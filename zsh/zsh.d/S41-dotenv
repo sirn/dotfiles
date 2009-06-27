@@ -1,0 +1,25 @@
+typeset -ga chpwd_functions
+
+chpwd_functions+='zsh_chpwd_dotenv'
+zsh_chpwd_dotenv() {
+    if [ $dotenv_old_path ]; then
+        export PATH="$dotenv_old_path"
+        export RPROMPT="$dotenv_old_rprompt"
+    fi
+
+    local dotenv_current_dir="$(pwd)"
+    export dotenv_old_path="$PATH"
+    export dotenv_old_rprompt="$RPROMPT"
+    if [ -f "$dotenv_current_dir/.env" ]; then
+        export dotenv_path="$(cat $dotenv_current_dir/.env)"
+        export dotenv_last_match="$dotenv_current_dir"
+    fi
+    if [ $dotenv_path ]; then
+        if [ ! ${dotenv_current_dir:#"$dotenv_last_match"*} ]; then
+            export PATH="$dotenv_path:$PATH"
+            export RPROMPT="$RPROMPT (%U$dotenv_path[(ws:/:)-2]%u)"
+        fi
+    fi
+}
+
+# vim:ft=zsh

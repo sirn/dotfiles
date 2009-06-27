@@ -1,0 +1,4 @@
+local PROMPT="%B%m%b %n%# "
+local RPROMPT="%U"'$(get_git_prompt_info)'"%u %B%~%b"
+
+# vim:ft=zsh

@@ -1,0 +1,8 @@
+[user]
+  name = Kridsada Thanabulpong
+  email = sirn@ogsite.net
+
+[color]
+  diff = always
+
+# vim:ft=gitconfig

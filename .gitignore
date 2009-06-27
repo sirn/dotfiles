@@ -1,0 +1,7 @@
+# Nasty system caches
+.DS_Store
+Thumbs.db
+
+# Runtime-generated files
+*.swp
+*.elc
