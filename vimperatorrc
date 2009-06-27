@@ -1,12 +1,12 @@
-set guioptions-=mTB               " disable toolbars
-set showtabline=0                 " disable tab bar
+set guioptions-=mTB
+set showtabline=0
 
-qmark b bbitly                    " bit.ly bookmarklet
-qmark j bjisho                    " jisho.org bookmarklet
-qmark y bydict                    " dic.yahoo.co.jp bookmarklet
-qmark d bdelicious                " delicious.com bookmarklet
-qmark s bsupergenpass             " supergenpass bookmarklet
+qmark b bbitly
+qmark j bjisho
+qmark y bydict
+qmark d bdelicious
+qmark s bsupergenpass
 
-echo                              " silent
+echo
 
 " vim:ft=vim
