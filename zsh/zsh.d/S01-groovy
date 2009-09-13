@@ -1,2 +1,7 @@
+# Groovy
 export GROOVY_HOME="/usr/local/groovy"
 export PATH="$PATH:$GROOVY_HOME/bin"
+
+# Grails
+export GRAILS_HOME="/usr/local/grails"
+export PATH="$PATH:$GRAILS_HOME/bin"

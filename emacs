@@ -68,6 +68,11 @@
 (autoload 'javascript-mode "javascript" nil t)
 (add-to-list 'auto-mode-alist '("\\.js\\'" . javascript-mode))
 
+;; Groovy-mode
+(autoload 'groovy-mode "groovy-mode.el" nil t)
+(add-to-list 'auto-mode-alist '("\.groovy$" . groovy-mode))
+(add-to-list 'interpreter-mode-alist '("groovy" . groovy-mode))
+
 ;; Markdown-mode, for editing article and such
 (autoload 'markdown-mode "markdown-mode.el" nil t)
 (add-to-list 'auto-mode-alist '("\\.text" . markdown-mode))
@@ -115,7 +120,7 @@
     (set-default-font
      "-outline-Consolas-normal-r-normal-normal-13-97-96-96-c-*-iso8859-1"))
   (when is-osx
-    (set-default-font "DejaVu Sans Mono-12"))
+    (set-default-font "Menlo-12"))
   (when is-nix
     (set-default-font "Terminus-10")
     (set-fontset-font nil 'thai '("Lomaputta"))))
