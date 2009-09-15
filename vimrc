@@ -26,7 +26,6 @@ set tabstop=2                     " number of spaces for each tab
 set shiftwidth=2                  " for autoindent
 set smartindent                   " auto detect when to insert indentation
 
-set list listchars=eol:¬          " display newline character as ¬
 set ofu=syntaxcomplete#Complete   " enable Omni completion
 
 " GUI-specified functions
