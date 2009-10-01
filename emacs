@@ -122,7 +122,7 @@
   (when is-osx
     (set-default-font "Menlo-12"))
   (when is-nix
-    (set-default-font "Terminus-10")
+    (set-default-font "DejaVu Sans Mono-9")
     (set-fontset-font nil 'thai '("Lomaputta"))))
 
 ;; Custom variables --------------------------------------------------------
