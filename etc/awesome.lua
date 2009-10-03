@@ -61,7 +61,6 @@ menu_awesome = {
 
 menu_applications = {
   { "firefox", "firefox" },
-  { "irssi", "urxvt -name irssi -e irssi" },
   { "mplayer", "gnome-mplayer" },
   { "keepassx", "keepassx" },
 }
