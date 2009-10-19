@@ -209,7 +209,10 @@ globalkeys = awful.util.table.join(
       mypromptbox[mouse.screen].widget,
       awful.util.eval, nil,
       awful.util.getdir("cache") .. "/history_eval")
-    end)
+    end),
+
+  -- Utility
+  awful.key({ }, "Print", function () awful.util.spawn("scrot") end)
 )
 
 -- Client awful tagging: this is useful to tag some clients and then do stuff like move to tag on them
@@ -278,6 +281,21 @@ root.keys(globalkeys)
 
 -- Hooks --------------------------------------------------------------------
 
+-- Hook function to execute when focusing a client
+awful.hooks.focus.register(function (c)
+  if not awful.client.ismarked(c) then
+    c.border_color = "#ff0000"
+    c.border_width = 1
+  end
+end)
+
+-- Hook function to execute when unfocusing a client.
+awful.hooks.unfocus.register(function (c)
+  if not awful.client.ismarked(c) then
+    c.border_color = beautiful.border_normal
+  end
+end)
+
 -- Hook function to execute when marking a client
 awful.hooks.marked.register(function (c)
   c.border_color = beautiful.border_marked
@@ -285,7 +303,7 @@ end)
 
 -- Hook function to execute when unmarking a client.
 awful.hooks.unmarked.register(function (c)
-  c.border_color = beautiful.border_normal -- beautiful.border_focus
+  c.border_color = beautiful.border_focus
 end)
 
 -- Hook function to execute when the mouse enters a client.
