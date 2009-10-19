@@ -35,7 +35,6 @@ floatapps = {
 -- Predefined application tags
 apptags = {
   ["task_radio"] = { screen = 1, tag = 6 },
-  ["task_ssh"] = { screen = 1, tag = 6 },
   ["VirtualBox"] = { screen = 1, tag = 3 },
 }
 
@@ -63,12 +62,12 @@ menu_applications = {
   { "firefox", "firefox" },
   { "mplayer", "gnome-mplayer" },
   { "keepassx", "keepassx" },
+  { "irssi", terminal .. " -e irssi" },
 }
 
 task_cmd = terminal .. " -name task_"
 menu_tasks = {
-  { "listen to radio", task_cmd .. "radio -e mplayer http_proxy://localhost:8888/http://www.animenfo.com/radio/listen.m3u" },
-  { "ssh to futami", task_cmd .. "ssh -e ssh -L0.0.0.0:8888:proxy.csloxinfo.com:8080 sirn@210.1.31.215" },
+  { "listen to radio", task_cmd .. "radio -e mplayer http://www.animenfo.com/radio/listen.m3u" },
 }
 
 mymainmenu = awful.menu.new({
