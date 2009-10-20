@@ -73,6 +73,10 @@
 (add-to-list 'auto-mode-alist '("\.groovy$" . groovy-mode))
 (add-to-list 'interpreter-mode-alist '("groovy" . groovy-mode))
 
+;; Erlang
+(autoload 'erlang-mode "erlang.el" nil t)
+(add-to-list 'auto-mode-alist '("\\.erl\\'" . erlang-mode))
+
 ;; Markdown-mode, for editing article and such
 (autoload 'markdown-mode "markdown-mode.el" nil t)
 (add-to-list 'auto-mode-alist '("\\.text" . markdown-mode))
