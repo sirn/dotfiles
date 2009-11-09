@@ -1,0 +1,14 @@
+# Paths
+if [ $is_osx ]; then
+  export PYTHON_PATH=/Library/Frameworks/Python.framework/Versions/2.6/bin
+  export PATH=$PYTHON_PATH:$PATH
+fi
+
+# VirtualEnv
+if [ -e $PYTHON_PATH/virtualenvwrapper_bashrc ]; then
+  export WORKON_HOME=$HOME/.virtualenvs
+  source $PYTHON_PATH/virtualenvwrapper_bashrc
+  workon default
+fi
+
+# vim:ft=zsh
