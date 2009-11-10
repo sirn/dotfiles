@@ -8,7 +8,6 @@ fi
 if [ -e $PYTHON_PATH/virtualenvwrapper_bashrc ]; then
   export WORKON_HOME=$HOME/.virtualenvs
   source $PYTHON_PATH/virtualenvwrapper_bashrc
-  workon default
 fi
 
 # vim:ft=zsh
