@@ -1,0 +1,11 @@
+# Options
+startup_message off   # disable the startup message
+autodetach on         # detach on hangup instead of terminating screen
+
+# Status line
+hardstatus alwayslastline
+hardstatus string "%{= bw} %H %{-}%> %-Lw%{+b}%n%{c}*%{+b d} %t%{-b}%+Lw %<%-= %{= rw} %c "
+
+# Keymap
+bind 'n' next
+bind 'p' prev
