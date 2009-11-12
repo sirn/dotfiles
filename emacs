@@ -38,6 +38,9 @@
     ;; specify this, otherwise it won't work on Windows.
     (setq exec-path
           (append (list "C:/Program Files (x86)/Git/bin") exec-path)))
+(if is-osx
+    ;; try not to rely on MacPorts or Fink, but instead on binary packages
+    (setq exec-path (append exec-path '("/usr/local/git/bin"))))
 
 ;; Comint
 (require 'comint)
