@@ -111,7 +111,6 @@
 (when window-system
   ;; Themes
   (require 'color-theme)
-  (color-theme-initialize)
   (color-theme-sunburst)
   ;; unclutter window
   (tool-bar-mode 0)
