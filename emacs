@@ -51,10 +51,21 @@
 (define-key comint-mode-map [(control meta n)] 'comint-next-input)
 (define-key comint-mode-map [(control meta p)] 'comint-previous-input)
 
+;; YASnippet
+(require 'yasnippet)
+(yas/initialize)
+(yas/load-directory "~/.dotfiles/elisp/yasnippet/snippets")
+
 ;; Custom theme
 (load "~/.dotfiles/elisp/custom-theme.el")
 
 ;; Minor modes -------------------------------------------------------------
+
+;; Auto-completion
+(require 'auto-complete)
+(require 'auto-complete-config)
+
+(global-auto-complete-mode t)
 
 ;; TextMate-like parenthesis matching, only enable this for Python-mode.
 (autoload 'textmate-mode "emacs-textmate" "TextMate Pair Mode" t)
