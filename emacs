@@ -56,6 +56,9 @@
 (yas/initialize)
 (yas/load-directory "~/.dotfiles/elisp/yasnippet/snippets")
 
+;; Auto resize frames
+(load "resize-frame.el")
+
 ;; Custom theme
 (load "~/.dotfiles/elisp/custom-theme.el")
 
