@@ -94,6 +94,10 @@
 (autoload 'erlang-mode "erlang.el" nil t)
 (add-to-list 'auto-mode-alist '("\\.erl\\'" . erlang-mode))
 
+;; Ruby-mode
+(autoload 'ruby-mode "ruby-mode.el" nil t)
+(add-to-list 'auto-mode-alist '("\\.rb\\'" . ruby-mode))
+
 ;; Markdown-mode, for editing article and such
 (autoload 'markdown-mode "markdown-mode.el" nil t)
 (add-to-list 'auto-mode-alist '("\\.text" . markdown-mode))
