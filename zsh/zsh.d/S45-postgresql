@@ -1,0 +1,6 @@
+# Paths
+if [ $is_osx ]; then
+  export PATH=/Library/PostgreSQL/8.4/bin:$PATH
+fi
+
+# vim:ft=zsh
