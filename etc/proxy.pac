@@ -1,5 +1,11 @@
 function FindProxyForURL(url, host) {
-    if (shExpMatch(url, "*twitter.com/*")) { return "DIRECT"; }
-    if (shExpMatch(url, "*.twitter.com/*")) { return "DIRECT"; }
-    return "PROXY localhost:8888; PROXY 192.168.1.129:8888; DIRECT"
+
+  // True Internet cannot access NearlyFreeSpeech for some reason
+  if (isInNet(host, "208.94.116.0", "255.255.254.0")) {
+    return "PROXY proxy.trueinternet.co.th:8080";
+  }
+
+  // Default to direct connection
+  return "DIRECT";
+
 }
