@@ -1,0 +1,16 @@
+# Managed servers
+
+Host futami
+  Hostname 210.1.31.215
+  Port 22
+
+Host ontheo
+  Hostname ontheo.ath.cx
+  Port 22
+
+# Unmanaged servers
+
+Host absolute
+  User sirn_absolutef
+  Hostname ssh.phx.nearlyfreespeech.net
+  Port 22
