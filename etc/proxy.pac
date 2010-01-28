@@ -1,6 +1,6 @@
 function FindProxyForURL(url, host) {
 
-    var direct = "PROXY proxy.trueinternet.co.th:8080; DIRECT"; // Meh.
+    var direct = "DIRECT"; // Meh.
     var proxy = "PROXY proxy.trueinternet.co.th:8080";
 
     // Always bypass proxy config for localnet

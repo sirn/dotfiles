@@ -1,0 +1,5 @@
+if [ -e /usr/local/cappuccino ]; then
+  export PATH=/usr/local/cappuccino/bin:$PATH
+fi
+
+# vim:ft=zsh
