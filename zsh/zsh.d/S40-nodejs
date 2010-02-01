@@ -1,0 +1,5 @@
+if [ -e /usr/local/nodejs ]; then
+  export PATH=/usr/local/nodejs/bin:$PATH
+fi
+
+# vim:ft=zsh
