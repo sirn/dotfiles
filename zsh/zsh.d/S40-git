@@ -1,7 +1,4 @@
-# Paths
-if [ $is_osx ]; then
-  export PATH=/usr/local/git/bin:$PATH
-fi
+_add_path /usr/local/git
 
 # http://www.jukie.net/~bart/blog/20071219221358
 autoload _git

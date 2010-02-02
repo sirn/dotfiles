@@ -1,5 +1,3 @@
-if [ -e "$HOME/.gem/ruby/1.8/bin" ]; then
-  export PATH="$HOME/.gem/ruby/1.8/bin:$PATH"
-fi
+_add_path $HOME/.gem/ruby/1.8/
 
 # vim:ft=zsh

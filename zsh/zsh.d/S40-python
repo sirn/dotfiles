@@ -1,5 +1,5 @@
 # Paths
-if [ $is_osx ]; then
+if [ -e /Library/Frameworks/Python.framework/Versions/2.6 ]; then
   export PYTHON_PATH=/Library/Frameworks/Python.framework/Versions/2.6/bin
   export PATH=$PYTHON_PATH:$PATH
 fi

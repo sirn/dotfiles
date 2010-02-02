@@ -1,6 +1,3 @@
-# Paths
-if [ $is_osx ]; then
-  export PATH=/usr/local/erlang/bin:$PATH
-fi
+_add_path /usr/local/erlang
 
 # vim:ft=zsh
