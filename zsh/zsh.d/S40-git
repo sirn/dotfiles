@@ -1,34 +1,11 @@
 _add_path /usr/local/git
 
-# http://www.jukie.net/~bart/blog/20071219221358
-autoload _git
-typeset -ga preexec_functions
-typeset -ga precmd_functions
-typeset -ga chpwd_functions
-
-setopt prompt_subst
-export __CURRENT_GIT_BRANCH=
-
-parse_git_branch() {
-    git branch --no-color 2> /dev/null \
-        | sed -e '/^[^*]/d' -e 's/* \(.*\)/git:\1/'
-}
-preexec_functions+='zsh_preexec_update_git_vars'
-zsh_preexec_update_git_vars() {
-    case "$(history $HISTCMD)" in 
-        *git*)
-            export __CURRENT_GIT_BRANCH="$(parse_git_branch)"
-            ;;
-    esac
-}
-
-chpwd_functions+='zsh_chpwd_update_git_vars'
-zsh_chpwd_update_git_vars() {
-    export __CURRENT_GIT_BRANCH="$(parse_git_branch)"
-}
-
-get_git_prompt_info() {
-    echo $__CURRENT_GIT_BRANCH
+# Prompt
+function _prompt_git {
+    local branch=$(git symbolic-ref HEAD 2>/dev/null|awk '{sub(/^refs\/heads\//, ""); print}')
+    if [ $branch ]; then
+        echo " %Ugit:$branch%u"
+    fi
 }
 
 # vim:ft=zsh

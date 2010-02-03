@@ -1,10 +1,11 @@
-setopt extended_glob
 if [[ "$TERM" == "screen" ]]; then
-  local PROMPT="%# "
-  function preexec {
-    local CMD=${1[(wr)^(*=*|sudo|-*)]}
-    echo -ne "\ek$CMD\e\\"
-  }
+    
+    # Set screen's status
+    function preexec {
+        local CMD=${1[(wr)^(*=*|sudo|-*)]}
+        echo -ne "\ek$CMD\e\\"
+    }
+    
 fi
 
 # vim:ft=zsh

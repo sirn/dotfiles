@@ -1,5 +1,2 @@
-export _OLD_VIRTUAL_RPROMPT=$RPROMPT
-PROMPT="$_OLD_VIRTUAL_PS1"
-RPROMPT="$RPROMPT (py:%U`basename \"$VIRTUAL_ENV\"`%u)"
-
+# Do nothing.
 # vim:ft=zsh
