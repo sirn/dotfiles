@@ -100,8 +100,9 @@
 (add-to-list 'auto-mode-alist '("\\.wiki" . wikipedia-mode))
 
 ;; Jinja2-mode
-(autoload 'jinja-mode "jinja.el" nil t)
-(add-to-list 'auto-mode-alist '("\\.jinja2" . jinja-mode))
+; turns out it's more annoying than useful without nxhtml.
+;(autoload 'jinja-mode "jinja.el" nil t)
+;(add-to-list 'auto-mode-alist '("\\.jinja2" . jinja-mode))
 
 ;; Personalizes ------------------------------------------------------------
 
