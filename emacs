@@ -31,17 +31,6 @@
 (ido-mode t)
 (iswitchb-mode 1)
 
-;; Git-emacs
-(require 'git-emacs)
-(if is-w32
-    ;; since Windows is not using UNIX layout, we'll have to especially
-    ;; specify this, otherwise it won't work on Windows.
-    (setq exec-path
-          (append (list "C:/Program Files (x86)/Git/bin") exec-path)))
-(if is-osx
-    ;; try not to rely on MacPorts or Fink, but instead on binary packages
-    (setq exec-path (append exec-path '("/usr/local/git/bin"))))
-
 ;; Comint
 (require 'comint)
 (define-key comint-mode-map [(meta p)]
@@ -85,11 +74,6 @@
 (autoload 'javascript-mode "javascript" nil t)
 (add-to-list 'auto-mode-alist '("\\.js\\'" . javascript-mode))
 
-;; Groovy-mode
-(autoload 'groovy-mode "groovy-mode.el" nil t)
-(add-to-list 'auto-mode-alist '("\.groovy$" . groovy-mode))
-(add-to-list 'interpreter-mode-alist '("groovy" . groovy-mode))
-
 ;; Erlang
 (autoload 'erlang-mode "erlang.el" nil t)
 (add-to-list 'auto-mode-alist '("\\.erl\\'" . erlang-mode))
@@ -114,6 +98,10 @@
 ;; Wikipedia-mode
 (autoload 'wikipedia-mode "wikipedia-mode.el" nil t)
 (add-to-list 'auto-mode-alist '("\\.wiki" . wikipedia-mode))
+
+;; Jinja2-mode
+(autoload 'jinja-mode "jinja.el" nil t)
+(add-to-list 'auto-mode-alist '("\\.jinja2" . jinja-mode))
 
 ;; Personalizes ------------------------------------------------------------
 
