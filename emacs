@@ -104,6 +104,10 @@
 ;(autoload 'jinja-mode "jinja.el" nil t)
 ;(add-to-list 'auto-mode-alist '("\\.jinja2" . jinja-mode))
 
+;; Repoze.bfg stuff
+(add-to-list 'auto-mode-alist '("\\.jinja2" . html-mode))
+(add-to-list 'auto-mode-alist '("\\.zcml" . xml-mode))
+
 ;; Personalizes ------------------------------------------------------------
 
 ;; Disable welcome screen
