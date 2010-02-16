@@ -1,0 +1,3 @@
+[submodule "elisp/auto-complete"]
+	path = elisp/auto-complete
+	url = git://github.com/m2ym/auto-complete.git
