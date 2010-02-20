@@ -7,6 +7,7 @@ fi
 alias vi='vim'
 alias ll='ls -l'
 alias la='ls -A'
+alias lla='ls -alh'
 alias l='ls -CF'
 
 alias mv='nocorrect mv'
