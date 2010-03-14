@@ -22,13 +22,6 @@ if [ $is_bsd ]; then
   export CLICOLOR="yes"
 fi
 
-# Environment
-if [ $is_osx ]; then
-  export JAVA_HOME="/Library/Java/Home"
-else
-  export JAVA_HOME="/usr/java"
-fi
-
 # Completion
 autoload -U compinit
 compinit
