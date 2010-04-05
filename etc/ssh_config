@@ -12,9 +12,15 @@ Host chika
   Hostname 69.164.211.117
   Port 22
 
+# Clients
+
+Host yuno
+  Hostname 210.1.31.61
+  Port 22
+
 # Unmanaged servers
 
-Host absolute
-  User sirn_absolutef
+Host fanboi
+  User sirn_fanboi
   Hostname ssh.phx.nearlyfreespeech.net
   Port 22
