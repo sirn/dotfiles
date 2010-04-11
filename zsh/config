@@ -3,9 +3,10 @@ fpath=(~/.dotfiles/zsh/functions $fpath)
 
 # Enable colors for color-supported terms
 autoload colors
-if [[ "$terminfo[colors]" -ge 8 ]]; then
-  colors
-  export COLORTERM=yes
+zmodload zsh/terminfo
+if [ "$terminfo[colors]" -ge 8 ]; then
+    colors
+    export COLORTERM=yes
 fi
 
 # Paths
