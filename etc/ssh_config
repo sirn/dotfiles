@@ -8,10 +8,6 @@ Host ontheo
   Hostname ontheo.ath.cx
   Port 22
 
-Host chika
-  Hostname 69.164.211.117
-  Port 22
-
 # Clients
 
 Host yuno
