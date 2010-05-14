@@ -20,3 +20,8 @@ Host fanboi
   User sirn_fanboi
   Hostname ssh.phx.nearlyfreespeech.net
   Port 22
+
+Host webfaction
+  User sirn
+  Hostname web129.webfaction.com
+  Port 22
