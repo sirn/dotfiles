@@ -1,7 +1,11 @@
 # Managed servers
 
 Host futami
-  Hostname 210.1.31.215
+  Hostname futami.grid.in.th
+  Port 22
+
+Host chika
+  Hostname chika.grid.in.th
   Port 22
 
 Host ontheo
@@ -16,12 +20,6 @@ Host yuno
 
 # Unmanaged servers
 
-Host fanboi
-  User sirn_fanboi
+Host nfs
   Hostname ssh.phx.nearlyfreespeech.net
-  Port 22
-
-Host webfaction
-  User sirn
-  Hostname web129.webfaction.com
   Port 22
