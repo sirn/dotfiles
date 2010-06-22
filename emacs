@@ -137,7 +137,7 @@
     (set-default-font
      "-outline-Consolas-normal-r-normal-normal-13-97-96-96-c-*-iso8859-1"))
   (when is-osx
-    (set-default-font "Menlo-12"))
+    (set-default-font "Inconsolata-dz-12"))
   (when is-nix
     (set-default-font "DejaVu Sans Mono-9")
     (set-fontset-font nil 'thai '("Lomaputta"))))
@@ -145,4 +145,4 @@
 ;; Custom variables --------------------------------------------------------
 
 ;; Heh.
-;; vim:ft=lisp 
+;; vim:ft=lisp
