@@ -1,3 +1,6 @@
 [submodule "elisp/auto-complete"]
 	path = elisp/auto-complete
 	url = git://github.com/m2ym/auto-complete.git
+[submodule "elisp/clojure-mode"]
+	path = elisp/clojure-mode
+	url = git://github.com/jochu/clojure-mode.git

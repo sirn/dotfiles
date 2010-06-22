@@ -8,4 +8,10 @@ else
     fi
 fi
 
+# Clojure stuff
+
+if [ -e /usr/local/Cellar/clojure-contrib/1.1.0 ]; then
+    export CLASSPATH="$CLASSPATH:/usr/local/Cellar/clojure-contrib/1.1.0/clojure-contrib.jar"
+fi
+
 # vim:ft=zsh

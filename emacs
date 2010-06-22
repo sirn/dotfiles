@@ -95,6 +95,10 @@
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 
+;; Clojure-mode
+(autoload 'clojure-mode "clojure-mode.el" nil t)
+(add-to-list 'auto-mode-alist '("\\.clj" . clojure-mode))
+
 ;; Wikipedia-mode
 (autoload 'wikipedia-mode "wikipedia-mode.el" nil t)
 (add-to-list 'auto-mode-alist '("\\.wiki" . wikipedia-mode))
