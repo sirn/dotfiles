@@ -5,9 +5,10 @@ if [ -e /Library/Frameworks/Python.framework/Versions/2.6 ]; then
 fi
 
 # VirtualEnv
-if [ -e $PYTHON_PATH/virtualenvwrapper_bashrc ]; then
+if [ -e $PYTHON_PATH/virtualenvwrapper.sh ]; then
     export WORKON_HOME=$HOME/.virtualenvs
-    source $PYTHON_PATH/virtualenvwrapper_bashrc
+    source $PYTHON_PATH/virtualenvwrapper.sh
+    workon default
 fi
 
 # Prompt
