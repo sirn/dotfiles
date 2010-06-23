@@ -45,6 +45,10 @@
 (yas/initialize)
 (yas/load-directory "~/.dotfiles/elisp/yasnippet/snippets")
 
+;; SLIME
+(require 'slime)
+(slime-setup)
+
 ;; Auto resize frames
 (load "resize-frame.el")
 
