@@ -48,6 +48,11 @@
 ;; SLIME
 (require 'slime)
 (slime-setup)
+(setq inferior-lisp-program
+      (concat "java -server -Dfile.encoding=UTF-8 -cp "
+              "/usr/local/Cellar/clojure-contrib/1.1.0/clojure-contrib.jar:"
+              "/usr/local/Cellar/clojure/1.1.0/clojure.jar:. "
+              "clojure.main"))
 
 ;; Auto resize frames
 (load "resize-frame.el")
