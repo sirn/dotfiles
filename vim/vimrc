@@ -32,7 +32,7 @@ set ofu=syntaxcomplete#Complete   " enable Omni completion
 if has("gui_running")
   colorscheme desert
   " default font for Linux, Mac, Windows
-  set guifont=Monospace,Menlo,Consolata
+  set guifont=Inconsolata-dz,Monospace,Menlo,Consolata
 endif
 
 " Navigation
