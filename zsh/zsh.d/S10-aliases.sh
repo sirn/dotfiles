@@ -1,7 +1,6 @@
-if [ $is_bsd ]; then
-  alias df='df -t nonullfs'
-else
-  alias ls="ls --color=auto"
+if [[ -z $is_bsd ]]; then
+    # Not BSD, assume it's using GNU toolchain
+    alias ls="ls --color=auto"
 fi
 
 alias vi='vim'
