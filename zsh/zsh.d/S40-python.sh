@@ -1,21 +1,20 @@
 # Paths
-if [ -e /Library/Frameworks/Python.framework/Versions/2.6 ]; then
-    export PYTHON_PATH=/Library/Frameworks/Python.framework/Versions/2.6/bin
+local python_home=/Library/Frameworks/Python.framework/Versions/2.6
+
+if [[ -e $python_home ]]; then
+    export PYTHON_PATH=$python_home/bin
     export PATH=$PYTHON_PATH:$PATH
 fi
 
 # VirtualEnv
-if [ -e $PYTHON_PATH/virtualenvwrapper.sh ]; then
-    export WORKON_HOME=$HOME/.virtualenvs
-    source $PYTHON_PATH/virtualenvwrapper.sh
-    workon default
-fi
-
-# Prompt
-function _prompt_virtualenv {
-    if [ $VIRTUAL_ENV ]; then
-        echo " (py:%U`basename \"$VIRTUAL_ENV\"`%u)"
+if [[ -e $PYTHON_PATH/virtualenvwrapper.sh ]]; then
+    # Avoid loading VirtualEnvWrapper twice, since it is extremely slow
+    if [[ -z $VIRTUALENVWRAPPER_PYTHON ]]; then
+        export WORKON_HOME=$HOME/.virtualenvs
+        export VIRTUAL_ENV_DISABLE_PROMPT=yes
+        source $PYTHON_PATH/virtualenvwrapper.sh
+        workon default
     fi
-}
+fi
 
 # vim:ft=zsh

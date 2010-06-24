@@ -1,9 +1,9 @@
 # System detection
 if [[ -z "${OSTYPE:#darwin*}" ]]; then
-    export is_osx=1
-    export is_bsd=1
-elif [[ -z "${OSTYPE:#bsd*}" ]]; then export is_bsd=1
-elif [[ -z "${OSTYPE:#linux*}" ]]; then export is_linux=1
+    export IS_BSD=yes
+    export IS_OSX=yes
+elif [[ -z "${OSTYPE:#bsd*}" ]]; then export IS_BSD=yes
+elif [[ -z "${OSTYPE:#linux*}" ]]; then export IS_LINUX=yes
 fi
 
 # zsh.d

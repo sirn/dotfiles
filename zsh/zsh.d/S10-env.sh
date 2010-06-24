@@ -1,5 +1,34 @@
-if [ -z $TZ ]; then
+# Set the timezone otherwise some app won't work (e.g. MochiWeb)
+if [[ -z $TZ ]]; then
     export TZ="GMT+7"
 fi
+
+# Shell related
+export LC_ALL="en_US.UTF-8"
+export LANG="en_US.UTF-8"
+
+# Personalize
+export EDITOR='vim'
+
+if [[ -n $IS_BSD ]]; then
+    # I won't use GNU tools in BSD anyway
+    export LSCOLORS="ExGxFxdxCxDxDxhbadExEx"
+    export CLICOLOR="yes"
+else
+    alias ls="ls --color=auto"
+fi
+
+alias vi='vim'
+alias ll='ls -l'
+alias la='ls -A'
+alias lla='ls -alh'
+alias l='ls -CF'
+
+alias mv='nocorrect mv'
+alias cp='nocorrect cp'
+alias ln='nocorrect ln'
+alias mkdir='nocorrect mkdir'
+
+alias git-serve='git daemon --reuseaddr --export-all --base-path=. --enable=receive-pack .'
 
 # vim:ft=zsh
