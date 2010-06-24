@@ -26,7 +26,6 @@ setopt auto_cd        # Perform cd to the directory if no command exist
 setopt auto_param_keys   # Append }, : to params automatically, if needed
 setopt auto_param_slash  # Append trailing slash for parameters
 setopt auto_remove_slash # Remove slash if the next character is delimiter
-setopt cdable_vars    # Try to complete the directory from vars
 unsetopt beep         # Disable annoying BEEP
 unsetopt bg_nice      # Don't NICE the background process
 
