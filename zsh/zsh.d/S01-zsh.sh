@@ -8,6 +8,7 @@ fi
 
 # Enable completion
 autoload -U compinit
+mkdir -p ~/.zsh # Make sure zcompdump could be created
 compinit -d ~/.zsh/zcompdump
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
