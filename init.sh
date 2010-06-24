@@ -26,8 +26,5 @@ _link_to_home etc/ssh_config .ssh/config
 if [[ $1 == "--with-x" ]]; then
     _link_to_home etc/ratpoisonrc .ratpoisonrc
     _link_to_home etc/Xdefaults .Xdefaults
-fi
-
-if [[ -e ~/.config/awesome ]]; then
     _link_to_home etc/awesome.lua ~/.config/awesome/rc.lua
 fi
