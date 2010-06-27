@@ -17,6 +17,7 @@ zstyle ':completion:*' insert-unambiguous false
 
 # ZSH Options
 setopt zle            # Enable ZSH line editor
+setopt emacs          # Enable Emacs key bindings
 setopt auto_list      # List ambiguous by default
 setopt auto_menu      # Show ambiguous listing menu by default
 setopt hash_cmds      # Place location of each command inside hash table
