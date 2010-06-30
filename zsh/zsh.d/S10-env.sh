@@ -30,5 +30,6 @@ alias ln='nocorrect ln'
 alias mkdir='nocorrect mkdir'
 
 alias git-serve='git daemon --reuseaddr --export-all --base-path=. --enable=receive-pack .'
+alias psmem='ps -o rss,ucomm'
 
 # vim:ft=zsh
