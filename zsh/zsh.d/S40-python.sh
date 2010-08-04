@@ -1,5 +1,5 @@
 # Paths
-local python_home=/Library/Frameworks/Python.framework/Versions/2.6
+local python_home=/Library/Frameworks/Python.framework/Versions/2.7
 
 if [[ -e $python_home ]]; then
     export PYTHON_PATH=$python_home/bin
