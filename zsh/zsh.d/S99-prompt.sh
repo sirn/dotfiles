@@ -16,7 +16,7 @@ function _prompt_git {
 }
 
 function _prompt_pwd {
-    echo " %B$(print -P "%~"|sed 's/\([^_\.\/]\)[^\/]*\//\1\//g')%b"
+    echo " %B$(print -P "%~"|sed 's/\([^[:punct:]]\)[^\/]*\//\1\//g')%b"
 }
 
 function _prompt_virtualenv {
