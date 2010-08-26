@@ -1,9 +1,5 @@
 # Managed servers
 
-Host futami
-  Hostname futami.grid.in.th
-  Port 22
-
 Host chika
   Hostname chika.grid.in.th
   Port 22
