@@ -12,10 +12,10 @@ _add_to_exec() {
 export PATH="/bin:/sbin"
 
 # System paths
+_add_to_exec /Developer/usr
 _add_to_exec /usr
 _add_to_exec /usr/local
 _add_to_exec /opt/local
-_add_to_exec /Developer/usr
 
 # Local paths
 _add_to_exec ~/.local

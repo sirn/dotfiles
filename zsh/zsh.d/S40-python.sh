@@ -1,5 +1,9 @@
 # Paths
-local python_home=/Library/Frameworks/Python.framework/Versions/2.7
+if [[ -n `brew 2>/dev/null` ]]; then
+  local python_home=`brew --prefix python`
+else
+  local python_home=/Library/Frameworks/Python.framework/Versions/2.7
+fi
 
 if [[ -e $python_home ]]; then
     export PYTHON_PATH=$python_home/bin
