@@ -1,19 +1,25 @@
-# Paths
+# Path
+# $PYTHON_HOME usually different by each packaging manager method
+# +-----------+----------------------------------------------------------
+# | Homebrew  | `brew --prefix python`
+# | MacPython | /Library/Frameworks/Python.framework/Versions/0.0
+# | OSX       | /System/Library/Frameworks/Python.framework/Versions/0.0
+# | Linux     | /usr/
+# +-----------+----------------------------------------------------------
+# Only setup Homebrew for the time being.
+_add_python() {
+  if [[ -e $1 ]]; then
+    export PATH=$1/bin:$PATH
+    if [[ -z $PYTHON_PATH ]]; then
+      export PYTHON_PATH=$1/bin
+    fi
+  fi
+}
+
 if [[ -n `brew 2>/dev/null` ]]; then
-  local python_home=`brew --prefix python`
-  local python3_home=`brew --prefix python3`
-else
-  local python_home=/Library/Frameworks/Python.framework/Versions/2.7
-fi
-
-if [[ -e $python_home ]]; then
-    export PYTHON_PATH=$python_home/bin
-    export PATH=$PYTHON_PATH:$PATH
-fi
-
-# Python 3
-if [[ -e $python3_home ]]; then
-    export PATH=$python3_home/bin:$PATH
+  brew --prefix python python3 | while read prefix; do
+    _add_python $prefix
+  done
 fi
 
 # VirtualEnv

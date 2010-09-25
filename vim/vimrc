@@ -42,12 +42,6 @@ nmap <C-t> :tabnew<cr>
 nmap <C-d> :tabclose<cr>
 
 " Filetype-specific settings
-autocmd BufRead *.mako set filetype=mako
-autocmd FileType mako setlocal shiftwidth=2
-autocmd FileType mako setlocal tabstop=2
-autocmd FileType mako setlocal syntax=mako
-autocmd FileType mako setlocal omnifunc=htmlcomplete#CompleteTags
-
 autocmd FileType python setlocal smartindent
   \ cinwords=if,elif,else,for,while,try,except,finally,def,class
 autocmd FileType python setlocal shiftwidth=4
