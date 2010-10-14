@@ -1,45 +1,57 @@
 set nocompatible                  " disable vi-compatibility
 set backspace=indent,eol,start    " allow backspace over everything
 set nobackup                      " everything is already in VCS
-
 set history=50                    " keep 50 lines of command line history
 set ruler                         " show the cursor position all the time
 set showcmd                       " display incomplete commands
-set textwidth=0                   " maximum width before auto break
-
-syntax on                         " always color terminal anyway
-
 set incsearch                     " do incremental searching
 set hlsearch                      " highlight matched searchs
-
-" auto-detect filetype and load language-specific indentations
-filetype plugin indent on 
-autocmd BufReadPost *
-  \ if line("'\"") > 0 && line("'\"") <= line("$") |
-  \   exe "normal g`\"" |
-  \ endif
-
 set autoindent                    " always enable auto indentation
-
 set expandtab                     " insert spaces instead of tab
 set tabstop=2                     " number of spaces for each tab
 set shiftwidth=2                  " for autoindent
 set smartindent                   " auto detect when to insert indentation
 
-set ofu=syntaxcomplete#Complete   " enable Omni completion
+set wildmenu                      " show completion on top of status line
+set wildmode=list:longest         " complete till longest common string
+set cursorline                    " highlight current line
+set laststatus=2                  " always show the status line
 
-" GUI-specified functions
+set guioptions-=T
+
+syntax on                         " always color terminal anyway
+
+autocmd BufReadPost *
+  \ if line("'\"") > 0 && line("'\"") <= line("$") |
+  \   exe "normal g`\"" |
+  \ endif
+
+" GUI-specified settings
 if has("gui_running")
-  colorscheme desert
   " default font for Linux, Mac, Windows
-  set guifont=Inconsolata-dz,Monospace,Menlo,Consolata
+  colorscheme molokai
+  set guifont=Inconsolata-dz:h12,Monospace,Menlo,Consolata
+  " display line number and mark 79-chars limit.
+  set number
+  set textwidth=0
+  set colorcolumn=79
+  " display TextMate-like symbol for tabs and \n
+  set list
+  set listchars=tab:▸\ ,eol:¬
 endif
 
 " Navigation
 nmap <C-p> :tabprevious<cr>
 nmap <C-n> :tabnext<cr>
-nmap <C-t> :tabnew<cr>
-nmap <C-d> :tabclose<cr>
+
+" load pathogen
+filetype off
+call pathogen#runtime_append_all_bundles()
+filetype plugin indent on
+
+" NERDTree
+map <C-t> :NERDTreeToggle<cr>
+let NERDTreeIgnore=['.git$', '.*\.pyc$']
 
 " Filetype-specific settings
 autocmd FileType python setlocal smartindent
