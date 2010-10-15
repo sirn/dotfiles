@@ -19,6 +19,10 @@ set laststatus=2                  " always show the status line
 
 set guioptions-=T
 
+" fix comment indentation
+set cindent
+set cinkeys=0{,0},!^F,o,O,e
+
 syntax on                         " always color terminal anyway
 
 autocmd BufReadPost *
