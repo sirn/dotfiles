@@ -10,6 +10,7 @@ set autoindent                    " always enable auto indentation
 set expandtab                     " insert spaces instead of tab
 set tabstop=2                     " number of spaces for each tab
 set shiftwidth=2                  " for autoindent
+set softtabstop=2                 " make backspace jump to previous stop
 set smartindent                   " auto detect when to insert indentation
 
 set wildmenu                      " show completion on top of status line
@@ -60,7 +61,9 @@ let NERDTreeIgnore=['.git$', '.*\.pyc$']
 " Filetype-specific settings
 autocmd FileType python setlocal smartindent
   \ cinwords=if,elif,else,for,while,try,except,finally,def,class
-autocmd FileType python setlocal shiftwidth=4
-autocmd FileType python setlocal tabstop=4
+
+autocmd FileType python,sass,css setlocal shiftwidth=4
+autocmd FileType python,sass,css setlocal tabstop=4
+autocmd FileType python,sass,css setlocal softtabstop=4
 
 " vim:ft=vim
