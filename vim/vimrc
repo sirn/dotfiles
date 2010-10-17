@@ -62,6 +62,7 @@ let NERDTreeIgnore=['.git$', '.*\.pyc$']
 autocmd FileType python setlocal smartindent
   \ cinwords=if,elif,else,for,while,try,except,finally,def,class
 
+autocmd FileType html setlocal colorcolumn=0
 autocmd FileType python,sass,css setlocal shiftwidth=4
 autocmd FileType python,sass,css setlocal tabstop=4
 autocmd FileType python,sass,css setlocal softtabstop=4
