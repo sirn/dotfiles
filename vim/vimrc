@@ -14,13 +14,13 @@ set softtabstop=2                 " make backspace jump to previous stop
 set smartindent                   " auto detect when to insert indentation
 
 set wildmenu                      " show completion on top of status line
-set wildmode=list:longest         " complete till longest common string
+set wildmode=longest,full         " complete longest, then show completions
 set cursorline                    " highlight current line
 set laststatus=2                  " always show the status line
 
 set guioptions-=T
 
-" fix comment indentation
+" Fix comment indentation
 set cindent
 set cinkeys=0{,0},!^F,o,O,e
 
@@ -31,35 +31,12 @@ autocmd BufReadPost *
   \   exe "normal g`\"" |
   \ endif
 
-" GUI-specified settings
-if has("gui_running")
-  " default font for Linux, Mac, Windows
-  colorscheme molokai
-  set guifont=Inconsolata-dz:h12,Monospace,Menlo,Consolata
-  " display line number and mark 79-chars limit.
-  set number
-  set textwidth=0
-  set colorcolumn=79
-  " display TextMate-like symbol for tabs and \n
-  set list
-  set listchars=tab:▸\ ,eol:¬
-endif
-
 " Navigation
 nmap <C-p> :tabprevious<cr>
 nmap <C-n> :tabnext<cr>
 
 " Omni completion
 set ofu=syntaxcomplete#Complete
-
-" load pathogen
-filetype off
-call pathogen#runtime_append_all_bundles()
-filetype plugin indent on
-
-" NERDTree
-map <C-t> :NERDTreeToggle<cr>
-let NERDTreeIgnore=['.git$', '.*\.pyc$']
 
 " Filetype-specific settings
 autocmd FileType python setlocal smartindent
@@ -70,8 +47,38 @@ autocmd FileType python,sass,css setlocal shiftwidth=4
 autocmd FileType python,sass,css setlocal tabstop=4
 autocmd FileType python,sass,css setlocal softtabstop=4
 
-" Vim Clojure
-let vimclojure#NailgunClient = "~/.local/bin/ng"
-let vimclojure#WantNailgun = 1
+" These extras are pretty much unneeded when I'm not coding
+if has("gui_running")
+
+  " Default font for Linux, Mac, Windows
+  colorscheme molokai
+  set guifont=Inconsolata-dz:h12,Monospace,Menlo,Consolas
+
+  " Display line number and mark 79-chars limit.
+  set number
+  set textwidth=0
+  set colorcolumn=79
+
+  " Display TextMate-like symbol for tabs and \n
+  set list
+  set listchars=tab:▸\ ,eol:¬
+
+  " Pathogen
+  filetype off
+  call pathogen#runtime_append_all_bundles()
+  filetype plugin indent on
+
+  " NERDTree
+  map <C-t> :NERDTreeToggle<CR>
+  let NERDTreeIgnore=['.git$', '.*\.pyc$']
+
+  " Vim Clojure
+  let vimclojure#NailgunClient = "~/.local/bin/ng"
+  let vimclojure#WantNailgun = 1
+
+  " Gundo
+  nnoremap <F5> :GundoToggle<CR>
+
+endif
 
 " vim:ft=vim

@@ -2,6 +2,10 @@
 .DS_Store
 Thumbs.db
 
+# Other VCS
+.hg
+.svn
+
 # Runtime-generated files
 *.swp
 *.elc
