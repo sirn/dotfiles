@@ -49,6 +49,9 @@ endif
 nmap <C-p> :tabprevious<cr>
 nmap <C-n> :tabnext<cr>
 
+" Omni completion
+set ofu=syntaxcomplete#Complete
+
 " load pathogen
 filetype off
 call pathogen#runtime_append_all_bundles()
@@ -66,5 +69,9 @@ autocmd FileType html setlocal colorcolumn=0
 autocmd FileType python,sass,css setlocal shiftwidth=4
 autocmd FileType python,sass,css setlocal tabstop=4
 autocmd FileType python,sass,css setlocal softtabstop=4
+
+" Vim Clojure
+let vimclojure#NailgunClient = "~/.local/bin/ng"
+let vimclojure#WantNailgun = 1
 
 " vim:ft=vim
