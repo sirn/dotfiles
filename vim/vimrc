@@ -73,11 +73,14 @@ if has("gui_running")
   let NERDTreeIgnore=['.git$', '.*\.pyc$']
 
   " Vim Clojure
-  let vimclojure#NailgunClient = "~/.local/bin/ng"
+  let vimclojure#NailgunClient = expand("~/.local/bin/ng")
   let vimclojure#WantNailgun = 1
 
   " Gundo
   nnoremap <F5> :GundoToggle<CR>
+
+  " Plugin key maps
+  map <unique> <silent> <Leader>t <Plug>PeepOpen
 
 endif
 
