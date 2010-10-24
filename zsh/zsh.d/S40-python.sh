@@ -22,6 +22,11 @@ if [[ -n `brew 2>/dev/null` ]]; then
   done
 fi
 
+# MacPorts
+if [[ -e /opt/local ]]; then
+  _add_python /opt/local/Library/Frameworks/Python.framework/Versions/2.7
+fi
+
 # VirtualEnv
 if [[ -e $PYTHON_PATH/virtualenvwrapper.sh ]]; then
     # Avoid loading VirtualEnvWrapper twice, since it is extremely slow
