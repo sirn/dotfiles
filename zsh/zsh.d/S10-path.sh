@@ -23,5 +23,6 @@ _add_to_exec ~/.gem/ruby/1.8
 
 # Application-specific
 _add_to_exec /Library/PostgreSQL/8.4
+_add_to_exec /usr/local/share/npm
 
 # vim:ft=zsh
