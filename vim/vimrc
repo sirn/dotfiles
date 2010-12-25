@@ -42,10 +42,9 @@ set ofu=syntaxcomplete#Complete
 autocmd FileType python setlocal smartindent
   \ cinwords=if,elif,else,for,while,try,except,finally,def,class
 
-autocmd FileType html setlocal colorcolumn=0
-autocmd FileType python,sass,css setlocal shiftwidth=4
-autocmd FileType python,sass,css setlocal tabstop=4
-autocmd FileType python,sass,css setlocal softtabstop=4
+autocmd FileType python,sass,css,sql setlocal shiftwidth=4
+autocmd FileType python,sass,css,sql setlocal tabstop=4
+autocmd FileType python,sass,css,sql setlocal softtabstop=4
 
 " These extras are pretty much unneeded when I'm not coding
 if has("gui_running")
@@ -58,6 +57,7 @@ if has("gui_running")
   set number
   set textwidth=0
   set colorcolumn=79
+  autocmd FileType html setlocal colorcolumn=0
 
   " Display TextMate-like symbol for tabs and \n
   set list
