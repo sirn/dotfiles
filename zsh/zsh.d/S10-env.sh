@@ -3,10 +3,12 @@ if [[ -z $TZ ]]; then
     export TZ="GMT+7"
 fi
 
-# Shell related
-export LC_ALL="en_US.UTF-8"
-export LC_CTYPE="en_US.UTF-8"
-export LANG="en_US.UTF-8"
+# Locales
+if [[ -n $IS_BSD ]]; then
+  export LC_ALL="en_US.UTF-8"
+  export LC_CTYPE="en_US.UTF-8"
+  export LANG="en_US.UTF-8"
+fi
 
 # Personalize
 export EDITOR='vim'
