@@ -1,8 +1,3 @@
-# Set the timezone otherwise some app won't work (e.g. MochiWeb)
-if [[ -z $TZ ]]; then
-    export TZ="GMT+7"
-fi
-
 # Locales
 if [[ -n $IS_BSD ]]; then
   export LC_ALL="en_US.UTF-8"
