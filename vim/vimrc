@@ -8,9 +8,9 @@ set incsearch                     " do incremental searching
 set hlsearch                      " highlight matched searchs
 set autoindent                    " always enable auto indentation
 set expandtab                     " insert spaces instead of tab
-set tabstop=2                     " number of spaces for each tab
-set shiftwidth=2                  " for autoindent
-set softtabstop=2                 " make backspace jump to previous stop
+set tabstop=4                     " number of spaces for each tab
+set shiftwidth=4                  " for autoindent
+set softtabstop=4                 " make backspace jump to previous stop
 set smartindent                   " auto detect when to insert indentation
 
 set wildmenu                      " show completion on top of status line
@@ -43,9 +43,9 @@ set ofu=syntaxcomplete#Complete
 autocmd FileType python setlocal smartindent
   \ cinwords=if,elif,else,for,while,try,except,finally,def,class
 
-autocmd FileType python,sass,css,sql setlocal shiftwidth=4
-autocmd FileType python,sass,css,sql setlocal tabstop=4
-autocmd FileType python,sass,css,sql setlocal softtabstop=4
+autocmd FileType clojure setlocal shiftwidth=4
+autocmd FileType clojure setlocal tabstop=4
+autocmd FileType clojure setlocal softtabstop=4
 
 " These extras are pretty much unneeded when I'm not coding
 if has("gui_running")
