@@ -43,9 +43,9 @@ set ofu=syntaxcomplete#Complete
 autocmd FileType python setlocal smartindent
   \ cinwords=if,elif,else,for,while,try,except,finally,def,class
 
-autocmd FileType clojure setlocal shiftwidth=4
-autocmd FileType clojure setlocal tabstop=4
-autocmd FileType clojure setlocal softtabstop=4
+autocmd FileType clojure,html setlocal shiftwidth=4
+autocmd FileType clojure,html setlocal tabstop=4
+autocmd FileType clojure,html setlocal softtabstop=4
 
 " These extras are pretty much unneeded when I'm not coding
 if has("gui_running")
