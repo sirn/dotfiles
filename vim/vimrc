@@ -25,6 +25,7 @@ set cindent
 set cinkeys=0{,0},!^F,o,O,e
 
 syntax on                         " always color terminal anyway
+au BufNewFile,BufRead *.j setf objj  " syntax highlight for Objective-J
 
 autocmd BufReadPost *
   \ if line("'\"") > 0 && line("'\"") <= line("$") |

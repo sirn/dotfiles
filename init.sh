@@ -22,6 +22,7 @@ _link_to_home vim/vimperatorrc .vimperatorrc
 _link_to_home vim/autoload .vim/autoload
 _link_to_home vim/colors .vim/colors
 _link_to_home vim/bundle .vim/bundle
+_link_to_home vim/syntax .vim/syntax
 _link_to_home etc/gitconfig .gitconfig
 _link_to_home etc/screenrc .screenrc
 _link_to_home etc/ssh_config .ssh/config
