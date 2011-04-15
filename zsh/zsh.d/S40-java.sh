@@ -22,6 +22,7 @@ if [[ -n `brew 2>/dev/null` ]]; then
         done
     }
 fi
+_add_brew_classpath rlwrap
 _add_brew_classpath clojure clojure-contrib
 _add_brew_classpath jython
 
