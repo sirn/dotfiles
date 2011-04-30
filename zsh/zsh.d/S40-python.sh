@@ -17,7 +17,7 @@ _add_python() {
 }
 
 if [[ -n `brew 2>/dev/null` ]]; then
-  brew --prefix python python3 | while read prefix; do
+  brew --prefix python python3 pypy | while read prefix; do
     _add_python $prefix
   done
 fi
@@ -28,12 +28,16 @@ if [[ -e /opt/local ]]; then
 fi
 
 # VirtualEnv
-if [[ -e $PYTHON_PATH/virtualenvwrapper.sh ]]; then
+VIRTUALENV_PATH=$PYTHON_PATH
+if [[ -e /usr/local/share/python ]]; then
+  VIRTUALENV_PATH=/usr/local/share/python
+fi
+if [[ -e $VIRTUALENV_PATH/virtualenvwrapper.sh ]]; then
     # Avoid loading VirtualEnvWrapper twice, since it is extremely slow
     if [[ -z $VIRTUALENVWRAPPER_PYTHON ]]; then
         export WORKON_HOME=$HOME/.virtualenvs
         export VIRTUAL_ENV_DISABLE_PROMPT=yes
-        source $PYTHON_PATH/virtualenvwrapper.sh
+        source $VIRTUALENV_PATH/virtualenvwrapper.sh
         workon default
     fi
 fi
