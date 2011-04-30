@@ -28,9 +28,11 @@ if [[ -e /opt/local ]]; then
 fi
 
 # VirtualEnv
-VIRTUALENV_PATH=$PYTHON_PATH
-if [[ -e /usr/local/share/python ]]; then
-  VIRTUALENV_PATH=/usr/local/share/python
+export VIRTUALENV_PATH=$PYTHON_PATH
+brew_shared=/usr/local/share/python
+if [[ -e $brew_shared ]]; then
+  export VIRTUALENV_PATH=$brew_shared
+  export PATH=$brew_shared:$PATH
 fi
 if [[ -e $VIRTUALENV_PATH/virtualenvwrapper.sh ]]; then
     # Avoid loading VirtualEnvWrapper twice, since it is extremely slow
