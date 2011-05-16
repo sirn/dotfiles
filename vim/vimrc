@@ -43,9 +43,9 @@ set ofu=syntaxcomplete#Complete
 autocmd FileType python setlocal smartindent
   \ cinwords=if,elif,else,for,while,try,except,finally,def,class
 
-autocmd FileType clojure,ruby setlocal shiftwidth=2
-autocmd FileType clojure,ruby setlocal tabstop=2
-autocmd FileType clojure,ruby setlocal softtabstop=2
+autocmd FileType clojure,ruby,cucumber setlocal shiftwidth=2
+autocmd FileType clojure,ruby,cucumber setlocal tabstop=2
+autocmd FileType clojure,ruby,cucumber setlocal softtabstop=2
 autocmd FileType yaml,html,htmldjango,haml,sass setlocal shiftwidth=2
 autocmd FileType yaml,html,htmldjango,haml,sass setlocal tabstop=2
 autocmd FileType yaml,html,htmldjango,haml,sass setlocal softtabstop=2
