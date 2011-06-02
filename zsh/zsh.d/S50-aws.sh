@@ -2,7 +2,7 @@
 if [[ -e $HOME/.ec2 ]]; then
     export EC2_PRIVATE_KEY="$(/bin/ls $HOME/.ec2/pk-*.pem)"
     export EC2_CERT="$(/bin/ls $HOME/.ec2/cert-*.pem)"
-    export EC2_HOME="/usr/local/Cellar/ec2-api-tools/1.4.2.2/jars"
+    export EC2_HOME="$(brew --prefix ec2-api-tools)/jars"
     export EC2_URL="https://ap-northeast-1.ec2.amazonaws.com"
     export EC2_KEYPAIR="$(/bin/ls $HOME/.ec2/ec2-*.pem)"
 fi
