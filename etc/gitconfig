@@ -14,4 +14,7 @@
 [diff]
   tool = Kaleidoscope
 
+[heroku]
+  account = personal
+
 # vim:ft=gitconfig
