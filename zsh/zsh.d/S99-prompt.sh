@@ -28,7 +28,13 @@ function _prompt_virtualenv {
 function precmd {
     # Prompt function need to be executed on every command
     export RPROMPT="$(_prompt_git)$(_prompt_pwd)$(_prompt_virtualenv)"
-    
+    # Special function for Apple Terminal
+    if [[ $TERM_PROGRAM == "Apple_Terminal" ]] && [[ -z $INSIDE_EMACS ]]; then
+        local SEARCH=' '
+        local REPLACE='%20'
+        local PWD_URL="file://$HOSTNAME${PWD//$SEARCH/$REPLACE}"
+        printf '\e]7;%s\a' "$PWD_URL"
+    fi
 }
 
 # vim:ft=zsh
