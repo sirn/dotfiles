@@ -15,9 +15,9 @@
 
 ;; Packages
 (package-initialize)
-(dolist (p '(color-theme starter-kit starter-kit-bindings starter-kit-js
-                         starter-kit-ruby starter-kit-lisp auto-complete
-                         clojure-mode slime slime-repl))
+(dolist (p '(color-theme auto-complete clojure-mode clojure-test-mode
+                         starter-kit starter-kit-bindings starter-kit-js
+                         starter-kit-ruby starter-kit-lisp))
   (when (not (package-installed-p p))
     (package-install p)))
 
