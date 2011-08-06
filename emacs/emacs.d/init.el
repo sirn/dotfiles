@@ -28,6 +28,8 @@
 (setq inhibit-splash-screen t)
 
 ;; Modules
+(require 'auto-complete)
+(require 'auto-complete-config)
 (global-auto-complete-mode t)
 
 ;; Window
