@@ -9,3 +9,9 @@ Thumbs.db
 # Runtime-generated files
 *.swp
 *.elc
+*~
+
+# Emacs stuff
+emacs/emacs.d/*
+!emacs/emacs.d/site/*
+!emacs/emacs.d/*.el

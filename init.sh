@@ -16,7 +16,7 @@ function _link_to_home {
 
 # Installation
 _link_to_home zsh/zshrc .zshrc
-_link_to_home elisp/emacs .emacs
+_link_to_home emacs/emacs.d .emacs.d
 _link_to_home vim/vimrc .vimrc
 _link_to_home vim/vimperatorrc .vimperatorrc
 _link_to_home vim/autoload .vim/autoload
