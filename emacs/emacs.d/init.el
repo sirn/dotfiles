@@ -43,4 +43,6 @@
 
 ;; Window
 (when window-system
+  (require 'whitespace)
+  (global-whitespace-mode t)
   (set-default-font "Inconsolata-dz-12"))
