@@ -3,6 +3,15 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
+;; Setup a proper exec path
+(setq exec-path (append (list
+                         "/usr/local/bin"
+                         "/opt/local/bin"
+                         "/usr/bin"
+                         (expand-file-name "~/.rvm/gems/ruby-1.9.2-p180/bin")
+                         (expand-file-name "~/.local/bin"))
+                        exec-path))
+
 ;; Make sure load-path and package.el is properly setup.
 (add-to-list 'load-path "~/.dotfiles/emacs/emacs.d/site/")
 (when (not (require 'package nil t ))
@@ -17,7 +26,7 @@
 (package-initialize)
 (dolist (p '(color-theme auto-complete clojure-mode clojure-test-mode
                          starter-kit starter-kit-bindings starter-kit-js
-                         starter-kit-ruby starter-kit-lisp))
+                         starter-kit-ruby starter-kit-lisp sass-mode))
   (when (not (package-installed-p p))
     (package-install p)))
 
@@ -34,6 +43,4 @@
 
 ;; Window
 (when window-system
-  (load "color-theme-molokai.el")
-  (color-theme-molokai)
   (set-default-font "Inconsolata-dz-12"))
