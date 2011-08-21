@@ -1,0 +1,15 @@
+# Unison preferences file
+root = /Users/sirn
+root = ssh://sirn@Implicit.local//Users/sirn
+
+# Path to synchronize
+path = Archives
+path = Private
+path = Music
+path = Pictures
+
+# Ignore files
+ignore = Name {.DS_Store}
+
+# Setup prefer
+prefer = newer
