@@ -63,6 +63,9 @@ if has("gui_running")
   set colorcolumn=79
   autocmd FileType html setlocal colorcolumn=0
 
+  " Initial line size
+  set lines=60
+
   " Display TextMate-like symbol for tabs and \n
   set list
   set listchars=tab:▸\ ,eol:¬

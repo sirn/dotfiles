@@ -15,6 +15,7 @@ ignore = Name .DS_Store
 # Ignore non-user created files in documents
 ignore = Path Documents/Parallels
 ignore = Path Documents/RDC\ Connections
+ignore = Path Documents/.*
 
 # Setup prefer
 prefer = newer
