@@ -64,7 +64,7 @@ if has("gui_running")
   autocmd FileType html setlocal colorcolumn=0
 
   " Initial line size
-  set lines=60
+  set lines=50
 
   " Display TextMate-like symbol for tabs and \n
   set list
