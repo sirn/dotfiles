@@ -10,7 +10,7 @@ fi
 # Instance configurations
 export EC2_TYPE="t1.micro"
 export EC2_KEYNAME="ec2-keypair"
-export EC2_AMI="ami-dab812db" # Ubuntu Server
+export EC2_AMI="ami-f063d6f1" # Ubuntu Server
 export EC2_USERNAME="ubuntu"
 
 # Helper functions
@@ -33,5 +33,13 @@ function ec2-ssh {
     # SSH into Ubuntu ec2 server and open a SOCK proxy at port 9050.
     if [[ -n $1 ]]; then
         ssh -D 9050 -i $EC2_KEYPAIR $EC2_USERNAME@$1
+    fi
+}
+
+function ec2-install-vpn {
+    # SSH into Ubuntu ec2 and install PPTP server
+    if [[ -n $1 ]]; then
+        local installer="https://raw.github.com/gist/1156378/ffe06a792c86b771805ca0e6aad16823524ac9c9/pptpd.sh"
+        ssh -i $EC2_KEYPAIR $EC2_USERNAME@$1 "sudo bash < <(curl -s $installer)"
     fi
 }
