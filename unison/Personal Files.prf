@@ -9,12 +9,16 @@ path = Music
 path = Pictures
 path = Documents
 
+# Special path for 1Password
+path = Library/Containers/com.agilebits.onepassword-osx-helper/Data/Documents
+
 # Ignore files
 ignore = Name .DS_Store
 
 # Ignore non-user created files in documents
 ignore = Path Documents/Parallels
 ignore = Path Documents/RDC\ Connections
+ignore = Path Documents/Virtual\ Machines*
 ignore = Path Documents/.*
 
 # Setup prefer
