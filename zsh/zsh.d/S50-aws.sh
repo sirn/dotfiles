@@ -3,14 +3,14 @@ if [[ -e $HOME/.ec2 ]]; then
     export EC2_PRIVATE_KEY="$(/bin/ls $HOME/.ec2/pk-*.pem)"
     export EC2_CERT="$(/bin/ls $HOME/.ec2/cert-*.pem)"
     export EC2_HOME="$(brew --prefix ec2-api-tools)/jars"
-    export EC2_URL="https://ap-northeast-1.ec2.amazonaws.com"
+    export EC2_URL="https://ap-southeast-1.ec2.amazonaws.com"
     export EC2_KEYPAIR="$(/bin/ls $HOME/.ec2/ec2-*.pem)"
 fi
 
 # Instance configurations
 export EC2_TYPE="t1.micro"
 export EC2_KEYNAME="ec2-keypair"
-export EC2_AMI="ami-f063d6f1" # Ubuntu Server
+export EC2_AMI="ami-7a057f28" # Ubuntu Server
 export EC2_USERNAME="ubuntu"
 
 # Helper functions
