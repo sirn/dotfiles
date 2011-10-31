@@ -17,4 +17,7 @@
 [heroku]
   account = personal
 
+[push]
+  default = tracking
+
 # vim:ft=gitconfig
