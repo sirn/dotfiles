@@ -50,41 +50,41 @@ autocmd FileType yaml,html,htmldjango,haml,sass setlocal shiftwidth=2
 autocmd FileType yaml,html,htmldjango,haml,sass setlocal tabstop=2
 autocmd FileType yaml,html,htmldjango,haml,sass setlocal softtabstop=2
 
+" Personalization
+colorscheme molokai
+set number
+set textwidth=0
+set colorcolumn=79
+
+" Display TextMate-like symbol for tabs and \n
+set list
+set listchars=tab:▸\ ,eol:¬
+
+" Pathogen
+filetype off
+call pathogen#runtime_append_all_bundles()
+filetype plugin indent on
+
+" NERDTree
+map <C-t> :NERDTreeToggle<CR>
+let NERDTreeIgnore=['.git$', '.*\.pyc$']
+
+" Gundo
+nnoremap <F5> :GundoToggle<CR>
+
 " These extras are pretty much unneeded when I'm not coding
 if has("gui_running")
 
   " Default font for Linux, Mac, Windows
-  colorscheme molokai
   set guifont=Inconsolata-dz:h12,Monospace,Menlo,Consolas
-
-  " Display line number and mark 79-chars limit.
-  set number
-  set textwidth=0
-  set colorcolumn=79
   autocmd FileType html setlocal colorcolumn=0
 
   " Initial line size
   set lines=50
 
-  " Display TextMate-like symbol for tabs and \n
-  set list
-  set listchars=tab:▸\ ,eol:¬
-
-  " Pathogen
-  filetype off
-  call pathogen#runtime_append_all_bundles()
-  filetype plugin indent on
-
-  " NERDTree
-  map <C-t> :NERDTreeToggle<CR>
-  let NERDTreeIgnore=['.git$', '.*\.pyc$']
-
   " Vim Clojure
   let vimclojure#NailgunClient = expand("/usr/local/bin/ng")
   let vimclojure#WantNailgun = 1
-
-  " Gundo
-  nnoremap <F5> :GundoToggle<CR>
 
   " Plugin key maps
   map <unique> <silent> <Leader>t <Plug>PeepOpen

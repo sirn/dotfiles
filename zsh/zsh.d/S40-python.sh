@@ -27,6 +27,11 @@ if [[ -e /opt/local ]]; then
   _add_python /opt/local/Library/Frameworks/Python.framework/Versions/2.7
 fi
 
+# Linux
+if [[ -n $IS_LINUX ]]; then
+  _add_python /usr
+fi
+
 # VirtualEnv
 export VIRTUALENV_PATH=$PYTHON_PATH
 brew_shared=/usr/local/share/python
