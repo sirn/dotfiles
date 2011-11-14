@@ -16,7 +16,7 @@ export EC2_USERNAME="ubuntu"
 # Helper functions
 function ec2-instances {
     # Display a simplified ec2 instance information.
-    ec2-describe-instances|grep INSTANCE|awk '{print $2 " " $4}'
+    ec2-describe-instances $@|grep INSTANCE|awk '{print $2 " " $4}'
 }
 
 function ec2-boot {

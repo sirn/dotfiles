@@ -20,4 +20,7 @@
 [push]
   default = tracking
 
+[core]
+  excludesfile = ~/.dotfiles/etc/gitignore
+
 # vim:ft=gitconfig

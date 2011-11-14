@@ -1,0 +1,9 @@
+# Editor files
+*~
+*.swp
+
+# System files
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
