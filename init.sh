@@ -25,6 +25,7 @@ _link_to_home vim/bundle .vim/bundle
 _link_to_home vim/syntax .vim/syntax
 _link_to_home etc/gitconfig .gitconfig
 _link_to_home etc/screenrc .screenrc
+_link_to_home etc/tmux.conf .tmux.conf
 _link_to_home etc/ssh_config .ssh/config
 
 if [[ $1 == "--with-x" ]]; then
