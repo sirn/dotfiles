@@ -11,6 +11,7 @@ path = Documents
 
 # Special path for 1Password
 path = Library/Containers/com.agilebits.onepassword-osx-helper/Data/Documents
+path = Library/Application\ Support/Sublime\ Text 2
 
 # Ignore files
 ignore = Name .DS_Store

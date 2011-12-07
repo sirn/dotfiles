@@ -52,7 +52,6 @@ autocmd FileType yaml,html,htmldjango,haml,sass setlocal softtabstop=2
 
 " Personalization
 colorscheme molokai
-set number
 set textwidth=0
 set colorcolumn=79
 
@@ -79,7 +78,8 @@ if has("gui_running")
   set guifont=Inconsolata-dz:h12,Monospace,Menlo,Consolas
   autocmd FileType html setlocal colorcolumn=0
 
-  " Initial line size
+  " Initial line size and line numbers
+  set number
   set lines=50
 
   " Vim Clojure
