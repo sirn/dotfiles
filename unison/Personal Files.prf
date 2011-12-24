@@ -8,6 +8,7 @@ path = Private
 path = Music
 path = Pictures
 path = Documents
+path = Downloads
 
 # Special path for 1Password
 path = Library/Containers/com.agilebits.onepassword-osx-helper/Data/Documents
