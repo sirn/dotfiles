@@ -26,7 +26,8 @@
 (package-initialize)
 (dolist (p '(color-theme auto-complete clojure-mode clojure-test-mode
                          starter-kit starter-kit-bindings starter-kit-js
-                         starter-kit-ruby starter-kit-lisp sass-mode))
+                         starter-kit-ruby starter-kit-lisp sass-mode
+                         less-css-mode))
   (when (not (package-installed-p p))
     (package-install p)))
 
@@ -46,3 +47,10 @@
   (require 'whitespace)
   (global-whitespace-mode t)
   (set-default-font "Inconsolata-dz-12"))
+
+;; Custom
+(custom-set-variables
+ '(safe-local-variable-values
+   (quote ((less-css-compile-at-save . t)
+           (whitespace-line-column . 80)
+           (lexical-binding . t)))))
