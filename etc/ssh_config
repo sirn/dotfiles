@@ -1,24 +1,15 @@
-# Managed servers
+# Options
 
-Host chika
-  Hostname chika.grid.in.th
-  Port 22
-
-Host ontheo
-  Hostname ontheo.ath.cx
-  Port 22
-
-# Clients
-
-Host yuno
-  Hostname 210.1.31.61
-  Port 22
+ControlMaster auto
+ControlPath /tmp/ssh_mux_%h_%p_%r
 
 # Unmanaged servers
 
 Host nfs
   Hostname ssh.phx.nearlyfreespeech.net
   Port 22
+
+# Heroku accounts
 
 Host heroku.personal
   HostName heroku.com
