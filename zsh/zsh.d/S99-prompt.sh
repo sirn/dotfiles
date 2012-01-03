@@ -25,9 +25,24 @@ function _prompt_virtualenv {
     fi
 }
 
+# Precmd Hooks
+
+function _precmd_update_virtualenv {
+    if [[ -e ".venv" ]]; then
+        local venv=$(cat .venv)
+        if [[ $venv != $(basename $VIRTUAL_ENV) ]]; then
+            workon $venv
+        fi
+    fi
+}
+
 function precmd {
+    # Precmd hooks
+    _precmd_update_virtualenv
+
     # Prompt function need to be executed on every command
     export RPROMPT="$(_prompt_git)$(_prompt_pwd)$(_prompt_virtualenv)"
+
     # Special function for Apple Terminal
     if [[ $TERM_PROGRAM == "Apple_Terminal" ]] && [[ -z $INSIDE_EMACS ]]; then
         local SEARCH=' '
