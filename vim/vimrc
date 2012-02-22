@@ -53,7 +53,10 @@ autocmd FileType yaml,html,htmldjango,haml,sass setlocal softtabstop=2
 " Personalization
 colorscheme molokai
 set textwidth=0
-set colorcolumn=79
+
+if exists("&colorcolumn")
+  set colorcolumn=79
+endif
 
 " Display TextMate-like symbol for tabs and \n
 set list
