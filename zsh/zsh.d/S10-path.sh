@@ -27,6 +27,7 @@ _add_to_exec /Developer/usr
 _add_to_exec /usr
 _add_to_exec /usr/local
 _add_to_exec /opt/local
+_add_to_exec /usr/pkg
 
 # Local paths
 _add_to_exec ~/.local
