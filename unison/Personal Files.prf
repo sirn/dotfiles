@@ -21,6 +21,9 @@ ignore = Name .DS_Store
 ignore = Path Documents/Parallels
 ignore = Path Documents/RDC\ Connections
 ignore = Path Documents/Virtual\ Machines*
+ignore = Path Documents/PS\ Vita
+ignore = Path Documents/Titanium\ Studio\ Workspace
+ignore = Path Documents/Aptana\ Rubles
 ignore = Path Documents/.*
 
 # Setup prefer
