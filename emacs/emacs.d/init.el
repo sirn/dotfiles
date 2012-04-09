@@ -30,6 +30,9 @@
                                starter-kit-ruby starter-kit-lisp sass-mode
                                less-css-mode))
 
+;; Enable Clojure-mode for ClojureScript
+(setq auto-mode-alist (cons '("\\.cljs" . clojure-mode) auto-mode-alist))
+
 ;; Make sure all packages are installed
 (dolist (p packages)
   (when (not (package-installed-p p))
