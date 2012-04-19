@@ -2,6 +2,9 @@
   name = Kridsada Thanabulpong
   email = sirn@ogsite.net
 
+[alias]
+  tree = log --graph --oneline
+
 [color]
   diff = auto
 
