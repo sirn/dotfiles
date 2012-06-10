@@ -27,6 +27,8 @@ _link_to_home etc/gitconfig .gitconfig
 _link_to_home etc/screenrc .screenrc
 _link_to_home etc/tmux.conf .tmux.conf
 _link_to_home etc/ssh_config .ssh/config
+_link_to_home fish/functions .config/fish/functions
+_link_to_home fish/config.fish .config/fish/config.fish
 
 if [[ $1 == "--with-x" ]]; then
     _link_to_home etc/ratpoisonrc .ratpoisonrc

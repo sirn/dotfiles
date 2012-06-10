@@ -22,11 +22,6 @@ if [[ -n `brew 2>/dev/null` ]]; then
   done
 fi
 
-# MacPorts
-if [[ -e /opt/local ]]; then
-  _add_python /opt/local/Library/Frameworks/Python.framework/Versions/2.7
-fi
-
 # Linux
 if [[ -n $IS_LINUX ]]; then
   _add_python /usr
@@ -39,7 +34,7 @@ if [[ -e $brew_shared ]]; then
   export VIRTUALENV_PATH=$brew_shared
   export PATH=$brew_shared:$PATH
 fi
-if [[ -e $VIRTUALENV_PATH/virtualenvwrapper.sh ]]; then
+if [[ -e $VIRTUALENV_PATH/virtualenvwrapper_lazy.sh ]]; then
     # Avoid loading VirtualEnvWrapper twice, since it is extremely slow
     if [[ -z $VIRTUALENVWRAPPER_PYTHON ]]; then
         export WORKON_HOME=$HOME/.virtualenvs

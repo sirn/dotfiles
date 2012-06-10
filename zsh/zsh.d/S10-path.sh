@@ -22,18 +22,9 @@ fi
 # Reset original path
 export PATH="/bin:/sbin"
 
-# System paths
-_add_to_exec /Developer/usr
+# Extra paths
 _add_to_exec /usr
 _add_to_exec /usr/local
-_add_to_exec /opt/local
-_add_to_exec /usr/pkg
-
-# Local paths
 _add_to_exec ~/.local
-_add_to_exec ~/.gem/ruby/1.8
-
-# Application-specific
-_add_to_exec /Library/PostgreSQL/8.4
 
 # vim:ft=zsh
