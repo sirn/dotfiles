@@ -6,9 +6,18 @@ if status --is-login
     # General bin paths
     set PATH /usr/local/sbin $PATH
     set PATH /usr/local/bin $PATH
-    set PATH ~/.local/bin $PATH
+    set PATH $HOME/.local/bin $PATH
+
+    # Ruby-specific configurations
+    if test -d $HOME/.rbenv
+        set PATH $HOME/.rbenv/bin $PATH
+        set PATH $HOME/.rbenv/shims $PATH
+        rbenv rehash >/dev/null
+    end
 
     # Python-specific configurations
-    virtualenv activate default
+    if test -d $HOME/.virtualenvs
+        virtualenv activate default
+    end
 
 end
