@@ -16,9 +16,7 @@ function virtualenv -d "Manage Python virtualenv environment"
             virtualenv deactivate
             if test -d $__virtualenvs/$argv[2]
                 set -g __virtualenv_path $PATH
-                set -g __virtualenv_home $PYTHON_HOME
-                set -g PATH $__virtualenvs/$argv[2]/bin $__virtualenv_path
-                set -g PYTHON_HOME $__virtualenvs/$argv[2]
+                set PATH $__virtualenvs/$argv[2]/bin $__virtualenv_path
             else
                 echo "Unable to activate Virtualenv: $argv[2] not found."
                 echo "Maybe you want to create a new Virtualenv?"
@@ -30,13 +28,8 @@ function virtualenv -d "Manage Python virtualenv environment"
         # Remove Virtualenv PATH from PATH env.
         case deactivate
             if set -q __virtualenv_path
-                set -g PATH $__virtualenv_path
+                set PATH $__virtualenv_path
                 set -e __virtualenv_path
-            end
-
-            if set -q __virtualenv_home
-                set -g PYTHON_HOME $__virtualenv_home
-                set -e __virtualenv_home
             end
 
         # Create new Virtualenv in virtualenvs directory.
