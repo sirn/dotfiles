@@ -20,4 +20,9 @@ if status --is-login
         virtualenv activate default
     end
 
+    # Node-specific configurations
+    if test -d /usr/local/share/npm/
+        set PATH /usr/local/share/npm/bin $PATH
+    end
+
 end

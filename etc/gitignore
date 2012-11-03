@@ -7,3 +7,6 @@
 ehthumbs.db
 Icon?
 Thumbs.db
+
+# Temp files
+dump.rdb
