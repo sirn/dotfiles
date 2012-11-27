@@ -2,28 +2,15 @@
 root = /Users/sirn
 root = ssh://sirn@Implicit.local//Users/sirn
 
-# Path to synchronize
-path = Archives
-path = Private
-path = Music
-path = Pictures
+# Scan paths
 path = Documents
 path = Downloads
-
-# Special path for 1Password
-path = Library/Containers/com.agilebits.onepassword-osx-helper/Data/Documents
 path = Library/Application Support/Sublime Text 2
 
-# Ignore files
+# Ignore OSX cache files and large files
 ignore = Name .DS_Store
-
-# Ignore non-user created files in documents
-ignore = Path Documents/Parallels
-ignore = Path Documents/RDC\ Connections
-ignore = Path Documents/Virtual\ Machines*
 ignore = Path Documents/PS\ Vita
-ignore = Path Documents/Titanium\ Studio\ Workspace
-ignore = Path Documents/Aptana\ Rubles
+ignore = Path Documents/Virtual\ Machines*
 ignore = Path Documents/.*
 
 # Setup prefer
