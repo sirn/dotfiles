@@ -25,4 +25,9 @@ if status --is-login
         set PATH /usr/local/share/npm/bin $PATH
     end
 
+    # Aliases
+    function intellij
+        open -b com.jetbrains.intellij
+    end
+
 end
