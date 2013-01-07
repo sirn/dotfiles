@@ -25,6 +25,6 @@
 
 [core]
   excludesfile = ~/.dotfiles/etc/gitignore
-  quotepath = false
+	quotepath = false
 
 # vim:ft=gitconfig

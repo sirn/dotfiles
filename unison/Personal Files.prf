@@ -5,6 +5,9 @@ root = ssh://sirn@Implicit.local//Users/sirn
 # Scan paths
 path = Documents
 path = Downloads
+path = Movies
+path = Musics
+path = Projects/Resources
 path = Library/Application Support/Sublime Text 2
 
 # Ignore OSX cache files and large files
