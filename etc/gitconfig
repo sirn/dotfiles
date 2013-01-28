@@ -8,15 +8,6 @@
 [color]
   diff = auto
 
-[difftool "Kaleidoscope"]
-  cmd = ksdiff-wrapper git \"$LOCAL\" \"$REMOTE\"
-
-[difftool]
-  prompt = false
-
-[diff]
-  tool = Kaleidoscope
-
 [heroku]
   account = personal
 
@@ -25,6 +16,25 @@
 
 [core]
   excludesfile = ~/.dotfiles/etc/gitignore
-	quotepath = false
+  quotepath = false
+
+[difftool "Kaleidoscope"]
+  cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+
+[diff]
+  tool = Kaleidoscope
+
+[difftool]
+  prompt = false
+
+[mergetool "Kaleidoscope"]
+  cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+  trustExitCode = true
+
+[mergetool]
+  prompt = false
+
+[merge]
+  tool = Kaleidoscope
 
 # vim:ft=gitconfig
