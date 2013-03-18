@@ -18,7 +18,6 @@ function _link_to_home {
 _link_to_home zsh/zshrc .zshrc
 _link_to_home emacs/emacs.d .emacs.d
 _link_to_home vim/vimrc .vimrc
-_link_to_home vim/vimperatorrc .vimperatorrc
 _link_to_home vim/autoload .vim/autoload
 _link_to_home vim/colors .vim/colors
 _link_to_home vim/bundle .vim/bundle

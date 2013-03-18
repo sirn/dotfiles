@@ -10,3 +10,7 @@ Thumbs.db
 
 # Temp files
 dump.rdb
+
+# Project files
+.idea
+*.iml
