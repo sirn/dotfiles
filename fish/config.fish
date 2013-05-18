@@ -26,8 +26,7 @@ if status --is-login
     end
 
     # Aliases
-    function intellij
-        open -b com.jetbrains.intellij
-    end
+    function intellij; open -b com.jetbrains.intellij; end
+    function git; hub $argv; end
 
 end

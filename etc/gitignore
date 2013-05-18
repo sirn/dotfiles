@@ -14,3 +14,4 @@ dump.rdb
 # Project files
 .idea
 *.iml
+out/
