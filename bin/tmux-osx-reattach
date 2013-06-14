@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
 if [[ "$(uname)" = "Darwin" ]]; then
-    reattach-to-user-namespace $@
+    if hash reattach-to-user-namespace 2>/dev/null; then
+        reattach-to-user-namespace $@
+    else
+        exec "$@"
+    fi
 else
     exec "$@"
 fi
