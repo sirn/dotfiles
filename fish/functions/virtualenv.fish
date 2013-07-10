@@ -6,7 +6,7 @@ function virtualenv -d "Manage Python virtualenv environment"
     end
 
     # Check whether Virtualenv exists before running.
-    if test -f /usr/local/share/python/virtualenv
+    if test -f /usr/local/bin/virtualenv
 
         switch "$argv[1]"
 
