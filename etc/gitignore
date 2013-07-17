@@ -15,3 +15,6 @@ dump.rdb
 .idea
 *.iml
 out/
+
+# User files
+.env
