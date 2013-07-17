@@ -36,7 +36,7 @@ function virtualenv -d "Manage Python virtualenv environment"
         case new
             set __virtualenv_pwd (pwd)
             cd $__virtualenvs
-            /usr/local/share/python/virtualenv $argv[(seq 2 (count $argv))]
+            /usr/local/bin/virtualenv $argv[(seq 2 (count $argv))]
             virtualenv activate $argv[(count $argv)]
             cd $__virtualenv_pwd
 
