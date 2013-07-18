@@ -1,0 +1,3 @@
+#!/bin/bash
+DEPENDENCIES=$(join <(brew leaves) <(brew deps $@))
+brew rm $@ $DEPENDENCIES
