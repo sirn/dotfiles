@@ -26,8 +26,17 @@ if status --is-login
         set PATH /usr/local/share/npm/bin $PATH
     end
 
+    # EC2-specific paths
+    if test -d $HOME/.ec2
+        set EC2_PRIVATE_KEY (/bin/ls $HOME/.ec2/pk-*.pem)
+        set EC2_CERT (/bin/ls $HOME/.ec2/cert-*.pem)
+        set EC2_KEYPAIR (/bin/ls $HOME/.ec2/ec2-*.pem)
+    end
+
     # Aliases
-    function intellij; open -b com.jetbrains.intellij; end
-    function git; hub $argv; end
+    function intellij; open -b com.jetbrains.intellij $argv; end
+    if which hub 2>&1 >/dev/null
+        function git; hub $argv; end
+    end
 
 end
