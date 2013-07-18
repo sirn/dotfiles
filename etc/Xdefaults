@@ -1,8 +1,0 @@
-URxvt.foreground: #eeeeee
-URxvt.background: #222222
-URxvt.font: xft:Terminus-10
-
-# Workaround for ZSH bug with urxvt.
-URxvt.termName: xterm
-
-# vim:ft=xdefaults

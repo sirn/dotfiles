@@ -63,18 +63,6 @@ endif
 set list
 set listchars=tab:▸\ ,eol:¬
 
-" Pathogen
-filetype off
-call pathogen#runtime_append_all_bundles()
-filetype plugin indent on
-
-" NERDTree
-map <C-t> :NERDTreeToggle<CR>
-let NERDTreeIgnore=['.git$', '.*\.pyc$']
-
-" Gundo
-nnoremap <F5> :GundoToggle<CR>
-
 " These extras are pretty much unneeded when I'm not coding
 if has("gui_running")
 
@@ -85,13 +73,6 @@ if has("gui_running")
   " Initial line size and line numbers
   set number
   set lines=50
-
-  " Vim Clojure
-  let vimclojure#NailgunClient = expand("/usr/local/bin/ng")
-  let vimclojure#WantNailgun = 1
-
-  " Plugin key maps
-  map <unique> <silent> <Leader>t <Plug>PeepOpen
 
 endif
 

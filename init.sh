@@ -15,22 +15,12 @@ function _link_to_home {
 }
 
 # Installation
-_link_to_home zsh/zshrc .zshrc
 _link_to_home emacs/emacs.d .emacs.d
 _link_to_home vim/vimrc .vimrc
-_link_to_home vim/autoload .vim/autoload
 _link_to_home vim/colors .vim/colors
-_link_to_home vim/bundle .vim/bundle
 _link_to_home vim/syntax .vim/syntax
 _link_to_home etc/gitconfig .gitconfig
-_link_to_home etc/screenrc .screenrc
 _link_to_home etc/tmux.conf .tmux.conf
 _link_to_home etc/ssh_config .ssh/config
 _link_to_home fish/functions .config/fish/functions
 _link_to_home fish/config.fish .config/fish/config.fish
-
-if [[ $1 == "--with-x" ]]; then
-    _link_to_home etc/ratpoisonrc .ratpoisonrc
-    _link_to_home etc/Xdefaults .Xdefaults
-    _link_to_home etc/awesome.lua ~/.config/awesome/rc.lua
-fi
