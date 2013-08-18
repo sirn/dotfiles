@@ -1,37 +1,22 @@
-;; Disable mouse integration.
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-
 ;; Setup a proper exec path
 (setq exec-path (append (list
                          "/usr/local/bin"
                          "/opt/local/bin"
                          "/usr/bin"
-                         (expand-file-name "~/.rvm/gems/ruby-1.9.2-p180/bin")
+                         (expand-file-name "~/.rbenv/shims")
                          (expand-file-name "~/.local/bin"))
                         exec-path))
 
-;; Make sure load-path and package.el is properly setup.
+;; Make sure load-path is properly setup.
 (add-to-list 'load-path "~/.dotfiles/emacs/emacs.d/site/")
-(when (not (require 'package nil t ))
-  (load "package.el"))
-
-;; Mermalade
-(add-to-list
- 'package-archives
- '("marmalade" . "http://marmalade-repo.org/packages/") t)
 
 ;; Packages
 (package-initialize)
+(add-to-list
+ 'package-archives
+ '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (when (not package-archive-contents) (package-refresh-contents))
-(defvar packages '(color-theme auto-complete clojure-mode clojure-test-mode
-                               starter-kit starter-kit-bindings starter-kit-js
-                               starter-kit-ruby starter-kit-lisp sass-mode
-                               less-css-mode))
-
-;; Enable Clojure-mode for ClojureScript
-(setq auto-mode-alist (cons '("\\.cljs" . clojure-mode) auto-mode-alist))
+(defvar packages '(better-defaults color-theme auto-complete))
 
 ;; Make sure all packages are installed
 (dolist (p packages)
@@ -41,7 +26,6 @@
 ;; Behavior
 (setq auto-save-default nil)
 (setq backup-inhibited t)
-(setq indent-tabs-mode nil)
 (setq inhibit-splash-screen t)
 
 ;; Modules
@@ -58,6 +42,5 @@
 ;; Custom
 (custom-set-variables
  '(safe-local-variable-values
-   (quote ((less-css-compile-at-save . t)
-           (whitespace-line-column . 80)
+   (quote ((whitespace-line-column . 80)
            (lexical-binding . t)))))
