@@ -17,7 +17,9 @@ set wildmenu                      " show completion on top of status line
 set wildmode=longest,full         " complete longest, then show completions
 set cursorline                    " highlight current line
 set laststatus=2                  " always show the status line
+
 set shell=/bin/bash               " use POSIX-complaint shell
+set exrc                          " enable per-directory vimrc.
 
 set guioptions-=T
 
@@ -71,10 +73,6 @@ if exists("&colorcolumn")
   set colorcolumn=79
 endif
 
-" Display TextMate-like symbol for tabs and \n
-set list
-set listchars=tab:▸\ ,eol:¬
-
 " Remove trailing whitespace on save
 autocmd BufWritePre * :%s/\s\+$//e
 
@@ -92,11 +90,12 @@ if isdirectory(expand("~/.dotfiles/vim/bundle/vundle"))
   Bundle 'tpope/vim-fugitive'
   Bundle "daylerees/colour-schemes", {"rtp": "vim-themes/"}
   Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
-  Bundle 'wincent/Command-T'
+  Bundle 'kien/ctrlp.vim'
   Bundle 'bling/vim-airline'
 
   " Personalization if Vundle exists
   colorscheme Carbonight
+  let g:ctrlp_map='<leader>t'  " Heh.
 
   " Required by Vundle
   filetype plugin indent on

@@ -11,7 +11,8 @@ Thumbs.db
 # Temp files
 dump.rdb
 
-# Project files
+# Per-project files
+.vimrc
 .idea
 *.iml
 out/
