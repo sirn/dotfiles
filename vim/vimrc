@@ -90,9 +90,13 @@ if isdirectory(expand("~/.dotfiles/vim/bundle/vundle"))
 
   " Bundles!
   Bundle 'tpope/vim-fugitive'
-  Bundle 'rstacruz/sparkup'
+  Bundle "daylerees/colour-schemes", {"rtp": "vim-themes/"}
+  Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
   Bundle 'wincent/Command-T'
   Bundle 'bling/vim-airline'
+
+  " Personalization if Vundle exists
+  colorscheme Carbonight
 
   " Required by Vundle
   filetype plugin indent on
