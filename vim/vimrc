@@ -21,7 +21,9 @@ set laststatus=2                  " always show the status line
 set shell=/bin/bash               " use POSIX-complaint shell
 set exrc                          " enable per-directory vimrc.
 
-set guioptions-=T
+set guioptions-=T                 " remove toolbar
+set guioptions-=r                 " remove right scrollbar
+set guioptions-=L                 " remove left scrollbar
 
 " Fix comment indentation
 set cindent
@@ -38,9 +40,14 @@ autocmd BufReadPost *
   \   exe "normal g`\"" |
   \ endif
 
-" Navigation
+" Aliases
 nmap <C-p> :tabprevious<cr>
 nmap <C-n> :tabnext<cr>
+nmap <leader>w :bd<cr>
+nmap <leader>h :wincmd h<cr>
+nmap <leader>j :wincmd j<cr>
+nmap <leader>k :wincmd k<cr>
+nmap <leader>l :wincmd l<cr>
 
 " Omni completion
 set ofu=syntaxcomplete#Complete
@@ -92,6 +99,7 @@ if isdirectory(expand("~/.dotfiles/vim/bundle/vundle"))
   Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
   Bundle 'kien/ctrlp.vim'
   Bundle 'bling/vim-airline'
+  Bundle 'mileszs/ack.vim'
 
   " Personalization if Vundle exists
   colorscheme Carbonight
