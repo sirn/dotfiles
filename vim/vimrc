@@ -17,6 +17,7 @@ set wildmenu                      " show completion on top of status line
 set wildmode=longest,full         " complete longest, then show completions
 set cursorline                    " highlight current line
 set laststatus=2                  " always show the status line
+set shell=/bin/bash               " use POSIX-complaint shell
 
 set guioptions-=T
 
@@ -24,6 +25,7 @@ set guioptions-=T
 set cindent
 set cinkeys=0{,0},!^F,o,O,e
 
+" Syntax highlight
 syntax on                              " always color terminal anyway
 au BufNewFile,BufRead *.j setf objj    " syntax highlight for Objective-J
 au BufNewFile,BufRead *.fish setf fish " syntax highlight for Fish
@@ -45,12 +47,21 @@ set ofu=syntaxcomplete#Complete
 autocmd FileType python setlocal smartindent
   \ cinwords=if,elif,else,for,while,try,except,finally,def,class
 
-autocmd FileType clojure,ruby,cucumber,eruby,scss setlocal shiftwidth=2
-autocmd FileType clojure,ruby,cucumber,eruby,scss setlocal tabstop=2
-autocmd FileType clojure,ruby,cucumber,eruby,scss setlocal softtabstop=2
-autocmd FileType yaml,html,htmldjango,haml,sass setlocal shiftwidth=2
-autocmd FileType yaml,html,htmldjango,haml,sass setlocal tabstop=2
-autocmd FileType yaml,html,htmldjango,haml,sass setlocal softtabstop=2
+" Shorttabs (2 tabs instead of default 4)
+let s:shorttabs = [
+  \ "clojure",
+  \ "cucumber",
+  \ "eruby",
+  \ "haml",
+  \ "ruby",
+  \ "sass",
+  \ "scss",
+  \ "vim",
+  \ "yaml"
+  \ ]
+autocmd FileType * if index(s:shorttabs, &ft) > 0 | setlocal shiftwidth=2
+autocmd FileType * if index(s:shorttabs, &ft) > 0 | setlocal tabstop=2
+autocmd FileType * if index(s:shorttabs, &ft) > 0 | setlocal softtabstop=2
 
 " Personalization
 colorscheme molokai
@@ -64,16 +75,47 @@ endif
 set list
 set listchars=tab:▸\ ,eol:¬
 
+" Remove trailing whitespace on save
+autocmd BufWritePre * :%s/\s\+$//e
+
 " These extras are pretty much unneeded when I'm not coding
 if has("gui_running")
 
   " Default font for Linux, Mac, Windows
-  set guifont=Inconsolata-dz:h12,Monospace,Menlo,Consolas
+  set guifont+=Inconsolata-dz\ for\ Powerline:h12
+  set guifont+=Inconsolata-dz:h12
+  set guifont+=Monospace
+  set guifont+=Menlo
+  set guifont+=Consolas
   autocmd FileType html setlocal colorcolumn=0
 
   " Initial line size and line numbers
   set number
   set lines=50
+
+endif
+
+" Initialize Vundle if submodule exists.
+if isdirectory(expand("~/.dotfiles/vim/bundle/vundle"))
+
+  filetype off
+  set rtp+=~/.dotfiles/vim/bundle/vundle/
+  call vundle#rc()
+
+  " Let Vundle manage Vundle
+  Bundle 'gmarik/vundle'
+
+  " Bundles!
+  Bundle 'tpope/vim-fugitive'
+  Bundle 'rstacruz/sparkup'
+  Bundle 'wincent/Command-T'
+
+  " Airline
+  Bundle 'bling/vim-airline'
+  let g:airline_powerline_fonts=1
+
+  " Required by Vundle
+  filetype plugin indent on
 
 endif
 
