@@ -108,7 +108,7 @@ if isdirectory(expand("~/.dotfiles/vim/bundle/vundle"))
   " Ignored files for Ctrl-P
   let g:ctrlp_max_height = 20
   set wildignore+=.DS_Store,Thumbs.db
-  set wildignore+=*.so,*.swp,*.zip,*.orig,*.log,*.tmp,*.db
+  set wildignore+=*.so,*.swp,*.zip,*.orig,*.log,*.tmp,*.db,*.pyc
   set wildignore+=*/log/*,*/tmp/*
   set wildignore+=*/node_modules/*
   set wildignore+=*/*.egg-info/*
