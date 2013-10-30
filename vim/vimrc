@@ -78,6 +78,27 @@ set listchars=tab:▸\ ,eol:¬
 " Remove trailing whitespace on save
 autocmd BufWritePre * :%s/\s\+$//e
 
+" Initialize Vundle if submodule exists.
+if isdirectory(expand("~/.dotfiles/vim/bundle/vundle"))
+
+  filetype off
+  set rtp+=~/.dotfiles/vim/bundle/vundle/
+  call vundle#rc()
+
+  " Let Vundle manage Vundle
+  Bundle 'gmarik/vundle'
+
+  " Bundles!
+  Bundle 'tpope/vim-fugitive'
+  Bundle 'rstacruz/sparkup'
+  Bundle 'wincent/Command-T'
+  Bundle 'bling/vim-airline'
+
+  " Required by Vundle
+  filetype plugin indent on
+
+endif
+
 " These extras are pretty much unneeded when I'm not coding
 if has("gui_running")
 
@@ -93,29 +114,8 @@ if has("gui_running")
   set number
   set lines=50
 
-endif
-
-" Initialize Vundle if submodule exists.
-if isdirectory(expand("~/.dotfiles/vim/bundle/vundle"))
-
-  filetype off
-  set rtp+=~/.dotfiles/vim/bundle/vundle/
-  call vundle#rc()
-
-  " Let Vundle manage Vundle
-  Bundle 'gmarik/vundle'
-
-  " Bundles!
-  Bundle 'tpope/vim-fugitive'
-  Bundle 'rstacruz/sparkup'
-  Bundle 'wincent/Command-T'
-
   " Airline
-  Bundle 'bling/vim-airline'
   let g:airline_powerline_fonts=1
-
-  " Required by Vundle
-  filetype plugin indent on
 
 endif
 
