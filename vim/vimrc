@@ -105,6 +105,13 @@ if isdirectory(expand("~/.dotfiles/vim/bundle/vundle"))
   colorscheme Carbonight
   let g:ctrlp_map='<leader>t'  " Heh.
 
+  " Ignored files for Ctrl-P
+  let g:ctrlp_max_height = 20
+  set wildignore+=*.so,*.swp,*.zip,*.orig,*.log,*.tmp,*.db
+  set wildignore+=*/log/*,*/tmp/*
+  set wildignore+=*/node_modules/*
+  set wildignore+=*/*.egg_info/*
+
   " Required by Vundle
   filetype plugin indent on
 
