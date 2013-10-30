@@ -26,7 +26,8 @@ set cinkeys=0{,0},!^F,o,O,e
 
 syntax on                              " always color terminal anyway
 au BufNewFile,BufRead *.j setf objj    " syntax highlight for Objective-J
-au BufNewFile,BufRead *.fish setf fish "syntax highlight for Fish
+au BufNewFile,BufRead *.fish setf fish " syntax highlight for Fish
+au BufNewFile,BufRead Vagrantfile setf ruby " syntax highlight for Vagrant
 
 autocmd BufReadPost *
   \ if line("'\"") > 0 && line("'\"") <= line("$") |
