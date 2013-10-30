@@ -110,7 +110,7 @@ if isdirectory(expand("~/.dotfiles/vim/bundle/vundle"))
   set wildignore+=*.so,*.swp,*.zip,*.orig,*.log,*.tmp,*.db
   set wildignore+=*/log/*,*/tmp/*
   set wildignore+=*/node_modules/*
-  set wildignore+=*/*.egg_info/*
+  set wildignore+=*/*.egg-info/*
 
   " Required by Vundle
   filetype plugin indent on
