@@ -33,6 +33,12 @@ if status --is-login
         set EC2_KEYPAIR (/bin/ls $HOME/.ec2/ec2-*.pem)
     end
 
+    if test -d /Applications/VMware\ Fusion.app
+        function vmrun
+            /Applications/VMware\ Fusion.app/Contents/Library/vmrun $argv
+        end
+    end
+
     # Aliases
     function intellij; open -b com.jetbrains.intellij $argv; end
     if which hub 2>&1 >/dev/null
