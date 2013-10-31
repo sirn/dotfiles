@@ -41,9 +41,9 @@ autocmd BufReadPost *
   \ endif
 
 " Aliases
-nmap <C-p> :tabprevious<cr>
-nmap <C-n> :tabnext<cr>
 nmap <leader>w :bd<cr>
+nmap <leader>p :tabprevious<cr>
+nmap <leader>n :tabnext<cr>
 nmap <leader>h :wincmd h<cr>
 nmap <leader>j :wincmd j<cr>
 nmap <leader>k :wincmd k<cr>
@@ -100,6 +100,7 @@ if isdirectory(expand("~/.dotfiles/vim/bundle/vundle"))
   Bundle 'kien/ctrlp.vim'
   Bundle 'bling/vim-airline'
   Bundle 'mileszs/ack.vim'
+  Bundle 'terryma/vim-multiple-cursors'
 
   " Personalization if Vundle exists
   colorscheme Carbonight
