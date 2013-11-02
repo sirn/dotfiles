@@ -95,7 +95,6 @@ if isdirectory(expand("~/.dotfiles/vim/bundle/vundle/autoload"))
   Bundle "daylerees/colour-schemes", {"rtp": "vim-themes/"}
   Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
   Bundle 'kien/ctrlp.vim'
-  Bundle 'bling/vim-airline'
   Bundle 'mileszs/ack.vim'
   Bundle 'terryma/vim-multiple-cursors'
   Bundle 'ervandew/supertab'
@@ -132,7 +131,8 @@ if has("gui_running")
   set number
   set lines=50
 
-  " Airline
+  " Airline messed up with exit codes and broke shell.
+  Bundle 'bling/vim-airline'
   let g:airline_powerline_fonts=1
 
 endif
