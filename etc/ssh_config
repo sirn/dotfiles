@@ -8,15 +8,3 @@ ControlPath /tmp/ssh_mux_%h_%p_%r
 Host nfs
   Hostname ssh.phx.nearlyfreespeech.net
   Port 22
-
-# Heroku accounts
-
-Host heroku.personal
-  HostName heroku.com
-  IdentityFile ~/.ssh/identity.heroku.personal
-  IdentitiesOnly yes
-
-Host heroku.work
-  HostName heroku.com
-  IdentityFile ~/.ssh/identity.heroku.work
-  IdentitiesOnly yes
