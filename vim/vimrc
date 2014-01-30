@@ -12,6 +12,8 @@ set tabstop=4                     " number of spaces for each tab
 set shiftwidth=4                  " for autoindent
 set softtabstop=4                 " make backspace jump to previous stop
 set smartindent                   " auto detect when to insert indentation
+set nolist                        " disable automatic line-break
+set nowrap                        " disable automatic line-wrapping
 
 set wildmenu                      " show completion on top of status line
 set wildmode=longest,full         " complete longest, then show completions
@@ -34,6 +36,7 @@ syntax on                              " always color terminal anyway
 au BufNewFile,BufRead *.j setf objj    " syntax highlight for Objective-J
 au BufNewFile,BufRead *.fish setf fish " syntax highlight for Fish
 au BufNewFile,BufRead Vagrantfile setf ruby " syntax highlight for Vagrant
+au BufNewFile,BufRead Guardfile setf ruby   " syntax highlight for Guard
 
 autocmd BufReadPost *
   \ if line("'\"") > 0 && line("'\"") <= line("$") |
@@ -98,6 +101,7 @@ if isdirectory(expand("~/.dotfiles/vim/bundle/vundle/autoload"))
   Bundle 'mileszs/ack.vim'
   Bundle 'terryma/vim-multiple-cursors'
   Bundle 'ervandew/supertab'
+  Bundle 'kchmck/vim-coffee-script'
 
   " Personalization if Vundle exists
   colorscheme Carbonight
