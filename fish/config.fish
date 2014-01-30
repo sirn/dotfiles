@@ -8,6 +8,7 @@ if status --is-login
     set PATH /usr/local/bin $PATH
     set PATH $HOME/.local/bin $PATH
     set PATH $HOME/.dotfiles/bin $PATH
+    set PATH $HOME/Dropbox/Library/Misc/bin $PATH
 
     # Ruby-specific configurations
     if test -d $HOME/.rbenv
