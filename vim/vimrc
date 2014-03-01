@@ -95,7 +95,7 @@ if isdirectory(expand("~/.dotfiles/vim/bundle/vundle/autoload"))
 
   " Bundles!
   Bundle 'tpope/vim-fugitive'
-  Bundle "daylerees/colour-schemes", {"rtp": "vim-themes/"}
+  Bundle 'daylerees/colour-schemes', {'rtp': 'vim-themes/'}
   Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
   Bundle 'kien/ctrlp.vim'
   Bundle 'mileszs/ack.vim'
