@@ -18,8 +18,10 @@ if status --is-login
     end
 
     # Python-specific configurations
-    if test -d $HOME/.virtualenvs
-        virtualenv activate default
+    if test -d $HOME/.pyenv
+        set PATH $HOME/.pyenv/bin $PATH
+        set PATH $HOME/.pyenv/shims $PATH
+        pyenv rehash >/dev/null
     end
 
     # Node-specific configurations
