@@ -8,8 +8,9 @@
 [color]
   diff = auto
 
-[heroku]
-  account = personal
+[status]
+  short = true
+  branch = true
 
 [push]
   default = tracking

@@ -102,6 +102,7 @@ if isdirectory(expand("~/.dotfiles/vim/bundle/vundle/autoload"))
   Bundle 'terryma/vim-multiple-cursors'
   Bundle 'ervandew/supertab'
   Bundle 'kchmck/vim-coffee-script'
+  Bundle 'wting/rust.vim'
 
   " Personalization if Vundle exists
   colorscheme Carbonight
