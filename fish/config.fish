@@ -10,6 +10,13 @@ if status --is-login
     set PATH $HOME/.dotfiles/bin $PATH
     set PATH $HOME/Dropbox/Library/Misc/bin $PATH
 
+    # Use VIM as editor if available
+    if which vim 2>&1 >/dev/null
+        set EDITOR vim
+        function vi; vim $argv; end
+    end
+
+
     # Ruby-specific configurations
     if test -d $HOME/.rbenv
         set PATH $HOME/.rbenv/bin $PATH
