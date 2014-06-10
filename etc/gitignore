@@ -12,6 +12,7 @@ Thumbs.db
 dump.rdb
 
 # Per-project files
+.vagrant
 .vimrc
 .idea
 *.iml
