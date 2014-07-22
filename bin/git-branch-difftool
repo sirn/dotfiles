@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-git difftool $(git merge-base develop $(git symbolic-ref HEAD))
+git difftool $(git branched-commit)
