@@ -1,0 +1,9 @@
+{
+    "mouse-follows-focus": false,
+    "focus-follows-mouse": false,
+    "floating": [
+        "com.apple.systempreferences",
+        "com.tapbots.TweetbotMac",
+        "2BUA8C4S2C.com.agilebits.onepassword-osx-helper"
+    ]
+}

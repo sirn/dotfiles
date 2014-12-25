@@ -22,6 +22,7 @@ _link_to_home vim/colors .vim/colors
 _link_to_home vim/syntax .vim/syntax
 _link_to_home vim/bundle .vim/bundle
 _link_to_home etc/ackrc .ackrc
+_link_to_home etc/amethyst .amethyst
 _link_to_home etc/gitconfig .gitconfig
 _link_to_home etc/tmux.conf .tmux.conf
 _link_to_home etc/ssh_config .ssh/config
