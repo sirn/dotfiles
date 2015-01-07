@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 DOTFILES_DIR=`cd ${0%/*} && pwd -P`
 
 # Helper function
