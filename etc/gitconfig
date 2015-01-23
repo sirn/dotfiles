@@ -4,6 +4,7 @@
 
 [alias]
   tree = log --graph --oneline
+  serve = daemon --reuseaddr --verbose --base-path=. --export-all ./.git
 
 [color]
   diff = auto
