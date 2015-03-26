@@ -16,6 +16,7 @@ Vagrantfile
 .vagrant
 .vimrc
 .idea
+.generators
 *.iml
 out/
 cache/

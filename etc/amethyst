@@ -2,8 +2,11 @@
     "mouse-follows-focus": false,
     "focus-follows-mouse": false,
     "floating": [
+        "2BUA8C4S2C.com.agilebits.onepassword-osx-helper",
+        "com.adobe.acc.AdobeCreativeCloud",
+        "com.apple.iphonesimulator",
         "com.apple.systempreferences",
-        "com.tapbots.TweetbotMac",
-        "2BUA8C4S2C.com.agilebits.onepassword-osx-helper"
+        "com.flexibits.fantastical2.mac",
+        "com.tapbots.TweetbotMac"
     ]
 }
