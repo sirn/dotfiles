@@ -98,7 +98,7 @@ if isdirectory(expand("~/.dotfiles/vim/bundle/vundle/autoload"))
   Bundle 'daylerees/colour-schemes', {'rtp': 'vim-themes/'}
   Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
   Bundle 'kien/ctrlp.vim'
-  Bundle 'mileszs/ack.vim'
+  Bundle 'rking/ag.vim'
   Bundle 'terryma/vim-multiple-cursors'
   Bundle 'ervandew/supertab'
   Bundle 'kchmck/vim-coffee-script'
