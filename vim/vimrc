@@ -84,28 +84,36 @@ endif
 autocmd BufWritePre * :%s/\s\+$//e
 
 " Initialize Vundle if submodule is cloned.
-if isdirectory(expand("~/.dotfiles/vim/bundle/vundle/autoload"))
+if isdirectory(expand("~/.dotfiles/vim/bundle/Vundle.vim/autoload"))
 
   filetype off
-  set rtp+=~/.dotfiles/vim/bundle/vundle/
-  call vundle#rc()
+  set rtp+=~/.dotfiles/vim/bundle/Vundle.vim/
+  call vundle#begin()
 
   " Let Vundle manage Vundle
-  Bundle 'gmarik/vundle'
+  Plugin 'gmarik/Vundle.vim'
 
   " Bundles!
-  Bundle 'tpope/vim-fugitive'
-  Bundle 'daylerees/colour-schemes', {'rtp': 'vim-themes/'}
-  Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
-  Bundle 'kien/ctrlp.vim'
-  Bundle 'rking/ag.vim'
-  Bundle 'terryma/vim-multiple-cursors'
-  Bundle 'ervandew/supertab'
-  Bundle 'kchmck/vim-coffee-script'
-  Bundle 'wting/rust.vim'
+  Plugin 'tpope/vim-fugitive'
+  Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
+  Plugin 'kien/ctrlp.vim'
+  Plugin 'rking/ag.vim'
+  Plugin 'terryma/vim-multiple-cursors'
+  Plugin 'ervandew/supertab'
+  Plugin 'kchmck/vim-coffee-script'
+  Plugin 'wting/rust.vim'
+
+  " Bundles that are to be enabled if GUI is running.
+  if has("gui_running")
+    Plugin 'bling/vim-airline'  " Messed up with exit codes and broke shell.
+    Plugin 'daylerees/colour-schemes', {'rtp': 'vim/'}
+  endif
+
+  " Required by Vundle
+  call vundle#end()
+  filetype plugin indent on
 
   " Personalization if Vundle exists
-  colorscheme Carbonight
   let g:ctrlp_map='<leader>t'  " Heh.
 
   " Ignored files for Ctrl-P
@@ -115,9 +123,6 @@ if isdirectory(expand("~/.dotfiles/vim/bundle/vundle/autoload"))
   set wildignore+=*/log/*,*/tmp/*
   set wildignore+=*/node_modules/*
   set wildignore+=*/*.egg-info/*
-
-  " Required by Vundle
-  filetype plugin indent on
 
 endif
 
@@ -131,14 +136,16 @@ if has("gui_running")
   set guifont+=Menlo
   set guifont+=Consolas
   autocmd FileType html setlocal colorcolumn=0
+  colorscheme carbonight-purist
 
   " Initial line size and line numbers
   set number
   set lines=50
 
-  " Airline messed up with exit codes and broke shell.
-  Bundle 'bling/vim-airline'
-  let g:airline_powerline_fonts=1
+  " Plugins that should be configured only when Vundle exists.
+  if isdirectory(expand("~/.dotfiles/vim/bundle/Vundle.vim/autoload"))
+    let g:airline_powerline_fonts=1
+  endif
 
 endif
 
