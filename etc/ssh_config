@@ -1,10 +1,12 @@
 # Options
 
-# This thing seems to broke IntelliJ really badly.
-# ControlMaster auto
-# ControlPath /tmp/ssh_mux_%h_%p_%r
+ControlMaster auto
+ControlPath /tmp/ssh_mux_%h_%p_%r
 
-# Unmanaged servers
+# Host options
+
+Host *
+  User sirn
 
 Host nfs
   Hostname ssh.phx.nearlyfreespeech.net
