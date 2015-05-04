@@ -20,12 +20,15 @@ set wildmode=longest,full         " complete longest, then show completions
 set cursorline                    " highlight current line
 set laststatus=2                  " always show the status line
 
-set shell=/bin/bash               " use POSIX-complaint shell
+set viminfo=                      " disable viminfo
 set exrc                          " enable per-directory vimrc.
 
 set guioptions-=T                 " remove toolbar
 set guioptions-=r                 " remove right scrollbar
 set guioptions-=L                 " remove left scrollbar
+
+set rtp+=~/.dotfiles/vim/         " use dotfiles as RTP
+set shell=bash                    " use POSIX-complaint shell
 
 " Fix comment indentation
 set cindent
@@ -88,7 +91,7 @@ if isdirectory(expand("~/.dotfiles/vim/bundle/Vundle.vim/autoload"))
 
   filetype off
   set rtp+=~/.dotfiles/vim/bundle/Vundle.vim/
-  call vundle#begin()
+  call vundle#begin(expand("~/.dotfiles/vim/bundle"))
 
   " Let Vundle manage Vundle
   Plugin 'gmarik/Vundle.vim'
