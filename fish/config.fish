@@ -11,7 +11,7 @@ if status --is-login
 
     # Use VIM as editor if available.
     if which vim 2>&1 >/dev/null
-        set EDITOR vim
+        set -Ux EDITOR vim
         function vi; vim $argv; end
     end
 
