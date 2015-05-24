@@ -30,6 +30,10 @@ set guioptions-=L                 " remove left scrollbar
 set rtp+=~/.dotfiles/vim/         " use dotfiles as RTP
 set shell=bash                    " use POSIX-complaint shell
 
+if has("win32")
+  set shellslash                  " use forward slash for filename in Windows
+endif
+
 " Fix comment indentation
 set cindent
 set cinkeys=0{,0},!^F,o,O,e
@@ -91,7 +95,7 @@ if isdirectory(expand("~/.dotfiles/vim/bundle/Vundle.vim/autoload"))
 
   filetype off
   set rtp+=~/.dotfiles/vim/bundle/Vundle.vim/
-  call vundle#begin(expand("~/.dotfiles/vim/bundle"))
+  call vundle#begin("~/.dotfiles/vim/bundle")
 
   " Let Vundle manage Vundle
   Plugin 'gmarik/Vundle.vim'
