@@ -44,6 +44,14 @@ if status --is-login
         end
     end
 
+    # Auto-running ssh-agent and auto-killing it.
+    if which ssh-agent 2>&1 >/dev/null
+        eval (ssh-agent -c) >/dev/null
+        function cleanup-ssh-agent --on-process-exit %self
+            ssh-agent -k >/dev/null
+        end
+    end
+
     # Aliases.
     function intellij; open -b com.jetbrains.intellij $argv; end
     if which hub 2>&1 >/dev/null
