@@ -8,6 +8,8 @@ ControlPath /tmp/ssh_mux_%h_%p_%r
 Host *
   User sirn
 
-Host nfs
-  Hostname ssh.phx.nearlyfreespeech.net
-  Port 22
+Host github.com
+  PreferredAuthentications publickey
+  User git
+  HostName github.com
+  IdentityFile ~/.ssh/github
