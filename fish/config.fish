@@ -53,13 +53,7 @@ if status --is-login
 end
 
 if status --is-interactive
-
-    # Auto-running ssh-agent and auto-killing it.
-    if which ssh-agent 2>&1 >/dev/null
-        eval (ssh-agent -c) >/dev/null
-        function cleanup-ssh-agent --on-process-exit %self
-            ssh-agent -k >/dev/null
-        end
+    if which keychain 2>&1 >/dev/null
+        eval (keychain --eval --quiet) >/dev/null
     end
-
 end
