@@ -1,4 +1,4 @@
-if status --is-login
+if status --is-login --is-interactive
 
     # Fish reassigns $fish_greeting if it is not set so we can't do -e.
     set fish_greeting ""
