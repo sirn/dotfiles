@@ -1,2 +1,14 @@
+map <silent> xx :js toggle_navbar()<CR>
+
+:js << EOF
+function toggle_navbar() {
+    if (options['toolbars'].contains('nonavigation')) {
+        options['toolbars'] = 'navigation';
+    } else {
+        options['toolbars'] = 'nonavigation';
+    }
+}
+EOF
+
 set toolbars=none
 set defsearch=duckduckgo
