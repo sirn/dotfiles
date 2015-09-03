@@ -46,9 +46,8 @@ if status --is-login --is-interactive
 
     # Aliases.
     function intellij; open -b com.jetbrains.intellij $argv; end
-    if which hub 2>&1 >/dev/null
-        function git; hub $argv; end
-    end
+    if which hub 2>&1 >/dev/null; function git; hub $argv; end; end
+    if which nvim 2>&1 >/dev/null; function vim; nvim $argv; end; end
 
 end
 
