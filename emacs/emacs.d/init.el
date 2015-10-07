@@ -28,6 +28,7 @@
   '(better-defaults
     auto-complete
     fill-column-indicator
+    keychain-environment
     magit
     helm))
 
@@ -55,6 +56,12 @@
 
 (require 'magit)
 (global-set-key (kbd "C-x g") 'magit-status)
+
+(require 'keychain-environment)
+(let ((original-shell (getenv "SHELL")))
+  (and (setenv "SHELL" "/bin/bash")
+       (keychain-refresh-environment)
+       (setenv "SHELL" original-shell)))
 
 ;; Window
 ;; -----------------------------------------------------------------------------
