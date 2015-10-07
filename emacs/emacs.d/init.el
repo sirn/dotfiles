@@ -53,6 +53,9 @@
 (global-set-key (kbd "C-x b") 'helm-buffers-list)
 (setq helm-M-x-fuzzy-match t)
 
+(require 'magit)
+(global-set-key (kbd "C-x g") 'magit-status)
+
 ;; Window
 ;; -----------------------------------------------------------------------------
 (when window-system
