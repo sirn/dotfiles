@@ -25,12 +25,13 @@
   (package-refresh-contents))
 
 (defvar packages
-  '(better-defaults
-    auto-complete
+  '(auto-complete
+    better-defaults
     fill-column-indicator
+    helm
     keychain-environment
     magit
-    helm))
+    yaml-mode))
 
 (dolist (p packages)
   (when (not (package-installed-p p))
@@ -54,14 +55,14 @@
 (global-set-key (kbd "C-x b") 'helm-buffers-list)
 (setq helm-M-x-fuzzy-match t)
 
-(require 'magit)
-(global-set-key (kbd "C-x g") 'magit-status)
-
 (require 'keychain-environment)
 (let ((original-shell (getenv "SHELL")))
   (and (setenv "SHELL" "/bin/bash")
        (keychain-refresh-environment)
        (setenv "SHELL" original-shell)))
+
+(require 'magit)
+(global-set-key (kbd "C-x g") 'magit-status)
 
 ;; Window
 ;; -----------------------------------------------------------------------------
