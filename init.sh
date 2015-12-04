@@ -23,7 +23,7 @@ _link_to_home etc/ackrc .ackrc
 _link_to_home etc/amethyst .amethyst
 _link_to_home etc/gitconfig .gitconfig
 _link_to_home etc/tmux.conf .tmux.conf
-_link_to_home etc/ssh_config .ssh/config
 _link_to_home etc/aria2.conf .aria2/aria2.conf
+_link_to_home ssh/config.d .ssh/config.d
 _link_to_home fish/functions .config/fish/functions
 _link_to_home fish/config.fish .config/fish/config.fish

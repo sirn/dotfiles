@@ -1,13 +1,5 @@
-Host *
-  User sirn
-
 Host github.com
   PreferredAuthentications publickey
   User git
   HostName github.com
-  IdentityFile ~/.ssh/git
-
-Host git.*
-  PreferredAuthentications publickey
-  User git
   IdentityFile ~/.ssh/git

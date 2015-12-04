@@ -19,3 +19,7 @@ emacs/emacs.d/*
 # Vim stuff
 vim/bundle/*
 !vim/bundle/vundle
+
+# SSH stuff
+ssh/config.d/*
+!ssh/config.d/0*

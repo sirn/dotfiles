@@ -49,6 +49,10 @@ if status --is-login --is-interactive
     if which hub 2>&1 >/dev/null; function git; hub $argv; end; end
     if which nvim 2>&1 >/dev/null; function vim; nvim $argv; end; end
 
+    # SSH config.d
+    function _reload_ssh_config; cat $HOME/.ssh/config.d/* > $HOME/.ssh/config; end
+    function ssh; _reload_ssh_config; command ssh $argv; end
+
 end
 
 if status --is-interactive
