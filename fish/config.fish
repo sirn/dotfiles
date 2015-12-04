@@ -52,6 +52,7 @@ if status --is-login --is-interactive
     # SSH config.d
     function _reload_ssh_config; cat $HOME/.ssh/config.d/* > $HOME/.ssh/config; end
     function ssh; _reload_ssh_config; command ssh $argv; end
+    function scp; _reload_ssh_config; command scp $argv; end
 
 end
 
