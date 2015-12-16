@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+installed_casks = `brew cask list`.split
+upgradable_casks = []
+
+puts "Checking for update..."
+
+installed_casks.each do |cask|
+  if system("brew cask info #{cask}| grep -qF 'Not installed'")
+    puts "* Cask #{cask} needs upgrading."
+    upgradable_casks << cask
+  end
+end
+
+if upgradable_casks.size > 0
+  puts "Please upgrade casks manually:"
+  upgradable_casks.each do |cask|
+    puts "brew cask install #{cask}"
+  end
+else
+  puts "No cask to update."
+end
