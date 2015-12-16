@@ -13,8 +13,8 @@
                  :strike-through nil
                  :box nil
                  :inverse-video nil
-                 :foreground "#B0B0B0"
-                 :background "#2E2C2B"
+                 :foreground "#b0b0b0"
+                 :background "#0c0c0c"
                  :stipple nil
                  :inherit nil))))
 '(cursor ((t (:background "#f8f8f0"))))
