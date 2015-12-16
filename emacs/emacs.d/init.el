@@ -120,7 +120,7 @@
 (custom-set-faces '(fringe ((t (:background "#0c0c0c")))))
 (custom-set-faces '(linum ((t (:foreground "#3f3f3f" :background "#0c0c0c")))))
 (unless (window-system)
-  (setq linum-format "%4d \u2502 "))
+  (setq linum-format "%4d "))
 
 ;; Magit
 (require 'magit)
