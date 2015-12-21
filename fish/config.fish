@@ -9,10 +9,26 @@ if status --is-login --is-interactive
     set PATH $HOME/.local/bin $PATH
     set PATH $HOME/.dotfiles/bin $PATH
 
-    # Use VIM as editor if available.
-    if which vim 2>&1 >/dev/null
-        set -Ux EDITOR vim
+    # Aliases.
+    function intellij; open -b com.jetbrains.intellij $argv; end
+    function vi; vim $argv; end
+
+    if which hub 2>&1 >/dev/null
+       function git; hub $argv; end
+    end
+
+    if which nvim 2>&1 >/dev/null
+        function vim; nvim $argv; end
+        function vi; nvim $argv; end
+    else if which vim 2>&1 >/dev/null
         function vi; vim $argv; end
+    end
+
+    # Use Emacs as editor if available or use Vim.
+    if which emacs 2>&1 >/dev/null
+        set -Ux EDITOR emacs
+    else if which vim 2>&1 >/dev/null
+        set -Ux EDITOR vim
     end
 
     # Ruby-specific configurations.
@@ -43,11 +59,6 @@ if status --is-login --is-interactive
             /Applications/VMware\ Fusion.app/Contents/Library/vmrun $argv
         end
     end
-
-    # Aliases.
-    function intellij; open -b com.jetbrains.intellij $argv; end
-    if which hub 2>&1 >/dev/null; function git; hub $argv; end; end
-    if which nvim 2>&1 >/dev/null; function vim; nvim $argv; end; end
 
     # SSH config.d
     function _reload_ssh_config; cat $HOME/.ssh/config.d/* > $HOME/.ssh/config; end
