@@ -139,7 +139,8 @@
 (global-whitespace-mode t)
 (custom-set-faces '(whitespace-space ((t (:foreground "#383838")))))
 (custom-set-faces '(whitespace-newline ((t (:foreground "#383838")))))
-(setq whitespace-style '(face trailing tabs))
+(custom-set-faces '(whitespace-tab ((t (:foreground "#383838")))))
+(setq whitespace-style '(face trailing tabs tab-mark))
 
 
 ;; Footer
