@@ -14,9 +14,7 @@ end
 
 if upgradable_casks.size > 0
   puts "Please upgrade casks manually:"
-  upgradable_casks.each do |cask|
-    puts "brew cask install #{cask}"
-  end
+  puts "brew cask install #{upgradable_casks.join(" ")}"
 else
   puts "No cask to update."
 end
