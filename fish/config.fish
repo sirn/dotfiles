@@ -24,8 +24,14 @@ if status --is-login --is-interactive
         function vi; vim $argv; end
     end
 
+    if which emacsclient 2>&1 >/dev/null
+       function emacs; emacsclient -c -t -a emacs $argv; end
+    end
+
     # Use Emacs as editor if available or use Vim.
-    if which emacs 2>&1 >/dev/null
+    if which emacsclient 2>&1 >/dev/null
+        set -Ux EDITOR "emacsclient -a emacs"
+    else if which emacs 2>&1 >/dev/null
         set -Ux EDITOR emacs
     else if which vim 2>&1 >/dev/null
         set -Ux EDITOR vim
