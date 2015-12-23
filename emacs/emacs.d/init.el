@@ -126,6 +126,10 @@
 (require 'magit)
 (global-set-key (kbd "C-x g") 'magit-status)
 
+;; Ruby-mode
+(require 'ruby-mode)
+(setq ruby-align-to-stmt-keywords t)
+
 ;; Sass-mode
 (require 'sass-mode)
 (add-to-list 'auto-mode-alist '("\\.sass\\'" . sass-mode))
