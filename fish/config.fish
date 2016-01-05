@@ -3,38 +3,35 @@ if status --is-login --is-interactive
     # Fish reassigns $fish_greeting if it is not set so we can't do -e.
     set fish_greeting ""
 
-    # General bin paths.
+    # Few custom bin paths. .local is machine-specific while .dotfiles is shared
+    # between all machines and is version controlled (i.e. this repository).
     set PATH /usr/local/sbin $PATH
     set PATH /usr/local/bin $PATH
     set PATH $HOME/.local/bin $PATH
     set PATH $HOME/.dotfiles/bin $PATH
 
-    # Aliases.
-    function intellij; open -b com.jetbrains.intellij $argv; end
-    function vi; vim $argv; end
-
+    # Prefer hub over git for GitHub integration.
     if which hub 2>&1 >/dev/null
        function git; hub $argv; end
     end
 
+    # Prefer nvim over vim over vi.
     if which nvim 2>&1 >/dev/null
         function vim; nvim $argv; end
         function vi; nvim $argv; end
+        set -Ux EDITOR nvim
     else if which vim 2>&1 >/dev/null
         function vi; vim $argv; end
-    end
-
-    if which emacsclient 2>&1 >/dev/null
-       function emacs; emacsclient -c -t -a emacs $argv; end
-    end
-
-    # Use Emacs as editor if available or use Vim.
-    if which emacsclient 2>&1 >/dev/null
-        set -Ux EDITOR "emacsclient -a emacs"
-    else if which emacs 2>&1 >/dev/null
-        set -Ux EDITOR emacs
-    else if which vim 2>&1 >/dev/null
         set -Ux EDITOR vim
+    else if which vi 2>&1 >/dev/null
+        set -Ux EDITOR vi
+    end
+
+    # Allow VMWare to be used headlessly using vmrun.
+    if test -d /Applications/VMware\ Fusion.app
+        function vmrun
+            /Applications/VMware\ Fusion.app/Contents/Library/vmrun $argv
+        end
     end
 
     # Ruby-specific configurations.
@@ -56,16 +53,6 @@ if status --is-login --is-interactive
         set PATH /usr/local/share/npm/bin $PATH
     end
 
-    # Directory bin.
-    set PATH ./bin $PATH
-
-    # Headless VMWare.
-    if test -d /Applications/VMware\ Fusion.app
-        function vmrun
-            /Applications/VMware\ Fusion.app/Contents/Library/vmrun $argv
-        end
-    end
-
     # SSH config.d
     function _reload_ssh_config; cat $HOME/.ssh/config.d/* > $HOME/.ssh/config; end
     function ssh; _reload_ssh_config; command ssh $argv; end
@@ -73,6 +60,8 @@ if status --is-login --is-interactive
 
 end
 
+# Setup the $SSH_AGENT_PID and $SSH_AUTH_SOCK globally in OSX to use ssh-agent
+# initialized by keychain command rather than Mac OS X's Keychain.
 if status --is-interactive
     if which keychain 2>&1 >/dev/null
         eval (keychain --eval --quiet) >/dev/null

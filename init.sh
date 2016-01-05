@@ -15,9 +15,7 @@ function _link_to_home {
 }
 
 # Installation
-_link_to_home emacs/emacs.d .emacs.d
-_link_to_home vim/vimrc .vimrc
-_link_to_home vim/vimrc .nvimrc
+_link_to_home emacs/spacemacs .spacemacs
 _link_to_home vim/vimperatorrc .vimperatorrc
 _link_to_home etc/ackrc .ackrc
 _link_to_home etc/amethyst .amethyst
