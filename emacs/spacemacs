@@ -23,7 +23,6 @@
         ruby-version-manager 'rbenv
         ruby-test-runner 'ruby-test))
      ruby-on-rails
-     spell-checking
      syntax-checking
      vagrant
      version-control
@@ -46,7 +45,7 @@
    dotspacemacs-startup-recent-list-size 5
    dotspacemacs-themes '(minimal)
    dotspacemacs-colorize-cursor-according-to-state t
-   dotspacemacs-default-font '("Inconsolata-dz"
+   dotspacemacs-default-font '("Source Code Pro"
                                :size 13
                                :weight normal
                                :width normal
