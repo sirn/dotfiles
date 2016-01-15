@@ -89,11 +89,20 @@
    ))
 
 (defun dotspacemacs/user-init ()
-  "Initialization function for user code."
+  "Initialization function for user code. Called after Spacemacs init."
+
+  ;; Disable the message about assigning $PATH in .profile instead of shell rc.
+  (setq exec-path-from-shell-check-startup-files nil)
+
   )
 
 (defun dotspacemacs/user-config ()
-  "Configuration function for user code."
+  "Configuration function for user code. Called after layers configuration."
+
+  ;; Disable sRGB in OS X to make Powerline colors appears "correct".
+  ;; (Or maybe consistency wrong is a better word.)
+  (setq ns-use-srgb-colorspace nil)
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
