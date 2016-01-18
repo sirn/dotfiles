@@ -22,6 +22,12 @@ Vagrantfile
 out/
 cache/
 
+# Language specific
+node_modules/
+*.egg/
+*.pyc
+__pycache__/
+
 # User files
 .env
 stdout
