@@ -13,6 +13,7 @@
      git
      html
      javascript
+     keychain
      markdown
      org
      osx
