@@ -3,62 +3,9 @@
   file: path={{item}} state=directory
   with_items: dots
 
-- name: link .ackrc
+- name: link files and directories
   file:
-    src: ~/.dotfiles/etc/ackrc
-    path: ~/.ackrc
+    src: "{{item.source}}"
+    path: "{{item.dest}}"
     state: link
-
-- name: link .aria2.conf
-  file:
-    src: ~/.dotfiles/etc/aria2.conf
-    path: ~/.aria2/aria2.conf
-    state: link
-
-- name: link .amethyst
-  file:
-    src: ~/.dotfiles/etc/amethyst
-    path: ~/.amethyst
-    state: link
-
-- name: link .config/fish/config.fish
-  file:
-    src: ~/.dotfiles/fish/config.fish
-    path: ~/.config/fish/config.fish
-    state: link
-
-- name: link .config/fish/functions
-  file:
-    src: ~/.dotfiles/fish/functions
-    path: ~/.config/fish/functions
-    state: link
-
-- name: link .gitconfig
-  file:
-    src: ~/.dotfiles/etc/gitconfig
-    path: ~/.gitconfig
-    state: link
-
-- name: link .spacemacs.d
-  file:
-    src: ~/.dotfiles/emacs/spacemacs.d
-    path: ~/.spacemacs.d
-    state: link
-
-- name: link .ssh/config.d
-  file:
-    src: ~/.dotfiles/ssh/config.d
-    path: ~/.ssh/config.d
-    state: link
-
-- name: link .tmux.conf
-  file:
-    src: ~/.dotfiles/etc/tmux.conf
-    path: ~/.tmux.conf
-    state: link
-
-- name: link .vimperatorrc
-  file:
-    src: ~/.dotfiles/vim/vimperatorrc
-    path: ~/.vimperatorrc
-    state: link
+  with_items: links

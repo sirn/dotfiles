@@ -9,3 +9,34 @@ dots:
   - ~/.ssh
   - ~/.config
   - ~/.config/fish
+
+links:
+  - source: ~/.dotfiles/etc/ackrc
+    dest: ~/.ackrc
+
+  - source: ~/.dotfiles/etc/aria2.conf
+    dest: ~/.aria2/aria2.conf
+
+  - source: ~/.dotfiles/etc/amethyst
+    dest: ~/.amethyst
+
+  - source: ~/.dotfiles/fish/config.fish
+    dest: ~/.config/fish/config.fish
+
+  - source: ~/.dotfiles/fish/functions
+    dest: ~/.config/fish/functions
+
+  - source: ~/.dotfiles/etc/gitconfig
+    dest: ~/.gitconfig
+
+  - source: ~/.dotfiles/emacs/spacemacs.d
+    dest: ~/.spacemacs.d
+
+  - source: ~/.dotfiles/ssh/config.d
+    dest: ~/.ssh/config.d
+
+  - source: ~/.dotfiles/etc/tmux.conf
+    dest: ~/.tmux.conf
+
+  - source: ~/.dotfiles/vim/vimperatorrc
+    dest: ~/.vimperatorrc
