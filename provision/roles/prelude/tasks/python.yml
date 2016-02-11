@@ -6,7 +6,7 @@
   register: python_installed
 
 - name: install eggs
-  command: ~/.pyenv/versions/2.7.11/bin/pip install --upgrade {{item}}
+  command: ~/.pyenv/versions/{{python_version}}/bin/pip install --upgrade {{item}}
   with_items: python_eggs
   when: "python_installed.changed"
 
