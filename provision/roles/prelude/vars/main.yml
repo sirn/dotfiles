@@ -1,0 +1,48 @@
+---
+shell: fish
+
+taps:
+  - beeftornado/rmtree
+  - caskroom/cask
+  - caskroom/fonts
+  - homebrew/dupes
+
+packages:
+  - ansible
+  - aria2
+  - brew-rmtree
+  - emacs
+  - git
+  - git-flow
+  - hub
+  - imagemagick
+  - ipcalc
+  - keychain
+  - openssh
+  - openssl
+  - pyenv
+  - rbenv
+  - ruby-build
+  - the_silver_searcher
+  - tmux
+  - trash
+  - xhyve
+  - xz
+  - youtube-dl
+
+services:
+  - syncthing
+
+ruby_version: 2.2.4
+
+ruby_gems:
+  - bundler
+  - middleman
+  - tmuxinator
+
+python_version: pypy-4.0.1
+
+python_eggs:
+  - glances
+  - autoflake
+  - pip

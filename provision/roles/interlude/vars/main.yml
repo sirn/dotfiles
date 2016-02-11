@@ -1,0 +1,36 @@
+---
+applications:
+  - amethyst
+  - bartender
+  - charles
+  - emacs
+  - freesmug-chromium
+  - gpgtools
+  - hazel
+  - imagealpha
+  - imageoptim
+  - iterm2
+  - keyboard-maestro
+  - launchbar
+  - mpv
+  - omnifocus
+  - omnigraffle
+  - otto
+  - packer
+  - pycharm
+  - rubymine
+  - skype
+  - teamviewer
+  - textexpander
+  - the-unarchiver
+  - vagrant
+  - viscosity
+  - xquartz
+
+fonts:
+  - font-inconsolata
+  - font-inconsolata-dz
+  - font-lato
+  - font-sauce-code-powerline
+  - font-source-code-pro
+  - font-source-han-sans
