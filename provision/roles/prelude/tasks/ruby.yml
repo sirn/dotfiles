@@ -6,9 +6,12 @@
   register: ruby_installed
 
 - name: install gems
-  command: ~/.rbenv/versions/{{ruby_version}}/bin/gem install {{item}}
+  gem:
+    name: "{{item}}"
+    state: latest
+    executable: ~/.rbenv/versions/{{ruby_version}}/bin/gem
   with_items: ruby_gems
-  when: "ruby_installed.changed"
+  register: ruby_gems_installed
 
 - name: update default ruby
   command: /usr/local/bin/rbenv global {{ruby_version}}
@@ -16,4 +19,4 @@
 
 - name: update rbenv shims
   command: /usr/local/bin/rbenv rehash
-  when: "ruby_installed.changed"
+  when: "ruby_gems_installed.changed"
