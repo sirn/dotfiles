@@ -6,9 +6,12 @@
   register: python_installed
 
 - name: install eggs
-  command: ~/.pyenv/versions/{{python_version}}/bin/pip install --upgrade {{item}}
+  pip:
+    name: "{{item}}"
+    state: latest
+    executable: ~/.pyenv/versions/{{python_version}}/bin/pip
   with_items: python_eggs
-  when: "python_installed.changed"
+  register: python_eggs_installed
 
 - name: update default python
   command: /usr/local/bin/pyenv global {{python_version}}
@@ -16,4 +19,4 @@
 
 - name: update pyenv shims
   command: /usr/local/bin/pyenv rehash
-  when: "python_installed.changed"
+  when: "python_eggs_installed.changed"
