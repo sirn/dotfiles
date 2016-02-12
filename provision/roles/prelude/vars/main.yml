@@ -46,3 +46,6 @@ python_eggs:
   - glances
   - autoflake
   - pip
+
+node_packages:
+  - typescript

@@ -1,0 +1,16 @@
+---
+- name: install node
+  homebrew: name=node state=latest
+
+- name: install npm packages
+  npm:
+    name: "{{item}}"
+    global: true
+    executable: /usr/local/bin/npm
+  with_items: node_packages
+
+- name: install custom typescript-tools
+  npm:
+    name: 'https://github.com/sirn/typescript-tools.git#typescript-1.7-exp'
+    global: true
+    executable: /usr/local/bin/npm
