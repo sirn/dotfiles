@@ -10,6 +10,7 @@ applications:
   - imagealpha
   - imageoptim
   - iterm2
+  - java
   - keyboard-maestro
   - launchbar
   - mpv
