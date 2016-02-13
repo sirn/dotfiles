@@ -38,13 +38,15 @@ ruby_version: 2.2.4
 ruby_gems:
   - bundler
   - middleman
+  - pry
   - tmuxinator
 
 python_version: pypy-4.0.1
 
 python_eggs:
-  - glances
   - autoflake
+  - glances
+  - ipython
   - pip
 
 node_packages:
