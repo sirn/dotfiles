@@ -41,12 +41,13 @@ ruby_gems:
   - pry
   - tmuxinator
 
-python_version: pypy-4.0.1
+python_version: 3.4.4
 
 python_eggs:
   - autoflake
   - glances
   - ipython
+  - pelican
   - pip
 
 node_packages:

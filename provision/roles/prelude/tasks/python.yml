@@ -5,13 +5,19 @@
     creates: ~/.pyenv/versions/{{python_version}}
   register: python_installed
 
+# Ansible PYTHONPATH will conflict with Pip's PYTHONPATH
+# and will cause some package included in Ansible to not
+# installable (e.g. six).
 - name: install eggs
   pip:
     name: "{{item}}"
     state: latest
     executable: ~/.pyenv/versions/{{python_version}}/bin/pip
+    chdir: ~/.pyenv/versions/{{python_version}}
   with_items: python_eggs
   register: python_eggs_installed
+  environment:
+    PYTHONPATH:
 
 - name: update default python
   command: /usr/local/bin/pyenv global {{python_version}}
