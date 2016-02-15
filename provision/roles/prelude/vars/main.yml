@@ -47,8 +47,11 @@ python_eggs:
   - autoflake
   - glances
   - ipython
-  - pelican
   - pip
+  - virtualenv
 
 node_packages:
+  - autoprefixer
+  - postcss
+  - postcss-cli
   - typescript
