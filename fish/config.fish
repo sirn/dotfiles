@@ -5,10 +5,14 @@ if status --is-login --is-interactive
 
     # Few custom bin paths. .local is machine-specific while .dotfiles is shared
     # between all machines and is version controlled (i.e. this repository).
-    set PATH /usr/local/sbin $PATH
-    set PATH /usr/local/bin $PATH
-    set PATH $HOME/.local/bin $PATH
-    set PATH $HOME/.dotfiles/bin $PATH
+    set -x PATH /usr/local/sbin $PATH
+    set -x PATH /usr/local/bin $PATH
+    set -x PATH $HOME/.local/bin $PATH
+    set -x PATH $HOME/.dotfiles/bin $PATH
+
+    # Locale
+    set -x LC_ALL en_US.UTF-8
+    set -x LANG en_US.UTF-8
 
     # Prefer hub over git for GitHub integration.
     if which hub 2>&1 >/dev/null
