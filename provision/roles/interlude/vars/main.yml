@@ -3,6 +3,7 @@ applications:
   - amethyst
   - bartender
   - charles
+  - dropshare
   - emacs
   - freesmug-chromium
   - gpgtools
