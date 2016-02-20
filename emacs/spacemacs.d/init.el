@@ -25,6 +25,7 @@
         ruby-test-runner 'ruby-test))
      ruby-on-rails
      syntax-checking
+     typescript
      vagrant
      version-control
      yaml
