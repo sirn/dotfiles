@@ -10,6 +10,7 @@ taps:
 packages:
   - ansible
   - aria2
+  - asciinema
   - brew-rmtree
   - emacs
   - git
