@@ -1,5 +1,6 @@
 ---
 applications:
+  - airfoil
   - amethyst
   - bartender
   - charles
