@@ -23,3 +23,6 @@ vim/bundle/*
 # SSH stuff
 ssh/config.d/*
 !ssh/config.d/0*
+
+# Ansible stuff
+local.retry

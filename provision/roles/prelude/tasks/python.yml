@@ -14,7 +14,7 @@
     state: latest
     executable: ~/.pyenv/versions/{{python_version}}/bin/pip
     chdir: ~/.pyenv/versions/{{python_version}}
-  with_items: python_eggs
+  with_items: "{{python_eggs}}"
   register: python_eggs_installed
   environment:
     PYTHONPATH:

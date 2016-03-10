@@ -10,7 +10,7 @@
     name: "{{item}}"
     state: latest
     executable: ~/.rbenv/versions/{{ruby_version}}/bin/gem
-  with_items: ruby_gems
+  with_items: "{{ruby_gems}}"
   register: ruby_gems_installed
 
 - name: update default ruby

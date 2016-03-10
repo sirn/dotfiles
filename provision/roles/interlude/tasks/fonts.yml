@@ -1,4 +1,4 @@
 ---
 - name: install cask fonts
   homebrew_cask: name={{item}} state=present
-  with_items: fonts
+  with_items: "{{fonts}}"

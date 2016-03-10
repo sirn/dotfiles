@@ -1,11 +1,11 @@
 ---
 - name: prepare dot directories
   file: path={{item}} state=directory
-  with_items: dots
+  with_items: "{{dots}}"
 
 - name: link files and directories
   file:
     src: "{{item.source}}"
     path: "{{item.dest}}"
     state: link
-  with_items: links
+  with_items: "{{links}}"

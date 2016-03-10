@@ -1,4 +1,4 @@
 ---
 - name: install cask applications
   homebrew_cask: name={{item}} state=present
-  with_items: applications
+  with_items: "{{applications}}"

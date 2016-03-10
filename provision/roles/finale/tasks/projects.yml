@@ -1,4 +1,4 @@
 ---
 - name: create project directories
   file: path={{item}} state=directory
-  with_items: projects
+  with_items: "{{projects}}"

@@ -1,4 +1,4 @@
 ---
 - name: initialize homebrew taps
   homebrew_tap: tap={{item}} state=present
-  with_items: taps
+  with_items: "{{taps}}"

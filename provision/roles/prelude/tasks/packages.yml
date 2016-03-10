@@ -4,7 +4,7 @@
 
 - name: install homebrew packages
   homebrew: name={{item}} state=latest
-  with_items: packages
+  with_items: "{{packages}}"
 
 - name: install ffmpeg with fdk-aac
   homebrew:

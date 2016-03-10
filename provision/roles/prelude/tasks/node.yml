@@ -7,7 +7,7 @@
     name: "{{item}}"
     global: true
     executable: /usr/local/bin/npm
-  with_items: node_packages
+  with_items: "{{node_packages}}"
 
 - name: install custom typescript-tools
   npm:
