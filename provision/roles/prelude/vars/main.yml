@@ -13,12 +13,15 @@ packages:
   - asciinema
   - brew-rmtree
   - emacs
+  - erlang
+  - ghc
   - git
   - git-flow
   - hub
   - imagemagick
   - ipcalc
   - keychain
+  - leiningen
   - openssh
   - openssl
   - pyenv
