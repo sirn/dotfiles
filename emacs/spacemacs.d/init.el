@@ -20,7 +20,6 @@
      python
      '((ruby
         :variables
-        ruby-enable-enh-ruby-mode t
         ruby-version-manager 'rbenv
         ruby-test-runner 'ruby-test))
      ruby-on-rails
