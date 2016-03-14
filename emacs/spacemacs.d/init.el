@@ -9,8 +9,11 @@
    '(
      auto-completion
      better-defaults
+     clojure
      emacs-lisp
+     erlang
      git
+     haskell
      html
      javascript
      keychain
