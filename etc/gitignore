@@ -13,6 +13,8 @@ dump.rdb
 
 # Per-project files
 Vagrantfile
+.ruby-version
+.python-version
 .vagrant
 .otto
 .vimrc
