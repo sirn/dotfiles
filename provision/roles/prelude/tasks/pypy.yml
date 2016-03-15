@@ -1,0 +1,5 @@
+---
+- name: install pypy {{pypy_version}}
+  command: pyenv install pypy-{{pypy_version}}
+  args:
+    creates: ~/.pyenv/versions/pypy-{{pypy_version}}

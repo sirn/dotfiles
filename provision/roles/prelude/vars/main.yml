@@ -46,6 +46,7 @@ ruby_gems:
   - tmuxinator
 
 python_version: 3.4.4
+pypy_version: 5.0.0
 
 python_eggs:
   - autoflake
