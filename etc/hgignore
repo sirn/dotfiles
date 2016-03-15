@@ -1,0 +1,37 @@
+syntax: glob
+
+# Editor files
+*~
+*.swp
+
+# System files
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# Temp files
+dump.rdb
+
+# Per-project files
+Vagrantfile
+.ruby-version
+.python-version
+.vagrant
+.otto
+.vimrc
+.idea
+.generators
+*.iml
+out/
+cache/
+
+# Language specific
+node_modules/
+*.egg/
+*.pyc
+__pycache__/
+
+# User files
+.env
+stdout

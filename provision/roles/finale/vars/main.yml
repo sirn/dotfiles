@@ -29,6 +29,9 @@ links:
   - source: ~/.dotfiles/etc/gitconfig
     dest: ~/.gitconfig
 
+  - source: ~/.dotfiles/etc/hgrc
+    dest: ~/.hgrc
+
   - source: ~/.dotfiles/emacs/spacemacs.d
     dest: ~/.spacemacs.d
 
