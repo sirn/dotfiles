@@ -53,6 +53,7 @@ python_eggs:
   - autoflake
   - glances
   - ipython
+  - jupyter
   - pip
   - virtualenv
 
