@@ -28,6 +28,7 @@ packages:
   - pyenv
   - rbenv
   - ruby-build
+  - shellcheck
   - the_silver_searcher
   - tmux
   - trash

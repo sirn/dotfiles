@@ -42,7 +42,7 @@ fi
 #
 
 echo -e "* \033[0;33mRunning Ansible playbook. This will take a while.\033[0;0m"
-$(which ansible-playbook) provision/local.yml -K -i provision/hosts $@
+$(which ansible-playbook) provision/local.yml -K -i provision/hosts "$@"
 
 
 #
@@ -57,15 +57,15 @@ if [[ $? == 0 ]] ; then
     while read -ra INSTALLED_CASKS; do
         for i in "${INSTALLED_CASKS[@]}"; do
             echo -ne "\r\033[K  Checking \033[1;30m$i\033[0;0m..."
-            brew cask info $i| grep -qF 'Not installed'
+            brew cask info "$i"| grep -qF 'Not installed'
             if [[ $? == 0 ]] ; then
                 OUTDATED_CASKS+=($i)
             fi
         done
-    done <<< `brew cask list`
+    done <<< "$(brew cask list)"
 
     if [ ${#OUTDATED_CASKS[@]} != 0 ]; then
-        echo -e "\r\033[K\033[1A\r\033[K* \033[0;33mUpdating casks: \033[1;30m${OUTDATED_CASKS[@]}\033[0;0m"
+        echo -e "\r\033[K\033[1A\r\033[K* \033[0;33mUpdating casks: \033[1;30m${OUTDATED_CASKS[*]}\033[0;0m"
         brew cask install "${OUTDATED_CASKS[@]}"
     else
         echo -e "\033[1A\r\033[K* Casks are up-to-date. \033[0;32m✓\033[0;0m"
