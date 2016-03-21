@@ -6,6 +6,7 @@ applications:
   - charles
   - dropshare
   - emacs
+  - flux
   - gpgtools
   - hazel
   - imagealpha
