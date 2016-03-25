@@ -6,8 +6,4 @@
   homebrew: name={{item}} state=latest
   with_items: "{{packages}}"
 
-- name: install ffmpeg with fdk-aac
-  homebrew:
-    name: ffmpeg
-    install_options: with-fdk-aac
-    state: latest
+- include: packages/ffmpeg.yml
