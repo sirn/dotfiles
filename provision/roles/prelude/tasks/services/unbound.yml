@@ -1,0 +1,40 @@
+---
+- name: install unbound service
+  homebrew: name=unbound state=latest
+  register: unbound_installed
+
+- name: updating unbound configurations
+  copy:
+    src: usr/local/etc/unbound/unbound.conf
+    dest: /usr/local/etc/unbound/unbound.conf
+  register: unbound_configured
+
+- name: enabling unbound service
+  file:
+    src: /usr/local/opt/unbound/homebrew.mxcl.unbound.plist
+    path: ~/Library/LaunchAgents/homebrew.mxcl.unbound.plist
+    state: link
+    force: yes
+  register: unbound_enabled
+
+- name: ensuring resolver directory
+  become: yes
+  file:
+    path: /etc/resolver
+    state: directory
+
+- name: adding dev resolvers
+  become: yes
+  copy:
+    src: etc/resolver/dev
+    dest: /etc/resolver/dev
+
+- name: unloading unbound service
+  command: launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.unbound.plist
+  ignore_errors: yes
+  when: "unbound_installed.changed or unbound_configured.changed or unbound_enabled.changed"
+
+- name: loading unbound service
+  command: launchctl load ~/Library/LaunchAgents/homebrew.mxcl.unbound.plist
+  ignore_errors: yes
+  when: "unbound_installed.changed or unbound_configured.changed or unbound_enabled.changed"

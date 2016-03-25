@@ -29,3 +29,5 @@
   ignore_errors: yes
   with_items: "{{services}}"
   when: "service_installed.changed or service_enabled.changed"
+
+- include: services/unbound.yml
