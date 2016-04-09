@@ -9,6 +9,7 @@
   gem:
     name: "{{item}}"
     state: latest
+    user_install: False
     executable: ~/.rbenv/versions/{{ruby_version}}/bin/gem
   with_items: "{{ruby_gems}}"
   register: ruby_gems_installed
