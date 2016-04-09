@@ -32,4 +32,5 @@ __pycache__/
 
 # User files
 .env
+.envrc
 stdout
