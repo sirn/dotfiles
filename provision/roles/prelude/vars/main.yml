@@ -12,6 +12,7 @@ packages:
   - aria2
   - asciinema
   - brew-rmtree
+  - direnv
   - emacs
   - erlang
   - ghc

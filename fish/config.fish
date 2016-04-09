@@ -14,6 +14,11 @@ if status --is-login --is-interactive
     set -x LC_ALL en_US.UTF-8
     set -x LANG en_US.UTF-8
 
+    # Enable direnv so we can directory-specific envs in .envrc.
+    if which direnv 2>&1 >/dev/null
+       eval (direnv hook fish)
+    end
+
     # Prefer hub over git for GitHub integration.
     if which hub 2>&1 >/dev/null
        function git; hub $argv; end
