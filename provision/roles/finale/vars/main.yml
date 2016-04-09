@@ -11,9 +11,6 @@ dots:
   - ~/.config/fish
 
 links:
-  - source: ~/.dotfiles/etc/ackrc
-    dest: ~/.ackrc
-
   - source: ~/.dotfiles/etc/aria2.conf
     dest: ~/.aria2/aria2.conf
 
