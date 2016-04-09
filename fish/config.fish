@@ -19,11 +19,6 @@ if status --is-login --is-interactive
        eval (direnv hook fish)
     end
 
-    # Prefer hub over git for GitHub integration.
-    if which hub 2>&1 >/dev/null
-       function git; hub $argv; end
-    end
-
     # Prefer nvim over vim over vi.
     if which nvim 2>&1 >/dev/null
         function vim; nvim $argv; end
@@ -34,13 +29,6 @@ if status --is-login --is-interactive
         set -Ux EDITOR vim
     else if which vi 2>&1 >/dev/null
         set -Ux EDITOR vi
-    end
-
-    # Allow VMWare to be used headlessly using vmrun.
-    if test -d /Applications/VMware\ Fusion.app
-        function vmrun
-            /Applications/VMware\ Fusion.app/Contents/Library/vmrun $argv
-        end
     end
 
     # Ruby-specific configurations.

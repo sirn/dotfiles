@@ -18,7 +18,6 @@ packages:
   - ghc
   - git
   - git-flow
-  - hub
   - imagemagick
   - ipcalc
   - keychain
