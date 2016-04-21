@@ -15,7 +15,6 @@ applications:
   - java
   - keyboard-maestro
   - launchbar
-  - mpv
   - omnifocus
   - omnigraffle
   - otto

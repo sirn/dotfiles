@@ -23,6 +23,7 @@ packages:
   - keychain
   - leiningen
   - mercurial
+  - mpv
   - openssh
   - openssl
   - pyenv
