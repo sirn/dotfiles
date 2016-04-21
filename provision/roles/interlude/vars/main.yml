@@ -2,6 +2,7 @@
 applications:
   - airfoil
   - amethyst
+  - arq
   - bartender
   - charles
   - dropshare
