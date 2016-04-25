@@ -1,5 +1,6 @@
 ---
 applications:
+  - adobe-creative-cloud
   - aerial
   - airfoil
   - amethyst
