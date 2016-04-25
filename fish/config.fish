@@ -23,12 +23,12 @@ if status --is-login --is-interactive
     if which nvim 2>&1 >/dev/null
         function vim; nvim $argv; end
         function vi; nvim $argv; end
-        set -Ux EDITOR nvim
+        set -x EDITOR nvim
     else if which vim 2>&1 >/dev/null
         function vi; vim $argv; end
-        set -Ux EDITOR vim
+        set -x EDITOR vim
     else if which vi 2>&1 >/dev/null
-        set -Ux EDITOR vi
+        set -x EDITOR vi
     end
 
     # Ruby-specific configurations.
@@ -48,6 +48,11 @@ if status --is-login --is-interactive
     # Node-specific configurations.
     if test -d /usr/local/share/npm/
         set PATH /usr/local/share/npm/bin $PATH
+    end
+
+    # Homebrew-specific configurations.
+    if which brew 2>&1 >/dev/null
+        set -x HOMEBREW_NO_ANALYTICS 1
     end
 
     # SSH config.d
