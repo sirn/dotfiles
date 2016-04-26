@@ -3,8 +3,6 @@ shell: fish
 
 taps:
   - beeftornado/rmtree
-  - caskroom/cask
-  - caskroom/fonts
   - homebrew/dupes
 
 packages:
