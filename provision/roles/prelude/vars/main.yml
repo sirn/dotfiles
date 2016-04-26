@@ -1,43 +1,31 @@
 ---
-shell: fish
-
-taps:
-  - beeftornado/rmtree
-  - homebrew/dupes
-
 packages:
-  - ansible
   - aria2
-  - asciinema
-  - brew-rmtree
   - direnv
   - emacs
   - erlang
+  - ffmpeg
   - ghc
   - git
-  - git-flow
+  - gitflow
   - imagemagick
   - ipcalc
   - keychain
   - leiningen
   - mercurial
-  - mpv
   - openssh
   - openssl
-  - pyenv
-  - rbenv
-  - ruby-build
-  - rust
-  - shellcheck
-  - the_silver_searcher
+  - silver-searcher
+  - socat
   - tmux
   - trash
-  - xhyve
   - xz
   - youtube-dl
 
-services:
-  - syncthing
+attributed_packages:
+  - goPackages.asciinema
+  - haskellPackages.ShellCheck
+  - pythonPackages.ansible2
 
 ruby_version: 2.2.4
 

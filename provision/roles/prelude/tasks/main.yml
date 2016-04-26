@@ -1,9 +1,7 @@
 ---
-- include: taps.yml
 - include: packages.yml
 - include: services.yml
 - include: shell.yml
 - include: ruby.yml
 - include: python.yml
-- include: pypy.yml
 - include: node.yml

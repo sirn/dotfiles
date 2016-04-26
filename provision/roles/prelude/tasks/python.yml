@@ -1,9 +1,20 @@
 ---
+- name: install pyenv
+  git:
+    repo: https://github.com/yyuu/pyenv.git
+    dest: ~/.pyenv
+    force: yes
+
 - name: install python {{python_version}}
   command: pyenv install {{python_version}}
   args:
     creates: ~/.pyenv/versions/{{python_version}}
   register: python_installed
+
+- name: install pypy {{pypy_version}}
+  command: pyenv install pypy-{{pypy_version}}
+  args:
+    creates: ~/.pyenv/versions/pypy-{{pypy_version}}
 
 # Ansible PYTHONPATH will conflict with Pip's PYTHONPATH
 # and will cause some package included in Ansible to not
@@ -20,9 +31,9 @@
     PYTHONPATH:
 
 - name: update default python
-  command: /usr/local/bin/pyenv global {{python_version}}
+  command: ~/.pyenv/bin/pyenv global {{python_version}}
   when: "python_installed.changed"
 
 - name: update pyenv shims
-  command: /usr/local/bin/pyenv rehash
+  command: ~/.pyenv/bin/pyenv rehash
   when: "python_eggs_installed.changed"

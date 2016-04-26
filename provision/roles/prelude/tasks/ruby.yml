@@ -1,4 +1,16 @@
 ---
+- name: install rbenv
+  git:
+    repo: https://github.com/rbenv/rbenv.git
+    dest: ~/.rbenv
+    force: yes
+
+- name: install ruby-build
+  git:
+    repo: https://github.com/rbenv/ruby-build.git
+    dest: ~/.rbenv/plugins/ruby-build
+    force: yes
+
 - name: install ruby {{ruby_version}}
   command: rbenv install {{ruby_version}}
   args:
@@ -9,15 +21,15 @@
   gem:
     name: "{{item}}"
     state: latest
-    user_install: False
+    user_install: false
     executable: ~/.rbenv/versions/{{ruby_version}}/bin/gem
   with_items: "{{ruby_gems}}"
   register: ruby_gems_installed
 
 - name: update default ruby
-  command: /usr/local/bin/rbenv global {{ruby_version}}
+  command: ~/.rbenv/bin/rbenv global {{ruby_version}}
   when: "ruby_installed.changed"
 
 - name: update rbenv shims
-  command: /usr/local/bin/rbenv rehash
+  command: ~/.rbenv/bin/rbenv rehash
   when: "ruby_gems_installed.changed"

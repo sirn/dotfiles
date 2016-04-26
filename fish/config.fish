@@ -14,6 +14,12 @@ if status --is-login --is-interactive
     set -x LC_ALL en_US.UTF-8
     set -x LANG en_US.UTF-8
 
+    # Nix
+    if test -d $HOME/.nix-profile/
+        eval (eval $HOME/.dotfiles/bin/nix-fish-env 2>/dev/null)
+        set -x GIT_SSL_CAINFO $SSL_CERT_FILE
+    end
+
     # Enable direnv so we can directory-specific envs in .envrc.
     if which direnv 2>&1 >/dev/null
        eval (direnv hook fish)
@@ -48,11 +54,6 @@ if status --is-login --is-interactive
     # Node-specific configurations.
     if test -d /usr/local/share/npm/
         set PATH /usr/local/share/npm/bin $PATH
-    end
-
-    # Homebrew-specific configurations.
-    if which brew 2>&1 >/dev/null
-        set -x HOMEBREW_NO_ANALYTICS 1
     end
 
     # SSH config.d
