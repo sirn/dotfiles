@@ -12,17 +12,15 @@ fi
 
 
 #
-# Nix
+# Homebrew
 #
 
-which -s nix-env
+which -s brew
 if [[ $? != 0 ]] ; then
-    echo -e "* \033[0;33mNix is not installed. Installing.\033[0;0m"
-    curl https://nixos.org/nix/install | sh
-    rmdir nix-binary-tarball-unpack >/dev/null 2>&1
-    . /Users/sirn/.nix-profile/etc/profile.d/nix.sh
+    echo -e "* \033[0;33mHomebrew is not installed. Installing.\033[0;0m"
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 else
-    echo -e "* Nix is already installed. \033[0;32m✓\033[0;0m"
+    echo -e "* Homebrew is already installed. \033[0;32m✓\033[0;0m"
 fi
 
 
@@ -33,7 +31,7 @@ fi
 which -s ansible-playbook
 if [[ $? != 0 ]] ; then
     echo -e "* \033[0;33mAnsible is not installed. Installing.\033[0;0m"
-    $(which nix-env) -f '<nixpkgs>' -iA pythonPackages.ansible2
+    $(which brew) install ansible
 else
     echo -e "* Ansible is already installed. \033[0;32m✓\033[0;0m"
 fi
@@ -45,3 +43,12 @@ fi
 
 echo -e "* \033[0;33mRunning Ansible playbook. This will take a while.\033[0;0m"
 $(which ansible-playbook) provision/local.yml -K -i provision/hosts "$@"
+
+
+#
+# Cleanup
+#
+
+echo -e "* \033[0;33mCleaning up...\033[0;0m"
+rm $HOME/.homebrew_analytics_user_uuid >/dev/null 2>&1
+brew cleanup

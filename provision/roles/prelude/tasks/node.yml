@@ -1,21 +1,21 @@
 ---
 - name: install node
-  nix: name=nodejs state=latest
+  homebrew: name=node state=latest
   register: node_installed
 
 - name: configure npm prefix
-  command: /nix/var/nix/profiles/default/bin/npm config set prefix ~/.local
+  command: /usr/local/bin/npm config set prefix ~/.local
   when: "node_installed.changed"
 
 - name: install npm packages
   npm:
     name: "{{item}}"
     global: true
-    executable: /nix/var/nix/profiles/default/bin/npm
+    executable: /usr/local/bin/npm
   with_items: "{{node_packages}}"
 
 - name: install custom typescript-tools
   npm:
     name: 'https://github.com/sirn/typescript-tools.git#typescript-1.7-exp'
     global: true
-    executable: /nix/var/nix/profiles/default/bin/npm
+    executable: /usr/local/bin/npm

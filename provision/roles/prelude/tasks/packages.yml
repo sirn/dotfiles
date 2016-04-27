@@ -1,21 +1,14 @@
 ---
-- name: update nix channels
-  nix: update_channels=yes
+- name: initialize homebrew taps
+  homebrew_tap: tap={{item}} state=present
+  with_items: "{{taps}}"
 
-- name: install nix packages
-  nix:
-    name: "{{item}}"
-    state: present
-    expr: ~/.dotfiles/nix/custom-packages.nix
+- name: update homebrew
+  homebrew: update_homebrew=yes
+
+- name: install homebrew packages
+  homebrew: name={{item}} state=present
   with_items: "{{packages}}"
 
-- name: install attributed nix packages
-  nix:
-    name: "{{item}}"
-    expr: "<nixpkgs>"
-    state: present
-    attr: true
-  with_items: "{{attributed_packages}}"
-
-- name: upgrade nix packages
-  nix: upgrade_packages=yes
+- name: upgrade homebrew packages
+  homebrew: upgrade_all=yes

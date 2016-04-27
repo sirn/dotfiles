@@ -1,6 +1,6 @@
 ---
 - name: install unbound service
-  nix: name=unbound state=latest
+  homebrew: name=unbound state=latest
   register: unbound_installed
 
 - name: updating unbound configurations

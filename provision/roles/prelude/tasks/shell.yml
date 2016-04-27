@@ -1,16 +1,16 @@
 ---
 - name: install fish shell
-  nix: name=fish state=latest
+  homebrew: name=fish state=latest
 
 - name: appending fish to list of shells
   become: yes
   lineinfile:
     dest: /etc/shells
-    line: /nix/var/nix/profiles/default/bin/fish
+    line: /usr/local/bin/fish
     state: present
   register: fish_append
 
 - name: changing default shell
   become: yes
-  command: chsh -s /nix/var/nix/profiles/default/bin/fish {{ansible_user_id}}
+  command: chsh -s /usr/local/bin/fish {{ansible_user_id}}
   when: "fish_append.changed"

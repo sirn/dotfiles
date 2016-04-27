@@ -14,10 +14,9 @@ if status --is-login --is-interactive
     set -x LC_ALL en_US.UTF-8
     set -x LANG en_US.UTF-8
 
-    # Nix
-    if test -d $HOME/.nix-profile/
-        eval (eval $HOME/.dotfiles/bin/nix-fish-env 2>/dev/null)
-        set -x GIT_SSL_CAINFO $SSL_CERT_FILE
+    # Homebrew
+    if which brew 2>&1 >/dev/null
+        set -x HOMEBREW_NO_ANALYTICS 1
     end
 
     # Enable direnv so we can directory-specific envs in .envrc.

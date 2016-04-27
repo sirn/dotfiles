@@ -1,31 +1,34 @@
 ---
+taps:
+  - homebrew/dupes
+
 packages:
+  - ansible
   - aria2
+  - asciinema
   - direnv
   - emacs
   - erlang
   - ffmpeg
   - ghc
   - git
-  - gitflow
+  - git-flow
   - imagemagick
   - ipcalc
   - keychain
   - leiningen
   - mercurial
+  - mpv
   - openssh
   - openssl
-  - silver-searcher
+  - rust
+  - shellcheck
   - socat
+  - the_silver_searcher
   - tmux
   - trash
   - xz
   - youtube-dl
-
-attributed_packages:
-  - goPackages.asciinema
-  - haskellPackages.ShellCheck
-  - pythonPackages.ansible2
 
 ruby_version: 2.2.4
 
