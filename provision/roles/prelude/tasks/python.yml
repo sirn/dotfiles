@@ -6,13 +6,13 @@
     force: yes
 
 - name: install python {{python_version}}
-  command: pyenv install {{python_version}}
+  command: ~/.pyenv/bin/pyenv install {{python_version}}
   args:
     creates: ~/.pyenv/versions/{{python_version}}
   register: python_installed
 
 - name: install pypy {{pypy_version}}
-  command: pyenv install pypy-{{pypy_version}}
+  command: ~/.pyenv/bin/pyenv install pypy-{{pypy_version}}
   args:
     creates: ~/.pyenv/versions/pypy-{{pypy_version}}
 

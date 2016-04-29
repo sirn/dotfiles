@@ -12,7 +12,7 @@
     force: yes
 
 - name: install ruby {{ruby_version}}
-  command: rbenv install {{ruby_version}}
+  command: ~/.rbenv/bin/rbenv install {{ruby_version}}
   args:
     creates: ~/.rbenv/versions/{{ruby_version}}
   register: ruby_installed
