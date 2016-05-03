@@ -1,6 +1,7 @@
 ---
 taps:
   - homebrew/dupes
+  - homebrew/binary
 
 packages:
   - ansible
@@ -20,6 +21,7 @@ packages:
   - leiningen
   - mercurial
   - mpv
+  - ngrok2
   - openssh
   - openssl
   - rust
