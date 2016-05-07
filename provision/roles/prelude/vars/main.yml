@@ -2,6 +2,7 @@
 taps:
   - homebrew/dupes
   - homebrew/binary
+  - homebrew/versions
 
 packages:
   - ansible
@@ -24,6 +25,7 @@ packages:
   - ngrok2
   - openssh
   - openssl
+  - rebar3
   - rust
   - shellcheck
   - socat
