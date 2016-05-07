@@ -14,6 +14,8 @@ if status --is-login
 
     if which brew 2>&1 >/dev/null
         set -x HOMEBREW_NO_ANALYTICS 1
+        set -x OPENSSL_INCLUDE_DIR /usr/local/opt/openssl/include
+        set -x OPENSSL_LIB_DIR /usr/local/opt/openssl/lib
     end
 
     if test -d $HOME/.rbenv
