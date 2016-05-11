@@ -41,6 +41,7 @@ ruby_gems:
   - bundler
   - middleman
   - pry
+  - terraforming
   - tmuxinator
 
 python3_version: 3.4.4
