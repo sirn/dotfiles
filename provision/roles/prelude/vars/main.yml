@@ -5,7 +5,6 @@ taps:
   - homebrew/versions
 
 packages:
-  - ansible
   - aria2
   - asciinema
   - cocot
@@ -44,10 +43,14 @@ ruby_gems:
   - pry
   - tmuxinator
 
-python_version: 3.4.4
+python3_version: 3.4.4
+python2_version: 2.7.11
 pypy_version: 5.0.0
 
-python_eggs:
+python2_eggs:
+  - ansible
+
+python3_eggs:
   - autoflake
   - glances
   - ipython

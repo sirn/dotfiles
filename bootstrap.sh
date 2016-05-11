@@ -30,6 +30,7 @@ fi
 
 which -s ansible-playbook
 if [[ $? != 0 ]] ; then
+    export ansible_bootstrapped=1
     echo -e "* \033[0;33mAnsible is not installed. Installing.\033[0;0m"
     $(which brew) install ansible
 else
@@ -52,3 +53,8 @@ $(which ansible-playbook) provision/local.yml -K -i provision/hosts "$@"
 echo -e "* \033[0;33mCleaning up...\033[0;0m"
 rm $HOME/.homebrew_analytics_user_uuid >/dev/null 2>&1
 brew cleanup
+
+if [ $ansible_bootstrapped ]; then
+    echo -e "* \033[0;33mUninstalling a bootstrapped Ansible.\033[0;0m"
+    $(which brew) uninstall ansible
+fi
