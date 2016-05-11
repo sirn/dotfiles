@@ -1,0 +1,18 @@
+---
+- name: create arcanist base directory
+  file: path=~/.local/src/arcanist state=directory
+
+- name: clone arcanist prerequisites
+  git:
+    repo: https://github.com/phacility/{{item}}.git
+    dest: ~/.local/src/arcanist/{{item}}
+    force: yes
+  with_items:
+    - arcanist
+    - libphutil
+
+- name: link arcanist binary
+  file:
+    src: ~/.local/src/arcanist/arcanist/bin/arc
+    dest: ~/.local/bin/arc
+    state: link
