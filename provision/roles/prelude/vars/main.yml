@@ -29,6 +29,7 @@ packages:
   - rust
   - shellcheck
   - socat
+  - terraform
   - the_silver_searcher
   - tmux
   - trash
