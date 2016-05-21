@@ -12,6 +12,7 @@
      clojure
      emacs-lisp
      erlang
+     erlang-rebar
      git
      haskell
      html
