@@ -22,12 +22,12 @@
      org
      osx
      python
-     '((ruby
-        :variables
-        ruby-version-manager 'rbenv
-        ruby-test-runner 'ruby-test))
+     (ruby :variables
+           ruby-version-manager 'rbenv
+           ruby-test-runner 'ruby-test)
      ruby-on-rails
-     shell
+     (shell :variables
+            shell-default-shell 'eshell)
      syntax-checking
      typescript
      vagrant
