@@ -32,8 +32,6 @@ if status --is-login
 
     if which keychain 2>&1 >/dev/null
         eval (keychain --eval --quiet) >/dev/null
-        launchctl setenv SSH_AGENT_PID $SSH_AGENT_PID
-        launchctl setenv SSH_AUTH_SOCK $SSH_AUTH_SOCK
     end
 
 end
