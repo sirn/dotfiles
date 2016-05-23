@@ -27,6 +27,7 @@
         ruby-version-manager 'rbenv
         ruby-test-runner 'ruby-test))
      ruby-on-rails
+     shell
      syntax-checking
      typescript
      vagrant
