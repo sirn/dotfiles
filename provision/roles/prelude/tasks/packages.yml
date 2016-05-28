@@ -1,14 +1,8 @@
 ---
-- name: initialize homebrew taps
-  homebrew_tap: tap={{item}} state=present
-  with_items: "{{taps}}"
+- name: update nix channels
+  nix: update_channels=yes
 
-- name: update homebrew
-  homebrew: update_homebrew=yes
-
-- name: install homebrew packages
-  homebrew: name={{item}} state=present
-  with_items: "{{packages}}"
-
-- name: upgrade homebrew packages
-  homebrew: upgrade_all=yes
+- name: install nix packages
+  nix: name=all state=present
+  environment:
+    NIXPKGS_CONFIG: "{{ansible_env['HOME']}}/.dotfiles/nix/default.nix"

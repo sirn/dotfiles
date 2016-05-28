@@ -6,7 +6,7 @@
     <string>net.syncthing.syncthing</string>
     <key>ProgramArguments</key>
     <array>
-      <string>/usr/local/bin/syncthing</string>
+      <string>/nix/var/nix/profiles/default/bin/syncthing</string>
       <string>-no-browser</string>
       <string>-no-restart</string>
     </array>

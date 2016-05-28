@@ -1,8 +1,4 @@
 ---
-- name: install unbound service
-  homebrew: name=unbound state=latest
-  register: unbound_installed
-
 - name: updating unbound configurations
   copy:
     src: usr/local/etc/unbound/unbound.conf
@@ -30,9 +26,9 @@
 - name: unloading unbound service
   command: launchctl unload ~/Library/LaunchAgents/net.unbound.unbound.plist
   ignore_errors: yes
-  when: "unbound_installed.changed or unbound_configured.changed or unbound_enabled.changed"
+  when: "unbound_configured.changed or unbound_enabled.changed"
 
 - name: loading unbound service
   command: launchctl load ~/Library/LaunchAgents/net.unbound.unbound.plist
   ignore_errors: yes
-  when: "unbound_installed.changed or unbound_configured.changed or unbound_enabled.changed"
+  when: "unbound_configured.changed or unbound_enabled.changed"
