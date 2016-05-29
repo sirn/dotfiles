@@ -11,9 +11,9 @@
 - name: unloading syncthing service
   command: launchctl unload ~/Library/LaunchAgents/net.syncthing.syncthing.plist
   ignore_errors: yes
-  when: "syncthing_enabled.changed"
+  when: "syncthing_enabled.changed or packages_updated.changed"
 
 - name: loading syncthing service
   command: launchctl load ~/Library/LaunchAgents/net.syncthing.syncthing.plist
   ignore_errors: yes
-  when: "syncthing_enabled.changed"
+  when: "syncthing_enabled.changed or packages_updated.changed"

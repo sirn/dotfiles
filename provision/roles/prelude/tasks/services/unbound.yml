@@ -32,9 +32,9 @@
 - name: unloading unbound service
   command: launchctl unload ~/Library/LaunchAgents/net.unbound.unbound.plist
   ignore_errors: yes
-  when: "unbound_configured.changed or unbound_enabled.changed"
+  when: "unbound_configured.changed or unbound_enabled.changed or packages_updated.changed"
 
 - name: loading unbound service
   command: launchctl load ~/Library/LaunchAgents/net.unbound.unbound.plist
   ignore_errors: yes
-  when: "unbound_configured.changed or unbound_enabled.changed"
+  when: "unbound_configured.changed or unbound_enabled.changed or packages_updated.changed"
