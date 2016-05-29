@@ -9,8 +9,8 @@ server:
     local-data: "dev. 10800 IN A 127.0.0.1"
 
     # Unbound is going to run as unprivileged user by launchd.
-    directory: "/usr/local/etc/unbound"
-    pidfile: "/usr/local/etc/unbound/unbound.pid"
+    directory: "{{ansible_env['HOME']}}/.local/etc/unbound"
+    pidfile: "{{ansible_env['HOME']}}/.local/etc/unbound/unbound.pid"
     do-daemonize: no
     username: ""
     chroot: ""

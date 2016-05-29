@@ -10,14 +10,14 @@
     <true/>
     <key>ProgramArguments</key>
     <array>
-      <string>/nix/var/nix/profiles/default/bin/unbound</string>
+      <string>{{ansible_env['HOME']}}/.nix-profile/bin/unbound</string>
       <string>-d</string>
       <string>-c</string>
-      <string>/usr/local/etc/unbound/unbound.conf</string>
+      <string>{{ansible_env['HOME']}}/.local/etc/unbound/unbound.conf</string>
     </array>
     <key>StandardErrorPath</key>
-    <string>/dev/null</string>
+    <string>{{ansible_env['HOME']}}/.local/var/log/unbound.log</string>
     <key>StandardOutPath</key>
-    <string>/dev/null</string>
+    <string>{{ansible_env['HOME']}}/.local/var/log/unbound.log</string>
   </dict>
 </plist>

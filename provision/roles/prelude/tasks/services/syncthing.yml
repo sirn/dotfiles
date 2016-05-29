@@ -1,7 +1,10 @@
 ---
+- name: ensure syncthing directory
+  file: path=~/.local/var/log state=directory
+
 - name: enable syncthing service
-  copy:
-    src: home/Library/LaunchAgents/net.syncthing.syncthing.plist
+  template:
+    src: home/Library/LaunchAgents/net.syncthing.syncthing.plist.j2
     dest: ~/Library/LaunchAgents/net.syncthing.syncthing.plist
   register: syncthing_enabled
 

@@ -6,7 +6,7 @@
     <string>net.syncthing.syncthing</string>
     <key>ProgramArguments</key>
     <array>
-      <string>/nix/var/nix/profiles/default/bin/syncthing</string>
+      <string>{{ansible_env['HOME']}}/.nix-profile/bin/syncthing</string>
       <string>-no-browser</string>
       <string>-no-restart</string>
     </array>
@@ -20,8 +20,8 @@
     <key>ProcessType</key>
     <string>Background</string>
     <key>StandardErrorPath</key>
-    <string>/usr/local/var/log/syncthing.log</string>
+    <string>{{ansible_env['HOME']}}/.local/var/log/syncthing.log</string>
     <key>StandardOutPath</key>
-    <string>/usr/local/var/log/syncthing.log</string>
+    <string>{{ansible_env['HOME']}}/.local/var/log/syncthing.log</string>
   </dict>
 </plist>

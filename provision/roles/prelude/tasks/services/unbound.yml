@@ -1,13 +1,19 @@
 ---
+- name: ensure unbound directories
+  file: path={{item}} state=directory
+  with_items:
+    - ~/.local/etc/unbound
+    - ~/.local/var/log
+
 - name: updating unbound configurations
-  copy:
-    src: usr/local/etc/unbound/unbound.conf
-    dest: /usr/local/etc/unbound/unbound.conf
+  template:
+    src: home/local/etc/unbound/unbound.conf.j2
+    dest: "{{ansible_env['HOME']}}/.local/etc/unbound/unbound.conf"
   register: unbound_configured
 
 - name: enabling unbound service
-  copy:
-    src: home/Library/LaunchAgents/net.unbound.unbound.plist
+  template:
+    src: home/Library/LaunchAgents/net.unbound.unbound.plist.j2
     dest: ~/Library/LaunchAgents/net.unbound.unbound.plist
   register: unbound_enabled
 
