@@ -1,34 +1,14 @@
 {
   packageOverrides = pkgs: with pkgs; rec {
-    localAria2 = import ./pkgs/aria2 {
-      inherit stdenv fetchurl pkgconfig autoreconfHook cacert;
-      inherit openssl c-ares libxml2 sqlite zlib libssh2;
-    };
+    callPackageDarwin = newScope darwin.apple_sdk.frameworks;
 
-    localTrash = import ./pkgs/trash {
-      inherit stdenv fetchurl clang;
-      inherit (darwin.apple_sdk.frameworks) AppKit Cocoa ScriptingBridge;
-    };
-
-    localTmuxinator = import ./pkgs/tmuxinator {
-      inherit stdenv bundlerEnv ruby;
-    };
-
-    python35LocalAutoflake = import ./pkgs/autoflake {
-      inherit stdenv fetchurl python35Packages;
-    };
-
-    nodeLocalTypescript = import ./pkgs/typescript {
-      inherit stdenv nodePackages;
-    };
-
-    nodeLocalTypescriptTools = import ./pkgs/typescript-tools {
-      inherit stdenv nodePackages;
-    };
-
-    go16LocalSyncthing = import ./pkgs/syncthing {
-      inherit stdenv fetchurl go_1_6;
-    };
+    localAria2 = callPackage ./pkgs/aria2 { };
+    localTrash = callPackageDarwin ./pkgs/trash { };
+    localTmuxinator = callPackage ./pkgs/tmuxinator { };
+    python35LocalAutoflake = callPackage ./pkgs/autoflake { };
+    nodeLocalTypescript = callPackage ./pkgs/typescript { };
+    nodeLocalTypescriptTools = callPackage ./pkgs/typescript-tools { };
+    go16LocalSyncthing = callPackage ./pkgs/syncthing { };
 
     all = buildEnv {
       name = "all";
