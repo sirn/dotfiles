@@ -17,6 +17,7 @@
       paths = [
         ansible2
         asciinema
+        bundler
         direnv
         emacs
         erlang

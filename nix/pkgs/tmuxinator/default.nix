@@ -1,19 +1,27 @@
-{ stdenv, bundlerEnv, ruby }:
+{ stdenv, bundlerEnv, ruby, makeWrapper }:
 
-bundlerEnv rec {
-  name = "tmuxinator-${version}";
-  version = "0.8.1";
+stdenv.mkDerivation rec {
+  name = "tmuxinator-${env.gems.tmuxinator.version}";
 
-  inherit ruby;
-  gemfile = ./Gemfile;
-  lockfile = ./Gemfile.lock;
-  gemset = ./gemset.nix;
+  env = bundlerEnv {
+    inherit ruby;
+    name = "${name}-gems";
+    gemfile = ./Gemfile;
+    lockfile = ./Gemfile.lock;
+    gemset = ./gemset.nix;
+  };
+
+  buildInputs = [ makeWrapper ];
+  phases = ["installPhase"];
+  installPhase = ''
+    mkdir -p $out/bin
+    makeWrapper ${env}/bin/tmuxinator $out/bin/tmuxinator
+  '';
 
   meta = with stdenv.lib; {
     description = "Manage complex tmux sessions easily";
     homepage = https://github.com/tmuxinator/tmuxinator;
     license = licenses.mit;
-    maintainers = with maintainers; [ auntie ];
     platforms = platforms.unix;
   };
 }
