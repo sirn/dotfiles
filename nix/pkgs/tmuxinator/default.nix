@@ -1,27 +1,30 @@
-{ stdenv, bundlerEnv, ruby, makeWrapper }:
+{ buildRubyGem, makeWrapper, ruby }:
 
-stdenv.mkDerivation rec {
-  name = "tmuxinator-${env.gems.tmuxinator.version}";
+buildRubyGem rec {
+  inherit ruby;
+  name = "${gemName}-${version}";
+  gemName = "tmuxinator";
+  version = "0.8.1";
+  sha256 = "1cpmlfa684j9r1hjya70nfcl5lzdbzmbi9hqbs5nhxha97b77qs5";
 
-  env = bundlerEnv {
+  # Horrible hack until BUNDLE_FROZEN='1' is removed from bundleEnv
+  # as it breaks anything that runs under Tmuxinator that use Bundler.
+
+  erubis = buildRubyGem rec {
     inherit ruby;
-    name = "${name}-gems";
-    gemfile = ./Gemfile;
-    lockfile = ./Gemfile.lock;
-    gemset = ./gemset.nix;
+    name = "ruby${ruby.version}-${gemName}-${version}";
+    gemName = "erubis";
+    version = "2.7.0";
+    sha256 = "1fj827xqjs91yqsydf0zmfyw9p4l2jz5yikg3mppz6d7fi8kyrb3";
   };
 
-  buildInputs = [ makeWrapper ];
-  phases = ["installPhase"];
-  installPhase = ''
-    mkdir -p $out/bin
-    makeWrapper ${env}/bin/tmuxinator $out/bin/tmuxinator
-  '';
-
-  meta = with stdenv.lib; {
-    description = "Manage complex tmux sessions easily";
-    homepage = https://github.com/tmuxinator/tmuxinator;
-    license = licenses.mit;
-    platforms = platforms.unix;
+  thor = buildRubyGem rec {
+    inherit ruby;
+    name = "ruby${ruby.version}-${gemName}-${version}";
+    gemName = "thor";
+    version = "0.19.1";
+    sha256 = "08p5gx18yrbnwc6xc0mxvsfaxzgy2y9i78xq7ds0qmdm67q39y4z";
   };
+
+  propagatedBuildInputs = [ erubis thor ];
 }
