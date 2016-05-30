@@ -3,7 +3,7 @@
   nix: update_channels=yes
 
 - name: install nix packages
-  nix: name=all state=present
+  nix: name=all state=present force=yes
   register: packages_updated
   environment:
     NIXPKGS_CONFIG: "{{ansible_env['HOME']}}/.dotfiles/nix/default.nix"

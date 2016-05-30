@@ -64,7 +64,7 @@ class NixPkg(object):
         if status != 0:
             raise NixPkgException(
                 'an error occurred while installing %s: %s' % (pkg, err))
-        return out
+        return err
 
     def _upgrade(self, pkg):
         cmd = ['--upgrade']
@@ -74,14 +74,14 @@ class NixPkg(object):
         if status != 0:
             msg = 'an error occurred while upgrading %s: %s' % (pkg, err)
             raise NixPkgException(msg)
-        return out
+        return err
 
     def _uninstall(self, pkg):
         status, out, err = self._nix_env('--uninstall', pkg)
         if status != 0:
             msg = 'an error occurred while uninstalling %s: %s' % (pkg, err)
             raise NixPkgException(msg)
-        return out
+        return err
 
     #
     # Result
@@ -105,7 +105,7 @@ class NixPkg(object):
         if status != 0:
             raise NixPkgException(
                 'an error occurred while upgrading packages: %s' % (err,))
-        if out != '':
+        if err != '':
             return self._changed('packages has been succesfully upgraded')
         return self._message('all packages are up-to-date')
 
@@ -114,7 +114,7 @@ class NixPkg(object):
         if status != 0:
             raise NixPkgException(
                 'an error occurred while upgrading packages: %s' % (err,))
-        if out != '':
+        if err != '':
             return self._changed('channels has been succesfully updated')
         return self._message('channels are up-to-date')
 
@@ -125,10 +125,11 @@ class NixPkg(object):
     def _state_present(self):
         i = 0
         for pkg in self.packages:
-            if self._check_package(pkg):
+            if not self.force and self._check_package(pkg):
                 continue
-            self._install(pkg)
-            i += 1
+            err = self._install(pkg)
+            if not err.rstrip().split("\n")[-1].startswith('installing'):
+                i += 1
         if i:
             return self._changed('installed %s package(s)' % i)
         return self._message('no package was installed')
@@ -141,8 +142,8 @@ class NixPkg(object):
                 self._install(pkg)
                 i += 1
             else:
-                out = self._upgrade(pkg)
-                if out != '':
+                err = self._upgrade(pkg)
+                if err != '':
                     u += 1
         if u and not i:
             return self._changed('upgraded %s package(s)' % u)
@@ -172,6 +173,7 @@ def main():
             name=dict(aliases=['pkg', 'name'], required=False, type='list'),
             expr=dict(require=False, default=None),
             attr=dict(require=False, default=None, type='bool'),
+            force=dict(require=False, type='bool'),
             update_channels=dict(required=False, type='bool'),
             upgrade_packages=dict(required=False, type='bool'),
             state=dict(default='present', choices=[
@@ -197,6 +199,7 @@ def main():
         module=module,
         packages=packages,
         state=module.params['state'],
+        force=module.params['force'],
         update_channels=module.params['update_channels'],
         upgrade_packages=module.params['upgrade_packages'],
         expr=module.params['expr'],
