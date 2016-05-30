@@ -5,6 +5,7 @@
     localAria2 = callPackage ./pkgs/aria2 { };
     localTrash = callPackageDarwin ./pkgs/trash { };
     localTmuxinator = callPackage ./pkgs/tmuxinator { };
+    localGitFlow = callPackage ./pkgs/gitflow { };
     python35LocalAutoflake = callPackage ./pkgs/autoflake { };
     nodeLocalTypescript = callPackage ./pkgs/typescript { };
     nodeLocalTypescriptTools = callPackage ./pkgs/typescript-tools { };
@@ -23,7 +24,6 @@
         fish
         ghc
         gitAndTools.gitFull
-        gitAndTools.gitflow
         gitAndTools.hub
         go16LocalSyncthing
         haskellPackages.ShellCheck
@@ -32,6 +32,7 @@
         keychain
         leiningen
         localAria2
+        localGitFlow
         localTmuxinator
         localTrash
         mercurial
