@@ -54,6 +54,7 @@
         silver-searcher
         socat
         terraform
+        texlive.combined.scheme-basic
         tmux
         unbound
         xz
