@@ -5,6 +5,7 @@
     localAria2 = callPackage ./pkgs/aria2 { };
     localTrash = callPackageDarwin ./pkgs/trash { };
     localTmuxinator = callPackage ./pkgs/tmuxinator { };
+    localTexlive = callPackage ./pkgs/texlive { };
     localGitFlow = callPackage ./pkgs/gitflow { };
     python35LocalAutoflake = callPackage ./pkgs/autoflake { };
     nodeLocalTypescript = callPackage ./pkgs/typescript { };
@@ -34,6 +35,7 @@
         leiningen
         localAria2
         localGitFlow
+        localTexlive
         localTmuxinator
         localTrash
         mercurial
@@ -54,7 +56,6 @@
         silver-searcher
         socat
         terraform
-        texlive.combined.scheme-basic
         tmux
         unbound
         xz
