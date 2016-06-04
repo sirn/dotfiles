@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #
 # Xcode Command-Line Tools
@@ -20,7 +20,9 @@ if [[ $? != 0 ]] ; then
     echo -e "* \033[0;33mNix is not installed. Installing.\033[0;0m"
     curl https://nixos.org/nix/install | sh
     rmdir nix-binary-tarball-unpack >/dev/null 2>&1
-    . $HOME/.nix-profile/etc/profile.d/nix.sh
+
+    # shellcheck source=/dev/null
+    . "$HOME/.nix-profile/etc/profile.d/nix.sh"
 else
     echo -e "* Nix is already installed. \033[0;32m✓\033[0;0m"
 fi
