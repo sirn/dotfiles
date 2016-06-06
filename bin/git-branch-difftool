@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-git difftool $(git branched-commit)
+git difftool $(git branched-commit $@)

@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-git diff $(git branched-commit)
+git diff $(git branched-commit $@)
