@@ -2,9 +2,9 @@
 
 stdenv.lib.overrideDerivation gitAndTools.gitflow (oldAttrs: {
   src = fetchFromGitHub {
-    owner = "sirn";
+    owner = "petervanderdoes";
     repo = "gitflow-avh";
-    rev = "develop";
-    sha256 = "03lc4k0jkxz989vvgbnp68apj68v61fn8q5l3zsvx434s7v4lz4b";
+    rev = "b261d1c61026822dedca02ede100e5df27e1d5bf";
+    sha256 = "1aqay58z16cnrbhqflrgkkviphavbi18iiqks1hgjmjymkxkrqnd";
   };
 })

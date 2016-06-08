@@ -2,16 +2,16 @@
   packageOverrides = pkgs: with pkgs; rec {
     callPackageDarwin = newScope darwin.apple_sdk.frameworks;
 
-    localAria2 = callPackage ./pkgs/aria2 { };
-    localTrash = callPackageDarwin ./pkgs/trash { };
-    localTmuxinator = callPackage ./pkgs/tmuxinator { };
-    localTexlive = callPackage ./pkgs/texlive { };
-    localGitFlow = callPackage ./pkgs/gitflow { };
     erlangLocalRebar3 = callPackage ./pkgs/rebar3 { };
-    python35LocalAutoflake = callPackage ./pkgs/autoflake { };
+    go16LocalSyncthing = callPackage ./pkgs/syncthing { };
+    localAria2 = callPackage ./pkgs/aria2 { };
+    localGitFlow = callPackage ./pkgs/gitflow { };
+    localTexlive = callPackage ./pkgs/texlive { };
+    localTmuxinator = callPackage ./pkgs/tmuxinator { };
+    localTrash = callPackageDarwin ./pkgs/trash { };
     nodeLocalTypescript = callPackage ./pkgs/typescript { };
     nodeLocalTypescriptTools = callPackage ./pkgs/typescript-tools { };
-    go16LocalSyncthing = callPackage ./pkgs/syncthing { };
+    python35LocalAutoflake = callPackage ./pkgs/autoflake { };
 
     all = buildEnv {
       name = "all";
