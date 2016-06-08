@@ -7,6 +7,7 @@
     localTmuxinator = callPackage ./pkgs/tmuxinator { };
     localTexlive = callPackage ./pkgs/texlive { };
     localGitFlow = callPackage ./pkgs/gitflow { };
+    erlangLocalRebar3 = callPackage ./pkgs/rebar3 { };
     python35LocalAutoflake = callPackage ./pkgs/autoflake { };
     nodeLocalTypescript = callPackage ./pkgs/typescript { };
     nodeLocalTypescriptTools = callPackage ./pkgs/typescript-tools { };
@@ -22,6 +23,7 @@
         direnv
         emacs
         erlang
+        erlangLocalRebar3
         ffmpeg
         fish
         ghc
@@ -50,7 +52,6 @@
         python35Packages.ipython
         python35Packages.pip
         python35Packages.virtualenv
-        rebar3
         ruby
         rustc
         silver-searcher
