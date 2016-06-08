@@ -108,6 +108,7 @@
   ;; (Or maybe consistency wrong is a better word.)
   (setq ns-use-srgb-colorspace nil)
   (setq powerline-default-separator 'utf-8)
+  (spaceline-compile)
 
   )
 
