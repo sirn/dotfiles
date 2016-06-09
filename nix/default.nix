@@ -9,6 +9,7 @@
     localTexlive = callPackage ./pkgs/texlive { };
     localTmuxinator = callPackage ./pkgs/tmuxinator { };
     localTrash = callPackageDarwin ./pkgs/trash { };
+    nodeLocalTern = callPackage ./pkgs/tern { };
     nodeLocalTypescript = callPackage ./pkgs/typescript { };
     nodeLocalTypescriptTools = callPackage ./pkgs/typescript-tools { };
     python35LocalAutoflake = callPackage ./pkgs/autoflake { };
@@ -41,6 +42,7 @@
         localTmuxinator
         localTrash
         mercurial
+        nodeLocalTern
         nodeLocalTypescript
         nodeLocalTypescriptTools
         nodejs
