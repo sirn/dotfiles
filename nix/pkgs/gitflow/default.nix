@@ -1,6 +1,6 @@
 { stdenv, gitAndTools, fetchFromGitHub }:
 
-stdenv.lib.overrideDerivation gitAndTools.gitflow (oldAttrs: {
+gitAndTools.gitflow.overrideDerivation (oldAttrs: {
   src = fetchFromGitHub {
     owner = "petervanderdoes";
     repo = "gitflow-avh";
