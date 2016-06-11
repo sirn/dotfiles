@@ -2,6 +2,13 @@
   packageOverrides = pkgs: with pkgs; rec {
     callPackageDarwin = newScope darwin.apple_sdk.frameworks;
 
+    # Horrible hack to make x509 works in OSX.
+    go_1_6 = pkgs.go_1_6.overrideDerivation (oldAttrs: {
+      patches = oldAttrs.patches ++ [
+        ./pkgs/go-patch/x509_darwin_nonc.patch
+      ];
+    });
+
     erlangLocalRebar3 = callPackage ./pkgs/rebar3 { };
     go16LocalSyncthing = callPackage ./pkgs/syncthing { };
     localAria2 = callPackage ./pkgs/aria2 { };
