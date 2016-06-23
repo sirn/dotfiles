@@ -19,13 +19,13 @@
     nodeLocalTern = callPackage ./pkgs/tern { };
     nodeLocalTypescript = callPackage ./pkgs/typescript { };
     nodeLocalTypescriptTools = callPackage ./pkgs/typescript-tools { };
+    python26LocalAnsible2 = callPackage ./pkgs/ansible2 { };
     python35LocalAutoflake = callPackage ./pkgs/autoflake { };
 
     all = buildEnv {
       name = "all";
 
       paths = [
-        ansible2
         asciinema
         bundler
         direnv
@@ -56,6 +56,7 @@
         openssh
         openssl
         python
+        python26LocalAnsible2
         python35
         python35LocalAutoflake
         python35Packages.ipython
