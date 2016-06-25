@@ -38,6 +38,7 @@
         gitAndTools.gitFull
         gitAndTools.hub
         go16LocalSyncthing
+        graphviz
         haskellPackages.ShellCheck
         imagemagick
         ipcalc
