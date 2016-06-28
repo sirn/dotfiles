@@ -42,6 +42,7 @@
         haskellPackages.ShellCheck
         imagemagick
         ipcalc
+        irssi
         keychain
         leiningen
         localAria2
