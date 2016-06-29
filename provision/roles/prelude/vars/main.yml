@@ -1,0 +1,69 @@
+---
+brew_taps:
+  - homebrew/dupes
+  - homebrew/binary
+  - homebrew/versions
+
+brew_packages:
+  - aria2
+  - asciinema
+  - cocot
+  - direnv
+  - emacs
+  - erlang
+  - ffmpeg
+  - ghc
+  - git
+  - git-flow
+  - graphviz
+  - imagemagick
+  - ipcalc
+  - irssi
+  - keychain
+  - leiningen
+  - mercurial
+  - mpv
+  - ngrok2
+  - openssh
+  - openssl
+  - rebar3
+  - rust
+  - shellcheck
+  - socat
+  - terraform
+  - the_silver_searcher
+  - tmux
+  - trash
+  - xz
+  - youtube-dl
+
+ruby_version: 2.3.1
+
+ruby_packages:
+  - bundler
+  - middleman
+  - pry
+  - terraforming
+  - tmuxinator
+
+python2_version: 2.7.12
+
+python2_packages:
+  - ansible
+
+python3_version: 3.5.2
+
+python3_packages:
+  - autoflake
+  - glances
+  - ipython
+  - jupyter
+  - pip
+  - virtualenv
+
+node_packages:
+  - autoprefixer
+  - postcss
+  - postcss-cli
+  - tern
+  - typescript

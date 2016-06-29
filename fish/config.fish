@@ -10,10 +10,22 @@ if status --is-login
     set -x PATH $HOME/.local/bin $PATH
     set -x PATH $HOME/.dotfiles/bin $PATH
 
-    if test -d $HOME/.nix-profile/
-        eval (eval $HOME/.dotfiles/bin/nix-fish-env) 2>/dev/null
-        set -x NIXPKGS_CONFIG $HOME/.dotfiles/nix/default.nix
-        set -x GIT_SSL_CAINFO $SSL_CERT_FILE
+    if which brew 2>&1 >/dev/null
+        set -x HOMEBREW_NO_ANALYTICS 1
+        set -x OPENSSL_INCLUDE_DIR /usr/local/opt/openssl/include
+        set -x OPENSSL_LIB_DIR /usr/local/opt/openssl/lib
+    end
+
+    if test -d $HOME/.rbenv
+        set -x PATH $HOME/.rbenv/bin $PATH
+        set -x PATH $HOME/.rbenv/shims $PATH
+        rbenv rehash >/dev/null
+    end
+
+    if test -d $HOME/.pyenv
+        set -x PATH $HOME/.pyenv/bin $PATH
+        set -x PATH $HOME/.pyenv/shims $PATH
+        pyenv rehash >/dev/null
     end
 
     if which keychain 2>&1 >/dev/null

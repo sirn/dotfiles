@@ -1,4 +1,8 @@
 ---
+- name: install unbound service
+  homebrew: name=unbound state=latest
+  register: unbound_installed
+
 - name: ensure unbound directories
   file: path={{item}} state=directory
   with_items:
@@ -32,9 +36,9 @@
 - name: unloading unbound service
   command: launchctl unload ~/Library/LaunchAgents/net.unbound.unbound.plist
   ignore_errors: yes
-  when: "unbound_configured.changed or unbound_enabled.changed or packages_updated.changed"
+  when: "unbound_configured.changed or unbound_enabled.changed or unbound_installed.changed"
 
 - name: loading unbound service
   command: launchctl load ~/Library/LaunchAgents/net.unbound.unbound.plist
   ignore_errors: yes
-  when: "unbound_configured.changed or unbound_enabled.changed or packages_updated.changed"
+  when: "unbound_configured.changed or unbound_enabled.changed or unbound_installed.changed"

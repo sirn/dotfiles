@@ -1,9 +1,14 @@
 ---
-- name: update nix channels
-  nix: update_channels=yes
+- name: initialize brew taps
+  homebrew_tap: tap={{item}} state=present
+  with_items: "{{brew_taps}}"
 
-- name: install nix packages
-  nix: name=all state=present force=yes
-  register: packages_updated
-  environment:
-    NIXPKGS_CONFIG: "{{ansible_env['HOME']}}/.dotfiles/nix/default.nix"
+- name: update homebrew
+  homebrew: update_homebrew=yes
+
+- name: install homebrew packages
+  homebrew: name={{item}} state=present
+  with_items: "{{brew_packages}}"
+
+- name: upgrade homebrew packages
+  homebrew: upgrade_all=yes

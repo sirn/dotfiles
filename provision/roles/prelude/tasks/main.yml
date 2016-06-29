@@ -1,4 +1,6 @@
 ---
+- include: services.yml
 - include: packages.yml
 - include: shell.yml
-- include: services.yml
+- include: python.yml
+- include: nodejs.yml
