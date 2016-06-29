@@ -1,0 +1,15 @@
+---
+- name: initialize cask
+  homebrew_tap: tap={{item}} state=present
+  with_items:
+    - caskroom/cask
+    - caskroom/versions
+    - caskroom/fonts
+
+- name: install cask packages
+  homebrew_cask: name={{item}} state=present
+  with_items: "{{cask_packages}}"
+
+- name: install cask fonts
+  homebrew_cask: name={{item}} state=present
+  with_items: "{{cask_fonts}}"

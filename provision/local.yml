@@ -3,4 +3,5 @@
   connection: local
   roles:
     - packages
+    - apps
     - local

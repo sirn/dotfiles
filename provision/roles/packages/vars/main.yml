@@ -26,6 +26,8 @@ brew_packages:
   - ngrok2
   - openssh
   - openssl
+  - otto
+  - packer
   - rebar3
   - rust
   - shellcheck
@@ -34,6 +36,7 @@ brew_packages:
   - the_silver_searcher
   - tmux
   - trash
+  - vault
   - xz
   - youtube-dl
 

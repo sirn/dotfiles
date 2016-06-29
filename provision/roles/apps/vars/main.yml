@@ -1,0 +1,43 @@
+---
+cask_packages:
+  - adobe-creative-cloud
+  - airfoil
+  - amethyst
+  - arq
+  - bartender
+  - charles
+  - cleanmymac
+  - crashplan
+  - dropshare
+  - firefox
+  - flux
+  - freesmug-chromium
+  - gnucash
+  - gpgtools
+  - hazel
+  - imagealpha
+  - imageoptim
+  - iterm2-beta
+  - java
+  - keyboard-maestro
+  - launchbar
+  - microsoft-office
+  - omnifocus
+  - omnigraffle
+  - path-finder
+  - qcma
+  - sketch
+  - skype
+  - the-unarchiver
+  - thunderbird
+  - vagrant
+  - virtualbox
+  - viscosity
+
+cask_fonts:
+  - font-fira-code
+  - font-inconsolata
+  - font-inconsolata-dz
+  - font-inconsolata-dz-for-powerline
+  - font-sauce-code-powerline
+  - font-source-code-pro
