@@ -1,5 +1,4 @@
 ---
 - include: projects.yml
 - include: spacemacs.yml
-- include: arcanist.yml
 - include: dotfiles.yml

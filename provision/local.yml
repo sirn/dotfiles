@@ -2,5 +2,5 @@
 - hosts: all
   connection: local
   roles:
-    - prelude
-    - finale
+    - packages
+    - local

@@ -4,3 +4,4 @@
 - include: shell.yml
 - include: python.yml
 - include: nodejs.yml
+- include: arcanist.yml
