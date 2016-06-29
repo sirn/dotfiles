@@ -9,6 +9,15 @@
       ];
     });
 
+    python35Packages = pkgs.python35Packages // {
+      pyqt4 = pkgs.python35Packages.pyqt4.overrideDerivation (oldAttrs: {
+        NIX_CFLAGS_COMPILE = "-mmacosx-version-min=10.7";
+        buildInputs = oldAttrs.buildInputs ++ [
+          darwin.apple_sdk.frameworks.ApplicationServices
+        ];
+      });
+    };
+
     erlangLocalRebar3 = callPackage ./pkgs/rebar3 { };
     go16LocalSyncthing = callPackage ./pkgs/syncthing { };
     localAria2 = callPackage ./pkgs/aria2 { };
@@ -62,6 +71,7 @@
         python35
         python35LocalAutoflake
         python35Packages.ipython
+        python35Packages.jupyter
         python35Packages.pip
         python35Packages.virtualenv
         ruby
