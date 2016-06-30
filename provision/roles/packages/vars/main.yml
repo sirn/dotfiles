@@ -23,7 +23,6 @@ brew_packages:
   - leiningen
   - mercurial
   - mpv
-  - ngrok2
   - openssh
   - openssl
   - otto

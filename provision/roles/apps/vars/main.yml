@@ -7,7 +7,6 @@ cask_packages:
   - bartender
   - charles
   - cleanmymac
-  - crashplan
   - dropshare
   - firefox
   - flux
@@ -25,7 +24,6 @@ cask_packages:
   - omnifocus
   - omnigraffle
   - path-finder
-  - qcma
   - sketch
   - skype
   - the-unarchiver
@@ -33,6 +31,7 @@ cask_packages:
   - vagrant
   - virtualbox
   - viscosity
+  - xquartz
 
 cask_fonts:
   - font-fira-code
