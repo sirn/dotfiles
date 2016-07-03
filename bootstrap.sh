@@ -81,6 +81,7 @@ fi
 echo -e "* \033[0;33mCleaning up...\033[0;0m"
 rm $HOME/.homebrew_analytics_user_uuid >/dev/null 2>&1
 brew cleanup
+brew cask cleanup
 
 if [ $ansible_bootstrapped ]; then
     echo -e "* \033[0;33mUninstalling a bootstrapped Ansible.\033[0;0m"

@@ -36,6 +36,7 @@ brew_packages:
   - tmux
   - trash
   - vault
+  - xhyve
   - xz
   - youtube-dl
 
