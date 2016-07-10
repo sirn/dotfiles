@@ -9,6 +9,8 @@
       (split-string (shell-command-to-string "rebar3 path")))))
 
 (defun erlang-rebar-hook ()
+  (setq flycheck-erlang-include-path
+        (list "../include/" "../../include/" "../../"))
   (let ((paths (erlang-rebar-code-path)))
     (progn
       (setq flycheck-erlang-library-path paths)
