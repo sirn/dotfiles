@@ -1,9 +1,4 @@
 ---
-- include: brew.yml
 - include: services.yml
 - include: shell.yml
 - include: packages.yml
-- include: python.yml
-- include: ruby.yml
-- include: nodejs.yml
-- include: arcanist.yml

@@ -1,7 +1,6 @@
 ---
-- name: install homebrew packages
-  homebrew: name={{item}} state=present
-  with_items: "{{brew_packages}}"
-
-- name: upgrade homebrew packages
-  homebrew: upgrade_all=yes
+- include: packages/homebrew.yml
+- include: packages/python.yml
+- include: packages/ruby.yml
+- include: packages/nodejs.yml
+- include: packages/arcanist.yml

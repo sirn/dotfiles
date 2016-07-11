@@ -1,7 +1,0 @@
----
-- name: initialize brew taps
-  homebrew_tap: tap={{item}} state=present
-  with_items: "{{brew_taps}}"
-
-- name: update homebrew
-  homebrew: update_homebrew=yes
