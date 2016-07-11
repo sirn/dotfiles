@@ -29,7 +29,7 @@ if status --is-login
     end
 
     if which keychain 2>&1 >/dev/null
-        eval (keychain --eval --quiet) >/dev/null
+        eval (keychain --agents ssh,gpg --eval --quiet) >/dev/null
     end
 end
 

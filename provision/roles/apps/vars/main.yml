@@ -12,7 +12,6 @@ cask_packages:
   - flux
   - freesmug-chromium
   - gnucash
-  - gpgtools
   - hazel
   - imagealpha
   - imageoptim
