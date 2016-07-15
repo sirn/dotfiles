@@ -15,8 +15,8 @@ brew_packages:
   - ghc
   - git
   - git-flow
-  - gpg2
   - gpg-agent
+  - gpg2
   - graphviz
   - imagemagick
   - ipcalc
@@ -31,6 +31,7 @@ brew_packages:
   - packer
   - pinentry-mac
   - rebar3
+  - rtmpdump
   - rust
   - shellcheck
   - socat
