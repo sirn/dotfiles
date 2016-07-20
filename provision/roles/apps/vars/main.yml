@@ -4,6 +4,7 @@ cask_packages:
   - airfoil
   - amethyst
   - arq
+  - atom
   - bartender
   - charles
   - cleanmymac
