@@ -25,6 +25,7 @@ cask_packages:
   - omnifocus
   - omnigraffle
   - path-finder
+  - paw
   - sketch
   - skype
   - the-unarchiver
