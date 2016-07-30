@@ -66,6 +66,7 @@ python3_packages:
   - ipython
   - jupyter
   - pip
+  - pyqt5
   - virtualenv
 
 node_packages:
