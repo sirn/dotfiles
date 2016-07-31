@@ -28,6 +28,10 @@ if status --is-login
         pyenv rehash >/dev/null
     end
 
+    if test -f /usr/libexec/java_home
+        set -x JAVA_HOME (/usr/libexec/java_home)
+    end
+
     if which keychain 2>&1 >/dev/null
         eval (keychain --agents ssh,gpg --eval --quiet) >/dev/null
     end
