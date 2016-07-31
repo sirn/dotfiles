@@ -33,6 +33,7 @@ brew_packages:
   - rebar3
   - rtmpdump
   - rust
+  - scala
   - shellcheck
   - socat
   - terraform
