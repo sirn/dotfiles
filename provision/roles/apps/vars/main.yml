@@ -18,6 +18,7 @@ cask_packages:
   - imageoptim
   - iterm2-beta
   - java
+  - jce-unlimited-strength-policy
   - keybase
   - keyboard-maestro
   - launchbar

@@ -15,6 +15,7 @@ brew_packages:
   - ghc
   - git
   - git-flow
+  - golang
   - gpg-agent
   - gpg2
   - graphviz
