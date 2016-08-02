@@ -14,6 +14,7 @@
      erlang
      erlang-rebar
      git
+     go
      haskell
      html
      javascript
@@ -26,6 +27,7 @@
            ruby-version-manager 'rbenv
            ruby-test-runner 'ruby-test)
      ruby-on-rails
+     scala
      (shell :variables
             shell-default-shell 'eshell)
      syntax-checking
