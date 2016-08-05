@@ -8,6 +8,7 @@ brew_packages:
   - aria2
   - asciinema
   - cocot
+  - curl
   - direnv
   - emacs
   - erlang
@@ -33,7 +34,6 @@ brew_packages:
   - pinentry-mac
   - rebar3
   - rtmpdump
-  - rust
   - scala
   - shellcheck
   - socat

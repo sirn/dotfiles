@@ -16,6 +16,11 @@ if status --is-login
         set -x OPENSSL_LIB_DIR /usr/local/opt/openssl/lib
     end
 
+    if which cargo 2>&1 >/dev/null
+        set -x PATH $HOME/.cargo/bin $PATH
+        set -x RUST_SRC_PATH $HOME/.local/src/rust/current/src/
+    end
+
     if test -d $HOME/.rbenv
         set -x PATH $HOME/.rbenv/bin $PATH
         set -x PATH $HOME/.rbenv/shims $PATH

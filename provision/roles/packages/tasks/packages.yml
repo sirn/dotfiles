@@ -2,5 +2,6 @@
 - include: packages/homebrew.yml
 - include: packages/python.yml
 - include: packages/ruby.yml
+- include: packages/rust.yml
 - include: packages/nodejs.yml
 - include: packages/arcanist.yml

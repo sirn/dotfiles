@@ -27,6 +27,7 @@
            ruby-version-manager 'rbenv
            ruby-test-runner 'ruby-test)
      ruby-on-rails
+     rust
      scala
      (shell :variables
             shell-default-shell 'eshell)
@@ -100,6 +101,9 @@
 
   ;; Disable the message about assigning $PATH in .profile instead of shell rc.
   (setq exec-path-from-shell-check-startup-files nil)
+
+  ;; Enable Racer for Rust auto-completion.
+  (setq-default rust-enable-racer t)
 
   )
 

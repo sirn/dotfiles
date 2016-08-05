@@ -1,0 +1,32 @@
+---
+- name: install rust
+  homebrew: name=rust state=latest
+  register: rust_installed
+
+- name: install racer
+  command: cargo install racer
+  args:
+    creates: ~/.cargo/bin/racer
+
+- name: determine rust version
+  shell: rustc --version | cut -d " " -f 2 -
+  register: rust_version
+  changed_when: false
+
+- name: create rust source directory
+  file: path=~/.local/src/rust state=directory
+
+# https://github.com/ansible/ansible/issues/11348
+- name: extract rust source
+  shell: |
+    curl https://static.rust-lang.org/dist/rustc-{{rust_version.stdout}}-src.tar.gz |
+    tar -xvzf - -C ~/.local/src/rust/
+  args:
+    warn: no
+    creates: "~/.local/src/rust/rustc-{{rust_version.stdout}}"
+
+- name: link rust source
+  file:
+    src: "~/.local/src/rust/rustc-{{rust_version.stdout}}"
+    dest: ~/.local/src/rust/current
+    state: link
