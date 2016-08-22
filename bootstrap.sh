@@ -55,15 +55,14 @@ if [[ $? == 0 ]] ; then
     echo -e "* \033[0;33mCask appears to be installed. Checking for updates.\033[0;0m"
     OUTDATED_CASKS=()
 
-    while read -ra INSTALLED_CASKS; do
-        for i in "${INSTALLED_CASKS[@]}"; do
-            echo -ne "\r\033[K  Checking \033[1;30m$i\033[0;0m..."
-            brew cask info "$i"| grep -qF 'Not installed'
-            if [[ $? == 0 ]] ; then
-                OUTDATED_CASKS+=($i)
-            fi
-        done
-    done <<< "$(brew cask list)"
+    while read -ra CASK_INFO; do
+        echo -ne "\r\033[K  Checking \033[1;30m${CASK_INFO[0]}\033[0;0m..."
+        INSTALLED_VERSION=${CASK_INFO[${#CASK_INFO[@]}-1]}
+        LATEST_VERSION=$(brew cask _stanza version "${CASK_INFO[0]}")
+        if [[ "$INSTALLED_VERSION" != "$LATEST_VERSION" ]]; then
+            OUTDATED_CASKS+=(${CASK_INFO[0]})
+        fi
+    done <<< "$(brew cask list --versions)"
 
     if [ ${#OUTDATED_CASKS[@]} != 0 ]; then
         echo -e "\r\033[K\033[1A\r\033[K* \033[0;33mUpdating casks: \033[1;30m${OUTDATED_CASKS[*]}\033[0;0m"
@@ -79,7 +78,7 @@ fi
 #
 
 echo -e "* \033[0;33mCleaning up...\033[0;0m"
-rm $HOME/.homebrew_analytics_user_uuid >/dev/null 2>&1
+rm "$HOME"/.homebrew_analytics_user_uuid >/dev/null 2>&1
 brew cleanup
 brew cask cleanup
 
