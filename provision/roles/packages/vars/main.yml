@@ -29,7 +29,6 @@ brew_packages:
   - mpv
   - openssh
   - openssl
-  - otto
   - packer
   - pinentry-mac
   - rebar3

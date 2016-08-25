@@ -16,7 +16,6 @@ Vagrantfile
 .ruby-version
 .python-version
 .vagrant
-.otto
 .vimrc
 .idea
 .generators
