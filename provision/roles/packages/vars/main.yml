@@ -26,6 +26,7 @@ brew_packages:
   - keychain
   - leiningen
   - mercurial
+  - moreutils
   - mpv
   - openssh
   - openssl
