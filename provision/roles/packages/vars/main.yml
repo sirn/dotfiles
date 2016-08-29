@@ -40,6 +40,7 @@ brew_packages:
   - the_silver_searcher
   - tmux
   - trash
+  - tree
   - vault
   - xhyve
   - xz
