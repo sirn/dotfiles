@@ -1,13 +1,11 @@
 ---
 projects:
-  - ~/Projects
   - ~/Projects/_Vendor
   - ~/Projects/_Other
 
 dots:
   - ~/.aria2
   - ~/.ssh
-  - ~/.config
   - ~/.config/fish
 
 links:

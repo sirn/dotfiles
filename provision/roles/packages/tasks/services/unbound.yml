@@ -4,7 +4,7 @@
   register: unbound_installed
 
 - name: ensure unbound directories
-  file: path={{item}} state=directory
+  file: path={{item}} state=directory recurse=yes
   with_items:
     - ~/.local/etc/unbound
     - ~/.local/var/log
@@ -26,6 +26,7 @@
   file:
     path: /etc/resolver
     state: directory
+    recurse: yes
 
 - name: adding dev resolvers
   become: yes

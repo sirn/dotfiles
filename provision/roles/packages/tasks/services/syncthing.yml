@@ -4,7 +4,7 @@
   register: syncthing_installed
 
 - name: ensure syncthing directory
-  file: path=~/.local/var/log state=directory
+  file: path=~/.local/var/log state=directory recurse=yes
 
 - name: enable syncthing service
   template:

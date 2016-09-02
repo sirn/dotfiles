@@ -1,6 +1,6 @@
 ---
 - name: prepare dot directories
-  file: path={{item}} state=directory
+  file: path={{item}} state=directory recurse=yes
   with_items: "{{dots}}"
 
 - name: link files and directories

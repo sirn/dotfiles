@@ -14,7 +14,7 @@
   changed_when: false
 
 - name: create rust source directory
-  file: path=~/.local/src/rust state=directory
+  file: path=~/.local/src/rust state=directory recurse=yes
 
 # https://github.com/ansible/ansible/issues/11348
 - name: extract rust source
