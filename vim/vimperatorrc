@@ -1,3 +1,3 @@
 set toolbars=none
 set defsearch=duckduckgo
-style -name ublick * #nav-bar * { visibility: visible; }
+style -name ublock * #nav-bar * { visibility: visible; }
