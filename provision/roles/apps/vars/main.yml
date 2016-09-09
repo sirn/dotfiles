@@ -1,10 +1,8 @@
 ---
 cask_packages:
   - adobe-creative-cloud
-  - airfoil
   - amethyst
   - arq
-  - atom
   - bartender
   - charles
   - cleanmymac
@@ -19,7 +17,6 @@ cask_packages:
   - iterm2-beta
   - java
   - jce-unlimited-strength-policy
-  - keybase
   - keyboard-maestro
   - launchbar
   - microsoft-office

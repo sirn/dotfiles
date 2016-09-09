@@ -12,6 +12,7 @@
     name: "{{item}}"
     global: true
     executable: /usr/local/bin/npm
+    state: latest
   with_items: "{{node_packages}}"
 
 - name: install custom typescript-tools
