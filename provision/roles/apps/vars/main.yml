@@ -22,7 +22,6 @@ cask_packages:
   - microsoft-office
   - omnifocus
   - omnigraffle
-  - path-finder
   - paw
   - sketch
   - skype
