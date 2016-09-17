@@ -1,5 +1,4 @@
 Host github.com
-  PreferredAuthentications publickey
   User git
   HostName github.com
   IdentityFile ~/.ssh/git_ed25519
