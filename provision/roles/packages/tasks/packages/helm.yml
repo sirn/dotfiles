@@ -1,0 +1,27 @@
+---
+- name: create helm base directory
+  file: path=~/.local/src/helm state=directory recurse=yes
+
+- name: download helm installer
+  get_url:
+    url: https://get.helm.sh
+    dest: ~/.local/src/helm/install.sh
+    mode: 0744
+
+- name: install helm
+  command: sh ~/.local/src/helm/install.sh
+  args:
+    chdir: ~/.local/src/helm/
+    creates: ~/.local/src/helm/helmc
+
+- name: ensure local directory
+  file:
+    path: ~/.local/bin/
+    state: directory
+    recurse: yes
+
+- name: link helm binary
+  file:
+    src: ~/.local/src/helm/helmc
+    dest: ~/.local/bin/helmc
+    state: link

@@ -1,6 +1,8 @@
 ---
 - include: packages/homebrew.yml
 - include: packages/arcanist.yml
+- include: packages/deis.yml
+- include: packages/helm.yml
 - include: packages/nodejs.yml
 - include: packages/python.yml
 - include: packages/ruby.yml

@@ -1,0 +1,27 @@
+---
+- name: create deis base directory
+  file: path=~/.local/src/deis state=directory recurse=yes
+
+- name: download deis installer
+  get_url:
+    url: http://deis.io/deis-cli/install-v2.sh
+    dest: ~/.local/src/deis/install-v2.sh
+    mode: 0744
+
+- name: install deis
+  command: sh ~/.local/src/deis/install-v2.sh
+  args:
+    chdir: ~/.local/src/deis/
+    creates: ~/.local/src/deis/deis
+
+- name: ensure local directory
+  file:
+    path: ~/.local/bin/
+    state: directory
+    recurse: yes
+
+- name: link deis binary
+  file:
+    src: ~/.local/src/deis/deis
+    dest: ~/.local/bin/deis
+    state: link

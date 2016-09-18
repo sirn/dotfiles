@@ -11,6 +11,12 @@
     - arcanist
     - libphutil
 
+- name: ensure local directory
+  file:
+    path: ~/.local/bin/
+    state: directory
+    recurse: yes
+
 - name: link arcanist binary
   file:
     src: ~/.local/src/arcanist/arcanist/bin/arc
