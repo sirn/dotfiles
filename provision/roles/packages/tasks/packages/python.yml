@@ -9,13 +9,13 @@
   command: ~/.pyenv/bin/pyenv install {{python2_version}}
   args:
     creates: ~/.pyenv/versions/{{python2_version}}
-  register: python2_installed
+  notify: update default python
 
 - name: install python {{python3_version}}
   command: ~/.pyenv/bin/pyenv install {{python3_version}}
   args:
     creates: ~/.pyenv/versions/{{python3_version}}
-  register: python3_installed
+  notify: update default python
 
 - name: install python {{python2_version}} packages
   pip:
@@ -24,7 +24,7 @@
     executable: ~/.pyenv/versions/{{python2_version}}/bin/pip
     chdir: ~/.pyenv/versions/{{python2_version}}
   with_items: "{{python2_packages}}"
-  register: python2_packages_installed
+  notify: update pyenv shims
   environment:
     PYTHONPATH:
 
@@ -35,14 +35,6 @@
     executable: ~/.pyenv/versions/{{python3_version}}/bin/pip
     chdir: ~/.pyenv/versions/{{python3_version}}
   with_items: "{{python3_packages}}"
-  register: python3_packages_installed
+  notify: update pyenv shims
   environment:
     PYTHONPATH:
-
-- name: update default python
-  command: ~/.pyenv/bin/pyenv global {{python2_version}} {{python3_version}}
-  when: "python2_installed.changed or python3_installed.changed"
-
-- name: update pyenv shims
-  command: ~/.pyenv/bin/pyenv rehash
-  when: "python2_packages_installed.changed or python3_packages_installed.changed"

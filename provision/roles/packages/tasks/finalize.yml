@@ -1,3 +1,0 @@
----
-- name: upgrade homebrew packages
-  homebrew: upgrade_all=yes

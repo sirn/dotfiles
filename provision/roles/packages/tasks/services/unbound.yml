@@ -1,7 +1,9 @@
 ---
 - name: install unbound service
   homebrew: name=unbound state=latest
-  register: unbound_installed
+  notify:
+    - unload unbound service
+    - load unbound service
 
 - name: ensure unbound directories
   file: path={{item}} state=directory recurse=yes
@@ -13,7 +15,9 @@
   template:
     src: home/local/etc/unbound/unbound.conf.j2
     dest: "{{ansible_env['HOME']}}/.local/etc/unbound/unbound.conf"
-  register: unbound_configured
+  notify:
+    - unload unbound service
+    - load unbound service
 
 - name: enabling unbound service
   template:
@@ -33,13 +37,3 @@
   copy:
     src: etc/resolver/dev
     dest: /etc/resolver/dev
-
-- name: unloading unbound service
-  command: launchctl unload ~/Library/LaunchAgents/net.unbound.unbound.plist
-  ignore_errors: yes
-  when: "unbound_configured.changed or unbound_enabled.changed or unbound_installed.changed"
-
-- name: loading unbound service
-  command: launchctl load ~/Library/LaunchAgents/net.unbound.unbound.plist
-  ignore_errors: yes
-  when: "unbound_configured.changed or unbound_enabled.changed or unbound_installed.changed"

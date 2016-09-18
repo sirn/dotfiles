@@ -2,4 +2,3 @@
 - include: packages.yml
 - include: services.yml
 - include: shell.yml
-- include: finalize.yml

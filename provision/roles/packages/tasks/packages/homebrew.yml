@@ -5,6 +5,8 @@
 
 - name: update homebrew
   homebrew: update_homebrew=yes
+  notify:
+    - upgrade homebrew packages
 
 - name: install homebrew packages
   homebrew: name={{item}} state=latest

@@ -8,9 +8,7 @@
     dest: /etc/shells
     line: /usr/local/bin/fish
     state: present
-  register: fish_append
 
 - name: changing default shell
   become: yes
-  command: chsh -s /usr/local/bin/fish {{ansible_user_id}}
-  when: "fish_append.changed"
+  user: name={{ansible_user_id}} shell=/usr/local/bin/fish

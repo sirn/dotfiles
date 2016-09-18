@@ -15,7 +15,8 @@
   command: ~/.rbenv/bin/rbenv install {{ruby_version}}
   args:
     creates: ~/.rbenv/versions/{{ruby_version}}
-  register: ruby_installed
+  notify:
+    - update default ruby
 
 - name: install ruby packages
   gem:
@@ -24,12 +25,5 @@
     user_install: false
     executable: ~/.rbenv/versions/{{ruby_version}}/bin/gem
   with_items: "{{ruby_packages}}"
-  register: ruby_packages_installed
-
-- name: update default ruby
-  command: ~/.rbenv/bin/rbenv global {{ruby_version}}
-  when: "ruby_installed.changed"
-
-- name: update rbenv shims
-  command: ~/.rbenv/bin/rbenv rehash
-  when: "ruby_packages_installed.changed"
+  notify:
+    - update rbenv shims

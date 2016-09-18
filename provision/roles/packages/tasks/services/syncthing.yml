@@ -1,7 +1,9 @@
 ---
 - name: install syncthing service
   homebrew: name=syncthing state=latest
-  register: syncthing_installed
+  notify:
+    - unload syncthing service
+    - load syncthing service
 
 - name: ensure syncthing directory
   file: path=~/.local/var/log state=directory recurse=yes
@@ -10,14 +12,6 @@
   template:
     src: home/Library/LaunchAgents/net.syncthing.syncthing.plist.j2
     dest: ~/Library/LaunchAgents/net.syncthing.syncthing.plist
-  register: syncthing_enabled
-
-- name: unloading syncthing service
-  command: launchctl unload ~/Library/LaunchAgents/net.syncthing.syncthing.plist
-  ignore_errors: yes
-  when: "syncthing_enabled.changed or syncthing_installed.changed"
-
-- name: loading syncthing service
-  command: launchctl load ~/Library/LaunchAgents/net.syncthing.syncthing.plist
-  ignore_errors: yes
-  when: "syncthing_enabled.changed or syncthing_installed.changed"
+  notify:
+    - unload syncthing service
+    - load syncthing service

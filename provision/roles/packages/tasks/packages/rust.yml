@@ -1,7 +1,6 @@
 ---
 - name: install rust
   homebrew: name=rust state=latest
-  register: rust_installed
 
 - name: install racer
   command: cargo install racer
