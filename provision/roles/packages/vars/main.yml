@@ -24,6 +24,7 @@ brew_packages:
   - ipcalc
   - irssi
   - keychain
+  - kubernetes-cli
   - leiningen
   - mercurial
   - moreutils
