@@ -5,7 +5,6 @@ cask_packages:
   - arq
   - bartender
   - charles
-  - cleanmymac
   - dropshare
   - firefox
   - flux
