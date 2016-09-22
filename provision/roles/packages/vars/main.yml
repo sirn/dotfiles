@@ -33,6 +33,7 @@ brew_packages:
   - openssl
   - packer
   - pinentry-mac
+  - reattach-to-user-namespace
   - rebar3
   - rtmpdump
   - scala
