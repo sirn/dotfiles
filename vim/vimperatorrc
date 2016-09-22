@@ -1,3 +1,7 @@
 set toolbars=none
 set defsearch=duckduckgo
 style -name ublock * #nav-bar * { visibility: visible; }
+
+" Compatibility workaround for Firefox 49+
+" https://github.com/vimperator/vimperator-labs/issues/590
+js services.services.autoCompleteSearch.class_="@mozilla.org/autocomplete/search;1?name=unifiedcomplete"
