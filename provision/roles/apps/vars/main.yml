@@ -28,9 +28,8 @@ cask_packages:
   - the-unarchiver
   - thunderbird
   - vagrant
-  - virtualbox
-  - virtualbox-extension-pack
   - viscosity
+  - vmware-fusion
   - xquartz
 
 cask_fonts:
