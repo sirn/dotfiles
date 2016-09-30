@@ -17,6 +17,6 @@
 
 - name: install custom typescript-tools
   npm:
-    name: 'https://github.com/sirn/typescript-tools.git#typescript-1.7-exp'
+    name: 'https://github.com/sirn/typescript-tools.git#tsconfig'
     global: true
     executable: /usr/local/bin/npm
