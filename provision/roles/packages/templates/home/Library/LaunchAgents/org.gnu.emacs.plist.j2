@@ -4,6 +4,11 @@
   <dict>
     <key>Label</key>
     <string>org.gnu.emacs</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+      <key>PATH</key>
+      <string>{{ansible_env['HOME']}}/.pyenv/shims:{{ansible_env['HOME']}}/.pyenv/bin:{{ansible_env['HOME']}}/.rbenv/shims:{{ansible_env['HOME']}}/.rbenv/bin:{{ansible_env['HOME']}}/.cargo/bin:{{ansible_env['HOME']}}/.dotfiles/bin:{{ansible_env['HOME']}}/.local/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin</string>
+    </dict>
     <key>ProgramArguments</key>
     <array>
       <string>/usr/local/bin/emacs</string>
