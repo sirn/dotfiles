@@ -1,5 +1,4 @@
 ---
 - include: services/env.yml
-- include: services/emacs.yml
 - include: services/syncthing.yml
 - include: services/unbound.yml
