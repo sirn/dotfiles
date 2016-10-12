@@ -13,7 +13,7 @@ cask_packages:
   - hazel
   - imagealpha
   - imageoptim
-  - iterm2-beta
+  - iterm2
   - java
   - jce-unlimited-strength-policy
   - keyboard-maestro
