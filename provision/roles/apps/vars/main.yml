@@ -18,6 +18,7 @@ cask_packages:
   - jce-unlimited-strength-policy
   - keyboard-maestro
   - launchbar
+  - mactex
   - microsoft-office
   - omnifocus
   - omnigraffle
