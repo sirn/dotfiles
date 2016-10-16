@@ -4,6 +4,14 @@
 - name: upgrade homebrew packages
   homebrew: upgrade_all=yes
 
+# packages/mpv
+
+- name: link mpv
+  command: brew linkapps mpv
+  ignore_errors: yes
+  args:
+    warn: no
+
 # packages/python
 
 - name: update default python

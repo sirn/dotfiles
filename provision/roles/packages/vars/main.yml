@@ -28,7 +28,6 @@ brew_packages:
   - leiningen
   - mercurial
   - moreutils
-  - mpv
   - openssh
   - openssl
   - packer
@@ -81,3 +80,4 @@ node_packages:
   - postcss-cli
   - tern
   - typescript
+  - typescript-formatter
