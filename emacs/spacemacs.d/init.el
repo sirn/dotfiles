@@ -103,9 +103,7 @@
   (setq exec-path-from-shell-check-startup-files nil)
 
   ;; Enable Racer for Rust auto-completion.
-  (setq-default rust-enable-racer t)
-
-  )
+  (setq-default rust-enable-racer t))
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code. Called after layers configuration."
@@ -116,7 +114,18 @@
   (setq powerline-default-separator 'utf-8)
   (spaceline-compile)
 
-  )
+  ;; Fix vagrant-tramp broken on macOS by using custom TRAMP method and custom
+  ;; vagrant-tramp-ssh binary.
+  (add-to-list
+   'tramp-methods
+   `(,vagrant-tramp-method
+     (tramp-login-env (("SHELL") ("/bin/sh")))
+     (tramp-remote-shell "/bin/sh")
+     (tramp-remote-shell-args ("-c"))
+     (tramp-login-args (("%h")))
+     (tramp-login-program ,(shell-quote-argument
+                            (expand-file-name
+                             "~/.dotfiles/bin/vagrant-tramp-ssh"))))))
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
