@@ -54,8 +54,6 @@ ruby_packages:
   - bundler
   - middleman
   - pry
-  - terraforming
-  - tmuxinator
 
 python2_version: 2.7.12
 
