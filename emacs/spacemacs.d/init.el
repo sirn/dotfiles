@@ -108,6 +108,9 @@
 (defun dotspacemacs/user-config ()
   "Configuration function for user code. Called after layers configuration."
 
+  ;; Use jk keychord instead of ESC.
+  (setq evil-escape-key-sequence "jk")
+
   ;; Disable sRGB in OS X to make Powerline colors appears "correct".
   ;; (Or maybe consistency wrong is a better word.)
   (setq ns-use-srgb-colorspace nil)
