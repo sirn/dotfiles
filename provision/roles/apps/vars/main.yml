@@ -8,8 +8,8 @@ cask_packages:
   - dropshare
   - firefox
   - flux
-  - freesmug-chromium
   - gnucash
+  - google-chrome
   - hazel
   - imagealpha
   - imageoptim
