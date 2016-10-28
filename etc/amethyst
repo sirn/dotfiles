@@ -10,6 +10,7 @@
         "com.apple.systempreferences",
         "com.flexibits.fantastical2.mac",
         "com.squirrels.Reflector-2",
-        "com.tapbots.TweetbotMac"
+        "com.tapbots.TweetbotMac",
+        "jp.bookwalker.mac"
     ]
 }
