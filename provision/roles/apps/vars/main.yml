@@ -1,6 +1,7 @@
 ---
 cask_packages:
   - adobe-creative-cloud
+  - alfred
   - amethyst
   - arq
   - bartender
@@ -17,7 +18,6 @@ cask_packages:
   - java
   - jce-unlimited-strength-policy
   - keyboard-maestro
-  - launchbar
   - mactex
   - microsoft-office
   - omnifocus
