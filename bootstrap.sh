@@ -66,7 +66,8 @@ if [[ $? == 0 ]] ; then
 
     if [ ${#OUTDATED_CASKS[@]} != 0 ]; then
         echo -e "\r\033[K\033[1A\r\033[K* \033[0;33mUpdating casks: \033[1;30m${OUTDATED_CASKS[*]}\033[0;0m"
-        brew cask install --force "${OUTDATED_CASKS[@]}"
+        brew cask uninstall --force "${OUTDATED_CASKS[@]}"
+        brew cask install "${OUTDATED_CASKS[@]}"
     else
         echo -e "\r\033[K\033[1A\r\033[K* Casks are up-to-date. \033[0;32m✓\033[0;0m"
     fi
