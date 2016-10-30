@@ -10,7 +10,6 @@ brew_packages:
   - cocot
   - curl
   - direnv
-  - emacs
   - erlang
   - ffmpeg
   - ghc
