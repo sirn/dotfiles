@@ -12,6 +12,7 @@ cask_packages:
   - flux
   - gnucash
   - google-chrome
+  - google-cloud-sdk
   - hazel
   - imagealpha
   - imageoptim

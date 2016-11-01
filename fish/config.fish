@@ -40,6 +40,11 @@ if status --is-login
     if which keychain 2>&1 >/dev/null
         eval (keychain --agents ssh,gpg --eval --quiet) >/dev/null
     end
+
+    set google_cloud_path /usr/local/Caskroom/google-cloud-sdk
+    if test -d $google_cloud_path
+        set -x PATH $google_cloud_path/latest/google-cloud-sdk/bin $PATH
+    end
 end
 
 if status --is-interactive
