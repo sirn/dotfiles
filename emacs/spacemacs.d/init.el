@@ -4,7 +4,8 @@
   "Configuration Layers declaration."
   (setq-default
    dotspacemacs-distribution 'spacemacs
-   dotspacemacs-configuration-layer-path '()
+   dotspacemacs-configuration-layer-path
+   '("~/.dotfiles/emacs/emacs.d/private/")
    dotspacemacs-configuration-layers
    '(
      auto-completion
