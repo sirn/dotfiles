@@ -98,23 +98,13 @@
 
 (defun dotspacemacs/user-init ()
   "Initialization function for user code. Called after Spacemacs init."
-
-  ;; Disable the message about assigning $PATH in .profile instead of shell rc.
   (setq exec-path-from-shell-check-startup-files nil)
-
-  ;; Store custom-set-variables in a separate file.
   (setq custom-file "~/.dotfiles/emacs/emacs.d/custom.el")
   (load custom-file))
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code. Called after layers configuration."
-
-  ;; Use jk keychord instead of ESC.
   (setq evil-escape-key-sequence "jk")
-
-  ;; Disable sRGB in OS X to make Powerline colors appears "correct".
-  ;; (Or maybe consistency wrong is a better word.)
-  (setq ns-use-srgb-colorspace nil)
   (setq powerline-default-separator 'utf-8)
   (spaceline-compile)
 
