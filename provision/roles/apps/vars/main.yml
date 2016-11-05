@@ -7,7 +7,6 @@ cask_packages:
   - bartender
   - charles
   - dropshare
-  - emacs
   - firefox
   - flux
   - gnucash

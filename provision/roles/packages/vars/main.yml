@@ -3,6 +3,7 @@ brew_taps:
   - homebrew/dupes
   - homebrew/binary
   - homebrew/versions
+  - d12frosted/emacs-plus
 
 brew_packages:
   - aria2
@@ -10,6 +11,7 @@ brew_packages:
   - cocot
   - curl
   - direnv
+  - emacs-plus
   - erlang
   - ffmpeg
   - ghc
