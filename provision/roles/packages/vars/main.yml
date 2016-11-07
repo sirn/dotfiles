@@ -29,6 +29,7 @@ brew_packages:
   - leiningen
   - mercurial
   - moreutils
+  - nghttp2
   - openssh
   - openssl
   - packer
