@@ -108,6 +108,10 @@
   (setq powerline-default-separator 'utf-8)
   (spaceline-compile)
 
+  (with-eval-after-load 'org
+    (setq org-directory "~/Sync/Documents/Org")
+    (setq org-agenda-files '("~/Sync/Documents/Org/tasks.org")))
+
   ;; Fix vagrant-tramp broken on macOS by using custom TRAMP method and custom
   ;; vagrant-tramp-ssh binary.
   (add-to-list
