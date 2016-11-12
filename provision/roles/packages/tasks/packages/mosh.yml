@@ -1,0 +1,17 @@
+---
+- name: install mosh
+  homebrew: name=mobile-shell state=latest
+  register: mosh_installed
+
+- name: resolve mosh-server link
+  stat: path=/usr/local/bin/mosh-server
+  register: mosh_link
+
+- name: enable mosh-server in firewall
+  become: yes
+  command: "{{item}}"
+  with_items:
+    - "/usr/libexec/ApplicationFirewall/socketfilterfw --add {{mosh_link.stat.lnk_source}}"
+    - "/usr/libexec/ApplicationFirewall/socketfilterfw --unblockapp {{mosh_link.stat.lnk_source}}"
+  ignore_errors: yes
+  when: mosh_installed.changed
