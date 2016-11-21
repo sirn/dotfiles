@@ -8,9 +8,9 @@ cask_packages:
   - charles
   - dropshare
   - firefox
+  - flash-ppapi
   - flux
   - gnucash
-  - google-chrome
   - google-cloud-sdk
   - hazel
   - imagealpha
@@ -33,6 +33,7 @@ cask_packages:
   - virtualbox
   - virtualbox-extension-pack
   - viscosity
+  - vivaldi
   - xquartz
 
 cask_fonts:

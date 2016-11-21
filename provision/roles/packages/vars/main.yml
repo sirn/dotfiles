@@ -27,6 +27,7 @@ brew_packages:
   - keychain
   - kubernetes-cli
   - leiningen
+  - mas
   - mercurial
   - moreutils
   - nghttp2
