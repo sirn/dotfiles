@@ -76,6 +76,7 @@ python3_packages:
 
 node_packages:
   - autoprefixer
+  - js-beautify
   - nativefier
   - postcss
   - postcss-cli
