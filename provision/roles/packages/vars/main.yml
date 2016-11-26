@@ -29,6 +29,7 @@ brew_packages:
   - leiningen
   - mas
   - mercurial
+  - mobile-shell
   - moreutils
   - nghttp2
   - openssh

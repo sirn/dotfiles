@@ -4,7 +4,6 @@
 - include: packages/deis.yml
 - include: packages/helm.yml
 - include: packages/mpv.yml
-- include: packages/mosh.yml
 - include: packages/nodejs.yml
 - include: packages/python.yml
 - include: packages/ruby.yml
