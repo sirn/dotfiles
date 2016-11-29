@@ -5,8 +5,9 @@ projects:
 
 dots:
   - ~/.aria2
-  - ~/.ssh
   - ~/.config/fish
+  - ~/.irssi
+  - ~/.ssh
 
 links:
   - source: ~/.dotfiles/etc/aria2.conf
@@ -26,6 +27,9 @@ links:
 
   - source: ~/.dotfiles/etc/hgrc
     dest: ~/.hgrc
+
+  - source: ~/.dotfiles/irssi/scripts
+    dest: ~/.irssi/scripts
 
   - source: ~/.dotfiles/emacs/spacemacs.d
     dest: ~/.spacemacs.d
