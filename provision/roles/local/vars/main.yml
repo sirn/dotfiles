@@ -1,7 +1,6 @@
 ---
-projects:
-  - ~/Projects/_Vendor
-  - ~/Projects/_Other
+
+# dotfiles.yml
 
 dots:
   - ~/.aria2
@@ -12,9 +11,6 @@ dots:
 links:
   - source: ~/.dotfiles/etc/aria2.conf
     dest: ~/.aria2/aria2.conf
-
-  - source: ~/.dotfiles/etc/amethyst
-    dest: ~/.amethyst
 
   - source: ~/.dotfiles/fish/config.fish
     dest: ~/.config/fish/config.fish
@@ -42,3 +38,13 @@ links:
 
   - source: ~/.dotfiles/vim/vimperatorrc
     dest: ~/.vimperatorrc
+
+darwin_links:
+  - source: ~/.dotfiles/etc/amethyst
+    dest: ~/.amethyst
+
+# projects.yml
+
+projects:
+  - ~/Projects/_Vendor
+  - ~/Projects/_Other

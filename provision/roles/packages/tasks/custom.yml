@@ -1,0 +1,8 @@
+---
+- include: "custom/arcanist.yml"
+- include: "custom/deis.yml"
+- include: "custom/helm.yml"
+- include: "custom/nodejs.yml"
+- include: "custom/python.yml"
+- include: "custom/ruby.yml"
+- include: "custom/rust.yml"

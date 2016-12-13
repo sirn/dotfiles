@@ -1,4 +1,7 @@
 ---
+
+# packages/darwin_brew
+
 brew_taps:
   - homebrew/dupes
   - homebrew/binary
@@ -52,6 +55,8 @@ brew_packages:
   - xz
   - youtube-dl
 
+# packages/darwin_cask
+
 cask_taps:
   - caskroom/cask
   - caskroom/versions
@@ -102,12 +107,19 @@ cask_fonts:
   - font-source-code-pro
   - font-source-code-pro-for-powerline
 
-ruby_version: 2.3.1
+# custom/node
 
-ruby_packages:
-  - bundler
-  - middleman
-  - pry
+node_packages:
+  - autoprefixer
+  - js-beautify
+  - nativefier
+  - postcss
+  - postcss-cli
+  - tern
+  - typescript
+  - typescript-formatter
+
+# custom_python
 
 python2_version: 2.7.12
 
@@ -125,12 +137,11 @@ python3_packages:
   - pyqt5
   - virtualenv
 
-node_packages:
-  - autoprefixer
-  - js-beautify
-  - nativefier
-  - postcss
-  - postcss-cli
-  - tern
-  - typescript
-  - typescript-formatter
+# custom/ruby
+
+ruby_version: 2.3.1
+
+ruby_packages:
+  - bundler
+  - middleman
+  - pry

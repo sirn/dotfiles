@@ -1,6 +1,7 @@
 ---
 - name: install rust
   homebrew: name=rust state=latest
+  when: ansible_os_family == "Darwin"
 
 - name: install racer
   command: cargo install racer

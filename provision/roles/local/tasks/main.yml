@@ -1,5 +1,5 @@
 ---
-- include: vagrant.yml
+- include: dotfiles.yml
 - include: projects.yml
 - include: spacemacs.yml
-- include: dotfiles.yml
+- include: vagrant.yml

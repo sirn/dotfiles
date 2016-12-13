@@ -5,5 +5,5 @@
 - name: adding vagrant sudoers
   become: yes
   copy:
-    src: etc/sudoers.d/01_vagrant
+    src: "etc/sudoers.d/01_vagrant_{{ansible_os_family|lower}}"
     dest: /etc/sudoers.d/01_vagrant

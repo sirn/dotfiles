@@ -2,8 +2,8 @@
 - name: install unbound service
   homebrew: name=unbound state=latest
   notify:
-    - unload unbound service
-    - load unbound service
+    - unload unbound launchd service
+    - load unbound launchd service
 
 - name: ensure unbound directories
   file: path={{item}} state=directory recurse=yes
@@ -16,8 +16,8 @@
     src: home/local/etc/unbound/unbound.conf.j2
     dest: "{{ansible_env['HOME']}}/.local/etc/unbound/unbound.conf"
   notify:
-    - unload unbound service
-    - load unbound service
+    - unload unbound launchd service
+    - load unbound launchd service
 
 - name: enabling unbound service
   template:

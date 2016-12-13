@@ -5,5 +5,5 @@
     dest: ~/Library/LaunchAgents/th.in.grid.env.plist
   register: env_enabled
   notify:
-    - unload enviornment service
-    - load environment service
+    - unload enviornment launchd service
+    - load environment launchd service

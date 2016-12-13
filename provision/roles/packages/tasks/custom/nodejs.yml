@@ -1,17 +1,17 @@
 ---
 - name: install node
   homebrew: name=node state=latest
+  when: ansible_os_family == "Darwin"
   register: node_installed
 
 - name: configure npm prefix
-  command: /usr/local/bin/npm config set prefix ~/.local
+  command: npm config set prefix ~/.local
   when: "node_installed.changed"
 
 - name: install npm packages
   npm:
     name: "{{item}}"
     global: true
-    executable: /usr/local/bin/npm
     state: latest
   with_items: "{{node_packages}}"
 
@@ -19,4 +19,3 @@
   npm:
     name: 'https://github.com/sirn/typescript-tools.git#tsconfig'
     global: true
-    executable: /usr/local/bin/npm

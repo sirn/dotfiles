@@ -26,7 +26,7 @@ echo_error() {
 #
 
 darwin_setenv() {
-    PATH=/usr/local/bin:$PATH
+    export PATH=/usr/local/bin:$PATH
     darwin_ansible_bootstrapped=0
 }
 
@@ -79,7 +79,7 @@ darwin_cask_update() {
             fi
         done <<< "$(brew cask list --versions)"
 
-        echo -ne "\r"
+        echo -ne "\r\n"
         echo_clear
 
         if [ ${#outdated_casks[@]} == 0 ]; then

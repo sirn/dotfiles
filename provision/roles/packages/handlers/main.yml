@@ -1,18 +1,7 @@
 ---
-# packages/homebrew
+- include: "{{ansible_os_family|lower}}.yml"
 
-- name: upgrade homebrew packages
-  homebrew: upgrade_all=yes
-
-# packages/mpv
-
-- name: link mpv
-  command: brew linkapps mpv
-  ignore_errors: yes
-  args:
-    warn: no
-
-# packages/python
+# custom/python
 
 - name: update default python
   command: ~/.pyenv/bin/pyenv global {{python2_version}} {{python3_version}}
@@ -20,40 +9,10 @@
 - name: update pyenv shims
   command: ~/.pyenv/bin/pyenv rehash
 
-# packages/ruby
+# custom/ruby
 
 - name: update default ruby
   command: ~/.rbenv/bin/rbenv global {{ruby_version}}
 
 - name: update rbenv shims
   command: ~/.rbenv/bin/rbenv rehash
-
-# services/env
-
-- name: unload environment service
-  command: launchctl unload ~/Library/LaunchAgents/th.in.grid.env.plist
-  ignore_errors: yes
-
-- name: load environment service
-  command: launchctl load ~/Library/LaunchAgents/th.in.grid.env.plist
-  ignore_errors: yes
-
-# services/syncthing
-
-- name: unload syncthing service
-  command: launchctl unload ~/Library/LaunchAgents/net.syncthing.syncthing.plist
-  ignore_errors: yes
-
-- name: load syncthing service
-  command: launchctl load ~/Library/LaunchAgents/net.syncthing.syncthing.plist
-  ignore_errors: yes
-
-# services/unbound
-
-- name: unload unbound service
-  command: launchctl unload ~/Library/LaunchAgents/net.unbound.unbound.plist
-  ignore_errors: yes
-
-- name: load unbound service
-  command: launchctl load ~/Library/LaunchAgents/net.unbound.unbound.plist
-  ignore_errors: yes

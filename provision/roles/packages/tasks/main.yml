@@ -1,4 +1,4 @@
----
-- include: packages.yml
-- include: services.yml
-- include: shell.yml
+- include: "packages/{{ansible_os_family|lower}}.yml"
+- include: "shell/{{ansible_os_family|lower}}.yml"
+- include: "services/{{ansible_os_family|lower}}.yml"
+- include: "custom.yml"
