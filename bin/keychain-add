@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-while read -ra SSH_KEYS; do
-  for i in "${SSH_KEYS[@]}"; do
-    $(which keychain) -q "$i"
-  done
-done <<< "$(find -E ~/.ssh -iregex '.*_(rsa|dsa|ecdsa|ed25519)$')"
