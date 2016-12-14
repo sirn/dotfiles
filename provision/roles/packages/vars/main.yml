@@ -9,35 +9,68 @@ pacman_packages:
   - adobe-source-serif-pro-fonts
   - aria2
   - curl
+  - dmenu
   - emacs
+  - erlang
+  - ffmpeg
   - firefox
   - fish
+  - ghc
   - git
   - gnucash
   - gnupg
+  - go
+  - graphviz
   - imagemagick
+  - ipcalc
   - irssi
   - keychain
+  - mercurial
+  - moreutils
+  - mosh
+  - neovim
+  - nghttp2
   - noto-fonts
   - noto-fonts-cjk
   - noto-fonts-emoji
+  - openssh
+  - openssl
+  - rfkill
+  - rtmpdump
+  - scala
   - shellcheck
+  - socat
   - the_silver_searcher
   - thunderbird
   - tmux
+  - tree
   - ttf-dejavu
   - vagrant
   - virtualbox
+  - xmonad
+  - xmonad-contrib
   - xz
   - youtube-dl
+
+aur_packages:
+  - direnv
+  - google-cloud-sdk
+  - kubernetes
+  - leiningen
+  - packer-io
+  - rebar3
+  - terraform
+  - vault
+  - virtualbox-ext-oracle
 
 # packages/darwin_brew
 
 brew_taps:
-  - homebrew/dupes
-  - homebrew/binary
-  - homebrew/versions
   - d12frosted/emacs-plus
+  - homebrew/binary
+  - homebrew/dupes
+  - homebrew/versions
+  - neovim/neovim
 
 brew_packages:
   - aria2
@@ -66,6 +99,7 @@ brew_packages:
   - mercurial
   - mobile-shell
   - moreutils
+  - neovim
   - nghttp2
   - openssh
   - openssl
