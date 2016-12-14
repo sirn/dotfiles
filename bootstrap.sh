@@ -128,7 +128,7 @@ linux_arch_setenv() {
     export PATH=/usr/local/bin:$PATH
 }
 
-linux_ansible_bootstrap() {
+linux_arch_ansible_bootstrap() {
     if hash ansible-playbook 2>/dev/null; then
         echo_ok 'Ansible is already installed.'
     else
@@ -140,7 +140,7 @@ linux_ansible_bootstrap() {
 bootstrap_linux() {
     if hash pacman 2>/dev/null; then
         linux_arch_setenv
-        linux_ansible_bootstrap
+        linux_arch_ansible_bootstrap
         common_ansible_run
     else
         echo_error "No compatible package manager."
