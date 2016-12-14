@@ -62,6 +62,9 @@ aur_packages:
   - terraform
   - vault
   - virtualbox-ext-oracle
+  - vivaldi
+  - vivaldi-ffmpeg-codecs
+  - vivaldi-widevine
 
 # packages/darwin_brew
 
