@@ -12,6 +12,12 @@ links:
   - source: ~/.dotfiles/etc/aria2.conf
     dest: ~/.aria2/aria2.conf
 
+  - source: ~/.dotfiles/etc/bash_profile
+    dest: ~/.bash_profile
+
+  - source: ~/.dotfiles/etc/bashrc
+    dest: ~/.bashrc
+
   - source: ~/.dotfiles/fish/config.fish
     dest: ~/.config/fish/config.fish
 

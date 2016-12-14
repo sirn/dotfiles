@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+#
+# ~/.bash_profile
+#
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export EDITOR=vi
+
+PATH=/usr/local/sbin:$PATH
+PATH=/usr/local/bin:$PATH
+PATH=$HOME/.local/bin:$PATH
+PATH=$HOME/.dotfiles/bin:$PATH
+
+if hash brew 2>/dev/null; then
+    export HOMEBREW_NO_ANALYTICS=1
+    export OPENSSL_INCLUDE_DIR=/usr/local/opt/openssl/include
+    export OPENSSL_LIB_DIR=/usr/local/opt/openssl/lib
+fi
+
+if hash cargo 2>/dev/null; then
+    export RUST_SRC_PATH=$HOME/.local/src/rust/current/src/
+    PATH=$HOME/.cargo/bin:$PATH
+fi
+
+if [ -d "$HOME/.rbenv" ]; then
+    PATH=$HOME/.rbenv/bin:$PATH
+    PATH=$HOME/.rbenv/shims:$PATH
+fi
+
+if [ -d "$HOME/.pyenv" ]; then
+    PATH=$HOME/.pyenv/bin:$PATH
+    PATH=$HOME/.pyenv/shims:$PATH
+fi
+
+if [ -f /usr/libexec/java_home ]; then
+    JAVA_HOME=$(/usr/libexec/java_home)
+    export JAVA_HOME
+fi
+
+export PATH
+
+if hash keychain 2>/dev/null; then
+    eval "$(keychain --eval --agents ssh,gpg --quiet)"
+fi
+
+# shellcheck source=/dev/null
+[[ -s ~/.bashrc ]] && source ~/.bashrc

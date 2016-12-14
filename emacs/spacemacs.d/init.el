@@ -30,6 +30,7 @@
      ruby-on-rails
      rust
      scala
+     shell-scripts
      (shell :variables
             shell-default-shell 'eshell)
      syntax-checking

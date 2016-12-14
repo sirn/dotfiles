@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# ~/.bashrc
+#
+
+[[ $- != *i* ]] && return
+[[ -s /etc/bashrc ]] && source /etc/bashrc
+
+hash rbenv 2>/dev/null && rbenv rehash &>/dev/null &disown
+hash pyenv 2>/dev/null && pyenv rehash &>/dev/null &disown
+
+exec fish

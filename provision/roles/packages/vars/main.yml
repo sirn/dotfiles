@@ -11,6 +11,7 @@ pacman_packages:
   - curl
   - emacs
   - firefox
+  - fish
   - git
   - gnucash
   - gnupg
@@ -47,6 +48,7 @@ brew_packages:
   - emacs-plus
   - erlang
   - ffmpeg
+  - fish
   - ghc
   - git
   - git-flow
