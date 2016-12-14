@@ -56,11 +56,9 @@
    dotspacemacs-themes '(minimal)
    dotspacemacs-colorize-cursor-according-to-state t
    dotspacemacs-default-font '("Source Code Pro"
-                               :size 14
                                :weight normal
                                :width normal
                                :powerline-scale 1.3)
-
    dotspacemacs-leader-key "SPC"
    dotspacemacs-emacs-leader-key "M-m"
    dotspacemacs-major-mode-leader-key ","
@@ -105,8 +103,11 @@
 (defun dotspacemacs/user-config ()
   "Configuration function for user code. Called after layers configuration."
   (setq evil-escape-key-sequence "jk")
-  (setq powerline-default-separator 'utf-8)
-  (spaceline-compile)
+
+  (if (eq system-type "darwin")
+      (progn
+        (setq powerline-default-separator 'utf-8)
+        (spaceline-compile)))
 
   (with-eval-after-load 'org
     (setq org-directory "~/Sync/Documents/Org")

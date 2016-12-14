@@ -1,0 +1,11 @@
+---
+- name: update pacman
+  become: yes
+  pacman: update_cache=yes
+  notify:
+    - upgrade pacman packages
+
+- name: install pacman packages
+  become: yes
+  pacman: name={{item}} state=latest
+  with_items: "{{pacman_packages}}"

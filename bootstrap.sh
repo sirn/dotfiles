@@ -22,6 +22,19 @@ echo_error() {
 
 
 #
+# Common
+#
+
+common_ansible_run() {
+    echo_wait 'Running Ansible playbook. This will take a while.'
+    if ! ansible-playbook provision/local.yml -K -i provision/hosts; then
+        echo_error 'Ansible playbook exited with an error.'
+        exit 1
+    fi
+}
+
+
+#
 # Darwin
 #
 
@@ -54,14 +67,6 @@ darwin_ansible_bootstrap() {
         echo_wait 'Ansible is not installed. Installing...'
         brew install ansible
         darwin_ansible_bootstrapped=1
-    fi
-}
-
-darwin_ansible_run() {
-    echo_wait 'Running Ansible playbook. This will take a while.'
-    if ! ansible-playbook provision/local.yml -K -i provision/hosts; then
-        echo_error 'Ansible playbook exited with an error.'
-        exit 1
     fi
 }
 
@@ -109,9 +114,38 @@ bootstrap_darwin() {
     darwin_xcode_setup
     darwin_brew_setup
     darwin_ansible_bootstrap
-    darwin_ansible_run
+    common_ansible_run
     darwin_cask_update
     darwin_cleanup
+}
+
+
+#
+# Linux
+#
+
+linux_arch_setenv() {
+    export PATH=/usr/local/bin:$PATH
+}
+
+linux_ansible_bootstrap() {
+    if hash ansible-playbook 2>/dev/null; then
+        echo_ok 'Ansible is already installed.'
+    else
+        echo_wait 'Ansible is not installed. Installing...'
+        sudo pacman -S --noconfirm ansible
+    fi
+}
+
+bootstrap_linux() {
+    if hash pacman 2>/dev/null; then
+        linux_arch_setenv
+        linux_ansible_bootstrap
+        common_ansible_run
+    else
+        echo_error "No compatible package manager."
+        exit 1
+    fi
 }
 
 
@@ -121,6 +155,7 @@ bootstrap_darwin() {
 
 case $OSTYPE in
     darwin*) bootstrap_darwin ;;
+    linux*)  bootstrap_linux ;;
     *)
         echo_error "Could not start bootstrap script."
         echo_error "Unknown platform: $OSTYPE."

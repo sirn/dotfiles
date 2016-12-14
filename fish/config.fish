@@ -10,13 +10,13 @@ if status --is-login
     set -x PATH $HOME/.local/bin $PATH
     set -x PATH $HOME/.dotfiles/bin $PATH
 
-    if which brew 2>&1 >/dev/null
+    if type -P brew >/dev/null 2>&1
         set -x HOMEBREW_NO_ANALYTICS 1
         set -x OPENSSL_INCLUDE_DIR /usr/local/opt/openssl/include
         set -x OPENSSL_LIB_DIR /usr/local/opt/openssl/lib
     end
 
-    if which cargo 2>&1 >/dev/null
+    if type -P cargo >/dev/null 2>&1
         set -x PATH $HOME/.cargo/bin $PATH
         set -x RUST_SRC_PATH $HOME/.local/src/rust/current/src/
     end
@@ -37,7 +37,7 @@ if status --is-login
         set -x JAVA_HOME (/usr/libexec/java_home)
     end
 
-    if which keychain 2>&1 >/dev/null
+    if type -P keychain >/dev/null 2>&1
         eval (keychain --agents ssh,gpg --eval --quiet) >/dev/null
     end
 
@@ -48,7 +48,7 @@ if status --is-login
 end
 
 if status --is-interactive
-    if which direnv 2>&1 >/dev/null
+    if type -P direnv >/dev/null 2>&1
        eval (direnv hook fish)
     end
 end
