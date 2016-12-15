@@ -18,4 +18,4 @@ if [ -d "$HOME/.pyenv" ]; then
     pyenv rehash &>/dev/null &disown
 fi
 
-exec fish
+[[ $- != *c* ]] && exec fish
