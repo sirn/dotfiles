@@ -2,12 +2,11 @@
 
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration."
-  (setq-default
-   dotspacemacs-distribution 'spacemacs
-   dotspacemacs-configuration-layer-path '("~/.dotfiles/emacs/emacs.d/private/")
-   dotspacemacs-configuration-layers
-   '(
-     ansible
+  (setq layers-darwin '(osx))
+  (setq layers-linux '())
+  (setq
+   layers-common
+   '(ansible
      auto-completion
      better-defaults
      clojure
@@ -22,7 +21,6 @@
      keychain
      markdown
      org
-     osx
      python
      (ruby :variables
            ruby-version-manager 'rbenv
@@ -38,7 +36,16 @@
      typescript
      vagrant
      version-control
-     yaml)
+     yaml))
+
+  (setq layers
+        (cond ((eq system-type 'darwin) (append layers-common layers-darwin))
+              ((eq system-type 'gnu/linux) (append layers-common layers-linux))))
+
+  (setq-default
+   dotspacemacs-distribution 'spacemacs
+   dotspacemacs-configuration-layer-path '("~/.dotfiles/emacs/emacs.d/private/")
+   dotspacemacs-configuration-layers layers
    dotspacemacs-additional-packages '()
    dotspacemacs-excluded-packages '()
    dotspacemacs-delete-orphan-packages t))
@@ -56,8 +63,9 @@
    dotspacemacs-startup-recent-list-size 5
    dotspacemacs-themes '(minimal)
    dotspacemacs-colorize-cursor-according-to-state t
-   dotspacemacs-default-font '("Source Code Pro"
+   dotspacemacs-default-font `("Source Code Pro"
                                :weight normal
+                               :size ,(when (eq system-type 'darwin) 14)
                                :width normal
                                :powerline-scale 1.3)
    dotspacemacs-leader-key "SPC"
@@ -105,7 +113,7 @@
   "Configuration function for user code. Called after layers configuration."
   (setq evil-escape-key-sequence "jk")
 
-  (if (eq system-type "darwin")
+  (if (eq system-type 'darwin)
       (progn
         (setq powerline-default-separator 'utf-8)
         (spaceline-compile)))
