@@ -23,16 +23,6 @@ if hash cargo 2>/dev/null; then
     PATH=$HOME/.cargo/bin:$PATH
 fi
 
-if [ -d "$HOME/.rbenv" ]; then
-    PATH=$HOME/.rbenv/bin:$PATH
-    PATH=$HOME/.rbenv/shims:$PATH
-fi
-
-if [ -d "$HOME/.pyenv" ]; then
-    PATH=$HOME/.pyenv/bin:$PATH
-    PATH=$HOME/.pyenv/shims:$PATH
-fi
-
 if [ -f /usr/libexec/java_home ]; then
     JAVA_HOME=$(/usr/libexec/java_home)
     export JAVA_HOME
