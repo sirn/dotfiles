@@ -29,6 +29,7 @@ pacman_packages:
   - moreutils
   - mosh
   - neovim
+  - net-tools
   - nghttp2
   - noto-fonts
   - noto-fonts-cjk

@@ -1,1 +1,2 @@
+- include: "archlinux_nfs.yml"
 - include: "archlinux_syncthing.yml"

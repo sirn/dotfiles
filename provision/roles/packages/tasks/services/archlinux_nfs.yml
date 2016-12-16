@@ -1,0 +1,13 @@
+---
+- name: install nfs service
+  become: yes
+  pacman: name=nfs-utils state=latest
+  notify:
+    - restart nfs-server systemd service
+
+- name: enable nfs service
+  become: yes
+  systemd:
+    name: "nfs-server"
+    enabled: yes
+    state: started
