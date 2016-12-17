@@ -1,0 +1,33 @@
+---
+- name: install unbound service
+  become: yes
+  pacman: name=unbound state=latest
+  notify:
+    - restart unbound systemd service
+
+- name: ensure unbound directory
+  become: yes
+  file: path=/etc/unbound state=directory recurse=yes
+
+- name: update resolvconf configuration
+  become: yes
+  copy:
+    src: etc/resolvconf.conf
+    dest: "/etc/resolvconf.conf"
+  notify:
+    - reload resolvconf
+
+- name: update unbound configuration
+  become: yes
+  copy:
+    src: etc/unbound/unbound.conf
+    dest: "/etc/unbound/unbound.conf"
+  notify:
+    - restart unbound systemd service
+
+- name: enable unbound service
+  become: yes
+  systemd:
+    name: "unbound"
+    enabled: yes
+    state: started

@@ -10,6 +10,7 @@ pacman_packages:
   - aria2
   - curl
   - dmenu
+  - dnsutils
   - emacs
   - erlang
   - ffmpeg

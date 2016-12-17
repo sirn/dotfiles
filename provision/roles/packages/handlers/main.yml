@@ -37,6 +37,19 @@
     daemon_reload: yes
     state: restarted
 
+# service/archlinux_unbound
+
+- name: restart unbound systemd service
+  become: yes
+  systemd:
+    name: "unbound"
+    daemon_reload: yes
+    state: restarted
+
+- name: reload resolvconf
+  become: yes
+  command: resolvconf -u
+
 # services/darwin_env
 
 - name: unload environment launchd service
