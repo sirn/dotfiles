@@ -1,0 +1,34 @@
+---
+- name: check pacaur installation
+  shell: pacman -Q |grep pacaur |head -n1
+  register: check_pacaur
+  changed_when: not check_pacaur.stdout
+
+- name: download tarball for pacaur
+  get_url:
+    url: "https://aur.archlinux.org/cgit/aur.git/snapshot/pacaur.tar.gz"
+    dest: /tmp/
+  register: download_pacaur
+  when: not check_pacaur.stdout
+
+- name: extract tarball for pacaur
+  unarchive:
+    src: "{{download_pacaur.dest}}"
+    dest: /tmp
+  register: extract_pacaur
+  when: download_pacaur.changed
+
+- name: build package for pacaur
+  command: >-
+    makepkg --noconfirm --noprogressbar -mfs
+    chdir=/tmp/pacaur
+  when: not check_pacaur.stdout
+
+- name: install pacaur
+  become: yes
+  shell: >-
+    pacman --noconfirm --noprogressbar --needed -U *.pkg.tar.xz
+    chdir=/tmp/pacaur
+  register: install_pacaur
+  changed_when: install_pacaur.stdout.find('there is nothing to do') == -1
+  when: not check_pacaur.stdout

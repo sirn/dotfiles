@@ -1,2 +1,3 @@
 ---
 - include: "archlinux_pacman.yml"
+- include: "archlinux_aur.yml"

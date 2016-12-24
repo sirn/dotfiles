@@ -1,0 +1,3 @@
+---
+- include: "archlinux_aur_cower.yml"
+- include: "archlinux_aur_pacaur.yml"
