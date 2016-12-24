@@ -50,6 +50,12 @@ darwin_links:
     dest: ~/.amethyst
 
 archlinux_links:
+  - source: ~/.dotfiles/etc/Xresources
+    dest: ~/.Xresources
+
+  - source: ~/.dotfiles/etc/xinitrc
+    dest: ~/.xinitrc
+
   - source: ~/.dotfiles/etc/xmobarrc
     dest: ~/.xmobarrc
 
