@@ -22,16 +22,16 @@ pacman_packages:
   - gnupg
   - go
   - graphviz
+  - ibus
+  - ibus-kkc
   - imagemagick
   - ipcalc
   - irssi
   - keychain
   - mercurial
   - moreutils
-  - mosh
   - neovim
   - net-tools
-  - nghttp2
   - noto-fonts
   - noto-fonts-cjk
   - noto-fonts-emoji
@@ -62,11 +62,12 @@ aur_keys:
 aur_packages:
   - direnv
   - google-cloud-sdk
+  - ibus-libthai
   - leiningen
   - packer-io
+  - pepper-flash
   - rebar3
   - terraform
-  - vault
   - virtualbox-ext-oracle
   - vivaldi
   - vivaldi-ffmpeg-codecs
@@ -106,10 +107,8 @@ brew_packages:
   - leiningen
   - mas
   - mercurial
-  - mobile-shell
   - moreutils
   - neovim
-  - nghttp2
   - openssh
   - openssl
   - packer
@@ -125,7 +124,6 @@ brew_packages:
   - tmux
   - trash
   - tree
-  - vault
   - xhyve
   - xz
   - youtube-dl
