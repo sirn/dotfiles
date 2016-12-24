@@ -62,7 +62,6 @@ aur_keys:
 aur_packages:
   - direnv
   - google-cloud-sdk
-  - kubectl-bin
   - leiningen
   - packer-io
   - rebar3
