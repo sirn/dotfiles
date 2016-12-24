@@ -39,6 +39,7 @@ pacman_packages:
   - openssl
   - rfkill
   - rtmpdump
+  - rxvt-unicode
   - scala
   - shellcheck
   - socat
@@ -51,6 +52,7 @@ pacman_packages:
   - virtualbox
   - xmonad
   - xmonad-contrib
+  - xsel
   - xz
   - youtube-dl
 

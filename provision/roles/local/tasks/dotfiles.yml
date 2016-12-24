@@ -8,6 +8,7 @@
     src: "{{item.source}}"
     path: "{{item.dest}}"
     state: link
+    force: yes
   with_items: "{{links}}"
 
 - name: link darwin-specific files and directories
@@ -15,5 +16,15 @@
     src: "{{item.source}}"
     path: "{{item.dest}}"
     state: link
+    force: yes
   with_items: "{{darwin_links}}"
   when: ansible_os_family == "Darwin"
+
+- name: link arch-specific files and directories
+  file:
+    src: "{{item.source}}"
+    path: "{{item.dest}}"
+    state: link
+    force: yes
+  with_items: "{{archlinux_links}}"
+  when: ansible_os_family == "Archlinux"

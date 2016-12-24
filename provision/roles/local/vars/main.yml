@@ -49,6 +49,16 @@ darwin_links:
   - source: ~/.dotfiles/etc/amethyst
     dest: ~/.amethyst
 
+archlinux_links:
+  - source: ~/.dotfiles/etc/xmobarrc
+    dest: ~/.xmobarrc
+
+  - source: ~/.dotfiles/etc/xmonad.hs
+    dest: ~/.xmonad/xmonad.hs
+
+  - source: ~/.dotfiles/etc/xprofile
+    dest: ~/.xprofile
+
 # projects.yml
 
 projects:
