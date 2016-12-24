@@ -6,6 +6,11 @@
   become: yes
   pacman: upgrade=yes
 
+# packages/acrhlinux_aur_pacaur
+
+- name: upgrade pacaur packages
+  pacaur: upgrade=yes
+
 # packages/darwin_brew
 
 - name: upgrade homebrew packages

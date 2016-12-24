@@ -18,15 +18,18 @@
   register: extract_cower
   when: download_cower.changed
 
-# Use skippgpcheck for now as GPG is broken (2.1.17)
-#
-# - name: import gpg key for cower
-#   shell: gpg --recv-keys --keyserver hkp://pgp.mit.edu 1EB2638FF56C0C53
-#   when: not check_cower.stdout
+- name: import gpg key for cower
+  shell:
+    gpg --list-keys 1EB2638FF56C0C53 2>/dev/null ||
+      curl -s "https://pgp.mit.edu/pks/lookup?op=get&search=0x1EB2638FF56C0C53" |
+      gpg --import
+  register: import_cower_key
+  changed_when: import_cower_key.stdout.find('imported') > 0
+  when: not check_cower.stdout
 
 - name: build package for cower
   command: >-
-    makepkg --noconfirm --noprogressbar --skippgpcheck -mfs
+    makepkg --noconfirm --noprogressbar -mfs
     chdir=/tmp/cower
   when: not check_cower.stdout
 

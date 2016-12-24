@@ -56,10 +56,13 @@ pacman_packages:
   - xz
   - youtube-dl
 
+aur_keys:
+  - 5A92E04305696D78
+
 aur_packages:
   - direnv
   - google-cloud-sdk
-  - kubernetes
+  - kubectl-bin
   - leiningen
   - packer-io
   - rebar3
