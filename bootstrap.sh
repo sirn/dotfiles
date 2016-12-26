@@ -133,7 +133,7 @@ linux_arch_ansible_bootstrap() {
         echo_ok 'Ansible is already installed.'
     else
         echo_wait 'Ansible is not installed. Installing...'
-        sudo pacman -S --noconfirm ansible
+        sudo pacman -S --noconfirm ansible python
     fi
 }
 

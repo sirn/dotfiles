@@ -14,7 +14,7 @@ killall ibus-daemon
 ibus-daemon --daemonize --xim
 
 # Wallpaper
-WALLPAPER=$HOME/Pictures/Wallpapers/Current.jpg
+WALLPAPER=$HOME/Pictures/Wallpapers/Current
 [ -f "$WALLPAPER" ] && feh --bg-scale "$WALLPAPER"
 
 # System bar

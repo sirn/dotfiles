@@ -1,0 +1,24 @@
+---
+- name: install redshift service
+  become: yes
+  pacman: name=redshift state=latest
+  notify:
+    - restart redshift systemd service
+
+- name: ensure redshift service directory
+  file:
+    path: ~/.config/systemd/user/redshift.service.d
+    state: directory
+    recurse: yes
+
+- name: update redshift service configuration
+  copy:
+    src: home/config/systemd/user/redshift.service/display.conf
+    dest: ~/.config/systemd/user/redshift.service.d/display.conf
+
+- name: enable redshift service
+  systemd:
+    name: "redshift"
+    enabled: yes
+    user: yes
+    state: started

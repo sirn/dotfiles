@@ -1,0 +1,10 @@
+---
+- name: install powertop service
+  become: yes
+  pacman: name=powertop state=latest
+
+- name: enable powertop service
+  become: yes
+  copy:
+    src: etc/systemd/system/powertop.service
+    dest: /etc/systemd/system/powertop.service

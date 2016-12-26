@@ -14,8 +14,12 @@
   copy:
     src: etc/resolvconf.conf
     dest: "/etc/resolvconf.conf"
-  notify:
-    - reload resolvconf
+  register: update_resolvconf
+
+- name: reload resolvconf
+  become: yes
+  command: resolvconf -u
+  when: update_resolvconf.changed
 
 - name: update unbound configuration
   become: yes

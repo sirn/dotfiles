@@ -24,12 +24,21 @@
   args:
     warn: no
 
-# services/nfs
+# services/archlinux_nfs
 
 - name: restart nfs-server systemd service
   become: yes
   systemd:
     name: "nfs-server"
+    daemon_reload: yes
+    state: restarted
+
+# services/archlinux_redshift
+
+- name: restart redshift systemd service
+  systemd:
+    name: "redshift"
+    user: yes
     daemon_reload: yes
     state: restarted
 
@@ -50,10 +59,6 @@
     name: "unbound"
     daemon_reload: yes
     state: restarted
-
-- name: reload resolvconf
-  become: yes
-  command: resolvconf -u
 
 # services/darwin_env
 

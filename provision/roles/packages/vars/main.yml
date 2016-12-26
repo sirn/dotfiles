@@ -13,6 +13,7 @@ pacman_packages:
   - dnsutils
   - emacs
   - erlang
+  - feh
   - ffmpeg
   - firefox
   - fish
@@ -30,6 +31,7 @@ pacman_packages:
   - keychain
   - mercurial
   - moreutils
+  - mpv
   - neovim
   - net-tools
   - noto-fonts
@@ -46,10 +48,12 @@ pacman_packages:
   - the_silver_searcher
   - thunderbird
   - tmux
+  - trayer
   - tree
   - ttf-dejavu
   - vagrant
   - virtualbox
+  - xmobar
   - xmonad
   - xmonad-contrib
   - xsel
@@ -72,6 +76,7 @@ aur_packages:
   - vivaldi
   - vivaldi-ffmpeg-codecs
   - vivaldi-widevine
+  - xcape
 
 # packages/darwin_brew
 
