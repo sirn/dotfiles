@@ -1,0 +1,4 @@
+---
+- include: "aur_cower.yml"
+- include: "aur_pacaur.yml"
+- include: "aur_packages.yml"

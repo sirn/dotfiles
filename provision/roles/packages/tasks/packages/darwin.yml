@@ -1,4 +1,4 @@
 ---
-- include: "darwin_brew.yml"
-- include: "darwin_cask.yml"
-- include: "darwin_mpv.yml"
+- include: "darwin/brew.yml"
+- include: "darwin/cask.yml"
+- include: "darwin/mpv.yml"

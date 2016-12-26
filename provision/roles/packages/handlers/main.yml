@@ -1,22 +1,22 @@
 ---
 
-# packages/archlinux_pacman
+# packages/archlinux/pacman
 
 - name: upgrade pacman packages
   become: yes
   pacman: upgrade=yes
 
-# packages/acrhlinux_aur_pacaur
+# packages/acrhlinux/aur_pacaur
 
 - name: upgrade pacaur packages
   pacaur: upgrade=yes
 
-# packages/darwin_brew
+# packages/darwin/brew
 
 - name: upgrade homebrew packages
   homebrew: upgrade_all=yes
 
-# packages/darwin_mpv
+# packages/darwin/mpv
 
 - name: link mpv
   command: brew linkapps mpv
@@ -24,7 +24,7 @@
   args:
     warn: no
 
-# services/archlinux_mpd
+# services/archlinux/mpd
 
 - name: restart mpd systemd service
   systemd:
@@ -33,7 +33,7 @@
     daemon_reload: yes
     state: restarted
 
-# services/archlinux_nfs
+# services/archlinux/nfs
 
 - name: restart nfs-server systemd service
   become: yes
@@ -42,7 +42,7 @@
     daemon_reload: yes
     state: restarted
 
-# services/archlinux_redshift
+# services/archlinux/redshift
 
 - name: restart redshift systemd service
   systemd:
@@ -51,7 +51,7 @@
     daemon_reload: yes
     state: restarted
 
-# services/archlinux_syncthing
+# services/archlinux/syncthing
 
 - name: restart syncthing systemd service
   become: yes
@@ -60,7 +60,7 @@
     daemon_reload: yes
     state: restarted
 
-# service/archlinux_unbound
+# services/archlinux/unbound
 
 - name: restart unbound systemd service
   become: yes
@@ -69,7 +69,7 @@
     daemon_reload: yes
     state: restarted
 
-# services/darwin_env
+# services/darwin/env
 
 - name: unload environment launchd service
   command: launchctl unload ~/Library/LaunchAgents/th.in.grid.env.plist
@@ -79,7 +79,7 @@
   command: launchctl load ~/Library/LaunchAgents/th.in.grid.env.plist
   ignore_errors: yes
 
-# services/darwin_syncthing
+# services/darwin/syncthing
 
 - name: unload syncthing launchd service
   command: launchctl unload ~/Library/LaunchAgents/net.syncthing.syncthing.plist
@@ -89,7 +89,7 @@
   command: launchctl load ~/Library/LaunchAgents/net.syncthing.syncthing.plist
   ignore_errors: yes
 
-# services/darwin_unbound
+# services/darwin/unbound
 
 - name: unload unbound launchd service
   command: launchctl unload ~/Library/LaunchAgents/net.unbound.unbound.plist
