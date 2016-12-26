@@ -1,0 +1,31 @@
+---
+- name: install mpd service
+  become: yes
+  pacman: name={{item}} state=latest
+  with_items:
+    - mpd
+    - ncmpc
+  notify:
+    - restart mpd systemd service
+
+- name: ensure mpd service directory
+  file:
+    path: "{{item}}"
+    state: directory
+    recurse: yes
+  with_items:
+    - ~/.config/mpd
+    - ~/.local/var/mpd
+    - ~/.local/var/mpd/playlists
+
+- name: configure mpd service
+  copy:
+    src: home/config/mpd/mpd.conf
+    dest: ~/.config/mpd/mpd.conf
+
+- name: enable mpd service
+  systemd:
+    name: "mpd"
+    enabled: yes
+    user: yes
+    state: started

@@ -24,6 +24,15 @@
   args:
     warn: no
 
+# services/archlinux_mpd
+
+- name: restart mpd systemd service
+  systemd:
+    name: "mpd"
+    user: yes
+    daemon_reload: yes
+    state: restarted
+
 # services/archlinux_nfs
 
 - name: restart nfs-server systemd service
