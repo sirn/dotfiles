@@ -1,7 +1,8 @@
 import XMonad
 import XMonad.Config.Desktop
-import XMonad.Util.Run(spawnPipe)
 import XMonad.Hooks.DynamicLog
+import XMonad.Util.EZConfig(additionalKeys)
+import XMonad.Util.Run(spawnPipe)
 
 baseConfig = desktopConfig
 
@@ -11,7 +12,13 @@ main = do
     { terminal   = "urxvt"
     , modMask    = mod4Mask
     , logHook    = dynamicLogString basePP >>= xmonadPropLog
-    }
+    } `additionalKeys` myAdditionalKeys
+
+myAdditionalKeys :: [((ButtonMask, KeySym), X ())]
+myAdditionalKeys =
+  [ ((0, 0x1008FF11), spawn "pamixer -d 10")
+  , ((0, 0x1008FF13), spawn "pamixer -i 10")
+  ]
 
 basePP :: PP
 basePP =
