@@ -37,6 +37,7 @@ pacman_packages:
   - noto-fonts
   - noto-fonts-cjk
   - noto-fonts-emoji
+  - onboard
   - openssh
   - openssl
   - rfkill

@@ -3,6 +3,7 @@ import XMonad.Config.Desktop
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.SetWMName
 import XMonad.Hooks.EwmhDesktops
+import XMonad.Hooks.ManageDocks
 import XMonad.Util.EZConfig(additionalKeys)
 import XMonad.Util.Run(spawnPipe)
 
@@ -14,15 +15,10 @@ main = do
   xmonad $ fullscreenSupport $ ewmh baseConfig
     { terminal        = "urxvt"
     , modMask         = mod4Mask
-    , logHook         = dynamicLogString basePP >>= xmonadPropLog
+    , logHook         = dynamicLogString myPP >>= xmonadPropLog
     , handleEventHook = handleEventHook baseConfig <+> fullscreenEventHook
+    , manageHook      = manageHook baseConfig <+> myManageHooks
     } `additionalKeys` myAdditionalKeys
-
-myAdditionalKeys :: [((ButtonMask, KeySym), X ())]
-myAdditionalKeys =
-  [ ((0, 0x1008FF11), spawn "pamixer -d 10")
-  , ((0, 0x1008FF13), spawn "pamixer -i 10")
-  ]
 
 fullscreenSupport :: XConfig a -> XConfig a
 fullscreenSupport c = c
@@ -48,8 +44,18 @@ setSupportedWithFullscreen = withDisplay $ \dpy -> do
     io $ changeProperty32 dpy r a c propModeReplace (fmap fromIntegral supp)
     setWMName "xmonad"
 
-basePP :: PP
-basePP =
+myManageHooks :: ManageHook
+myManageHooks = composeAll
+  [ className =? "Onboard" --> doIgnore ]
+
+myAdditionalKeys :: [((ButtonMask, KeySym), X ())]
+myAdditionalKeys =
+  [ ((0, 0x1008FF11), spawn "pamixer -d 10")
+  , ((0, 0x1008FF13), spawn "pamixer -i 10")
+  ]
+
+myPP :: PP
+myPP =
   xmobarPP { ppOrder   = \(ws:l:_:_) -> [ws,l]
            , ppCurrent = xmobarColor "#000" "#fff" . pad
            , ppHidden  = xmobarColor "#fff" "#666" . pad
