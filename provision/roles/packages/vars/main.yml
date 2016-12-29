@@ -164,7 +164,6 @@ cask_packages:
   - keyboard-maestro
   - mactex
   - microsoft-office
-  - omnifocus
   - omnigraffle
   - paw
   - sketch
