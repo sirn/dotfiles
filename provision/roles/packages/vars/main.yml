@@ -44,6 +44,7 @@ pacman_packages:
   - rtmpdump
   - rxvt-unicode
   - scala
+  - scrot
   - shellcheck
   - socat
   - the_silver_searcher
