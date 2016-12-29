@@ -133,4 +133,17 @@
      (tramp-login-args (("%h")))
      (tramp-login-program ,(shell-quote-argument
                             (expand-file-name
-                             "~/.dotfiles/bin/vagrant-tramp-ssh"))))))
+                             "~/.dotfiles/bin/vagrant-tramp-ssh")))))
+
+  ;; Fix broken status parsing in vagrant-tramp.
+  (defun vagrant-tramp--all-boxes ()
+    (let* ((status-cmd "vagrant global-status --machine-readable")
+           (status-raw (shell-command-to-string status-cmd))
+           (status-lines (-drop 7 (split-string status-raw "\n")))
+           (status-data-raw (--map (mapconcat 'identity
+                                              (-drop 4 (split-string it ",")) ",")
+                                   status-lines))
+           (status-data (--map (replace-regexp-in-string " " "" it) status-data-raw))
+           (status-groups (-butlast (-split-on "" status-data)))
+           (vm-attrs '(id name provider state dir)))
+      (--map (-zip vm-attrs it) status-groups))))
