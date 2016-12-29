@@ -105,9 +105,12 @@
 
 (defun dotspacemacs/user-init ()
   "Initialization function for user code. Called after Spacemacs init."
-  (setq exec-path-from-shell-check-startup-files nil)
   (setq custom-file "~/.dotfiles/emacs/emacs.d/custom.el")
-  (load custom-file))
+  (load custom-file)
+
+  ;; Unfortunately have to use interactive shell because Python cannot
+  ;; be override in login shell as lots of stuff will broke in X.
+  (setq exec-path-from-shell-check-startup-files nil))
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code. Called after layers configuration."
