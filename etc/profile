@@ -10,7 +10,6 @@ export EDITOR=vi
 PATH=/usr/local/sbin:$PATH
 PATH=/usr/local/bin:$PATH
 PATH=$HOME/.local/bin:$PATH
-PATH=$HOME/.dotfiles/bin:$PATH
 
 if hash brew 2>/dev/null; then
     export HOMEBREW_NO_ANALYTICS=1
