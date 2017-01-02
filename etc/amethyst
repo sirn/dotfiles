@@ -1,6 +1,6 @@
 {
     "mouse-follows-focus": false,
-    "focus-follows-mouse": true,
+    "focus-follows-mouse": false,
     "floating": [
         "2BUA8C4S2C.com.agilebits.onepassword-osx-helper",
         "com.adobe.Photoshop",
