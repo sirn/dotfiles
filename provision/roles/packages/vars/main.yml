@@ -24,7 +24,6 @@ pacman_packages:
   - go
   - graphviz
   - ibus
-  - ibus-kkc
   - imagemagick
   - ipcalc
   - irssi
@@ -69,6 +68,7 @@ aur_packages:
   - direnv
   - google-cloud-sdk
   - ibus-libthai
+  - ibuz-mozc
   - leiningen
   - packer-io
   - pepper-flash
