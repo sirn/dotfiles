@@ -114,8 +114,6 @@
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code. Called after layers configuration."
-  (setq evil-escape-key-sequence "jk")
-
   (if (eq system-type 'darwin)
       (progn
         (setq powerline-default-separator 'utf-8)

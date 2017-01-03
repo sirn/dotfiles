@@ -1,5 +1,3 @@
 set toolbars=none
 set defsearch=duckduckgo
 style -name ublock * #nav-bar * { visibility: visible; }
-
-inoremap jk <ESC>
