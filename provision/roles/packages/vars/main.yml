@@ -68,7 +68,7 @@ aur_packages:
   - direnv
   - google-cloud-sdk
   - ibus-libthai
-  - ibuz-mozc
+  - ibus-mozc
   - leiningen
   - packer-io
   - pepper-flash

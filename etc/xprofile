@@ -7,6 +7,9 @@
 setxkbmap -option ctrl:nocaps
 xcape -e 'Control_L=Escape'
 
+# Uniform looks
+export QT_QPA_PLATFORMTHEME='gtk2'
+
 # Ibus
 export GTK_IM_MODULE=ibus
 export XMODIFIERS=@im=ibus
