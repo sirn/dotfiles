@@ -145,7 +145,6 @@ cask_taps:
   - caskroom/fonts
 
 cask_packages:
-  - adobe-creative-cloud
   - alfred
   - amethyst
   - arq
@@ -165,8 +164,6 @@ cask_packages:
   - jce-unlimited-strength-policy
   - keyboard-maestro
   - mactex
-  - microsoft-office
-  - omnigraffle
   - paw
   - sketch
   - skype
