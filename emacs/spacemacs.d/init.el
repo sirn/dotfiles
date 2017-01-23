@@ -19,6 +19,7 @@
      html
      javascript
      keychain
+     lua
      markdown
      org
      python
