@@ -69,7 +69,6 @@ aur_packages:
   - google-cloud-sdk
   - ibus-libthai
   - ibus-mozc
-  - kubernetes-helm
   - leiningen
   - packer-io
   - pepper-flash
