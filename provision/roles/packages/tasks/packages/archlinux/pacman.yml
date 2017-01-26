@@ -7,5 +7,5 @@
 
 - name: install pacman packages
   become: yes
-  pacman: name={{item}} state=latest
+  pacman: name={{item}} state=present
   with_items: "{{pacman_packages}}"
