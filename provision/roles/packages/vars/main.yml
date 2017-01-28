@@ -211,6 +211,7 @@ python3_packages:
   - ipython
   - jupyter
   - pip
+  - pipenv
   - pyqt5
   - virtualenv
 
