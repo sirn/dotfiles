@@ -22,6 +22,10 @@ if hash cargo 2>/dev/null; then
     PATH=$HOME/.cargo/bin:$PATH
 fi
 
+if hash go 2>/dev/null; then
+    export GOPATH=$HOME/Projects/_Go/
+fi
+
 if [ -f /usr/libexec/java_home ]; then
     JAVA_HOME=$(/usr/libexec/java_home)
     export JAVA_HOME

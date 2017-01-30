@@ -74,3 +74,4 @@ archlinux_links:
 projects:
   - ~/Projects/_Vendor
   - ~/Projects/_Other
+  - ~/Projects/_Go
