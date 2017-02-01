@@ -92,6 +92,7 @@ brew_taps:
 brew_packages:
   - aria2
   - asciinema
+  - blueutil
   - cocot
   - curl
   - direnv

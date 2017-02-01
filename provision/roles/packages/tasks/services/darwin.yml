@@ -1,3 +1,4 @@
 - include: "darwin/env.yml"
+- include: "darwin/sleepwatcher.yml"
 - include: "darwin/syncthing.yml"
 - include: "darwin/unbound.yml"
