@@ -15,7 +15,6 @@ pacman_packages:
   - erlang
   - feh
   - ffmpeg
-  - firefox
   - fish
   - ghc
   - git
@@ -66,6 +65,7 @@ aur_keys:
 
 aur_packages:
   - direnv
+  - firefox-esr
   - google-cloud-sdk
   - ibus-libthai
   - ibus-mozc
@@ -151,7 +151,7 @@ cask_packages:
   - bartender
   - charles
   - dropshare
-  - firefox
+  - firefox-esr
   - flash-ppapi
   - flux
   - gnucash
