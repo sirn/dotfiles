@@ -210,6 +210,8 @@ python3_packages:
   - glances
   - ipython
   - jupyter
+  - matplotlib
+  - numpy
   - pip
   - pipenv
   - pyqt5
