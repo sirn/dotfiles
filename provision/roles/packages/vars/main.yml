@@ -83,11 +83,11 @@ aur_packages:
 # packages/darwin_brew
 
 brew_taps:
-  - d12frosted/emacs-plus
   - homebrew/binary
   - homebrew/dupes
   - homebrew/versions
   - neovim/neovim
+  - railwaycat/emacsmacport
 
 brew_packages:
   - aria2
@@ -96,7 +96,6 @@ brew_packages:
   - cocot
   - curl
   - direnv
-  - emacs-plus
   - erlang
   - ffmpeg
   - fish
@@ -151,6 +150,7 @@ cask_packages:
   - bartender
   - charles
   - dropshare
+  - emacs-mac
   - firefox-esr
   - flash-ppapi
   - flux
@@ -164,6 +164,7 @@ cask_packages:
   - jce-unlimited-strength-policy
   - keyboard-maestro
   - mactex
+  - mpv
   - paw
   - sketch
   - skype

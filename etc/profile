@@ -11,12 +11,6 @@ PATH=/usr/local/sbin:$PATH
 PATH=/usr/local/bin:$PATH
 PATH=$HOME/.local/bin:$PATH
 
-if hash brew 2>/dev/null; then
-    export HOMEBREW_NO_ANALYTICS=1
-    export OPENSSL_INCLUDE_DIR=/usr/local/opt/openssl/include
-    export OPENSSL_LIB_DIR=/usr/local/opt/openssl/lib
-fi
-
 if hash cargo 2>/dev/null; then
     export RUST_SRC_PATH=$HOME/.local/src/rust/current/src/
     PATH=$HOME/.cargo/bin:$PATH
@@ -26,16 +20,34 @@ if hash go 2>/dev/null; then
     export GOPATH=$HOME/Projects/_Go/
 fi
 
-if [ -f /usr/libexec/java_home ]; then
-    JAVA_HOME=$(/usr/libexec/java_home)
-    export JAVA_HOME
-fi
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    if hash brew 2>/dev/null; then
+        export HOMEBREW_NO_ANALYTICS=1
+        export OPENSSL_INCLUDE_DIR=/usr/local/opt/openssl/include
+        export OPENSSL_LIB_DIR=/usr/local/opt/openssl/lib
+    fi
 
-export PATH
+    if [ -f /usr/libexec/java_home ]; then
+        JAVA_HOME=$(/usr/libexec/java_home)
+        export JAVA_HOME
+    fi
+
+    if [ -d /Applications/Emacs.app/Contents/MacOS/bin ]; then
+        PATH=/Applications/Emacs.app/Contents/MacOS/bin:$PATH
+    elif [ -d /Applications/Emacs.app/Contents/MacOS ]; then
+        PATH=/Applications/Emacs.app/Contents/MacOS:$PATH
+    fi
+
+    if [ -d /Applications/mpv.app/Contents/MacOS ]; then
+        PATH=/Applications/mpv.app/Contents/MacOS:$PATH
+    fi
+fi
 
 if hash keychain 2>/dev/null; then
     eval "$(keychain --eval --agents ssh,gpg --quiet)"
 fi
+
+export PATH
 
 # shellcheck source=/dev/null
 [[ -s ~/.bashrc ]] && source ~/.bashrc

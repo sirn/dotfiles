@@ -1,5 +1,0 @@
----
-- name: install mpv bundle
-  homebrew: name=mpv options="with-bundle" state=latest
-  notify:
-    - link mpv
