@@ -29,8 +29,8 @@
 # https://github.com/ansible/ansible/issues/11348
 - name: extract rust source
   shell: |
-    curl https://static.rust-lang.org/dist/rustc-{{rust_version.stdout}}-src.tar.gz |
     mkdir -p ~/.local/src/rust/rustc-{{rust_version.stdout}} &&
+    curl https://static.rust-lang.org/dist/rustc-{{rust_version.stdout}}-src.tar.gz |
     tar -xvzf - --strip-components 1 -C ~/.local/src/rust/rustc-{{rust_version.stdout}}
   args:
     warn: no
