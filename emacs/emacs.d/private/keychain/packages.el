@@ -6,6 +6,6 @@
     :config
     (let ((shell (getenv "SHELL")))
       (progn
-        (setenv "SHELL" "/bin/bash")
+        (setenv "SHELL" "/bin/sh")
         (keychain-refresh-environment)
         (setenv "SHELL" shell)))))
