@@ -120,6 +120,9 @@
         (setq powerline-default-separator 'utf-8)
         (spaceline-compile)))
 
+  (setq shell-file-name "/bin/sh")
+  (setenv "SHELL" "/bin/sh")
+
   (with-eval-after-load 'org
     (setq org-directory "~/Sync/Documents/Org")
     (setq org-agenda-files '("~/Sync/Documents/Org/tasks.org")))
