@@ -30,13 +30,14 @@
 - name: extract rust source
   shell: |
     curl https://static.rust-lang.org/dist/rustc-{{rust_version.stdout}}-src.tar.gz |
-    tar -xvzf - -C ~/.local/src/rust/
+    mkdir -p ~/.local/src/rust/rustc-{{rust_version.stdout}} &&
+    tar -xvzf - --strip-components 1 -C ~/.local/src/rust/rustc-{{rust_version.stdout}}
   args:
     warn: no
-    creates: "~/.local/src/rust/rustc-{{rust_version.stdout}}-src"
+    creates: "~/.local/src/rust/rustc-{{rust_version.stdout}}"
 
 - name: link rust source
   file:
-    src: "~/.local/src/rust/rustc-{{rust_version.stdout}}-src"
+    src: "~/.local/src/rust/rustc-{{rust_version.stdout}}"
     dest: ~/.local/src/rust/current
     state: link
