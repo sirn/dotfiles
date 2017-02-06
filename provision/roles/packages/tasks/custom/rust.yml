@@ -33,10 +33,10 @@
     tar -xvzf - -C ~/.local/src/rust/
   args:
     warn: no
-    creates: "~/.local/src/rust/rustc-{{rust_version.stdout}}"
+    creates: "~/.local/src/rust/rustc-{{rust_version.stdout}}-src"
 
 - name: link rust source
   file:
-    src: "~/.local/src/rust/rustc-{{rust_version.stdout}}"
+    src: "~/.local/src/rust/rustc-{{rust_version.stdout}}-src"
     dest: ~/.local/src/rust/current
     state: link
