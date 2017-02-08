@@ -91,7 +91,7 @@ darwin_cask_update() {
             echo_ok 'Casks are up-to-date.'
         else
             echo_wait "Updating casks: \033[1;30m${outdated_casks[*]}"
-            brew cask reinstall --force "${outdated_casks[@]}"
+            brew cask install --force "${outdated_casks[@]}"
         fi
     fi
 }
