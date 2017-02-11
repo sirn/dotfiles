@@ -162,6 +162,7 @@ cask_packages:
   - iterm2
   - java
   - jce-unlimited-strength-policy
+  - kap
   - keyboard-maestro
   - mactex
   - mpv
