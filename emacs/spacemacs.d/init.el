@@ -127,6 +127,9 @@
     (setq org-directory "~/Sync/Documents/Org")
     (setq org-agenda-files '("~/Sync/Documents/Org/tasks.org")))
 
+  (if (file-exists-p "~/.spacemacs.d/local.el")
+      (load-file "~/.spacemacs.d/local.el"))
+
   ;; Fix vagrant-tramp broken on macOS by using custom TRAMP method and custom
   ;; vagrant-tramp-ssh binary.
   (add-to-list

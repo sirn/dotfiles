@@ -14,6 +14,8 @@ Thumbs.db
 # Emacs stuff
 emacs/emacs.d/*
 !emacs/emacs.d/site/*
+emacs/spacemacs.d/*
+!emacs/spacemacs.d/init.el
 
 # Vim stuff
 vim/bundle/*
