@@ -64,7 +64,7 @@
    dotspacemacs-startup-recent-list-size 5
    dotspacemacs-themes '(minimal)
    dotspacemacs-colorize-cursor-according-to-state t
-   dotspacemacs-default-font `("Fira Code"
+   dotspacemacs-default-font `("Hasklig"
                                :weight normal
                                :size ,(when (eq system-type 'darwin) 14)
                                :width normal
