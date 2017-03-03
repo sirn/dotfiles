@@ -70,10 +70,12 @@ aur_packages:
   - ibus-libthai
   - ibus-mozc
   - leiningen
+  - otf-hasklig
   - packer-io
   - pepper-flash
   - rebar3
   - terraform
+  - ttf-fira-code
   - virtualbox-ext-oracle
   - vivaldi
   - vivaldi-ffmpeg-codecs
@@ -182,6 +184,7 @@ cask_packages:
 
 cask_fonts:
   - font-fira-code
+  - font-hasklig
   - font-inconsolata
   - font-inconsolata-dz
   - font-inconsolata-dz-for-powerline

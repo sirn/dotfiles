@@ -64,11 +64,11 @@
    dotspacemacs-startup-recent-list-size 5
    dotspacemacs-themes '(minimal)
    dotspacemacs-colorize-cursor-according-to-state t
-   dotspacemacs-default-font `("Source Code Pro"
+   dotspacemacs-default-font `("Fira Code"
                                :weight normal
                                :size ,(when (eq system-type 'darwin) 14)
                                :width normal
-                               :powerline-scale 1.3)
+                               :powerline-scale 1.5)
    dotspacemacs-leader-key "SPC"
    dotspacemacs-emacs-leader-key "M-m"
    dotspacemacs-major-mode-leader-key ","
@@ -115,11 +115,6 @@
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code. Called after layers configuration."
-  (if (eq system-type 'darwin)
-      (progn
-        (setq powerline-default-separator 'utf-8)
-        (spaceline-compile)))
-
   (setq shell-file-name "/bin/sh")
   (setenv "SHELL" "/bin/sh")
 
@@ -129,6 +124,9 @@
 
   (if (file-exists-p "~/.spacemacs.d/local.el")
       (load-file "~/.spacemacs.d/local.el"))
+
+  (if (boundp 'mac-auto-operator-composition-mode)
+      (mac-auto-operator-composition-mode))
 
   ;; Fix vagrant-tramp broken on macOS by using custom TRAMP method and custom
   ;; vagrant-tramp-ssh binary.
