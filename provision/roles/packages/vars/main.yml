@@ -101,7 +101,6 @@ brew_packages:
   - erlang
   - ffmpeg
   - fish
-  - forklift
   - ghc
   - git
   - git-flow
@@ -157,6 +156,7 @@ cask_packages:
   - firefox-esr
   - flash-ppapi
   - flux
+  - forklift
   - gnucash
   - google-cloud-sdk
   - hazel
