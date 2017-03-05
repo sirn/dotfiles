@@ -182,11 +182,7 @@ cask_packages:
   - xquartz
 
 cask_fonts:
-  - font-inconsolata
-  - font-inconsolata-dz
-  - font-inconsolata-dz-for-powerline
   - font-source-code-pro
-  - font-source-code-pro-for-powerline
 
 # custom/node
 
