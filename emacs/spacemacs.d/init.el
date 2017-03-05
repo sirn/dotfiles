@@ -64,7 +64,7 @@
    dotspacemacs-startup-recent-list-size 5
    dotspacemacs-themes '(minimal)
    dotspacemacs-colorize-cursor-according-to-state t
-   dotspacemacs-default-font `("Fira Code"
+   dotspacemacs-default-font `("Source Code Pro"
                                :weight normal
                                :size ,(when (eq system-type 'darwin) 14)
                                :width normal
@@ -122,11 +122,11 @@
     (setq org-directory "~/Sync/Documents/Org")
     (setq org-agenda-files '("~/Sync/Documents/Org/tasks.org")))
 
-  (if (file-exists-p "~/.spacemacs.d/local.el")
-      (load-file "~/.spacemacs.d/local.el"))
+  (when (file-exists-p "~/.spacemacs.d/local.el")
+    (load-file "~/.spacemacs.d/local.el"))
 
-  (if (boundp 'mac-auto-operator-composition-mode)
-      (mac-auto-operator-composition-mode))
+  (when (boundp 'mac-auto-operator-composition-mode)
+    (mac-auto-operator-composition-mode))
 
   ;; Fix vagrant-tramp broken on macOS by using custom TRAMP method and custom
   ;; vagrant-tramp-ssh binary.
