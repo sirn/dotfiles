@@ -71,16 +71,6 @@
   command: launchctl load ~/Library/LaunchAgents/th.in.grid.env.plist
   ignore_errors: yes
 
-# services/darwin/env
-
-- name: unload sleepwatcher launchd service
-  command: launchctl unload ~/Library/LaunchAgents/de.bernhard-baehr.sleepwatcher.plist
-  ignore_errors: yes
-
-- name: load sleepwatcher launchd service
-  command: launchctl load ~/Library/LaunchAgents/de.bernhard-baehr.sleepwatcher.plist
-  ignore_errors: yes
-
 # services/darwin/syncthing
 
 - name: unload syncthing launchd service
