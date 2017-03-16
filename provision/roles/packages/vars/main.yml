@@ -65,10 +65,12 @@ aur_keys:
 
 aur_packages:
   - direnv
-  - firefox-esr
+  - firefox-esr-bin
   - google-cloud-sdk
+  - hugo
   - ibus-libthai
   - ibus-mozc
+  - kubernetes-helm
   - leiningen
   - packer-io
   - pepper-flash
@@ -106,6 +108,7 @@ brew_packages:
   - gpg-agent
   - gpg2
   - graphviz
+  - hugo
   - imagemagick
   - ipcalc
   - irssi

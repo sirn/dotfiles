@@ -14,5 +14,5 @@
     - upgrade pacaur packages
 
 - name: install pacaur packages
-  pacaur: name={{item}} state=latest
+  pacaur: name={{item}} state=present
   with_items: "{{aur_packages}}"
