@@ -152,6 +152,7 @@ cask_packages:
   - arq
   - bartender
   - charles
+  - choosy
   - dropshare
   - emacs-mac
   - firefox-esr
