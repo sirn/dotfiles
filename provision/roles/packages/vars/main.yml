@@ -157,7 +157,6 @@ cask_packages:
   - emacs-mac
   - firefox-esr
   - flash-ppapi
-  - flux
   - forklift
   - gnucash
   - google-cloud-sdk
