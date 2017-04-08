@@ -105,7 +105,6 @@ brew_packages:
   - git
   - git-flow
   - golang
-  - gpg-agent
   - gpg2
   - graphviz
   - hugo

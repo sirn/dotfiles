@@ -44,6 +44,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 if hash keychain 2>/dev/null; then
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        PATH=/usr/local/opt/gpg-agent/bin:$PATH
+    fi
+
     eval "$(keychain --eval --agents ssh,gpg --quiet)"
 fi
 
