@@ -170,6 +170,7 @@ cask_packages:
   - mactex
   - microsoft-office
   - mpv
+  - omnigraffle
   - paw
   - sketch
   - skype
