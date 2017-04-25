@@ -102,6 +102,7 @@ brew_packages:
   - erlang
   - ffmpeg
   - fish
+  - fswatch
   - ghc
   - git
   - git-flow
