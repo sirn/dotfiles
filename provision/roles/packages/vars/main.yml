@@ -53,6 +53,7 @@ pacman_packages:
   - ttf-dejavu
   - vagrant
   - virtualbox
+  - whois
   - xmobar
   - xmonad
   - xmonad-contrib
@@ -186,6 +187,7 @@ cask_packages:
 
 cask_fonts:
   - font-source-code-pro
+  - font-source-sans-pro
 
 # custom/node
 
