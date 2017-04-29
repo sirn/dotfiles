@@ -204,12 +204,12 @@ node_packages:
 
 # custom_python
 
-python2_version: 2.7.12
+python2_version: 2.7.13
 
 python2_packages:
-  - ansible
+  - ansible==2.2.2.0
 
-python3_version: 3.5.2
+python3_version: 3.6.1
 
 python3_packages:
   - autoflake
