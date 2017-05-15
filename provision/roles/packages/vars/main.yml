@@ -20,7 +20,6 @@ pacman_packages:
   - git
   - gnucash
   - gnupg
-  - go
   - graphviz
   - ibus
   - imagemagick
@@ -106,7 +105,6 @@ brew_packages:
   - ghc
   - git
   - git-flow
-  - golang
   - gpg2
   - graphviz
   - hugo
@@ -189,6 +187,15 @@ cask_packages:
 cask_fonts:
   - font-source-code-pro
   - font-source-sans-pro
+
+# custom/go
+
+go_packages:
+  - github.com/nsf/gocode
+  - github.com/rogpeppe/godef
+  - golang.org/x/tools/cmd/guru
+  - golang.org/x/tools/cmd/gorename
+  - golang.org/x/tools/cmd/goimports
 
 # custom/node
 

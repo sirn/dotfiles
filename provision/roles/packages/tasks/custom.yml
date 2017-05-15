@@ -1,6 +1,7 @@
 ---
 - include: "custom/arcanist.yml"
 - include: "custom/deis.yml"
+- include: "custom/go.yml"
 - include: "custom/nodejs.yml"
 - include: "custom/python.yml"
 - include: "custom/ruby.yml"

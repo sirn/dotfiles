@@ -18,6 +18,7 @@ fi
 
 if hash go 2>/dev/null; then
     export GOPATH=$HOME/Projects/_Go/
+    PATH=$HOME/Projects/_Go/bin
 fi
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
