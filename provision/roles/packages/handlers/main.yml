@@ -16,6 +16,15 @@
 - name: upgrade homebrew packages
   homebrew: upgrade_all=yes
 
+# services/archlinux/docker
+
+- name: restart docker systemd service
+  systemd:
+    name: "docker"
+    user: yes
+    daemon_reload: yes
+    state: restarted
+
 # services/archlinux/mpd
 
 - name: restart mpd systemd service

@@ -11,7 +11,6 @@ pacman_packages:
   - curl
   - dmenu
   - dnsutils
-  - docker
   - emacs
   - erlang
   - feh

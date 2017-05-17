@@ -1,3 +1,4 @@
+- include: "archlinux/docker.yml"
 - include: "archlinux/mpd.yml"
 - include: "archlinux/nfs.yml"
 - include: "archlinux/powertop.yml"
