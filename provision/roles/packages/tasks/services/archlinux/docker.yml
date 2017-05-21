@@ -9,5 +9,4 @@
   systemd:
     name: "docker"
     enabled: yes
-    user: yes
     state: started
