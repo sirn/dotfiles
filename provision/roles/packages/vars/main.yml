@@ -29,6 +29,7 @@ pacman_packages:
   - mercurial
   - moreutils
   - mpv
+  - mupdf
   - neovim
   - net-tools
   - noto-fonts
