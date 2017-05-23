@@ -46,9 +46,6 @@ links:
   - source: ~/.dotfiles/etc/tmux.conf
     dest: ~/.tmux.conf
 
-  - source: ~/.dotfiles/vim/vimperatorrc
-    dest: ~/.vimperatorrc
-
 darwin_links:
   - source: ~/.dotfiles/etc/amethyst
     dest: ~/.amethyst

@@ -67,7 +67,7 @@ aur_keys:
 
 aur_packages:
   - direnv
-  - firefox-esr-bin
+  - firefox
   - google-cloud-sdk
   - hugo
   - ibus-libthai
@@ -156,7 +156,7 @@ cask_packages:
   - choosy
   - dropshare
   - emacs-mac
-  - firefox-esr
+  - firefox
   - flash-ppapi
   - forklift
   - gnucash
