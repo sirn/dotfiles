@@ -37,6 +37,7 @@ pacman_packages:
   - onboard
   - openssh
   - openssl
+  - pcmanfm
   - rfkill
   - rtmpdump
   - rxvt-unicode
