@@ -1,4 +1,10 @@
 ---
+- name: configure pacman
+  become: yes
+  copy:
+    src: etc/pacman.conf
+    dest: /etc/pacman.conf
+
 - name: update pacman
   become: yes
   pacman: update_cache=yes

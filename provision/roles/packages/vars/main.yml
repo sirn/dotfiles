@@ -67,6 +67,7 @@ aur_keys:
   - 5A92E04305696D78
 
 aur_packages:
+  - crossover
   - direnv
   - firefox-developer
   - google-cloud-sdk
