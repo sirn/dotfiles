@@ -56,6 +56,9 @@ pacman_packages:
   - vagrant
   - virtualbox
   - whois
+  - wine-mono
+  - wine-staging
+  - wine_gecko
   - xmobar
   - xmonad
   - xmonad-contrib
@@ -67,7 +70,6 @@ aur_keys:
   - 5A92E04305696D78
 
 aur_packages:
-  - crossover
   - direnv
   - firefox-developer
   - google-cloud-sdk
