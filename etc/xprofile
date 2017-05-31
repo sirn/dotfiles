@@ -22,4 +22,13 @@ WALLPAPER=$HOME/Pictures/Wallpapers/Current
 [ -f "$WALLPAPER" ] && feh --bg-scale "$WALLPAPER"
 
 # System bar
-trayer --edge top --align right --SetDockType true --SetPartialStrut true --expand true --width 15 --transparent true --alpha 0 --tint 0x000000 &
+trayer --edge top \
+	--align right \
+	--SetDockType true \
+	--SetPartialStrut true \
+	--expand true \
+	--width 15 \
+	--height 30 \
+	--transparent true \
+	--alpha 0 \
+	--tint 0x000000 &

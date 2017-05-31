@@ -1,4 +1,4 @@
-Config { font = "xft:Source Code Pro:size=9"
+Config { font = "xft:Source Code Pro:size=10"
        , bgColor = "black"
        , fgColor = "white"
        , position = TopW L 100
@@ -18,7 +18,7 @@ Config { font = "xft:Source Code Pro:size=9"
                         ] 10
                     ]
        , sepChar = "%"
-       , additionalFonts = ["xft:Source Code Pro:size=9:bold"]
+       , additionalFonts = ["xft:Source Code Pro:size=10:bold"]
        , alignSep = "}{"
        , template = "%date%%XMonadLog% %wlp1s0wi% %wlp1s0% %multicpu% %memory% %battery%"
        }
