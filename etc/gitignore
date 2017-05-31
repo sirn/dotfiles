@@ -12,11 +12,7 @@ Thumbs.db
 dump.rdb
 
 # Per-project files
-Vagrantfile
-.ruby-version
-.python-version
 .vagrant
-.vimrc
 .idea
 .generators
 .gems
@@ -24,13 +20,5 @@ Vagrantfile
 out/
 cache/
 
-# Language specific
-node_modules/
-*.egg/
-*.pyc
-__pycache__/
-
 # User files
-.env
-.envrc
 stdout
