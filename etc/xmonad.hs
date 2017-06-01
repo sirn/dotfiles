@@ -1,18 +1,10 @@
 import XMonad
-import XMonad.Config.Desktop
-import XMonad.Hooks.DynamicLog
+import XMonad.Config.Xfce
 import XMonad.Hooks.SetWMName
 import XMonad.Hooks.EwmhDesktops
-import XMonad.Hooks.ManageDocks
 import XMonad.Util.EZConfig(additionalKeys)
-import XMonad.Util.Run(spawnPipe)
 
-baseConfig = desktopConfig
-
-fullscreenSupport :: XConfig a -> XConfig a
-fullscreenSupport c = c
-  { startupHook = startupHook c +++ setSupportedWithFullscreen }
-  where x +++ y = mappend x y
+baseConfig = xfceConfig
 
 setSupportedWithFullscreen :: X ()
 setSupportedWithFullscreen = withDisplay $ \dpy -> do
@@ -33,9 +25,16 @@ setSupportedWithFullscreen = withDisplay $ \dpy -> do
     io $ changeProperty32 dpy r a c propModeReplace (fmap fromIntegral supp)
     setWMName "xmonad"
 
+fullscreenSupport :: XConfig a -> XConfig a
+fullscreenSupport c = c
+  { startupHook = startupHook c +++ setSupportedWithFullscreen }
+  where x +++ y = mappend x y
+
 myManageHooks :: ManageHook
 myManageHooks = composeAll
-  [ className =? "Onboard" --> doIgnore ]
+  [ className =? "Onboard"         --> doIgnore
+  , className =? "Xfce4-appfinder" --> doFloat
+  , className =? "Xfrun4"          --> doFloat ]
 
 myModMask :: KeyMask
 myModMask = mod4Mask
@@ -44,26 +43,14 @@ myAdditionalKeys :: [((ButtonMask, KeySym), X ())]
 myAdditionalKeys =
   [ ((0, 0x1008FF11),   spawn "pamixer -d 10")
   , ((0, 0x1008FF13),   spawn "pamixer -i 10")
-  , ((myModMask, xK_p), spawn "dmenu_run -fn \"Source Code Pro-11\"")
+  , ((myModMask, xK_p), spawn "dmenu_run -fn \"Source Code Pro-10\" -lh 40")
   ]
-
-myPP :: PP
-myPP =
-  xmobarPP { ppOrder   = \(ws:l:_:_) -> [ws,l]
-           , ppCurrent = xmobarColor "#000" "#fff" . pad
-           , ppHidden  = xmobarColor "#fff" "#666" . pad
-           , ppLayout  = xmobarColor "gray" ""
-           , ppSep     = " "
-           , ppWsSep   = ""
-           }
 
 main :: IO ()
 main = do
-  xmproc <- spawnPipe "xmobar"
   xmonad $ fullscreenSupport $ ewmh baseConfig
     { terminal        = "urxvt"
     , modMask         = myModMask
-    , logHook         = dynamicLogString myPP >>= xmonadPropLog
     , handleEventHook = handleEventHook baseConfig <+> fullscreenEventHook
     , manageHook      = manageHook baseConfig <+> myManageHooks
     } `additionalKeys` myAdditionalKeys

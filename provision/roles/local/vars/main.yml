@@ -54,12 +54,6 @@ archlinux_links:
   - source: ~/.dotfiles/etc/Xresources
     dest: ~/.Xresources
 
-  - source: ~/.dotfiles/etc/xinitrc
-    dest: ~/.xinitrc
-
-  - source: ~/.dotfiles/etc/xmobarrc
-    dest: ~/.xmobarrc
-
   - source: ~/.dotfiles/etc/xmonad.hs
     dest: ~/.xmonad/xmonad.hs
 

@@ -7,28 +7,9 @@
 setxkbmap -option ctrl:nocaps
 xcape -e 'Control_L=Escape'
 
-# Uniform looks
-export QT_QPA_PLATFORMTHEME='gtk2'
-
 # Ibus
 export GTK_IM_MODULE=ibus
 export XMODIFIERS=@im=ibus
 export QT_IM_MODULE=ibus
 killall ibus-daemon
 ibus-daemon --daemonize --xim
-
-# Wallpaper
-WALLPAPER=$HOME/Pictures/Wallpapers/Current
-[ -f "$WALLPAPER" ] && feh --bg-scale "$WALLPAPER"
-
-# System bar
-trayer --edge top \
-	--align right \
-	--SetDockType true \
-	--SetPartialStrut true \
-	--expand true \
-	--width 15 \
-	--height 30 \
-	--transparent true \
-	--alpha 0 \
-	--tint 0x000000 &

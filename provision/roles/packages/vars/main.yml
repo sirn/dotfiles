@@ -9,7 +9,6 @@ pacman_packages:
   - adobe-source-serif-pro-fonts
   - aria2
   - curl
-  - dmenu
   - dnsutils
   - emacs
   - erlang
@@ -39,7 +38,6 @@ pacman_packages:
   - onboard
   - openssh
   - openssl
-  - pcmanfm
   - rfkill
   - rtmpdump
   - rxvt-unicode
@@ -50,13 +48,12 @@ pacman_packages:
   - the_silver_searcher
   - thunderbird
   - tmux
-  - trayer
   - tree
   - ttf-dejavu
   - vagrant
   - virtualbox
   - whois
-  - xmobar
+  - xfce4
   - xmonad
   - xmonad-contrib
   - xsel
@@ -68,6 +65,7 @@ aur_keys:
 
 aur_packages:
   - direnv
+  - dmenu-xyw-mouse-msel
   - firefox-developer
   - google-cloud-sdk
   - hugo
