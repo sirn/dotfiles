@@ -3,8 +3,9 @@
 # dotfiles.yml
 
 dots:
-  - ~/.aria2
+  - ~/.aria1
   - ~/.config/fish
+  - ~/.emacs.d
   - ~/.irssi
   - ~/.ssh
   - ~/.xmonad
@@ -37,8 +38,8 @@ links:
   - source: ~/.dotfiles/etc/profile
     dest: ~/.profile
 
-  - source: ~/.dotfiles/emacs/spacemacs.d
-    dest: ~/.spacemacs.d
+  - source: ~/.dotfiles/emacs/init.el
+    dest: ~/.emacs.d/init.el
 
   - source: ~/.dotfiles/ssh/config.d
     dest: ~/.ssh/config.d
