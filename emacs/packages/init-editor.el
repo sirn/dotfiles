@@ -27,6 +27,9 @@
     (define-key company-active-map [S-tab] 'company-select-previous-or-abort)
     (global-company-mode t)))
 
+(req-package eldoc
+  :diminish "")
+
 (req-package flycheck
   :diminish ""
   :config
