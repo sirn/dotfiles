@@ -1,4 +1,6 @@
-(req-package exec-path-from-shell)
+(req-package exec-path-from-shell
+  :config
+  (exec-path-from-shell-initialize))
 
 (req-package keychain-environment
   :require exec-path-from-shell

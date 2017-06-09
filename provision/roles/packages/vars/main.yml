@@ -240,3 +240,4 @@ ruby_packages:
   - bundler
   - middleman
   - pry
+  - sqlint
