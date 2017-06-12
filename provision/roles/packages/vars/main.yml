@@ -204,6 +204,7 @@ go_packages:
 node_packages:
   - autoprefixer
   - js-beautify
+  - localtunnel
   - nativefier
   - postcss
   - postcss-cli
