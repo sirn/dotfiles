@@ -48,6 +48,7 @@ darwin_xcode_setup() {
     if ! xcode-select --install 2>/dev/null; then
         echo_clear
         echo_ok 'Xcode has been successfully setup.'
+	echo_ok 'Please make sure to run sudo xcodebuild -license'
     fi
 }
 

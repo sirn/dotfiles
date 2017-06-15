@@ -3,7 +3,7 @@
 # dotfiles.yml
 
 dots:
-  - ~/.aria1
+  - ~/.aria2
   - ~/.config/fish
   - ~/.emacs.d
   - ~/.irssi
