@@ -68,6 +68,7 @@ aur_packages:
   - direnv
   - dmenu-xyw-mouse-msel
   - firefox-developer
+  - git-lfs
   - google-cloud-sdk
   - hugo
   - ibus-libthai
@@ -107,6 +108,7 @@ brew_packages:
   - ghc
   - git
   - git-flow
+  - git-lfs
   - gpg2
   - graphviz
   - hugo
