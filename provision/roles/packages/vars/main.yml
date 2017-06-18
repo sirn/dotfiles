@@ -99,6 +99,7 @@ brew_packages:
   - asciinema
   - blueutil
   - carthage
+  - cocoapods
   - cocot
   - curl
   - direnv
