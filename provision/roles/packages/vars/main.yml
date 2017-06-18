@@ -98,6 +98,7 @@ brew_packages:
   - aria2
   - asciinema
   - blueutil
+  - carthage
   - cocot
   - curl
   - direnv
