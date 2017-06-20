@@ -75,6 +75,7 @@ aur_packages:
   - ibus-mozc
   - kubernetes-helm
   - leiningen
+  - minikube-bin
   - packer-io
   - pepper-flash
   - rebar3
