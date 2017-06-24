@@ -72,28 +72,21 @@ darwin_ansible_bootstrap() {
 }
 
 darwin_cask_update() {
-    if brew cask >/dev/null 2>&1; then
-        echo_wait 'Cask appears to be installed. Checking for updates...'
-        outdated_casks=()
+    echo_wait 'Cask appears to be installed. Checking for updates...'
+    outdated_casks=()
 
-        while read -ra cask_info; do
-            echo -ne "\r\033[K  Checking \033[1;30m${cask_info[0]}\033[0;0m..."
-            installed_version=${cask_info[${#cask_info[@]}-1]}
-            latest_version=$(brew cask _stanza version "${cask_info[0]}")
-            if [[ "$installed_version" != "$latest_version" ]]; then
-                outdated_casks+=(${cask_info[0]})
-            fi
-        done <<< "$(brew cask list --versions)"
+    while read -ra cask_info; do
+        outdated_casks+=(${cask_info[0]})
+    done <<< "$(brew cask outdated --quiet --greedy)"
 
-        echo -ne "\r\n"
-        echo_clear
+    echo -ne "\r\n"
+    echo_clear
 
-        if [ ${#outdated_casks[@]} == 0 ]; then
-            echo_ok 'Casks are up-to-date.'
-        else
-            echo_wait "Updating casks: \033[1;30m${outdated_casks[*]}"
-            brew cask install --force "${outdated_casks[@]}"
-        fi
+    if [ ${#outdated_casks[@]} == 0 ]; then
+        echo_ok 'Casks are up-to-date.'
+    else
+        echo_wait "Updating casks: \033[1;30m${outdated_casks[*]}"
+        brew cask install --force "${outdated_casks[@]}"
     fi
 }
 
