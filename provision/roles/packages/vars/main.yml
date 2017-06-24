@@ -67,7 +67,6 @@ aur_keys:
 aur_packages:
   - direnv
   - dmenu-xyw-mouse-msel
-  - firefox-developer
   - git-lfs
   - google-cloud-sdk
   - hugo
@@ -164,7 +163,6 @@ cask_packages:
   - dropshare
   - emacs-mac
   - firefox
-  - firefoxdeveloperedition
   - flash-ppapi
   - forklift
   - gnucash
