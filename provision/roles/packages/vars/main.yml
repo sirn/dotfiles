@@ -40,13 +40,13 @@ pacman_packages:
   - openssh
   - openssl
   - rfkill
+  - ripgrep
   - rtmpdump
   - rxvt-unicode
   - scala
   - scrot
   - shellcheck
   - socat
-  - the_silver_searcher
   - thunderbird
   - tmux
   - tree
@@ -132,12 +132,12 @@ brew_packages:
   - pinentry-mac
   - reattach-to-user-namespace
   - rebar3
+  - ripgrep
   - rtmpdump
   - scala
   - shellcheck
   - socat
   - terraform
-  - the_silver_searcher
   - tmux
   - trash
   - tree
