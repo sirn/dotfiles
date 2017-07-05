@@ -1,4 +1,5 @@
-(menu-bar-mode -1)
+(unless (eq system-type 'darwin)
+  (menu-bar-mode -1))
 
 (when (display-graphic-p)
   (if (eq system-type 'darwin)
