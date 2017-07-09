@@ -41,8 +41,8 @@ links:
   - source: ~/.dotfiles/emacs/init.el
     dest: ~/.emacs.d/init.el
 
-  - source: ~/.dotfiles/ssh/config.d
-    dest: ~/.ssh/config.d
+  - source: ~/.dotfiles/ssh/config
+    dest: ~/.ssh/config
 
   - source: ~/.dotfiles/etc/tmux.conf
     dest: ~/.tmux.conf
