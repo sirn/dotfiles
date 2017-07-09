@@ -6,7 +6,6 @@ dots:
   - ~/.aria2
   - ~/.config/fish
   - ~/.emacs.d
-  - ~/.irssi
   - ~/.ssh
 
 archlinux_dots:
@@ -33,9 +32,6 @@ links:
 
   - source: ~/.dotfiles/etc/hgrc
     dest: ~/.hgrc
-
-  - source: ~/.dotfiles/irssi/scripts
-    dest: ~/.irssi/scripts
 
   - source: ~/.dotfiles/etc/profile
     dest: ~/.profile
