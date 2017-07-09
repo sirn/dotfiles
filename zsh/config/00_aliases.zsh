@@ -1,0 +1,5 @@
+alias ls="ls -G"
+alias ll="ls -alh"
+alias vi="nvim"
+alias vim="nvim"
+alias emacs="emacs -nw"

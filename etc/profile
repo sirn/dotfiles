@@ -38,12 +38,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         export JAVA_HOME
     fi
 
-    if [ -d /Applications/Emacs.app/Contents/MacOS/bin ]; then
-        PATH=/Applications/Emacs.app/Contents/MacOS/bin:$PATH
-    elif [ -d /Applications/Emacs.app/Contents/MacOS ]; then
-        PATH=/Applications/Emacs.app/Contents/MacOS:$PATH
-    fi
-
     if [ -d /Applications/mpv.app/Contents/MacOS ]; then
         PATH=/Applications/mpv.app/Contents/MacOS:$PATH
     fi
@@ -58,6 +52,3 @@ if hash keychain 2>/dev/null; then
 fi
 
 export PATH
-
-# shellcheck source=/dev/null
-[[ -s ~/.bashrc ]] && source ~/.bashrc

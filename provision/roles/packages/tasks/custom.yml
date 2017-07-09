@@ -1,5 +1,6 @@
 ---
 - include: "custom/arcanist.yml"
+- include: "custom/zsh.yml"
 - include: "custom/deis.yml"
 - include: "custom/golang.yml"
 - include: "custom/nodejs.yml"

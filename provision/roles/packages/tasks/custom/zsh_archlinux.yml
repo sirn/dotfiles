@@ -1,0 +1,8 @@
+---
+- name: install zsh
+  become: yes
+  pacman: name=zsh state=present
+
+- name: install fzy
+  become: yes
+  pacaur: name=fzy state=present

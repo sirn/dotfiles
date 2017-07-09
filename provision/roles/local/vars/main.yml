@@ -4,7 +4,6 @@
 
 dots:
   - ~/.aria2
-  - ~/.config/fish
   - ~/.emacs.d
   - ~/.ssh
 
@@ -14,18 +13,6 @@ archlinux_dots:
 links:
   - source: ~/.dotfiles/etc/aria2.conf
     dest: ~/.aria2/aria2.conf
-
-  - source: ~/.dotfiles/etc/bash_profile
-    dest: ~/.bash_profile
-
-  - source: ~/.dotfiles/etc/bashrc
-    dest: ~/.bashrc
-
-  - source: ~/.dotfiles/fish/config.fish
-    dest: ~/.config/fish/config.fish
-
-  - source: ~/.dotfiles/fish/functions
-    dest: ~/.config/fish/functions
 
   - source: ~/.dotfiles/etc/gitconfig
     dest: ~/.gitconfig
@@ -44,6 +31,12 @@ links:
 
   - source: ~/.dotfiles/etc/tmux.conf
     dest: ~/.tmux.conf
+
+  - source: ~/.dotfiles/zsh/zshrc
+    dest: ~/.zshrc
+
+  - source: ~/.dotfiles/zsh/zprofile
+    dest: ~/.zprofile
 
 darwin_links:
   - source: ~/.dotfiles/etc/amethyst

@@ -1,6 +1,8 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 #
-# ~/.bash_profile
+# ~/.zprofile
 #
 
 [[ -s ~/.profile ]] && source ~/.profile
+
+# vim:ft=sh

@@ -15,7 +15,6 @@ pacman_packages:
   - feh
   - ffmpeg
   - firefox
-  - fish
   - ghc
   - git
   - gnucash
@@ -102,9 +101,9 @@ brew_packages:
   - cocot
   - curl
   - direnv
+  - emacs
   - erlang
   - ffmpeg
-  - fish
   - fswatch
   - ghc
   - git
