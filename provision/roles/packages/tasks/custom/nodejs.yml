@@ -1,17 +1,5 @@
 ---
-- name: install node
-  homebrew: name=node state=latest
-  when: ansible_os_family == "Darwin"
-  register: node_installed
-
-- name: install node
-  become: yes
-  pacman: name={{item}} state=latest
-  when: ansible_os_family == "Archlinux"
-  register: node_installed
-  with_items:
-    - nodejs
-    - npm
+- include: "nodejs_{{ansible_os_family|lower}}.yml"
 
 - name: configure npm prefix
   command: npm config set prefix ~/.local

@@ -1,14 +1,5 @@
 ---
-- name: install go
-  homebrew: name=golang state=latest
-  when: ansible_os_family == "Darwin"
-  register: node_installed
-
-- name: install go
-  become: yes
-  pacman: name=go state=latest
-  when: ansible_os_family == "Archlinux"
-  register: node_installed
+- include: "golang_{{ansible_os_family|lower}}.yml"
 
 - name: ensure gopath directory
   file:

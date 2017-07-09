@@ -1,0 +1,4 @@
+---
+- name: install go
+  become: yes
+  pacman: name=go state=latest

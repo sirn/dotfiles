@@ -3,6 +3,11 @@
   file: path={{item}} state=directory recurse=yes
   with_items: "{{dots}}"
 
+- name: prepare arch-specific dot directories
+  file: path={{item}} state=directory recurse=yes
+  with_items: "{{archlinux_dots}}"
+  when: ansible_os_family == "Archlinux"
+
 - name: link files and directories
   file:
     src: "{{item.source}}"

@@ -1,0 +1,4 @@
+---
+- name: install node
+  homebrew: name=node state=latest
+  register: node_installed

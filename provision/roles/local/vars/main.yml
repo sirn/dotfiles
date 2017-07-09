@@ -8,6 +8,8 @@ dots:
   - ~/.emacs.d
   - ~/.irssi
   - ~/.ssh
+
+archlinux_dots:
   - ~/.xmonad
 
 links:
