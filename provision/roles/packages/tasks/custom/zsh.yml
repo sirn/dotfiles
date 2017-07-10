@@ -5,6 +5,7 @@
   git:
     repo: https://github.com/zplug/zplug.git
     dest: ~/.zplug
+    update: no
 
 - name: ensure zsh is in /etc/shells
   become: yes
