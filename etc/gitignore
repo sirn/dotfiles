@@ -14,6 +14,8 @@ dump.rdb
 # Per-project files
 .vagrant
 .idea
+.envrc
+.dir-locals.el
 .generators
 .gems
 *.iml
