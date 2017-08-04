@@ -190,6 +190,7 @@ cask_packages:
   - viscosity
   - vivaldi
   - xquartz
+  - datagrip
 
 cask_fonts:
   - font-source-code-pro
