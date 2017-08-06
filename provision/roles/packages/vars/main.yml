@@ -170,7 +170,6 @@ cask_packages:
   - iterm2
   - java
   - jce-unlimited-strength-policy
-  - kap
   - keyboard-maestro
   - mactex
   - microsoft-office
@@ -180,7 +179,6 @@ cask_packages:
   - omnioutliner
   - paw
   - sketch
-  - spotify
   - swinsian
   - the-unarchiver
   - thunderbird
