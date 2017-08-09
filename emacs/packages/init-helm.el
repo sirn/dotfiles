@@ -38,9 +38,10 @@
   :require evil-leader ;; helm load is deferred
   :commands helm-do-ag
   :init
-  (custom-set-variables '(helm-ag-base-command "rg --color=never --no-heading"))
-  (evil-leader/set-key
-    "/" 'helm-do-ag))
+  (progn
+    (custom-set-variables '(helm-ag-base-command "rg --color=never --no-heading"))
+    (evil-leader/set-key
+      "/" 'helm-do-ag)))
 
 (req-package helm-flycheck
   :require flycheck ;; helm load is deferred
@@ -63,9 +64,9 @@
   (defun helm-projectile-ag (&optional options)
     (interactive (if current-prefix-arg (list (read-string "option: " "" 'helm-ag--extra-options-history))))
     (if (require 'helm-ag nil  'noerror)
-	(if (projectile-project-p)
-	    (let ((helm-ag-command-option options)
-		  (current-prefix-arg nil))
-	      (helm-do-ag (projectile-project-root) (car (projectile-parse-dirconfig-file))))
-	  (error "You're not in a project"))
+        (if (projectile-project-p)
+            (let ((helm-ag-command-option options)
+                  (current-prefix-arg nil))
+              (helm-do-ag (projectile-project-root) (car (projectile-parse-dirconfig-file))))
+          (error "You're not in a project"))
       (error "Package helm-ag not available"))))

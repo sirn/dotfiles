@@ -3,9 +3,9 @@
   :commands company-go
   :init
   (add-hook 'go-mode-hook
-	    (lambda ()
-	      (set (make-local-variable 'company-backends)
-		   '(company-go)))))
+            (lambda ()
+              (set (make-local-variable 'company-backends)
+                   '(company-go)))))
 
 (req-package flycheck-gometalinter
   :require flycheck

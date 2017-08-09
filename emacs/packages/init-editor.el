@@ -1,3 +1,4 @@
+(setq-default indent-tabs-mode nil)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (req-package avy
@@ -12,13 +13,14 @@
 (req-package company
   :diminish ""
   :init
-  (setq company-idle-delay 0.1)
-  (setq company-minimum-prefix-length 2)
-  (setq company-require-match nil)
-  (setq company-dabbrev-downcase nil)
-  (setq company-selection-wrap-around t)
-  (setq company-tooltip-flip-when-above t)
-  (setq company-tooltip-align-annotations t)
+  (progn
+    (setq company-idle-delay 0.1)
+    (setq company-minimum-prefix-length 2)
+    (setq company-require-match nil)
+    (setq company-dabbrev-downcase nil)
+    (setq company-selection-wrap-around t)
+    (setq company-tooltip-flip-when-above t)
+    (setq company-tooltip-align-annotations t))
   :config
   (progn
     (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
@@ -39,18 +41,20 @@
   :require evil-leader
   :commands global-linum-mode
   :init
-  (setq linum-format "%4d ")
-  (evil-leader/set-key
-    "tl" 'global-linum-mode))
+  (progn
+    (setq linum-format "%4d ")
+    (evil-leader/set-key
+      "tl" 'global-linum-mode)))
 
 (req-package linum-relative
   :require (linum evil-leader)
   :config
-  (setq linum-relative-current-symbol "")
-  (setq linum-relative-format "%4s ")
-  (linum-relative-mode)
-  (evil-leader/set-key
-    "tL" 'linum-relative-toggle))
+  (progn
+    (setq linum-relative-current-symbol "")
+    (setq linum-relative-format "%4s ")
+    (linum-relative-mode)
+    (evil-leader/set-key
+      "tL" 'linum-relative-toggle)))
 
 (req-package rainbow-delimiters
   :commands rainbow-delimiters-mode

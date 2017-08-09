@@ -6,8 +6,10 @@
   :diminish (anzu-mode . "")
   :require evil
   :config
-  (setq anzu-cons-mode-line-p nil)
-  (global-anzu-mode t))
+  (progn
+    (setq anzu-cons-mode-line-p nil)
+    (global-anzu-mode t)
+    ))
 
 (req-package evil-commentary
   :diminish ""
