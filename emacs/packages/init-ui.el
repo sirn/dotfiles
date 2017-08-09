@@ -24,9 +24,9 @@
     (setq telephone-line-primary-right-separator 'telephone-line-abs-left)
     (setq telephone-line-secondary-right-separator 'telephone-line-abs-hollow-left)
     (setq telephone-line-height (if (eq system-type 'darwin) 22 32))
-    (telephone-line-defsegment* custom-winum-segment
+    (telephone-line-defsegment* custom-winum-segment ()
       (winum-get-number-string))
-    (telephone-line-defsegment* custom-anzu-segment
+    (telephone-line-defsegment* custom-anzu-segment ()
       (anzu--update-mode-line))
     (setq telephone-line-lhs
           '((nil    . (custom-winum-segment))
