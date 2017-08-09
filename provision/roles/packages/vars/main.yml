@@ -86,6 +86,7 @@ aur_packages:
 # packages/darwin_brew
 
 brew_taps:
+  - ethereum/ethereum
   - homebrew/binary
   - homebrew/dupes
   - homebrew/versions

@@ -1,5 +1,6 @@
 ---
 - include: "darwin/pre.yml"
 - include: "darwin/env.yml"
+- include: "darwin/ethereum.yml"
 - include: "darwin/syncthing.yml"
 - include: "darwin/unbound.yml"
