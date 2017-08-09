@@ -1,3 +1,12 @@
+(defun helm-hide-minibuffer-maybe ()
+  (when (with-helm-buffer helm-echo-input-in-header-line)
+    (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+      (overlay-put ov 'window (selected-window))
+      (overlay-put ov 'face
+                   (let ((bg-color (face-background 'default nil)))
+                     `(:background ,bg-color :foreground ,bg-color)))
+      (setq-local cursor-type nil))))
+
 (req-package helm
   :require evil-leader
   :diminish (helm-mode . "")
@@ -17,6 +26,9 @@
     (define-key helm-map (kbd "C-h") 'helm-next-source)
     (define-key helm-map (kbd "C-S-h") 'describe-key)
     (define-key helm-map (kbd "C-l") (kbd "RET"))
+    (setq helm-split-window-in-side-p t)
+    (setq helm-echo-input-in-header-line t)
+    (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe)
     (with-eval-after-load 'helm-files
       (dolist (keymap (list helm-find-files-map helm-read-file-map))
         (define-key keymap (kbd "C-l") 'helm-execute-persistent-action)
