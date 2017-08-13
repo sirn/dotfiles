@@ -110,18 +110,58 @@
   command: launchctl load ~/Library/LaunchAgents/net.unbound.unbound.plist
   ignore_errors: yes
 
-# custom/python
+# lang/elixir
+
+- name: update default elixir
+  command: ~/.asdf/bin/asdf global elixir {{elixir_version}}
+
+- name: update elixir shims
+  command: ~/.asdf/bin/asdf reshim elixir
+
+# lang/erlang
+
+- name: update default erlang
+  command: ~/.asdf/bin/asdf global erlang {{erlang_version}}
+
+- name: update erlang shims
+  command: ~/.asdf/bin/asdf reshim erlang
+
+# lang/golang
+
+- name: update default golang
+  command: ~/.asdf/bin/asdf global golang {{golang_version}}
+
+- name: update golang shims
+  command: ~/.asdf/bin/asdf reshim golang
+
+# lang/nodejs
+
+- name: update default nodejs
+  command: ~/.asdf/bin/asdf global nodejs {{nodejs_version}}
+
+- name: update nodejs shims
+  command: ~/.asdf/bin/asdf reshim nodejs
+
+# lang/python
 
 - name: update default python
-  command: ~/.pyenv/bin/pyenv global {{python2_version}} {{python3_version}}
+  command: ~/.asdf/bin/asdf global python {{python2_version}} {{python3_version}}
 
-- name: update pyenv shims
-  command: ~/.pyenv/bin/pyenv rehash
+- name: update python shims
+  command: ~/.asdf/bin/asdf reshim python
 
-# custom/ruby
+# lang/ruby
 
 - name: update default ruby
-  command: ~/.rbenv/bin/rbenv global {{ruby_version}}
+  command: ~/.asdf/bin/asdf global ruby {{ruby_version}}
 
-- name: update rbenv shims
-  command: ~/.rbenv/bin/rbenv rehash
+- name: update ruby shims
+  command: ~/.asdf/bin/asdf reshim ruby
+
+# lang/rust
+
+- name: update default rust
+  command: ~/.asdf/bin/asdf global rust {{rust_version}}
+
+- name: update rust shims
+  command: ~/.asdf/bin/asdf reshim rust

@@ -5,9 +5,6 @@
     - unload ethereum launchd service
     - load ethereum launchd service
 
-- name: ensure ethereum directory
-  file: path=~/.ethereum state=directory recurse=yes
-
 - name: enable ethereum service
   template:
     src: home/Library/LaunchAgents/org.ethereum.ethereum.plist.j2

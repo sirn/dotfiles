@@ -1,4 +1,7 @@
 ---
-- include: "darwin/pre.yml"
+# Some brew packages (e.g. scala) required Java to be installed.
+- name: install java
+  homebrew_cask: name=java state=present
+
 - include: "darwin/brew.yml"
 - include: "darwin/cask.yml"

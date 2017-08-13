@@ -1,5 +1,10 @@
 ---
-- include: "darwin/pre.yml"
+- name: ensure launch agents directory
+  file:
+    path: ~/Library/LaunchAgents
+    state: directory
+    recurse: yes
+
 - include: "darwin/env.yml"
 - include: "darwin/ethereum.yml"
 - include: "darwin/syncthing.yml"

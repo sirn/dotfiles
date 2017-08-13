@@ -1,0 +1,9 @@
+---
+- include: "lang/asdf.yml"
+- include: "lang/elixir.yml"
+- include: "lang/erlang.yml"
+- include: "lang/golang.yml"
+- include: "lang/nodejs.yml"
+- include: "lang/python.yml"
+- include: "lang/ruby.yml"
+- include: "lang/rust.yml"

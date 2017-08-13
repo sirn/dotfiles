@@ -1,0 +1,33 @@
+---
+- name: install rust plugin via asdf
+  command: ~/.asdf/bin/asdf plugin-add rust https://github.com/code-lever/asdf-rust
+  args:
+    creates: ~/.asdf/plugins/rust
+
+- name: install rust {{rust_version}} via asdf
+  command: ~/.asdf/bin/asdf install rust {{rust_version}}
+  args:
+    creates: ~/.asdf/installs/rust/{{rust_version}}
+  notify:
+    - update default rust
+    - update rust shims
+
+- name: create rust source directory
+  file: path=~/.local/src/rust state=directory recurse=yes
+
+- name: extract rust source for {{rust_version}}
+  shell: |
+    mkdir -p ~/.local/src/rust/rustc-{{rust_version}} &&
+    curl https://static.rust-lang.org/dist/rustc-{{rust_version}}-src.tar.gz |
+    tar -xvzf - --strip-components 1 -C ~/.local/src/rust/rustc-{{rust_version}}
+  args:
+    warn: no
+    creates: "~/.local/src/rust/rustc-{{rust_version}}"
+
+- name: install rust packages
+  command: ~/.asdf/installs/rust/{{rust_version}}/bin/cargo install {{item}}
+  args:
+    creates: ~/.cargo/bin/{{item}}
+  with_items: "{{rust_packages}}"
+  notify:
+    - update rust shims

@@ -11,7 +11,6 @@ pacman_packages:
   - curl
   - dnsutils
   - emacs
-  - erlang
   - feh
   - ffmpeg
   - firefox
@@ -41,7 +40,6 @@ pacman_packages:
   - ripgrep
   - rtmpdump
   - rxvt-unicode
-  - scala
   - scrot
   - shellcheck
   - socat
@@ -64,6 +62,8 @@ aur_keys:
   - 5A92E04305696D78
 
 aur_packages:
+  - arcanist-git
+  - deis-workflow-cli-bin
   - direnv
   - dmenu-xyw-mouse-msel
   - git-lfs
@@ -90,11 +90,13 @@ brew_taps:
   - ethereum/ethereum
   - homebrew/binary
   - homebrew/dupes
+  - homebrew/php
   - homebrew/versions
   - neovim/neovim
   - railwaycat/emacsmacport
 
 brew_packages:
+  - arcanist
   - aria2
   - asciinema
   - blueutil
@@ -102,9 +104,9 @@ brew_packages:
   - cocoapods
   - cocot
   - curl
+  - deis
   - direnv
   - emacs
-  - erlang
   - ffmpeg
   - fswatch
   - ghc
@@ -133,7 +135,6 @@ brew_packages:
   - rebar3
   - ripgrep
   - rtmpdump
-  - scala
   - shellcheck
   - socat
   - terraform
@@ -197,18 +198,19 @@ cask_fonts:
   - font-source-code-pro
   - font-source-sans-pro
 
-# custom/go
+# lang/elixir
 
-go_packages:
-  - github.com/nsf/gocode
-  - github.com/rogpeppe/godef
-  - golang.org/x/tools/cmd/guru
-  - golang.org/x/tools/cmd/gorename
-  - golang.org/x/tools/cmd/goimports
+elixir_version: 1.5.1-otp-20
 
-# custom/node
+# lang/erlang
 
-node_packages:
+erlang_version: 20.0
+
+# lang/nodejs
+
+nodejs_version: 8.3.0
+
+nodejs_packages:
   - autoprefixer
   - js-beautify
   - localtunnel
@@ -219,14 +221,25 @@ node_packages:
   - tslint
   - typescript
 
-# custom_python
+# lang/golang
+
+golang_version: 1.8.3
+
+golang_packages:
+  - github.com/nsf/gocode
+  - github.com/rogpeppe/godef
+  - golang.org/x/tools/cmd/guru
+  - golang.org/x/tools/cmd/gorename
+  - golang.org/x/tools/cmd/goimports
+
+# lang/python
 
 python2_version: 2.7.13
 
 python2_packages:
-  - ansible==2.2.2.0
+  - ansible
 
-python3_version: 3.6.1
+python3_version: 3.6.2
 
 python3_packages:
   - autoflake
@@ -240,12 +253,20 @@ python3_packages:
   - pyqt5
   - virtualenv
 
-# custom/ruby
+# lang/ruby
 
-ruby_version: 2.3.1
+ruby_version: 2.4.1
 
 ruby_packages:
   - bundler
   - middleman
   - pry
   - sqlint
+
+# lang/rust
+
+rust_version: 1.19.0
+
+rust_packages:
+  - racer
+  - rustfmt

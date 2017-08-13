@@ -1,0 +1,28 @@
+---
+- name: install nodejs plugin via asdf
+  command: ~/.asdf/bin/asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs
+  args:
+    creates: ~/.asdf/plugins/nodejs
+
+- name: install nodejs {{nodejs_version}} via asdf
+  command: ~/.asdf/bin/asdf install nodejs {{nodejs_version}}
+  args:
+    creates: ~/.asdf/installs/nodejs/{{nodejs_version}}
+  notify:
+    - update default nodejs
+    - update nodejs shims
+
+- name: configure npm prefix
+  command: npm config set prefix ~/.local
+  args:
+    creates: ~/.npmrc
+
+- name: install nodejs packages
+  npm:
+    name: "{{item}}"
+    global: true
+    state: latest
+    executable: ~/.asdf/installs/nodejs/{{nodejs_version}}/bin/npm
+  with_items: "{{nodejs_packages}}"
+  notify:
+    - update nodejs shims

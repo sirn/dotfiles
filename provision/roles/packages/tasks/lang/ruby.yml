@@ -1,0 +1,23 @@
+---
+- name: install ruby plugin via asdf
+  command: ~/.asdf/bin/asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby
+  args:
+    creates: ~/.asdf/plugins/ruby
+
+- name: install ruby {{ruby_version}} via asdf
+  command: ~/.asdf/bin/asdf install ruby {{ruby_version}}
+  args:
+    creates: ~/.asdf/installs/ruby/{{ruby_version}}
+  notify:
+    - update default ruby
+    - update ruby shims
+
+- name: install ruby packages
+  gem:
+    name: "{{item}}"
+    state: latest
+    user_install: false
+    executable: ~/.asdf/installs/ruby/{{ruby_version}}/bin/gem
+  with_items: "{{ruby_packages}}"
+  notify:
+    - update ruby shims

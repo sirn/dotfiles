@@ -1,8 +1,0 @@
----
-- name: install node
-  become: yes
-  pacman: name={{item}} state=latest
-  register: node_installed
-  with_items:
-    - nodejs
-    - npm

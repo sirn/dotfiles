@@ -1,6 +1,0 @@
----
-- name: ensure launch agents directory
-  file:
-    path: ~/Library/LaunchAgents
-    state: directory
-    recurse: yes

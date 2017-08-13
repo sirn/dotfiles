@@ -1,0 +1,13 @@
+---
+- name: install erlang plugin via asdf
+  command: ~/.asdf/bin/asdf plugin-add erlang https://github.com/asdf-vm/asdf-erlang
+  args:
+    creates: ~/.asdf/plugins/erlang
+
+- name: install erlang {{erlang_version}} via asdf
+  command: ~/.asdf/bin/asdf install erlang {{erlang_version}}
+  args:
+    creates: ~/.asdf/installs/erlang/{{erlang_version}}
+  notify:
+    - update default erlang
+    - update erlang shims

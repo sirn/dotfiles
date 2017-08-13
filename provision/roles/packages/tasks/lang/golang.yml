@@ -1,0 +1,29 @@
+---
+- name: install golang plugin via asdf
+  command: ~/.asdf/bin/asdf plugin-add golang https://github.com/kennyp/asdf-golang
+  args:
+    creates: ~/.asdf/plugins/golang
+
+- name: install golang {{golang_version}} via asdf
+  command: ~/.asdf/bin/asdf install golang {{golang_version}}
+  args:
+    creates: ~/.asdf/installs/golang/{{golang_version}}
+  notify:
+    - update default golang
+    - update golang shims
+
+- name: ensure gopath directory
+  file:
+    path: ~/Projects/_Go/
+    state: directory
+    recurse: yes
+
+- name: install golang packages
+  command: ~/.asdf/installs/golang/{{golang_version}}/go/bin/go get -u -v {{item}}
+  args:
+    creates: "~/Projects/_Go/src/{{item}}"
+  environment:
+    GOPATH: "{{ansible_env.HOME}}/Projects/_Go/"
+  with_items: "{{golang_packages}}"
+  notify:
+    - update golang shims
