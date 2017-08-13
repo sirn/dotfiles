@@ -11,8 +11,3 @@
     global: true
     state: latest
   with_items: "{{node_packages}}"
-
-- name: install custom typescript-tools
-  npm:
-    name: 'https://github.com/sirn/typescript-tools.git#tsconfig'
-    global: true

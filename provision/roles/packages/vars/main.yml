@@ -57,6 +57,7 @@ pacman_packages:
   - xmonad-contrib
   - xsel
   - xz
+  - yarn
   - youtube-dl
 
 aur_keys:
@@ -141,6 +142,7 @@ brew_packages:
   - tree
   - xhyve
   - xz
+  - yarn
   - youtube-dl
 
 # packages/darwin_cask
@@ -214,8 +216,8 @@ node_packages:
   - postcss
   - postcss-cli
   - tern
+  - tslint
   - typescript
-  - typescript-formatter
 
 # custom_python
 
