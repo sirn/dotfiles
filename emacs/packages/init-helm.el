@@ -1,4 +1,4 @@
-(defun helm-hide-minibuffer-maybe ()
+(defun custom/helm-hide-minibuffer-maybe ()
   (when (with-helm-buffer helm-echo-input-in-header-line)
     (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
       (overlay-put ov 'window (selected-window))
@@ -28,7 +28,7 @@
     (define-key helm-map (kbd "C-l") (kbd "RET"))
     (setq helm-split-window-in-side-p t)
     (setq helm-echo-input-in-header-line t)
-    (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe)
+    (add-hook 'helm-minibuffer-set-up-hook 'custom/helm-hide-minibuffer-maybe)
     (with-eval-after-load 'helm-files
       (dolist (keymap (list helm-find-files-map helm-read-file-map))
         (define-key keymap (kbd "C-l") 'helm-execute-persistent-action)

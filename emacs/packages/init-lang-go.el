@@ -1,11 +1,11 @@
+(defun custom/setup-company-go ()
+  (set (make-local-variable 'company-backends) '(company-go)))
+
 (req-package company-go
   :require company
   :commands company-go
   :init
-  (add-hook 'go-mode-hook
-            (lambda ()
-              (set (make-local-variable 'company-backends)
-                   '(company-go)))))
+  (add-hook 'go-mode-hook 'custom/setup-company-go))
 
 (req-package flycheck-gometalinter
   :require flycheck
