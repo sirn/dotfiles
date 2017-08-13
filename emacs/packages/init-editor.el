@@ -11,7 +11,7 @@
     "jl" 'avy-goto-line))
 
 (req-package company
-  :diminish ""
+  :diminish company-mode
   :init
   (progn
     (setq company-idle-delay 0.1)
@@ -30,10 +30,10 @@
     (global-company-mode t)))
 
 (req-package eldoc
-  :diminish "")
+  :diminish eldoc-mode)
 
 (req-package flycheck
-  :diminish ""
+  :diminish flycheck-mode
   :config
   (add-hook 'after-init-hook 'global-flycheck-mode))
 
@@ -62,20 +62,20 @@
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
 (req-package rainbow-mode
-  :diminish rainbow-mode
   :commands rainbow-mode
+  :diminish rainbow-mode
   :init
   (add-hook 'prog-mode-hook 'rainbow-mode))
 
 (req-package smartparens
-  :diminish (smartparens-mode . "")
+  :diminish smartparens-mode
   :config
   (progn
     (require 'smartparens-config)
     (smartparens-global-mode t)))
 
 (req-package undo-tree
-  :diminish ""
+  :diminish undo-tree-mode
   :init
   (progn
     (setq undo-tree-auto-save-history t)

@@ -1,7 +1,7 @@
 (req-package magit
   :require evil-leader
-  :diminish (auto-revert-mode magit-auto-revert-mode)
   :commands magit-status
+  :diminish (auto-revert-mode magit-auto-revert-mode)
   :init
   (evil-leader/set-key
     "gs" 'magit-status))

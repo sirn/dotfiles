@@ -3,17 +3,16 @@
   (evil-mode t))
 
 (req-package evil-anzu
-  :diminish (anzu-mode . "")
   :require evil
+  :diminish anzu-mode
   :config
   (progn
     (setq anzu-cons-mode-line-p nil)
-    (global-anzu-mode t)
-    ))
+    (global-anzu-mode t)))
 
 (req-package evil-commentary
-  :diminish ""
   :require evil
+  :diminish evil-commentary-mode
   :config
   (evil-commentary-mode))
 

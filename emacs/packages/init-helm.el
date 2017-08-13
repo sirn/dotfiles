@@ -9,7 +9,7 @@
 
 (req-package helm
   :require evil-leader
-  :diminish (helm-mode . "")
+  :diminish helm-mode
   :bind
   (("M-x"     . helm-M-x)
    ("C-x C-b" . helm-buffers-list)
