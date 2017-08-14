@@ -11,3 +11,47 @@
   notify:
     - update default erlang
     - update erlang shims
+
+# Package manager installed Rebar3 sometimes broken when Erlang version
+# mismatched. The official bin works with any versions, so let's use that.
+
+- name: create rebar3 directory
+  file: path=~/.cache/rebar3/bin state=directory recurse=yes
+
+- name: download rebar3
+  get_url:
+    url: https://s3.amazonaws.com/rebar3/rebar3
+    dest: ~/.cache/rebar3/bin/rebar3
+    mode: 0775
+  register: download_rebar3
+
+- name: install rebar3
+  command: ~/.cache/rebar3/bin/rebar3 local install
+  when: download_rebar3.changed
+
+# Poor man's auto-update mechanism using Last-Modified header.
+
+- name: check local rebar3 version
+  shell: cat ~/.cache/rebar3/.version
+  args:
+    warn: no
+  register: local_rebar3
+  ignore_errors: true
+  changed_when: false
+
+- name: check remote rebar3 version
+  shell:
+    curl -sLI HEAD https://s3.amazonaws.com/rebar3/rebar3 |
+    grep Last-Modified
+  args:
+    warn: no
+  register: remote_rebar3
+  changed_when: |
+    not local_rebar3
+    or local_rebar3.stdout != remote_rebar3.stdout
+
+- name: upgrade rebar3
+  shell:
+    ~/.cache/rebar3/bin/rebar3 local upgrade &&
+    echo {{remote_rebar3.stdout}} > ~/.cache/rebar3/.version
+  when: remote_rebar3.changed

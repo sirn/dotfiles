@@ -21,6 +21,10 @@ if hash cargo 2>/dev/null; then
     PATH=$HOME/.cargo/bin:$PATH
 fi
 
+if [ -d ~/.cache/rebar3 ]; then
+    PATH=$HOME/.cache/rebar3/bin:$PATH
+fi
+
 if hash go 2>/dev/null; then
     export GOPATH=$HOME/Projects/_Go/
     PATH=$HOME/Projects/_Go/bin:$PATH

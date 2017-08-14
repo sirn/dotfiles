@@ -76,7 +76,6 @@ aur_packages:
   - minikube-bin
   - packer-io
   - pepper-flash
-  - rebar3
   - terraform
   - virtualbox-ext-oracle
   - vivaldi
@@ -132,7 +131,6 @@ brew_packages:
   - packer
   - pinentry-mac
   - reattach-to-user-namespace
-  - rebar3
   - ripgrep
   - rtmpdump
   - shellcheck
