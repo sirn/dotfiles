@@ -13,7 +13,7 @@
     - update nodejs shims
 
 - name: configure npm prefix
-  command: npm config set prefix ~/.local
+  command: ~/.asdf/installs/nodejs/{{nodejs_version}}/npm config set prefix ~/.local
   args:
     creates: ~/.npmrc
 
