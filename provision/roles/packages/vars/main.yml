@@ -66,6 +66,7 @@ aur_packages:
   - deis-workflow-cli-bin
   - direnv
   - dmenu-xyw-mouse-msel
+  - geth-git
   - git-lfs
   - google-cloud-sdk
   - hugo
@@ -106,6 +107,7 @@ brew_packages:
   - deis
   - direnv
   - emacs
+  - ethereum
   - ffmpeg
   - fswatch
   - ghc
