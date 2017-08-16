@@ -161,6 +161,7 @@ cask_packages:
   - bartender
   - charles
   - choosy
+  - datagrip
   - dropshare
   - emacs-mac
   - firefox
@@ -187,12 +188,10 @@ cask_packages:
   - the-unarchiver
   - thunderbird
   - vagrant
-  - virtualbox
-  - virtualbox-extension-pack
   - viscosity
   - vivaldi
+  - vmware-fusion
   - xquartz
-  - datagrip
 
 cask_fonts:
   - font-source-code-pro

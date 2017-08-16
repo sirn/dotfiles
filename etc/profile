@@ -45,6 +45,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     if [ -d /Applications/mpv.app/Contents/MacOS ]; then
         PATH=/Applications/mpv.app/Contents/MacOS:$PATH
     fi
+
+    if [ -d "/Applications/VMware Fusion.app" ]; then
+        export VAGRANT_VMWARE_CLONE_DIRECTORY="$HOME/Virtual Machines"
+    fi
 fi
 
 if hash keychain 2>/dev/null; then
