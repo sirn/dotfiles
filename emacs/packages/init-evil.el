@@ -1,6 +1,8 @@
 (req-package evil
   :config
-  (evil-mode t))
+  (progn
+    (fset 'evil-visual-update-x-selection 'ignore)
+    (evil-mode t)))
 
 (req-package evil-anzu
   :require evil
