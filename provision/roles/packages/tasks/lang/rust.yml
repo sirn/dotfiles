@@ -29,5 +29,7 @@
   args:
     creates: ~/.cargo/bin/{{item}}
   with_items: "{{rust_packages}}"
+  environment:
+    PATH: "{{ansible_env.HOME}}/.asdf/installs/rust/{{rust_version}}/bin:{{ansible_env.PATH}}"
   notify:
     - update rust shims

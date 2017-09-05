@@ -24,6 +24,7 @@
     creates: "~/Projects/_Go/src/{{item}}"
   environment:
     GOPATH: "{{ansible_env.HOME}}/Projects/_Go/"
+    GOROOT: "{{ansible_env.HOME}}/.asdf/installs/golang/{{golang_version}}/go"
   with_items: "{{golang_packages}}"
   notify:
     - update golang shims

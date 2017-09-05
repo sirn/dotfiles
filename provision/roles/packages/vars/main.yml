@@ -208,7 +208,7 @@ erlang_version: 20.0
 
 # lang/nodejs
 
-nodejs_version: 8.3.0
+nodejs_version: 8.4.0
 
 nodejs_packages:
   - autoprefixer

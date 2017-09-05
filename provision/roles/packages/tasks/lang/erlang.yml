@@ -55,3 +55,5 @@
     ~/.cache/rebar3/bin/rebar3 local upgrade &&
     echo {{remote_rebar3.stdout}} > ~/.cache/rebar3/.version
   when: remote_rebar3.changed
+  environment:
+    PATH: "{{ansible_env.HOME}}/.asdf/installs/erlang/{{erlang_version}}/bin:{{ansible_env.PATH}}"
