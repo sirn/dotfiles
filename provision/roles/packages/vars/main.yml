@@ -63,7 +63,6 @@ aur_keys:
 
 aur_packages:
   - arcanist-git
-  - deis-workflow-cli-bin
   - direnv
   - dmenu-xyw-mouse-msel
   - geth-git
@@ -104,7 +103,6 @@ brew_packages:
   - cocoapods
   - cocot
   - curl
-  - deis
   - direnv
   - emacs
   - ethereum
@@ -186,7 +184,6 @@ cask_packages:
   - screens
   - sketch
   - spotify
-  - swinsian
   - the-unarchiver
   - thunderbird
   - vagrant
