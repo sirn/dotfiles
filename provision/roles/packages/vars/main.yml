@@ -107,6 +107,7 @@ brew_packages:
   - emacs
   - ethereum
   - ffmpeg
+  - franz
   - fswatch
   - ghc
   - git
