@@ -1,2 +1,2 @@
 ---
-- include: "custom/zsh.yml"
+- import_tasks: "custom/zsh.yml"

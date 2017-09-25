@@ -1,4 +1,4 @@
 ---
-- include: "aur_cower.yml"
-- include: "aur_pacaur.yml"
-- include: "aur_packages.yml"
+- include_tasks: "aur_cower.yml"
+- include_tasks: "aur_pacaur.yml"
+- include_tasks: "aur_packages.yml"

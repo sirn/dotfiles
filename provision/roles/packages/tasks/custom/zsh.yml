@@ -1,5 +1,5 @@
 ---
-- include: "zsh_{{ansible_os_family|lower}}.yml"
+- include_tasks: "zsh_{{ansible_os_family|lower}}.yml"
 
 - name: clone zplug
   git:

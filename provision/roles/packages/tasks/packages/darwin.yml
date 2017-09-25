@@ -3,5 +3,5 @@
 - name: install java
   homebrew_cask: name=java state=present
 
-- include: "darwin/brew.yml"
-- include: "darwin/cask.yml"
+- include_tasks: "darwin/brew.yml"
+- include_tasks: "darwin/cask.yml"

@@ -1,4 +1,4 @@
 ---
-- include: dotfiles.yml
-- include: projects.yml
-- include: vagrant.yml
+- import_tasks: dotfiles.yml
+- import_tasks: projects.yml
+- import_tasks: vagrant.yml
