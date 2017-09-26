@@ -172,7 +172,6 @@ cask_packages:
   - imageoptim
   - iterm2
   - java
-  - jce-unlimited-strength-policy
   - keyboard-maestro
   - mactex
   - microsoft-office
