@@ -201,7 +201,7 @@ elixir_version: 1.5.1-otp-20
 
 # lang/erlang
 
-erlang_version: 20.0
+erlang_version: 20.1
 
 # lang/nodejs
 
