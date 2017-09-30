@@ -19,6 +19,7 @@ _prompt_hook () {
 add-zsh-hook precmd _prompt_hook
 
 HISTFILE=~/.zhistory
+HISTSIZE=10000
 SAVEHIST=10000
 
 PROMPT_HOSTNAME='%{${FG[246]}%}%m%{$reset_color%}'
