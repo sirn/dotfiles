@@ -2,9 +2,7 @@
   (menu-bar-mode -1))
 
 (when (display-graphic-p)
-  (if (eq system-type 'darwin)
-    (set-frame-font "Source Code Pro 14" nil t)
-    (set-frame-font "Source Code Pro 11" nil t))
+  (set-frame-font "Iosevka 14" nil t)
   (toggle-scroll-bar -1)
   (tool-bar-mode -1))
 

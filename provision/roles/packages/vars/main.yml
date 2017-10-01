@@ -192,6 +192,7 @@ cask_packages:
   - xquartz
 
 cask_fonts:
+  - font-iosevka
   - font-source-code-pro
   - font-source-sans-pro
 
