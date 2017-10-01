@@ -32,4 +32,7 @@
 	process = git-lfs filter-process
 	required = true
 
+[magit]
+	hideCampaign = true
+
 # vim:ft=gitconfig
