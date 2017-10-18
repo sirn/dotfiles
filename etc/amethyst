@@ -5,8 +5,9 @@
         "2BUA8C4S2C.com.agilebits.onepassword-osx-helper",
         "com.apple.iphonesimulator",
         "com.apple.systempreferences",
-        "com.tapbots.TweetbotMac",
+        "com.flexibits.cardhop.mac",
         "com.flexibits.fantastical2.mac",
-        "com.wulkano.kap"
+        "com.iconfactory.Phoenix",
+        "com.tapbots.TweetbotMac"
     ]
 }
