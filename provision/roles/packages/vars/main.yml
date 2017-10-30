@@ -13,7 +13,6 @@ pacman_packages:
   - emacs
   - feh
   - ffmpeg
-  - firefox
   - ghc
   - git
   - gnucash
@@ -65,6 +64,7 @@ aur_packages:
   - arcanist-git
   - direnv
   - dmenu-xyw-mouse-msel
+  - firefox-beta-bin
   - geth-git
   - git-lfs
   - google-cloud-sdk
@@ -162,7 +162,7 @@ cask_packages:
   - datagrip
   - dropshare
   - emacs-mac
-  - firefox
+  - firefox-beta
   - flash-ppapi
   - forklift
   - gnucash
