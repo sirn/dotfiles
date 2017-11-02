@@ -154,12 +154,10 @@ cask_taps:
 cask_packages:
   - alfred
   - amethyst
-  - appcode
   - arq
   - bartender
   - charles
   - choosy
-  - datagrip
   - dropshare
   - emacs-mac
   - firefox-beta
