@@ -72,22 +72,18 @@ darwin_ansible_bootstrap() {
 }
 
 darwin_cask_update() {
-    echo_wait 'Cask appears to be installed. Checking for updates...'
-    outdated_casks=()
+    echo_wait 'Cask appears to be installed. Performing updates...'
+    brew cu -a -y
+}
 
-    while read -ra cask_info; do
-        outdated_casks+=(${cask_info[0]})
-    done <<< "$(brew cask outdated --quiet --greedy)"
-
-    echo -ne "\r\n"
-    echo_clear
-
-    if [ ${#outdated_casks[@]} == 0 ]; then
-        echo_ok 'Casks are up-to-date.'
+darwin_mas_update() {
+    if hash mas 2>/dev/null; then
+        echo_ok 'MAS appears to be installed. Performing updates...'
     else
-        echo_wait "Updating casks: \033[1;30m${outdated_casks[*]}"
-        brew cask install --force "${outdated_casks[@]}"
+        echo_wait 'MAS is not installed. Installing...'
+        brew install mas
     fi
+    mas upgrade
 }
 
 darwin_cleanup() {
@@ -109,6 +105,7 @@ bootstrap_darwin() {
     darwin_ansible_bootstrap
     common_ansible_run
     darwin_cask_update
+    darwin_mas_update
     darwin_cleanup
 }
 

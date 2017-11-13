@@ -147,14 +147,15 @@ brew_packages:
 # packages/darwin_cask
 
 cask_taps:
+  - buo/cask-upgrade
   - caskroom/cask
-  - caskroom/versions
+  - caskroom/drivers
   - caskroom/fonts
+  - caskroom/versions
 
 cask_packages:
   - alfred
   - amethyst
-  - arq
   - bartender
   - charles
   - choosy
