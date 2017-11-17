@@ -169,6 +169,7 @@ cask_packages:
   - hazel
   - imagealpha
   - imageoptim
+  - iterm2
   - java
   - keyboard-maestro
   - mactex
