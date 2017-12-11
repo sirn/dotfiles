@@ -29,6 +29,8 @@
     (define-key company-active-map [S-tab] 'company-select-previous-or-abort)
     (global-company-mode t)))
 
+(req-package diminish)
+
 (req-package eldoc
   :diminish eldoc-mode)
 

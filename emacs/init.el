@@ -18,15 +18,11 @@
 (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
 (package-initialize)
 
-;; Require req-package to make .emacs manageable.
+;; Use req-package to make .emacs manageable.
 (unless (package-installed-p 'req-package)
   (package-refresh-contents)
   (package-install 'use-package)
   (package-install 'req-package))
-(eval-when-compile
-  (require 'use-package))
-(require 'diminish)
-(require 'bind-key)
 (require 'req-package)
 
 ;; Packages
