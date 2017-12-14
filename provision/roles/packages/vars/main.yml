@@ -187,7 +187,6 @@ cask_packages:
   - vagrant
   - viscosity
   - vivaldi
-  - vmware-fusion
   - xquartz
 
 cask_fonts:
