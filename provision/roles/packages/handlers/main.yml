@@ -134,6 +134,14 @@
 - name: update golang shims
   command: ~/.asdf/bin/asdf reshim golang
 
+# lang/kubectl
+
+- name: update default kubectl
+  command: ~/.asdf/bin/asdf global kubectl {{kubectl_version}}
+
+- name: update kubectl shims
+  command: ~/.asdf/bin/asdf reshim kubectl
+
 # lang/nodejs
 
 - name: update default nodejs

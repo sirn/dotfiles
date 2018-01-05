@@ -1,0 +1,13 @@
+---
+- name: install kubectl plugin via asdf
+  command: ~/.asdf/bin/asdf plugin-add kubectl https://github.com/Banno/asdf-kubectl.git
+  args:
+    creates: ~/.asdf/plugins/kubectl
+
+- name: install kubectl {{kubectl_version}} via asdf
+  command: ~/.asdf/bin/asdf install kubectl {{kubectl_version}}
+  args:
+    creates: ~/.asdf/installs/kubectl/{{kubectl_version}}
+  notify:
+    - update default kubectl
+    - update kubectl shims
