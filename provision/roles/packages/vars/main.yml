@@ -119,7 +119,6 @@ brew_packages:
   - ipcalc
   - jq
   - keychain
-  - kubernetes-cli
   - kubernetes-helm
   - leiningen
   - mas
@@ -174,6 +173,7 @@ cask_packages:
   - keyboard-maestro
   - mactex
   - microsoft-office
+  - minikube
   - mpv
   - omnifocus
   - omnigraffle
