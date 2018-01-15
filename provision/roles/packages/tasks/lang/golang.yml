@@ -14,16 +14,16 @@
 
 - name: ensure gopath directory
   file:
-    path: ~/Projects/_Go/
+    path: ~/Dev/go/
     state: directory
     recurse: yes
 
 - name: install golang packages
   command: ~/.asdf/installs/golang/{{golang_version}}/go/bin/go get -u -v {{item}}
   args:
-    creates: "~/Projects/_Go/src/{{item}}"
+    creates: "~/Dev/go/src/{{item}}"
   environment:
-    GOPATH: "{{ansible_env.HOME}}/Projects/_Go/"
+    GOPATH: "{{ansible_env.HOME}}/Dev/go/"
     GOROOT: "{{ansible_env.HOME}}/.asdf/installs/golang/{{golang_version}}/go"
   with_items: "{{golang_packages}}"
   notify:

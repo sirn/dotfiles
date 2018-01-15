@@ -51,10 +51,3 @@ archlinux_links:
 
   - source: ~/.dotfiles/etc/xprofile
     dest: ~/.xprofile
-
-# projects.yml
-
-projects:
-  - ~/Projects/_Vendor
-  - ~/Projects/_Other
-  - ~/Projects/_Go

@@ -1,4 +1,3 @@
 ---
 - import_tasks: dotfiles.yml
-- import_tasks: projects.yml
 - import_tasks: vagrant.yml

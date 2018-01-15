@@ -67,6 +67,7 @@ aur_packages:
   - direnv
   - dmenu-xyw-mouse-msel
   - geth-git
+  - ghq
   - git-lfs
   - google-cloud-sdk
   - hugo
@@ -110,6 +111,7 @@ brew_packages:
   - ffmpeg
   - fswatch
   - ghc
+  - ghq
   - git
   - git-flow
   - git-lfs

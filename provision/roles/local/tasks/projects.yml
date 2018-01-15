@@ -1,4 +1,0 @@
----
-- name: create project directories
-  file: path={{item}} state=directory recurse=yes
-  with_items: "{{projects}}"

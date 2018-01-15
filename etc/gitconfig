@@ -35,4 +35,8 @@
 [magit]
 	hideCampaign = true
 
+[ghq]
+	root = ~/Dev/src
+	root = ~/Dev/go/src
+
 # vim:ft=gitconfig
