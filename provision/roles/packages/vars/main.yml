@@ -19,6 +19,7 @@ pacman_packages:
   - gnucash
   - gnupg
   - graphviz
+  - hub
   - ibus
   - imagemagick
   - ipcalc
@@ -114,6 +115,7 @@ brew_packages:
   - git-lfs
   - gpg
   - graphviz
+  - hub
   - hugo
   - imagemagick
   - ipcalc
