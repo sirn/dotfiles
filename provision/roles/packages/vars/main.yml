@@ -104,6 +104,7 @@ brew_packages:
   - carthage
   - cocoapods
   - cocot
+  - coreutils
   - curl
   - direnv
   - emacs
