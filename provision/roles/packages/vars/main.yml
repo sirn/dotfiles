@@ -66,7 +66,6 @@ aur_packages:
   - arcanist-git
   - direnv
   - dmenu-xyw-mouse-msel
-  - geth-git
   - ghq
   - git-lfs
   - google-cloud-sdk
@@ -88,7 +87,6 @@ aur_packages:
 # packages/darwin_brew
 
 brew_taps:
-  - ethereum/ethereum
   - homebrew/binary
   - homebrew/dupes
   - homebrew/php
@@ -108,7 +106,6 @@ brew_packages:
   - curl
   - direnv
   - emacs
-  - ethereum
   - ffmpeg
   - fswatch
   - ghc
