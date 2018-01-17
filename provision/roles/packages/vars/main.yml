@@ -190,6 +190,8 @@ cask_packages:
   - the-unarchiver
   - thunderbird
   - vagrant
+  - virtualbox
+  - virtualbox-extension-pack
   - viscosity
   - vivaldi
   - xquartz
