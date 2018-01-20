@@ -1,8 +1,8 @@
 ---
 - name: install rust plugin via asdf
-  command: ~/.asdf/bin/asdf plugin-add rust https://github.com/code-lever/asdf-rust
-  args:
-    creates: ~/.asdf/plugins/rust
+  git:
+    repo: https://github.com/code-lever/asdf-rust
+    dest: ~/.asdf/plugins/rust
 
 - name: install rust {{rust_version}} via asdf
   command: ~/.asdf/bin/asdf install rust {{rust_version}}

@@ -1,8 +1,8 @@
 ---
 - name: install python plugin via asdf
-  command: ~/.asdf/bin/asdf plugin-add python https://github.com/tuvistavie/asdf-python
-  args:
-    creates: ~/.asdf/plugins/python
+  git:
+    repo: https://github.com/tuvistavie/asdf-python.git
+    dest: ~/.asdf/plugins/python
 
 - name: install python {{python2_version}} via asdf
   command: ~/.asdf/bin/asdf install python {{python2_version}}

@@ -1,8 +1,8 @@
 ---
 - name: install erlang plugin via asdf
-  command: ~/.asdf/bin/asdf plugin-add erlang https://github.com/asdf-vm/asdf-erlang
-  args:
-    creates: ~/.asdf/plugins/erlang
+  git:
+    repo: https://github.com/asdf-vm/asdf-erlang.git
+    dest: ~/.asdf/plugins/erlang
 
 - name: install erlang {{erlang_version}} via asdf
   command: ~/.asdf/bin/asdf install erlang {{erlang_version}}

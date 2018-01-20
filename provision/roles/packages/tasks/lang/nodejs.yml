@@ -13,11 +13,9 @@
     GNUPGHOME: "{{ansible_env.HOME}}/.asdf/keyrings/nodejs"
 
 - name: install nodejs plugin via asdf
-  command: ~/.asdf/bin/asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs
-  args:
-    creates: ~/.asdf/plugins/nodejs
-  environment:
-    GNUPGHOME: "{{ansible_env.HOME}}/.asdf/keyrings/nodejs"
+  git:
+    repo: https://github.com/asdf-vm/asdf-nodejs.git
+    dest: ~/.asdf/plugins/nodejs
 
 - name: install nodejs {{nodejs_version}} via asdf
   command: ~/.asdf/bin/asdf install nodejs {{nodejs_version}}
@@ -26,6 +24,8 @@
   notify:
     - update default nodejs
     - update nodejs shims
+  environment:
+    GNUPGHOME: "{{ansible_env.HOME}}/.asdf/keyrings/nodejs"
 
 - name: configure npm prefix
   command: ~/.asdf/installs/nodejs/{{nodejs_version}}/bin/npm config set prefix ~/.local

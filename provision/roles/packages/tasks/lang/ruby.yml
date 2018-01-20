@@ -1,8 +1,8 @@
 ---
 - name: install ruby plugin via asdf
-  command: ~/.asdf/bin/asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby
-  args:
-    creates: ~/.asdf/plugins/ruby
+  git:
+    repo: https://github.com/asdf-vm/asdf-ruby.git
+    dest: ~/.asdf/plugins/ruby
 
 - name: install ruby {{ruby_version}} via asdf
   command: ~/.asdf/bin/asdf install ruby {{ruby_version}}

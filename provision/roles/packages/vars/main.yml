@@ -228,7 +228,7 @@ elixir_version: 1.5.1-otp-20
 
 # lang/erlang
 
-erlang_version: 20.1
+erlang_version: 20.2.2
 
 # lang/kubectl
 
@@ -236,7 +236,7 @@ kubectl_version: 1.8.6
 
 # lang/nodejs
 
-nodejs_version: 8.4.0
+nodejs_version: 9.4.0
 
 nodejs_packages:
   - autoprefixer
@@ -251,7 +251,7 @@ nodejs_packages:
 
 # lang/golang
 
-golang_version: 1.8.3
+golang_version: 1.9.2
 
 golang_packages:
   - github.com/nsf/gocode
@@ -283,7 +283,7 @@ python3_packages:
 
 # lang/ruby
 
-ruby_version: 2.4.1
+ruby_version: 2.4.3
 
 ruby_packages:
   - bundler
@@ -293,7 +293,7 @@ ruby_packages:
 
 # lang/rust
 
-rust_version: 1.19.0
+rust_version: 1.23.0
 
 rust_packages:
   - racer

@@ -1,8 +1,8 @@
 ---
 - name: install elixir plugin via asdf
-  command: ~/.asdf/bin/asdf plugin-add elixir https://github.com/asdf-vm/asdf-elixir
-  args:
-    creates: ~/.asdf/plugins/elixir
+  git:
+    repo: https://github.com/asdf-vm/asdf-elixir.git
+    dest: ~/.asdf/plugins/elixir
 
 - name: install elixir {{elixir_version}} via asdf
   command: ~/.asdf/bin/asdf install elixir {{elixir_version}}
