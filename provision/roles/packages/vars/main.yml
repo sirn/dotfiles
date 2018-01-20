@@ -1,6 +1,6 @@
 ---
 
-# packages/archlinux_pacman
+# packages/archlinux/pacman
 
 pacman_packages:
   - adobe-source-code-pro-fonts
@@ -84,7 +84,7 @@ aur_packages:
   - vivaldi-widevine
   - xcape
 
-# packages/darwin_brew
+# packages/darwin/brew
 
 brew_taps:
   - homebrew/binary
@@ -123,7 +123,6 @@ brew_packages:
   - keychain
   - kubernetes-helm
   - leiningen
-  - mas
   - mercurial
   - moreutils
   - neovim
@@ -145,7 +144,7 @@ brew_packages:
   - yarn
   - youtube-dl
 
-# packages/darwin_cask
+# packages/darwin/cask
 
 cask_taps:
   - buo/cask-upgrade
@@ -199,6 +198,29 @@ cask_fonts:
   - font-iosevka
   - font-source-code-pro
   - font-source-sans-pro
+
+# packages/darwin/mas
+
+mas_packages:
+  - { id: 407963104, app: "Pixelmator" }
+  - { id: 411643860, app: "DaisyDisk" }
+  - { id: 413965349, app: "Soulver" }
+  - { id: 443987910, app: "1Password" }
+  - { id: 455545700, app: "BitPerfect" }
+  - { id: 497799835, app: "Xcode" }
+  - { id: 523620159, app: "CleanMyDrive 2" }
+  - { id: 539883307, app: "LINE" }
+  - { id: 557168941, app: "Tweetbot" }
+  - { id: 775737590, app: "iA Writer" }
+  - { id: 873245660, app: "Spillo" }
+  - { id: 880001334, app: "Reeder" }
+  - { id: 889428659, app: "xScope" }
+  - { id: 890031187, app: "Marked 2" }
+  - { id: 924726344, app: "Deliveries" }
+  - { id: 937984704, app: "Amphetamine" }
+  - { id: 975937182, app: "Day One" }
+  - { id: 1077036385, app: "Fluid Browser" }
+  - { id: 1107421413, app: "1Blocker" }
 
 # lang/elixir
 

@@ -1,0 +1,9 @@
+---
+- name: install mas-cli
+  homebrew: name=mas state=latest
+
+- name: initialize mac app store apps
+  command: mas install "{{item.id}}"
+  with_items: "{{mas_packages}}"
+  args:
+    creates: "/Applications/{{item.app}}.app"
