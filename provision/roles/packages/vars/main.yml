@@ -173,7 +173,9 @@ cask_packages:
   - iterm2
   - java
   - keyboard-maestro
+  - little-snitch
   - mactex
+  - micro-snitch
   - microsoft-office
   - minikube
   - mpv
