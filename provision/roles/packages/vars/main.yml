@@ -98,6 +98,7 @@ brew_packages:
   - arcanist
   - aria2
   - asciinema
+  - autoconf
   - blueutil
   - carthage
   - cocoapods
