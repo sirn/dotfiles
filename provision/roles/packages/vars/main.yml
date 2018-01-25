@@ -66,6 +66,7 @@ aur_packages:
   - arcanist-git
   - direnv
   - dmenu-xyw-mouse-msel
+  - dropbox
   - ghq
   - git-lfs
   - google-cloud-sdk
@@ -160,6 +161,7 @@ cask_packages:
   - bartender
   - charles
   - choosy
+  - dropbox
   - dropshare
   - emacs-mac
   - firefox

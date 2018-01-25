@@ -3,5 +3,4 @@
 - include_tasks: "archlinux/nfs.yml"
 - include_tasks: "archlinux/powertop.yml"
 - include_tasks: "archlinux/redshift.yml"
-- include_tasks: "archlinux/syncthing.yml"
 - include_tasks: "archlinux/unbound.yml"

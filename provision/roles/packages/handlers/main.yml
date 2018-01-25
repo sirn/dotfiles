@@ -52,15 +52,6 @@
     daemon_reload: yes
     state: restarted
 
-# services/archlinux/syncthing
-
-- name: restart syncthing systemd service
-  become: yes
-  systemd:
-    name: "syncthing@{{ansible_user_id}}"
-    daemon_reload: yes
-    state: restarted
-
 # services/archlinux/unbound
 
 - name: restart unbound systemd service
@@ -88,16 +79,6 @@
 
 - name: load ethereum launchd service
   command: launchctl load ~/Library/LaunchAgents/org.ethereum.ethereum.plist
-  ignore_errors: yes
-
-# services/darwin/syncthing
-
-- name: unload syncthing launchd service
-  command: launchctl unload ~/Library/LaunchAgents/net.syncthing.syncthing.plist
-  ignore_errors: yes
-
-- name: load syncthing launchd service
-  command: launchctl load ~/Library/LaunchAgents/net.syncthing.syncthing.plist
   ignore_errors: yes
 
 # services/darwin/unbound
