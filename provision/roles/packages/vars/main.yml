@@ -77,12 +77,8 @@ aur_packages:
   - leiningen
   - minikube-bin
   - packer-io
-  - pepper-flash
   - terraform
   - virtualbox-ext-oracle
-  - vivaldi
-  - vivaldi-ffmpeg-codecs
-  - vivaldi-widevine
   - xcape
 
 # packages/darwin/brew
@@ -165,7 +161,6 @@ cask_packages:
   - dropshare
   - emacs-mac
   - firefox
-  - flash-ppapi
   - forklift
   - gnucash
   - google-cloud-sdk
@@ -194,7 +189,6 @@ cask_packages:
   - virtualbox
   - virtualbox-extension-pack
   - viscosity
-  - vivaldi
   - xquartz
 
 cask_fonts:
