@@ -183,6 +183,7 @@ cask_packages:
   - screens
   - sketch
   - spotify
+  - tableplus
   - the-unarchiver
   - thunderbird
   - vagrant
