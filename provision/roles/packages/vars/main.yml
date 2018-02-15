@@ -227,19 +227,19 @@ mas_packages:
 
 # lang/elixir
 
-elixir_version: 1.5.1-otp-20
+elixir_version: 1.5.3-otp-20
 
 # lang/erlang
 
-erlang_version: 20.2.2
+erlang_version: 20.2.3
 
 # lang/kubectl
 
-kubectl_version: 1.8.6
+kubectl_version: 1.9.0
 
 # lang/nodejs
 
-nodejs_version: 9.4.0
+nodejs_version: 9.5.0
 
 nodejs_packages:
   - autoprefixer
@@ -254,7 +254,7 @@ nodejs_packages:
 
 # lang/golang
 
-golang_version: 1.9.2
+golang_version: 1.9.4
 
 golang_packages:
   - github.com/nsf/gocode
@@ -296,7 +296,7 @@ ruby_packages:
 
 # lang/rust
 
-rust_version: 1.23.0
+rust_version: 1.24.0
 
 rust_packages:
   - racer

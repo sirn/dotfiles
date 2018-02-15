@@ -3,7 +3,7 @@
   git:
     repo: https://github.com/asdf-vm/asdf.git
     dest: ~/.asdf
-    version: v0.4.1
+    version: v0.4.2
 
 - name: ensure asdf plugin directory
   file:
