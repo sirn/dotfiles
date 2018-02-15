@@ -218,7 +218,7 @@ mas_packages:
   - { id: 890031187, app: "Marked 2" }
   - { id: 924726344, app: "Deliveries" }
   - { id: 937984704, app: "Amphetamine" }
-  - { id: 963504129, app: "Pommie" }
+  - { id: 963504129, app: "PommieOSX" }
   - { id: 975937182, app: "Day One" }
   - { id: 990588172, app: "Gestimer" }
   - { id: 1077036385, app: "Fluid Browser" }
