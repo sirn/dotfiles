@@ -185,6 +185,7 @@ cask_packages:
   - sketch
   - spotify
   - tableplus
+  - telegram
   - the-unarchiver
   - thunderbird
   - vagrant
