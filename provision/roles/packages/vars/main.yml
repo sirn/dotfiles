@@ -109,6 +109,7 @@ brew_packages:
   - ghc
   - ghq
   - git
+  - git-crypt
   - git-flow
   - git-lfs
   - gpg
