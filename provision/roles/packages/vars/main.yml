@@ -223,7 +223,6 @@ mas_packages:
   - { id: 963504129, app: "PommieOSX" }
   - { id: 975937182, app: "Day One" }
   - { id: 990588172, app: "Gestimer" }
-  - { id: 1077036385, app: "Fluid Browser" }
   - { id: 1091189122, app: "Bear" }
   - { id: 1107421413, app: "1Blocker" }
 
