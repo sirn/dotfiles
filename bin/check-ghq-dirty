@@ -1,0 +1,14 @@
+#!/bin/bash
+
+cloned_projects=$(ghq list)
+
+while read -r project_name; do
+      printf "\033[1;1m${project_name}\033[0;0m\n"
+
+      project_path=$(ghq list -p -e "${project_name}")
+      pushd "${project_path}" &>/dev/null
+
+      git status --short 2>&1
+      popd &>/dev/null
+      echo
+done <<< "$cloned_projects"
