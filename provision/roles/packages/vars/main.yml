@@ -120,6 +120,8 @@ brew_packages:
   - ipcalc
   - jq
   - keychain
+  - kube-ps1
+  - kubectx
   - kubernetes-helm
   - leiningen
   - mercurial

@@ -26,3 +26,12 @@ PROMPT_HOSTNAME='%{${FG[246]}%}%m%{$reset_color%}'
 PROMPT_CWD='%{${FG[002]}%} ${_prompt_cwd}%{$reset_color%}'
 PROMPT_GIT='${vcs_info_msg_0_}%{$reset_color%}'
 PROMPT="${PROMPT_HOSTNAME}${PROMPT_CWD}${PROMPT_GIT} » "
+
+if [ -f "/usr/local/opt/kube-ps1/share/kube-ps1.sh" ]; then
+    source /usr/local/opt/kube-ps1/share/kube-ps1.sh
+    KUBE_PS1_SEPARATOR=" "
+    KUBE_PS1_DIVIDER=" "
+    KUBE_PS1_PREFIX=""
+    KUBE_PS1_SUFFIX=""
+    RPROMPT='$(kube_ps1)'${RPROMPT}
+fi
