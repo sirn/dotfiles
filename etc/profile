@@ -15,6 +15,7 @@ export XDG_STATE_HOME=~/.state
 PATH=/usr/local/sbin:$PATH
 PATH=/usr/local/bin:$PATH
 PATH=$HOME/.local/bin:$PATH
+PATH=$HOME/.dotfiles/bin:$PATH
 
 if hash cargo 2>/dev/null; then
     export RUST_SRC_PATH=$HOME/.local/src/rust/current/src/

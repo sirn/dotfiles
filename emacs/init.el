@@ -30,7 +30,6 @@
 
 ;; Packages
 (setq use-package-always-ensure t)
-(add-to-list 'load-path (expand-file-name "~/.dotfiles/emacs/packages"))
 (let ((loaded (mapcar #'file-name-sans-extension (delq nil (mapcar #'car load-history)))))
   (dolist (file (directory-files "~/.dotfiles/emacs/packages" t ".+\\.elc?$"))
     (let ((library (file-name-sans-extension file)))
