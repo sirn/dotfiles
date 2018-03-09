@@ -29,7 +29,7 @@ PROMPT="${PROMPT_HOSTNAME}${PROMPT_CWD}${PROMPT_GIT} » "
 
 if [ -f "/usr/local/opt/kube-ps1/share/kube-ps1.sh" ]; then
     source /usr/local/opt/kube-ps1/share/kube-ps1.sh
-    KUBE_PS1_SEPARATOR=" "
+    KUBE_PS1_SYMBOL_ENABLE=false
     KUBE_PS1_DIVIDER=" "
     KUBE_PS1_PREFIX=""
     KUBE_PS1_SUFFIX=""
