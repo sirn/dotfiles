@@ -1,0 +1,53 @@
+#!/bin/bash
+
+if [[ "$1" == "--help" ]]; then
+    echo "Use ghq list --help for more information."
+    exit 1
+fi
+
+cloned_projects=$(ghq list "$@")
+
+while read -r name; do
+      path=$(ghq list -p -e "${name}")
+      cd "${path}" || exit
+
+      working_status=$(git status --porcelain)
+      working_head=$(git rev-parse HEAD)
+      working_branch=$(git rev-parse --abbrev-ref HEAD)
+      working_ref=$(git symbolic-ref -q HEAD)
+
+      remote_branch=$(git for-each-ref --format='%(upstream:short)' "${working_ref}")
+      if [[ -n "${remote_branch}" ]]; then
+          remote_head=$(git rev-parse "@{u}")
+      fi
+
+      printf " \\033[1;1m%s\\033[0;0m" "${name}"
+      printf " \\033[0;36m%s\\033[0;0m" "${working_branch}"
+
+      if [[ -n "${working_status}" ]]; then
+          printf "\\033[0;31m*\\033[0;0m\\n"
+          printf " \\033[0;33mworking directory is dirty, skipping...\\033[0;0m\\n\\n"
+          continue
+      fi
+
+      printf "\\n"
+      if [[ -z "${remote_branch}" ]]; then
+          printf " no remote setup, skipping...\\n\\n"
+          continue
+      fi
+
+      git fetch --all --prune --quiet
+      if [[ -z $(git branch -r --contains "${working_head}") ]]; then
+          printf " \\033[0;35mworking directory contains uncommited ref, skipping...\\033[0;0m\\n\\n"
+          continue
+      fi
+
+      if [[ "${remote_head}" != "${working_head}" ]]; then
+          printf " \\033[1;34mworking directory is out-of-date, updating...\\033[0;0m\\n"
+          git pull --quiet
+          printf " working directory is now up-to-date!\\n\\n"
+          continue
+      fi
+
+      printf " \\033[0;32mworking directory is already up-to-date!\\033[0;0m\\n\\n"
+done <<< "$cloned_projects"
