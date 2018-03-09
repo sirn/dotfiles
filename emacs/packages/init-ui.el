@@ -2,7 +2,7 @@
   (menu-bar-mode -1))
 
 (when (display-graphic-p)
-  (set-frame-font "Iosevka 14" nil t)
+  (set-frame-font "PragmataPro 14" nil t)
   (toggle-scroll-bar -1)
   (tool-bar-mode -1))
 
