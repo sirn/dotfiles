@@ -1,5 +1,6 @@
 alias ls="ls -G"
 alias ll="ls -alh"
+alias ka="k -A"
 alias emacs="emacs -nw"
 
 if hash fzy 2>/dev/null; then
