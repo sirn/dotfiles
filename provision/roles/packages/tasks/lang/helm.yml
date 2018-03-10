@@ -1,0 +1,13 @@
+---
+- name: install helm plugin via asdf
+  git:
+    repo: https://github.com/Antiarchitect/asdf-helm.git
+    dest: ~/.asdf/plugins/helm
+
+- name: install helm {{helm_version}} via asdf
+  command: ~/.asdf/bin/asdf install helm {{helm_version}}
+  args:
+    creates: ~/.asdf/installs/helm/{{helm_version}}
+  notify:
+    - update default helm
+    - update helm shims

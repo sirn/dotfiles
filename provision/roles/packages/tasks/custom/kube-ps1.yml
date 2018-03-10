@@ -1,0 +1,6 @@
+---
+- name: clone kube-ps1
+  git:
+    repo: https://github.com/jonmosco/kube-ps1.git
+    dest: ~/.local/src/kube-ps1
+    version: "{{kube_ps1_version}}"

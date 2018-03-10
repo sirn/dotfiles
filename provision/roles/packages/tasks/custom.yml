@@ -1,2 +1,4 @@
 ---
+- import_tasks: "custom/kube-ps1.yml"
+- import_tasks: "custom/kubectx.yml"
 - import_tasks: "custom/zsh.yml"

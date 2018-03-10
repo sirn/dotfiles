@@ -115,6 +115,14 @@
 - name: update golang shims
   command: ~/.asdf/bin/asdf reshim golang
 
+# lang/helm
+
+- name: update default helm
+  command: ~/.asdf/bin/asdf global helm {{helm_version}}
+
+- name: update helm shims
+  command: ~/.asdf/bin/asdf reshim helm
+
 # lang/kubectl
 
 - name: update default kubectl
@@ -122,6 +130,14 @@
 
 - name: update kubectl shims
   command: ~/.asdf/bin/asdf reshim kubectl
+
+# lang/minikube
+
+- name: update default minikube
+  command: ~/.asdf/bin/asdf global minikube {{minikube_version}}
+
+- name: update minikube shims
+  command: ~/.asdf/bin/asdf reshim minikube
 
 # lang/nodejs
 
