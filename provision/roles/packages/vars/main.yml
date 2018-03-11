@@ -179,6 +179,7 @@ cask_packages:
   - the-unarchiver
   - thunderbird
   - vagrant
+  - veracrypt
   - virtualbox
   - virtualbox-extension-pack
   - viscosity
