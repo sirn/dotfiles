@@ -8,6 +8,11 @@
   command: ~/.asdf/bin/asdf install minikube {{minikube_version}}
   args:
     creates: ~/.asdf/installs/minikube/{{minikube_version}}
-  notify:
-    - update default minikube
-    - update minikube shims
+
+- name: set minikube {{minikube_version}} as default
+  command: ~/.asdf/bin/asdf global minikube {{minikube_version}}
+  changed_when: false
+
+- name: update minikube {{minikube_version}} shims
+  command: ~/.asdf/bin/asdf reshim minikube
+  changed_when: false

@@ -8,9 +8,10 @@
   command: ~/.asdf/bin/asdf install rust {{rust_version}}
   args:
     creates: ~/.asdf/installs/rust/{{rust_version}}
-  notify:
-    - update default rust
-    - update rust shims
+
+- name: set rust {{rust_version}} as default
+  command: ~/.asdf/bin/asdf global rust {{rust_version}}
+  changed_when: false
 
 - name: create rust source directory
   file: path=~/.local/src/rust state=directory recurse=yes
@@ -31,5 +32,7 @@
   with_items: "{{rust_packages}}"
   environment:
     PATH: "{{ansible_env.HOME}}/.asdf/installs/rust/{{rust_version}}/bin:{{ansible_env.PATH}}"
-  notify:
-    - update rust shims
+
+- name: update rust {{rust_version}} shims
+  command: ~/.asdf/bin/asdf reshim rust
+  changed_when: false

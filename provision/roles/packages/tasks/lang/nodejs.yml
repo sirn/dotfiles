@@ -5,6 +5,11 @@
     mode: 0700
     state: directory
 
+- name: install nodejs plugin via asdf
+  git:
+    repo: https://github.com/asdf-vm/asdf-nodejs.git
+    dest: ~/.asdf/plugins/nodejs
+
 - name: import nodejs release team keyring
   command: bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
   args:
@@ -12,25 +17,23 @@
   environment:
     GNUPGHOME: "{{ansible_env.HOME}}/.asdf/keyrings/nodejs"
 
-- name: install nodejs plugin via asdf
-  git:
-    repo: https://github.com/asdf-vm/asdf-nodejs.git
-    dest: ~/.asdf/plugins/nodejs
-
 - name: install nodejs {{nodejs_version}} via asdf
   command: ~/.asdf/bin/asdf install nodejs {{nodejs_version}}
   args:
     creates: ~/.asdf/installs/nodejs/{{nodejs_version}}
-  notify:
-    - update default nodejs
-    - update nodejs shims
   environment:
     GNUPGHOME: "{{ansible_env.HOME}}/.asdf/keyrings/nodejs"
+
+- name: set nodejs {{nodejs_version}} as default
+  command: ~/.asdf/bin/asdf global nodejs {{nodejs_version}}
+  changed_when: false
 
 - name: configure npm prefix
   command: ~/.asdf/installs/nodejs/{{nodejs_version}}/bin/npm config set prefix ~/.local
   args:
     creates: ~/.npmrc
+  environment:
+    PATH: "{{ansible_env.HOME}}/.asdf/shims:{{ansible_env.PATH}}"
 
 - name: install nodejs packages
   npm:
@@ -39,5 +42,9 @@
     state: latest
     executable: ~/.asdf/installs/nodejs/{{nodejs_version}}/bin/npm
   with_items: "{{nodejs_packages}}"
-  notify:
-    - update nodejs shims
+  environment:
+    PATH: "{{ansible_env.HOME}}/.asdf/shims:{{ansible_env.PATH}}"
+
+- name: update nodejs {{nodejs_version}} shims
+  command: ~/.asdf/bin/asdf reshim nodejs
+  changed_when: false

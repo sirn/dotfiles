@@ -2,11 +2,11 @@
 
 # custom/kube-ps1
 
-kube_ps1_version: 0.6.0
+kube_ps1_version: "0.6.0"
 
 # custom/kubectx
 
-kubectx_version: 0.4.0
+kubectx_version: "0.4.0"
 
 # packages/archlinux/pacman
 
@@ -69,7 +69,6 @@ aur_keys:
   - 5A92E04305696D78
 
 aur_packages:
-  - arcanist-git
   - direnv
   - dmenu-xyw-mouse-msel
   - dropbox
@@ -88,15 +87,10 @@ aur_packages:
 # packages/darwin/brew
 
 brew_taps:
-  - homebrew/binary
-  - homebrew/dupes
-  - homebrew/php
-  - homebrew/versions
-  - neovim/neovim
+  - beeftornado/rmtree
   - railwaycat/emacsmacport
 
 brew_packages:
-  - arcanist
   - aria2
   - autoconf
   - blueutil
@@ -133,6 +127,7 @@ brew_packages:
   - reattach-to-user-namespace
   - ripgrep
   - rtmpdump
+  - s6
   - shellcheck
   - socat
   - terraform
@@ -148,9 +143,7 @@ brew_packages:
 cask_taps:
   - buo/cask-upgrade
   - caskroom/cask
-  - caskroom/drivers
   - caskroom/fonts
-  - caskroom/versions
 
 cask_packages:
   - alfred
@@ -221,31 +214,31 @@ mas_packages:
 
 # lang/asdf
 
-asdf_version: 0.4.2
+asdf_version: "0.4.2"
 
 # lang/elixir
 
-elixir_version: 1.5.3-otp-20
+elixir_version: "1.6.3-otp-20"
 
 # lang/erlang
 
-erlang_version: 20.2.3
+erlang_version: "20.2.4"
 
 # lang/helm
 
-helm_version: 2.8.2
+helm_version: "2.8.2"
 
 # lang/kubectl
 
-kubectl_version: 1.9.0
+kubectl_version: "1.9.0"
 
 # lang/minikube
 
-minikube_version: 0.25.0
+minikube_version: "0.25.0"
 
 # lang/nodejs
 
-nodejs_version: 9.5.0
+nodejs_version: "9.8.0"
 
 nodejs_packages:
   - autoprefixer
@@ -261,7 +254,7 @@ nodejs_packages:
 
 # lang/golang
 
-golang_version: 1.9.4
+golang_version: "1.10"
 
 golang_packages:
   - github.com/nsf/gocode
@@ -272,12 +265,12 @@ golang_packages:
 
 # lang/python
 
-python2_version: 2.7.13
+python2_version: "2.7.13"
 
 python2_packages:
   - ansible
 
-python3_version: 3.6.2
+python3_version: "3.6.4"
 
 python3_packages:
   - asciinema
@@ -294,7 +287,7 @@ python3_packages:
 
 # lang/ruby
 
-ruby_version: 2.4.3
+ruby_version: "2.5.0"
 
 ruby_packages:
   - bundler
@@ -304,7 +297,7 @@ ruby_packages:
 
 # lang/rust
 
-rust_version: 1.24.0
+rust_version: "1.24.1"
 
 rust_packages:
   - racer

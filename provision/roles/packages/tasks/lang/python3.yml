@@ -1,0 +1,26 @@
+---
+- name: install python3 plugin via asdf
+  git:
+    repo: https://github.com/tuvistavie/asdf-python.git
+    dest: ~/.asdf/plugins/python3
+
+- name: install python3 {{python3_version}} via asdf
+  command: ~/.asdf/bin/asdf install python3 {{python3_version}}
+  args:
+    creates: ~/.asdf/installs/python3/{{python3_version}}
+
+- name: set python3 {{python3_version}} as default
+  command: ~/.asdf/bin/asdf global python3 {{python3_version}}
+  changed_when: false
+
+- name: install python3 packages
+  pip:
+    name: "{{item}}"
+    state: latest
+    executable: ~/.asdf/installs/python3/{{python3_version}}/bin/pip
+    chdir: ~/.asdf/installs/python3/{{python3_version}}
+  with_items: "{{python3_packages}}"
+
+- name: update python3 {{python3_version}} shims
+  command: ~/.asdf/bin/asdf reshim python3
+  changed_when: false

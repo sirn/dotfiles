@@ -2,5 +2,5 @@
 - hosts: all
   connection: local
   roles:
-    - packages
-    - local
+    - { role: packages, tags: "packages" }
+    - { role: local, tags: "local" }

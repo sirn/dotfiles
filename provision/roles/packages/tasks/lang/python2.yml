@@ -1,0 +1,26 @@
+---
+- name: install python2 plugin via asdf
+  git:
+    repo: https://github.com/tuvistavie/asdf-python.git
+    dest: ~/.asdf/plugins/python2
+
+- name: install python2 {{python2_version}} via asdf
+  command: ~/.asdf/bin/asdf install python2 {{python2_version}}
+  args:
+    creates: ~/.asdf/installs/python2/{{python2_version}}
+
+- name: set python2 {{python2_version}} as default
+  command: ~/.asdf/bin/asdf global python2 {{python2_version}}
+  changed_when: false
+
+- name: install python2 packages
+  pip:
+    name: "{{item}}"
+    state: latest
+    executable: ~/.asdf/installs/python2/{{python2_version}}/bin/pip
+    chdir: ~/.asdf/installs/python2/{{python2_version}}
+  with_items: "{{python2_packages}}"
+
+- name: update python2 {{python2_version}} shims
+  command: ~/.asdf/bin/asdf reshim python2
+  changed_when: false

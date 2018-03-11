@@ -8,9 +8,10 @@
   command: ~/.asdf/bin/asdf install golang {{golang_version}}
   args:
     creates: ~/.asdf/installs/golang/{{golang_version}}
-  notify:
-    - update default golang
-    - update golang shims
+
+- name: set golang {{golang_version}} as default
+  command: ~/.asdf/bin/asdf global golang {{golang_version}}
+  changed_when: false
 
 - name: ensure gopath directory
   file:
@@ -26,5 +27,7 @@
     GOPATH: "{{ansible_env.HOME}}/Dev/go/"
     GOROOT: "{{ansible_env.HOME}}/.asdf/installs/golang/{{golang_version}}/go"
   with_items: "{{golang_packages}}"
-  notify:
-    - update golang shims
+
+- name: update golang {{golang_version}} shims
+  command: ~/.asdf/bin/asdf reshim golang
+  changed_when: false

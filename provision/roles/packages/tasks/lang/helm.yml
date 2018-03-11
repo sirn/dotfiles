@@ -8,6 +8,11 @@
   command: ~/.asdf/bin/asdf install helm {{helm_version}}
   args:
     creates: ~/.asdf/installs/helm/{{helm_version}}
-  notify:
-    - update default helm
-    - update helm shims
+
+- name: set helm {{helm_version}} as default
+  command: ~/.asdf/bin/asdf global helm {{helm_version}}
+  changed_when: false
+
+- name: update helm {{helm_version}} shims
+  command: ~/.asdf/bin/asdf reshim helm
+  changed_when: false

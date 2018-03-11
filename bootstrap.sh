@@ -5,19 +5,19 @@
 #
 
 echo_clear() {
-    echo -ne "\033[1A\r\033[K"
+    printf "\\033[1A\\r\\033[K"
 }
 
 echo_ok() {
-    echo -e "\033[0;32m✓\033[0;0m $1"
+    printf "\\033[0;32m✓\\033[0;0m %s\\n" "$1"
 }
 
 echo_wait() {
-    echo -e "* \033[0;33m$1\033[0;0m"
+    printf "* \\033[0;33m%s\\033[0;0m\\n" "$1"
 }
 
 echo_error() {
-    echo -e "\033[0;31m!\033[0;0m $1"
+    printf "\\033[0;31m!\\033[0;0m %s\\n" "$1"
 }
 
 
@@ -27,7 +27,15 @@ echo_error() {
 
 common_ansible_run() {
     echo_wait 'Running Ansible playbook. This will take a while.'
-    if ! ansible-playbook provision/local.yml -K -i provision/hosts; then
+
+    local _playbook="provision/local.yml"
+    local _opts=(-K -i provision/hosts)
+
+    if [[ $override_ansible_python != "" ]]; then
+        _opts+=(-e "ansible_python_interpreter=/usr/local/bin/python")
+    fi
+
+    if ! ansible-playbook "$_playbook" "${_opts[@]}" "$@"; then
         echo_error 'Ansible playbook exited with an error.'
         exit 1
     fi
@@ -57,7 +65,8 @@ darwin_brew_setup() {
         echo_ok 'Homebrew is already installed.'
     else
         echo_wait 'Homebrew is not installed. Installing...'
-        /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+        local _install="https://raw.githubusercontent.com/Homebrew/install/master/install"
+        /usr/bin/ruby -e "$(curl -fsSL $_install)"
     fi
 }
 
@@ -66,8 +75,9 @@ darwin_ansible_bootstrap() {
         echo_ok 'Ansible is already installed.'
     else
         echo_wait 'Ansible is not installed. Installing...'
-        brew install ansible
+        brew install ansible python@2
         darwin_ansible_bootstrapped=1
+        override_ansible_python=/usr/local/bin/python2
     fi
 }
 
@@ -93,8 +103,10 @@ darwin_cleanup() {
     brew cask cleanup
 
     if [[ $darwin_ansible_bootstrapped == 1 ]]; then
+        brew tap beeftornado/rmtree
         echo_wait 'Uninstalling a bootstrapped Ansible...'
-        brew uninstall ansible
+        brew rmtree ansible
+	brew uninstall python@2
     fi
 }
 
@@ -103,9 +115,13 @@ bootstrap_darwin() {
     darwin_xcode_setup
     darwin_brew_setup
     darwin_ansible_bootstrap
-    common_ansible_run
-    darwin_cask_update
-    darwin_mas_update
+    common_ansible_run "$@"
+
+    if [[ "$*" == "" ]]; then
+        darwin_cask_update
+        darwin_mas_update
+    fi
+
     darwin_cleanup
 }
 
@@ -131,7 +147,7 @@ bootstrap_linux() {
     if hash pacman 2>/dev/null; then
         linux_arch_setenv
         linux_arch_ansible_bootstrap
-        common_ansible_run
+        common_ansible_run "$@"
     else
         echo_error "No compatible package manager."
         exit 1
@@ -144,8 +160,8 @@ bootstrap_linux() {
 #
 
 case $OSTYPE in
-    darwin*) bootstrap_darwin ;;
-    linux*)  bootstrap_linux ;;
+    darwin*) bootstrap_darwin "$@" ;;
+    linux*)  bootstrap_linux "$@" ;;
     *)
         echo_error "Could not start bootstrap script."
         echo_error "Unknown platform: $OSTYPE."

@@ -8,6 +8,11 @@
   command: ~/.asdf/bin/asdf install kubectl {{kubectl_version}}
   args:
     creates: ~/.asdf/installs/kubectl/{{kubectl_version}}
-  notify:
-    - update default kubectl
-    - update kubectl shims
+
+- name: set kubectl {{kubectl_version}} as default
+  command: ~/.asdf/bin/asdf global kubectl {{kubectl_version}}
+  changed_when: false
+
+- name: update kubectl {{kubectl_version}} shims
+  command: ~/.asdf/bin/asdf reshim kubectl
+  changed_when: false

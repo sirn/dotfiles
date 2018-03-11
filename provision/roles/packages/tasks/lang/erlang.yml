@@ -8,9 +8,10 @@
   command: ~/.asdf/bin/asdf install erlang {{erlang_version}}
   args:
     creates: ~/.asdf/installs/erlang/{{erlang_version}}
-  notify:
-    - update default erlang
-    - update erlang shims
+
+- name: set erlang {{erlang_version}} as default
+  command: ~/.asdf/bin/asdf global erlang {{erlang_version}}
+  changed_when: false
 
 # Package manager installed Rebar3 sometimes broken when Erlang version
 # mismatched. The official bin works with any versions, so let's use that.
@@ -57,3 +58,7 @@
   when: remote_rebar3.changed
   environment:
     PATH: "{{ansible_env.HOME}}/.asdf/installs/erlang/{{erlang_version}}/bin:{{ansible_env.PATH}}"
+
+- name: update erlang {{erlang_version}} shims
+  command: ~/.asdf/bin/asdf reshim erlang
+  changed_when: false
