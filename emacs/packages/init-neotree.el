@@ -12,7 +12,7 @@
 
 (req-package neotree
   :require (evil-leader projectile)
-  :commands (neotree-toggle neotree-dir neotree-find)
+  :commands (neotree-toggle)
   :init
   (evil-leader/set-key
     "pt" 'neotree-project-dir)

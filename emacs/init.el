@@ -13,12 +13,12 @@
 ;; Initialize package.el with custom repositories.
 (require 'package)
 (setq package-enable-at-startup nil)
-(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/"))
 (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
-(add-to-list 'package-archive-priorities '("melpa-stable" . 10))
-(add-to-list 'package-archive-priorities '("melpa" . 0))
-(add-to-list 'package-archive-priorities '("gnu" . 5))
+(add-to-list 'package-archive-priorities '("org" . 20))
+(add-to-list 'package-archive-priorities '("melpa" . 10))
+(add-to-list 'package-archive-priorities '("gnu" . 0))
 (package-initialize)
 
 ;; Use req-package to make .emacs manageable.

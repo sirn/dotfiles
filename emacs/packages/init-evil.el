@@ -34,9 +34,6 @@
       "bd" 'kill-buffer
       "bD" 'kill-buffer-and-window)))
 
-(req-package evil-magit
-  :require (evil magit))
-
 (req-package evil-surround
   :config
   (global-evil-surround-mode 1))

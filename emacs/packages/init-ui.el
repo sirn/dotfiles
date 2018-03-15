@@ -13,7 +13,20 @@
   (before theme-dont-propagate activate)
   (mapc #'disable-theme custom-enabled-themes))
 
-(req-package minimal-theme)
+(req-package minimal-theme
+  :config
+  (let* ((class '((class color) (min-colors 89)))
+         (foreground "grey90"))
+    (custom-theme-set-faces
+     'minimal
+     `(org-level-1 ((,class (:foreground ,foreground))))
+     `(org-level-2 ((,class (:foreground ,foreground))))
+     `(org-level-3 ((,class (:foreground ,foreground))))
+     `(org-level-4 ((,class (:foreground ,foreground))))
+     `(org-level-5 ((,class (:foreground ,foreground))))
+     `(org-level-6 ((,class (:foreground ,foreground))))
+     `(org-level-7 ((,class (:foreground ,foreground))))
+     `(org-level-8 ((,class (:foreground ,foreground)))))))
 
 (req-package telephone-line
   :config
@@ -22,9 +35,9 @@
     (setq telephone-line-primary-right-separator 'telephone-line-abs-left)
     (setq telephone-line-secondary-right-separator 'telephone-line-abs-hollow-left)
     (setq telephone-line-height (if (eq system-type 'darwin) 22 32))
-    (telephone-line-defsegment* custom/winum-segment
+    (telephone-line-defsegment* custom/winum-segment ()
       (winum-get-number-string))
-    (telephone-line-defsegment* custom/anzu-segment
+    (telephone-line-defsegment* custom/anzu-segment ()
       (anzu--update-mode-line))
     (setq telephone-line-lhs
           '((nil    . (custom/winum-segment))

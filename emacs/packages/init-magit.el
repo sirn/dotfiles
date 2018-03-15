@@ -6,6 +6,9 @@
   (evil-leader/set-key
     "gs" 'magit-status))
 
+(req-package evil-magit
+  :require (evil magit))
+
 (req-package git-gutter
   :diminish git-gutter-mode
   :config

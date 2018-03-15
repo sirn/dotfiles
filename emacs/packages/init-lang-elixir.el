@@ -13,8 +13,7 @@
   :mode ("\\.exs?\\'" "\\.elixir\\'")
   :interpreter "elixir"
   :init
-  (progn
-    (add-hook 'erlang-mode-hook 'custom/erlang-rebar-hook)))
+  (add-hook 'erlang-mode-hook 'custom/erlang-rebar-hook))
 
 (req-package alchemist
   :require elixir-mode
