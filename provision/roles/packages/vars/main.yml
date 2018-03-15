@@ -143,16 +143,21 @@ brew_packages:
 cask_taps:
   - buo/cask-upgrade
   - caskroom/cask
+  - caskroom/drivers
   - caskroom/fonts
 
 cask_packages:
   - alfred
   - amethyst
   - bartender
+  - caskroom/drivers/logitech-options
+  - caskroom/fonts/font-ia-writer-duospace
+  - caskroom/fonts/font-iosevka
+  - caskroom/fonts/font-source-code-pro
+  - caskroom/fonts/font-source-sans-pro
   - charles
   - choosy
   - dropbox
-  - emacs-mac
   - firefox
   - gnucash
   - google-cloud-sdk
@@ -170,6 +175,7 @@ cask_packages:
   - omnigraffle
   - omnioutliner
   - paw
+  - railswaycat/emacsmacport/emacs-mac
   - rescuetime
   - screens
   - sketch
@@ -185,12 +191,6 @@ cask_packages:
   - viscosity
   - xquartz
 
-cask_fonts:
-  - font-ia-writer-duospace
-  - font-iosevka
-  - font-source-code-pro
-  - font-source-sans-pro
-
 # packages/darwin/mas
 
 mas_packages:
@@ -198,7 +198,6 @@ mas_packages:
   - { id: 411643860, app: "DaisyDisk" }
   - { id: 413965349, app: "Soulver" }
   - { id: 443987910, app: "1Password" }
-  - { id: 455545700, app: "BitPerfect" }
   - { id: 497799835, app: "Xcode" }
   - { id: 523620159, app: "CleanMyDrive 2" }
   - { id: 539883307, app: "LINE" }
@@ -208,8 +207,9 @@ mas_packages:
   - { id: 880001334, app: "Reeder" }
   - { id: 889428659, app: "xScope" }
   - { id: 890031187, app: "Marked 2" }
-  - { id: 924726344, app: "Deliveries" }
   - { id: 937984704, app: "Amphetamine" }
+  - { id: 967805235, app: "Paste" }
+  - { id: 1032355479, app: "Presentation Font Embedder" }
   - { id: 1091189122, app: "Bear" }
   - { id: 1107421413, app: "1Blocker" }
 
