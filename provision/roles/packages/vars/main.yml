@@ -88,7 +88,6 @@ aur_packages:
 
 brew_taps:
   - beeftornado/rmtree
-  - railwaycat/emacsmacport
 
 brew_packages:
   - aria2
@@ -145,20 +144,21 @@ cask_taps:
   - caskroom/cask
   - caskroom/drivers
   - caskroom/fonts
+  - railwaycat/emacsmacport
 
 cask_packages:
   - alfred
   - amethyst
   - bartender
-  - caskroom/drivers/logitech-options
-  - caskroom/fonts/font-ia-writer-duospace
-  - caskroom/fonts/font-iosevka
-  - caskroom/fonts/font-source-code-pro
-  - caskroom/fonts/font-source-sans-pro
   - charles
   - choosy
   - dropbox
+  - emacs-mac               # railwaycat/emacsmacport
   - firefox
+  - font-ia-writer-duospace # caskroom/fonts
+  - font-iosevka            # caskroom/fonts
+  - font-source-code-pro    # caskroom/fonts
+  - font-source-sans-pro    # caskroom/fonts
   - gnucash
   - google-cloud-sdk
   - hazel
@@ -168,6 +168,7 @@ cask_packages:
   - java
   - keyboard-maestro
   - little-snitch
+  - logitech-options        # caskroom/drivers
   - mactex
   - microsoft-office
   - mpv
@@ -175,7 +176,6 @@ cask_packages:
   - omnigraffle
   - omnioutliner
   - paw
-  - railswaycat/emacsmacport/emacs-mac
   - rescuetime
   - screens
   - sketch
