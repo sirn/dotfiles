@@ -33,5 +33,5 @@ if [ -f "${HOME}/.local/src/kube-ps1/kube-ps1.sh" ]; then
     KUBE_PS1_DIVIDER=" "
     KUBE_PS1_PREFIX=""
     KUBE_PS1_SUFFIX=""
-    RPROMPT='$(kube_ps1)'${RPROMPT}
+    RPROMPT='$(kube_ps1)'
 fi
