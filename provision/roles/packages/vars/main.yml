@@ -215,6 +215,7 @@ mas_packages:
   - { id: 523620159, app: "CleanMyDrive 2" }
   - { id: 539883307, app: "LINE" }
   - { id: 603637384, app: "Name Mangler 3" }
+  - { id: 803453959, app: "Slack" }
   - { id: 873245660, app: "Spillo" }
   - { id: 880001334, app: "Reeder" }
   - { id: 889428659, app: "xScope" }
@@ -224,6 +225,7 @@ mas_packages:
   - { id: 1032355479, app: "Presentation Font Embedder" }
   - { id: 1091189122, app: "Bear" }
   - { id: 1107421413, app: "1Blocker" }
+  - { id: 1278508951, app: "Trello" }
   - { id: 1289378661, app: "Twitterific" }
 
 # lang/asdf
