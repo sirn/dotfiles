@@ -184,7 +184,6 @@ cask_packages:
   - little-snitch
   - logitech-options
   - mactex
-  - microsoft-office
   - mpv
   - omnifocus
   - omnigraffle
@@ -226,7 +225,7 @@ mas_packages:
   - { id: 1091189122, app: "Bear" }
   - { id: 1107421413, app: "1Blocker" }
   - { id: 1278508951, app: "Trello" }
-  - { id: 1289378661, app: "Twitterific" }
+  - { id: 1289378661, app: "Twitterrific" }
 
 # lang/asdf
 
