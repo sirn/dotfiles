@@ -31,6 +31,13 @@
 
 (req-package diminish)
 
+(req-package dtrt-indent
+  :diminish dtrt-indent-mode
+  :init
+  (add-hook 'conf-mode-hook 'dtrt-indent-mode)
+  (add-hook 'text-mode-hook 'dtrt-indent-mode)
+  (add-hook 'prog-mode-hook 'dtrt-indent-mode))
+
 (req-package eldoc
   :diminish eldoc-mode)
 
