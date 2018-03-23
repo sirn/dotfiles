@@ -31,8 +31,8 @@ common_ansible_run() {
     local _playbook="provision/local.yml"
     local _opts=(-K -i provision/hosts)
 
-    if [[ $override_ansible_python != "" ]]; then
-        _opts+=(-e "ansible_python_interpreter=/usr/local/bin/python")
+    if [[ $ansible_python != "" ]]; then
+        _opts+=(-e "ansible_python_interpreter=${ansible_python}")
     fi
 
     if ! ansible-playbook "$_playbook" "${_opts[@]}" "$@"; then
@@ -73,11 +73,14 @@ darwin_brew_setup() {
 darwin_ansible_bootstrap() {
     if hash ansible-playbook 2>/dev/null; then
         echo_ok 'Ansible is already installed.'
+        if [ -e "$HOME/.asdf/shims/python3" ]; then
+            ansible_python="$HOME/.asdf/shims/python3"
+        fi
     else
         echo_wait 'Ansible is not installed. Installing...'
         brew install ansible python@2
         darwin_ansible_bootstrapped=1
-        override_ansible_python=/usr/local/bin/python2
+        ansible_python=/usr/local/bin/python2
     fi
 }
 

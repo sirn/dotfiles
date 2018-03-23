@@ -1,15 +1,7 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 import sys
 from ansible.module_utils.basic import *
 from collections import namedtuple
-
-
-if sys.version_info[0] == 3:
-    def iteritems(d, **kw):
-        return iter(d.items(**kw))
-elif sys.version_info[0] == 2:
-    def iteritems(d, **kw):
-        return iter(d.iteritems(**kw))
 
 
 PacAurResult = namedtuple('PacAurResult', [
@@ -26,7 +18,7 @@ class PacAurException(Exception):
 class PacAur(object):
 
     def __init__(self, **kwargs):
-        for key, value in iteritems(kwargs):
+        for key, value in iter(kwargs):
             setattr(self, key, value)
 
     def run(self):

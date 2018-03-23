@@ -7,7 +7,6 @@
 - import_tasks: "lang/kubectl.yml"
 - import_tasks: "lang/minikube.yml"
 - import_tasks: "lang/nodejs.yml"
-- import_tasks: "lang/python2.yml"
 - import_tasks: "lang/python3.yml"
 - import_tasks: "lang/ruby.yml"
 - import_tasks: "lang/rust.yml"

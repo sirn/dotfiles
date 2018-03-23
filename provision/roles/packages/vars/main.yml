@@ -278,16 +278,12 @@ golang_packages:
   - golang.org/x/tools/cmd/gorename
   - golang.org/x/tools/cmd/goimports
 
-# lang/python
-
-python2_version: "2.7.13"
-
-python2_packages:
-  - ansible
+# lang/python3
 
 python3_version: "3.6.4"
 
 python3_packages:
+  - ansible
   - asciinema
   - autoflake
   - glances
