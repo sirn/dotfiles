@@ -153,6 +153,7 @@ cask_packages:
   - charles
   - choosy
   - dropbox
+  - duet
   - emacs-mac
   - firefox
   - font-ia-writer-duospace
@@ -189,6 +190,7 @@ cask_packages:
   - omnigraffle
   - omnioutliner
   - paw
+  - riot
   - screens
   - sketch
   - spotify
