@@ -185,6 +185,7 @@ cask_packages:
   - little-snitch
   - logitech-options
   - mactex
+  - mailmate
   - mpv
   - omnifocus
   - omnigraffle
@@ -197,7 +198,6 @@ cask_packages:
   - tableplus
   - telegram
   - the-unarchiver
-  - thunderbird
   - vagrant
   - veracrypt
   - virtualbox
