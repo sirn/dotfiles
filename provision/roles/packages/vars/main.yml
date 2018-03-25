@@ -109,6 +109,7 @@ brew_packages:
   - git-flow
   - git-lfs
   - gpg
+  - gpg-agent
   - graphviz
   - hub
   - hugo
