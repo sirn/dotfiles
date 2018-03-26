@@ -284,7 +284,7 @@ golang_packages:
 python3_version: "3.6.4"
 
 python3_packages:
-  - ansible
+  - ansible==2.4.3.0
   - asciinema
   - autoflake
   - glances
