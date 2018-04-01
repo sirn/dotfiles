@@ -1,6 +1,8 @@
 (defun custom/setup-company-python ()
   (set (make-local-variable 'company-backends) '(company-anaconda)))
 
+(setq python-shell-interpreter "python3")
+
 (req-package anaconda-mode
   :require eldoc
   :commands anaconda-mode
