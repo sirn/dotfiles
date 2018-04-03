@@ -145,9 +145,11 @@ cask_taps:
   - caskroom/cask
   - caskroom/drivers
   - caskroom/fonts
+  - caskroom/versions
   - railwaycat/emacsmacport
 
 cask_packages:
+  - 1password-beta
   - alfred
   - amethyst
   - bartender
@@ -212,7 +214,6 @@ mas_packages:
   - { id: 407963104, app: "Pixelmator" }
   - { id: 411643860, app: "DaisyDisk" }
   - { id: 413965349, app: "Soulver" }
-  - { id: 443987910, app: "1Password" }
   - { id: 497799835, app: "Xcode" }
   - { id: 523620159, app: "CleanMyDrive 2" }
   - { id: 539883307, app: "LINE" }
