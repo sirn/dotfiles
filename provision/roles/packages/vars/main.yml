@@ -288,6 +288,7 @@ python3_packages:
   - ansible==2.4.3.0
   - asciinema
   - autoflake
+  - flake8
   - glances
   - ipython
   - jupyter
@@ -295,6 +296,7 @@ python3_packages:
   - numpy
   - pip
   - pipenv
+  - pylint
   - pyqt5
   - virtualenv
 
