@@ -155,6 +155,7 @@ cask_packages:
   - bartender
   - charles
   - choosy
+  - coconutbattery
   - dropbox
   - duet
   - emacs-mac
