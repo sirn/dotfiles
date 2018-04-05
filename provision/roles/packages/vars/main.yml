@@ -154,7 +154,6 @@ cask_packages:
   - amethyst
   - bartender
   - charles
-  - choosy
   - coconutbattery
   - dropbox
   - duet
@@ -227,7 +226,6 @@ mas_packages:
   - { id: 890031187, app: "Marked 2" }
   - { id: 937984704, app: "Amphetamine" }
   - { id: 1091189122, app: "Bear" }
-  - { id: 1107421413, app: "1Blocker" }
   - { id: 1278508951, app: "Trello" }
 
 # lang/asdf
