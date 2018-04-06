@@ -198,7 +198,6 @@ cask_packages:
   - screens
   - sketch
   - spotify
-  - tableplus
   - telegram
   - the-unarchiver
   - vagrant
@@ -220,8 +219,6 @@ mas_packages:
   - { id: 557168941, app: "Tweetbot" }
   - { id: 603637384, app: "Name Mangler 3" }
   - { id: 803453959, app: "Slack" }
-  - { id: 873245660, app: "Spillo" }
-  - { id: 880001334, app: "Reeder" }
   - { id: 889428659, app: "xScope" }
   - { id: 890031187, app: "Marked 2" }
   - { id: 937984704, app: "Amphetamine" }
