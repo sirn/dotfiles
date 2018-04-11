@@ -197,6 +197,7 @@ cask_packages:
   - riot
   - screens
   - sketch
+  - soundsource
   - spotify
   - telegram
   - the-unarchiver
