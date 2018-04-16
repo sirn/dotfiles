@@ -88,6 +88,7 @@ aur_packages:
 
 brew_taps:
   - beeftornado/rmtree
+  - railwaycat/emacsmacport
 
 brew_packages:
   - aria2
@@ -99,7 +100,7 @@ brew_packages:
   - coreutils
   - curl
   - direnv
-  - emacs
+  - emacs-mac
   - ffmpeg
   - fswatch
   - ghc
@@ -146,7 +147,6 @@ cask_taps:
   - caskroom/drivers
   - caskroom/fonts
   - caskroom/versions
-  - railwaycat/emacsmacport
 
 cask_packages:
   - 1password-beta
@@ -157,7 +157,6 @@ cask_packages:
   - coconutbattery
   - dropbox
   - duet
-  - emacs-mac
   - firefox
   - font-ia-writer-duospace
   - font-ibm-plex
