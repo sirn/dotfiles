@@ -15,6 +15,7 @@
 
 - name: upgrade homebrew packages
   homebrew: upgrade_all=yes
+  ignore_errors: yes
 
 # services/archlinux/docker
 
