@@ -35,5 +35,5 @@
 - name: add dev resolvers
   become: yes
   copy:
-    src: etc/resolver/dev
-    dest: /etc/resolver/dev
+    src: etc/resolver/devel
+    dest: /etc/resolver/devel

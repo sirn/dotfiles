@@ -4,9 +4,9 @@ server:
     access-control: 127.0.0.0/8 allow
     port: 11053
 
-    # Local zone for .dev domains.
-    local-zone: "dev." redirect
-    local-data: "dev. 10800 IN A 127.0.0.1"
+    # Local zone for .devel domains.
+    local-zone: "devel." redirect
+    local-data: "devel. 10800 IN A 127.0.0.1"
 
     # Unbound is going to run as unprivileged user by launchd.
     directory: "{{ansible_env['HOME']}}/.local/etc/unbound"

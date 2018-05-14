@@ -36,8 +36,8 @@ $ ./bootstrap.sh
 * [**macOS**: Use Ansible to install Mac App Store applications with MAS](provision/roles/packages/tasks/packages/darwin/mas.yml)
 * [**macOS**: Check Sparkle settings for all installed apps](bin/check-sparkle)
 * [**macOS**: Using funtoo's keychain for ssh-agent/gpg-agent on macOS](provision/roles/packages/tasks/services/darwin/env.yml)
-* [**macOS**: Using unbound to create .dev TLD for local development use](provision/roles/packages/tasks/services/darwin/unbound.yml)
-* [**Arch Linux**: using unbound to create .dev TLD for local development use](provision/roles/packages/tasks/services/archlinux/unbound.yml)
+* [**macOS**: Using unbound to create .devel TLD for local development use](provision/roles/packages/tasks/services/darwin/unbound.yml)
+* [**Arch Linux**: using unbound to create .devel TLD for local development use](provision/roles/packages/tasks/services/archlinux/unbound.yml)
 * [**Arch Linux**: pacaur module for Ansible](provision/library/pacaur.py)
 
 ### License

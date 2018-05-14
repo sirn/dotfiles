@@ -6,7 +6,7 @@ kube_ps1_version: "0.6.0"
 
 # custom/kubectx
 
-kubectx_version: "0.4.0"
+kubectx_version: "0.5.0"
 
 # packages/archlinux/pacman
 
@@ -224,31 +224,31 @@ mas_packages:
 
 # lang/asdf
 
-asdf_version: "0.4.2"
+asdf_version: "0.4.3"
 
 # lang/elixir
 
-elixir_version: "1.6.3-otp-20"
+elixir_version: "1.6.5-otp-20"
 
 # lang/erlang
 
-erlang_version: "20.2.4"
+erlang_version: "20.3.6"
 
 # lang/haskell
 
-haskell_version: "8.4.1"
+haskell_version: "8.4.2"
 
 # lang/helm
 
-helm_version: "2.8.2"
+helm_version: "2.9.0"
 
 # lang/kubectl
 
-kubectl_version: "1.9.0"
+kubectl_version: "1.10.2"
 
 # lang/minikube
 
-minikube_version: "0.25.0"
+minikube_version: "0.26.1"
 
 # lang/nim
 
@@ -256,7 +256,7 @@ nim_version: "0.18.0"
 
 # lang/nodejs
 
-nodejs_version: "9.8.0"
+nodejs_version: "10.1.0"
 
 nodejs_packages:
   - autoprefixer
@@ -272,7 +272,7 @@ nodejs_packages:
 
 # lang/golang
 
-golang_version: "1.10"
+golang_version: "1.10.2"
 
 golang_packages:
   - github.com/nsf/gocode
@@ -303,7 +303,7 @@ python3_packages:
 
 # lang/ruby
 
-ruby_version: "2.5.0"
+ruby_version: "2.5.1"
 
 ruby_packages:
   - bundler
@@ -313,7 +313,7 @@ ruby_packages:
 
 # lang/rust
 
-rust_version: "1.24.1"
+rust_version: "1.26.0"
 
 rust_packages:
   - racer
