@@ -149,7 +149,7 @@ cask_taps:
   - caskroom/versions
 
 cask_packages:
-  - 1password-beta
+  - 1password
   - alfred
   - amethyst
   - bartender
