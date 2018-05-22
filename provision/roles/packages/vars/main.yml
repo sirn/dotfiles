@@ -149,7 +149,6 @@ cask_taps:
   - caskroom/versions
 
 cask_packages:
-  - 1password
   - alfred
   - amethyst
   - bartender
@@ -221,6 +220,7 @@ mas_packages:
   - { id: 937984704, app: "Amphetamine" }
   - { id: 1091189122, app: "Bear" }
   - { id: 1289378661, app: "Twitterific" }
+  - { id: 1333542190, app: "1Password 7" }
 
 # lang/asdf
 
