@@ -22,7 +22,6 @@ pacman_packages:
   - feh
   - ffmpeg
   - firefox
-  - ghc
   - git
   - gnucash
   - gnupg
@@ -44,6 +43,7 @@ pacman_packages:
   - onboard
   - openssh
   - openssl
+  - pandoc
   - rfkill
   - ripgrep
   - rtmpdump
@@ -103,7 +103,6 @@ brew_packages:
   - emacs-mac
   - ffmpeg
   - fswatch
-  - ghc
   - ghq
   - git
   - git-crypt
@@ -124,6 +123,7 @@ brew_packages:
   - openssh
   - openssl
   - packer
+  - pandoc
   - pinentry-mac
   - reattach-to-user-namespace
   - ripgrep
@@ -143,10 +143,9 @@ brew_packages:
 
 cask_taps:
   - buo/cask-upgrade
-  - caskroom/cask
-  - caskroom/drivers
-  - caskroom/fonts
-  - caskroom/versions
+  - homebrew/cask-drivers
+  - homebrew/cask-fonts
+  - homebrew/cask-versions
 
 cask_packages:
   - alfred
@@ -259,12 +258,9 @@ nim_version: "0.18.0"
 nodejs_version: "10.1.0"
 
 nodejs_packages:
-  - autoprefixer
-  - js-beautify
+  - eslint
   - localtunnel
-  - nativefier
-  - postcss
-  - postcss-cli
+  - prettier
   - tern
   - tslint
   - typescript

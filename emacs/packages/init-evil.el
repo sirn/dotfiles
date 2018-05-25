@@ -34,6 +34,12 @@
       "bd" 'kill-buffer
       "bD" 'kill-buffer-and-window)))
 
+(req-package evil-matchit
+  :require evil
+  :config
+  (global-evil-matchit-mode 1))
+
 (req-package evil-surround
+  :require evil
   :config
   (global-evil-surround-mode 1))

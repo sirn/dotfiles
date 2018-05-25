@@ -21,12 +21,11 @@
           (add-to-list 'flycheck-erlang-include-path path t))))))
 
 (req-package erlang
+  :require company
   :mode ("\\.erl\\'" . erlang-mode)
   :interpreter "erl"
   :init
-  (progn
-    (add-hook 'erlang-mode-hook 'company-mode)
-    (add-hook 'erlang-mode-hook 'custom/erlang-rebar-hook))
+  (add-hook 'erlang-mode-hook 'custom/erlang-rebar-hook)
   :config
   (progn
     (setq erlang-compile-extra-opts '(debug-info))

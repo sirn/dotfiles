@@ -17,19 +17,15 @@ PATH=/usr/local/bin:$PATH
 PATH=$HOME/.local/bin:$PATH
 PATH=$HOME/.dotfiles/bin:$PATH
 
-if hash cargo 2>/dev/null; then
-    export RUST_SRC_PATH=$HOME/.local/src/rust/current/src/
-    PATH=$HOME/.cargo/bin:$PATH
-fi
+export RUST_SRC_PATH=$HOME/.local/src/rust/current/src/
+PATH=$HOME/.cargo/bin:$PATH
 
 if [ -d ~/.cache/rebar3 ]; then
     PATH=$HOME/.cache/rebar3/bin:$PATH
 fi
 
-if hash go 2>/dev/null; then
-    export GOPATH=$HOME/Dev/go/
-    PATH=$HOME/Dev/go/bin:$PATH
-fi
+export GOPATH=$HOME/Dev/go/
+PATH=$HOME/Dev/go/bin:$PATH
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
     if hash brew 2>/dev/null; then

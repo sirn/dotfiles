@@ -25,6 +25,13 @@
     warn: no
     creates: "~/.local/src/rust/rustc-{{rust_version}}"
 
+- name: link rust source
+  file:
+    src: ~/.local/src/rust/rustc-{{rust_version}}
+    path: ~/.local/src/rust/current
+    state: link
+    force: yes
+
 - name: install rust packages
   command: ~/.asdf/installs/rust/{{rust_version}}/bin/cargo install {{item}}
   args:

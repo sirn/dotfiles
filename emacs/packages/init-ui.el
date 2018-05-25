@@ -1,3 +1,9 @@
+(defun custom/winum-assign-func ()
+  (when (and (boundp 'neo-buffer-name)
+             (string= (buffer-name) neo-buffer-name)
+             (eq (selected-window) (frame-first-window)))
+    0))
+
 (unless (eq system-type 'darwin)
   (menu-bar-mode -1))
 
@@ -12,6 +18,11 @@
 (defadvice load-theme
   (before theme-dont-propagate activate)
   (mapc #'disable-theme custom-enabled-themes))
+
+(req-package git-gutter
+  :diminish git-gutter-mode
+  :config
+  (global-git-gutter-mode t))
 
 (req-package minimal-theme
   :config
@@ -55,11 +66,11 @@
     (telephone-line-mode t)))
 
 (req-package winum
-  :require (evil-leader)
+  :require evil-leader
   :config
   (progn
     (setq winum-auto-setup-mode-line nil)
-    (setq winum-assign-func 'my-winum-assign-func)
+    (add-to-list 'winum-assign-functions 'custom/winum-assign-func)
     (winum-mode)
     (evil-leader/set-key
       "0" 'winum-select-window-0
@@ -72,8 +83,3 @@
       "7" 'winum-select-window-7
       "8" 'winum-select-window-8
       "9" 'winum-select-window-9)))
-
-(defun my-winum-assign-func ()
-  (cond
-   ((string-match-p (buffer-name) ".*\\*NeoTree\\*.*") 0)
-   (t nil)))

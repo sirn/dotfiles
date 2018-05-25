@@ -56,7 +56,7 @@
       "tl" 'global-linum-mode)))
 
 (req-package linum-relative
-  :require (linum evil-leader)
+  :require (evil-leader linum)
   :config
   (progn
     (setq linum-relative-current-symbol "")
@@ -64,6 +64,28 @@
     (linum-relative-mode)
     (evil-leader/set-key
       "tL" 'linum-relative-toggle)))
+
+(req-package pandoc-mode
+  :diminish pandoc-mode
+  :commands pandoc-mode
+  :init
+  (progn
+    (add-hook 'rst-mode-hook 'pandoc-mode)
+    (add-hook 'markdown-mode-hook 'pandoc-mode)))
+
+(req-package prettier-js
+  :diminish prettier-js-mode
+  :commands prettier-js-mode
+  :init
+  (progn
+    (add-hook 'css-mode-hook 'prettier-js-mode)
+    (add-hook 'js2-mode-hook 'prettier-js-mode)
+    (add-hook 'json-mode-hook 'prettier-js-mode)
+    (add-hook 'markdown-mode-hook 'prettier-js-mode))
+  :config
+  (setq prettier-js-args
+        '("--trailing-comma" "all"
+          "--tab-width" "4")))
 
 (req-package rainbow-delimiters
   :commands rainbow-delimiters-mode
@@ -77,7 +99,13 @@
   (add-hook 'prog-mode-hook 'rainbow-mode))
 
 (req-package smartparens
+  :require evil-leader
   :diminish smartparens-mode
+  :init
+  (evil-leader/set-key
+    "s>" 'sp-forward-slurp-sexp
+    "s<" 'sp-backward-slurp-sexp
+    "sd" 'sp-splice-sexp)
   :config
   (progn
     (require 'smartparens-config)
@@ -94,3 +122,26 @@
   :config
   (progn
     (global-undo-tree-mode)))
+
+(req-package yasnippet
+  :commands (yas-reload-all yas-minor-mode)
+  :diminish yas-minor-mode
+  :init
+  (add-hook 'elixir-mode-hook 'yas-minor-mode)
+  (add-hook 'erlang-mode-hook 'yas-minor-mode)
+  (add-hook 'go-mode-hook 'yas-minor-mode)
+  (add-hook 'js2-mode-hook 'yas-minor-mode)
+  (add-hook 'latex-mode-hook 'yas-minor-mode)
+  (add-hook 'makefile-mode-hook 'yas-minor-mode)
+  (add-hook 'php-mode-hook 'yas-minor-mode)
+  (add-hook 'python-mode-hook 'yas-minor-mode)
+  (add-hook 'rust-mode-hook 'yas-minor-mode)
+  (add-hook 'sql-mode-hook 'yas-minor-mode)
+  (add-hook 'terraform-mode-hook 'yas-minor-mode)
+  (add-hook 'typescript-mode-hook 'yas-minor-mode)
+  (add-hook 'yaml-mode-hook 'yas-minor-mode)
+  :config
+  (yas-reload-all))
+
+(req-package yasnippet-snippets
+  :require yasnippet)
