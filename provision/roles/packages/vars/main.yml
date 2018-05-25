@@ -289,6 +289,7 @@ python3_packages:
   - ansible==2.4.3.0
   - asciinema
   - autoflake
+  - black
   - flake8
   - glances
   - ipython
