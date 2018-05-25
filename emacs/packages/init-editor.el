@@ -10,6 +10,10 @@
     "jJ" 'avy-goto-char-2
     "jl" 'avy-goto-line))
 
+(req-package color-identifiers-mode
+  :init
+  (add-hook 'after-init-hook 'global-color-identifiers-mode))
+
 (req-package company
   :diminish company-mode
   :init
