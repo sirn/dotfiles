@@ -24,10 +24,6 @@
   :config
   (global-git-gutter-mode t))
 
-(req-package tao-theme
-  :config
-  (load-theme 'tao-yin t))
-
 (req-package telephone-line
   :config
   (progn
