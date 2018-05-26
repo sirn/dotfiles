@@ -11,6 +11,7 @@
     "jl" 'avy-goto-line))
 
 (req-package color-identifiers-mode
+  :diminish color-identifiers-mode
   :init
   (add-hook 'after-init-hook 'global-color-identifiers-mode))
 
