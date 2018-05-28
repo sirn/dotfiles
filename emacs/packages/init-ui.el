@@ -4,7 +4,8 @@
              (eq (selected-window) (frame-first-window)))
     0))
 
-(unless (eq system-type 'darwin)
+(if (or (not (eq system-type 'darwin))
+        (not (display-graphic-p)))
   (menu-bar-mode -1))
 
 (when (display-graphic-p)
