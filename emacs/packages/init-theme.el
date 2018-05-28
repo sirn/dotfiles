@@ -4,9 +4,11 @@
 
    ;; emacs
    `(mode-line                ((,class (:foreground ,color-5 :background ,color-15))))
+   `(mode-line-buffer-id      ((t (:foreground ,color-5))))
 
    ;; ansible
    `(ansible::task-label-face ((t (:foreground ,color-9))))
+   `(ansible::section-face    ((t (:foreground ,color-13 :weight bold))))
 
    ;; flycheck
    `(flycheck-error           ((((supports :underline (:style wave))) (:underline (:style wave :color "Red1") :inherit unspecified)) (t (:foreground "Red1" :weight bold :underline t))))
