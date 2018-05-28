@@ -261,6 +261,10 @@ nodejs_packages:
   - eslint
   - localtunnel
   - prettier
+  - stylelint
+  - stylelint-config-recommended
+  - stylelint-config-recommended-scss
+  - stylelint-scss
   - tern
   - tslint
   - typescript

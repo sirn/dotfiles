@@ -28,13 +28,6 @@
   command: ~/.asdf/bin/asdf global nodejs {{nodejs_version}}
   changed_when: false
 
-- name: configure npm prefix
-  command: ~/.asdf/installs/nodejs/{{nodejs_version}}/bin/npm config set prefix ~/.local
-  args:
-    creates: ~/.npmrc
-  environment:
-    PATH: "{{ansible_env.HOME}}/.asdf/shims:{{ansible_env.PATH}}"
-
 - name: install nodejs packages
   npm:
     name: "{{item}}"
