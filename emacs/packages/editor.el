@@ -78,6 +78,17 @@
     (add-hook 'rst-mode-hook 'pandoc-mode)
     (add-hook 'markdown-mode-hook 'pandoc-mode)))
 
+(req-package parinfer
+  :commands (parinfer-mode parinfer-toggle-mode)
+  :init
+  (progn
+    (setq parinfer-extensions '(defaults pretty-parens evil smart-tab smart-yank))
+    (add-hook 'clojure-mode-hook #'parinfer-mode)
+    (add-hook 'emacs-lisp-mode-hook #'parinfer-mode)
+    (add-hook 'common-lisp-mode-hook #'parinfer-mode)
+    (add-hook 'scheme-mode-hook #'parinfer-mode)
+    (add-hook 'lisp-mode-hook #'parinfer-mode)))
+
 (req-package prettier-js
   :diminish prettier-js-mode
   :commands prettier-js-mode
