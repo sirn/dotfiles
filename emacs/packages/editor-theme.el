@@ -22,7 +22,10 @@
    `(git-gutter:added         ((t (:foreground "green"))))
    `(git-gutter:deleted       ((t (:foreground "red"))))
    `(git-gutter:modified      ((t (:foreground "magenta"))))
-   `(git-gutter:unchanged     ((t (:foreground "yellow"))))))
+   `(git-gutter:unchanged     ((t (:foreground "yellow"))))
+
+   ;; web-mode
+   `(web-mode-block-attr-name-face ((t (:foreground ,color-13 :wegiht bold))))))
 
 (req-package tao-theme
   :config
