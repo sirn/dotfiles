@@ -258,6 +258,10 @@ nim_version: "0.18.0"
 nodejs_version: "10.1.0"
 
 nodejs_packages:
+  - elm
+  - elm-format
+  - elm-oracle
+  - elm-test
   - eslint
   - localtunnel
   - prettier
