@@ -79,6 +79,7 @@
     (add-hook 'markdown-mode-hook 'pandoc-mode)))
 
 (req-package parinfer
+  :diminish parinfer-mode
   :commands (parinfer-mode parinfer-toggle-mode)
   :init
   (progn

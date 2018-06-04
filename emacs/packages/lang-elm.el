@@ -4,6 +4,7 @@
 (req-package elm-mode
   :mode "\\.elm\\'"
   :interpreter "elm"
+  :diminish elm-indent-mode
   :init
   (add-hook 'elm-mode-hook 'custom/setup-company-elm)
   :config

@@ -235,7 +235,7 @@ erlang_version: "20.3.6"
 
 # lang/haskell
 
-haskell_version: "8.4.2"
+haskell_version: "8.4.1"
 
 # lang/helm
 
@@ -253,9 +253,9 @@ minikube_version: "0.26.1"
 
 nim_version: "0.18.0"
 
-# lang/nodejs
+# lang/nodejs (lts)
 
-nodejs_version: "10.1.0"
+nodejs_version: "8.11.2"
 
 nodejs_packages:
   - elm
@@ -265,6 +265,9 @@ nodejs_packages:
   - eslint
   - localtunnel
   - prettier
+  - purescript
+  - solc
+  - solium
   - stylelint
   - stylelint-config-recommended
   - stylelint-config-recommended-scss
