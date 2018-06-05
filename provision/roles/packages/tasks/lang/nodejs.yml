@@ -36,7 +36,7 @@
     executable: ~/.asdf/installs/nodejs/{{nodejs_version}}/bin/npm
   with_items: "{{nodejs_packages}}"
   environment:
-    PATH: "{{ansible_env.HOME}}/.asdf/shims:{{ansible_env.PATH}}"
+    PATH: "{{ansible_env.HOME}}/.asdf/installs/nodejs/{{nodejs_versions}}/bin:{{ansible_env.PATH}}"
 
 - name: update nodejs {{nodejs_version}} shims
   command: ~/.asdf/bin/asdf reshim nodejs
