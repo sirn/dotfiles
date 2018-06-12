@@ -51,25 +51,6 @@
   :config
   (add-hook 'after-init-hook 'global-flycheck-mode))
 
-(req-package linum
-  :require evil-leader
-  :commands global-linum-mode
-  :init
-  (progn
-    (setq linum-format "%4d ")
-    (evil-leader/set-key
-      "tl" 'global-linum-mode)))
-
-(req-package linum-relative
-  :require (evil-leader linum)
-  :config
-  (progn
-    (setq linum-relative-current-symbol "")
-    (setq linum-relative-format "%4s ")
-    (linum-relative-mode)
-    (evil-leader/set-key
-      "tL" 'linum-relative-toggle)))
-
 (req-package pandoc-mode
   :diminish pandoc-mode
   :commands pandoc-mode

@@ -2,4 +2,6 @@
   :require tramp
   :diminish projectile-mode
   :config
-  (projectile-mode))
+  (progn
+    (setq projectile-switch-project-action 'projectile-dired)
+    (projectile-mode)))
