@@ -1,4 +1,4 @@
-(defun custom/setup-tide ()
+(defun setup-tide ()
   (tide-setup)
   (flycheck-mode t)
   (setq flycheck-check-syntax-automatically '(save mode-enabled))
@@ -6,15 +6,24 @@
   (tide-hl-identifier-mode t)
   (company-mode-on))
 
-(req-package tide
-  :require (company typescript-mode)
-  :commands (tide-setup tide-mode)
+
+(use-package tide
+  :ensure t
+  :after typescript-mode
   :diminish tide-mode
+
+  :commands
+  (tide-setup
+   tide-mode)
+
   :init
-  (add-hook 'typescript-mode-hook 'custom/setup-tide)
+  (add-hook 'typescript-mode-hook 'setup-tide)
+
   :config
   (add-hook 'before-save-hook 'tide-format-before-save))
 
-(req-package typescript-mode
-  :mode "\\.ts\\'"
-  :interpreter "tss")
+
+(use-package typescript-mode
+  :ensure t
+  :interpreter "tss"
+  :mode "\\.ts\\'")

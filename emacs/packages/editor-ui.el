@@ -1,60 +1,69 @@
-(defun custom/winum-assign-func ()
-  (when (and (boundp 'neo-buffer-name)
-             (string= (buffer-name) neo-buffer-name)
-             (eq (selected-window) (frame-first-window)))
-    0))
-
-(if (or (not (eq system-type 'darwin))
-        (not (display-graphic-p)))
-  (menu-bar-mode -1))
-
+(menu-bar-mode -1)
 (when (display-graphic-p)
   (set-frame-font "PragmataPro 14" nil t)
   (toggle-scroll-bar -1)
-  (tool-bar-mode -1))
+  (tool-bar-mode -1)
+  (when (boundp 'mac-auto-operator-composition-mode)
+    (mac-auto-operator-composition-mode)))
 
-(when (boundp 'mac-auto-operator-composition-mode)
-  (mac-auto-operator-composition-mode))
 
-(defadvice load-theme
-  (before theme-dont-propagate activate)
-  (mapc #'disable-theme custom-enabled-themes))
-
-(req-package git-gutter
+(use-package git-gutter
   :diminish git-gutter-mode
+  :ensure t
+
+  :preface
+  (eval-when-compile
+    (declare-function global-git-gutter-mode nil))
+
   :config
   (global-git-gutter-mode t))
 
-(req-package telephone-line
-  :config
-  (progn
-    (require 'telephone-line-config)
-    (telephone-line-defsegment* custom/winum-segment ()
-      (winum-get-number-string))
-    (telephone-line-defsegment* custom/anzu-segment ()
-      (anzu--update-mode-line))
-    (setq telephone-line-lhs
-          '((nil    . (custom/winum-segment))
-            (evil   . (telephone-line-evil-tag-segment))
-            (accent . (telephone-line-vc-segment
-                       telephone-line-erc-modified-channels-segment
-                       telephone-line-process-segment))
-            (nil    . (telephone-line-minor-mode-segment
-                       telephone-line-buffer-segment))))
-    (setq telephone-line-rhs
-          '((nil    . (custom/anzu-segment
-                       telephone-line-misc-info-segment))
-            (accent . (telephone-line-major-mode-segment))
-            (evil   . (telephone-line-airline-position-segment))))
-    (telephone-line-mode t)))
 
-(req-package winum
-  :require evil-leader
+(use-package telephone-line
+  :ensure t
+
+  :preface
+  (eval-when-compile
+    (declare-function telephone-line-mode nil))
+
   :config
-  (progn
-    (setq winum-auto-setup-mode-line nil)
-    (add-to-list 'winum-assign-functions 'custom/winum-assign-func)
-    (winum-mode)
+  (require 'telephone-line-config)
+  (telephone-line-defsegment* custom/winum-segment () (winum-get-number-string))
+  (telephone-line-defsegment* custom/anzu-segment () (anzu--update-mode-line))
+  (setq telephone-line-lhs
+        '((nil    . (custom/winum-segment))
+          (evil   . (telephone-line-evil-tag-segment))
+          (accent . (telephone-line-vc-segment
+                     telephone-line-erc-modified-channels-segment
+                     telephone-line-process-segment))
+          (nil    . (telephone-line-minor-mode-segment
+                     telephone-line-buffer-segment))))
+  (setq telephone-line-rhs
+        '((nil    . (custom/anzu-segment
+                     telephone-line-misc-info-segment))
+          (accent . (telephone-line-major-mode-segment))
+          (evil   . (telephone-line-airline-position-segment))))
+  (telephone-line-mode t))
+
+
+(use-package winum
+  :ensure t
+
+  :preface
+  (eval-when-compile
+    (declare-function winum-mode nil))
+
+  :config
+  (defun custom/winum-assign-func ()
+    (when (and (boundp 'neo-buffer-name)
+               (string= (buffer-name) neo-buffer-name)
+               (eq (selected-window) (frame-first-window))) 0))
+  (add-to-list 'winum-assign-functions 'custom/winum-assign-func)
+
+  (setq winum-auto-setup-mode-line nil)
+  (winum-mode)
+
+  (eval-after-load 'evil-leader
     (evil-leader/set-key
       "0" 'winum-select-window-0
       "1" 'winum-select-window-1

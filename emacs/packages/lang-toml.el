@@ -1,2 +1,3 @@
-(req-package toml-mode
-  :mode ("\\.\\toml\\'" . toml-mode))
+(use-package toml-mode
+  :ensure t
+  :mode ("\\.toml\\'" . toml-mode))

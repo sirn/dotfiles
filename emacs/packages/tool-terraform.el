@@ -1,2 +1,3 @@
-(req-package terraform-mode
-  :mode ("\\.\\tf\\'" . terraform-mode))
+(use-package terraform-mode
+  :ensure t
+  :mode "\\.tf\\'")

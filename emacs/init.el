@@ -1,14 +1,20 @@
+(defconst emacs-start-time (current-time))
+
+
 ;; Use custom file at alternate path
 (setq custom-file "~/.emacs.d/custom.el")
 (if (file-exists-p custom-file)
     (load custom-file))
 
+
 ;; Remove banners
 (setq inhibit-startup-message t)
+
 
 ;; Disable backups
 (setq backup-inhibited t)
 (setq auto-save-default nil)
+
 
 ;; Initialize package.el with custom repositories.
 (require 'package)
@@ -21,12 +27,19 @@
 (add-to-list 'package-archive-priorities '("gnu" . 0))
 (package-initialize)
 
+
 ;; Use req-package to make .emacs manageable.
-(unless (package-installed-p 'req-package)
+(unless (package-installed-p 'use-package)
   (package-refresh-contents)
-  (package-install 'use-package)
-  (package-install 'req-package))
-(require 'req-package)
+  (package-install 'diminish)
+  (package-install 'use-package))
+
+(eval-when-compile
+  (require 'use-package)
+  (setq use-package-expand-minimally byte-compile-current-file))
+(require 'diminish)
+(require 'bind-key)
+
 
 ;; Packages
 (setq use-package-always-ensure t)
@@ -36,7 +49,15 @@
       (unless (member library loaded)
         (load library nil t)
         (push library loaded)))))
-(req-package-finish)
+
 
 ;; Use y/n instead of yes/no
 (defalias 'yes-or-no-p 'y-or-n-p)
+
+
+;; Benchmarking
+(add-hook
+ 'after-init-hook
+ `(lambda ()
+    (let ((elapsed (float-time (time-subtract (current-time) emacs-start-time))))
+      (message "Loading %s...done (%.3fs)" ,load-file-name elapsed t))))

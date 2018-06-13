@@ -1,5 +1,7 @@
-(req-package sql
+(use-package sql
+  :ensure t
   :mode ("\\.sql\\'" . sql-mode))
 
-(req-package sql-indent
-  :require sql)
+(use-package sql-indent
+  :after sql
+  :ensure t)

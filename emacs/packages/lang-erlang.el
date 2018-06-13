@@ -1,32 +1,37 @@
-(defun custom/erlang-rebar-locate-root ()
-  (locate-dominating-file default-directory "rebar.config"))
-
-(defun custom/erlang-rebar-code-path ()
-  (split-string (shell-command-to-string "rebar3 path -s :") ":"))
-
-(defun custom/erlang-rebar-include-path ()
-  (split-string (shell-command-to-string "find . -iname include -type d")))
-
-(defun custom/erlang-rebar-hook ()
-  (let ((default-directory (custom/erlang-rebar-locate-root)))
-    (when default-directory
-      (progn
-        (let ((paths (custom/erlang-rebar-code-path)))
-          (progn
-            (setq flycheck-erlang-library-path paths)
-            (add-to-list 'inferior-erlang-machine-options "-pa" t)
-            (dolist (path paths)
-              (add-to-list 'inferior-erlang-machine-options path t))))
-        (dolist (path (custom/erlang-rebar-include-path))
-          (add-to-list 'flycheck-erlang-include-path path t))))))
-
-(req-package erlang
-  :require company
+(use-package erlang
+  :ensure t
   :mode ("\\.erl\\'" . erlang-mode)
   :interpreter "erl"
+
+  :preface
+  (eval-when-compile
+    (defvar inferior-erlang-machine-options))
+
   :init
-  (add-hook 'erlang-mode-hook 'custom/erlang-rebar-hook)
+  (defun erlang-rebar-locate-root ()
+    (locate-dominating-file default-directory "rebar.config"))
+
+  (defun erlang-rebar-code-path ()
+    (split-string (shell-command-to-string "rebar3 path -s :") ":"))
+
+  (defun erlang-rebar-include-path ()
+    (split-string (shell-command-to-string "find . -iname include -type d")))
+
+  (defun erlang-rebar-hook ()
+    (let ((default-directory (erlang-rebar-locate-root)))
+      (when default-directory
+        (progn
+          (let ((paths (erlang-rebar-code-path)))
+            (progn
+              (setq flycheck-erlang-library-path paths)
+              (add-to-list 'inferior-erlang-machine-options "-pa" t)
+              (dolist (path paths)
+                (add-to-list 'inferior-erlang-machine-options path t))))
+          (dolist (path (erlang-rebar-include-path))
+            (add-to-list 'flycheck-erlang-include-path path t))))))
+
+  (add-hook 'erlang-mode-hook 'erlang-rebar-hook)
+
   :config
-  (progn
-    (setq erlang-compile-extra-opts '(debug-info))
-    (require 'erlang-start)))
+  (setq erlang-compile-extra-opts '(debug-info))
+  (require 'erlang-start))

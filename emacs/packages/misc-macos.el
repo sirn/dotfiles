@@ -9,6 +9,10 @@
          nil 'fullscreen
          (when (not (frame-parameter nil 'fullscreen)) 'fullscreen))))
 
+    (eval-when-compile
+      (defvar mac-command-key-is-meta)
+      (defvar mac-option-key-is-meta))
+
     (setq mac-command-key-is-meta nil)
     (setq mac-command-modifier 'super)
     (setq mac-option-key-is-meta t)
@@ -20,8 +24,22 @@
     (global-set-key (kbd "s-W") 'delete-frame)
     (global-set-key (kbd "s-n") 'make-frame))
 
-  (req-package osx-trash
-    :init (osx-trash-setup))
 
-  (req-package pbcopy
-    :init (turn-on-pbcopy)))
+  (use-package osx-trash
+    :ensure t
+
+    :preface
+    (declare-function osx-trash-setup nil)
+
+    :init
+    (osx-trash-setup))
+
+
+  (use-package pbcopy
+    :ensure t
+
+    :preface
+    (declare-function turn-on-pbcopy nil)
+
+    :init
+    (turn-on-pbcopy)))

@@ -1,2 +1,3 @@
-(req-package haskell-mode
+(use-package haskell-mode
+  :ensure t
   :mode "\\.hs\\'")

@@ -1,2 +1,3 @@
-(req-package hcl-mode
-  :mode ("\\.\\hcl\\'" . hcl-mode))
+(use-package hcl-mode
+  :ensure t
+  :mode ("\\.hcl\\'" . hcl-mode))

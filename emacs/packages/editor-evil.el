@@ -1,45 +1,77 @@
-(req-package evil
+(use-package evil
+  :ensure t
   :config
-  (progn
-    (fset 'evil-visual-update-x-selection 'ignore)
-    (evil-mode t)))
+  (fset 'evil-visual-update-x-selection 'ignore)
+  (evil-mode t))
 
-(req-package evil-anzu
-  :require evil
+
+(use-package evil-anzu
+  :after evil
   :diminish anzu-mode
-  :config
-  (progn
-    (setq anzu-cons-mode-line-p nil)
-    (global-anzu-mode t)))
+  :ensure t
 
-(req-package evil-commentary
-  :require evil
+  :config
+  (setq anzu-cons-mode-line-p nil)
+  (global-anzu-mode t))
+
+
+(use-package evil-commentary
+  :after evil
   :diminish evil-commentary-mode
-  :config
-  (evil-commentary-mode))
+  :ensure t
 
-(req-package evil-leader
-  :require evil
-  :config
-  (progn
-    (evil-leader/set-leader "<SPC>")
-    (global-evil-leader-mode 1)
-    (evil-leader/set-key
-      "wo" 'other-window
-      "wd" 'delete-window
-      "wD" 'delete-other-windows
-      "w-" 'split-window-below
-      "w/" 'split-window-right
-      "w=" 'balance-windows
-      "bd" 'kill-buffer
-      "bD" 'kill-buffer-and-window)))
+  :preface
+  (eval-when-compile
+    (declare-function evil-commentary-mode nil))
 
-(req-package evil-matchit
-  :require evil
   :config
-  (global-evil-matchit-mode 1))
+  (eval-after-load 'evil-commentary
+    (evil-commentary-mode t)))
 
-(req-package evil-surround
-  :require evil
+
+(use-package evil-leader
+  :after evil
+  :ensure t
+
+  :preface
+  (eval-when-compile
+    (declare-function global-evil-leader-mode nil)
+    (declare-function evil-leader/set-leader nil)
+    (declare-function evil-leader/set-key nil))
+
   :config
-  (global-evil-surround-mode 1))
+  (evil-leader/set-leader "<SPC>")
+  (global-evil-leader-mode 1)
+  (evil-leader/set-key
+    "wo" 'other-window
+    "wd" 'delete-window
+    "wD" 'delete-other-windows
+    "w-" 'split-window-below
+    "w/" 'split-window-right
+    "w=" 'balance-windows
+    "bd" 'kill-buffer
+    "bD" 'kill-buffer-and-window))
+
+
+(use-package evil-matchit
+  :after evil
+  :ensure t
+
+  :preface
+  (eval-when-compile
+    (declare-function global-evil-matchit-mode nil))
+
+  :config
+  (global-evil-matchit-mode t))
+
+
+(use-package evil-surround
+  :after evil
+  :ensure t
+
+  :preface
+  (eval-when-compile
+    (declare-function global-evil-surround-mode nil))
+
+  :config
+  (global-evil-surround-mode t))

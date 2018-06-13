@@ -1,26 +1,36 @@
-(defun custom/setup-company-go ()
-  (set (make-local-variable 'company-backends) '(company-go)))
-
-(req-package company-go
-  :require (company go-mode)
+(use-package company-go
+  :after (company go-mode)
   :commands company-go
-  :init
-  (add-hook 'go-mode-hook 'custom/setup-company-go))
+  :ensure t
 
-(req-package flycheck-gometalinter
-  :require (flycheck go-mode)
+  :init
+  (defun setup-company-go ()
+    (set (make-local-variable 'company-backends) '(company-go)))
+  (add-hook 'go-mode-hook 'setup-company-go))
+
+
+(use-package flycheck-gometalinter
+  :after (flycheck go-mode)
   :commands flycheck-gometalinter-setup
-  :init
-  (add-hook 'go-mode-hook #'flycheck-gometalinter-setup))
+  :ensure t
 
-(req-package go-eldoc
-  :require go-mode
+  :init
+  (add-hook 'go-mode-hook 'flycheck-gometalinter-setup))
+
+
+(use-package go-eldoc
+  :after go-mode
   :commands go-eldoc-setup
+  :ensure t
+
   :init
   (add-hook 'go-mode-hook 'go-eldoc-setup))
 
-(req-package go-mode
-  :mode "\\.go\\'"
+
+(use-package go-mode
+  :ensure t
   :interpreter "go"
-  :config
+  :mode "\\.go\\'"
+
+  :init
   (add-hook 'before-save-hook 'gofmt-before-save))

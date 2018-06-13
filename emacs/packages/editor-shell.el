@@ -1,4 +1,11 @@
-(req-package exec-path-from-shell
+(use-package exec-path-from-shell
+  :defer 2
+  :ensure t
+
+  :preface
+  (eval-when-compile
+    (declare-function exec-path-from-shell-initialize nil))
+
   :config
   ;; Disable environment check during startup because .rbenv/.pyenv need to be
   ;; initialized as part of the interactive shell, otherwise anything that were
@@ -8,8 +15,15 @@
   (setq exec-path-from-shell-check-startup-files nil)
   (exec-path-from-shell-initialize))
 
-(req-package keychain-environment
-  :require exec-path-from-shell
+
+(use-package keychain-environment
+  :after exec-path-from-shell
+  :ensure t
+
+  :preface
+  (eval-when-compile
+    (declare-function keychain-refresh-environment nil))
+
   :config
   (let ((shell (getenv "SHELL")))
     (progn

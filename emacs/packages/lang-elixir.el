@@ -1,26 +1,22 @@
-(defun custom/elixir-smartparens-hook ()
-  (sp-with-modes '(elixir-mode)
-    (sp-local-pair
-     "fn" "end"
-     :when '(("SPC" "RET"))
-     :actions '(insert navigate))
-    (sp-local-pair
-     "do" "end"
-     :when '(("SPC" "RET"))
-     :actions '(insert navigate))))
-
-(req-package alchemist
-  :require elixir-mode
+(use-package alchemist
+  :after elixir-mode
   :diminish alchemist-mode
+  :ensure t
+
   :init
   (add-hook 'elixir-mode-hook 'alchemist-mode))
 
-(req-package elixir-mode
-  :mode ("\\.exs?\\'" "\\.elixir\\'")
-  :interpreter "elixir")
 
-(req-package flycheck-mix
-  :require (flycheck elixir-mode)
+(use-package elixir-mode
+  :ensure t
+  :interpreter "elixir"
+  :mode ("\\.exs?\\'" "\\.elixir\\'"))
+
+
+(use-package flycheck-mix
+  :after (flycheck elixir-mode)
   :commands flycheck-mix-setup
+  :ensure t
+
   :init
-  (add-hook 'elixir-mode-hook #'flycheck-mix-setup))
+  (add-hook 'elixir-mode-hook 'flycheck-mix-setup))

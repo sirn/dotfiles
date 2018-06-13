@@ -1,20 +1,28 @@
-(req-package js2-mode
+(use-package js2-mode
+  :ensure t
   :mode "\\.js\\'")
 
-(req-package js2-refactor
-  :require js2-mode
-  :diminish js2-refactor-mode
-  :commands js2-refactor-mode
-  :init
-  (add-hook 'js2-mode-hook #'js2-refactor-mode))
 
-(req-package json-mode
+(use-package js2-refactor
+  :after js2-mode
+  :commands js2-refactor-mode
+  :diminish js2-refactor-mode
+  :ensure t
+
+  :init
+  (add-hook 'js2-mode-hook 'js2-refactor-mode))
+
+
+(use-package json-mode
+  :ensure t
   :mode "\\.json\\'")
 
-(req-package skewer-mode
-  :require js2-mode
-  :diminish skewer-mode
+
+(use-package skewer-mode
+  :after js2-mode
   :commands skewer-mode
+  :diminish skewer-mode
+  :ensure t
+
   :init
-  (progn
-    (add-hook 'js2-mode-hook 'skewer-mode)))
+  (add-hook 'js2-mode-hook 'skewer-mode))

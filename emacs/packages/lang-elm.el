@@ -1,19 +1,24 @@
-(defun custom/setup-company-elm ()
-  (set (make-local-variable 'company-backends) '(company-elm)))
-
-(req-package elm-mode
-  :mode "\\.elm\\'"
-  :interpreter "elm"
+(use-package elm-mode
   :diminish elm-indent-mode
-  :init
-  (add-hook 'elm-mode-hook 'custom/setup-company-elm)
-  :config
-  (progn
-    (setq elm-sort-imports-on-save t)
-    (setq elm-format-on-save t)))
+  :ensure t
+  :interpreter "elm"
+  :mode "\\.elm\\'"
 
-(req-package flycheck-elm
-  :require (flycheck elm-mode)
-  :commands flycheck-elm-setup
   :init
-  (add-hook 'elm-mode-hook #'flycheck-elm-setup))
+  (setq elm-sort-imports-on-save t)
+  (setq elm-format-on-save t)
+
+  (eval-after-load 'company
+    (progn
+      (defun setup-company-elm ()
+        (set (make-local-variable 'company-backends) '(company-elm)))
+      (add-hook 'elm-mode-hook 'setup-company-elm))))
+
+
+(use-package flycheck-elm
+  :after (flycheck elm-mode)
+  :commands flycheck-elm-setup
+  :ensure t
+
+  :init
+  (add-hook 'elm-mode-hook 'flycheck-elm-setup))

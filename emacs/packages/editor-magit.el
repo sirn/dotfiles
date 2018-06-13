@@ -1,13 +1,17 @@
-(req-package evil-magit
-  :require (evil magit))
+(use-package evil-magit
+  :after (evil magit)
+  :ensure t)
 
-(req-package magit
-  :require evil-leader
+
+(use-package magit
   :commands magit-status
   :diminish (auto-revert-mode magit-auto-revert-mode)
+  :ensure t
+
   :init
-  (evil-leader/set-key
-    "gs" 'magit-status)
+  (eval-after-load 'evil-leader
+    (evil-leader/set-key
+      "gs" 'magit-status))
+
   :config
-  (progn
-    (setq magit-push-current-set-remote-if-missing t)))
+  (setq magit-push-current-set-remote-if-missing t))

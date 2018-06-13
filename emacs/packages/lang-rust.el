@@ -1,12 +1,19 @@
-(req-package rust-mode
+(use-package rust-mode
+  :ensure t
   :mode ("\\.rs\\'" . rust-mode)
-  :config
+
+  :init
   (setq rust-format-on-save t))
 
-(req-package racer
-  :require (company eldoc rust-mode)
+
+(use-package racer
+  :after rust-mod
   :diminish racer-mode
+  :ensure t
+
+  :preface
+  (declare-function racer-mode nil)
+
   :init
-  (progn
-    (add-hook 'rust-mode-hook #'racer-mode)
-    (add-hook 'racer-mode-hook #'eldoc-mode)))
+  (add-hook 'rust-mode-hook 'racer-mode)
+  (add-hook 'racer-mode-hook 'eldoc-mode))
