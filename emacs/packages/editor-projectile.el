@@ -1,5 +1,4 @@
 (use-package projectile
-  :after tramp
   :diminish projectile-mode
   :ensure t
 
