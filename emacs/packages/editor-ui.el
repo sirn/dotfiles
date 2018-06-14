@@ -28,10 +28,10 @@
 
   :config
   (require 'telephone-line-config)
-  (telephone-line-defsegment* custom/winum-segment () (winum-get-number-string))
-  (telephone-line-defsegment* custom/anzu-segment () (anzu--update-mode-line))
+  (telephone-line-defsegment* winum-segment () (winum-get-number-string))
+  (telephone-line-defsegment* anzu-segment () (anzu--update-mode-line))
   (setq telephone-line-lhs
-        '((nil    . (custom/winum-segment))
+        '((nil    . (winum-segment))
           (evil   . (telephone-line-evil-tag-segment))
           (accent . (telephone-line-vc-segment
                      telephone-line-erc-modified-channels-segment
@@ -39,7 +39,7 @@
           (nil    . (telephone-line-minor-mode-segment
                      telephone-line-buffer-segment))))
   (setq telephone-line-rhs
-        '((nil    . (custom/anzu-segment
+        '((nil    . (anzu-segment
                      telephone-line-misc-info-segment))
           (accent . (telephone-line-major-mode-segment))
           (evil   . (telephone-line-airline-position-segment))))

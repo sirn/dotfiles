@@ -6,6 +6,8 @@
   (eval-when-compile
     (declare-function projectile-mode nil))
 
-  :config
+  :init
   (setq projectile-switch-project-action 'projectile-dired)
-  (projectile-mode))
+
+  :config
+  (projectile-mode t))
