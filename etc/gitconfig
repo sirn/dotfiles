@@ -43,6 +43,9 @@
 [magit]
 	hideCampaign = true
 
+[github]
+	user = sirn
+
 #
 # Overrides
 #

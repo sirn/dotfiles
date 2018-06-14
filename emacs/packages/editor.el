@@ -32,7 +32,7 @@
 
 
 (use-package company
-  :defer 1
+  :defer 2
   :demand t
   :diminish company-mode
   :ensure t
@@ -83,7 +83,7 @@
 
 
 (use-package flycheck
-  :defer 1
+  :defer 3
   :diminish flycheck-mode
   :ensure t
 

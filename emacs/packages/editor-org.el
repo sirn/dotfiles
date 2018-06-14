@@ -1,5 +1,5 @@
 (use-package evil-org
-  :after evil
+  :after (evil org)
   :commands evil-org-mode
   :diminish evil-org-mode
   :ensure t
@@ -20,6 +20,7 @@
 
 
 (use-package org
+  :ensure t
   :mode ("\\.org\\'" . org-mode)
 
   :init
