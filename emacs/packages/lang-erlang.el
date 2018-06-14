@@ -30,7 +30,8 @@
           (dolist (path (erlang-rebar-include-path))
             (add-to-list 'flycheck-erlang-include-path path t))))))
 
-  (add-hook 'erlang-mode-hook 'erlang-rebar-hook)
+  (with-eval-after-load 'flycheck
+    (add-hook 'erlang-mode-hook 'erlang-rebar-hook))
 
   :config
   (setq erlang-compile-extra-opts '(debug-info))

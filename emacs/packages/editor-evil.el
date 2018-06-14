@@ -25,7 +25,7 @@
     (declare-function evil-commentary-mode nil))
 
   :config
-  (eval-after-load 'evil-commentary
+  (with-eval-after-load 'evil-commentary
     (evil-commentary-mode t)))
 
 

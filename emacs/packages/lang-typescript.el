@@ -1,10 +1,16 @@
 (defun setup-tide ()
   (tide-setup)
-  (flycheck-mode t)
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  (eldoc-mode t)
   (tide-hl-identifier-mode t)
-  (company-mode-on))
+
+  (with-eval-after-load 'flycheck
+    (setq flycheck-check-syntax-automatically '(save mode-enabled))
+    (flycheck-mode t))
+
+  (with-eval-after-load 'eldoc
+    (eldoc-mode t))
+
+  (with-eval-after-load 'company
+    (company-mode-on)))
 
 
 (use-package tide

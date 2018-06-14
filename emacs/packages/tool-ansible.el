@@ -5,6 +5,7 @@
 
   :preface
   (eval-when-compile
+    (defvar ansible-filename-re)
     (declare-function ansible-maybe-enable nil))
 
   :init
@@ -44,11 +45,12 @@
 
 
 (use-package company-ansible
-  :after (ansible company)
+  :after ansible
   :commands company-ansible
   :ensure t
 
   :init
-  (defun setup-company-ansible ()
-    (set (make-local-variable 'company-backends) '(company-ansible)))
-  (add-hook 'ansible-hook 'setup-company-ansible))
+  (with-eval-after-load 'company
+    (defun setup-company-ansible ()
+      (set (make-local-variable 'company-backends) '(company-ansible)))
+    (add-hook 'ansible-hook 'setup-company-ansible)))

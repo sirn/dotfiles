@@ -9,23 +9,22 @@
     (declare-function neotree-find nil))
 
   :init
-  (eval-after-load 'projectile
-    (progn
-      (defun neotree-project-dir ()
-        (interactive)
-        (let ((project-dir (projectile-project-root))
-              (file-name (buffer-file-name)))
-          (neotree-toggle)
-          (if project-dir
-              (if (neo-global--window-exists-p)
-                  (progn
-                    (neotree-dir project-dir)
-                    (neotree-find file-name)))
-            (message "Could not find git project root."))))
+  (with-eval-after-load 'projectile
+    (defun neotree-project-dir ()
+      (interactive)
+      (let ((project-dir (projectile-project-root))
+            (file-name (buffer-file-name)))
+        (neotree-toggle)
+        (if project-dir
+            (if (neo-global--window-exists-p)
+                (progn
+                  (neotree-dir project-dir)
+                  (neotree-find file-name)))
+          (message "Could not find git project root."))))
 
-      (eval-after-load 'evil-leader
-        (evil-leader/set-key
-          "pt" 'neotree-project-dir))))
+    (with-eval-after-load 'evil-leader
+      (evil-leader/set-key
+        "pt" 'neotree-project-dir)))
 
   :config
   (evil-set-initial-state 'neotree-mode 'normal)

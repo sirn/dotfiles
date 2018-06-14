@@ -25,7 +25,7 @@
   :ensure t
 
   :init
-  (eval-after-load 'evil-leader
+  (with-eval-after-load 'evil-leader
     (evil-leader/set-key
       "h/" 'helm-org-rifle-org-directory
       "hc/" 'helm-org-rifle)))

@@ -22,7 +22,7 @@
   (helm-mode 1)
 
   (define-key helm-map (kbd "C-l") (kbd "RET"))
-  (eval-after-load 'evil-leader
+  (with-eval-after-load 'evil-leader
     (evil-leader/set-key
       "bb" 'helm-buffers-list))
 
@@ -66,7 +66,7 @@
    helm-projectile-switch-to-buffer)
 
   :init
-  (eval-after-load 'evil-leader
+  (with-eval-after-load 'evil-leader
     (evil-leader/set-key
       "p/" 'helm-projectile-rg
       "pf" 'helm-projectile-find-file
@@ -83,6 +83,6 @@
   :ensure t
 
   :init
-  (eval-after-load 'evil-leader
+  (with-eval-after-load 'evil-leader
     (evil-leader/set-key
       "/" 'helm-rg)))

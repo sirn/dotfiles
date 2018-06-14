@@ -11,7 +11,7 @@
    avy-goto-line)
 
   :init
-  (eval-after-load 'evil-leader
+  (with-eval-after-load 'evil-leader
     (evil-leader/set-key
       "jj" 'avy-goto-char
       "jJ" 'avy-goto-char-2
@@ -66,6 +66,7 @@
 
 
 (use-package dtrt-indent
+  :defer 5
   :diminish dtrt-indent-mode
   :ensure t
 
@@ -76,6 +77,7 @@
 
 
 (use-package eldoc
+  :defer 5
   :ensure t
   :diminish eldoc-mode)
 
@@ -153,6 +155,7 @@
 
 
 (use-package smartparens
+  :defer 3
   :diminish smartparens-mode
   :ensure t
 
@@ -161,7 +164,7 @@
     (declare-function smartparens-global-mode nil))
 
   :init
-  (eval-after-load 'evil-leader
+  (with-eval-after-load 'evil-leader
     (evil-leader/set-key
       "s>" 'sp-forward-slurp-sexp
       "s<" 'sp-backward-slurp-sexp
@@ -173,6 +176,7 @@
 
 
 (use-package undo-tree
+  :defer 1
   :diminish undo-tree-mode
   :ensure t
 
@@ -183,7 +187,7 @@
   :init
   (setq undo-tree-auto-save-history t)
   (setq undo-tree-history-directory-alist `(("." . "~/.emacs.d/undo")))
-  (eval-after-load 'evil-leader
+  (with-eval-after-load 'evil-leader
     (evil-leader/set-key
       "uv" 'undo-tree-visualize))
 

@@ -7,8 +7,8 @@
   :ensure t
 
   :init
-  (progn
-    (add-hook 'python-mode-hook 'anaconda-mode)
+  (add-hook 'python-mode-hook 'anaconda-mode)
+  (with-eval-after-load 'eldoc
     (add-hook 'python-mode-hook 'anaconda-eldoc-mode)))
 
 
@@ -22,18 +22,18 @@
 
 
 (use-package company-anaconda
-  :after (company anaconda-mode)
+  :after anaconda-mode
   :commands company-anaconda
   :ensure t
 
   :init
-  (defun setup-company-python ()
-    (set (make-local-variable 'company-backends) '(company-anaconda)))
-  (add-hook 'python-mode-hook 'setup-company-python))
+  (with-eval-after-load 'company
+    (defun setup-company-python ()
+      (set (make-local-variable 'company-backends) '(company-anaconda)))
+    (add-hook 'python-mode-hook 'setup-company-python)))
 
 
 (use-package pipenv
-  :after (flycheck projectile)
   :diminish pipenv-mode
   :ensure t
 
@@ -42,4 +42,6 @@
    pipenv-activate)
 
   :init
-  (add-hook 'python-mode-hook 'pipenv-mode))
+  (with-eval-after-load 'projectile
+    (with-eval-after-load 'flycheck
+      (add-hook 'python-mode-hook 'pipenv-mode))))

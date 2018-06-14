@@ -26,20 +26,22 @@
 
 
   (use-package osx-trash
+    :defer 5
     :ensure t
 
     :preface
     (declare-function osx-trash-setup nil)
 
-    :init
+    :config
     (osx-trash-setup))
 
 
   (use-package pbcopy
+    :defer 1
     :ensure t
 
     :preface
     (declare-function turn-on-pbcopy nil)
 
-    :init
+    :config
     (turn-on-pbcopy)))

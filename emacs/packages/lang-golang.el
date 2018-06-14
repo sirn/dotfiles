@@ -1,21 +1,23 @@
 (use-package company-go
-  :after (company go-mode)
+  :after go-mode
   :commands company-go
   :ensure t
 
   :init
-  (defun setup-company-go ()
-    (set (make-local-variable 'company-backends) '(company-go)))
-  (add-hook 'go-mode-hook 'setup-company-go))
+  (with-eval-after-load 'company
+    (defun setup-company-go ()
+      (set (make-local-variable 'company-backends) '(company-go)))
+    (add-hook 'go-mode-hook 'setup-company-go)))
 
 
 (use-package flycheck-gometalinter
-  :after (flycheck go-mode)
+  :after go-mode
   :commands flycheck-gometalinter-setup
   :ensure t
 
   :init
-  (add-hook 'go-mode-hook 'flycheck-gometalinter-setup))
+  (with-eval-after-load 'flycheck
+    (add-hook 'go-mode-hook 'flycheck-gometalinter-setup)))
 
 
 (use-package go-eldoc
@@ -24,7 +26,8 @@
   :ensure t
 
   :init
-  (add-hook 'go-mode-hook 'go-eldoc-setup))
+  (with-eval-after-load 'eldoc
+    (add-hook 'go-mode-hook 'go-eldoc-setup)))
 
 
 (use-package go-mode

@@ -36,13 +36,13 @@
 
 (eval-when-compile
   (require 'use-package)
+  (setq use-package-compute-statistics t)
   (setq use-package-expand-minimally byte-compile-current-file))
 (require 'diminish)
 (require 'bind-key)
 
 
 ;; Packages
-(setq use-package-always-ensure t)
 (let ((loaded (mapcar #'file-name-sans-extension (delq nil (mapcar #'car load-history)))))
   (dolist (file (directory-files "~/.dotfiles/emacs/packages" t ".+\\.elc?$"))
     (let ((library (file-name-sans-extension file)))

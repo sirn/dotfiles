@@ -63,7 +63,7 @@
   (setq winum-auto-setup-mode-line nil)
   (winum-mode)
 
-  (eval-after-load 'evil-leader
+  (with-eval-after-load 'evil-leader
     (evil-leader/set-key
       "0" 'winum-select-window-0
       "1" 'winum-select-window-1

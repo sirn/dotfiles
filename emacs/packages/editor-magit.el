@@ -9,7 +9,7 @@
   :ensure t
 
   :init
-  (eval-after-load 'evil-leader
+  (with-eval-after-load 'evil-leader
     (evil-leader/set-key
       "gs" 'magit-status))
 

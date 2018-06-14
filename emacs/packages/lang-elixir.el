@@ -14,9 +14,10 @@
 
 
 (use-package flycheck-mix
-  :after (flycheck elixir-mode)
+  :after elixir-mode
   :commands flycheck-mix-setup
   :ensure t
 
   :init
-  (add-hook 'elixir-mode-hook 'flycheck-mix-setup))
+  (with-eval-after-load 'flycheck
+    (add-hook 'elixir-mode-hook 'flycheck-mix-setup)))

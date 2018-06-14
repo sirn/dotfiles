@@ -16,4 +16,5 @@
 
   :init
   (add-hook 'rust-mode-hook 'racer-mode)
-  (add-hook 'racer-mode-hook 'eldoc-mode))
+  (with-eval-after-load 'eldoc
+    (add-hook 'racer-mode-hook 'eldoc-mode)))
