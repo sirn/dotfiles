@@ -8,6 +8,7 @@
 
 
 (use-package git-gutter
+  :defer 2
   :diminish git-gutter-mode
   :ensure t
 
@@ -54,11 +55,11 @@
     (declare-function winum-mode nil))
 
   :config
-  (defun custom/winum-assign-func ()
+  (defun winum-assign-func ()
     (when (and (boundp 'neo-buffer-name)
                (string= (buffer-name) neo-buffer-name)
                (eq (selected-window) (frame-first-window))) 0))
-  (add-to-list 'winum-assign-functions 'custom/winum-assign-func)
+  (add-to-list 'winum-assign-functions 'winum-assign-func)
 
   (setq winum-auto-setup-mode-line nil)
   (winum-mode)

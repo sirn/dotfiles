@@ -19,18 +19,6 @@
   (add-hook 'org-mode-hook 'setup-evil-org))
 
 
-(use-package helm-org-rifle
-  :after helm
-  :commands helm-org-rifle
-  :ensure t
-
-  :init
-  (with-eval-after-load 'evil-leader
-    (evil-leader/set-key
-      "h/" 'helm-org-rifle-org-directory
-      "hc/" 'helm-org-rifle)))
-
-
 (use-package org
   :mode ("\\.org\\'" . org-mode)
 

@@ -49,19 +49,5 @@
       `(git-gutter:modified      ((t (:foreground "magenta"))))
       `(git-gutter:unchanged     ((t (:foreground "yellow"))))
 
-      ;; helm-rg
-      `(helm-rg-preview-line-highlight ((t (:foreground ,color-10))))
-      `(helm-rg-base-rg-cmd-face       ((t (:foreground ,color-8))))
-      `(helm-rg-inactive-arg-face      ((t (:foreground ,color-8))))
-      `(helm-rg-active-arg-face        ((t (:foreground ,color-13))))
-      `(helm-rg-directory-cmd-face     ((t (:foreground ,color-10))))
-      `(helm-rg-error-message          ((t (:foreground ,color-10))))
-      `(helm-rg-title-face             ((t (:foreground ,color-10))))
-      `(helm-rg-directory-header-face  ((t (:foreground ,color-10))))
-      `(helm-rg-file-match-face        ((t (:foreground ,color-11 :weight bold))))
-      `(helm-rg-colon-separator-ripgrep-output-face ((t (:foreground ,color-8))))
-      `(helm-rg-line-number-match-face ((t (:foreground ,color-7))))
-      `(helm-rg-match-text-face        ((t (:foreground ,color-10))))
-
       ;; web-mode
       `(web-mode-block-attr-name-face ((t (:foreground ,color-13 :wegiht bold)))))))

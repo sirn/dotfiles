@@ -37,7 +37,7 @@
 
 
   (use-package pbcopy
-    :defer 1
+    :defer 2
     :ensure t
 
     :preface
