@@ -5,6 +5,7 @@
 
   :preface
   (eval-when-compile
+    (defvar projectile-project-root-files)
     (declare-function projectile-mode nil)
     (declare-function projectile-invalid-cache nil))
 
@@ -16,6 +17,7 @@
 
   :config
   (projectile-mode t)
+  (add-to-list 'projectile-project-root-files "Vagrantfile" t)
 
   (with-eval-after-load 'magit-branch
     (defun projectile-invalid-cache-adv (&rest _args)

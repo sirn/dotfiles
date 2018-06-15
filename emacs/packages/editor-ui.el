@@ -1,4 +1,9 @@
-(menu-bar-mode -1)
+;; macOS will "float" Emacs window if menu-bar-mode is disabled.
+;; (e.g. not sticky to Spaces and no fullscreen support)
+(when (not (eq window-system 'mac))
+  (menu-bar-mode -1))
+
+
 (when (display-graphic-p)
   (set-frame-font "PragmataPro 14" nil t)
   (toggle-scroll-bar -1)
