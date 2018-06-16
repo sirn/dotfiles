@@ -3,6 +3,6 @@
   become: yes
   pacman: name=zsh state=present
 
-- name: install fzy
+- name: install fzf
   become: yes
-  pacaur: name=fzy state=present
+  pacaur: name=fzf state=present

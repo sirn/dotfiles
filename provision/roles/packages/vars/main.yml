@@ -235,7 +235,10 @@ erlang_version: "20.3.6"
 
 # lang/haskell
 
-haskell_version: "8.4.1"
+haskell_version: "8.2.2"
+
+haskell_stack_packages:
+  - { name: hakyll, binary: hakyll-init }
 
 # lang/helm
 

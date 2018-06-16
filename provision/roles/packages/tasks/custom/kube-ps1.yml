@@ -4,3 +4,13 @@
     repo: https://github.com/jonmosco/kube-ps1.git
     dest: ~/.local/src/kube-ps1
     version: "{{kube_ps1_version}}"
+
+- name: create kube-ps1 configuration directory
+  file:
+    path: ~/.kube/kube-ps1
+    state: directory
+
+- name: disable kube-ps1 globally
+  file:
+    path: ~/.kube/kube-ps1/disabled
+    state: touch

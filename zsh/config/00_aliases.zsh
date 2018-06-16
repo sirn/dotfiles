@@ -3,9 +3,9 @@ alias ll="ls -alh"
 alias ka="k -A"
 alias emacs="emacs -nw"
 
-if hash fzy 2>/dev/null; then
-    alias ff="find . -type f |fzy"
-    alias fd="find . -type d |fzy"
+if hash fzf 2>/dev/null; then
+    alias ff="find . -type f |fzf"
+    alias fd="find . -type d |fzf"
 fi
 
 if hash nvim 2>/dev/null; then
