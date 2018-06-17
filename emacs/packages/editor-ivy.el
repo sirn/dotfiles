@@ -1,3 +1,29 @@
+;; Using raxod502's fork until a bug in Ivy is fixed.
+;; See also https://github.com/raxod502/prescient.el
+;; --
+;; Note: need to be included before counsel/swiper
+;; because they're essentially the same repo.
+(use-package ivy
+  :diminish ivy-mode
+  :straight
+  (:host github
+         :repo "raxod502/swiper"
+         :files (:defaults (:exclude
+                            "swiper.el"
+                            "counsel.el"
+                            "ivy-hydra.el")
+                           "doc/ivy-help.org")
+         :branch "fork/1"
+         :upstream (:host github :repo "abo-abo/swiper"))
+
+  :preface
+  (eval-when-compile
+    (declare-function ivy-mode nil))
+
+  :config
+  (ivy-mode 1))
+
+
 (use-package counsel
   :after ivy
   :demand t
@@ -59,33 +85,29 @@
   (counsel-projectile-mode t))
 
 
-(use-package historian
-  :straight t)
-
-
-(use-package ivy
-  :diminish ivy-mode
+(use-package ivy-prescient
+  :after (ivy prescient)
   :straight t
 
   :preface
   (eval-when-compile
-    (declare-function ivy-mode nil))
+    (declare-function ivy-prescient-mode nil))
 
   :config
-  (ivy-mode 1))
+  (ivy-prescient-mode t))
 
 
-(use-package ivy-historian
-  :after (historian ivy)
-  :diminish ivy-historian-mode
+(use-package prescient
   :straight t
 
   :preface
   (eval-when-compile
-    (declare-function ivy-historian-mode nil))
+    (declare-function prescient-persist-mode nil))
 
   :config
-  (ivy-historian-mode t))
+  (add-to-list 'ivy-prescient-excluded-commands 'counsel-rg)
+  (add-to-list 'ivy-prescient-excluded-commands 'counsel-projectile-rg)
+  (prescient-persist-mode t))
 
 
 (use-package swiper

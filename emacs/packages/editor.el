@@ -65,6 +65,18 @@
   (global-company-mode t))
 
 
+(use-package company-prescient
+  :after (company prescient)
+  :straight t
+
+  :preface
+  (eval-when-compile
+    (declare-function company-prescient-mode nil))
+
+  :config
+  (company-prescient-mode t))
+
+
 (use-package dtrt-indent
   :defer 5
   :diminish dtrt-indent-mode
