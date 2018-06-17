@@ -73,6 +73,7 @@
  ("pos-tip" . "051e08fec5cf30b7574bdf439f79fef7d42d689d")
  ("prescient.el" . "ee813ca390dcfe6d6e22e741dfbe3c71cee3d811")
  ("prettier-emacs" . "fac9dd29720f8417bd8cd5dd8ab5138c6dd7d701")
+ ("prodigy.el" . "701dccaa56de9e6a330c05bde33bce4f3b3d6a97")
  ("projectile" . "bde7d142cdeb97d1bd7d22bc76bf7c8bbed40a85")
  ("psc-ide-emacs" . "f71120b0c0d3192f79488ab000b9a689e5145ce4")
  ("purescript-mode" . "b76c7f37f1a3527e8ace66bbd584851e1f803cc8")
