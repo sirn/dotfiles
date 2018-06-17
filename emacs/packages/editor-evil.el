@@ -5,16 +5,6 @@
   (evil-mode t))
 
 
-(use-package evil-anzu
-  :after evil
-  :diminish anzu-mode
-  :ensure t
-
-  :config
-  (setq anzu-cons-mode-line-p nil)
-  (global-anzu-mode t))
-
-
 (use-package evil-commentary
   :after evil
   :diminish evil-commentary-mode

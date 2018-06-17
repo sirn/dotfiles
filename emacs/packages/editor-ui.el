@@ -34,8 +34,14 @@
 
   :config
   (require 'telephone-line-config)
+
   (telephone-line-defsegment* winum-segment () (winum-get-number-string))
-  (telephone-line-defsegment* anzu-segment () (anzu--update-mode-line))
+  (telephone-line-defsegment* projectile-segment ()
+    (when (and (boundp projectile-project-name))
+      (let ((proj (projectile-project-name)))
+        (when (not (equal proj "-"))
+          proj))))
+
   (setq telephone-line-lhs
         '((nil    . (winum-segment))
           (evil   . (telephone-line-evil-tag-segment))
@@ -44,11 +50,13 @@
                      telephone-line-process-segment))
           (nil    . (telephone-line-minor-mode-segment
                      telephone-line-buffer-segment))))
+
   (setq telephone-line-rhs
-        '((nil    . (anzu-segment
+        '((nil    . (projectile-segment
                      telephone-line-misc-info-segment))
           (accent . (telephone-line-major-mode-segment))
           (evil   . (telephone-line-airline-position-segment))))
+
   (telephone-line-mode t))
 
 
