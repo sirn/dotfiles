@@ -5,6 +5,7 @@
 dots:
   - ~/.aria2
   - ~/.emacs.d
+  - ~/.emacs.d/straight/versions
   - ~/.ssh
 
 archlinux_dots:
@@ -25,6 +26,9 @@ links:
 
   - source: ~/.dotfiles/emacs/init.el
     dest: ~/.emacs.d/init.el
+
+  - source: ~/.dotfiles/emacs/straight/versions/default.el
+    dest: ~/.emacs.d/straight/versions/default.el
 
   - source: ~/.dotfiles/ssh/config
     dest: ~/.ssh/config
