@@ -1,7 +1,7 @@
 (use-package sql
-  :ensure t
-  :mode ("\\.sql\\'" . sql-mode))
+  :mode ("\\.sql\\'" . sql-mode)
+  :straight t)
 
 (use-package sql-indent
   :after sql
-  :ensure t)
+  :straight t)

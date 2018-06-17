@@ -15,7 +15,7 @@
 (use-package git-gutter
   :defer 2
   :diminish git-gutter-mode
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile
@@ -26,7 +26,7 @@
 
 
 (use-package telephone-line
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile
@@ -37,7 +37,7 @@
 
   (telephone-line-defsegment* winum-segment () (winum-get-number-string))
   (telephone-line-defsegment* projectile-segment ()
-    (when (and (boundp projectile-project-name))
+    (when (and (boundp 'projectile-project-name))
       (let ((proj (projectile-project-name)))
         (when (not (equal proj "-"))
           proj))))
@@ -61,7 +61,7 @@
 
 
 (use-package winum
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile

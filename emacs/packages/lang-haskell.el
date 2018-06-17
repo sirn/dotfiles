@@ -1,3 +1,3 @@
 (use-package haskell-mode
-  :ensure t
-  :mode "\\.hs\\'")
+  :mode "\\.hs\\'"
+  :straight t)

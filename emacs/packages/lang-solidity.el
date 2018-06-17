@@ -1,6 +1,6 @@
 (use-package solidity-mode
-  :ensure t
   :mode ("\\.sol\\'" . solidity-mode)
+  :straight t
 
   :init
   (setq solidity-flycheck-solium-checker-active t)

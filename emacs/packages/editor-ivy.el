@@ -1,7 +1,7 @@
 (use-package counsel
   :after ivy
   :demand t
-  :ensure t
+  :straight t
 
   :bind
   (("C-c C-r" . ivy-resume)
@@ -35,7 +35,7 @@
 (use-package counsel-projectile
   :after (counsel projectile)
   :diminish counsel-projectile-mode
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile
@@ -60,14 +60,12 @@
 
 
 (use-package historian
-  :defer 1
-  :ensure t)
+  :straight t)
 
 
 (use-package ivy
-  :defer 1
   :diminish ivy-mode
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile
@@ -80,7 +78,7 @@
 (use-package ivy-historian
   :after (historian ivy)
   :diminish ivy-historian-mode
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile
@@ -92,7 +90,7 @@
 
 (use-package swiper
   :after ivy
-  :ensure t
+  :straight t
 
   :bind
   (("\C-s" . swiper)))

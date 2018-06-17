@@ -1,6 +1,6 @@
 (use-package neotree
   :commands neotree-toggle
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile

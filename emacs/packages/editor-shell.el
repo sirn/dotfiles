@@ -1,6 +1,6 @@
 (use-package exec-path-from-shell
   :defer 2
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile
@@ -18,7 +18,7 @@
 
 (use-package keychain-environment
   :after exec-path-from-shell
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile

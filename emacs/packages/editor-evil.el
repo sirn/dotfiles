@@ -1,5 +1,5 @@
 (use-package evil
-  :ensure t
+  :straight t
   :config
   (fset 'evil-visual-update-x-selection 'ignore)
   (evil-mode t))
@@ -8,7 +8,7 @@
 (use-package evil-commentary
   :after evil
   :diminish evil-commentary-mode
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile
@@ -21,7 +21,7 @@
 
 (use-package evil-leader
   :after evil
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile
@@ -45,7 +45,7 @@
 
 (use-package evil-matchit
   :after evil
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile
@@ -57,7 +57,7 @@
 
 (use-package evil-surround
   :after evil
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile

@@ -27,7 +27,7 @@
 
   (use-package osx-trash
     :defer 5
-    :ensure t
+    :straight t
 
     :preface
     (declare-function osx-trash-setup nil)
@@ -38,7 +38,7 @@
 
   (use-package pbcopy
     :defer 2
-    :ensure t
+    :straight t
 
     :preface
     (declare-function turn-on-pbcopy nil)

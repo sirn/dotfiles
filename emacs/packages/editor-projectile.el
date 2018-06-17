@@ -1,7 +1,6 @@
 (use-package projectile
-  :defer 2
   :diminish projectile-mode
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile

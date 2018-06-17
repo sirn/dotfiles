@@ -4,7 +4,7 @@
 (use-package anaconda-mode
   :commands (anaconda-mode anaconda-eldoc-mode)
   :diminish anaconda-mode
-  :ensure t
+  :straight t
 
   :init
   (add-hook 'python-mode-hook 'anaconda-mode)
@@ -15,7 +15,7 @@
 (use-package blacken
   :commands blacken-mode
   :diminish blacken-mode
-  :ensure t
+  :straight t
 
   :init
   (add-hook 'python-mode-hook 'blacken-mode))
@@ -24,7 +24,7 @@
 (use-package company-anaconda
   :after anaconda-mode
   :commands company-anaconda
-  :ensure t
+  :straight t
 
   :init
   (with-eval-after-load 'company
@@ -35,7 +35,7 @@
 
 (use-package pipenv
   :diminish pipenv-mode
-  :ensure t
+  :straight t
 
   :commands
   (pipenv-mode

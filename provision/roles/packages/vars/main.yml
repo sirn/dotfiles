@@ -118,6 +118,7 @@ brew_packages:
   - jq
   - keychain
   - leiningen
+  - libressl
   - moreutils
   - neovim
   - openssh

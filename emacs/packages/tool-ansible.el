@@ -1,7 +1,7 @@
 (use-package ansible
   :after yaml-mode
   :commands ansible
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile
@@ -32,7 +32,7 @@
 (use-package ansible-doc
   :after ansible
   :diminish ansible-doc-mode
-  :ensure t
+  :straight t
 
   :commands
   (ansible-doc
@@ -47,7 +47,7 @@
 (use-package company-ansible
   :after ansible
   :commands company-ansible
-  :ensure t
+  :straight t
 
   :init
   (with-eval-after-load 'company

@@ -1,12 +1,12 @@
 (use-package evil-magit
   :after (evil magit)
-  :ensure t)
+  :straight t)
 
 
 (use-package magit
   :commands magit-status
   :diminish (auto-revert-mode magit-auto-revert-mode)
-  :ensure t
+  :straight t
 
   :init
   (with-eval-after-load 'evil-leader

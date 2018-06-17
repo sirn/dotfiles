@@ -1,4 +1,4 @@
 (use-package php-mode
-  :ensure t
+  :interpreter "php"
   :mode ("\\.php\\'" . php-mode)
-  :interpreter "php")
+  :straight t)

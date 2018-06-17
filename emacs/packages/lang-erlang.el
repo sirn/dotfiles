@@ -1,7 +1,7 @@
 (use-package erlang
-  :ensure t
-  :mode ("\\.erl\\'" . erlang-mode)
   :interpreter "erl"
+  :mode ("\\.erl\\'" . erlang-mode)
+  :straight t
 
   :preface
   (eval-when-compile

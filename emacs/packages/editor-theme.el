@@ -4,7 +4,7 @@
 
 
 (use-package tao-theme
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile

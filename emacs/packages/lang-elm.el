@@ -1,8 +1,8 @@
 (use-package elm-mode
   :diminish elm-indent-mode
-  :ensure t
   :interpreter "elm"
   :mode "\\.elm\\'"
+  :straight t
 
   :init
   (setq elm-sort-imports-on-save t)
@@ -17,7 +17,7 @@
 (use-package flycheck-elm
   :after elm-mode
   :commands flycheck-elm-setup
-  :ensure t
+  :straight t
 
   :init
   (with-eval-after-load 'flycheck

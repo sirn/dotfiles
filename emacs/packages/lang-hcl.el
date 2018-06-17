@@ -1,3 +1,3 @@
 (use-package hcl-mode
-  :ensure t
-  :mode ("\\.hcl\\'" . hcl-mode))
+  :mode ("\\.hcl\\'" . hcl-mode)
+  :straight t)

@@ -1,6 +1,6 @@
 (use-package rust-mode
-  :ensure t
   :mode ("\\.rs\\'" . rust-mode)
+  :straight t
 
   :init
   (setq rust-format-on-save t))
@@ -9,7 +9,7 @@
 (use-package racer
   :after rust-mod
   :diminish racer-mode
-  :ensure t
+  :straight t
 
   :preface
   (declare-function racer-mode nil)

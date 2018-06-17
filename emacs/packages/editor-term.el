@@ -1,6 +1,6 @@
 (use-package multi-term
   :commands multi-term
-  :ensure t
+  :straight t
 
   :init
   (with-eval-after-load 'evil-leader

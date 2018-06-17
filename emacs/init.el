@@ -7,6 +7,16 @@
     (load custom-file))
 
 
+;; SSL cert
+(eval-when-compile
+  (defvar gnutls-trustfiles))
+
+(with-eval-after-load 'gnutls
+  (let ((cert "/usr/local/etc/libressl/cert.pem"))
+    (when (file-exists-p cert)
+      (add-to-list 'gnutls-trustfiles cert))))
+
+
 ;; Remove banners
 (setq inhibit-startup-message t)
 
@@ -16,30 +26,27 @@
 (setq auto-save-default nil)
 
 
-;; Initialize package.el with custom repositories.
-(require 'package)
-(setq package-enable-at-startup nil)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-(add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/"))
-(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
-(add-to-list 'package-archive-priorities '("org" . 20))
-(add-to-list 'package-archive-priorities '("melpa" . 10))
-(add-to-list 'package-archive-priorities '("gnu" . 0))
-(package-initialize)
+;; Initialize straight.el
+(let ((bootstrap-version 4)
+      (bootstrap-file (expand-file-name
+                       "straight/repos/straight.el/bootstrap.el"
+                       user-emacs-directory)))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
-
-;; Use req-package to make .emacs manageable.
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'diminish)
-  (package-install 'use-package))
+(straight-use-package 'diminish)
+(straight-use-package 'use-package)
 
 (eval-when-compile
   (require 'use-package)
   (setq use-package-compute-statistics t)
   (setq use-package-expand-minimally byte-compile-current-file))
-(require 'diminish)
-(require 'bind-key)
 
 
 ;; Packages

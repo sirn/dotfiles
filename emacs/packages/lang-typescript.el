@@ -14,9 +14,9 @@
 
 
 (use-package tide
-  :ensure t
   :after typescript-mode
   :diminish tide-mode
+  :straight t
 
   :commands
   (tide-setup
@@ -30,6 +30,6 @@
 
 
 (use-package typescript-mode
-  :ensure t
   :interpreter "tss"
-  :mode "\\.ts\\'")
+  :mode "\\.ts\\'"
+  :straight t)

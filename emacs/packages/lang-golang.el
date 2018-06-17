@@ -1,7 +1,7 @@
 (use-package company-go
   :after go-mode
   :commands company-go
-  :ensure t
+  :straight t
 
   :init
   (with-eval-after-load 'company
@@ -13,7 +13,7 @@
 (use-package flycheck-gometalinter
   :after go-mode
   :commands flycheck-gometalinter-setup
-  :ensure t
+  :straight t
 
   :init
   (with-eval-after-load 'flycheck
@@ -23,7 +23,7 @@
 (use-package go-eldoc
   :after go-mode
   :commands go-eldoc-setup
-  :ensure t
+  :straight t
 
   :init
   (with-eval-after-load 'eldoc
@@ -31,7 +31,7 @@
 
 
 (use-package go-mode
-  :ensure t
+  :straight t
   :interpreter "go"
   :mode "\\.go\\'"
 

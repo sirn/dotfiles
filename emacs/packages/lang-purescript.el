@@ -1,7 +1,7 @@
 (use-package purescript-mode
   :commands (purescript-mode turn-on-purescript-indentation)
-  :ensure t
   :mode "\\.purs\\'"
+  :straight t
 
   :init
   (add-hook 'purescript-mode-hook 'turn-on-purescript-indentation)
@@ -13,7 +13,7 @@
   :after purescript-mode
   :commands psc-ide-mode
   :diminish psc-ide-mode
-  :ensure t
+  :straight t
 
   :init
   (add-hook 'purescript-mode-hook 'psc-ide-mode))

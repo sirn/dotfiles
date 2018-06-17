@@ -2,7 +2,7 @@
   :after web-mode
   :commands emmet-mode
   :diminish emmet-mode
-  :ensure t
+  :straight t
 
   :preface
   (defvar web-mode-enable-current-element-highlight)
@@ -16,7 +16,7 @@
 
 
 (use-package web-mode
-  :ensure t
+  :straight t
   :mode
   ("\\.phtml\\'"
    "\\.tpl\\.php\\'"

@@ -3,7 +3,7 @@
 
 
 (use-package avy
-  :ensure t
+  :straight t
 
   :commands
   (avy-goto-char
@@ -21,7 +21,7 @@
 (use-package color-identifiers-mode
   :defer 3
   :diminish color-identifiers-mode
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile
@@ -35,7 +35,7 @@
   :defer 2
   :demand t
   :diminish company-mode
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile
@@ -68,7 +68,7 @@
 (use-package dtrt-indent
   :defer 5
   :diminish dtrt-indent-mode
-  :ensure t
+  :straight t
 
   :init
   (add-hook 'conf-mode-hook 'dtrt-indent-mode)
@@ -78,14 +78,14 @@
 
 (use-package eldoc
   :defer 5
-  :ensure t
+  :straight t
   :diminish eldoc-mode)
 
 
 (use-package flycheck
   :defer 3
   :diminish flycheck-mode
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile
@@ -98,7 +98,7 @@
 (use-package pandoc-mode
   :commands pandoc-mode
   :diminish pandoc-mode
-  :ensure t
+  :straight t
 
   :init
   (add-hook 'rst-mode-hook 'pandoc-mode)
@@ -107,7 +107,7 @@
 
 (use-package parinfer
   :diminish parinfer-mode
-  :ensure t
+  :straight t
 
   :commands
   (parinfer-mode
@@ -125,7 +125,7 @@
 (use-package prettier-js
   :commands prettier-js-mode
   :diminish prettier-js-mode
-  :ensure t
+  :straight t
 
   :init
   (setq prettier-js-args
@@ -139,7 +139,7 @@
 
 (use-package rainbow-delimiters
   :commands rainbow-delimiters-mode
-  :ensure t
+  :straight t
 
   :init
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
@@ -148,7 +148,7 @@
 (use-package rainbow-mode
   :commands rainbow-mode
   :diminish rainbow-mode
-  :ensure t
+  :straight t
 
   :init
   (add-hook 'prog-mode-hook 'rainbow-mode))
@@ -157,7 +157,7 @@
 (use-package smartparens
   :defer 3
   :diminish smartparens-mode
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile
@@ -178,7 +178,7 @@
 (use-package undo-tree
   :defer 1
   :diminish undo-tree-mode
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile
@@ -199,7 +199,7 @@
 
 (use-package yasnippet
   :diminish yas-minor-mode
-  :ensure t
+  :straight t
 
   :commands
   (yas-reload-all
@@ -226,4 +226,4 @@
 
 (use-package yasnippet-snippets
   :after yasnippet
-  :ensure t)
+  :straight t)

@@ -1,3 +1,3 @@
 (use-package terraform-mode
-  :ensure t
-  :mode "\\.tf\\'")
+  :mode "\\.tf\\'"
+  :straight t)

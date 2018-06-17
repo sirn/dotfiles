@@ -1,8 +1,18 @@
+;; Hack to install org with straight.
+;; See also https://github.com/raxod502/straight.el
+
+(use-package subr-x)
+
+
+(use-package git
+  :straight t)
+
+
 (use-package evil-org
   :after (evil org)
   :commands evil-org-mode
   :diminish evil-org-mode
-  :ensure t
+  :straight t
 
   :preface
   (eval-when-compile
@@ -20,8 +30,38 @@
 
 
 (use-package org
-  :ensure t
+  :straight t
   :mode ("\\.org\\'" . org-mode)
+
+  :preface
+  (eval-when-compile
+    (declare-function git-run nil))
+
+  (defun org-git-version ()
+    (require 'git)
+    (let ((git-repo (expand-file-name
+                     "straight/repos/org/"
+                     user-emacs-directory)))
+      (string-trim
+       (git-run "describe"
+                "--match=release\*"
+                "--abbrev=6"
+                "HEAD"))))
+
+  (defun org-release ()
+    (require 'git)
+    (let ((git-repo (expand-file-name
+                     "straight/repos/org/"
+                     user-emacs-directory)))
+      (string-trim
+       (string-remove-prefix
+        "release_"
+        (git-run "describe"
+                 "--match=release\*"
+                 "--abbrev=0"
+                 "HEAD")))))
+
+  (provide 'org-version)
 
   :init
   (setq org-directory (expand-file-name "~/Dropbox/Documents/Org/")))
