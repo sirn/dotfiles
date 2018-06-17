@@ -62,6 +62,7 @@
  ("melpa" . "7726fcef0525bb50b313c6e7ef10fa5b16e12101")
  ("multi-term" . "f954e4e18b0a035151d34852387e724d87a3316f")
  ("multiple-cursors.el" . "9c49874fa444a4e7255ec05f62c01daed31c7b09")
+ ("omnifocus-capture" . "91522137b52ed9628f045e572bef18999de80b96")
  ("org" . "2e1daf14e0ed8cb2fb97139e994e66a11776e50e")
  ("osx-trash.el" . "0f1dc052d0a750b8c75f14530a4897f5d4324b4e")
  ("otp" . "360b68d76d8c297d950616f088458b7c239be7ee")
