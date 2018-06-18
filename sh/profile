@@ -15,7 +15,6 @@ export XDG_STATE_HOME=~/.state
 PATH=/usr/local/sbin:$PATH
 PATH=/usr/local/bin:$PATH
 PATH=$HOME/.local/bin:$PATH
-PATH=$HOME/.dotfiles/bin:$PATH
 
 export RUST_SRC_PATH=$HOME/.local/src/rust/current/src/
 PATH=$HOME/.cargo/bin:$PATH

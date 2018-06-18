@@ -16,29 +16,34 @@ $ ./bootstrap.sh
 
 ```
 .
-├── bin                   workflow scripts
-├── emacs                 emacs configurations
-├── etc                   other configurations (unstructured)
-├── provision             ansible playbook
+├── _bin                  workflow scripts
+├── _provision            ansible playbook
 │   ├── library           ├─ ansible modules
 │   └── roles             └─ ansible roles
 │       ├── local            ├─ provisioning script for setting up dotfiles
 │       └── packages         └─ provisioning script for setting up packages and services
-├── ssh                   ssh configurations
-└── zsh                   zsh configurations
+├── amethyst              macos window manager
+├── aria2                 a better downloader
+├── emacs                 the one true os
+├── git                   dvcs made by a crazy person
+├── hg                    dvcs made by another crazy person
+├── sh                    because I like compatibilities
+├── ssh                   even though I have no idea about security
+├── xmonad                the best window manager that I can't use with macos
+├── xorg                  sometimes I use non-macos
+└── zsh                   for my own sanity
 ```
 
 ### Point of interest
 
-*   [**Any**: Use Ansible to manage asdf installations](provision/roles/packages/tasks/lang/)
-*   [**Any**: Sync repositories automatically with GHQ](bin/ghq-sync)
-*   [**macOS**: Use Ansible to install macOS applications with Homebrew-Cask](provision/roles/packages/tasks/packages/darwin/cask.yml)
-*   [**macOS**: Use Ansible to install Mac App Store applications with MAS](provision/roles/packages/tasks/packages/darwin/mas.yml)
-*   [**macOS**: Check Sparkle settings for all installed apps](bin/check-sparkle)
-*   [**macOS**: Using funtoo's keychain for ssh-agent/gpg-agent on macOS](provision/roles/packages/tasks/services/darwin/env.yml)
-*   [**macOS**: Using unbound to create .devel TLD for local development use](provision/roles/packages/tasks/services/darwin/unbound.yml)
-*   [**Arch Linux**: using unbound to create .devel TLD for local development use](provision/roles/packages/tasks/services/archlinux/unbound.yml)
-*   [**Arch Linux**: pacaur module for Ansible](provision/library/pacaur.py)
+-   [**Any**: Use Ansible to manage asdf installations](_provision/roles/packages/tasks/lang/)
+-   [**macOS**: Use Ansible to install macOS applications with Homebrew-Cask](_provision/roles/packages/tasks/packages/darwin/cask.yml)
+-   [**macOS**: Use Ansible to install Mac App Store applications with MAS](_provision/roles/packages/tasks/packages/darwin/mas.yml)
+-   [**macOS**: Check Sparkle settings for all installed apps](_bin/check-sparkle)
+-   [**macOS**: Using funtoo's keychain for ssh-agent/gpg-agent on macOS](_provision/roles/packages/tasks/services/darwin/env.yml)
+-   [**macOS**: Using unbound to create .devel TLD for local development use](_provision/roles/packages/tasks/services/darwin/unbound.yml)
+-   [**Arch Linux**: using unbound to create .devel TLD for local development use](_provision/roles/packages/tasks/services/archlinux/unbound.yml)
+-   [**Arch Linux**: pacaur module for Ansible](_provision/library/pacaur.py)
 
 ### License
 

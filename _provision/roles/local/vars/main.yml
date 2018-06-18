@@ -12,17 +12,8 @@ archlinux_dots:
   - ~/.xmonad
 
 links:
-  - source: ~/.dotfiles/etc/aria2.conf
+  - source: ~/.dotfiles/aria2/aria2.conf
     dest: ~/.aria2/aria2.conf
-
-  - source: ~/.dotfiles/etc/gitconfig
-    dest: ~/.gitconfig
-
-  - source: ~/.dotfiles/etc/hgrc
-    dest: ~/.hgrc
-
-  - source: ~/.dotfiles/etc/profile
-    dest: ~/.profile
 
   - source: ~/.dotfiles/emacs/init.el
     dest: ~/.emacs.d/init.el
@@ -30,10 +21,19 @@ links:
   - source: ~/.dotfiles/emacs/straight/versions/default.el
     dest: ~/.emacs.d/straight/versions/default.el
 
+  - source: ~/.dotfiles/git/gitconfig
+    dest: ~/.gitconfig
+
+  - source: ~/.dotfiles/hg/hgrc
+    dest: ~/.hgrc
+
+  - source: ~/.dotfiles/sh/profile
+    dest: ~/.profile
+
   - source: ~/.dotfiles/ssh/config
     dest: ~/.ssh/config
 
-  - source: ~/.dotfiles/etc/tmux.conf
+  - source: ~/.dotfiles/tmux/tmux.conf
     dest: ~/.tmux.conf
 
   - source: ~/.dotfiles/zsh/zshrc
@@ -43,15 +43,15 @@ links:
     dest: ~/.zprofile
 
 darwin_links:
-  - source: ~/.dotfiles/etc/amethyst
+  - source: ~/.dotfiles/amethyst/amethyst
     dest: ~/.amethyst
 
 archlinux_links:
-  - source: ~/.dotfiles/etc/Xresources
-    dest: ~/.Xresources
-
-  - source: ~/.dotfiles/etc/xmonad.hs
+  - source: ~/.dotfiles/xmonad/xmonad.hs
     dest: ~/.xmonad/xmonad.hs
 
-  - source: ~/.dotfiles/etc/xprofile
+  - source: ~/.dotfiles/xorg/Xresources
+    dest: ~/.Xresources
+
+  - source: ~/.dotfiles/xorg/xprofile
     dest: ~/.xprofile

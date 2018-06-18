@@ -8,7 +8,7 @@
 	gpgSign = true
 
 [core]
-	excludesfile = ~/.dotfiles/etc/gitignore
+	excludesfile = ~/.dotfiles/git/gitignore
 	quotepath = false
 
 [filter "lfs"]

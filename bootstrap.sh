@@ -28,8 +28,8 @@ echo_error() {
 common_ansible_run() {
     echo_wait 'Running Ansible playbook. This will take a while.'
 
-    local _playbook="provision/local.yml"
-    local _opts=(-K -i provision/hosts)
+    local _playbook="_provision/local.yml"
+    local _opts=(-K -i _provision/hosts)
 
     if [[ $ansible_python != "" ]]; then
         _opts+=(-e "ansible_python_interpreter=${ansible_python}")
