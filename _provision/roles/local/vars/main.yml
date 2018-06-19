@@ -39,6 +39,9 @@ links:
   - source: ~/.dotfiles/zsh/zshrc
     dest: ~/.zshrc
 
+  - source: ~/.dotfiles/tridactyl/tridactylrc
+    dest: ~/.tridactylrc
+
   - source: ~/.dotfiles/zsh/zprofile
     dest: ~/.zprofile
 

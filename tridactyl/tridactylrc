@@ -1,0 +1,17 @@
+" sanitise tridactyllocal tridactylsync
+
+bind <C-p> tabprev
+bind <C-n> tabnext
+bind <C-b> scrollpage -1
+bind <C-f> scrollpage 1
+
+set searchengine duckduckgo
+set hintnames numeric
+set hintchars 1234567890
+set hintfiltermode vimperator-reflow
+
+quickmark f https://fanboi.ch/
+quickmark y https://app.youneedabudget.com/
+
+fixamo
+guiset gui none
