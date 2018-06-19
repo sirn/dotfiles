@@ -16,3 +16,4 @@ quickmark y https://app.youneedabudget.com/
 
 fixamo
 guiset gui none
+guiset tabs always
