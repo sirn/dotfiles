@@ -5,6 +5,7 @@ bind <C-n> tabnext
 bind <C-b> scrollpage -1
 bind <C-f> scrollpage 1
 
+set csp clobber
 set searchengine duckduckgo
 set hintnames numeric
 set hintchars 1234567890
