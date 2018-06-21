@@ -4,6 +4,9 @@
   (menu-bar-mode -1))
 
 
+(setq-default frame-title-format '("%f"))
+
+
 (when (display-graphic-p)
   (set-frame-font "PragmataPro 14" nil t)
   (toggle-scroll-bar -1)
