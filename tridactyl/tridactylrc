@@ -13,9 +13,10 @@ set hintfiltermode vimperator-reflow
 
 quickmark f https://fanboi.ch/
 quickmark y https://app.youneedabudget.com/
+quickmark t https://app.timelyapp.com/829143/
 
 autocmd DocStart https://twitter.com urlmodify -r ^https:\/\/twitter.com https://mobile.twitter.com
 
 fixamo
 guiset gui none
-guiset tabs always
+guiset navbar autohide
