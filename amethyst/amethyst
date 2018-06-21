@@ -1,14 +1,17 @@
 {
     "mouse-follows-focus": false,
     "focus-follows-mouse": false,
+    "layouts": [
+        "tall",
+        "wide",
+        "fullscreen"
+    ],
     "floating": [
-        "2BUA8C4S2C.com.agilebits.onepassword-osx-helper",
+        "com.agilebits.onepassword7",
         "com.apple.FaceTime",
         "com.apple.iBooksX",
         "com.apple.iphonesimulator",
         "com.apple.systempreferences",
-        "com.flexibits.fantastical2.mac",
-        "com.iconfactory.Twitterrific5",
-        "com.valvesoftware.steam"
+        "com.iconfactory.Twitterrific5"
     ]
 }
