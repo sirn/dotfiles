@@ -187,6 +187,7 @@ cask_packages:
   - logitech-options
   - mactex
   - mailmate
+  - memory-tracker-by-timely
   - mpv
   - omnifocus
   - omnigraffle
