@@ -1,5 +1,4 @@
 (use-package exec-path-from-shell
-  :defer 2
   :straight t
 
   :preface

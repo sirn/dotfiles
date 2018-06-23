@@ -1,5 +1,4 @@
 (use-package tramp
-  :defer 3
   :config
   (put 'temporary-file-directory 'standard-value '("/tmp"))
   (setq tramp-auto-save-directory "~/.cache/emacs/backups")

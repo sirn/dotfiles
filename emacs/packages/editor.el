@@ -18,21 +18,7 @@
       "jl" 'avy-goto-line)))
 
 
-(use-package color-identifiers-mode
-  :defer 3
-  :diminish color-identifiers-mode
-  :straight t
-
-  :preface
-  (eval-when-compile
-    (declare-function global-color-identifiers-mode nil))
-
-  :config
-  (global-color-identifiers-mode t))
-
-
 (use-package company
-  :defer 2
   :demand t
   :diminish company-mode
   :straight t
@@ -78,7 +64,6 @@
 
 
 (use-package dtrt-indent
-  :defer 5
   :diminish dtrt-indent-mode
   :straight t
 
@@ -89,13 +74,11 @@
 
 
 (use-package eldoc
-  :defer 5
   :straight t
   :diminish eldoc-mode)
 
 
 (use-package flycheck
-  :defer 3
   :diminish flycheck-mode
   :straight t
 
@@ -167,7 +150,6 @@
 
 
 (use-package smartparens
-  :defer 3
   :diminish smartparens-mode
   :straight t
 
@@ -188,7 +170,6 @@
 
 
 (use-package undo-tree
-  :defer 1
   :diminish undo-tree-mode
   :straight t
 

@@ -4,7 +4,6 @@
  ("apiwrap.el" . "e4c9c57d6620a788ec8a715ff1bb50542edea3a6")
  ("avy" . "7c40f5e3811716b05d87a06096b190f7cf7bdc45")
  ("blacken" . "d98199e8ab94550f5036aac2293cfb1f745003fa")
- ("color-identifiers-mode" . "60ae3ab0fdffe0efae7e08950d7b2a96f4ea49e2")
  ("company-anaconda" . "ef6cbe26af1ee526a38139ed21cec8569c1b989d")
  ("company-ansible" . "d65dd603713e09241070b8e55ef802af736bcaa1")
  ("company-mode" . "a9138030819833c481cea93ddf52442237e4874e")

@@ -26,7 +26,6 @@
 
 
   (use-package osx-trash
-    :defer 5
     :straight t
 
     :preface
@@ -37,7 +36,6 @@
 
 
   (use-package pbcopy
-    :defer 2
     :straight t
 
     :preface

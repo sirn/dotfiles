@@ -16,7 +16,6 @@
 
 
 (use-package git-gutter
-  :defer 2
   :diminish git-gutter-mode
   :straight t
 
