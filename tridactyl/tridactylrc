@@ -1,9 +1,14 @@
 " sanitise tridactyllocal tridactylsync
 
+bind <C-.>a fillcmdline tabopen -c alternative
+bind <C-.>w fillcmdline tabopen -c work
+
 bind <C-p> tabprev
 bind <C-n> tabnext
 bind <C-b> scrollpage -1
 bind <C-f> scrollpage 1
+
+alias pinboard composite js 'https://pinboard.in/add?url='+encodeURIComponent(document.location)+'&title='+encodeURIComponent(document.title) | tabopen
 
 set csp clobber
 set searchengine duckduckgo
@@ -11,11 +16,15 @@ set hintnames numeric
 set hintchars 1234567890
 set hintfiltermode vimperator-reflow
 
-quickmark f https://fanboi.ch/
-quickmark y https://app.youneedabudget.com/
+quickmark d https://github.com/sirn/dotfiles
+quickmark e https://github.com/omisego/ewallet
+quickmark f https://fanboi.ch/meta/
+quickmark j https://jenkins.omisego.io/
 quickmark t https://app.timelyapp.com/829143/
+quickmark w https://waffle.io/forloopend/fanboi2
+quickmark y https://app.youneedabudget.com/
 
-autocmd DocStart https://twitter.com urlmodify -r ^https:\/\/twitter.com https://mobile.twitter.com
+autocmd DocStart https?:\/\/twitter.com urlmodify -r ^https?:\/\/twitter.com https://mobile.twitter.com
 
 fixamo
 guiset gui none
