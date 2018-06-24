@@ -9,6 +9,7 @@
     (declare-function neotree-find nil))
 
   :init
+  (setq neo-autorefresh nil)
   (with-eval-after-load 'projectile
     (defun neotree-project-dir ()
       (interactive)
