@@ -1,0 +1,20 @@
+server:
+    access-control: 0.0.0.0/0 refuse
+    access-control: 127.0.0.0/8 allow
+    access-control: ::0/0 refuse
+    access-control: ::1 allow
+    access-control: ::ffff:127.0.0.1 allow
+
+    interface: 127.0.0.1
+    port: 53
+
+    directory: "/usr/local/svcs/unbound/etc"
+    pidfile: "/usr/local/svcs/unbound/etc/unbound.pid"
+    do-daemonize: no
+    username: "nobody"
+    chroot: "/usr/local/svcs/unbound"
+    do-not-query-localhost: no
+
+forward-zone:
+    name: "."
+    forward-addr: 127.0.0.1@5553

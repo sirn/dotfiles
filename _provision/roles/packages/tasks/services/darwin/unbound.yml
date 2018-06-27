@@ -6,34 +6,33 @@
     - load unbound launchd service
 
 - name: ensure unbound directories
-  file: path={{item}} state=directory recurse=yes
+  become: yes
+  file:
+    path: "{{item}}"
+    state: directory
+    recurse: yes
+    owner: nobody
+    group: nobody
   with_items:
-    - ~/.local/etc/unbound
-    - ~/.local/var/log
+    - /usr/local/svcs/unbound/etc
+    - /usr/local/svcs/unbound/var
 
 - name: update unbound configurations
+  become: yes
   template:
-    src: home/local/etc/unbound/unbound.conf.j2
-    dest: "{{ansible_env['HOME']}}/.local/etc/unbound/unbound.conf"
+    src: unbound/unbound.conf.j2
+    dest: "/usr/local/svcs/unbound/etc/unbound.conf"
+    owner: nobody
+    group: nobody
   notify:
     - unload unbound launchd service
     - load unbound launchd service
 
 - name: enable unbound service
+  become: yes
   template:
-    src: home/Library/LaunchAgents/net.unbound.unbound.plist.j2
-    dest: ~/Library/LaunchAgents/net.unbound.unbound.plist
-  register: unbound_enabled
-
-- name: ensure resolver directory
-  become: yes
-  file:
-    path: /etc/resolver
-    state: directory
-    recurse: yes
-
-- name: add dev resolvers
-  become: yes
-  copy:
-    src: etc/resolver/devel
-    dest: /etc/resolver/devel
+    src: unbound/net.unbound.unbound.plist.j2
+    dest: /Library/LaunchAgents/net.unbound.unbound.plist
+  notify:
+    - unload unbound launchd service
+    - load unbound launchd service

@@ -13,11 +13,11 @@
       <string>/usr/local/sbin/unbound</string>
       <string>-d</string>
       <string>-c</string>
-      <string>{{ansible_env['HOME']}}/.local/etc/unbound/unbound.conf</string>
+      <string>/usr/local/svcs/unbound/etc/unbound.conf</string>
     </array>
     <key>StandardErrorPath</key>
-    <string>{{ansible_env['HOME']}}/.local/var/log/unbound.log</string>
+    <string>/usr/local/svcs/unbound/var/unbound.log</string>
     <key>StandardOutPath</key>
-    <string>{{ansible_env['HOME']}}/.local/var/log/unbound.log</string>
+    <string>/usr/local/svcs/unbound/var/unbound.log</string>
   </dict>
 </plist>

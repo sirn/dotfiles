@@ -5,5 +5,6 @@
     state: directory
     recurse: yes
 
-- include_tasks: "darwin/env.yml"
+- include_tasks: "darwin/dnscrypt-proxy.yml"
 - include_tasks: "darwin/unbound.yml"
+- include_tasks: "darwin/user-env.yml"

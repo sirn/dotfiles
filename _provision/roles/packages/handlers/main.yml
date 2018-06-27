@@ -62,32 +62,36 @@
     daemon_reload: yes
     state: restarted
 
-# services/darwin/env
+# services/darwin/dnscrypt
 
-- name: unload environment launchd service
-  command: launchctl unload ~/Library/LaunchAgents/th.in.grid.env.plist
+- name: unload dnscrypt-proxy launchd service
+  become: yes
+  command: launchctl unload ~/Library/LaunchAgents/com.github.jedisct1.dnscrypt-proxy.plist
   ignore_errors: yes
 
-- name: load environment launchd service
-  command: launchctl load ~/Library/LaunchAgents/th.in.grid.env.plist
+- name: load dnscrypt-proxy launchd service
+  become: yes
+  command: launchctl load /Library/LaunchAgents/com.github.jedisct1.dnscrypt-proxy.plist
   ignore_errors: yes
 
-# services/darwin/ethereum
+# services/darwin/user-env
 
-- name: unload ethereum launchd service
-  command: launchctl unload ~/Library/LaunchAgents/org.ethereum.ethereum.plist
+- name: unload user-env launchd service
+  command: launchctl unload ~/Library/LaunchAgents/th.in.grid.user-env.plist
   ignore_errors: yes
 
-- name: load ethereum launchd service
-  command: launchctl load ~/Library/LaunchAgents/org.ethereum.ethereum.plist
+- name: load user-env launchd service
+  command: launchctl load ~/Library/LaunchAgents/th.in.grid.user-env.plist
   ignore_errors: yes
 
 # services/darwin/unbound
 
 - name: unload unbound launchd service
-  command: launchctl unload ~/Library/LaunchAgents/net.unbound.unbound.plist
+  become: yes
+  command: launchctl unload /Library/LaunchAgents/net.unbound.unbound.plist
   ignore_errors: yes
 
 - name: load unbound launchd service
-  command: launchctl load ~/Library/LaunchAgents/net.unbound.unbound.plist
+  become: yes
+  command: launchctl load /Library/LaunchAgents/net.unbound.unbound.plist
   ignore_errors: yes
