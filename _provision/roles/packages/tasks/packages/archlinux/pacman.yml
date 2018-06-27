@@ -2,7 +2,7 @@
 - name: configure pacman
   become: yes
   copy:
-    src: etc/pacman.conf
+    src: pacman/pacman.conf
     dest: /etc/pacman.conf
 
 - name: update pacman

@@ -8,11 +8,17 @@ server:
     interface: 127.0.0.1
     port: 53
 
+{% if ansible_os_family|lower == 'darwin' %}
     directory: "/usr/local/svcs/unbound/etc"
     pidfile: "/usr/local/svcs/unbound/etc/unbound.pid"
-    do-daemonize: no
-    username: "nobody"
     chroot: "/usr/local/svcs/unbound"
+    username: "nobody"
+{% elif ansible_os_family|lower == 'archlinux' %}
+    directory: "/etc/unbound"
+    chroot: "/etc/unbound"
+    username: "unbound"
+{% endif %}
+    do-daemonize: no
     do-not-query-localhost: no
 
 forward-zone:

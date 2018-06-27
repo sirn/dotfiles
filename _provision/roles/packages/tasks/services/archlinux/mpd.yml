@@ -20,7 +20,7 @@
 
 - name: configure mpd service
   copy:
-    src: home/config/mpd/mpd.conf
+    src: mpd/mpd.conf
     dest: ~/.config/mpd/mpd.conf
 
 - name: enable mpd service

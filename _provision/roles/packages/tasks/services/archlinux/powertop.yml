@@ -6,5 +6,5 @@
 - name: enable powertop service
   become: yes
   copy:
-    src: etc/systemd/system/powertop.service
+    src: powertop/powertop.service
     dest: /etc/systemd/system/powertop.service

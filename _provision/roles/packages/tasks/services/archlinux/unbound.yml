@@ -12,7 +12,7 @@
 - name: update resolvconf configuration
   become: yes
   copy:
-    src: etc/resolvconf.conf
+    src: unbound/resolvconf.conf
     dest: "/etc/resolvconf.conf"
   register: update_resolvconf
 
@@ -23,8 +23,8 @@
 
 - name: update unbound configuration
   become: yes
-  copy:
-    src: etc/unbound/unbound.conf
+  template:
+    src: unbound/unbound.conf.j2
     dest: "/etc/unbound/unbound.conf"
   notify:
     - restart unbound systemd service

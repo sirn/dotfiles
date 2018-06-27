@@ -30,8 +30,8 @@
 
 - name: enable unbound service
   become: yes
-  template:
-    src: unbound/net.unbound.unbound.plist.j2
+  copy:
+    src: unbound/net.unbound.unbound.plist
     dest: /Library/LaunchAgents/net.unbound.unbound.plist
   notify:
     - unload unbound launchd service

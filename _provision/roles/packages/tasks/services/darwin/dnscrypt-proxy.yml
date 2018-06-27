@@ -19,8 +19,8 @@
 
 - name: update dnscrypt-proxy configurations
   become: yes
-  template:
-    src: dnscrypt-proxy/dnscrypt-proxy.toml.j2
+  copy:
+    src: dnscrypt-proxy/dnscrypt-proxy.toml
     dest: /usr/local/svcs/dnscrypt-proxy/etc/dnscrypt-proxy.toml
     owner: nobody
     group: nobody
@@ -30,8 +30,8 @@
 
 - name: enable dnscrypt-proxy service
   become: yes
-  template:
-    src: dnscrypt-proxy/com.github.jedisct1.dnscrypt-proxy.plist.j2
+  copy:
+    src: dnscrypt-proxy/com.github.jedisct1.dnscrypt-proxy.plist
     dest: /Library/LaunchAgents/com.github.jedisct1.dnscrypt-proxy.plist
   notify:
     - unload dnscrypt-proxy launchd service

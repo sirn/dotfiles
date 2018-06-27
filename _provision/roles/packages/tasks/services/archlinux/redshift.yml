@@ -13,7 +13,7 @@
 
 - name: update redshift service configuration
   copy:
-    src: home/config/systemd/user/redshift.service/display.conf
+    src: redshift/display.conf
     dest: ~/.config/systemd/user/redshift.service.d/display.conf
 
 - name: enable redshift service
