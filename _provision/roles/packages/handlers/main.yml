@@ -66,12 +66,12 @@
 
 - name: unload dnscrypt-proxy launchd service
   become: yes
-  command: launchctl unload ~/Library/LaunchAgents/com.github.jedisct1.dnscrypt-proxy.plist
+  command: launchctl unload /Library/LaunchDaemons/com.github.jedisct1.dnscrypt-proxy.plist
   ignore_errors: yes
 
 - name: load dnscrypt-proxy launchd service
   become: yes
-  command: launchctl load /Library/LaunchAgents/com.github.jedisct1.dnscrypt-proxy.plist
+  command: launchctl load /Library/LaunchDaemons/com.github.jedisct1.dnscrypt-proxy.plist
   ignore_errors: yes
 
 # services/darwin/user-env
@@ -88,10 +88,10 @@
 
 - name: unload unbound launchd service
   become: yes
-  command: launchctl unload /Library/LaunchAgents/net.unbound.unbound.plist
+  command: launchctl unload /Library/LaunchDaemons/net.unbound.unbound.plist
   ignore_errors: yes
 
 - name: load unbound launchd service
   become: yes
-  command: launchctl load /Library/LaunchAgents/net.unbound.unbound.plist
+  command: launchctl load /Library/LaunchDaemons/net.unbound.unbound.plist
   ignore_errors: yes

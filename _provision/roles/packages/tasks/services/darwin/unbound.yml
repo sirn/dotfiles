@@ -32,7 +32,7 @@
   become: yes
   copy:
     src: unbound/net.unbound.unbound.plist
-    dest: /Library/LaunchAgents/net.unbound.unbound.plist
+    dest: /Library/LaunchDaemons/net.unbound.unbound.plist
   notify:
     - unload unbound launchd service
     - load unbound launchd service

@@ -1,9 +1,17 @@
 ---
-- name: ensure launch agents directory
+- name: ensure launchd directory
   file:
     path: ~/Library/LaunchAgents
     state: directory
-    recurse: yes
+
+- name: ensure system launchd directory
+  become: yes
+  file:
+    path: "{{item}}"
+    state: directory
+  with_items:
+    - /Library/LaunchAgents
+    - /Library/LaunchDaemons
 
 - include_tasks: "darwin/dnscrypt-proxy.yml"
 - include_tasks: "darwin/unbound.yml"

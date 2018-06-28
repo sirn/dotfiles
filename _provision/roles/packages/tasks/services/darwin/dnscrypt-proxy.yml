@@ -32,7 +32,7 @@
   become: yes
   copy:
     src: dnscrypt-proxy/com.github.jedisct1.dnscrypt-proxy.plist
-    dest: /Library/LaunchAgents/com.github.jedisct1.dnscrypt-proxy.plist
+    dest: /Library/LaunchDaemons/com.github.jedisct1.dnscrypt-proxy.plist
   notify:
     - unload dnscrypt-proxy launchd service
     - load dnscrypt-proxy launchd service
