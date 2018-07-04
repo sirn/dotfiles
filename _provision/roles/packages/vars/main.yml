@@ -193,6 +193,7 @@ cask_packages:
   - omnigraffle
   - omnioutliner
   - paw
+  - quitter
   - screens
   - sketch
   - soundsource
