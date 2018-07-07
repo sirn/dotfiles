@@ -21,6 +21,15 @@
   command: resolvconf -u
   when: update_resolvconf.changed
 
+- name: ensure unbound anchor
+  become: yes
+  become_user: unbound
+  shell: /usr/sbin/unbound-anchor -a /etc/unbound/root.key
+  args:
+    creates: /etc/unbound/root.key
+  register: unbound_anchor
+  failed_when: unbound_anchor.rc >= 2
+
 - name: update unbound configuration
   become: yes
   template:

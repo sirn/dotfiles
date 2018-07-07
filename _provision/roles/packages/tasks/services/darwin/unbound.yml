@@ -17,6 +17,15 @@
     - /usr/local/svcs/unbound/etc
     - /usr/local/svcs/unbound/var
 
+- name: ensure unbound anchor
+  become: yes
+  become_user: nobody
+  shell: /usr/local/sbin/unbound-anchor -a /usr/local/svcs/unbound/etc/root.key
+  args:
+    creates: /usr/local/svcs/unbound/etc/root.key
+  register: unbound_anchor
+  failed_when: unbound_anchor.rc >= 2
+
 - name: update unbound configurations
   become: yes
   template:
