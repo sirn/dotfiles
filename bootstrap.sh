@@ -29,13 +29,14 @@ common_ansible_run() {
     echo_wait 'Running Ansible playbook. This will take a while.'
 
     local _playbook="_provision/local.yml"
+    local _config="_provision/ansible.cfg"
     local _opts=(-K -i _provision/hosts)
 
     if [[ $ansible_python != "" ]]; then
         _opts+=(-e "ansible_python_interpreter=${ansible_python}")
     fi
 
-    if ! ansible-playbook "$_playbook" "${_opts[@]}" "$@"; then
+    if ! env ANSIBLE_CONFIG="$_config" ansible-playbook "$_playbook" "${_opts[@]}" "$@"; then
         echo_error 'Ansible playbook exited with an error.'
         exit 1
     fi
