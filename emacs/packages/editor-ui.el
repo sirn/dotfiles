@@ -9,7 +9,7 @@
 
 (when (display-graphic-p)
   (set-frame-font "PragmataPro 14" nil t)
-  (toggle-scroll-bar -1)
+  (scroll-bar-mode -1)
   (tool-bar-mode -1)
   (when (boundp 'mac-auto-operator-composition-mode)
     (mac-auto-operator-composition-mode)))
