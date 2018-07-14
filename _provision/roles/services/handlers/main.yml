@@ -1,0 +1,20 @@
+---
+- name: reload dnscrypt-proxy launchd service
+  become: yes
+  shell: |
+    launchctl unload /Library/LaunchDaemons/com.github.jedisct1.dnscrypt-proxy.plist &&
+    launchctl load /Library/LaunchDaemons/com.github.jedisct1.dnscrypt-proxy.plist
+  ignore_errors: yes
+
+- name: reload user-env launchd service
+  shell: |
+    launchctl unload ~/Library/LaunchAgents/th.in.grid.user-env.plist &&
+    launchctl load ~/Library/LaunchAgents/th.in.grid.user-env.plist
+  ignore_errors: yes
+
+- name: reload unbound launchd service
+  become: yes
+  shell: |
+    launchctl unload /Library/LaunchDaemons/net.unbound.unbound.plist &&
+    launchctl load /Library/LaunchDaemons/net.unbound.unbound.plist
+  ignore_errors: yes

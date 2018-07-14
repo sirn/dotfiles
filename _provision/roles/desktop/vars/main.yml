@@ -1,0 +1,84 @@
+---
+brew_desktop_taps:
+  - railwaycat/emacsmacport
+
+brew_desktop_packages:
+  - emacs-mac
+
+cask_taps:
+  - buo/cask-upgrade
+  - homebrew/cask-drivers
+  - homebrew/cask-fonts
+  - homebrew/cask-versions
+
+cask_packages:
+  - alfred
+  - amethyst
+  - bartender
+  - charles
+  - coconutbattery
+  - dropbox
+  - duet
+  - firefox
+  - font-ia-writer-duospace
+  - font-ibm-plex
+  - font-iosevka
+  - font-lato
+  - font-noto-mono
+  - font-noto-sans
+  - font-noto-sans-cjk-jp
+  - font-noto-sans-thai
+  - font-noto-serif
+  - font-noto-serif-cjk-jp
+  - font-noto-serif-thai
+  - font-open-sans
+  - font-roboto
+  - font-roboto-condensed
+  - font-roboto-mono
+  - font-roboto-slab
+  - font-source-code-pro
+  - font-source-sans-pro
+  - gnucash
+  - google-cloud-sdk
+  - hazel
+  - imagealpha
+  - imageoptim
+  - iterm2
+  - java
+  - keyboard-maestro
+  - little-snitch
+  - logitech-options
+  - mactex
+  - mailmate
+  - memory-tracker-by-timely
+  - mpv
+  - omnifocus
+  - omnigraffle
+  - omnioutliner
+  - paw
+  - quitter
+  - screens
+  - sketch
+  - spotify
+  - telegram
+  - the-unarchiver
+  - vagrant
+  - veracrypt
+  - virtualbox
+  - virtualbox-extension-pack
+  - viscosity
+  - xquartz
+
+mas_packages:
+  - { id: 407963104, app: "Pixelmator" }
+  - { id: 411643860, app: "DaisyDisk" }
+  - { id: 413965349, app: "Soulver" }
+  - { id: 497799835, app: "Xcode" }
+  - { id: 523620159, app: "CleanMyDrive 2" }
+  - { id: 539883307, app: "LINE" }
+  - { id: 603637384, app: "Name Mangler 3" }
+  - { id: 889428659, app: "xScope" }
+  - { id: 890031187, app: "Marked 2" }
+  - { id: 937984704, app: "Amphetamine" }
+  - { id: 1289378661, app: "Twitterific" }
+  - { id: 1333542190, app: "1Password 7" }

@@ -1,0 +1,19 @@
+---
+- name: clone zplug
+  git:
+    repo: https://github.com/zplug/zplug.git
+    dest: ~/.zplug
+    update: no
+
+- name: ensure zsh is in /etc/shells
+  become: yes
+  lineinfile:
+    dest: /etc/shells
+    line: /usr/local/bin/zsh
+    state: present
+
+- name: change default shell to zsh
+  become: yes
+  user:
+    name: "{{ansible_user_id}}"
+    shell: /usr/local/bin/zsh

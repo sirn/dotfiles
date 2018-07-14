@@ -1,0 +1,27 @@
+---
+- include_tasks: "{{ansible_os_family|lower}}.yml"
+
+- import_tasks: "pkgs/kube-ps1.yml"
+- import_tasks: "pkgs/kubectx.yml"
+- import_tasks: "pkgs/zsh.yml"
+
+- name: prepare dot directories
+  file: path={{item}} state=directory recurse=yes
+  with_items: "{{dots}}"
+
+- name: link files and directories
+  file:
+    src: "{{item.source}}"
+    path: "{{item.dest}}"
+    state: link
+    force: yes
+  with_items: "{{dots_links}}"
+
+- name: prepare sudoers directory
+  file: path=/etc/sudoers.d state=directory recurse=yes
+
+- name: adding vagrant sudoers
+  become: yes
+  copy:
+    src: "vagrant/01_vagrant_{{ansible_os_family|lower}}"
+    dest: /etc/sudoers.d/01_vagrant

@@ -1,6 +1,0 @@
----
-- name: install zsh
-  homebrew: name="{{item}}" state=present
-  with_items:
-    - zsh
-    - fzf

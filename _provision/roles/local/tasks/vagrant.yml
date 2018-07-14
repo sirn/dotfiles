@@ -1,9 +1,0 @@
----
-- name: prepare sudoers directory
-  file: path=/etc/sudoers.d state=directory recurse=yes
-
-- name: adding vagrant sudoers
-  become: yes
-  copy:
-    src: "vagrant/01_vagrant_{{ansible_os_family|lower}}"
-    dest: /etc/sudoers.d/01_vagrant

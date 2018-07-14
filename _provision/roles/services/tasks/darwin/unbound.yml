@@ -1,0 +1,44 @@
+---
+- name: install unbound service
+  homebrew: name=unbound state=latest
+  notify:
+    - reload unbound launchd service
+
+- name: ensure unbound directories
+  become: yes
+  file:
+    path: "{{item}}"
+    state: directory
+    recurse: yes
+    owner: nobody
+    group: nobody
+  with_items:
+    - /usr/local/svcs/unbound/etc
+    - /usr/local/svcs/unbound/var
+
+- name: ensure unbound anchor
+  become: yes
+  become_user: nobody
+  shell: /usr/local/sbin/unbound-anchor -a /usr/local/svcs/unbound/etc/root.key
+  args:
+    creates: /usr/local/svcs/unbound/etc/root.key
+  register: unbound_anchor
+  failed_when: unbound_anchor.rc >= 2
+
+- name: update unbound configurations
+  become: yes
+  template:
+    src: unbound/unbound.conf.j2
+    dest: "/usr/local/svcs/unbound/etc/unbound.conf"
+    owner: nobody
+    group: nobody
+  notify:
+    - reload unbound launchd service
+
+- name: enable unbound service
+  become: yes
+  copy:
+    src: unbound/net.unbound.unbound.plist
+    dest: /Library/LaunchDaemons/net.unbound.unbound.plist
+  notify:
+    - reload unbound launchd service

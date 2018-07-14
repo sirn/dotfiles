@@ -1,6 +1,0 @@
----
-- hosts: all
-  connection: local
-  roles:
-    - { role: packages }
-    - { role: local, tags: "local" }

@@ -1,0 +1,60 @@
+---
+- name: install asdf
+  git:
+    repo: https://github.com/asdf-vm/asdf.git
+    dest: ~/.asdf
+    version: "v{{asdf_version}}"
+
+- name: ensure asdf plugin directory
+  file:
+    path: ~/.asdf/plugins
+    state: directory
+    recurse: yes
+
+- import_tasks: "pkgs/elixir.yml"
+  tags:
+    - elixir
+
+- import_tasks: "pkgs/erlang.yml"
+  tags:
+    - erlang
+
+- import_tasks: "pkgs/golang.yml"
+  tags:
+    - golang
+
+- import_tasks: "pkgs/haskell.yml"
+  tags:
+    - haskell
+
+- import_tasks: "pkgs/helm.yml"
+  tags:
+    - helm
+
+- import_tasks: "pkgs/kubectl.yml"
+  tags:
+    - kubectl
+
+- import_tasks: "pkgs/minikube.yml"
+  tags:
+    - minikube
+
+- import_tasks: "pkgs/nodejs.yml"
+  tags:
+    - nodejs
+
+- import_tasks: "pkgs/nim.yml"
+  tags:
+    - nim
+
+- import_tasks: "pkgs/python3.yml"
+  tags:
+    - python3
+
+- import_tasks: "pkgs/ruby.yml"
+  tags:
+    - ruby
+
+- import_tasks: "pkgs/rust.yml"
+  tags:
+    - rust

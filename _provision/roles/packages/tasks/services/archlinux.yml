@@ -1,6 +1,0 @@
-- include_tasks: "archlinux/docker.yml"
-- include_tasks: "archlinux/mpd.yml"
-- include_tasks: "archlinux/nfs.yml"
-- include_tasks: "archlinux/powertop.yml"
-- include_tasks: "archlinux/redshift.yml"
-- include_tasks: "archlinux/unbound.yml"

@@ -1,0 +1,7 @@
+---
+- hosts: all
+  roles:
+    - { role: console, tags: "console" }
+    - { role: services, tags: "services" }
+    - { role: asdf, tags: "asdf" }
+    - { role: desktop, tags: "desktop" }

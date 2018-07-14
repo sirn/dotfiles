@@ -1,8 +1,0 @@
----
-- name: initialize cask taps
-  homebrew_tap: tap={{item}} state=present
-  with_items: "{{cask_taps}}"
-
-- name: install cask packages
-  homebrew_cask: name={{item}} state=present
-  with_items: "{{cask_packages}}"

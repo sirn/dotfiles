@@ -1,0 +1,102 @@
+---
+brew_taps:
+  - beeftornado/rmtree
+
+brew_packages:
+  - aria2
+  - autoconf
+  - blueutil
+  - carthage
+  - cocoapods
+  - cocot
+  - coreutils
+  - curl
+  - direnv
+  - ffmpeg
+  - fswatch
+  - fzf
+  - ghq
+  - git
+  - git-crypt
+  - git-flow
+  - git-lfs
+  - gpg
+  - gpg-agent
+  - graphviz
+  - hub
+  - hugo
+  - imagemagick
+  - ipcalc
+  - jq
+  - keychain
+  - leiningen
+  - libressl
+  - moreutils
+  - neovim
+  - openssh
+  - openssl
+  - packer
+  - pandoc
+  - pinentry-mac
+  - reattach-to-user-namespace
+  - ripgrep
+  - rtmpdump
+  - s6
+  - shellcheck
+  - socat
+  - terraform
+  - tmux
+  - trash
+  - tree
+  - xhyve
+  - xz
+  - youtube-dl
+  - zsh
+
+dots:
+  - ~/.aria2
+  - ~/.emacs.d
+  - ~/.emacs.d/straight/versions
+  - ~/.ssh
+
+dots_links:
+  - source: ~/.dotfiles/aria2/aria2.conf
+    dest: ~/.aria2/aria2.conf
+
+  - source: ~/.dotfiles/emacs/init.el
+    dest: ~/.emacs.d/init.el
+
+  - source: ~/.dotfiles/emacs/straight/versions/default.el
+    dest: ~/.emacs.d/straight/versions/default.el
+
+  - source: ~/.dotfiles/git/gitconfig
+    dest: ~/.gitconfig
+
+  - source: ~/.dotfiles/hg/hgrc
+    dest: ~/.hgrc
+
+  - source: ~/.dotfiles/sh/profile
+    dest: ~/.profile
+
+  - source: ~/.dotfiles/ssh/config
+    dest: ~/.ssh/config
+
+  - source: ~/.dotfiles/tmux/tmux.conf
+    dest: ~/.tmux.conf
+
+  - source: ~/.dotfiles/zsh/zshrc
+    dest: ~/.zshrc
+
+  - source: ~/.dotfiles/tridactyl/tridactylrc
+    dest: ~/.tridactylrc
+
+  - source: ~/.dotfiles/zsh/zprofile
+    dest: ~/.zprofile
+
+dots_links_darwin:
+  - source: ~/.dotfiles/amethyst/amethyst
+    dest: ~/.amethyst
+
+kube_ps1_version: "0.6.0"
+
+kubectx_version: "0.5.0"

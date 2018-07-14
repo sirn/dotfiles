@@ -1,0 +1,31 @@
+---
+- name: install prerequisites
+  homebrew_cask: name={{item}} state=present
+  with_items:
+    - java
+    - xquartz
+
+- name: initialize brew desktop taps
+  homebrew_tap: tap={{item}} state=present
+  with_items: "{{brew_desktop_taps}}"
+
+- name: install homebrew desktop packages
+  homebrew: name={{item}} state=present
+  with_items: "{{brew_desktop_packages}}"
+
+- name: initialize cask taps
+  homebrew_tap: tap={{item}} state=present
+  with_items: "{{cask_taps}}"
+
+- name: install cask packages
+  homebrew_cask: name={{item}} state=present
+  with_items: "{{cask_packages}}"
+
+- name: install mas-cli
+  homebrew: name=mas state=latest
+
+- name: initialize mac app store apps
+  command: mas install "{{item.id}}"
+  with_items: "{{mas_packages}}"
+  args:
+    creates: "/Applications/{{item.app}}.app"

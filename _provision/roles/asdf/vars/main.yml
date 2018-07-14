@@ -1,0 +1,85 @@
+---
+asdf_version: "0.4.3"
+
+elixir_version: "1.6.5-otp-20"
+
+erlang_version: "20.3.6"
+
+haskell_version: "8.2.2"
+
+haskell_stack_packages:
+  - { name: hakyll, binary: hakyll-init }
+
+helm_version: "2.9.0"
+
+kubectl_version: "1.10.2"
+
+minikube_version: "0.26.1"
+
+nim_version: "0.18.0"
+
+nodejs_version: "8.11.2"
+
+nodejs_packages:
+  - bower
+  - elm
+  - elm-format
+  - elm-oracle
+  - elm-test
+  - eslint
+  - localtunnel
+  - prettier
+  - pulp
+  - purescript
+  - solc
+  - solium
+  - stylelint
+  - stylelint-config-recommended
+  - stylelint-config-recommended-scss
+  - stylelint-scss
+  - tern
+  - tslint
+  - typescript
+  - yarn
+
+golang_version: "1.10.2"
+
+golang_packages:
+  - github.com/nsf/gocode
+  - github.com/rogpeppe/godef
+  - golang.org/x/tools/cmd/guru
+  - golang.org/x/tools/cmd/gorename
+  - golang.org/x/tools/cmd/goimports
+
+python3_version: "3.6.4"
+
+python3_packages:
+  - ansible==2.4.3.0
+  - asciinema
+  - autoflake
+  - black
+  - flake8
+  - glances
+  - ipython
+  - jupyter
+  - matplotlib
+  - numpy
+  - pip
+  - pipenv
+  - pylint
+  - pyqt5
+  - virtualenv
+
+ruby_version: "2.5.1"
+
+ruby_packages:
+  - bundler
+  - middleman
+  - pry
+  - sqlint
+
+rust_version: "1.26.0"
+
+rust_packages:
+  - racer
+  - rustfmt

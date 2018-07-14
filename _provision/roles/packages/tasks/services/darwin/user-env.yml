@@ -1,8 +1,0 @@
----
-- name: enable user-env service
-  copy:
-    src: user-env/th.in.grid.user-env.plist
-    dest: ~/Library/LaunchAgents/th.in.grid.user-env.plist
-  notify:
-    - unload user-env launchd service
-    - load user-env launchd service

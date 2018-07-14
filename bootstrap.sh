@@ -1,4 +1,97 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
+
+#
+# Configurations
+#
+
+if [ "$XDG_CONFIG_HOME" = "" ]; then
+    XDG_CONFIG_HOME="$HOME/.config"
+fi
+
+_config_file="$XDG_CONFIG_HOME/dotfiles"
+
+print_usage() {
+    echo "Usage: $0 [-h] [-r] [[-p profile1] [-p profile2] ...] [-- [ansible args...]]"
+    echo
+    echo "    -h        Print this help."
+    echo "    -r        Reset configuration."
+    echo "    -p        Profile to install (default: asdf console desktop services)."
+    echo
+    echo "Available profiles:"
+    echo
+    echo "    asdf      Setup asdf-vm packages (e.g. language runtimes)."
+    echo "    console   Setup console packages and profiles."
+    echo "    desktop   Setup desktop packages."
+    echo "    services  Setup system services."
+    echo
+}
+
+reset_config() {
+    _profile=""
+    if [ -f "$_config_file" ]; then
+        rm "$_config_file"
+    fi
+}
+
+_profile=""
+
+# shellcheck disable=SC1090
+if [ -f "$_config_file" ]; then
+    . "$_config_file"
+fi
+
+
+#
+# Args parsing
+#
+
+ARGS=$(getopt hrp: "$@")
+
+# shellcheck disable=SC2181
+if [ $? != 0 ]; then
+    print_usage
+    exit 1
+fi
+
+eval set -- "$ARGS"
+
+while true; do
+    case "$1" in
+        -h ) print_usage; exit 2;;
+        -r ) reset_config; shift;;
+        -p ) _profile="$_profile $2"; shift; shift;;
+        -- ) shift; break;;
+        *  ) break;;
+    esac
+done
+
+
+#
+# Profile handling
+#
+
+clean_profile() {
+    while true; do
+        case "$1" in
+            asdf | console | desktop | services ) echo "$1"; shift;;
+            * ) break;;
+        esac
+    done | sort -u | awk 'FNR != 1 { printf " " } { printf }'
+}
+
+# shellcheck disable=SC2086
+_profile=$(clean_profile $_profile)
+
+if [ "$_profile" = "" ]; then
+    _profile="asdf console desktop services"
+fi
+
+mkdir -p "$(dirname "$_config_file")"
+
+cat <<-EOF > "$_config_file"
+_profile="$_profile"
+EOF
+
 
 #
 # Utils
@@ -13,7 +106,7 @@ echo_ok() {
 }
 
 echo_wait() {
-    printf "* \\033[0;33m%s\\033[0;0m\\n" "$1"
+    printf "* %s\\n" "$1"
 }
 
 echo_error() {
@@ -26,17 +119,39 @@ echo_error() {
 #
 
 common_ansible_run() {
-    echo_wait 'Running Ansible playbook. This will take a while.'
+    _playbook="_provision/playbook.yml"
+    _ansible_config="_provision/ansible.cfg"
+    _opts="-K -i _provision/hosts"
 
-    local _playbook="_provision/local.yml"
-    local _config="_provision/ansible.cfg"
-    local _opts=(-K -i _provision/hosts)
-
-    if [[ $ansible_python != "" ]]; then
-        _opts+=(-e "ansible_python_interpreter=${ansible_python}")
+    if [ "$_ansible_python" != "" ]; then
+        _opts="$_opts -e ansible_python_interpreter=$_ansible_python"
     fi
 
-    if ! env ANSIBLE_CONFIG="$_config" ansible-playbook "$_playbook" "${_opts[@]}" "$@"; then
+    if [ "$*" != "" ]; then
+        _opts="$_opts $*"
+    fi
+
+    _skip_asdf=1
+    _skip_console=1
+    _skip_desktop=1
+    _skip_services=1
+
+    for p in $_profile; do
+        case "$p" in
+            asdf )     _skip_asdf=0;;
+            console )  _skip_console=0;;
+            desktop )  _skip_desktop=0;;
+            services ) _skip_services=0;;
+        esac
+    done
+
+    [ $_skip_asdf     = 1 ] && _opts="$_opts --skip-tags=asdf"
+    [ $_skip_console  = 1 ] && _opts="$_opts --skip-tags=console"
+    [ $_skip_desktop  = 1 ] && _opts="$_opts --skip-tags=desktop"
+    [ $_skip_services = 1 ] && _opts="$_opts --skip-tags=services"
+
+    # shellcheck disable=SC2086
+    if ! env ANSIBLE_CONFIG="$_ansible_config" ansible-playbook "$_playbook" $_opts; then
         echo_error 'Ansible playbook exited with an error.'
         exit 1
     fi
@@ -47,115 +162,54 @@ common_ansible_run() {
 # Darwin
 #
 
-darwin_setenv() {
+bootstrap_darwin() {
     export PATH=/usr/local/bin:$PATH
-    darwin_ansible_bootstrapped=0
-}
+    export HOMEBREW_NO_COLOR=1
+    export HOMEBREW_NO_EMOJI=1
+    export HOMEBREW_NO_ANALYTICS=1
 
-darwin_xcode_setup() {
-    echo_wait 'Determining Xcode status. You may need to enter root password...'
-    if ! xcode-select --install 2>/dev/null; then
-        echo_clear
-        echo_ok 'Xcode has been successfully setup.'
-	echo_ok 'Please make sure to run sudo xcodebuild -license'
-    fi
-}
-
-darwin_brew_setup() {
-    if hash brew 2>/dev/null; then
-        echo_ok 'Homebrew is already installed.'
-    else
+    xcode-select --install 2>/dev/null
+    if ! hash brew 2>/dev/null; then
         echo_wait 'Homebrew is not installed. Installing...'
-        local _install="https://raw.githubusercontent.com/Homebrew/install/master/install"
+        _install="https://raw.githubusercontent.com/Homebrew/install/master/install"
         /usr/bin/ruby -e "$(curl -fsSL $_install)"
     fi
-}
 
-darwin_ansible_bootstrap() {
-    if hash ansible-playbook 2>/dev/null; then
-        echo_ok 'Ansible is already installed.'
-        if [ -e "$HOME/.asdf/shims/python3" ]; then
-            ansible_python="$HOME/.asdf/shims/python3"
-        fi
-    else
+    _ansible_bootstrapped=0
+
+    if ! hash ansible-playbook 2>/dev/null; then
         echo_wait 'Ansible is not installed. Installing...'
-        brew install ansible python@2
-        darwin_ansible_bootstrapped=1
-        ansible_python=/usr/local/bin/python2
+        brew install ansible python@3
+        _ansible_bootstrapped=1
+        _ansible_python=/usr/local/bin/python3
     fi
-}
 
-darwin_cask_update() {
-    echo_wait 'Cask appears to be installed. Performing updates...'
-    brew cu -a -y
-}
+    common_ansible_run "$@"
 
-darwin_mas_update() {
-    if hash mas 2>/dev/null; then
-        echo_ok 'MAS appears to be installed. Performing updates...'
-    else
-        echo_wait 'MAS is not installed. Installing...'
-        brew install mas
-    fi
-    mas upgrade
-}
+    for p in $_profile; do
+        case "$p" in
+            desktop )
+                if [ "$*" = "" ]; then
+                    if ! hash mas 2>/dev/null; then
+                        echo_wait 'MAS is not installed. Installing...'
+                        brew install mas
+                    fi
 
-darwin_cleanup() {
-    echo_wait 'Cleaning up...'
-    rm "$HOME"/.homebrew_analytics_user_uuid >/dev/null 2>&1
-    brew cleanup
-    brew cask cleanup
+                    brew cu -a -y
+                    mas upgrade
+                fi
+                ;;
+        esac
+    done
 
-    if [[ $darwin_ansible_bootstrapped == 1 ]]; then
+    if [ $_ansible_bootstrapped = 1 ]; then
         brew tap beeftornado/rmtree
         echo_wait 'Uninstalling a bootstrapped Ansible...'
         brew rmtree ansible
-	brew uninstall python@2
-    fi
-}
-
-bootstrap_darwin() {
-    darwin_setenv
-    darwin_xcode_setup
-    darwin_brew_setup
-    darwin_ansible_bootstrap
-    common_ansible_run "$@"
-
-    if [[ "$*" == "" ]]; then
-        darwin_cask_update
-        darwin_mas_update
+	brew uninstall python@3
     fi
 
-    darwin_cleanup
-}
-
-
-#
-# Linux
-#
-
-linux_arch_setenv() {
-    export PATH=/usr/local/bin:$PATH
-}
-
-linux_arch_ansible_bootstrap() {
-    if hash ansible-playbook 2>/dev/null; then
-        echo_ok 'Ansible is already installed.'
-    else
-        echo_wait 'Ansible is not installed. Installing...'
-        sudo pacman -S --noconfirm ansible python
-    fi
-}
-
-bootstrap_linux() {
-    if hash pacman 2>/dev/null; then
-        linux_arch_setenv
-        linux_arch_ansible_bootstrap
-        common_ansible_run "$@"
-    else
-        echo_error "No compatible package manager."
-        exit 1
-    fi
+    rm "$HOME"/.homebrew_analytics_user_uuid >/dev/null 2>&1
 }
 
 
@@ -163,12 +217,19 @@ bootstrap_linux() {
 # Main
 #
 
-case $OSTYPE in
-    darwin*) bootstrap_darwin "$@" ;;
-    linux*)  bootstrap_linux "$@" ;;
+_platform=$(uname)
+
+echo_wait "Running bootstrap with profile(s): $_profile"
+
+if [ "$*" != "" ]; then
+    echo_wait "Ansible will be run with extra args: $*"
+fi
+
+case $_platform in
+    Darwin) bootstrap_darwin "$@";;
     *)
         echo_error "Could not start bootstrap script."
-        echo_error "Unknown platform: $OSTYPE."
+        echo_error "Unknown platform: $_platform."
         exit 1
         ;;
 esac

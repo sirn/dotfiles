@@ -1,3 +1,0 @@
----
-- include_tasks: "archlinux/pacman.yml"
-- include_tasks: "archlinux/aur.yml"
