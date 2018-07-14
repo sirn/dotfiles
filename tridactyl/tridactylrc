@@ -24,8 +24,6 @@ quickmark t https://app.timelyapp.com/829143/
 quickmark w https://waffle.io/forloopend/fanboi2
 quickmark y https://app.youneedabudget.com/
 
-autocmd DocStart https?:\/\/twitter.com urlmodify -r ^https?:\/\/twitter.com https://mobile.twitter.com
-
 fixamo
 guiset gui none
 guiset navbar autohide
