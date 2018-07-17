@@ -1,16 +1,17 @@
 ---
 - name: install ruby plugin via asdf
   git:
-    repo: https://github.com/asdf-vm/asdf-ruby.git
-    dest: ~/.asdf/plugins/ruby
+    repo: https://github.com/sirn/asdf-ruby.git
+    dest: "{{asdf_path}}/plugins/ruby"
+    version: "fix-patch"
 
 - name: install ruby {{ruby_version}} via asdf
-  command: ~/.asdf/bin/asdf install ruby {{ruby_version}}
+  command: "{{asdf_bin}}/asdf install ruby {{ruby_version}}"
   args:
-    creates: ~/.asdf/installs/ruby/{{ruby_version}}
+    creates: "{{ruby_version_path}}"
 
 - name: set ruby {{ruby_version}} as default
-  command: ~/.asdf/bin/asdf global ruby {{ruby_version}}
+  command: "{{asdf_bin}}/asdf global ruby {{ruby_version}}"
   changed_when: false
 
 - name: install ruby packages
@@ -18,9 +19,9 @@
     name: "{{item}}"
     state: latest
     user_install: false
-    executable: ~/.asdf/installs/ruby/{{ruby_version}}/bin/gem
+    executable: "{{ruby_version_path}}/bin/gem"
   with_items: "{{ruby_packages}}"
 
 - name: update ruby {{ruby_version}} shims
-  command: ~/.asdf/bin/asdf reshim ruby
+  command: "{{asdf_bin}}/asdf reshim ruby"
   changed_when: false

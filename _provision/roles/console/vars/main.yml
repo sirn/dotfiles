@@ -1,57 +1,11 @@
 ---
-brew_taps:
-  - beeftornado/rmtree
+asdf_version: "0.4.3"
 
-brew_packages:
-  - aria2
-  - autoconf
-  - blueutil
-  - carthage
-  - cocoapods
-  - cocot
-  - coreutils
-  - curl
-  - direnv
-  - ffmpeg
-  - fswatch
-  - fzf
-  - ghq
-  - git
-  - git-crypt
-  - git-flow
-  - git-lfs
-  - gpg
-  - gpg-agent
-  - graphviz
-  - hub
-  - hugo
-  - imagemagick
-  - ipcalc
-  - jq
-  - keychain
-  - leiningen
-  - libressl
-  - moreutils
-  - neovim
-  - openssh
-  - openssl
-  - packer
-  - pandoc
-  - pinentry-mac
-  - reattach-to-user-namespace
-  - ripgrep
-  - rtmpdump
-  - s6
-  - shellcheck
-  - socat
-  - terraform
-  - tmux
-  - trash
-  - tree
-  - xhyve
-  - xz
-  - youtube-dl
-  - zsh
+asdf_path: "{{ansible_env.HOME}}/.asdf"
+
+asdf_bin: "{{asdf_path}}/bin"
+
+asdf_shims: "{{asdf_path}}/shims"
 
 dots:
   - ~/.aria2
@@ -87,16 +41,118 @@ dots_links:
   - source: ~/.dotfiles/zsh/zshrc
     dest: ~/.zshrc
 
-  - source: ~/.dotfiles/tridactyl/tridactylrc
-    dest: ~/.tridactylrc
-
   - source: ~/.dotfiles/zsh/zprofile
     dest: ~/.zprofile
 
-dots_links_darwin:
-  - source: ~/.dotfiles/amethyst/amethyst
-    dest: ~/.amethyst
+elixir_version: "1.6.5-otp-20"
+
+elixir_version_path: "{{ansible_env.HOME}}/.asdf/installs/elixir/{{elixir_version}}"
+
+elm_version: "0.18.0"
+
+elm_format_version: "0.7.0-exp"
+
+elm_format_bin: "elm-format-0.18"
+
+erlang_version: "20.3.6"
+
+erlang_version_path: "{{ansible_env.HOME}}/.asdf/installs/erlang/{{erlang_version}}"
+
+golang_version: "1.10.2"
+
+golang_version_path: "{{ansible_env.HOME}}/.asdf/installs/golang/{{golang_version}}"
+
+golang_gopath: "{{ansible_env.HOME}}/Dev/go"
+
+golang_goroot: "{{golang_version_path}}/go"
+
+golang_path: "{{golang_gopath}}/bin:{{golang_goroot}}/bin:{{env_path}}"
+
+golang_packages:
+  - github.com/Masterminds/glide
+  - github.com/junegunn/fzf
+  - github.com/mitchellh/gox
+  - github.com/motemen/ghq
+  - github.com/nsf/gocode
+  - github.com/rogpeppe/godef
+  - golang.org/x/tools/cmd/goimports
+  - golang.org/x/tools/cmd/gorename
+  - golang.org/x/tools/cmd/guru
+
+haskell_stack_packages:
+  - { name: ShellCheck, binary: shellcheck, resolver: "lts-11.17" }
+  - { name: hakyll, binary: hakyll-init, resolver: "lts-11.17" }
+  - { name: pandoc, binary: pandoc, resolver: "lts-11.17" }
+  - { name: cabal-install, binary: cabal, resolver: "lts-9.21" }
+
+helm_version: "2.9.1"
 
 kube_ps1_version: "0.6.0"
 
+kubectl_version: "1.8.15"
+
 kubectx_version: "0.5.0"
+
+nim_version: "0.18.0"
+
+nim_version_path: "{{ansible_env.HOME}}/.asdf/installs/nim/v{{nim_version}}"
+
+nodejs_npm_path: "/usr/local/lib/node_modules/npm/bin"
+
+nodejs_packages:
+  - bower
+  - elm-oracle
+  - eslint
+  - localtunnel
+  - prettier
+  - pulp
+  - purescript
+  - solc
+  - solium
+  - stylelint
+  - stylelint-config-recommended
+  - stylelint-config-recommended-scss
+  - stylelint-scss
+  - tern
+  - tslint
+  - typescript
+  - yarn
+
+python3_version: "3.6.4"
+
+python3_version_path: "{{ansible_env.HOME}}/.asdf/installs/python3/{{python3_version}}"
+
+python3_packages:
+  - ansible==2.4.3.0
+  - asciinema
+  - autoflake
+  - black
+  - flake8
+  - glances
+  - ipython
+  - jupyter
+  - numpy
+  - pip
+  - pipenv
+  - pylint
+  - virtualenv
+  - youtube-dl
+
+ruby_version: "2.5.1"
+
+ruby_version_path: "{{ansible_env.HOME}}/.asdf/installs/ruby/{{ruby_version}}"
+
+ruby_packages:
+  - bundler
+  - middleman
+  - pry
+  - sqlint
+
+rust_version: "1.26.0"
+
+rust_version_path: "{{ansible_env.HOME}}/.asdf/installs/rust/{{rust_version}}"
+
+rust_packages:
+  - { name: "racer", binary: "racer" }
+  - { name: "rustfmt", binary: "rustfmt" }
+  - { name: "ripgrep", binary: "rg" }

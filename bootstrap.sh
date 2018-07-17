@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 #
 # Configurations
@@ -10,16 +10,18 @@ fi
 
 _config_file="$XDG_CONFIG_HOME/dotfiles"
 
+_ansible_version="2.4.3.0"
+_ansible_opts=""
+
 print_usage() {
     echo "Usage: $0 [-h] [-r] [[-p profile1] [-p profile2] ...] [-- [ansible args...]]"
     echo
     echo "    -h        Print this help."
     echo "    -r        Reset configuration."
-    echo "    -p        Profile to install (default: asdf console desktop services)."
+    echo "    -p        Profile to install (default: console desktop services)."
     echo
     echo "Available profiles:"
     echo
-    echo "    asdf      Setup asdf-vm packages (e.g. language runtimes)."
     echo "    console   Setup console packages and profiles."
     echo "    desktop   Setup desktop packages."
     echo "    services  Setup system services."
@@ -73,7 +75,7 @@ done
 clean_profile() {
     while true; do
         case "$1" in
-            asdf | console | desktop | services ) echo "$1"; shift;;
+            console | desktop | services ) echo "$1"; shift;;
             * ) break;;
         esac
     done | sort -u | awk 'FNR != 1 { printf " " } { printf }'
@@ -83,7 +85,7 @@ clean_profile() {
 _profile=$(clean_profile $_profile)
 
 if [ "$_profile" = "" ]; then
-    _profile="asdf console desktop services"
+    _profile="console desktop services"
 fi
 
 mkdir -p "$(dirname "$_config_file")"
@@ -121,7 +123,15 @@ echo_error() {
 common_ansible_run() {
     _playbook="_provision/playbook.yml"
     _ansible_config="_provision/ansible.cfg"
-    _opts="-K -i _provision/hosts"
+    _opts="-i _provision/hosts"
+
+    if [ "$_ansible_bin" = "" ]; then
+        _ansible_bin=ansible-playbook
+    fi
+
+    if [ "$_ansible_opts" != "" ]; then
+        _opts="$_opts $_ansible_opts"
+    fi
 
     if [ "$_ansible_python" != "" ]; then
         _opts="$_opts -e ansible_python_interpreter=$_ansible_python"
@@ -131,27 +141,24 @@ common_ansible_run() {
         _opts="$_opts $*"
     fi
 
-    _skip_asdf=1
     _skip_console=1
     _skip_desktop=1
     _skip_services=1
 
     for p in $_profile; do
         case "$p" in
-            asdf )     _skip_asdf=0;;
             console )  _skip_console=0;;
             desktop )  _skip_desktop=0;;
             services ) _skip_services=0;;
         esac
     done
 
-    [ $_skip_asdf     = 1 ] && _opts="$_opts --skip-tags=asdf"
     [ $_skip_console  = 1 ] && _opts="$_opts --skip-tags=console"
     [ $_skip_desktop  = 1 ] && _opts="$_opts --skip-tags=desktop"
     [ $_skip_services = 1 ] && _opts="$_opts --skip-tags=services"
 
     # shellcheck disable=SC2086
-    if ! env ANSIBLE_CONFIG="$_ansible_config" ansible-playbook "$_playbook" $_opts; then
+    if ! env ANSIBLE_CONFIG="$_ansible_config" "$_ansible_bin" "$_playbook" $_opts; then
         echo_error 'Ansible playbook exited with an error.'
         exit 1
     fi
@@ -176,6 +183,7 @@ bootstrap_darwin() {
     fi
 
     _ansible_bootstrapped=0
+    _ansible_opts="-K"
 
     if ! hash ansible-playbook 2>/dev/null; then
         echo_wait 'Ansible is not installed. Installing...'
@@ -214,6 +222,46 @@ bootstrap_darwin() {
 
 
 #
+# FreeBSD
+#
+
+bootstrap_freebsd() {
+    export PATH=$HOME/.local/bin:/usr/local/bin:$PATH
+    export LANG=en_US.UTF-8
+
+    sudo ALWAYS_ASSUME_YES=yes pkg bootstrap >/dev/null 2>&1
+    sudo pkg update >/dev/null 2>&1
+
+    _ansible_bootstrapped=0
+    _ansible_python=/usr/local/bin/python3.6
+
+    if ! hash python3.6 2>/dev/null; then
+        echo_wait 'Python is not installed. Installing...'
+        sudo pkg install -y ca_root_nss
+        sudo pkg install -y python36
+    fi
+
+    if ! hash ansible-playbook 2>/dev/null; then
+        echo_wait 'Ansible is not installed. Installing...'
+        sudo pkg install -y py36-pip
+        pip-3.6 install --user ansible=="$_ansible_version"
+        _ansible_bootstrapped=1
+        _ansible_bin=$HOME/.local/bin/ansible-playbook
+    fi
+
+    common_ansible_run "$@"
+
+    if [ $_ansible_bootstrapped = 1 ]; then
+        echo_wait 'Uninstalling a bootstrapped Ansible...'
+        pip-3.6 uninstall -y ansible
+        rm -rf "$HOME/.local/lib/python3.6"
+        sudo pkg uninstall --user -y py36-pip
+        sudo pkg autoremove -y
+    fi
+}
+
+
+#
 # Main
 #
 
@@ -226,7 +274,8 @@ if [ "$*" != "" ]; then
 fi
 
 case $_platform in
-    Darwin) bootstrap_darwin "$@";;
+    Darwin)  bootstrap_darwin "$@";;
+    FreeBSD) bootstrap_freebsd "$@";;
     *)
         echo_error "Could not start bootstrap script."
         echo_error "Unknown platform: $_platform."

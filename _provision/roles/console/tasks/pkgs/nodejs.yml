@@ -1,0 +1,21 @@
+---
+- name: ensure nodejs user directory
+  file:
+    path: ~/.local/var/npm
+    state: directory
+
+- name: set npm prefix
+  lineinfile:
+    dest: ~/.npmrc
+    line: "prefix={{ansible_env.HOME}}/.local/var/npm"
+    state: present
+    create: yes
+
+- name: install nodejs packages
+  npm:
+    name: "{{item}}"
+    global: true
+    state: latest
+  with_items: "{{nodejs_packages}}"
+  environment:
+    PATH: "{{env_path}}"

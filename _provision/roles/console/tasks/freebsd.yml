@@ -1,0 +1,24 @@
+---
+- name: install java
+  become: yes
+  pkgng: name=openjdk-jre state=present
+
+- name: install pkgng packages
+  become: yes
+  pkgng: name={{pkgng_packages}} state=present
+
+# used by bindist in ghc-7.10.2 distribution (during elm build) for example.
+# but this is freebsd-specific so we have to put it here.
+
+- name: create local compatibility directories
+  file:
+    path: "{{item}}"
+    state: directory
+  with_items:
+    - ~/.local/compat/lib
+
+- name: link libutil for compatibility
+  file:
+    src: "/lib/libutil.so.9"
+    path: "~/.local/compat/lib/libutil.so.8"
+    state: link

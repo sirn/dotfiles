@@ -1,0 +1,21 @@
+---
+- name: install ntp
+  become: yes
+  pkgng: name=ntp state=present
+
+- name: enable ntpd in rc.conf
+  become: yes
+  lineinfile:
+    dest: /etc/rc.conf
+    line: ntpd_enable=YES
+    state: present
+  register: ntpd_enabled
+
+- name: set ntp time
+  become: yes
+  command: ntpd -qg
+  when: ntpd_enabled.changed
+
+- name: enable ntpd
+  become: yes
+  service: name=ntpd enabled=yes state=started

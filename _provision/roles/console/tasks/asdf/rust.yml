@@ -2,15 +2,15 @@
 - name: install rust plugin via asdf
   git:
     repo: https://github.com/code-lever/asdf-rust
-    dest: ~/.asdf/plugins/rust
+    dest: "{{asdf_path}}/plugins/rust"
 
 - name: install rust {{rust_version}} via asdf
-  command: ~/.asdf/bin/asdf install rust {{rust_version}}
+  command: "{{asdf_bin}}/asdf install rust {{rust_version}}"
   args:
-    creates: ~/.asdf/installs/rust/{{rust_version}}
+    creates: "{{rust_version_path}}"
 
 - name: set rust {{rust_version}} as default
-  command: ~/.asdf/bin/asdf global rust {{rust_version}}
+  command: "{{asdf_bin}}/asdf global rust {{rust_version}}"
   changed_when: false
 
 - name: create rust source directory
@@ -33,13 +33,13 @@
     force: yes
 
 - name: install rust packages
-  command: ~/.asdf/installs/rust/{{rust_version}}/bin/cargo install {{item}}
+  command: "{{rust_version_path}}/bin/cargo install {{item.name}}"
   args:
-    creates: ~/.cargo/bin/{{item}}
+    creates: ~/.cargo/bin/{{item.binary}}
   with_items: "{{rust_packages}}"
   environment:
-    PATH: "{{ansible_env.HOME}}/.asdf/installs/rust/{{rust_version}}/bin:{{ansible_env.PATH}}"
+    PATH: "{{rust_version_path}}/bin:{{env_path}}"
 
 - name: update rust {{rust_version}} shims
-  command: ~/.asdf/bin/asdf reshim rust
+  command: "{{asdf_bin}}/asdf reshim rust"
   changed_when: false

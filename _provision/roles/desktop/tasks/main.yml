@@ -1,2 +1,11 @@
 ---
 - include_tasks: "{{ansible_os_family|lower}}.yml"
+
+- name: link desktop-specific files and directories
+  file:
+    src: "{{item.source}}"
+    path: "{{item.dest}}"
+    state: link
+    force: yes
+  with_items: "{{dots_desktop}}"
+  when: dots_desktop

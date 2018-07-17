@@ -1,0 +1,9 @@
+---
+- name: link freebsd-specific files and directories
+  file:
+    src: "{{item.source}}"
+    path: "{{item.dest}}"
+    state: link
+    force: yes
+  with_items: "{{dots_desktop_freebsd}}"
+  when: dots_desktop_freebsd

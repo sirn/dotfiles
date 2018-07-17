@@ -1,0 +1,23 @@
+---
+- name: clone helm source
+  git:
+    repo: https://github.com/kubernetes/helm
+    dest: "~/Dev/go/src/k8s.io/helm"
+    version: "v{{helm_version}}"
+  register: helm_clone
+
+- name: build helm {{helm_version}} from source
+  command: "{{gmake_bin}} bootstrap build -e SHELL=bash"
+  args:
+    chdir: ~/Dev/go/src/k8s.io/helm
+  environment:
+    PATH: "{{golang_path}}"
+    GOPATH: "{{golang_gopath}}"
+    GOROOT: "{{golang_goroot}}"
+  when: helm_clone.changed
+
+- name: link helm binary
+  file:
+    src: ~/Dev/go/src/k8s.io/helm/bin/helm
+    dest: ~/Dev/go/bin/helm
+    state: link

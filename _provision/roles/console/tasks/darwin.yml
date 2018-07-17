@@ -5,18 +5,19 @@
     - upgrade homebrew packages
 
 - name: initialize brew taps
-  homebrew_tap: tap={{item}} state=present
-  with_items: "{{brew_taps}}"
+  homebrew_tap: tap={{brew_taps}} state=present
+
+- name: install java
+  homebrew_cask: name=java state=present
 
 - name: install homebrew packages
-  homebrew: name={{item}} state=present
-  with_items: "{{brew_packages}}"
+  homebrew: name={{brew_packages}} state=present
 
-- name: link darwin-specific files and directories
-  file:
-    src: "{{item.source}}"
-    path: "{{item.dest}}"
-    state: link
-    force: yes
-  with_items: "{{dots_links_darwin}}"
-  when: ansible_os_family == "Darwin"
+- name: prepare sudoers directory
+  file: path=/etc/sudoers.d state=directory recurse=yes
+
+- name: adding vagrant sudoers
+  become: yes
+  copy:
+    src: "vagrant/01_vagrant_{{ansible_os_family|lower}}"
+    dest: /etc/sudoers.d/01_vagrant

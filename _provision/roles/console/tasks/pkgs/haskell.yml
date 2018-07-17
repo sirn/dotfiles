@@ -1,0 +1,6 @@
+---
+- name: install haskell stack packages
+  command: stack install {{item.name}} --resolver {{item.resolver}}
+  args:
+    creates: ~/.local/bin/{{item.binary}}
+  with_items: "{{haskell_stack_packages}}"

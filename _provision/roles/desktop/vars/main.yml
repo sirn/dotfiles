@@ -44,7 +44,6 @@ cask_packages:
   - imagealpha
   - imageoptim
   - iterm2
-  - java
   - keyboard-maestro
   - little-snitch
   - logitech-options
@@ -68,6 +67,16 @@ cask_packages:
   - virtualbox-extension-pack
   - viscosity
   - xquartz
+
+dots_desktop:
+  - source: ~/.dotfiles/tridactyl/tridactylrc
+    dest: ~/.tridactylrc
+
+dots_desktop_darwin:
+  - source: ~/.dotfiles/amethyst/amethyst
+    dest: ~/.amethyst
+
+dots_desktop_freebsd:
 
 mas_packages:
   - { id: 407963104, app: "Pixelmator" }

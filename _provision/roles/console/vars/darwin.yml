@@ -1,0 +1,57 @@
+---
+brew_taps:
+  - beeftornado/rmtree
+
+brew_packages:
+  - aria2
+  - autoconf
+  - blueutil
+  - carthage
+  - cocoapods
+  - cocot
+  - coreutils
+  - curl
+  - direnv
+  - ffmpeg
+  - fswatch
+  - git
+  - git-crypt
+  - git-lfs
+  - gpg
+  - gpg-agent
+  - graphicsmagick
+  - graphviz
+  - haskell-stack
+  - hub
+  - ipcalc
+  - jq
+  - keychain
+  - leiningen
+  - libressl
+  - mercurial
+  - moreutils
+  - neovim
+  - node@8
+  - openssh
+  - openssl
+  - packer
+  - pinentry-mac
+  - reattach-to-user-namespace
+  - rtmpdump
+  - s6
+  - socat
+  - terraform
+  - tmux
+  - trash
+  - tree
+  - xhyve
+  - xz
+  - zsh
+
+clang_path: /usr/bin/clang
+
+env_path: "/usr/local/opt/node@8/bin:{{asdf_shims}}:{{ansible_env.PATH}}"
+
+gmake_bin: make
+
+ld_gold: no

@@ -2,15 +2,15 @@
 - name: install erlang plugin via asdf
   git:
     repo: https://github.com/asdf-vm/asdf-erlang.git
-    dest: ~/.asdf/plugins/erlang
+    dest: "{{asdf_path}}/plugins/erlang"
 
 - name: install erlang {{erlang_version}} via asdf
-  command: ~/.asdf/bin/asdf install erlang {{erlang_version}}
+  command: "{{asdf_bin}}/asdf install erlang {{erlang_version}}"
   args:
-    creates: ~/.asdf/installs/erlang/{{erlang_version}}
+    creates: "{{erlang_version_path}}"
 
 - name: set erlang {{erlang_version}} as default
-  command: ~/.asdf/bin/asdf global erlang {{erlang_version}}
+  command: "{{asdf_bin}}/asdf global erlang {{erlang_version}}"
   changed_when: false
 
 # Package manager installed Rebar3 sometimes broken when Erlang version
@@ -28,6 +28,8 @@
 
 - name: install rebar3
   command: ~/.cache/rebar3/bin/rebar3 local install
+  environment:
+    PATH: "{{erlang_version_path}}/bin:{{env_path}}"
   when: download_rebar3.changed
 
 # Poor man's auto-update mechanism using Last-Modified header.
@@ -57,8 +59,8 @@
     echo {{remote_rebar3.stdout}} > ~/.cache/rebar3/.version
   when: remote_rebar3.changed
   environment:
-    PATH: "{{ansible_env.HOME}}/.asdf/installs/erlang/{{erlang_version}}/bin:{{ansible_env.PATH}}"
+    PATH: "{{erlang_version_path}}/bin:{{env_path}}"
 
 - name: update erlang {{erlang_version}} shims
-  command: ~/.asdf/bin/asdf reshim erlang
+  command: "{{asdf_bin}}/asdf reshim erlang"
   changed_when: false

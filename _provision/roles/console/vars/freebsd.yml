@@ -1,0 +1,54 @@
+---
+clang_path: /usr/bin/clang
+
+env_path: "{{asdf_shims}}:{{ansible_env.PATH}}"
+
+gmake_bin: gmake
+
+ld_gold: yes
+
+pkgng_packages:
+  - GraphicsMagick
+  - aria2
+  - autoconf
+  - bash
+  - binutils
+  - ca_root_nss
+  - cocot
+  - coreutils
+  - curl
+  - direnv
+  - emacs-nox
+  - execline
+  - ffmpeg
+  - fswatch
+  - git
+  - git-crypt
+  - git-lfs
+  - gmake
+  - gnupg
+  - google-cloud-sdk
+  - graphviz
+  - hub
+  - ipcalc
+  - jq
+  - keychain
+  - leiningen
+  - mercurial
+  - moreutils
+  - neovim
+  - node8
+  - npm-node8
+  - openssl
+  - packer
+  - rtmpdump
+  - s6
+  - socat
+  - stack
+  - terraform
+  - tmux
+  - tree
+  - vagrant
+  - virtualbox-ose-additions-nox11
+  - virtualbox-ose-nox11
+  - zsh

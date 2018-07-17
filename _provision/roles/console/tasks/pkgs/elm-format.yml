@@ -1,0 +1,20 @@
+---
+- name: clone elm-format source
+  git:
+    repo: "https://github.com/avh4/elm-format"
+    dest: "~/.local/src/elm-format"
+    version: "{{elm_format_version}}"
+  register: elm_format_clone
+
+- name: install elm-format
+  command: stack install .
+  args:
+    chdir: ~/.local/src/elm-format
+  when: elm_format_clone.changed
+
+- name: link elm-format
+  file:
+    src: "~/.local/bin/{{elm_format_bin}}"
+    path: "~/.local/bin/elm-format"
+    state: link
+    force: yes

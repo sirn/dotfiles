@@ -1,0 +1,17 @@
+---
+- name: clone kubectl source
+  git:
+    repo: https://github.com/kubernetes/kubernetes
+    dest: "~/Dev/go/src/k8s.io/kubernetes"
+    version: "v{{kubectl_version}}"
+  register: kubernetes_clone
+
+- name: build kubectl {{kubectl_version}} from source
+  command: go install .
+  args:
+    chdir: ~/Dev/go/src/k8s.io/kubernetes/cmd/kubectl
+  environment:
+    PATH: "{{golang_path}}"
+    GOPATH: "{{golang_gopath}}"
+    GOROOT: "{{golang_goroot}}"
+  when: kubernetes_clone.changed

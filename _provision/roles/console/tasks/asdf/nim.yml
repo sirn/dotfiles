@@ -2,17 +2,17 @@
 - name: install nim plugin via asdf
   git:
     repo: https://github.com/rfrancis/asdf-nim.git
-    dest: ~/.asdf/plugins/nim
+    dest: "{{asdf_path}}/plugins/nim"
 
 - name: install nim {{nim_version}} via asdf
-  command: ~/.asdf/bin/asdf install nim v{{nim_version}}
+  command: "{{asdf_bin}}/asdf install nim v{{nim_version}}"
   args:
-    creates: ~/.asdf/installs/nim/v{{nim_version}}
+    creates: "{{nim_version_path}}"
 
 - name: set nim {{nim_version}} as default
-  command: ~/.asdf/bin/asdf global nim v{{nim_version}}
+  command: "{{asdf_bin}}/asdf global nim v{{nim_version}}"
   changed_when: false
 
 - name: update nim {{nim_version}} shims
-  command: ~/.asdf/bin/asdf reshim nim
+  command: "{{asdf_bin}}/asdf reshim nim"
   changed_when: false

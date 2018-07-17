@@ -1,9 +1,112 @@
 ---
+- include_vars: "{{ansible_os_family|lower}}.yml"
+  tags:
+    - always
+
+#
+# Platform-specific
+#
+
 - include_tasks: "{{ansible_os_family|lower}}.yml"
 
+#
+# asdf-managed
+#
+
+- name: install asdf
+  git:
+    repo: https://github.com/asdf-vm/asdf.git
+    dest: "{{asdf_path}}"
+    version: "v{{asdf_version}}"
+  tags:
+    - asdf
+
+- name: ensure asdf plugin directory
+  file:
+    path: "{{asdf_path}}/plugins"
+    state: directory
+    recurse: yes
+  tags:
+    - asdf
+
+- import_tasks: "asdf/elixir.yml"
+  tags:
+    - asdf
+    - elixir
+
+- import_tasks: "asdf/erlang.yml"
+  tags:
+    - asdf
+    - erlang
+
+- import_tasks: "asdf/golang.yml"
+  tags:
+    - asdf
+    - golang
+
+- import_tasks: "asdf/nim.yml"
+  tags:
+    - asdf
+    - nim
+
+- import_tasks: "asdf/python3.yml"
+  tags:
+    - asdf
+    - python3
+
+- import_tasks: "asdf/ruby.yml"
+  tags:
+    - asdf
+    - ruby
+
+- import_tasks: "asdf/rust.yml"
+  tags:
+    - asdf
+    - rust
+
+#
+# Custom packages
+#
+
+- import_tasks: "pkgs/haskell.yml"
+  tags:
+    - haskell
+
+- import_tasks: "pkgs/nodejs.yml"
+  tags:
+    - nodejs
+
+- import_tasks: "pkgs/elm.yml"
+  tags:
+    - elm
+
+- import_tasks: "pkgs/elm-format.yml"
+  tags:
+    - elm
+
+- import_tasks: "pkgs/helm.yml"
+  tags:
+    - kubernetes
+
 - import_tasks: "pkgs/kube-ps1.yml"
+  tags:
+    - kubernetes
+
+- import_tasks: "pkgs/kubectl.yml"
+  tags:
+    - kubernetes
+
 - import_tasks: "pkgs/kubectx.yml"
+  tags:
+    - kubernetes
+
 - import_tasks: "pkgs/zsh.yml"
+  tags:
+    - zsh
+
+#
+# Links
+#
 
 - name: prepare dot directories
   file: path={{item}} state=directory recurse=yes
@@ -16,12 +119,3 @@
     state: link
     force: yes
   with_items: "{{dots_links}}"
-
-- name: prepare sudoers directory
-  file: path=/etc/sudoers.d state=directory recurse=yes
-
-- name: adding vagrant sudoers
-  become: yes
-  copy:
-    src: "vagrant/01_vagrant_{{ansible_os_family|lower}}"
-    dest: /etc/sudoers.d/01_vagrant

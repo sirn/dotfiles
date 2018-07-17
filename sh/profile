@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 #
 # ~/.profile
 #
@@ -7,26 +7,44 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export EDITOR=vi
 
-export XDG_CONFIG_HOME=~/.config
-export XDG_CACHE_HOME=~/.cache
-export XDG_DATA_HOME=~/.data
-export XDG_STATE_HOME=~/.state
+export XDG_CONFIG_HOME=$HOME/.config
+export XDG_CACHE_HOME=$HOME/.cache
+export XDG_DATA_HOME=$HOME/.data
+export XDG_STATE_HOME=$HOME/.state
 
 PATH=/usr/local/sbin:$PATH
 PATH=/usr/local/bin:$PATH
 PATH=$HOME/.local/bin:$PATH
+PATH=$HOME/.local/var/npm/bin:$PATH
+
+#
+# Rust
+#
 
 export RUST_SRC_PATH=$HOME/.local/src/rust/current/src/
 PATH=$HOME/.cargo/bin:$PATH
 
-if [ -d ~/.cache/rebar3 ]; then
-    PATH=$HOME/.cache/rebar3/bin:$PATH
-fi
+#
+# Erlang
+#
+
+PATH=$HOME/.cache/rebar3/bin:$PATH
+
+#
+# Golang
+#
 
 export GOPATH=$HOME/Dev/go/
 PATH=$HOME/Dev/go/bin:$PATH
 
-if [[ "$OSTYPE" == "darwin"* ]]; then
+#
+# Platform-specific
+#
+
+if [ "$(uname)" = "Darwin" ]; then
+    PATH=/usr/local/opt/gpg-agent/bin:$PATH
+    PATH=/usr/local/opt/node@8/bin:$PATH
+
     if hash brew 2>/dev/null; then
         export HOMEBREW_NO_ANALYTICS=1
         export HOMEBREW_NO_AUTO_UPDATE=1
@@ -49,10 +67,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 if hash keychain 2>/dev/null; then
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        PATH=/usr/local/opt/gpg-agent/bin:$PATH
-    fi
-
     eval "$(keychain --eval --agents ssh,gpg --quiet)"
 fi
 
