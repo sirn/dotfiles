@@ -40,6 +40,7 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+(setq straight-process-buffer " *straight-process*")
 (straight-use-package 'diminish)
 (straight-use-package 'use-package)
 
