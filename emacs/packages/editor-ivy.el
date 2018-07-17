@@ -1,20 +1,8 @@
-;; Using raxod502's fork until a bug in Ivy is fixed.
-;; See also https://github.com/raxod502/prescient.el
-;; --
 ;; Note: need to be included before counsel/swiper
 ;; because they're essentially the same repo.
 (use-package ivy
   :diminish ivy-mode
-  :straight
-  (:host github
-         :repo "raxod502/swiper"
-         :files (:defaults (:exclude
-                            "swiper.el"
-                            "counsel.el"
-                            "ivy-hydra.el")
-                           "doc/ivy-help.org")
-         :branch "fork/1"
-         :upstream (:host github :repo "abo-abo/swiper"))
+  :straight t
 
   :preface
   (eval-when-compile
