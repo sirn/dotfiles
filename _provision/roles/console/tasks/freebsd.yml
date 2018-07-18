@@ -7,6 +7,40 @@
   become: yes
   pkgng: name={{pkgng_packages}} state=present
 
+# setup virtualbox kernel modules and permissions
+# see also: https://www.freebsd.org/doc/handbook/virtualization-host-virtualbox.html
+
+- name: configure virtualbox kernel module
+  become: yes
+  lineinfile:
+    dest: /boot/loader.conf
+    line: vboxdrv_load="YES"
+    state: present
+    create: yes
+
+- name: enable vboxnet service
+  become: yes
+  lineinfile:
+    dest: /etc/rc.conf
+    line: vboxnet_enable="YES"
+    state: present
+
+- name: configure virtualbox network module
+  become: yes
+  blockinfile:
+    path: /etc/devfs.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    content: |
+      own vboxnetctl root:vboxusers
+      perm vboxnetctl 0600
+
+- name: add {{ansible_user_id}} to vboxusers group
+  become: yes
+  user:
+    name: "{{ansible_user_id}}"
+    groups: vboxusers
+    append: yes
+
 # used by bindist in ghc-7.10.2 distribution (during elm build) for example.
 # but this is freebsd-specific so we have to put it here.
 

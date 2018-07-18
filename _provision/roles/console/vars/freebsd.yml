@@ -36,6 +36,7 @@ pkgng_packages:
   - leiningen
   - mercurial
   - moreutils
+  - mosh
   - neovim
   - node8
   - npm-node8

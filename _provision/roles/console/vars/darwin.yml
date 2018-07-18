@@ -30,6 +30,7 @@ brew_packages:
   - libressl
   - mercurial
   - moreutils
+  - mosh
   - neovim
   - node@8
   - openssh
