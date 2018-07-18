@@ -1,0 +1,19 @@
+---
+- name: enable nfsd in rc.conf
+  become: yes
+  lineinfile:
+    dest: /etc/rc.conf
+    line: "{{item}}"
+    state: present
+  with_items:
+    - nfs_server_enable="YES"
+    - mountd_enable="YES"
+    - rpcbind_enable="YES"
+
+- name: enable nfsd
+  become: yes
+  service: name={{item}} enabled=yes state=started
+  with_items:
+    - nfsd
+    - mountd
+    - rpcbind

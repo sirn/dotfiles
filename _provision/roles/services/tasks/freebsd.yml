@@ -1,2 +1,3 @@
 ---
 - include_tasks: "freebsd/ntp.yml"
+- include_tasks: "freebsd/nfs.yml"
