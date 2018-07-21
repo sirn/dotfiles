@@ -25,7 +25,7 @@ SAVEHIST=10000
 PROMPT_HOSTNAME='%m'
 PROMPT_CWD=' ${_prompt_cwd}'
 PROMPT_GIT='${vcs_info_msg_0_}%{$reset_color%}'
-PROMPT="${PROMPT_HOSTNAME}${PROMPT_CWD}${PROMPT_GIT}"
+PROMPT="%{$reset_color%}${PROMPT_HOSTNAME}${PROMPT_CWD}${PROMPT_GIT}%{$reset_color%}"
 
 if [ -f "${HOME}/.local/src/kube-ps1/kube-ps1.sh" ]; then
     source "${HOME}/.local/src/kube-ps1/kube-ps1.sh"

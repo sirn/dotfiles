@@ -11,6 +11,7 @@
     state: directory
 
 - name: disable kube-ps1 globally
-  file:
-    path: ~/.kube/kube-ps1/disabled
-    state: touch
+  copy:
+    content: ""
+    dest: ~/.kube/kube-ps1/disabled
+    force: no

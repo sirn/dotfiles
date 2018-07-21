@@ -1,9 +1,4 @@
 ---
-- name: update homebrew
-  homebrew: update_homebrew=yes
-  notify:
-    - upgrade homebrew packages
-
 - name: initialize brew taps
   homebrew_tap: tap={{brew_taps}} state=present
 
@@ -11,7 +6,10 @@
   homebrew_cask: name=java state=present
 
 - name: install homebrew packages
-  homebrew: name={{brew_packages}} state=present
+  homebrew:
+    name: "{{brew_packages}}"
+    install_options: build-from-source
+    state: present
 
 - name: prepare sudoers directory
   file: path=/etc/sudoers.d state=directory recurse=yes

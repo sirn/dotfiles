@@ -10,10 +10,17 @@
     - mountd_enable="YES"
     - rpcbind_enable="YES"
 
+- name: ensure exports file exists
+  become: yes
+  copy:
+    content: ""
+    dest: /etc/exports
+    force: no
+
 - name: enable nfsd
   become: yes
   service: name={{item}} enabled=yes state=started
   with_items:
-    - nfsd
-    - mountd
     - rpcbind
+    - mountd
+    - nfsd

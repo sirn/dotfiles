@@ -4,14 +4,26 @@ This repository hosts my personal dotfiles as well as machine provisioning and w
 
 ## Usage
 
-```
-$ git clone https://github.com/sirn/dotfiles.git .dotfiles
-$ cd dotfiles
-$ ./bootstrap.sh
+Darwin:
+
+```shell
+$ curl -sL https://raw.githubusercontent.com/sirn/dotfiles/master/bootstrap.sh | sh -s - -r \
+    -p console \
+    -p desktop \
+    -p services
 ```
 
-Run `./bootstrap.sh -h` for options.
+FreeBSD:
 
-### License
+```shell
+$ fetch -o - https://raw.githubusercontent.com/sirn/dotfiles/master/bootstrap.sh | sh -s - -r \
+    -p console \
+    -p desktop \
+    -p services
+```
+
+Subsequent run, use `./dotfiles/bootstrap.sh`.
+
+## License
 
 Public domain

@@ -21,7 +21,6 @@ brew_packages:
   - gpg-agent
   - graphicsmagick
   - graphviz
-  - haskell-stack
   - hub
   - ipcalc
   - jq
@@ -49,10 +48,12 @@ brew_packages:
   - xz
   - zsh
 
-clang_path: /usr/bin/clang
+clang_bin: /usr/bin/clang
 
-env_path: "/usr/local/opt/node@8/bin:{{asdf_shims}}:{{ansible_env.PATH}}"
+env_path: "{{ansible_env.HOME}}/.local/bin:{{asdf_shims}}:/usr/local/opt/node@8/bin:{{ansible_env.PATH}}"
+
+fuse_ld: no
+
+gcc_bin: /usr/bin/clang
 
 gmake_bin: make
-
-ld_gold: no

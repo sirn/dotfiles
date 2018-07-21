@@ -1,6 +1,64 @@
 #!/bin/sh
 
 #
+# Utils
+#
+
+echo_clear() {
+    printf "\\033[1A\\r\\033[K"
+}
+
+echo_ok() {
+    printf "\\033[0;32m✓\\033[0;0m %s\\n" "$1"
+}
+
+echo_wait() {
+    printf "* %s\\n" "$1"
+}
+
+echo_error() {
+    printf "\\033[0;31m!\\033[0;0m %s\\n" "$1"
+}
+
+
+#
+# Self-bootstrapping
+# Yo dawg
+#
+
+_repo_tar="https://github.com/sirn/dotfiles/archive/master.tar.gz"
+_repo_ssh="git@github.com:sirn/dotfiles.git"
+_dotfiles="$HOME/.dotfiles"
+
+_platform=$(uname)
+
+self_bootstrap_darwin() {
+    curl -sL "$_repo_tar" | tar -xvzf - --strip-components=1 -C "$_dotfiles"
+}
+
+self_bootstrap_freebsd() {
+    fetch -o - "$_repo_tar" | tar -xvzf - --strip-components=1 -C "$_dotfiles"
+}
+
+if [ ! -f "$_dotfiles/bootstrap.sh" ]; then
+    mkdir -p "$_dotfiles"
+
+    case $_platform in
+        Darwin)  self_bootstrap_darwin;;
+        FreeBSD) self_bootstrap_freebsd;;
+        *)
+            echo "Unknown platform: $_platform."
+            exit 1
+            ;;
+    esac
+
+    # shellcheck disable=SC1090
+    exec "$_dotfiles/bootstrap.sh" "$@"
+    exit 0
+fi
+
+
+#
 # Configurations
 #
 
@@ -36,6 +94,7 @@ reset_config() {
 }
 
 _profile=""
+_first_run="1"
 
 # shellcheck disable=SC1090
 if [ -f "$_config_file" ]; then
@@ -92,28 +151,8 @@ mkdir -p "$(dirname "$_config_file")"
 
 cat <<-EOF > "$_config_file"
 _profile="$_profile"
+_first_run="0"
 EOF
-
-
-#
-# Utils
-#
-
-echo_clear() {
-    printf "\\033[1A\\r\\033[K"
-}
-
-echo_ok() {
-    printf "\\033[0;32m✓\\033[0;0m %s\\n" "$1"
-}
-
-echo_wait() {
-    printf "* %s\\n" "$1"
-}
-
-echo_error() {
-    printf "\\033[0;31m!\\033[0;0m %s\\n" "$1"
-}
 
 
 #
@@ -121,8 +160,8 @@ echo_error() {
 #
 
 common_ansible_run() {
-    _playbook="_provision/playbook.yml"
-    _ansible_config="_provision/ansible.cfg"
+    _playbook="$_dotfiles/_provision/playbook.yml"
+    _ansible_config="$_dotfiles/_provision/ansible.cfg"
     _opts="-i _provision/hosts"
 
     if [ "$_ansible_bin" = "" ]; then
@@ -170,26 +209,36 @@ common_ansible_run() {
 #
 
 bootstrap_darwin() {
-    export PATH=/usr/local/bin:$PATH
-    export HOMEBREW_NO_COLOR=1
+    export PATH=$HOME/.local/bin:/usr/local/bin:$PATH
     export HOMEBREW_NO_EMOJI=1
     export HOMEBREW_NO_ANALYTICS=1
 
     xcode-select --install 2>/dev/null
+
     if ! hash brew 2>/dev/null; then
         echo_wait 'Homebrew is not installed. Installing...'
         _install="https://raw.githubusercontent.com/Homebrew/install/master/install"
         /usr/bin/ruby -e "$(curl -fsSL $_install)"
     fi
 
-    _ansible_bootstrapped=0
-    _ansible_opts="-K"
+    /usr/local/bin/brew update
 
-    if ! hash ansible-playbook 2>/dev/null; then
+    _ansible_opts="-K"
+    _ansible_python=/usr/local/bin/python2
+
+    if [ ! -f "$_ansible_python" ]; then
+        echo_wait 'Python is not installed. Installing...'
+        /usr/local/bin/brew install python@2 --build-from-source
+    fi
+
+    # Python on a Mac is weird.
+    # See also: https://docs.brew.sh/Homebrew-and-Python
+    _py_ver=$("$_ansible_python" -c 'import sys;print(".".join(map(str, sys.version_info[:2])))')
+    _ansible_bin="$HOME/Library/Python/$_py_ver/bin/ansible-playbook"
+
+    if [ ! -f "$_ansible_bin" ]; then
         echo_wait 'Ansible is not installed. Installing...'
-        brew install ansible python@3
-        _ansible_bootstrapped=1
-        _ansible_python=/usr/local/bin/python3
+        /usr/local/bin/pip2 install --user --install-option="--prefix=" ansible=="$_ansible_version"
     fi
 
     common_ansible_run "$@"
@@ -200,21 +249,21 @@ bootstrap_darwin() {
                 if [ "$*" = "" ]; then
                     if ! hash mas 2>/dev/null; then
                         echo_wait 'MAS is not installed. Installing...'
-                        brew install mas
+                        /usr/local/bin/brew install mas
                     fi
 
-                    brew cu -a -y
-                    mas upgrade
+                    /usr/local/bin/brew cask upgrade
+                    /usr/local/bin/mas upgrade
                 fi
                 ;;
         esac
     done
 
-    if [ $_ansible_bootstrapped = 1 ]; then
-        brew tap beeftornado/rmtree
-        echo_wait 'Uninstalling a bootstrapped Ansible...'
-        brew rmtree ansible
-	brew uninstall python@3
+    /usr/local/bin/brew upgrade --build-from-source
+
+    # Some weird packages will randomly chmod /usr/local/Cellar
+    if [ -d /usr/local/Cellar ]; then
+        chmod ug+rwx,o+rx /usr/local/Cellar
     fi
 
     rm "$HOME"/.homebrew_analytics_user_uuid >/dev/null 2>&1
@@ -229,43 +278,50 @@ bootstrap_freebsd() {
     export PATH=$HOME/.local/bin:/usr/local/bin:$PATH
     export LANG=en_US.UTF-8
 
-    sudo ALWAYS_ASSUME_YES=yes pkg bootstrap >/dev/null 2>&1
-    sudo pkg update >/dev/null 2>&1
+    # Perma-disable FreeBSD repo as we'll be exclusively using Synth.
+    sudo mkdir -p /usr/local/etc/pkg/repos
+    echo "FreeBSD: { enabled: no }" | sudo tee /usr/local/etc/pkg/repos/FreeBSD.conf >/dev/null
 
-    _ansible_bootstrapped=0
-    _ansible_python=/usr/local/bin/python3.6
-
-    if ! hash python3.6 2>/dev/null; then
-        echo_wait 'Python is not installed. Installing...'
-        sudo pkg install -y ca_root_nss
-        sudo pkg install -y python36
+    if [ ! -d /usr/ports/ports-mgmt/synth ]; then
+        sudo portsnap fetch --interactive
+        sudo portsnap extract
+    elif [ "$_first_run" = "1" ]; then
+        sudo portsnap fetch --interactive
+        sudo portsnap extract
+        sudo portsnap update
     fi
 
-    if ! hash ansible-playbook 2>/dev/null; then
+    if ! hash synth 2>/dev/null; then
+        echo_wait 'Synth is not installed. Installing...'
+        sudo make -C /usr/ports/ports-mgmt/synth -DBATCH install clean
+    fi
+
+    _ansible_python=/usr/local/bin/python2.7
+    _ansible_bin=$HOME/.local/bin/ansible-playbook
+
+    if [ ! -f "$_ansible_python" ]; then
+        echo_wait 'Python is not installed. Installing...'
+        sudo /usr/local/bin/synth install security/ca_root_nss lang/python27
+    fi
+
+    if [ ! -f /usr/local/bin/pip-2.7 ]; then
+        echo_wait 'Pip is not installed. Installing...'
+        sudo /usr/local/bin/synth install devel/py-pip@py27
+    fi
+
+    if [ ! -f "$_ansible_bin" ]; then
         echo_wait 'Ansible is not installed. Installing...'
-        sudo pkg install -y py36-pip
-        pip-3.6 install --user ansible=="$_ansible_version"
-        _ansible_bootstrapped=1
-        _ansible_bin=$HOME/.local/bin/ansible-playbook
+        /usr/local/bin/pip-2.7 install --user ansible=="$_ansible_version"
     fi
 
     common_ansible_run "$@"
-
-    if [ $_ansible_bootstrapped = 1 ]; then
-        echo_wait 'Uninstalling a bootstrapped Ansible...'
-        pip-3.6 uninstall -y ansible
-        rm -rf "$HOME/.local/lib/python3.6"
-        sudo pkg uninstall --user -y py36-pip
-        sudo pkg autoremove -y
-    fi
+    sudo /usr/local/bin/synth upgrade-system
 }
 
 
 #
 # Main
 #
-
-_platform=$(uname)
 
 echo_wait "Running bootstrap with profile(s): $_profile"
 
@@ -282,3 +338,16 @@ case $_platform in
         exit 1
         ;;
 esac
+
+
+#
+# Re-git
+#
+
+if [ ! -d "$_dotfiles/.git" ]; then
+    cd "$_dotfiles" || exit
+    git init
+    git remote add origin "$_repo_ssh"
+    GIT_SSH_COMMAND="ssh -i $HOME/.ssh/git_ed25519" git fetch
+    git reset --hard origin/master
+fi

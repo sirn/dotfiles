@@ -1,0 +1,7 @@
+---
+- name: enable portsnap periodic
+  become: yes
+  file:
+    src: portsnap/periodic.sh
+    dest: /usr/local/etc/periodic/daily/900.portsnap
+    mode: 0755

@@ -1,8 +1,5 @@
 " sanitise tridactyllocal tridactylsync
 
-bind <C-.>a fillcmdline tabopen -c alternative
-bind <C-.>w fillcmdline tabopen -c work
-
 bind <C-p> tabprev
 bind <C-n> tabnext
 bind <C-b> scrollpage -1
@@ -24,6 +21,6 @@ quickmark t https://app.timelyapp.com/829143/
 quickmark w https://waffle.io/forloopend/fanboi2
 quickmark y https://app.youneedabudget.com/
 
-fixamo
-guiset gui none
-guiset navbar autohide
+" fixamo
+" guiset gui none
+" guiset navbar autohide

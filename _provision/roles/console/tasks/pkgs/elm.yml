@@ -22,8 +22,6 @@
   args:
     creates: ~/.local/src/elm/stack.yaml
     chdir: ~/.local/src/elm
-  environment:
-    LD_LIBRARY_PATH: "{{ansible_env.HOME}}/.local/compat/lib"
 
 - name: patch dependencies in stack.yaml for elm
   replace:
@@ -35,31 +33,14 @@
     - { pkg: foundation, version: "0.0.20" }
     - { pkg: fsnotify, version: "0.2.1.2" }
 
-- name: patch build options in stack.yaml for elm
-  blockinfile:
-    path: ~/.local/src/elm/stack.yaml
-    marker: "# {mark} ANSIBLE MANAGED BLOCK"
-    content: |
-      with-gcc: {{clang_path}}
-      {% if ld_gold %}
-      ghc-options:
-        basement: -optl-fuse-ld=gold
-        foundation: -optl-fuse-ld=gold
-        zlib: -optl-fuse-ld=gold
-      {% endif %}
-
 - name: install elm
   command: stack install elm-compiler elm-package elm-make elm-repl
   args:
     chdir: ~/.local/src/elm
-  environment:
-    LD_LIBRARY_PATH: "{{ansible_env.HOME}}/.local/compat/lib"
   when: elm_clone.changed
 
 - name: install elm-reactor
   command: stack install elm-reactor
   args:
     chdir: ~/.local/src/elm
-  environment:
-    LD_LIBRARY_PATH: "{{ansible_env.HOME}}/.local/compat/lib"
   when: elm_clone.changed

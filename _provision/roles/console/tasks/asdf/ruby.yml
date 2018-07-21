@@ -5,10 +5,16 @@
     dest: "{{asdf_path}}/plugins/ruby"
     version: "fix-patch"
 
+# Some packages e.g. ruby ffi doesn't support building with clang on freebsd
+# Ruby will use the CC used to build Ruby itself, so we're setting CC here.
+# See also https://github.com/ffi/ffi/issues/622
 - name: install ruby {{ruby_version}} via asdf
   command: "{{asdf_bin}}/asdf install ruby {{ruby_version}}"
   args:
     creates: "{{ruby_version_path}}"
+  environment:
+    CC: "{{gcc_bin}}"
+    MAKE: "{{gmake_bin}}"
 
 - name: set ruby {{ruby_version}} as default
   command: "{{asdf_bin}}/asdf global ruby {{ruby_version}}"

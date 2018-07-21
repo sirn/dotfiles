@@ -2,7 +2,7 @@
 - name: install dnscrypt-proxy service
   homebrew: name=dnscrypt-proxy state=latest
   notify:
-    - reload dnscrypt-proxy launchd service
+    - restart dnscrypt-proxy launchd service
 
 - name: ensure dnscrypt-proxy directories
   become: yes
@@ -24,7 +24,7 @@
     owner: nobody
     group: nobody
   notify:
-    - reload dnscrypt-proxy launchd service
+    - restart dnscrypt-proxy launchd service
 
 - name: enable dnscrypt-proxy service
   become: yes
@@ -32,4 +32,4 @@
     src: dnscrypt-proxy/com.github.jedisct1.dnscrypt-proxy.plist
     dest: /Library/LaunchDaemons/com.github.jedisct1.dnscrypt-proxy.plist
   notify:
-    - reload dnscrypt-proxy launchd service
+    - restart dnscrypt-proxy launchd service

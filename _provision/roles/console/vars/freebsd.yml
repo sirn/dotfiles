@@ -1,55 +1,59 @@
 ---
-clang_path: /usr/bin/clang
+clang_bin: /usr/bin/clang
 
-env_path: "{{asdf_shims}}:{{ansible_env.PATH}}"
+env_path: "{{ansible_env.HOME}}/.local/bin:{{asdf_shims}}:{{ansible_env.PATH}}"
+
+fuse_ld: gold
+
+gcc_bin: /usr/local/bin/gcc
 
 gmake_bin: gmake
 
-ld_gold: yes
-
-pkgng_packages:
-  - GraphicsMagick
-  - aria2
-  - autoconf
-  - bash
-  - binutils
-  - ca_root_nss
-  - cocot
-  - coreutils
-  - curl
-  - direnv
-  - emacs-nox
-  - execline
-  - ffmpeg
-  - fswatch
-  - git
-  - git-crypt
-  - git-lfs
-  - gmake
-  - gnupg
-  - google-cloud-sdk
-  - graphviz
-  - hub
-  - ipcalc
-  - jq
-  - keychain
-  - leiningen
-  - mercurial
-  - moreutils
-  - mosh
-  - neovim
-  - node8
-  - npm-node8
-  - openssl
-  - packer
-  - rtmpdump
-  - s6
-  - socat
-  - stack
-  - terraform
-  - tmux
-  - tree
-  - vagrant
-  - virtualbox-ose-additions-nox11
-  - virtualbox-ose-nox11
-  - zsh
+ports_packages:
+  - converters/cocot
+  - devel/autoconf
+  - devel/binutils
+  - devel/git
+  - devel/git-lfs
+  - devel/gmake
+  - devel/hub
+  - devel/leiningen
+  - devel/mercurial@py27
+  - editors/emacs@nox
+  - editors/neovim
+  - emulators/virtualbox-ose-nox11
+  - ftp/curl
+  - graphics/GraphicsMagick
+  - graphics/graphviz
+  - java/openjdk8-jre
+  - lang/execline
+  - lang/gcc
+  - misc/compat8x
+  - multimedia/ffmpeg
+  - multimedia/rtmpdump
+  - net-mgmt/ipcalc
+  - net/google-cloud-sdk
+  - net/mosh
+  - net/socat
+  - security/ca_root_nss
+  - security/git-crypt
+  - security/gnupg
+  - security/keychain
+  - security/openssl
+  - shells/bash
+  - shells/zsh
+  - sysutils/coreutils
+  - sysutils/direnv
+  - sysutils/fswatch-mon
+  - sysutils/lsof
+  - sysutils/moreutils
+  - sysutils/packer
+  - sysutils/s6
+  - sysutils/terraform
+  - sysutils/tmux
+  - sysutils/tree
+  - sysutils/vagrant
+  - textproc/jq
+  - www/aria2
+  - www/node8
+  - www/npm-node8

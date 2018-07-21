@@ -6,7 +6,6 @@ brew_desktop_packages:
   - emacs-mac
 
 cask_taps:
-  - buo/cask-upgrade
   - homebrew/cask-drivers
   - homebrew/cask-fonts
   - homebrew/cask-versions
@@ -45,7 +44,6 @@ cask_packages:
   - imageoptim
   - iterm2
   - keyboard-maestro
-  - little-snitch
   - logitech-options
   - mactex
   - mailmate
@@ -55,7 +53,6 @@ cask_packages:
   - omnigraffle
   - omnioutliner
   - paw
-  - quitter
   - screens
   - sketch
   - spotify
@@ -89,5 +86,5 @@ mas_packages:
   - { id: 889428659, app: "xScope" }
   - { id: 890031187, app: "Marked 2" }
   - { id: 937984704, app: "Amphetamine" }
-  - { id: 1289378661, app: "Twitterific" }
+  - { id: 1289378661, app: "Twitterrific" }
   - { id: 1333542190, app: "1Password 7" }

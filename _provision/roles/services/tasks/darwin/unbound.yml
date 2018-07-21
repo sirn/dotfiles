@@ -2,7 +2,7 @@
 - name: install unbound service
   homebrew: name=unbound state=latest
   notify:
-    - reload unbound launchd service
+    - restart unbound launchd service
 
 - name: ensure unbound directories
   become: yes
@@ -18,12 +18,18 @@
 
 - name: ensure unbound anchor
   become: yes
-  become_user: nobody
   shell: /usr/local/sbin/unbound-anchor -a /usr/local/svcs/unbound/etc/root.key
   args:
     creates: /usr/local/svcs/unbound/etc/root.key
   register: unbound_anchor
   failed_when: unbound_anchor.rc >= 2
+
+- name: ensure unbound anchor permissions
+  become: yes
+  file:
+    path: /usr/local/svcs/unbound/etc/root.key
+    owner: nobody
+    group: nobody
 
 - name: update unbound configurations
   become: yes
@@ -33,7 +39,7 @@
     owner: nobody
     group: nobody
   notify:
-    - reload unbound launchd service
+    - restart unbound launchd service
 
 - name: enable unbound service
   become: yes
@@ -41,4 +47,4 @@
     src: unbound/net.unbound.unbound.plist
     dest: /Library/LaunchDaemons/net.unbound.unbound.plist
   notify:
-    - reload unbound launchd service
+    - restart unbound launchd service

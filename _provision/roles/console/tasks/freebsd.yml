@@ -1,11 +1,9 @@
 ---
-- name: install java
+- name: install ports packages via synth
   become: yes
-  pkgng: name=openjdk-jre state=present
-
-- name: install pkgng packages
-  become: yes
-  pkgng: name={{pkgng_packages}} state=present
+  command: /usr/local/bin/synth install {{ports_packages|join(" ")}}
+  register: synth_install
+  changed_when: synth_install.stdout.find("The most recent version of packages are already installed") == -1
 
 # setup virtualbox kernel modules and permissions
 # see also: https://www.freebsd.org/doc/handbook/virtualization-host-virtualbox.html
@@ -40,19 +38,3 @@
     name: "{{ansible_user_id}}"
     groups: vboxusers
     append: yes
-
-# used by bindist in ghc-7.10.2 distribution (during elm build) for example.
-# but this is freebsd-specific so we have to put it here.
-
-- name: create local compatibility directories
-  file:
-    path: "{{item}}"
-    state: directory
-  with_items:
-    - ~/.local/compat/lib
-
-- name: link libutil for compatibility
-  file:
-    src: "/lib/libutil.so.9"
-    path: "~/.local/compat/lib/libutil.so.8"
-    state: link

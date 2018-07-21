@@ -1,6 +1,31 @@
 ---
+- name: ensure stack directories
+  file:
+    path: "{{item}}"
+    state: directory
+  with_items:
+    - "~/.local/bin"
+    - "~/.stack"
+
+- name: install stack
+  shell: >
+    curl -sSL https://get.haskellstack.org/ |
+    sh -s - -d {{ansible_env.HOME}}/.local/bin
+  args:
+    warn: no
+    creates: ~/.local/bin/stack
+  environment:
+    PATH: "{{env_path}}"
+
+- name: configure stack globally
+  template:
+    src: stack/config.yaml.j2
+    dest: ~/.stack/config.yaml
+
 - name: install haskell stack packages
   command: stack install {{item.name}} --resolver {{item.resolver}}
   args:
     creates: ~/.local/bin/{{item.binary}}
+  environment:
+    PATH: "{{env_path}}"
   with_items: "{{haskell_stack_packages}}"

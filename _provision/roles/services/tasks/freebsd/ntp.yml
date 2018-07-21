@@ -1,7 +1,11 @@
 ---
-- name: install ntp
+- name: install ntp via synth
   become: yes
-  pkgng: name=ntp state=present
+  command: synth install ntp
+  register: synth_ntp_install
+  changed_when: synth_ntp_install.stdout.find("The most recent version of packages are already installed") == -1
+  notify:
+    - restart ntpd rc service
 
 - name: enable ntpd in rc.conf
   become: yes
