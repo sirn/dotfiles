@@ -1,7 +1,7 @@
 ---
 - name: install ntp via synth
   become: yes
-  command: synth install ntp
+  command: synth install net/ntp
   register: synth_ntp_install
   changed_when: synth_ntp_install.stdout.find("The most recent version of packages are already installed") == -1
   notify:

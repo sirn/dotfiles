@@ -1,7 +1,7 @@
 alias ls="ls -G"
 alias ll="ls -alh"
 alias ka="k -A"
-alias emacs="emacs -nw"
+alias emacs="emacsclient -c -a ''"
 
 if hash fzf 2>/dev/null; then
     alias ff="find . -type f |fzf"

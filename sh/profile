@@ -41,30 +41,37 @@ PATH=$HOME/Dev/go/bin:$PATH
 # Platform-specific
 #
 
-if [ "$(uname)" = "Darwin" ]; then
-    PATH=/usr/local/opt/gpg-agent/bin:$PATH
-    PATH=/usr/local/opt/node@8/bin:$PATH
+case "$(uname)" in
+    Darwin )
+        PATH=/usr/local/opt/gpg-agent/bin:$PATH
+        PATH=/usr/local/opt/node@8/bin:$PATH
 
-    if hash brew 2>/dev/null; then
-        export HOMEBREW_NO_ANALYTICS=1
-        export HOMEBREW_NO_AUTO_UPDATE=1
-        export OPENSSL_INCLUDE_DIR=/usr/local/opt/openssl/include
-        export OPENSSL_LIB_DIR=/usr/local/opt/openssl/lib
-    fi
+        if hash brew 2>/dev/null; then
+            export HOMEBREW_NO_ANALYTICS=1
+            export HOMEBREW_NO_AUTO_UPDATE=1
+            export OPENSSL_INCLUDE_DIR=/usr/local/opt/openssl/include
+            export OPENSSL_LIB_DIR=/usr/local/opt/openssl/lib
+        fi
 
-    if [ -f /usr/libexec/java_home ]; then
-        JAVA_HOME=$(/usr/libexec/java_home)
-        export JAVA_HOME
-    fi
+        if [ -f /usr/libexec/java_home ]; then
+            JAVA_HOME=$(/usr/libexec/java_home)
+            export JAVA_HOME
+        fi
 
-    if [ -d /Applications/mpv.app/Contents/MacOS ]; then
-        PATH=/Applications/mpv.app/Contents/MacOS:$PATH
-    fi
+        if [ -d /Applications/mpv.app/Contents/MacOS ]; then
+            PATH=/Applications/mpv.app/Contents/MacOS:$PATH
+        fi
 
-    if [ -d "/Applications/VMware Fusion.app" ]; then
-        export VAGRANT_VMWARE_CLONE_DIRECTORY="$HOME/Virtual Machines"
-    fi
-fi
+        if [ -d "/Applications/VMware Fusion.app" ]; then
+            export VAGRANT_VMWARE_CLONE_DIRECTORY="$HOME/Virtual Machines"
+        fi
+        ;;
+esac
+
+
+#
+# Finalizing
+#
 
 if hash keychain 2>/dev/null; then
     eval "$(keychain --eval --agents ssh,gpg --quiet)"

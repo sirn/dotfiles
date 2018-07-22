@@ -280,7 +280,7 @@ bootstrap_freebsd() {
 
     # Perma-disable FreeBSD repo as we'll be exclusively using Synth.
     sudo mkdir -p /usr/local/etc/pkg/repos
-    echo "FreeBSD: { enabled: no }" | sudo tee /usr/local/etc/pkg/repos/FreeBSD.conf >/dev/null
+    echo "FreeBSD: { enabled: no }" | sudo tee /usr/local/etc/pkg/repos/10_freebsd.conf >/dev/null
 
     if [ ! -d /usr/ports/ports-mgmt/synth ]; then
         sudo portsnap fetch --interactive
