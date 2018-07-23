@@ -7,6 +7,11 @@
 (setq-default frame-title-format '("%f"))
 
 
+(eval-when-compile
+  (declare-function scroll-bar-mode nil)
+  (declare-function mac-auto-operator-composition-mode nil))
+
+
 (when (display-graphic-p)
   (set-frame-font "PragmataPro Mono 14" nil t)
   (scroll-bar-mode -1)
@@ -28,10 +33,21 @@
 
 
 (use-package telephone-line
+  :after git-gutter ;; git-gutter is weird
   :straight t
 
   :preface
   (eval-when-compile
+    (defvar projectile-segment)
+    (defvar telephone-line-lhs)
+    (defvar telephone-line-nil)
+    (defvar telephone-line-rhs)
+    (defvar telephone-primary-left-separator)
+    (defvar telephone-primary-right-separator)
+    (defvar telephone-secondary-left-separator)
+    (defvar telephone-secondary-right-separator)
+    (defvar winum-segment)
+    (declare-function telephone-line-defsegment* nil)
     (declare-function telephone-line-mode nil))
 
   :config
@@ -43,6 +59,12 @@
       (let ((proj (projectile-project-name)))
         (when (not (equal proj "-"))
           proj))))
+
+  (unless (display-graphic-p)
+    (setq telephone-line-primary-left-separator 'telephone-line-nil)
+    (setq telephone-line-primary-right-separator 'telephone-line-nil)
+    (setq telephone-line-secondary-left-separator 'telephone-line-nil)
+    (setq telephone-line-secondary-right-separator 'telephone-line-nil))
 
   (setq telephone-line-lhs
         '((nil    . (winum-segment))
