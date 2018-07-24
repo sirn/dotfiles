@@ -42,18 +42,16 @@
     (defvar telephone-line-lhs)
     (defvar telephone-line-nil)
     (defvar telephone-line-rhs)
-    (defvar telephone-primary-left-separator)
-    (defvar telephone-primary-right-separator)
-    (defvar telephone-secondary-left-separator)
-    (defvar telephone-secondary-right-separator)
-    (defvar winum-segment)
+    (defvar telephone-line-primary-left-separator)
+    (defvar telephone-line-primary-right-separator)
+    (defvar telephone-line-secondary-left-separator)
+    (defvar telephone-line-secondary-right-separator)
     (declare-function telephone-line-defsegment* nil)
     (declare-function telephone-line-mode nil))
 
   :config
   (require 'telephone-line-config)
 
-  (telephone-line-defsegment* winum-segment () (winum-get-number-string))
   (telephone-line-defsegment* projectile-segment ()
     (when (and (boundp 'projectile-project-name))
       (let ((proj (projectile-project-name)))
@@ -67,7 +65,7 @@
     (setq telephone-line-secondary-right-separator 'telephone-line-nil))
 
   (setq telephone-line-lhs
-        '((nil    . (winum-segment))
+        '((nil    . (telephone-line-window-number-segment))
           (evil   . (telephone-line-evil-tag-segment))
           (accent . (telephone-line-vc-segment
                      telephone-line-erc-modified-channels-segment
