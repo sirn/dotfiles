@@ -36,6 +36,7 @@ brew_packages:
   - openssl
   - packer
   - pinentry-mac
+  - postgresql
   - reattach-to-user-namespace
   - rtmpdump
   - s6

@@ -11,6 +11,7 @@ gmake_bin: gmake
 
 ports_packages:
   - converters/cocot
+  - databases/postgresql96-client
   - devel/autoconf
   - devel/binutils
   - devel/git
