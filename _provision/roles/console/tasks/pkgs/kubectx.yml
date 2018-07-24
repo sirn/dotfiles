@@ -12,7 +12,7 @@
   git:
     repo: https://github.com/ahmetb/kubectx.git
     dest: ~/.local/src/kubectx
-    version: "v{{kubectx_version}}"
+    version: "{{kubectx_version}}"
 
 - name: link kubectx and kubens
   file:

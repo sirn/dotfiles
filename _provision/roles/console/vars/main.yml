@@ -91,7 +91,7 @@ kube_ps1_version: "0.6.0"
 
 kubectl_version: "1.11.1"
 
-kubectx_version: "0.5.0"
+kubectx_version: "5a1366b"
 
 nim_version: "0.18.0"
 
