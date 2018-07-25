@@ -46,6 +46,7 @@ ports_packages:
   - sysutils/coreutils
   - sysutils/direnv
   - sysutils/fswatch-mon
+  - sysutils/iocage@py36
   - sysutils/lsof
   - sysutils/moreutils
   - sysutils/packer

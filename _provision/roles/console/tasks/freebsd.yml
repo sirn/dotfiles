@@ -1,4 +1,13 @@
 ---
+- name: fetch freebsd source
+  become: yes
+  shell: >
+    fetch -o - "ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/$(freebsd-version -k)/src.txz" |
+    tar -C / -xvzf -
+  args:
+    warn: no
+    creates: /usr/src/Makefile
+
 - name: install ports packages via synth
   become: yes
   command: /usr/local/bin/synth install {{ports_packages|join(" ")}}
