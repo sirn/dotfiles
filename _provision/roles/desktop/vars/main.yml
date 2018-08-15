@@ -47,7 +47,6 @@ cask_packages:
   - logitech-options
   - mactex
   - mailmate
-  - memory-tracker-by-timely
   - mpv
   - omnifocus
   - omnigraffle
@@ -87,5 +86,4 @@ mas_packages:
   - { id: 889428659, app: "xScope" }
   - { id: 890031187, app: "Marked 2" }
   - { id: 937984704, app: "Amphetamine" }
-  - { id: 1289378661, app: "Twitterrific" }
   - { id: 1333542190, app: "1Password 7" }
