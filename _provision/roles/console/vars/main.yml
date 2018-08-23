@@ -134,6 +134,7 @@ python3_packages:
   - numpy
   - pip
   - pipenv
+  - pre-commit
   - pylint
   - virtualenv
   - youtube-dl
