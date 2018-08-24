@@ -63,7 +63,4 @@
 
   :preface
   (eval-when-compile
-    (declare-function git-run nil))
-
-  :init
-  (setq org-directory (expand-file-name "~/Dropbox/Documents/Org/")))
+    (declare-function git-run nil)))

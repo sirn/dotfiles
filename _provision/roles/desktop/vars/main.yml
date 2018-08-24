@@ -16,7 +16,6 @@ cask_packages:
   - bartender
   - charles
   - coconutbattery
-  - dropbox
   - duet
   - firefox
   - font-ia-writer-duospace
