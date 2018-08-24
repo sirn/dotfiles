@@ -16,7 +16,6 @@ cask_packages:
   - bartender
   - charles
   - coconutbattery
-  - duet
   - firefox
   - font-ia-writer-duospace
   - font-ibm-plex
@@ -36,9 +35,7 @@ cask_packages:
   - font-roboto-slab
   - font-source-code-pro
   - font-source-sans-pro
-  - gnucash
   - google-cloud-sdk
-  - hazel
   - imagealpha
   - imageoptim
   - iterm2
