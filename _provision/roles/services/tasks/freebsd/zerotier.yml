@@ -1,0 +1,26 @@
+---
+- name: install zerotier via synth
+  become: yes
+  command: synth install net/zerotier
+  register: synth_zerotier_install
+  changed_when: synth_zerotier_install.stdout.find("The most recent version of packages are already installed") == -1
+  notify:
+    - restart zerotier rc service
+
+- name: enable zerotier in rc.conf
+  become: yes
+  lineinfile:
+    dest: /etc/rc.conf
+    line: zerotier_enable=YES
+    state: present
+
+- name: enable up on open in sysctl.conf
+  become: yes
+  lineinfile:
+    dest: /etc/sysctl.conf
+    line: net.link.tap.up_on_open=1
+    state: present
+
+- name: enable zerotier
+  become: yes
+  service: name=zerotier enabled=yes state=started

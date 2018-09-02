@@ -51,7 +51,6 @@ cask_packages:
   - screens
   - sketch
   - spotify
-  - telegram
   - the-unarchiver
   - vagrant
   - veracrypt
@@ -76,7 +75,6 @@ mas_packages:
   - { id: 413965349, app: "Soulver" }
   - { id: 497799835, app: "Xcode" }
   - { id: 523620159, app: "CleanMyDrive 2" }
-  - { id: 539883307, app: "LINE" }
   - { id: 603637384, app: "Name Mangler 3" }
   - { id: 775737590, app: "iA Writer" }
   - { id: 889428659, app: "xScope" }

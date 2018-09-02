@@ -9,8 +9,8 @@ zplug "zplug/zplug", hook-build:'zplug --self-manage'
 zplug "b4b4r07/enhancd", use:init.sh
 
 zplug "zsh-users/zsh-completions", defer:1
+zplug "Valodim/zsh-curl-completion", defer:2
 zplug "zsh-users/zsh-autosuggestions", defer:2
-zplug "zsh-users/zsh-history-substring-search", defer:2
 zplug "b4b4r07/zsh-gomi", defer:2
 zplug "supercrabtree/k", defer:3
 
@@ -23,6 +23,7 @@ if ! zplug check --verbose; then
     fi
 fi
 
+bindkey -e
 zplug load
 
 # vim:ft=sh

@@ -22,3 +22,7 @@
 - name: restart ntpd rc service
   become: yes
   service: name=ntpd enabled=yes state=restarted
+
+- name: restart zerotier rc service
+  become: yes
+  service: name=zerotier enabled=yes state=restarted

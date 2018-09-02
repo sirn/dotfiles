@@ -10,10 +10,12 @@ gcc_bin: /usr/local/bin/gcc
 gmake_bin: gmake
 
 ports_packages:
+  - converters/base64
   - converters/cocot
   - databases/postgresql96-client
   - devel/autoconf
   - devel/binutils
+  - devel/cmake
   - devel/git
   - devel/git-lfs
   - devel/gmake
@@ -45,6 +47,7 @@ ports_packages:
   - shells/zsh
   - sysutils/coreutils
   - sysutils/direnv
+  - sysutils/entr
   - sysutils/fswatch-mon
   - sysutils/iocage@py36
   - sysutils/lsof

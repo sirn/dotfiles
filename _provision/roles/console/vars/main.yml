@@ -71,6 +71,7 @@ golang_path: "{{golang_gopath}}/bin:{{golang_goroot}}/bin:{{env_path}}"
 golang_packages:
   - github.com/Masterminds/glide
   - github.com/junegunn/fzf
+  - github.com/knqyf263/pet
   - github.com/mitchellh/gox
   - github.com/motemen/ghq
   - github.com/nsf/gocode
@@ -155,5 +156,5 @@ rust_version_path: "{{ansible_env.HOME}}/.asdf/installs/rust/{{rust_version}}"
 
 rust_packages:
   - { name: "racer", binary: "racer" }
-  - { name: "rustfmt", binary: "rustfmt" }
   - { name: "ripgrep", binary: "rg" }
+  - { name: "rustfmt", binary: "rustfmt" }
