@@ -16,3 +16,4 @@
 - include_tasks: "darwin/dnscrypt-proxy.yml"
 - include_tasks: "darwin/unbound.yml"
 - include_tasks: "darwin/user-env.yml"
+- include_tasks: "darwin/zerotier.yml"
