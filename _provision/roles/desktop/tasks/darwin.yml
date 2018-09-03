@@ -4,24 +4,29 @@
 
 - name: initialize brew desktop taps
   homebrew_tap: tap={{brew_desktop_taps}} state=present
+  when: brew_desktop_taps
 
 - name: install homebrew desktop packages
   homebrew: name={{brew_desktop_packages}} state=present
+  when: brew_desktop_packages
 
-- name: initialize cask taps
-  homebrew_tap: tap={{cask_taps}} state=present
+- name: initialize cask desktop taps
+  homebrew_tap: tap={{cask_desktop_taps}} state=present
+  when: cask_desktop_taps
 
-- name: install cask packages
-  homebrew_cask: name={{cask_packages}} state=present
+- name: install cask desktop packages
+  homebrew_cask: name={{cask_desktop_packages}} state=present
+  when: cask_desktop_packages
 
 - name: install mas-cli
   homebrew: name=mas state=latest
 
 - name: initialize mac app store apps
   command: mas install "{{item.id}}"
-  with_items: "{{mas_packages}}"
+  with_items: "{{mas_desktop_packages}}"
   args:
     creates: "/Applications/{{item.app}}.app"
+  when: mas_desktop_packages
 
 - name: link darwin-specific files and directories
   file:

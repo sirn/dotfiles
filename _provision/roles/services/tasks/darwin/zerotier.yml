@@ -1,0 +1,4 @@
+- name: install zerotier-one via cask
+  homebrew_cask: name=zerotier-one state=present
+  notify:
+    - restart zerotier-one launchd service

@@ -48,6 +48,11 @@ brew_packages:
   - xz
   - zsh
 
+cask_taps:
+
+cask_packages:
+  - google-cloud-sdk
+
 clang_bin: /usr/bin/clang
 
 env_path: "{{ansible_env.HOME}}/.local/bin:{{asdf_shims}}:/usr/local/opt/node@8/bin:{{ansible_env.PATH}}"

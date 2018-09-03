@@ -5,12 +5,12 @@ brew_desktop_taps:
 brew_desktop_packages:
   - emacs-mac
 
-cask_taps:
+cask_desktop_taps:
   - homebrew/cask-drivers
   - homebrew/cask-fonts
   - homebrew/cask-versions
 
-cask_packages:
+cask_desktop_packages:
   - alfred
   - amethyst
   - bartender
@@ -69,7 +69,7 @@ dots_desktop_darwin:
 
 dots_desktop_freebsd:
 
-mas_packages:
+mas_desktop_packages:
   - { id: 407963104, app: "Pixelmator" }
   - { id: 411643860, app: "DaisyDisk" }
   - { id: 413965349, app: "Soulver" }

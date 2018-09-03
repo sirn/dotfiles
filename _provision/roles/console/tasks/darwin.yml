@@ -1,6 +1,7 @@
 ---
 - name: initialize brew taps
   homebrew_tap: tap={{brew_taps}} state=present
+  when: brew_taps
 
 - name: install java
   homebrew_cask: name=java state=present
@@ -10,6 +11,15 @@
     name: "{{brew_packages}}"
     install_options: build-from-source
     state: present
+  when: brew_packages
+
+- name: initialize cask taps
+  homebrew_tap: tap={{cask_taps}} state=present
+  when: cask_taps
+
+- name: install cask packages
+  homebrew_cask: name={{cask_packages}} state=present
+  when: cask_packages
 
 - name: prepare sudoers directory
   file: path=/etc/sudoers.d state=directory recurse=yes
