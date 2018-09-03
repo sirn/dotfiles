@@ -30,6 +30,7 @@ ports_packages:
   - graphics/graphviz
   - java/openjdk8-jre
   - lang/execline
+  - lang/expect
   - lang/gcc
   - misc/compat8x
   - multimedia/ffmpeg
