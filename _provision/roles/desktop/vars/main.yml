@@ -16,7 +16,6 @@ cask_desktop_packages:
   - bartender
   - charles
   - coconutbattery
-  - firefox
   - font-ia-writer-duospace
   - font-ibm-plex
   - font-iosevka
@@ -60,8 +59,6 @@ cask_desktop_packages:
   - xquartz
 
 dots_desktop:
-  - source: ~/.dotfiles/tridactyl/tridactylrc
-    dest: ~/.tridactylrc
 
 dots_desktop_darwin:
   - source: ~/.dotfiles/amethyst/amethyst
