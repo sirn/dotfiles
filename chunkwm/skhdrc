@@ -1,0 +1,42 @@
+# focus window
+ctrl + alt - h : chunkc tiling::window --focus west
+ctrl + alt - j : chunkc tiling::window --focus south
+ctrl + alt - k : chunkc tiling::window --focus north
+ctrl + alt - l : chunkc tiling::window --focus east
+
+# swap window
+ctrl + shift + alt - h : chunkc tiling::window --swap west
+ctrl + shift + alt - j : chunkc tiling::window --swap south
+ctrl + shift + alt - k : chunkc tiling::window --swap north
+ctrl + shift + alt - l : chunkc tiling::window --swap east
+
+# resize window
+ctrl + alt - 0 : chunkc tiling::desktop --equalize
+
+# send window to desktop
+ctrl + alt - x : chunkc tiling::window --send-to-desktop $(chunkc get _last_active_desktop)
+ctrl + alt - z : chunkc tiling::window --send-to-desktop prev
+ctrl + alt - c : chunkc tiling::window --send-to-desktop next
+ctrl + alt - 1 : chunkc tiling::window --send-to-desktop 1
+ctrl + alt - 2 : chunkc tiling::window --send-to-desktop 2
+ctrl + alt - 3 : chunkc tiling::window --send-to-desktop 3
+ctrl + alt - 4 : chunkc tiling::window --send-to-desktop 4
+
+# rotate tree
+ctrl + alt - r : chunkc tiling::desktop --rotate 90
+
+# toggle window fullscreen
+ctrl + alt - f : chunkc tiling::window --toggle fullscreen
+
+# toggle window split type
+ctrl + alt - e : chunkc tiling::window --toggle split
+
+# float / unfloat window and center on screen
+ctrl + alt - t :
+    chunkc tiling::window --toggle float;\
+    chunkc tiling::window --grid-layout 4:4:1:1:2:2
+
+# change layout of desktop
+ctrl + alt - a : chunkc tiling::desktop --layout bsp
+ctrl + alt - s : chunkc tiling::desktop --layout monocle
+ctrl + alt - d : chunkc tiling::desktop --layout float

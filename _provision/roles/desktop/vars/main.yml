@@ -12,7 +12,6 @@ cask_desktop_taps:
 
 cask_desktop_packages:
   - alfred
-  - amethyst
   - bartender
   - charles
   - coconutbattery
@@ -61,8 +60,11 @@ cask_desktop_packages:
 dots_desktop:
 
 dots_desktop_darwin:
-  - source: ~/.dotfiles/amethyst/amethyst
-    dest: ~/.amethyst
+  - source: ~/.dotfiles/chunkwm/chunkwmrc
+    dest: ~/.chunkwmrc
+
+  - source: ~/.dotfiles/chunkwm/skhdrc
+    dest: ~/.skhdrc
 
 dots_desktop_freebsd:
 

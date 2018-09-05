@@ -1,0 +1,12 @@
+---
+- name: restart chunkwm launchd service
+  shell: |
+    launchctl unload ~/Library/LaunchAgents/io.github.koekeishiya.chunkwm.plist &&
+    launchctl load ~/Library/LaunchAgents/io.github.koekeishiya.chunkwm.plist
+  ignore_errors: yes
+
+- name: restart skhd launchd service
+  shell: |
+    launchctl unload ~/Library/LaunchAgents/io.github.koekeishiya.skhd.plist &&
+    launchctl load ~/Library/LaunchAgents/io.github.koekeishiya.skhd.plist
+  ignore_errors: yes

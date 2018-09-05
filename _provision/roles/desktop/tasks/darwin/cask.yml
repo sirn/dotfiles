@@ -1,0 +1,8 @@
+---
+- name: initialize cask desktop taps
+  homebrew_tap: tap={{cask_desktop_taps}} state=present
+  when: cask_desktop_taps
+
+- name: install cask desktop packages
+  homebrew_cask: name={{cask_desktop_packages}} state=present
+  when: cask_desktop_packages

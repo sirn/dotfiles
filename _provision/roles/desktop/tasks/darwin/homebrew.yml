@@ -1,0 +1,8 @@
+---
+- name: initialize homebrew desktop taps
+  homebrew_tap: tap={{brew_desktop_taps}} state=present
+  when: brew_desktop_taps
+
+- name: install homebrew desktop packages
+  homebrew: name={{brew_desktop_packages}} state=present
+  when: brew_desktop_packages
