@@ -10,6 +10,13 @@ ctrl + shift + alt - j : chunkc tiling::window --swap south
 ctrl + shift + alt - k : chunkc tiling::window --swap north
 ctrl + shift + alt - l : chunkc tiling::window --swap east
 
+# set insertion point
+shift + alt - f : chunkc tiling::window --use-insertion-point cancel
+shift + alt - h : chunkc tiling::window --use-insertion-point west
+shift + alt - j : chunkc tiling::window --use-insertion-point south
+shift + alt - k : chunkc tiling::window --use-insertion-point north
+shift + alt - l : chunkc tiling::window --use-insertion-point east
+
 # resize window
 ctrl + alt - 0 : chunkc tiling::desktop --equalize
 
@@ -35,6 +42,9 @@ ctrl + alt - e : chunkc tiling::window --toggle split
 ctrl + alt - t :
     chunkc tiling::window --toggle float;\
     chunkc tiling::window --grid-layout 4:4:1:1:2:2
+
+# fix screenshot
+cmd + shift - 4 -> : chunkc border::clear
 
 # change layout of desktop
 ctrl + alt - a : chunkc tiling::desktop --layout bsp
