@@ -24,6 +24,8 @@ brew_packages:
   - ipcalc
   - jq
   - keychain
+  - kubernetes-cli
+  - kubernetes-helm
   - leiningen
   - libressl
   - mercurial
@@ -52,6 +54,7 @@ cask_taps:
 
 cask_packages:
   - google-cloud-sdk
+  - minikube
 
 clang_bin: /usr/bin/clang
 

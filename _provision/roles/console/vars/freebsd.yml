@@ -50,8 +50,11 @@ ports_packages:
   - sysutils/direnv
   - sysutils/entr
   - sysutils/fswatch-mon
+  - sysutils/helm
   - sysutils/iocage@py36
+  - sysutils/kubectl
   - sysutils/lsof
+  - sysutils/minikube
   - sysutils/moreutils
   - sysutils/packer
   - sysutils/s6

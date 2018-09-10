@@ -76,28 +76,10 @@
   tags:
     - nodejs
 
-- import_tasks: "pkgs/elm.yml"
-  tags:
-    - elm
-
-- import_tasks: "pkgs/elm-format.yml"
-  tags:
-    - elm
-
-- import_tasks: "pkgs/helm.yml"
-  tags:
-    - kubernetes
-    - helm
-
 - import_tasks: "pkgs/kube-ps1.yml"
   tags:
     - kubernetes
     - kube-ps1
-
-- import_tasks: "pkgs/kubectl.yml"
-  tags:
-    - kubernetes
-    - kubectl
 
 - import_tasks: "pkgs/kubectx.yml"
   tags:
