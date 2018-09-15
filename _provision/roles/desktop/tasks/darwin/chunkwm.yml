@@ -13,7 +13,10 @@
     - ~/.local/var/logs
 
 - name: install chunkwm
-  homebrew: name=chunkwm state=latest
+  homebrew:
+    name: chunkwm
+    state: latest
+    install_options: with-purify,build-from-source
   notify:
     - restart chunkwm launchd service
 
