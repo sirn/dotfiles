@@ -132,6 +132,7 @@ python3_packages:
   - pip
   - pipenv
   - pre-commit
+  - proselint
   - pylint
   - virtualenv
   - youtube-dl

@@ -86,6 +86,10 @@
   (eval-when-compile
     (declare-function global-flycheck-mode nil))
 
+  :init
+  (add-hook 'markdown-mode-hook 'flycheck-mode)
+  (add-hook 'text-mode-hook 'flycheck-mode)
+
   :config
   (global-flycheck-mode t))
 
