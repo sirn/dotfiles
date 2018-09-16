@@ -28,7 +28,6 @@ ctrl - 2 : chunkc tiling::desktop --focus 2
 ctrl - 3 : chunkc tiling::desktop --focus 3
 ctrl - 4 : chunkc tiling::desktop --focus 4
 ctrl - 5 : chunkc tiling::desktop --focus 5
-ctrl - 6 : chunkc tiling::desktop --focus 6
 
 # send window to desktop
 ctrl + alt - left : chunkc tiling::window --send-to-desktop prev
@@ -38,7 +37,6 @@ ctrl + alt - 2 : chunkc tiling::window --send-to-desktop 2
 ctrl + alt - 3 : chunkc tiling::window --send-to-desktop 3
 ctrl + alt - 4 : chunkc tiling::window --send-to-desktop 4
 ctrl + alt - 5 : chunkc tiling::window --send-to-desktop 5
-ctrl + alt - 6 : chunkc tiling::window --send-to-desktop 6
 
 # rotate tree
 ctrl + alt - r : chunkc tiling::desktop --rotate 90
