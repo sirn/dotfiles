@@ -96,7 +96,7 @@ chunkc tiling::rule --owner iBooks              --state float &
 chunkc tiling::rule --owner mpv                 --state sticky --alpha 0.65 &
 
 chunkc tiling::rule --owner Twitterrific \
-       --grid-layout 1:6:5:0:1:1 \
+       --grid-layout 1:4:3:0:1:1 \
        --state sticky &
 
 chunkc tiling::rule --owner Emacs \
