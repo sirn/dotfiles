@@ -86,6 +86,8 @@ haskell_stack_packages:
   - { name: pandoc, binary: pandoc, resolver: "lts-11.17" }
   - { name: cabal-install, binary: cabal, resolver: "lts-9.21" }
 
+ksonnet_version: "0.12.0"
+
 kube_ps1_version: "0.6.0"
 
 kubectx_version: "5a1366b"

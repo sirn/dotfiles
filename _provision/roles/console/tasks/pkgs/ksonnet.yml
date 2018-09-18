@@ -1,0 +1,16 @@
+---
+- name: clone ksonnet
+  git:
+    repo: https://github.com/ksonnet/ksonnet
+    dest: ~/Dev/go/src/github.com/ksonnet/ksonnet
+    version: "v{{ksonnet_version}}"
+  register: ksonnet_clone
+
+- name: install ksonnet
+  command: "make install"
+  args:
+    chdir: ~/Dev/go/src/github.com/ksonnet/ksonnet
+  environment:
+    GOPATH: "{{golang_gopath}}"
+    GOROOT: "{{golang_goroot}}"
+  when: ksonnet_clone.changed
