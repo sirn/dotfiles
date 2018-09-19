@@ -107,14 +107,16 @@ chunkc tiling::rule --owner Finder \
        --name Copy \
        --state float &
 
+# Desktop 4
+chunkc tiling::rule --owner Discord             --desktop 4 --follow-desktop &
+chunkc tiling::rule --owner LINE                --desktop 4 --follow-desktop &
+chunkc tiling::rule --owner Messages            --desktop 4 --follow-desktop &
+chunkc tiling::rule --owner Slack               --desktop 4 --follow-desktop &
+chunkc tiling::rule --owner Telegram            --desktop 4 --follow-desktop &
+
 # Desktop 5
-chunkc tiling::rule --owner Discord             --desktop 5 --follow-desktop &
-chunkc tiling::rule --owner LINE                --desktop 5 --follow-desktop &
 chunkc tiling::rule --owner MailMate            --desktop 5 --follow-desktop &
-chunkc tiling::rule --owner Messages            --desktop 5 --follow-desktop &
-chunkc tiling::rule --owner Slack               --desktop 5 --follow-desktop &
 chunkc tiling::rule --owner Spotify             --desktop 5 --follow-desktop &
-chunkc tiling::rule --owner Telegram            --desktop 5 --follow-desktop &
 chunkc tiling::rule --owner iTunes              --desktop 5 --follow-desktop &
 chunkc tiling::rule --owner OmniFocus \
        --except "^$" \
