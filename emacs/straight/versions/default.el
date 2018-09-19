@@ -53,6 +53,7 @@
  ("json-mode" . "ffc92b1eefc54963703b43be140f4c8c8ad348f7")
  ("json-reformat" . "8eb6668ed447988aea06467ba8f42e1f2178246f")
  ("json-snatcher" . "c4cecc0a5051bd364373aa499c47a1bb7a5ac51c")
+ ("jsonnet-mode" . "0d68681d501fd57ebde5ed4fe100033a5d3aafa8")
  ("keychain-environment" . "d3643196de6dc79ea77f9f4805028350fd76100b")
  ("magit" . "c5269547ae178f4893a8ec662f71b0e032d4c0fa")
  ("magit-popup" . "e2060ccb3105555f55992a995587221820341b24")
