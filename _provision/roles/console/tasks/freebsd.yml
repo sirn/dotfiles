@@ -2,7 +2,7 @@
 - name: fetch freebsd source
   become: yes
   shell: >
-    fetch -o - "ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/$(freebsd-version -k)/src.txz" |
+    fetch -o - "ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/$(freebsd-version -k | sed 's/\-[^\-]*$//g')/src.txz" |
     tar -C / -xvzf -
   args:
     warn: no

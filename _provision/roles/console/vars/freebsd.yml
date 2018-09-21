@@ -5,7 +5,11 @@ env_path: "{{ansible_env.HOME}}/.local/bin:{{asdf_shims}}:{{ansible_env.PATH}}"
 
 fuse_ld: gold
 
-gcc_bin: /usr/local/bin/gcc
+gcc_bin: /usr/local/bin/gcc7
+
+gcc_rpath: /usr/local/lib/gcc7
+
+gxx_bin: /usr/local/bin/g++7
 
 gmake_bin: gmake
 
@@ -20,6 +24,7 @@ ports_packages:
   - devel/git-lfs
   - devel/gmake
   - devel/hub
+  - devel/jsonnet
   - devel/leiningen
   - devel/mercurial@py27
   - editors/emacs@nox
@@ -62,6 +67,7 @@ ports_packages:
   - sysutils/tmux
   - sysutils/tree
   - sysutils/vagrant
+  - sysutils/zfstools
   - textproc/jq
   - www/aria2
   - www/node8

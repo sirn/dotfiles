@@ -11,7 +11,7 @@
   become: yes
   lineinfile:
     dest: /etc/rc.conf
-    line: ntpd_enable=YES
+    line: ntpd_enable="YES"
     state: present
   register: ntpd_enabled
 

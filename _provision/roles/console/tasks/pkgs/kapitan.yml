@@ -1,0 +1,23 @@
+---
+- name: install jsonnet
+  pip:
+    name: "jsonnet"
+    state: latest
+    executable: "{{python3_version_path}}/bin/pip"
+    chdir: "{{python3_version_path}}"
+  environment:
+    MAKE: "{{gmake_bin}}"
+    CXX: "{{gxx_bin}}"
+    CXXFLAGS: "{% if gcc_rpath %}-Wl,-rpath={{gcc_rpath}} {% endif %}-std=c++11 -fPIC -Iinclude -Ithird_party/md5"
+    LDFLAGS: "{% if gcc_rpath %}-Wl,-rpath={{gcc_rpath}} -L{{gcc_rpath}}{% endif %}"
+
+- name: install kapitan
+  pip:
+    name: "kapitan"
+    state: latest
+    executable: "{{python3_version_path}}/bin/pip"
+    chdir: "{{python3_version_path}}"
+
+- name: update python3 {{python3_version}} shims
+  command: "{{asdf_bin}}/asdf reshim python3"
+  changed_when: false

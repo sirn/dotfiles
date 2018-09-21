@@ -76,6 +76,11 @@
   tags:
     - nodejs
 
+- import_tasks: "pkgs/kapitan.yml"
+  tags:
+    - kubernetes
+    - kapitan
+
 - import_tasks: "pkgs/ksonnet.yml"
   tags:
     - kubernetes

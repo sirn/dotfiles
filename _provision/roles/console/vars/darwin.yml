@@ -23,6 +23,7 @@ brew_packages:
   - hub
   - ipcalc
   - jq
+  - jsonnet
   - keychain
   - kubernetes-cli
   - kubernetes-helm
@@ -63,5 +64,9 @@ env_path: "{{ansible_env.HOME}}/.local/bin:{{asdf_shims}}:/usr/local/opt/node@8/
 fuse_ld: no
 
 gcc_bin: /usr/bin/clang
+
+gcc_rpath: no
+
+gxx_bin: /usr/bin/clang++
 
 gmake_bin: make

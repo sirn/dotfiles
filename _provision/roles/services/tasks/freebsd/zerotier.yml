@@ -11,14 +11,7 @@
   become: yes
   lineinfile:
     dest: /etc/rc.conf
-    line: zerotier_enable=YES
-    state: present
-
-- name: enable up on open in sysctl.conf
-  become: yes
-  lineinfile:
-    dest: /etc/sysctl.conf
-    line: net.link.tap.up_on_open=1
+    line: zerotier_enable="YES"
     state: present
 
 - name: enable zerotier
