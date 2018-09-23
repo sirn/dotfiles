@@ -72,7 +72,7 @@ chunkc set ffm_standby_on_float          1
 
 chunkc set window_float_topmost          1
 chunkc set window_fade_inactive          1
-chunkc set window_fade_alpha             0.85
+chunkc set window_fade_alpha             0.65
 chunkc set window_fade_duration          0.25
 chunkc set window_use_cgs_move           1
 
@@ -93,7 +93,7 @@ chunkc tiling::rule --owner FaceTime            --state float &
 chunkc tiling::rule --owner \"1Password 7\"     --state float &
 chunkc tiling::rule --owner \"CleanMyMac X\"    --state float &
 chunkc tiling::rule --owner iBooks              --state float &
-chunkc tiling::rule --owner mpv                 --state sticky --alpha 0.65 &
+chunkc tiling::rule --owner mpv                 --state sticky &
 
 chunkc tiling::rule --owner Twitterrific \
        --grid-layout 1:4:3:0:1:1 \
@@ -107,6 +107,11 @@ chunkc tiling::rule --owner Finder \
        --name Copy \
        --state float &
 
+chunkc tiling::rule --owner iTunes \
+       --name MiniPlayer \
+       --grid-layout 5:7:6:0:1:1 \
+       --state sticky &
+
 # Desktop 4
 chunkc tiling::rule --owner Discord             --desktop 4 --follow-desktop &
 chunkc tiling::rule --owner LINE                --desktop 4 --follow-desktop &
@@ -117,7 +122,12 @@ chunkc tiling::rule --owner Telegram            --desktop 4 --follow-desktop &
 # Desktop 5
 chunkc tiling::rule --owner MailMate            --desktop 5 --follow-desktop &
 chunkc tiling::rule --owner Spotify             --desktop 5 --follow-desktop &
-chunkc tiling::rule --owner iTunes              --desktop 5 --follow-desktop &
+
+chunkc tiling::rule --owner iTunes \
+       --except MiniPlayer \
+       --desktop 5 \
+       --follow-desktop &
+
 chunkc tiling::rule --owner OmniFocus \
        --except "^$" \
        --desktop 5 \
