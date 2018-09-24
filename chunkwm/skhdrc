@@ -20,15 +20,6 @@ shift + alt - l : chunkc tiling::window --use-insertion-point east
 # resize window
 ctrl + alt - 0 : chunkc tiling::desktop --equalize
 
-# switch desktop
-ctrl - left : chunkc tiling::desktop --focus prev
-ctrl - right : chunkc tiling::desktop --focus next
-ctrl - 1 : chunkc tiling::desktop --focus 1
-ctrl - 2 : chunkc tiling::desktop --focus 2
-ctrl - 3 : chunkc tiling::desktop --focus 3
-ctrl - 4 : chunkc tiling::desktop --focus 4
-ctrl - 5 : chunkc tiling::desktop --focus 5
-
 # send window to desktop
 ctrl + alt - left : chunkc tiling::window --send-to-desktop prev
 ctrl + alt - right : chunkc tiling::window --send-to-desktop next

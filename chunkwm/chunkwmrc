@@ -93,11 +93,11 @@ chunkc tiling::rule --owner FaceTime            --state float &
 chunkc tiling::rule --owner \"1Password 7\"     --state float &
 chunkc tiling::rule --owner \"CleanMyMac X\"    --state float &
 chunkc tiling::rule --owner iBooks              --state float &
-chunkc tiling::rule --owner mpv                 --state sticky &
+chunkc tiling::rule --owner mpv                 --state float &
 
 chunkc tiling::rule --owner Twitterrific \
        --grid-layout 1:4:3:0:1:1 \
-       --state sticky &
+       --state float &
 
 chunkc tiling::rule --owner Emacs \
        --except "^$" \
@@ -110,7 +110,7 @@ chunkc tiling::rule --owner Finder \
 chunkc tiling::rule --owner iTunes \
        --name MiniPlayer \
        --grid-layout 5:7:6:0:1:1 \
-       --state sticky &
+       --state float &
 
 # Desktop 4
 chunkc tiling::rule --owner Discord             --desktop 4 --follow-desktop &
@@ -132,9 +132,3 @@ chunkc tiling::rule --owner OmniFocus \
        --except "^$" \
        --desktop 5 \
        --follow-desktop &
-
-#
-# Load script additions
-# https://koekeishiya.github.io/chunkwm/docs/sa.html
-#
-chunkwm --load-sa
