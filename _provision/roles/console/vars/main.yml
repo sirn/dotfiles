@@ -44,21 +44,15 @@ dots_links:
   - source: ~/.dotfiles/zsh/zprofile
     dest: ~/.zprofile
 
-elixir_version: "1.6.5-otp-20"
+elixir_version: "1.7.3"
 
 elixir_version_path: "{{ansible_env.HOME}}/.asdf/installs/elixir/{{elixir_version}}"
 
-elm_version: "0.18.0"
-
-elm_format_version: "0.7.0-exp"
-
-elm_format_bin: "elm-format-0.18"
-
-erlang_version: "20.3.6"
+erlang_version: "21.0.9"
 
 erlang_version_path: "{{ansible_env.HOME}}/.asdf/installs/erlang/{{erlang_version}}"
 
-golang_version: "1.10.2"
+golang_version: "1.11"
 
 golang_version_path: "{{ansible_env.HOME}}/.asdf/installs/golang/{{golang_version}}"
 
@@ -117,7 +111,7 @@ nodejs_packages:
   - typescript
   - yarn
 
-python3_version: "3.6.4"
+python3_version: "3.6.6"
 
 python3_version_path: "{{ansible_env.HOME}}/.asdf/installs/python3/{{python3_version}}"
 
@@ -149,7 +143,7 @@ ruby_packages:
   - pry
   - sqlint
 
-rust_version: "1.26.0"
+rust_version: "1.29.0"
 
 rust_version_path: "{{ansible_env.HOME}}/.asdf/installs/rust/{{rust_version}}"
 

@@ -215,6 +215,11 @@ bootstrap_darwin() {
 
     xcode-select --install 2>/dev/null
 
+    _sdk="/Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg"
+    if [ -e "$_sdk" ] && [ ! -f /usr/lib/bundle1.o ]; then
+        sudo /usr/sbin/installer -pkg "$_sdk" -target /
+    fi
+
     if ! hash brew 2>/dev/null; then
         echo_wait 'Homebrew is not installed. Installing...'
         _install="https://raw.githubusercontent.com/Homebrew/install/master/install"
