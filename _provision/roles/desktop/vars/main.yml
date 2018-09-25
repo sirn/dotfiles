@@ -14,8 +14,10 @@ cask_desktop_packages:
   - alfred
   - bartender
   - charles
+  - cleanmymac
   - coconutbattery
   - discord
+  - firefox
   - font-ia-writer-duospace
   - font-ibm-plex
   - font-iosevka
@@ -77,6 +79,7 @@ mas_desktop_packages:
   - { id: 497799835, app: "Xcode" }
   - { id: 523620159, app: "CleanMyDrive 2" }
   - { id: 539883307, app: "LINE" }
+  - { id: 587512244, app: "Kaleidoscope" }
   - { id: 603637384, app: "Name Mangler 3" }
   - { id: 775737590, app: "iA Writer" }
   - { id: 803453959, app: "Slack" }
