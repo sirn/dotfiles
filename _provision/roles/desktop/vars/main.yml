@@ -17,7 +17,6 @@ cask_desktop_packages:
   - cleanmymac
   - coconutbattery
   - discord
-  - firefox
   - font-ia-writer-duospace
   - font-ibm-plex
   - font-iosevka
@@ -86,6 +85,7 @@ mas_desktop_packages:
   - { id: 889428659, app: "xScope" }
   - { id: 890031187, app: "Marked 2" }
   - { id: 937984704, app: "Amphetamine" }
+  - { id: 1121192229, app: "Better" }
   - { id: 1287445660, app: "Agenda" }
   - { id: 1289378661, app: "Twitterrific" }
   - { id: 1333542190, app: "1Password 7" }
