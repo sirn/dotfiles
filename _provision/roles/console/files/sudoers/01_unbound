@@ -1,0 +1,6 @@
+##
+## Launchctl privileges specification
+##
+Cmnd_Alias LAUNCHCTL_UNBOUND_UNLOAD = /bin/launchctl unload /Library/LaunchDaemons/com.github.jedisct1.dnscrypt-proxy.plist
+Cmnd_Alias LAUNCHCTL_UNBOUND_LOAD = /bin/launchctl load /Library/LaunchDaemons/com.github.jedisct1.dnscrypt-proxy.plist
+%admin ALL=(root) NOPASSWD: LAUNCHCTL_UNBOUND_UNLOAD, LAUNCHCTL_UNBOUND_LOAD

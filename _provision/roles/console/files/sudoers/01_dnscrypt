@@ -1,0 +1,6 @@
+##
+## Launchctl privileges specification
+##
+Cmnd_Alias LAUNCHCTL_DNSCRYPT_UNLOAD = /bin/launchctl unload /Library/LaunchDaemons/net.unbound.unbound.plist
+Cmnd_Alias LAUNCHCTL_DNSCRYPT_LOAD = /bin/launchctl load /Library/LaunchDaemons/net.unbound.unbound.plist
+%admin ALL=(root) NOPASSWD: LAUNCHCTL_DNSCRYPT_UNLOAD, LAUNCHCTL_DNSCRYPT_LOAD
