@@ -97,6 +97,7 @@
   (add-to-list 'winum-assign-functions 'winum-assign-func)
 
   (setq winum-auto-setup-mode-line nil)
+  (setq winum-scope 'visible)
   (winum-mode)
 
   (with-eval-after-load 'evil-leader
