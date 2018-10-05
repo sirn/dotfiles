@@ -14,6 +14,33 @@
   register: synth_install
   changed_when: synth_install.stdout.find("The most recent version of packages are already installed") == -1
 
+# setup sysctl
+
+- name: configure sysctl
+  become: yes
+  lineinfile:
+    path: /etc/sysctl.conf
+    line: "{{item.key}}={{item.value}}"
+    regexp: "^(# ?)?{{item.key}}="
+  with_items:
+    - { key: "security.bsd.see_other_uids", value: "0" }
+    - { key: "kern.maxfiles", value: "5242880" }
+    - { key: "kern.maxfilesperproc", value: "524288" }
+
+# setup logging
+
+- name: configure periodic logging
+  become: yes
+  lineinfile:
+    dest: /etc/periodic.conf
+    line: "{{item}}"
+    create: yes
+    state: present
+  with_items:
+    - daily_output="/var/log/daily.log"
+    - weekly_output="/var/log/weekly.log"
+    - monthly_output="/var/log/monthly.log"
+
 # setup virtualbox kernel modules and permissions
 # see also: https://www.freebsd.org/doc/handbook/virtualization-host-virtualbox.html
 

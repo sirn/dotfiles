@@ -68,7 +68,7 @@ fi
 
 _config_file="$XDG_CONFIG_HOME/dotfiles"
 
-_ansible_version="2.4.3.0"
+_ansible_version="2.7.0"
 _ansible_opts=""
 
 print_usage() {
@@ -229,11 +229,11 @@ bootstrap_darwin() {
     /usr/local/bin/brew update
 
     _ansible_opts="-K"
-    _ansible_python=/usr/local/bin/python2
+    _ansible_python=/usr/local/bin/python3
 
     if [ ! -f "$_ansible_python" ]; then
         echo_wait 'Python is not installed. Installing...'
-        /usr/local/bin/brew install python@2 --build-from-source
+        /usr/local/bin/brew install python@3 --build-from-source
     fi
 
     # Python on a Mac is weird.
@@ -243,7 +243,7 @@ bootstrap_darwin() {
 
     if [ ! -f "$_ansible_bin" ]; then
         echo_wait 'Ansible is not installed. Installing...'
-        /usr/local/bin/pip2 install --user --install-option="--prefix=" ansible=="$_ansible_version"
+        /usr/local/bin/pip3 install --user --install-option="--prefix=" ansible=="$_ansible_version"
     fi
 
     common_ansible_run "$@"
@@ -264,7 +264,9 @@ bootstrap_darwin() {
         esac
     done
 
-    /usr/local/bin/brew upgrade --build-from-source
+    if [ "$*" = "" ]; then
+        /usr/local/bin/brew upgrade --build-from-source
+    fi
 
     # Some weird packages will randomly chmod /usr/local/Cellar
     if [ -d /usr/local/Cellar ]; then
@@ -301,26 +303,29 @@ bootstrap_freebsd() {
         sudo make -C /usr/ports/ports-mgmt/synth -DBATCH install clean
     fi
 
-    _ansible_python=/usr/local/bin/python2.7
+    _ansible_python=/usr/local/bin/python3.6
     _ansible_bin=$HOME/.local/bin/ansible-playbook
 
     if [ ! -f "$_ansible_python" ]; then
         echo_wait 'Python is not installed. Installing...'
-        sudo /usr/local/bin/synth install security/ca_root_nss lang/python27
+        sudo /usr/local/bin/synth install security/ca_root_nss lang/python36
     fi
 
-    if [ ! -f /usr/local/bin/pip-2.7 ]; then
+    if [ ! -f /usr/local/bin/pip-3.6 ]; then
         echo_wait 'Pip is not installed. Installing...'
-        sudo /usr/local/bin/synth install devel/py-pip@py27
+        sudo /usr/local/bin/synth install devel/py-pip@py36
     fi
 
     if [ ! -f "$_ansible_bin" ]; then
         echo_wait 'Ansible is not installed. Installing...'
-        /usr/local/bin/pip-2.7 install --user ansible=="$_ansible_version"
+        /usr/local/bin/pip-3.6 install --user ansible=="$_ansible_version"
     fi
 
     common_ansible_run "$@"
-    sudo /usr/local/bin/synth upgrade-system
+
+    if [ "$*" = "" ]; then
+        sudo /usr/local/bin/synth upgrade-system
+    fi
 }
 
 

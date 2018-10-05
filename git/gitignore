@@ -12,15 +12,17 @@ Thumbs.db
 dump.rdb
 
 # Per-project files
-.vagrant
-.idea
-.envrc
-.dir-locals.el
-.generators
-.gems
 *.iml
-out/
+*.pyc
+.dir-locals.el
+.envrc
+.gems/
+.generators/
+.idea/
+.mypy_cache/
+.vagrant/
 cache/
+out/
 
 # User files
 stdout

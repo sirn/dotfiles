@@ -10,7 +10,9 @@
          (when (not (frame-parameter nil 'fullscreen)) 'fullscreen))))
 
     (eval-when-compile
+      (defvar mac-command-modifier)
       (defvar mac-command-key-is-meta)
+      (defvar mac-option-modifier)
       (defvar mac-option-key-is-meta))
 
     (setq mac-command-key-is-meta nil)

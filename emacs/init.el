@@ -27,6 +27,7 @@
 
 
 ;; Initialize straight.el
+(setq straight-recipes-gnu-elpa-use-mirror t)
 (let ((bootstrap-version 4)
       (bootstrap-file (expand-file-name
                        "straight/repos/straight.el/bootstrap.el"

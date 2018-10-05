@@ -19,6 +19,7 @@
     state: latest
     executable: "{{python3_version_path}}/bin/pip"
     chdir: "{{python3_version_path}}"
+    extra_args: --no-binary
 
 - name: update python3 {{python3_version}} shims
   command: "{{asdf_bin}}/asdf reshim python3"
