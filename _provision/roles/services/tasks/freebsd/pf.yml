@@ -1,0 +1,43 @@
+---
+- name: configure pf
+  become: yes
+  template:
+    src: pf/pf.conf.j2
+    dest: /etc/pf.conf
+    validate: pfctl -n -f %s
+  register: pf_config
+
+- name: enable pf
+  become: yes
+  service:
+    name: pf
+    enabled: yes
+    state: started
+
+- name: reload pf
+  become: yes
+  command: pfctl -F all -f /etc/pf.conf
+  when: pf_config.changed
+
+# setup pf anchor hooks
+
+- name: configure pf anchor hook script
+  become: yes
+  copy:
+    src: pf/devd_anchor.sh
+    dest: /usr/local/libexec/local-pf-ifnet
+    mode: 0755
+
+- name: ensure devd directory
+  become: yes
+  file:
+    path: /usr/local/etc/devd/
+    state: directory
+
+- name: configure pf anchor devd
+  become: yes
+  copy:
+    src: pf/devd_anchor.conf
+    dest: /usr/local/etc/devd/pf_ifnet.conf
+  notify:
+    - restart devd rc service

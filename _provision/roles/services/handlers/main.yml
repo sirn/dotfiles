@@ -26,10 +26,14 @@
     launchctl load /Library/LaunchDaemons/com.zerotier.one.plist
   ignore_errors: yes
 
+- name: restart devd rc service
+  become: yes
+  service: name=devd state=restarted
+
 - name: restart ntpd rc service
   become: yes
-  service: name=ntpd enabled=yes state=restarted
+  service: name=ntpd state=restarted
 
 - name: restart zerotier rc service
   become: yes
-  service: name=zerotier enabled=yes state=restarted
+  service: name=zerotier state=restarted

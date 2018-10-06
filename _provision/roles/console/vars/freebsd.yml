@@ -3,6 +3,12 @@ clang_bin: /usr/bin/clang
 
 env_path: "{{ansible_env.HOME}}/.local/bin:{{asdf_shims}}:{{ansible_env.PATH}}"
 
+pf_allowed_ports:
+  - { port: "22", proto: tcp }
+  - { port: "60000:61000", proto: udp }
+
+pf_ext_if: "{{ansible_interfaces[0]}}"
+
 fuse_ld: gold
 
 gcc_bin: /usr/local/bin/gcc7

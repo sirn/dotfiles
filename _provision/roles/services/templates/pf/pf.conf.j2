@@ -1,0 +1,15 @@
+ext_if="{{pf_ext_if}}"
+ext_net=$ext_if:network
+
+scrub in all
+block in all
+
+pass out all keep state
+pass in quick on lo0 all
+anchor "pfifnet/*"
+
+pass in on $ext_if inet proto icmp all icmp-type echoreq keep state
+pass in on $ext_if inet6 proto icmp6 all icmp6-type echoreq keep state
+{% for spec in pf_allowed_ports %}
+pass in on $ext_if proto {{spec.proto}} from any to any port {{spec.port}} keep state
+{% endfor %}
