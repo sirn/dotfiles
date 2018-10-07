@@ -89,6 +89,7 @@ chunkc core::load tiling.so
 # https://github.com/koekeishiya/chunkwm/wiki/Useful-tips-and-workarounds
 #
 
+chunkc tiling::rule --owner Arq                 --state float &
 chunkc tiling::rule --owner FaceTime            --state float &
 chunkc tiling::rule --owner \"1Password 7\"     --state float &
 chunkc tiling::rule --owner \"CleanMyMac X\"    --state float &
