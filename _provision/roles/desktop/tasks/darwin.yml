@@ -1,6 +1,6 @@
 ---
 - name: install prerequisites
-  homebrew_cask: name=java,xquartz state=present
+  homebrew_cask: name=java8,xquartz state=present
 
 - name: link darwin-specific files and directories
   file:
