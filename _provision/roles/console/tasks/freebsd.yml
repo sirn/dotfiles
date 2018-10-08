@@ -2,7 +2,7 @@
 - name: fetch freebsd source
   become: yes
   shell: >
-    fetch -o - "ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/$(freebsd-version -k | sed 's/\-[^\-]*$//g')/src.txz" |
+    fetch -o - "ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/$(freebsd-version -k | sed 's/\-p.*$//g')/src.txz" |
     tar -C / -xvzf -
   args:
     warn: no
@@ -48,9 +48,15 @@
   become: yes
   lineinfile:
     dest: /boot/loader.conf
-    line: vboxdrv_load="YES"
+    line: "{{item}}"
     state: present
     create: yes
+  with_items:
+    - netgraph_load="YES"
+    - ng_ether_load="YES"
+    - vboxdrv_load="YES"
+    - vboxnetflt_load="YES"
+    - vboxnetadp_load="YES"
 
 - name: enable vboxnet service
   become: yes
