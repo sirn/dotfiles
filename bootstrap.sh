@@ -1,27 +1,6 @@
 #!/bin/sh
 
 #
-# Utils
-#
-
-echo_clear() {
-    printf "\\033[1A\\r\\033[K"
-}
-
-echo_ok() {
-    printf "\\033[0;32m✓\\033[0;0m %s\\n" "$1"
-}
-
-echo_wait() {
-    printf "* %s\\n" "$1"
-}
-
-echo_error() {
-    printf "\\033[0;31m!\\033[0;0m %s\\n" "$1"
-}
-
-
-#
 # Self-bootstrapping
 # Yo dawg
 #
@@ -59,6 +38,17 @@ fi
 
 
 #
+# Includes
+#
+
+# shellcheck source=_share/ansible.sh
+. "$HOME/.dotfiles/_share/ansible.sh"
+
+# shellcheck source=_share/utils.sh
+. "$HOME/.dotfiles/_share/utils.sh"
+
+
+#
 # Configurations
 #
 
@@ -68,7 +58,6 @@ fi
 
 _config_file="$XDG_CONFIG_HOME/dotfiles"
 
-_ansible_version="2.7.0"
 _ansible_opts=""
 
 print_usage() {
@@ -228,18 +217,10 @@ bootstrap_darwin() {
 
     /usr/local/bin/brew update
 
-    _ansible_opts="-K"
-    _ansible_python=/usr/local/bin/python3
-
     if [ ! -f "$_ansible_python" ]; then
         echo_wait 'Python is not installed. Installing...'
         /usr/local/bin/brew install python@3 --build-from-source
     fi
-
-    # Python on a Mac is weird.
-    # See also: https://docs.brew.sh/Homebrew-and-Python
-    _py_ver=$("$_ansible_python" -c 'import sys;print(".".join(map(str, sys.version_info[:2])))')
-    _ansible_bin="$HOME/Library/Python/$_py_ver/bin/ansible-playbook"
 
     if [ ! -f "$_ansible_bin" ]; then
         echo_wait 'Ansible is not installed. Installing...'
@@ -302,9 +283,6 @@ bootstrap_freebsd() {
         echo_wait 'Synth is not installed. Installing...'
         sudo make -C /usr/ports/ports-mgmt/synth -DBATCH install clean
     fi
-
-    _ansible_python=/usr/local/bin/python3.6
-    _ansible_bin=$HOME/.local/bin/ansible-playbook
 
     if [ ! -f "$_ansible_python" ]; then
         echo_wait 'Python is not installed. Installing...'

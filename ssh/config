@@ -1,2 +1,3 @@
 Include ~/.ssh/config.d/*
+Include ~/.dotpriv/ssh/config.d/*
 Include ~/.dotfiles/ssh/config.d/*
