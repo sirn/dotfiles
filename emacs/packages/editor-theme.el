@@ -8,7 +8,6 @@
 
   :preface
   (eval-when-compile
-    (defvar color-0)
     (defvar color-1)
     (defvar color-2)
     (defvar color-3)
@@ -50,4 +49,4 @@
       `(git-gutter:unchanged     ((t (:foreground "yellow"))))
 
       ;; web-mode
-      `(web-mode-block-attr-name-face ((t (:foreground ,color-13 :wegiht bold)))))))
+      `(web-mode-block-attr-name-face ((t (:foreground ,color-13 :weight bold)))))))
