@@ -78,3 +78,4 @@ ports_packages:
   - www/aria2
   - www/node8
   - www/npm-node8
+  - www/w3m

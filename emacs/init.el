@@ -7,6 +7,12 @@
     (load custom-file))
 
 
+;; Private configurations
+(let ((private-init-file "~/.dotpriv/emacs/init.el"))
+  (if (file-exists-p private-init-file)
+      (load private-init-file)))
+
+
 ;; SSL cert
 (eval-when-compile
   (defvar gnutls-trustfiles))
