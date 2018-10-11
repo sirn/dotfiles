@@ -8,6 +8,9 @@
   (eval-when-compile
     (declare-function ivy-mode nil))
 
+  ;; :init
+  (setq ivy-use-virtual-buffers t)
+
   :config
   (ivy-mode 1))
 
@@ -40,6 +43,9 @@
    ("C-h"     . counsel-up-directory))
 
   :init
+  (add-to-list 'ivy-ignore-buffers "^#")
+  (add-to-list 'ivy-ignore-buffers "^\\*irc\\-")
+
   (with-eval-after-load 'evil-leader
     (evil-leader/set-key
       "bb" 'ivy-switch-buffer
