@@ -52,11 +52,7 @@
     state: present
     create: yes
   with_items:
-    - netgraph_load="YES"
-    - ng_ether_load="YES"
     - vboxdrv_load="YES"
-    - vboxnetflt_load="YES"
-    - vboxnetadp_load="YES"
 
 - name: enable vboxnet service
   become: yes
