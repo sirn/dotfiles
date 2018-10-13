@@ -1,16 +1,22 @@
 (defconst emacs-start-time (current-time))
 
 
+(defgroup gr '()
+  "Gridth's customization group."
+  :group 'convenience
+  :prefix 'gr)
+
+
 ;; Use custom file at alternate path
 (setq custom-file "~/.emacs.d/custom.el")
 (if (file-exists-p custom-file)
-    (load custom-file))
+    (load (file-name-sans-extension custom-file)))
 
 
 ;; Private configurations
 (let ((private-init-file "~/.dotpriv/emacs/init.el"))
   (if (file-exists-p private-init-file)
-      (load private-init-file)))
+      (load (file-name-sans-extension private-init-file))))
 
 
 ;; SSL cert
@@ -33,6 +39,10 @@
 
 
 ;; Initialize straight.el
+(eval-when-compile
+  (defvar straight-recipes-gnu-elpa-use-mirror)
+  (defvar straight-process-buffer))
+
 (setq straight-recipes-gnu-elpa-use-mirror t)
 (let ((bootstrap-version 4)
       (bootstrap-file (expand-file-name
@@ -64,6 +74,10 @@
       (unless (member library loaded)
         (load library nil t)
         (push library loaded)))))
+
+
+(with-current-buffer (get-buffer "*Messages*")
+  (turn-on-evil-mode))
 
 
 ;; Use y/n instead of yes/no

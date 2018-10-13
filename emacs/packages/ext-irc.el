@@ -11,7 +11,7 @@
   (setq circe-network-defaults '())
   (setq circe-server-buffer-name "*irc-{network}*")
 
-  (defun ivy-switch-irc-buffers ()
+  (defun gr/ivy-switch-irc-buffers ()
     (interactive)
     (ivy-read "Switch to channel: "
               (seq-filter
@@ -23,7 +23,7 @@
 
   (with-eval-after-load 'evil-leader
     (evil-leader/set-key
-      "ib" 'ivy-switch-irc-buffers))
+      "ib" 'gr/ivy-switch-irc-buffers))
 
   :config
   (require 'circe-color-nicks)

@@ -1,17 +1,3 @@
-;; (eval-when-compile
-;;   (declare-function lsp-python-enable nil))
-
-;; (defun lsp-python--find-root ()
-;;   "Returns the Python project root."
-;;   (or (locate-dominating-file default-directory "setup.py")
-;;       (locate-dominating-file default-directory "setup.cfg")
-;;       (projectile-project-root)
-;;       default-directory))
-
-;; (with-eval-after-load 'lsp-mode
-;;   (lsp-define-stdio-client lsp-python "python" 'lsp-python--find-root '("pyls"))
-;;   (add-hook 'python-mode-hook 'lsp-python-enable))
-
 (eval-when-compile
   (defvar python-shell-interpreter))
 
@@ -45,9 +31,9 @@
 
   :init
   (with-eval-after-load 'company
-    (defun setup-company-python ()
+    (defun gr/setup-company-python ()
       (set (make-local-variable 'company-backends) '(company-anaconda)))
-    (add-hook 'python-mode-hook 'setup-company-python)))
+    (add-hook 'python-mode-hook 'gr/setup-company-python)))
 
 
 (use-package pipenv

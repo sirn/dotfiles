@@ -32,11 +32,11 @@
 
   :preface
   (eval-when-compile
-    (declare-function setup-tide nil))
+    (declare-function gr/setup-tide nil))
 
   :init
-  (when (boundp 'setup-tide)
-    (defun setup-web-mode-tsx ()
+  (when (boundp 'gr/setup-tide)
+    (defun gr/setup-web-mode-tsx ()
       (when (and (buffer-file-name) (string-equal "tsx" (file-name-extension (buffer-file-name))))
-        (setup-tide)))
-    (add-hook 'web-mode-hook 'setup-web-mode-tsx)))
+        (gr/setup-tide)))
+    (add-hook 'web-mode-hook 'gr/setup-web-mode-tsx)))

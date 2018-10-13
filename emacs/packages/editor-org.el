@@ -48,13 +48,13 @@
     (declare-function evil-org-agenda-set-keys nil))
 
   :init
-  (defun setup-evil-org ()
+  (defun gr/setup-evil-org ()
     (require 'evil-org)
     (require 'evil-org-agenda)
     (evil-org-mode)
     (evil-org-set-key-theme '(navigation insert textobjects additional))
     (evil-org-agenda-set-keys))
-  (add-hook 'org-mode-hook 'setup-evil-org))
+  (add-hook 'org-mode-hook 'gr/setup-evil-org))
 
 
 (use-package org

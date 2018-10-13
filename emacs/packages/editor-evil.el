@@ -1,8 +1,26 @@
 (use-package evil
   :straight t
+
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-mode-line-format nil)
+
   :config
   (fset 'evil-visual-update-x-selection 'ignore)
   (evil-mode t))
+
+
+(use-package evil-collection
+  :after evil
+  :straight t
+
+  :preface
+  (eval-when-compile
+    (declare-function evil-collection-init nil))
+
+  :config
+  (evil-collection-init))
 
 
 (use-package evil-commentary

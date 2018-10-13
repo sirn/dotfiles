@@ -5,6 +5,8 @@
 
 
 (setq-default frame-title-format '("%f"))
+(line-number-mode 1)
+(column-number-mode 1)
 
 
 (eval-when-compile
@@ -32,56 +34,6 @@
   (global-git-gutter-mode t))
 
 
-(use-package telephone-line
-  :after git-gutter ;; git-gutter is weird
-  :straight t
-
-  :preface
-  (eval-when-compile
-    (defvar projectile-segment)
-    (defvar telephone-line-lhs)
-    (defvar telephone-line-nil)
-    (defvar telephone-line-rhs)
-    (defvar telephone-line-primary-left-separator)
-    (defvar telephone-line-primary-right-separator)
-    (defvar telephone-line-secondary-left-separator)
-    (defvar telephone-line-secondary-right-separator)
-    (declare-function telephone-line-defsegment* nil)
-    (declare-function telephone-line-mode nil))
-
-  :config
-  (require 'telephone-line-config)
-
-  (telephone-line-defsegment* projectile-segment ()
-    (when (and (boundp 'projectile-project-name))
-      (let ((proj (projectile-project-name)))
-        (when (not (equal proj "-"))
-          proj))))
-
-  (unless (display-graphic-p)
-    (setq telephone-line-primary-left-separator 'telephone-line-nil)
-    (setq telephone-line-primary-right-separator 'telephone-line-nil)
-    (setq telephone-line-secondary-left-separator 'telephone-line-nil)
-    (setq telephone-line-secondary-right-separator 'telephone-line-nil))
-
-  (setq telephone-line-lhs
-        '((nil    . (telephone-line-window-number-segment))
-          (evil   . (telephone-line-evil-tag-segment))
-          (accent . (telephone-line-vc-segment
-                     telephone-line-erc-modified-channels-segment
-                     telephone-line-process-segment))
-          (nil    . (telephone-line-minor-mode-segment
-                     telephone-line-buffer-segment))))
-
-  (setq telephone-line-rhs
-        '((nil    . (projectile-segment
-                     telephone-line-misc-info-segment))
-          (accent . (telephone-line-major-mode-segment))
-          (evil   . (telephone-line-airline-position-segment))))
-
-  (telephone-line-mode t))
-
-
 (use-package winum
   :straight t
 
@@ -90,11 +42,11 @@
     (declare-function winum-mode nil))
 
   :config
-  (defun winum-assign-func ()
+  (defun gr/winum-assign-func ()
     (when (and (boundp 'neo-buffer-name)
                (string= (buffer-name) neo-buffer-name)
                (eq (selected-window) (frame-first-window))) 0))
-  (add-to-list 'winum-assign-functions 'winum-assign-func)
+  (add-to-list 'winum-assign-functions 'gr/winum-assign-func)
 
   (setq winum-auto-setup-mode-line nil)
   (setq winum-scope 'visible)

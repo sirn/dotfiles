@@ -19,7 +19,8 @@
   (add-to-list 'projectile-project-root-files "Vagrantfile" t)
 
   (with-eval-after-load 'magit-branch
-    (defun projectile-invalidate-cache-adv (&rest _args)
+    (defun gr/projectile-invalidate-cache-adv (&rest _args)
       (projectile-invalidate-cache nil))
-    (advice-add 'magit-checkout :after 'projectile-invalidate-cache-adv)
-    (advice-add 'magit-branch-and-checkout :after 'projectile-invalidate-cache-adv)))
+
+    (advice-add 'magit-checkout :after 'gr/projectile-invalidate-cache-adv)
+    (advice-add 'magit-branch-and-checkout :after 'gr/projectile-invalidate-cache-adv)))

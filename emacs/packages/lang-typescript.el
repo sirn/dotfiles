@@ -1,4 +1,4 @@
-(defun setup-tide ()
+(defun gr/setup-tide ()
   (tide-setup)
   (tide-hl-identifier-mode t)
 
@@ -15,15 +15,12 @@
 
 (use-package tide
   :after typescript-mode
+  :commands (tide-setup tide-mode)
   :diminish tide-mode
   :straight t
 
-  :commands
-  (tide-setup
-   tide-mode)
-
   :init
-  (add-hook 'typescript-mode-hook 'setup-tide)
+  (add-hook 'typescript-mode-hook 'gr/setup-tide)
 
   :config
   (add-hook 'before-save-hook 'tide-format-before-save))

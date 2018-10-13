@@ -22,31 +22,71 @@
     (defvar color-12)
     (defvar color-13)
     (defvar color-14)
-    (defvar color-15))
+    (defvar color-15)
+    (declare-function gr/echo-area-setup-face nil))
 
   :config
   (load-theme 'tao-yin t)
-  (tao-with-color-variables tao-theme-yin-palette
-   (custom-theme-set-faces
-      'tao-yin
+  (tao-with-color-variables
+    tao-theme-yin-palette
+    (custom-theme-set-faces
+     'tao-yin
 
-      ;; ansible
-      `(ansible::task-label-face ((t (:foreground ,color-9))))
-      `(ansible::section-face    ((t (:foreground ,color-13 :weight bold))))
+     ;;
+     ;; Custom faces for ansible
+     ;;
+     `(ansible::task-label-face ((t (:foreground ,color-9))))
+     `(ansible::section-face    ((t (:foreground ,color-13 :weight bold))))
 
-      ;; flycheck
-      `(flycheck-error           ((((supports :underline (:style wave))) (:underline (:style wave :color "Red1") :inherit unspecified)) (t (:foreground "Red1" :weight bold :underline t))))
-      `(flycheck-warning         ((((supports :underline (:style wave))) (:underline (:style wave :color "DarkOrange") :inherit unspecified)) (t (:foreground "DarkOrange" :weight bold :underline t))))
-      `(flycheck-info            ((((supports :underline (:style wave))) (:underline (:style wave :color "ForestGreen") :inherit unspecified)) (t (:foreground "ForestGreen" :weight bold :underline t))))
-      `(flycheck-fringe-error    ((t (:foreground "Red1"))))
-      `(flycheck-fringe-warning  ((t (:foreground "DarkOrange"))))
-      `(flycheck-fringe-info     ((t (:foreground "ForestGreen"))))
+     ;;
+     ;; Custom faces flycheck
+     ;;
+     `(flycheck-error           ((((supports :underline (:style wave))) (:underline (:style wave :color "Red1") :inherit unspecified)) (t (:foreground "Red1" :weight bold :underline t))))
+     `(flycheck-warning         ((((supports :underline (:style wave))) (:underline (:style wave :color "DarkOrange") :inherit unspecified)) (t (:foreground "DarkOrange" :weight bold :underline t))))
+     `(flycheck-info            ((((supports :underline (:style wave))) (:underline (:style wave :color "ForestGreen") :inherit unspecified)) (t (:foreground "ForestGreen" :weight bold :underline t))))
+     `(flycheck-fringe-error    ((t (:foreground "Red1"))))
+     `(flycheck-fringe-warning  ((t (:foreground "DarkOrange"))))
+     `(flycheck-fringe-info     ((t (:foreground "ForestGreen"))))
 
-      ;; git-gutter
-      `(git-gutter:added         ((t (:foreground "green"))))
-      `(git-gutter:deleted       ((t (:foreground "red"))))
-      `(git-gutter:modified      ((t (:foreground "magenta"))))
-      `(git-gutter:unchanged     ((t (:foreground "yellow"))))
+     ;;
+     ;; Custom faces for git-gutter
+     ;;
+     `(git-gutter:added         ((t (:foreground "green"))))
+     `(git-gutter:deleted       ((t (:foreground "red"))))
+     `(git-gutter:modified      ((t (:foreground "magenta"))))
+     `(git-gutter:unchanged     ((t (:foreground "yellow"))))
 
-      ;; web-mode
-      `(web-mode-block-attr-name-face ((t (:foreground ,color-13 :weight bold)))))))
+     ;;
+     ;; Custom faces for smart-mode-line
+     ;;
+     `(mode-line                ((t (:background ,color-5 :inherit default))))
+     `(mode-line-buffer-id      ((t (:inherit sml/filename))))
+     `(mode-line-inactive       ((t (:background ,color-6))))
+     `(sml/global               ((t (:background nil :inherit mode-line))))
+     `(sml/modes                ((t (:foreground ,color-8))))
+     `(sml/minor-modes          ((t (:foreground ,color-8))))
+     `(sml/read-only            ((t (:foreground ,color-8))))
+
+     ;; Prefix
+     ;; mode-line-winum/mode-line-evil
+     `(gr/mode-line-winum       ((t (:foreground ,color-8 :weight bold))))
+     `(gr/mode-line-evil        ((t (:foreground ,color-13 :weight bold))))
+
+     ;; Line number
+     ;; line-number:col-number
+     `(sml/col-number           ((t (:foreground ,color-8))))
+     `(sml/line-number          ((t (:foreground ,color-10 :weight bold))))
+
+     ;; Filename
+     ;; [prefix(sudo/git/projectile)]folder/filename
+     `(sml/prefix               ((t (:foreground ,color-15))))
+     `(sml/sudo                 ((t (:foreground "Red" :inherit sml/prefix))))
+     `(sml/git                  ((t (:inherit sml/prefix))))
+     `(sml/projectile           ((t (:inherit sml/prefix))))
+     `(sml/folder               ((t (:foreground ,color-10))))
+     `(sml/filename             ((t (:foreground ,color-10 :weight bold))))
+
+     ;;
+     ;; Custom faces for web-mode
+     ;;
+     `(web-mode-block-attr-name-face ((t (:foreground ,color-13 :weight bold)))))))

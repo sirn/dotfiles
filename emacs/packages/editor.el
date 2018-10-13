@@ -94,6 +94,21 @@
   (global-flycheck-mode t))
 
 
+(use-package origami
+  :diminish origami-mode
+  :straight t
+
+  :preface
+  (eval-when-compile
+    (declare-function global-origami-mode nil))
+
+  :config
+  (global-origami-mode t)
+  (evil-define-key 'normal prog-mode-map
+    (kbd "TAB")   'origami-toggle-node
+    (kbd "M-TAB") 'origami-toggle-all-nodes))
+
+
 (use-package pandoc-mode
   :commands pandoc-mode
   :diminish pandoc-mode
@@ -192,6 +207,16 @@
   (unless (file-exists-p "~/.emacs.d/undo")
     (make-directory "~/.emacs.d/undo"))
   (global-undo-tree-mode t))
+
+
+(use-package visual-regexp
+  :commands (vr/replace vr/query-replace)
+  :straight t
+
+  :init
+  (define-key global-map (kbd "C-c r") 'vr/replace)
+  (define-key global-map (kbd "C-c q") 'vr/query-replace))
+
 
 
 (use-package yasnippet

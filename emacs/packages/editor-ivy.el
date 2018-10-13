@@ -1,5 +1,4 @@
-;; Note: need to be included before counsel/swiper
-;; because they're essentially the same repo.
+;; Note: need to be included before counsel/swiper (same repo)
 (use-package ivy
   :diminish ivy-mode
   :straight t

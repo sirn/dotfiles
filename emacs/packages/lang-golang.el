@@ -5,9 +5,9 @@
 
   :init
   (with-eval-after-load 'company
-    (defun setup-company-go ()
+    (defun gr/setup-company-go ()
       (set (make-local-variable 'company-backends) '(company-go)))
-    (add-hook 'go-mode-hook 'setup-company-go)))
+    (add-hook 'go-mode-hook 'gr/setup-company-go)))
 
 
 (use-package flycheck-gometalinter
