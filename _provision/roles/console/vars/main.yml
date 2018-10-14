@@ -1,5 +1,5 @@
 ---
-asdf_version: "0.4.3"
+asdf_version: "0.6.0"
 
 asdf_path: "{{ansible_env.HOME}}/.asdf"
 
@@ -116,7 +116,7 @@ python3_version: "3.6.6"
 python3_version_path: "{{ansible_env.HOME}}/.asdf/installs/python3/{{python3_version}}"
 
 python3_packages:
-  - ansible==2.4.3.0
+  - ansible
   - asciinema
   - autoflake
   - black

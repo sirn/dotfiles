@@ -61,6 +61,7 @@ ports_packages:
   - sysutils/direnv
   - sysutils/entr
   - sysutils/fswatch-mon
+  - sysutils/fusefs-webdavfs
   - sysutils/helm
   - sysutils/iocage@py36
   - sysutils/kubectl
