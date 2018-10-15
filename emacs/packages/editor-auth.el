@@ -6,7 +6,25 @@
     (defvar auth-sources))
 
   :config
-  (setq auth-sources '("~/.authinfo.gpg")))
+  (setq auth-sources '()))
+
+
+(use-package auth-source-pass
+  :after (auth-source password-store)
+  :straight t
+
+  :preface
+  (eval-when-compile
+    (declare-function auth-source-pass-enable nil))
+
+  :config
+  (let ((dir (password-store-dir)))
+    (when (file-directory-p dir)
+      (auth-source-pass-enable))))
+
+
+(use-package password-store
+  :straight t)
 
 
 (use-package pinentry

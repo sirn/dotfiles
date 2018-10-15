@@ -69,6 +69,7 @@ ports_packages:
   - sysutils/minikube
   - sysutils/moreutils
   - sysutils/packer
+  - sysutils/password-store
   - sysutils/s6
   - sysutils/terraform
   - sysutils/tmux
