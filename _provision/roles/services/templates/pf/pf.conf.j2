@@ -13,3 +13,6 @@ pass in on $ext_if inet6 proto icmp6 all icmp6-type echoreq keep state
 {% for spec in pf_allowed_ports %}
 pass in on $ext_if proto {{spec.proto}} from any to any port {{spec.port}} keep state
 {% endfor %}
+
+include "/etc/pf/private.conf"
+include "/etc/pf/local.conf"
