@@ -12,30 +12,39 @@ export XDG_CACHE_HOME=$HOME/.cache
 export XDG_DATA_HOME=$HOME/.data
 export XDG_STATE_HOME=$HOME/.state
 
-PATH=/usr/local/sbin:$PATH
-PATH=/usr/local/bin:$PATH
-PATH=$HOME/.local/bin:$PATH
-PATH=$HOME/.local/var/npm/bin:$PATH
+PATH=/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+PATH=$PATH:$HOME/.local/bin
 
-#
-# Rust
-#
-
-export RUST_SRC_PATH=$HOME/.local/src/rust/current/src/
-PATH=$HOME/.cargo/bin:$PATH
 
 #
 # Erlang
 #
 
-PATH=$HOME/.cache/rebar3/bin:$PATH
+PATH=$PATH:$HOME/.cache/rebar3/bin
+
 
 #
 # Golang
 #
 
 export GOPATH=$HOME/Dev/go/
-PATH=$HOME/Dev/go/bin:$PATH
+PATH=$PATH:$HOME/Dev/go/bin
+
+
+#
+# Node
+#
+
+PATH=$PATH:$HOME/.local/var/npm/bin
+
+
+#
+# Rust
+#
+
+export RUST_SRC_PATH=$HOME/.local/src/rust/current/src/
+PATH=$PATH:$HOME/.cargo/bin
+
 
 #
 # Platform-specific
@@ -43,8 +52,8 @@ PATH=$HOME/Dev/go/bin:$PATH
 
 case "$(uname)" in
     Darwin )
-        PATH=/usr/local/opt/gpg-agent/bin:$PATH
-        PATH=/usr/local/opt/node@8/bin:$PATH
+        PATH=$PATH:/usr/local/opt/gpg-agent/bin
+        PATH=$PATH:/usr/local/opt/node@8/bin
 
         if hash brew 2>/dev/null; then
             export HOMEBREW_NO_ANALYTICS=1
@@ -59,13 +68,16 @@ case "$(uname)" in
         fi
 
         if [ -d /Applications/mpv.app/Contents/MacOS ]; then
-            PATH=/Applications/mpv.app/Contents/MacOS:$PATH
+            PATH=$PATH:/Applications/mpv.app/Contents/MacOS
         fi
 
         if [ -d "/Applications/VMware Fusion.app" ]; then
             export VAGRANT_VMWARE_CLONE_DIRECTORY="$HOME/Virtual Machines"
         fi
         ;;
+    FreeBSD )
+        GPG_TTY=$(tty)
+        export GPG_TTY
 esac
 
 

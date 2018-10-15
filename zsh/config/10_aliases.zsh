@@ -10,7 +10,3 @@ fi
 if hash hub 2>/dev/null; then
     alias git="hub"
 fi
-
-if hash drill 2>/dev/null; then
-    alias dig="drill"
-fi
