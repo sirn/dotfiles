@@ -331,9 +331,12 @@ esac
 #
 
 if [ ! -d "$_dotfiles/.git" ]; then
-    cd "$_dotfiles" || exit
-    git init
-    git remote add origin "$_repo_ssh"
-    GIT_SSH_COMMAND="ssh -i $HOME/.ssh/git_ed25519" git fetch
-    git reset --hard origin/master
+    echo "Once you have SSH keys setup, you might want to re-init dotfiles:"
+    echo
+    echo "  cd $_dotfiles"
+    echo "  git init"
+    echo "  git remote add origin $_repo_ssh"
+    echo "  git fetch"
+    echo "  git reset --hard origin/master"
+    echo
 fi
