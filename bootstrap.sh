@@ -58,8 +58,6 @@ fi
 
 _config_file="$XDG_CONFIG_HOME/dotfiles"
 
-_ansible_opts=""
-
 print_usage() {
     echo "Usage: $0 [-h] [-r] [[-p profile1] [-p profile2] ...] [-- [ansible args...]]"
     echo
