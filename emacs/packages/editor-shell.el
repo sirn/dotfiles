@@ -13,19 +13,3 @@
   ;; which may not the contain necessary modules required by the distro package.
   (setq exec-path-from-shell-check-startup-files nil)
   (exec-path-from-shell-initialize))
-
-
-(use-package keychain-environment
-  :after exec-path-from-shell
-  :straight t
-
-  :preface
-  (eval-when-compile
-    (declare-function keychain-refresh-environment nil))
-
-  :config
-  (let ((shell (getenv "SHELL")))
-    (progn
-      (setenv "SHELL" "/bin/sh")
-      (keychain-refresh-environment)
-      (setenv "SHELL" shell))))

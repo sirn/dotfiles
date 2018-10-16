@@ -1,4 +1,0 @@
-Host gitlab.com
-  User git
-  HostName gitlab.com
-  IdentityFile ~/.ssh/git_ed25519

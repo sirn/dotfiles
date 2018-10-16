@@ -53,7 +53,6 @@ ports_packages:
   - security/ca_root_nss
   - security/git-crypt
   - security/gnupg
-  - security/keychain
   - security/openssl
   - shells/bash
   - shells/zsh

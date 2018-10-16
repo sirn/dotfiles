@@ -45,7 +45,7 @@
 
 (use-package epg
   :straight t
-  :after (epa keychain-environment)
+  :after epa
 
   :preface
   (declare-function pinentry-start nil)

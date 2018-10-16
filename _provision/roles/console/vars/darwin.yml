@@ -24,7 +24,6 @@ brew_packages:
   - ipcalc
   - jq
   - jsonnet
-  - keychain
   - kubernetes-cli
   - kubernetes-helm
   - leiningen

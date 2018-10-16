@@ -1,4 +1,0 @@
-Host aur.archlinux.org
-  User aur
-  HostName aur.archlinux.org
-  IdentityFile ~/.ssh/git_ed25519

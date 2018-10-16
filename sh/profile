@@ -17,33 +17,40 @@ PATH=$PATH:$HOME/.local/bin
 
 
 #
-# Erlang
+# Language runtime
 #
 
+# Erlang
 PATH=$PATH:$HOME/.cache/rebar3/bin
 
-
-#
 # Golang
-#
-
 export GOPATH=$HOME/Dev/go/
 PATH=$PATH:$HOME/Dev/go/bin
 
-
-#
 # Node
-#
-
 PATH=$PATH:$HOME/.local/var/npm/bin
 
-
-#
 # Rust
-#
-
 export RUST_SRC_PATH=$HOME/.local/src/rust/current/src/
 PATH=$PATH:$HOME/.cargo/bin
+
+
+#
+# GPG agent
+#
+
+if hash gpgconf 2>/dev/null; then
+    gpgconf --launch gpg-agent
+    unset SSH_AGENT_PID
+
+    if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
+        SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+        export SSH_AUTH_SOCK
+    fi
+
+    GPG_TTY=$(tty)
+    export GPG_TTY
+fi
 
 
 #
@@ -75,18 +82,11 @@ case "$(uname)" in
             export VAGRANT_VMWARE_CLONE_DIRECTORY="$HOME/Virtual Machines"
         fi
         ;;
-    FreeBSD )
-        GPG_TTY=$(tty)
-        export GPG_TTY
 esac
 
 
 #
 # Finalizing
 #
-
-if hash keychain 2>/dev/null; then
-    eval "$(keychain --eval --agents ssh,gpg --quiet)"
-fi
 
 export PATH

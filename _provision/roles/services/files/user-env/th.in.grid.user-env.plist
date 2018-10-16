@@ -10,9 +10,8 @@
     <string>--login</string>
     <string>-c</string>
     <string>
-      launchctl setenv SSH_AUTH_SOCK $SSH_AUTH_SOCK;
-      launchctl setenv SSH_AGENT_PID $SSH_AGENT_PID;
-      launchctl setenv GPG_AGENT_INFO $GPG_AGENT_INFO
+      launchctl unsetenv SSH_AGENT_PID;
+      launchctl setenv SSH_AUTH_SOCK $SSH_AUTH_SOCK
     </string>
   </array>
   <key>RunAtLoad</key>
