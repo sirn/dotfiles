@@ -36,6 +36,7 @@ brew_packages:
   - openssh
   - openssl
   - packer
+  - pass
   - pinentry-mac
   - postgresql
   - reattach-to-user-namespace

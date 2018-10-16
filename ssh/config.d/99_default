@@ -1,6 +1,5 @@
 Host *
   User sirn
-  IdentityFile ~/.ssh/id_ed25519
   PreferredAuthentications publickey
   ControlMaster auto
   ControlPath ~/.ssh/ssh-%r@%h:%p
