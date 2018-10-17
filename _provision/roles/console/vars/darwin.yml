@@ -4,6 +4,7 @@ brew_taps:
 
 brew_packages:
   - aria2
+  - asciinema
   - autoconf
   - carthage
   - cocoapods
@@ -13,6 +14,7 @@ brew_packages:
   - direnv
   - ffmpeg
   - fswatch
+  - fzf
   - git
   - git-crypt
   - git-lfs
@@ -40,6 +42,7 @@ brew_packages:
   - pinentry-mac
   - postgresql
   - reattach-to-user-namespace
+  - ripgrep
   - rtmpdump
   - s6
   - socat
@@ -47,8 +50,10 @@ brew_packages:
   - tmux
   - trash
   - tree
+  - w3m
   - xhyve
   - xz
+  - youtube-dl
   - zsh
 
 cask_taps:

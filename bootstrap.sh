@@ -222,7 +222,7 @@ bootstrap_darwin() {
 
     if [ ! -f "$_ansible_bin" ]; then
         echo_wait 'Ansible is not installed. Installing...'
-        /usr/local/bin/pip3 install --user --install-option="--prefix=" ansible=="$_ansible_version"
+        /usr/local/bin/brew install ansible --build-from-source
     fi
 
     common_ansible_run "$@"
@@ -287,14 +287,9 @@ bootstrap_freebsd() {
         sudo /usr/local/bin/synth install security/ca_root_nss lang/python36
     fi
 
-    if [ ! -f /usr/local/bin/pip-3.6 ]; then
-        echo_wait 'Pip is not installed. Installing...'
-        sudo /usr/local/bin/synth install devel/py-pip@py36
-    fi
-
     if [ ! -f "$_ansible_bin" ]; then
         echo_wait 'Ansible is not installed. Installing...'
-        /usr/local/bin/pip-3.6 install --user ansible=="$_ansible_version"
+        sudo /usr/local/bin/synth install sysutils/ansible@py36
     fi
 
     common_ansible_run "$@"

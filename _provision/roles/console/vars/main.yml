@@ -64,7 +64,6 @@ golang_path: "{{golang_gopath}}/bin:{{golang_goroot}}/bin:{{env_path}}"
 
 golang_packages:
   - github.com/Masterminds/glide
-  - github.com/junegunn/fzf
   - github.com/knqyf263/pet
   - github.com/mitchellh/gox
   - github.com/motemen/ghq
@@ -86,7 +85,7 @@ kube_ps1_version: "0.6.0"
 
 kubectx_version: "5a1366b"
 
-nim_version: "0.18.0"
+nim_version: "0.19.0"
 
 nim_version_path: "{{ansible_env.HOME}}/.asdf/installs/nim/v{{nim_version}}"
 
@@ -94,9 +93,7 @@ nodejs_npm_path: "/usr/local/lib/node_modules/npm/bin"
 
 nodejs_packages:
   - bower
-  - elm-oracle
   - eslint
-  - localtunnel
   - prettier
   - pulp
   - purescript
@@ -116,12 +113,9 @@ python3_version: "3.6.6"
 python3_version_path: "{{ansible_env.HOME}}/.asdf/installs/python3/{{python3_version}}"
 
 python3_packages:
-  - ansible
-  - asciinema
   - autoflake
   - black
   - flake8
-  - glances
   - ipython
   - jupyter
   - numpy
@@ -131,7 +125,6 @@ python3_packages:
   - proselint
   - pylint
   - virtualenv
-  - youtube-dl
 
 ruby_version: "2.5.1"
 
@@ -149,5 +142,4 @@ rust_version_path: "{{ansible_env.HOME}}/.asdf/installs/rust/{{rust_version}}"
 
 rust_packages:
   - { name: "racer", binary: "racer" }
-  - { name: "ripgrep", binary: "rg" }
   - { name: "rustfmt", binary: "rustfmt" }

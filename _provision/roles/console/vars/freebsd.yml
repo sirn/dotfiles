@@ -74,8 +74,12 @@ ports_packages:
   - sysutils/tree
   - sysutils/vagrant
   - sysutils/zfstools
+  - textproc/fzf
   - textproc/jq
+  - textproc/py-asciinema@py36
+  - textproc/ripgrep
   - www/aria2
   - www/node8
   - www/npm-node8
   - www/w3m
+  - www/youtube_dl
