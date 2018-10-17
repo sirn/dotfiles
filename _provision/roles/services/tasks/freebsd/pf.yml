@@ -6,8 +6,9 @@
     state: "{{item.state}}"
   with_items:
     - { path: /etc/pf, state: directory }
-    - { path: /etc/pf/private.conf, state: touch }
+    - { path: /etc/pf/jails.conf, state: touch }
     - { path: /etc/pf/local.conf, state: touch }
+    - { path: /etc/pf/private.conf, state: touch }
 
 - name: configure pf
   become: yes

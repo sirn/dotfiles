@@ -1,18 +1,24 @@
 ext_if="{{pf_ext_if}}"
 ext_net=$ext_if:network
+icmp_types="{ 2, 128 }"
+icmp6_types="{ 128, 133, 134, 135, 136, 137 }"
 
 scrub in all
 block in all
 
-pass out all keep state
-pass in quick on lo0 all
+pass out inet all flags any keep state
+pass out inet6 all flags any keep state
+pass in on lo0 inet all
+pass in on lo0 inet6 all
 anchor "pfifnet/*"
 
-pass in on $ext_if inet proto icmp all icmp-type echoreq keep state
-pass in on $ext_if inet6 proto icmp6 all icmp6-type echoreq keep state
+pass in on $ext_if inet proto icmp all icmp-type $icmp_types keep state
+pass in on $ext_if inet6 proto icmp6 all icmp6-type $icmp6_types keep state
 {% for spec in pf_allowed_ports %}
-pass in on $ext_if proto {{spec.proto}} from any to any port {{spec.port}} keep state
+pass in on $ext_if inet proto {{spec.proto}} from any to any port {{spec.port}} keep state
+pass in on $ext_if inet6 proto {{spec.proto}} from any to any port {{spec.port}} keep state
 {% endfor %}
 
-include "/etc/pf/private.conf"
+include "/etc/pf/jails.conf"
 include "/etc/pf/local.conf"
+include "/etc/pf/private.conf"
