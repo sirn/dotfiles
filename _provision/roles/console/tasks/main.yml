@@ -81,11 +81,6 @@
     - kubernetes
     - kapitan
 
-- import_tasks: "pkgs/ksonnet.yml"
-  tags:
-    - kubernetes
-    - ksonnet
-
 - import_tasks: "pkgs/kube-ps1.yml"
   tags:
     - kubernetes
