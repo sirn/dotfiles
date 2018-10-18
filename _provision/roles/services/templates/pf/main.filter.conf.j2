@@ -1,0 +1,22 @@
+block in all
+
+# Allow IPv4 traffic
+icmp_types="{ 2, 128 }"
+pass in on {{pf_ext_if}} inet proto icmp all icmp-type $icmp_types keep state
+pass in on lo0 inet all
+pass out inet all flags any keep state
+
+# Allow IPv6 traffic
+icmp6_types="{ 128, 133, 134, 135, 136, 137 }"
+pass in on {{pf_ext_if}} inet6 proto icmp6 all icmp6-type $icmp6_types keep state
+pass in on lo0 inet6 all
+pass out inet6 all flags any keep state
+
+{% for spec in pf_allowed_ports %}
+# {{spec.name}}
+pass in on {{pf_ext_if}} inet proto {{spec.proto}} from any to any port {{spec.port}} keep state
+pass in on {{pf_ext_if}} inet6 proto {{spec.proto}} from any to any port {{spec.port}} keep state
+
+{% endfor %}
+# Filter anchor
+anchor "pfifnet/*"
