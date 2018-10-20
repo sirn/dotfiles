@@ -34,6 +34,7 @@ ports_packages:
   - devel/git
   - devel/git-lfs
   - devel/gmake
+  - devel/hs-ShellCheck
   - devel/hub
   - devel/jsonnet
   - devel/leiningen
@@ -79,6 +80,7 @@ ports_packages:
   - sysutils/vagrant
   - sysutils/zfstools
   - textproc/fzf
+  - textproc/hs-pandoc
   - textproc/jq
   - textproc/py-asciinema@py36
   - textproc/ripgrep

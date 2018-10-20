@@ -74,10 +74,6 @@ golang_packages:
   - golang.org/x/tools/cmd/guru
 
 haskell_stack_packages:
-  - { name: ShellCheck, binary: shellcheck, resolver: "lts-11.17" }
-  - { name: hakyll, binary: hakyll-init, resolver: "lts-11.17" }
-  - { name: pandoc, binary: pandoc, resolver: "lts-11.17" }
-  - { name: cabal-install, binary: cabal, resolver: "lts-9.21" }
 
 ksonnet_version: "0.12.0"
 

@@ -38,6 +38,7 @@ brew_packages:
   - openssh
   - openssl
   - packer
+  - pandoc
   - pass
   - pinentry-mac
   - postgresql
@@ -45,6 +46,7 @@ brew_packages:
   - ripgrep
   - rtmpdump
   - s6
+  - shellcheck
   - socat
   - terraform
   - tmux
