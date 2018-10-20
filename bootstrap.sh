@@ -307,7 +307,7 @@ bootstrap_freebsd() {
 echo_wait "Running bootstrap with profile(s): $_profile"
 
 if [ "$*" != "" ]; then
-    echo_wait "Ansible will be run with extra args: $*"
+    echo_wait "Ansible will run with extra args: $*"
 fi
 
 case $_platform in

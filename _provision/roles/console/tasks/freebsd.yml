@@ -26,7 +26,6 @@
     - { key: "security.bsd.see_other_uids", value: "0" }
     - { key: "kern.maxfiles", value: "5242880" }
     - { key: "kern.maxfilesperproc", value: "524288" }
-    - { key: "vfs.usermount", value: "1" }
 
 # setup logging
 
@@ -41,23 +40,6 @@
     - daily_output="/var/log/daily.log"
     - weekly_output="/var/log/weekly.log"
     - monthly_output="/var/log/monthly.log"
-
-# setup fuse
-
-- name: configure fuse kernel module
-  become: yes
-  lineinfile:
-    dest: /boot/loader.conf
-    line: fuse_load="YES"
-    state: present
-    create: yes
-
-- name: add {{ansible_user_id}} to operator group
-  become: yes
-  user:
-    name: "{{ansible_user_id}}"
-    groups: operator
-    append: yes
 
 # setup virtualbox kernel modules and permissions
 # see also: https://www.freebsd.org/doc/handbook/virtualization-host-virtualbox.html

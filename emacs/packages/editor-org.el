@@ -5,7 +5,10 @@
 
 
 (use-package git
-  :straight t)
+  :straight t
+
+  :config
+  (setq org-log-done t))
 
 
 (defun org-git-version ()
