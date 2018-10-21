@@ -8,6 +8,12 @@
     warn: no
     creates: /usr/src/Makefile
 
+- name: copy ports configurations
+  become: yes
+  copy:
+    src: synth/make.conf
+    dest: /usr/local/etc/synth/LiveSystem-make.conf
+
 - name: install ports packages via synth
   become: yes
   command: /usr/local/bin/synth install {{ports_packages|join(" ")}}
