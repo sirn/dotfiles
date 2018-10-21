@@ -43,6 +43,7 @@ ports_packages:
   - editors/neovim
   - emulators/virtualbox-ose-nox11
   - ftp/curl
+  - ftp/lftp
   - graphics/GraphicsMagick
   - graphics/graphviz
   - java/openjdk8-jre
@@ -64,6 +65,7 @@ ports_packages:
   - shells/zsh
   - sysutils/coreutils
   - sysutils/direnv
+  - sysutils/duplicity
   - sysutils/entr
   - sysutils/fswatch-mon
   - sysutils/helm
