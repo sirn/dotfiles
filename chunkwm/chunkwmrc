@@ -91,6 +91,7 @@ chunkc core::load tiling.so
 
 chunkc tiling::rule --owner Arq                 --state float &
 chunkc tiling::rule --owner FaceTime            --state float &
+chunkc tiling::rule --owner Fantastical         --state float &
 chunkc tiling::rule --owner \"1Password 7\"     --state float &
 chunkc tiling::rule --owner \"CleanMyMac X\"    --state float &
 chunkc tiling::rule --owner iBooks              --state float &

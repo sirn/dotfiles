@@ -30,3 +30,4 @@
   environment:
     PATH: "{{env_path}}"
   with_items: "{{haskell_stack_packages}}"
+  when: haskell_stack_packages
