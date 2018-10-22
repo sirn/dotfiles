@@ -1,7 +1,7 @@
 block in all
 
 # Allow IPv4 traffic
-icmp_types="{ 2, 128 }"
+icmp_types="{ echoreq }"
 pass in on {{pf_ext_if}} inet proto icmp all icmp-type $icmp_types keep state
 pass in on lo0 inet all
 pass out inet all flags any keep state
