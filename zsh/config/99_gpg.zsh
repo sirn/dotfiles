@@ -7,7 +7,7 @@
 
 _gpg_update_tty_hook () {
     case "$1" in
-        *ssh* | *sftp* | *scp* | *git* | *rsync* | *mosh* )
+        *ssh* | *sftp* | *scp* | *git* | *rsync* | *mosh* | *ghq* | *duplicity* )
             gpg-connect-agent updatestartuptty /bye >/dev/null
             ;;
         * )
