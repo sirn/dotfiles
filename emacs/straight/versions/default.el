@@ -103,6 +103,7 @@
  ("typescript.el" . "72ec0f93aa6614baaa3dfa1b23be2b6691c6c4cf")
  ("undo-tree" . "d54ef13e3c69655e39f977b8bf75399a6d2b5e42")
  ("use-package" . "2b89ca4b9102baaf3f84f3fc8177c8a17288e291")
+ ("visual-regexp-steroids.el" . "a6420b25ec0fbba43bf57875827092e1196d8a9e")
  ("visual-regexp.el" . "b3096c2d391ff4e28a2a4e8cd82efbf11071ea85")
  ("w3m" . "ea64ccb3d792b60f0815309f588bf46b1f0ca80e")
  ("web-mode" . "e31d1dd4ee436db8aaca3f35223af5a05fb47dec")

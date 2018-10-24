@@ -218,6 +218,10 @@
   (define-key global-map (kbd "C-c q") 'vr/query-replace))
 
 
+(use-package visual-regexp-steroids
+  :after visual-regexp
+  :straight t)
+
 
 (use-package yasnippet
   :diminish yas-minor-mode
