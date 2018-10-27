@@ -6,13 +6,17 @@
 source ~/.zplug/init.zsh
 
 zplug "zplug/zplug", hook-build:'zplug --self-manage'
-zplug "b4b4r07/enhancd", use:init.sh
 
-zplug "zsh-users/zsh-completions", defer:1
-zplug "Valodim/zsh-curl-completion", defer:2
+zplug "b4b4r07/enhancd", use:init.sh
+zplug "zsh-users/zsh-completions",     defer:1
+zplug "Valodim/zsh-curl-completion",   defer:2
 zplug "zsh-users/zsh-autosuggestions", defer:2
-zplug "b4b4r07/zsh-gomi", defer:2
-zplug "supercrabtree/k", defer:3
+zplug "b4b4r07/zsh-gomi",              defer:2
+zplug "supercrabtree/k",               defer:3
+
+zplug "motemen/ghq",  as:command, from:github, hook-build:'go get -d && go build'
+zplug "knqyf263/pet", as:command, from:github, hook-build:'go get -d && go build'
+zplug "junegunn/fzf", as:command, from:github, hook-build:'go get -d && go build'
 
 zplug "~/.dotfiles/zsh/config", from:local, defer:3
 if test -d ~/.dotpriv/zsh/config; then
