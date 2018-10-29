@@ -217,12 +217,12 @@ bootstrap_darwin() {
 
     if [ ! -f "$_ansible_python" ]; then
         echo_wait 'Python is not installed. Installing...'
-        /usr/local/bin/brew install python@3 --build-from-source
+        /usr/local/bin/brew install python@3
     fi
 
     if [ ! -f "$_ansible_bin" ]; then
         echo_wait 'Ansible is not installed. Installing...'
-        /usr/local/bin/brew install ansible --build-from-source
+        /usr/local/bin/brew install ansible
     fi
 
     common_ansible_run "$@"
@@ -244,7 +244,7 @@ bootstrap_darwin() {
     done
 
     if [ "$*" = "" ]; then
-        /usr/local/bin/brew upgrade --build-from-source
+        /usr/local/bin/brew upgrade
     fi
 
     # Some weird packages will randomly chmod /usr/local/Cellar

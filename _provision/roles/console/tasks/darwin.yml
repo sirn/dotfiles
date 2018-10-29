@@ -9,7 +9,6 @@
 - name: install homebrew packages
   homebrew:
     name: "{{brew_packages}}"
-    install_options: build-from-source
     state: present
   when: brew_packages
 

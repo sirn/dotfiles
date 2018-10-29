@@ -16,7 +16,7 @@
   homebrew:
     name: chunkwm
     state: latest
-    install_options: with-purify,build-from-source
+    install_options: with-purify
   notify:
     - restart chunkwm launchd service
 
