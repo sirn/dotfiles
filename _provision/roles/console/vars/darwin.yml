@@ -19,7 +19,6 @@ brew_packages:
   - git-crypt
   - git-lfs
   - gpg
-  - gpg-agent
   - graphicsmagick
   - graphviz
   - hub
