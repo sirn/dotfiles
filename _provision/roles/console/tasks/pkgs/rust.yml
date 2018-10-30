@@ -14,10 +14,11 @@
   environment:
     PATH: "{{env_path}}"
 
-- name: fetch rust source code
-  command: rustup component add rust-src
-  register: fetch_rust_src
-  changed_when: fetch_rust_src.stderr.find("is up to date") == -1
+- name: add rust components
+  command: rustup component add "{{item}}"
+  register: fetch_rust_component
+  changed_when: fetch_rust_component.stderr.find("is up to date") == -1
+  with_items: "{{rust_components}}"
   environment:
     PATH: "{{env_path}}"
 

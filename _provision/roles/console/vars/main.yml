@@ -130,6 +130,9 @@ ruby_packages:
   - pry
   - sqlint
 
+rust_components:
+  - rust-src
+  - rustfmt-preview
+
 rust_cargo_packages:
   - { name: "racer", binary: "racer", flags: "--vers ~2.0.0" }
-  - { name: "rustfmt", binary: "rustfmt", flags: "" }
