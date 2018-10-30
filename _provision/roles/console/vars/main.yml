@@ -130,10 +130,6 @@ ruby_packages:
   - pry
   - sqlint
 
-rust_version: "1.29.0"
-
-rust_version_path: "{{ansible_env.HOME}}/.asdf/installs/rust/{{rust_version}}"
-
-rust_packages:
-  - { name: "racer", binary: "racer" }
-  - { name: "rustfmt", binary: "rustfmt" }
+rust_cargo_packages:
+  - { name: "racer", binary: "racer", flags: "--vers ~2.0.0" }
+  - { name: "rustfmt", binary: "rustfmt", flags: "" }

@@ -59,11 +59,6 @@
     - asdf
     - ruby
 
-- import_tasks: "asdf/rust.yml"
-  tags:
-    - asdf
-    - rust
-
 #
 # Custom packages
 #
@@ -90,6 +85,10 @@
   tags:
     - kubernetes
     - kubectx
+
+- import_tasks: "pkgs/rust.yml"
+  tags:
+    - rust
 
 - import_tasks: "pkgs/zsh.yml"
   tags:

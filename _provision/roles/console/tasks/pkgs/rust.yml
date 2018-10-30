@@ -1,0 +1,30 @@
+---
+- name: install rust
+  shell: >
+    curl https://sh.rustup.rs -sSf |
+    sh -s - -y --no-modify-path
+  args:
+    warn: no
+    creates: ~/.cargo/bin/rustup
+
+- name: update rust version
+  command: rustup update
+  register: update_rust
+  changed_when: update_rust.stdout.find("unchanged") == -1
+  environment:
+    PATH: "{{env_path}}"
+
+- name: fetch rust source code
+  command: rustup component add rust-src
+  register: fetch_rust_src
+  changed_when: fetch_rust_src.stderr.find("is up to date") == -1
+  environment:
+    PATH: "{{env_path}}"
+
+- name: install rust packages
+  command: "cargo install {{item.name}} {{item.flags}}"
+  with_items: "{{rust_cargo_packages}}"
+  args:
+    creates: "~/.cargo/bin/{{item.binary}}"
+  environment:
+    PATH: "{{env_path}}"

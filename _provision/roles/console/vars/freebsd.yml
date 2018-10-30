@@ -1,7 +1,13 @@
 ---
 clang_bin: /usr/bin/clang
 
-env_path: "{{ansible_env.HOME}}/.local/bin:{{asdf_shims}}:{{ansible_env.PATH}}"
+env_paths:
+  - "{{ansible_env.HOME}}/.local/bin"
+  - "{{ansible_env.HOME}}/.cargo/bin"
+  - "{{asdf_shims}}"
+  - "{{ansible_env.PATH}}"
+
+env_path: "{{env_paths|join(\":\")}}"
 
 pf_allowed_ports:
   - name: Allow ssh
