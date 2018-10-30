@@ -149,7 +149,7 @@ EOF
 common_ansible_run() {
     _playbook="$_dotfiles/_provision/playbook.yml"
     _ansible_config="$_dotfiles/_provision/ansible.cfg"
-    _opts="-i _provision/hosts"
+    _opts="-i $_dotfiles/_provision/hosts"
 
     if [ "$_ansible_bin" = "" ]; then
         _ansible_bin=ansible-playbook
