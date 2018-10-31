@@ -25,6 +25,9 @@
     (defvar color-15)
     (declare-function gr/echo-area-setup-face nil))
 
+  :init
+  (setq tao-theme-use-sepia (display-graphic-p))
+
   :config
   (load-theme 'tao-yin t)
   (tao-with-color-variables
