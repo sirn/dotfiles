@@ -26,7 +26,8 @@
     (declare-function gr/echo-area-setup-face nil))
 
   :init
-  (setq tao-theme-use-sepia (display-graphic-p))
+  (setq tao-theme-use-boxes nil)
+  (setq tao-theme-use-sepia nil)
 
   :config
   (load-theme 'tao-yin t)
