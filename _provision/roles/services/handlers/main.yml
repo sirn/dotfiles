@@ -19,13 +19,6 @@
     launchctl load /Library/LaunchDaemons/net.unbound.unbound.plist
   ignore_errors: yes
 
-- name: restart zerotier-one launchd service
-  become: yes
-  shell: |
-    launchctl unload /Library/LaunchDaemons/com.zerotier.one.plist &&
-    launchctl load /Library/LaunchDaemons/com.zerotier.one.plist
-  ignore_errors: yes
-
 - name: restart devd rc service
   become: yes
   service: name=devd state=restarted
@@ -33,7 +26,3 @@
 - name: restart ntpd rc service
   become: yes
   service: name=ntpd state=restarted
-
-- name: restart zerotier rc service
-  become: yes
-  service: name=zerotier state=restarted
