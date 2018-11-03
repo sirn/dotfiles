@@ -15,7 +15,6 @@ cask_desktop_packages:
   - arq
   - bartender
   - charles
-  - choosy
   - cleanmymac
   - coconutbattery
   - discord
@@ -59,7 +58,6 @@ cask_desktop_packages:
   - virtualbox
   - virtualbox-extension-pack
   - viscosity
-  - vivaldi
   - xquartz
 
 dots_desktop:
