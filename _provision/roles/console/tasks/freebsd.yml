@@ -89,3 +89,12 @@
     name: "{{ansible_user_id}}"
     groups: vboxusers
     append: yes
+
+
+## Setup terminfo
+##
+
+- name: setup 24-bits terminfo
+  command: tic -x -o ~/.terminfo ~/.dotfiles/_var/terminfo-24bit.src
+  args:
+    creates: ~/.terminfo/78/xterm-24bit
