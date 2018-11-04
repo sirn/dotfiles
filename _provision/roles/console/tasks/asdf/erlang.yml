@@ -1,4 +1,7 @@
 ---
+## Erlang
+##
+
 - name: install erlang plugin via asdf
   git:
     repo: https://github.com/asdf-vm/asdf-erlang.git
@@ -9,16 +12,18 @@
   args:
     creates: "{{erlang_version_path}}"
 
-- name: set erlang {{erlang_version}} as default
-  command: "{{asdf_bin}}/asdf global erlang {{erlang_version}}"
-  changed_when: false
+
+## Rebar3
+##
+
+- name: create rebar3 directory
+  file:
+    path: ~/.cache/rebar3/bin
+    state: directory
+    recurse: yes
 
 # Package manager installed Rebar3 sometimes broken when Erlang version
 # mismatched. The official bin works with any versions, so let's use that.
-
-- name: create rebar3 directory
-  file: path=~/.cache/rebar3/bin state=directory recurse=yes
-
 - name: download rebar3
   get_url:
     url: https://s3.amazonaws.com/rebar3/rebar3
@@ -31,8 +36,6 @@
   environment:
     PATH: "{{erlang_version_path}}/bin:{{env_path}}"
   when: download_rebar3.changed
-
-# Poor man's auto-update mechanism using Last-Modified header.
 
 - name: check local rebar3 version
   shell: cat ~/.cache/rebar3/.version
@@ -61,6 +64,12 @@
   environment:
     PATH: "{{erlang_version_path}}/bin:{{env_path}}"
 
-- name: update erlang {{erlang_version}} shims
-  command: "{{asdf_bin}}/asdf reshim erlang"
+
+## Setting default
+##
+
+- name: update erlang defaults
+  shell: |
+    {{asdf_bin}}/asdf global erlang {{erlang_version}} &&
+    {{asdf_bin}}/asdf reshim erlang
   changed_when: false

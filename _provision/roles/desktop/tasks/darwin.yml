@@ -1,6 +1,20 @@
 ---
+## Install desktop dependencies
+##
+## Note: I still need to use java8 because I rely on KVM software that
+## require javaws, which is deprecated after java8.
+##
+
 - name: install prerequisites
-  homebrew_cask: name=java8,xquartz state=present
+  homebrew_cask:
+    name:
+      - java8
+      - xquartz
+    state: present
+
+
+## Setup desktop links
+##
 
 - name: link darwin-specific files and directories
   file:
@@ -11,7 +25,109 @@
   with_items: "{{dots_desktop_darwin}}"
   when: dots_desktop_darwin
 
-- include_tasks: darwin/homebrew.yml
-- include_tasks: darwin/cask.yml
-- include_tasks: darwin/mas.yml
-- include_tasks: darwin/chunkwm.yml
+
+## Install brew desktop packages
+##
+
+- name: initialize homebrew desktop taps
+  homebrew_tap:
+    tap: "{{brew_desktop_taps}}"
+    state: present
+  when: brew_desktop_taps
+
+- name: install homebrew desktop packages
+  homebrew:
+    name: "{{brew_desktop_packages}}"
+    state: present
+  when: brew_desktop_packages
+
+
+## Install cask desktop packages
+##
+
+- name: initialize cask desktop taps
+  homebrew_tap:
+    tap: "{{cask_desktop_taps}}"
+    state: present
+  when: cask_desktop_taps
+
+- name: install cask desktop packages
+  homebrew_cask:
+    name: "{{cask_desktop_packages}}"
+    state: present
+  when: cask_desktop_packages
+
+
+## Install Mac App Store softwares
+##
+
+- name: install mas-cli
+  homebrew:
+    name: mas
+    state: latest
+
+- name: initialize mac app store apps
+  command: mas install "{{item.id}}"
+  with_items: "{{mas_desktop_packages}}"
+  args:
+    creates: "/Applications/{{item.app}}.app"
+  when: mas_desktop_packages
+
+
+## Install chunkwm
+##
+## Chunkwm is only relevant in desktop context; so it is installed here
+## instead of in services.
+##
+
+- name: initialize chunkwm taps
+  homebrew_tap:
+    tap: "{{item}}"
+    state: present
+  with_items:
+    - crisidev/chunkwm
+    - koekeishiya/formulae
+
+- name: ensure chunkwm directories
+  file:
+    path: "{{item}}"
+    state: directory
+  with_items:
+    - ~/.local/var/logs
+
+- name: install chunkwm
+  homebrew:
+    name: chunkwm
+    state: latest
+    install_options: with-purify
+  notify:
+    - restart chunkwm launchd service
+
+- name: enable chunkwm service
+  template:
+    src: chunkwm/io.github.koekeishiya.chunkwm.plist.j2
+    dest: ~/Library/LaunchAgents/io.github.koekeishiya.chunkwm.plist
+  notify:
+    - restart chunkwm launchd service
+
+
+
+## Install skhd
+##
+## Skhd is only relevant in desktop context; so it is installed here
+## instead of in services.
+##
+
+- name: install skhd
+  homebrew:
+    name: skhd
+    state: latest
+  notify:
+    - restart skhd launchd service
+
+- name: enable skhd service
+  template:
+    src: chunkwm/io.github.koekeishiya.skhd.plist.j2
+    dest: ~/Library/LaunchAgents/io.github.koekeishiya.skhd.plist
+  notify:
+    - restart skhd launchd service

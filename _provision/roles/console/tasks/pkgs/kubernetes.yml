@@ -1,0 +1,81 @@
+---
+- name: ensure local directory
+  file:
+    path: "{{item}}"
+    state: directory
+    recurse: yes
+  with_items:
+    - ~/.local/bin
+    - ~/.local/src
+
+
+## Jsonnet
+##
+
+- name: install jsonnet
+  pip:
+    name: "jsonnet"
+    state: latest
+    executable: "{{python3_version_path}}/bin/pip"
+    chdir: "{{python3_version_path}}"
+  environment:
+    MAKE: "{{gmake_bin}}"
+    CXX: "{{gxx_bin}}"
+    CXXFLAGS: "{% if gcc_rpath %}-Wl,-rpath={{gcc_rpath}} {% endif %}-std=c++11 -fPIC -Iinclude -Ithird_party/md5"
+    LDFLAGS: "{% if gcc_rpath %}-Wl,-rpath={{gcc_rpath}} -L{{gcc_rpath}}{% endif %}"
+
+
+## Kapitan
+##
+
+- name: install kapitan
+  pip:
+    name: "kapitan"
+    state: latest
+    executable: "{{python3_version_path}}/bin/pip"
+    chdir: "{{python3_version_path}}"
+
+- name: update python3 shims for kapitan
+  command: "{{asdf_bin}}/asdf reshim python3"
+  changed_when: false
+
+
+## Kube-PS1
+##
+
+- name: clone kube-ps1
+  git:
+    repo: https://github.com/jonmosco/kube-ps1.git
+    dest: ~/.local/src/kube-ps1
+    version: "{{kube_ps1_version}}"
+
+- name: create kube-ps1 configuration directory
+  file:
+    path: ~/.kube/kube-ps1
+    state: directory
+
+- name: disable kube-ps1 globally
+  copy:
+    content: ""
+    dest: ~/.kube/kube-ps1/disabled
+    force: no
+
+
+## Kubectx
+##
+
+- name: clone kubectx
+  git:
+    repo: https://github.com/ahmetb/kubectx.git
+    dest: ~/.local/src/kubectx
+    version: "{{kubectx_version}}"
+
+- name: link kubectx and kubens
+  file:
+    src: "~/.local/src/kubectx/{{item}}"
+    path: "~/.local/bin/{{item}}"
+    state: link
+    force: yes
+  with_items:
+    - kubectx
+    - kubens

@@ -1,4 +1,7 @@
 ---
+## Stack
+##
+
 - name: ensure stack directories
   file:
     path: "{{item}}"
@@ -7,7 +10,8 @@
     - "~/.local/bin"
     - "~/.stack"
 
-# Stack installed via package manager is weird.
+# Stack installed via package manager cannot install some Haskell versions
+# so we're using the official Slack distribution instead.
 - name: install stack
   shell: >
     curl -sSL https://get.haskellstack.org/ |
@@ -22,6 +26,10 @@
   template:
     src: stack/config.yaml.j2
     dest: ~/.stack/config.yaml
+
+
+## Haskell packages
+##
 
 - name: install haskell stack packages
   command: stack install {{item.name}} --resolver {{item.resolver}}

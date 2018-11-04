@@ -1,4 +1,7 @@
 ---
+## Nim
+##
+
 - name: install nim plugin via asdf
   git:
     repo: https://github.com/rfrancis/asdf-nim.git
@@ -9,10 +12,12 @@
   args:
     creates: "{{nim_version_path}}"
 
-- name: set nim {{nim_version}} as default
-  command: "{{asdf_bin}}/asdf global nim v{{nim_version}}"
-  changed_when: false
 
-- name: update nim {{nim_version}} shims
-  command: "{{asdf_bin}}/asdf reshim nim"
+## Setting default
+##
+
+- name: update nim defaults
+  shell: |
+    {{asdf_bin}}/asdf global nim v{{nim_version}} &&
+    {{asdf_bin}}/asdf reshim nim
   changed_when: false

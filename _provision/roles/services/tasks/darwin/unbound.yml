@@ -1,8 +1,17 @@
 ---
+## Install unbound
+##
+
 - name: install unbound service
-  homebrew: name=unbound state=latest
+  homebrew:
+    name: unbound
+    state: latest
   notify:
     - restart unbound launchd service
+
+
+## Configure unbound
+##
 
 - name: ensure unbound directories
   become: yes
@@ -40,6 +49,10 @@
     group: nobody
   notify:
     - restart unbound launchd service
+
+
+## Register unbound service
+##
 
 - name: enable unbound service
   become: yes

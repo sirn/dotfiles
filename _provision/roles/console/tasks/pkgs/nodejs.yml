@@ -1,4 +1,7 @@
 ---
+## NodeJS
+##
+
 - name: ensure nodejs user directory
   file:
     path: ~/.local/var/npm
@@ -10,6 +13,10 @@
     line: "prefix={{ansible_env.HOME}}/.local/var/npm"
     state: present
     create: yes
+
+
+## NodeJS packages
+##
 
 - name: install nodejs packages
   npm:

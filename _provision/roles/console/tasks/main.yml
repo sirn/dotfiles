@@ -1,17 +1,16 @@
 ---
+## Include platform-specific playbooks
+##
+
 - include_vars: "{{ansible_os_family|lower}}.yml"
   tags:
     - always
 
-#
-# Platform-specific
-#
-
 - include_tasks: "{{ansible_os_family|lower}}.yml"
 
-#
-# asdf-managed
-#
+
+## Install cross-platform packages managed by asdf
+##
 
 - name: install asdf
   git:
@@ -59,32 +58,21 @@
     - asdf
     - ruby
 
-#
-# Custom packages
-#
+
+## Install cross-platform packages
+##
 
 - import_tasks: "pkgs/haskell.yml"
   tags:
     - haskell
 
+- import_tasks: "pkgs/kubernetes.yml"
+  tags:
+    - kubernetes
+
 - import_tasks: "pkgs/nodejs.yml"
   tags:
     - nodejs
-
-- import_tasks: "pkgs/kapitan.yml"
-  tags:
-    - kubernetes
-    - kapitan
-
-- import_tasks: "pkgs/kube-ps1.yml"
-  tags:
-    - kubernetes
-    - kube-ps1
-
-- import_tasks: "pkgs/kubectx.yml"
-  tags:
-    - kubernetes
-    - kubectx
 
 - import_tasks: "pkgs/rust.yml"
   tags:
@@ -94,12 +82,15 @@
   tags:
     - zsh
 
-#
-# Links
-#
+
+## Setup links
+##
 
 - name: prepare dot directories
-  file: path={{item}} state=directory recurse=yes
+  file:
+    path: "{{item}}"
+    state: directory
+    recurse: yes
   with_items: "{{dots}}"
 
 - name: link files and directories

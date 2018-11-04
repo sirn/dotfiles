@@ -1,4 +1,7 @@
 ---
+## Install ntp
+##
+
 - name: install ntp via synth
   become: yes
   command: synth install net/ntp
@@ -6,6 +9,10 @@
   changed_when: synth_ntp_install.stdout.find("The most recent version of packages are already installed") == -1
   notify:
     - restart ntpd rc service
+
+
+## Configure ntp
+##
 
 - name: enable ntpd in rc.conf
   become: yes
@@ -19,6 +26,10 @@
   become: yes
   command: ntpd -qg
   when: ntpd_enabled.changed
+
+
+## Enable ntp service
+##
 
 - name: enable ntpd
   become: yes

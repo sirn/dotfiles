@@ -1,47 +1,20 @@
 ---
+## Configure pf
+##
+
 - name: ensure pf directory
   become: yes
   file:
     path: /etc/pf
     state: directory
 
-- name: configure initial pf
-  become: yes
-  copy:
-    src: pf/pf.conf
-    dest: /etc/pf.conf
-    force: no
-
 - name: configure main pf configurations
   become: yes
   template:
-    src: "pf/main.{{item}}.conf.j2"
-    dest: "/etc/pf/main.{{item}}.conf"
-  register: pf_include_config
-  with_items:
-    - filter
-    - normalization
-    - queue
-    - translation
-
-- name: register main pf configurations
-  become: yes
-  lineinfile:
-    path: /etc/pf.conf
-    insertbefore: "# {{item|upper}}: END"
-    line: "include \"/etc/pf/main.{{item}}.conf\""
-  with_items:
-    - filter
-    - normalization
-    - queue
-    - translation
+    src: pf/pf.conf.j2
+    dest: /etc/pf.conf
+    validate: pfctl -n -f %s
   register: pf_config
-
-- name: validate pf configurations
-  become: yes
-  command: pfctl -n -f /etc/pf.conf
-  register: pf_validate
-  when: pf_config.changed or pf_include_config.changed
 
 - name: enable pf
   become: yes
@@ -53,9 +26,11 @@
 - name: reload pf
   become: yes
   command: pfctl -F all -f /etc/pf.conf
-  when: pf_validate.changed
+  when: pf_config.changed
 
-# setup pf anchor hooks
+
+## Setup pf anchor hooks
+##
 
 - name: configure pf anchor hook script
   become: yes

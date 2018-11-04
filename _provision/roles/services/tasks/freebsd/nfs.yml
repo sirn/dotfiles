@@ -1,4 +1,7 @@
 ---
+## Configure nfsd
+##
+
 - name: enable nfsd in rc.conf
   become: yes
   lineinfile:
@@ -16,6 +19,10 @@
     content: ""
     dest: /etc/exports
     force: no
+
+
+## Enable nfsd service
+##
 
 - name: enable nfsd
   become: yes

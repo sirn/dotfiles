@@ -1,4 +1,7 @@
 ---
+## Configure launchd
+##
+
 - name: ensure launchd directory
   file:
     path: ~/Library/LaunchAgents
@@ -12,6 +15,10 @@
   with_items:
     - /Library/LaunchAgents
     - /Library/LaunchDaemons
+
+
+## Include sub-packages
+##
 
 - include_tasks: "darwin/dnscrypt-proxy.yml"
 - include_tasks: "darwin/unbound.yml"

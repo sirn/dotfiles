@@ -1,4 +1,7 @@
 ---
+## Setup desktop links
+##
+
 - name: link freebsd-specific files and directories
   file:
     src: "{{item.source}}"

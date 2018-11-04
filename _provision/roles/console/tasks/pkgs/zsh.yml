@@ -1,14 +1,25 @@
 ---
+## Zplug
+##
+
 - name: clone zplug
   git:
     repo: https://github.com/zplug/zplug.git
     dest: ~/.zplug
     update: no
 
+
+## iTerm
+##
+
 - name: download iterm2 shell integration
   get_url:
     url: https://iterm2.com/shell_integration/zsh
     dest: ~/.iterm2_shell_integration.zsh
+
+
+## User default shell
+##
 
 - name: ensure zsh is in /etc/shells
   become: yes

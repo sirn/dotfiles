@@ -1,4 +1,7 @@
 ---
+## Setup FreeBSD ports
+##
+
 - name: fetch freebsd source
   become: yes
   shell: >
@@ -14,13 +17,19 @@
     src: synth/make.conf
     dest: /usr/local/etc/synth/LiveSystem-make.conf
 
+
+## Install FreeBSD ports packages
+##
+
 - name: install ports packages via synth
   become: yes
   command: /usr/local/bin/synth install {{ports_packages|join(" ")}}
   register: synth_install
   changed_when: synth_install.stdout.find("The most recent version of packages are already installed") == -1
 
-# setup sysctl
+
+## Configure system
+##
 
 - name: configure sysctl
   become: yes
@@ -32,8 +41,6 @@
     - { key: "security.bsd.see_other_uids", value: "0" }
     - { key: "kern.maxfiles", value: "5242880" }
     - { key: "kern.maxfilesperproc", value: "524288" }
-
-# setup logging
 
 - name: configure periodic logging
   become: yes
@@ -47,8 +54,10 @@
     - weekly_output="/var/log/weekly.log"
     - monthly_output="/var/log/monthly.log"
 
-# setup virtualbox kernel modules and permissions
-# see also: https://www.freebsd.org/doc/handbook/virtualization-host-virtualbox.html
+
+## Configure system for VirtualBox
+## See also: https://www.freebsd.org/doc/handbook/virtualization-host-virtualbox.html
+##
 
 - name: configure virtualbox kernel module
   become: yes

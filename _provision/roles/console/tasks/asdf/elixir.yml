@@ -1,4 +1,7 @@
 ---
+## Elixir
+##
+
 - name: install elixir plugin via asdf
   git:
     repo: https://github.com/asdf-vm/asdf-elixir.git
@@ -9,10 +12,12 @@
   args:
     creates: "{{elixir_version_path}}"
 
-- name: set elixir {{elixir_version}} as default
-  command: "{{asdf_bin}}/asdf global elixir {{elixir_version}}"
-  changed_when: false
 
-- name: update elixir {{elixir_version}} shims
-  command: "{{asdf_bin}}/asdf reshim elixir"
+## Setting default
+##
+
+- name: update elixir defaults
+  shell: |
+    {{asdf_bin}}/asdf global elixir {{elixir_version}} &&
+    {{asdf_bin}}/asdf reshim elixir
   changed_when: false

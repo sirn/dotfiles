@@ -1,11 +1,14 @@
 ---
+## Ruby
+##
+
 - name: install ruby plugin via asdf
   git:
     repo: https://github.com/sirn/asdf-ruby.git
     dest: "{{asdf_path}}/plugins/ruby"
     version: "fix-patch"
 
-# Some packages e.g. ruby ffi doesn't support building with clang on freebsd
+# Some packages e.g. ruby ffi doesn't support building with clang on FreeBSD.
 # Ruby will use the CC used to build Ruby itself, so we're setting CC here.
 # See also https://github.com/ffi/ffi/issues/622
 - name: install ruby {{ruby_version}} via asdf
@@ -16,10 +19,6 @@
     CC: "{{gcc_bin}}"
     MAKE: "{{gmake_bin}}"
 
-- name: set ruby {{ruby_version}} as default
-  command: "{{asdf_bin}}/asdf global ruby {{ruby_version}}"
-  changed_when: false
-
 - name: install ruby packages
   gem:
     name: "{{item}}"
@@ -28,6 +27,12 @@
     executable: "{{ruby_version_path}}/bin/gem"
   with_items: "{{ruby_packages}}"
 
-- name: update ruby {{ruby_version}} shims
-  command: "{{asdf_bin}}/asdf reshim ruby"
+
+## Setting default
+##
+
+- name: update ruby defaults
+  shell: |
+    {{asdf_bin}}/asdf global ruby {{ruby_version}} &&
+    {{asdf_bin}}/asdf reshim ruby
   changed_when: false

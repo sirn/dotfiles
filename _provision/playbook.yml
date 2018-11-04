@@ -1,6 +1,17 @@
 ---
 - hosts: all
-  roles:
-    - { role: console, tags: "console" }
-    - { role: services, tags: "services" }
-    - { role: desktop, tags: "desktop" }
+  tasks:
+    - import_role:
+        name: console
+      tags:
+        - console
+
+    - import_role:
+        name: services
+      tags:
+        - services
+
+    - import_role:
+        name: desktop
+      tags:
+        - desktop

@@ -1,8 +1,17 @@
 ---
+## Install dnscrypt-proxy
+##
+
 - name: install dnscrypt-proxy service
-  homebrew: name=dnscrypt-proxy state=latest
+  homebrew:
+    name: dnscrypt-proxy
+    state: latest
   notify:
     - restart dnscrypt-proxy launchd service
+
+
+## Configure dnscrypt-proxy
+##
 
 - name: ensure dnscrypt-proxy directories
   become: yes
@@ -16,7 +25,7 @@
     - /usr/local/svcs/dnscrypt-proxy/etc
     - /usr/local/svcs/dnscrypt-proxy/var
 
-- name: update dnscrypt-proxy configurations
+- name: configure dnscrypt-proxy
   become: yes
   copy:
     src: dnscrypt-proxy/dnscrypt-proxy.toml
@@ -25,6 +34,10 @@
     group: nobody
   notify:
     - restart dnscrypt-proxy launchd service
+
+
+## Register dnscrypt-proxy service
+##
 
 - name: enable dnscrypt-proxy service
   become: yes
