@@ -95,6 +95,21 @@
 ##
 
 - name: setup 24-bits terminfo
-  command: tic -x -o ~/.terminfo ~/.dotfiles/_var/terminfo-24bit.src
-  args:
-    creates: ~/.terminfo/78/xterm-24bit
+  become: yes
+  shell: |
+    if ! infocmp xterm-24bits >/dev/null 2>&1; then
+      tic -s -x {{ansible_env.HOME}}/.dotfiles/_var/terminfo-24bit.src
+      ( \
+        printf "\n"
+        printf "# These entries do not have 24-bit support, they are added\n"
+        printf "# so those built against system termcap do not fail.\n"
+        printf "# --"
+        tic -C -K -s -x {{ansible_env.HOME}}/.dotfiles/_var/terminfo-24bit.src
+      ) >> /usr/share/misc/termcap
+      cd /usr/share/misc
+      cap_mkdb termcap
+      exit 9
+    fi
+  register: terminfo_register
+  failed_when: terminfo_register.rc != 0 and terminfo_register.rc != 9
+  changed_when: terminfo_register.rc == 9

@@ -120,7 +120,7 @@ python3_packages:
   - pylint
   - virtualenv
 
-ruby_version: "2.5.1"
+ruby_version: "2.5.3"
 
 ruby_version_path: "{{ansible_env.HOME}}/.asdf/installs/ruby/{{ruby_version}}"
 

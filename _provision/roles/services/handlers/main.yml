@@ -21,8 +21,12 @@
 
 - name: restart devd rc service
   become: yes
-  service: name=devd state=restarted
+  service:
+    name: devd
+    state: restarted
 
-- name: restart ntpd rc service
+- name: restart openntpd rc service
   become: yes
-  service: name=ntpd state=restarted
+  service:
+    name: openntpd
+    state: restarted
