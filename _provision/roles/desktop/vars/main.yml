@@ -43,7 +43,6 @@ cask_desktop_packages:
   - keyboard-maestro
   - logitech-options
   - mactex
-  - mailmate
   - mpv
   - omnifocus
   - omnigraffle
