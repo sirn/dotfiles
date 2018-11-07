@@ -1,3 +1,5 @@
+#!/usr/local/bin/env zsh
+
 function pet-select() {
     BUFFER=$(pet search --query "$LBUFFER")
     CURSOR=$#BUFFER

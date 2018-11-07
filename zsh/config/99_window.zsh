@@ -1,8 +1,10 @@
+#!/usr/local/bin/env zsh
+
 autoload -Uz add-zsh-hook
 
-_window_hook () {
+_window_update_title_hook () {
     local _window_title="\e]0;$(pwd)\a"
     printf "$_window_title"
 }
 
-add-zsh-hook precmd _window_hook
+add-zsh-hook precmd _window_update_title_hook

@@ -1,3 +1,5 @@
+#!/usr/local/bin/env zsh
+
 autoload -Uz add-zsh-hook
 autoload -Uz vcs_info
 

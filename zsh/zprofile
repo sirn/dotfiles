@@ -3,6 +3,4 @@
 # ~/.zprofile
 #
 
-[[ -s ~/.profile ]] && source ~/.profile
-
-# vim:ft=sh
+[ -s ~/.profile ] && source ~/.profile

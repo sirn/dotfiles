@@ -1,9 +1,14 @@
+#!/usr/bin/env zsh
+
 alias ls="ls -G"
-alias ll="ls -alh"
-alias ka="k -A"
-alias emacs="emacsclient -c -a ''"
+alias ll="ls -lh"
+alias la="ls -alh"
+alias ka="k -hA"
+alias kk="k -h"
 
 if hash nvim 2>/dev/null; then
+    alias nvi="nvim"
+    alias vi="nvim"
     alias vim="nvim"
 fi
 
