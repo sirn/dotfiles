@@ -46,7 +46,7 @@
      ;; Custom faces flycheck
      ;;
      `(flycheck-fringe-error    ((t (:foreground "red"))))
-     `(flycheck-fringe-warning  ((t (:foreground "orange"))))
+     `(flycheck-fringe-warning  ((t (:foreground "darkorange"))))
      `(flycheck-fringe-info     ((t (:foreground "green"))))
      `(flycheck-error           ((t (:underline t :inherit flycheck-fringe-error))))
      `(flycheck-warning         ((t (:underline t :inherit flycheck-fringe-warning))))
@@ -75,6 +75,7 @@
      ;; mode-line-winum/mode-line-evil
      `(gr/mode-line-winum       ((t (:foreground ,color-8 :weight bold))))
      `(gr/mode-line-evil        ((t (:foreground ,color-13 :weight bold))))
+     `(gr/mode-line-notmuch     ((t (:foreground "cyan" :weight bold))))
 
      ;; Line number
      ;; line-number:col-number
