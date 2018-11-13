@@ -9,6 +9,7 @@
     (defvar sml/theme))
 
   :init
+  (setq sml/no-confirm-load-theme t)
   (setq sml/theme nil)
 
   :config

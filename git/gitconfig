@@ -33,6 +33,16 @@
 	email = sirn@ogsite.net
 
 #
+# Repo
+#
+
+[url "git@github.com:"]
+	insteadOf = "https://github.com/"
+
+[url "git@gitlab.com:"]
+	insteadOf = "https://gitlab.com/"
+
+#
 # Third-party
 #
 

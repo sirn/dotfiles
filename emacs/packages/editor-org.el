@@ -66,4 +66,9 @@
 
   :preface
   (eval-when-compile
-    (declare-function git-run nil)))
+    (declare-function git-run nil)
+    (declare-function org-babel-do-load-languages nil))
+
+  :config
+  (org-babel-do-load-languages
+   'org-babel-load-languages '((python . t))))
