@@ -36,7 +36,6 @@ brew_packages:
   - neovim
   - node@8
   - openssh
-  - openssl
   - packer
   - pandoc
   - pass
