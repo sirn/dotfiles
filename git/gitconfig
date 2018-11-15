@@ -42,6 +42,9 @@
 [url "git@gitlab.com:"]
 	insteadOf = "https://gitlab.com/"
 
+[url "git@gt.sr.ht:"]
+	insteadOf = "https://git.sr.ht/"
+
 #
 # Third-party
 #
