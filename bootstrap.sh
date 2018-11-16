@@ -5,8 +5,8 @@
 # Yo dawg
 #
 
-_repo_tar="https://github.com/sirn/dotfiles/archive/master.tar.gz"
-_repo_ssh="git@github.com:sirn/dotfiles.git"
+_repo_tar="https://git.sr.ht/~sirn/dotfiles/archive/master.tar.gz"
+_repo_ssh="git@git.sr.ht:~sirn/dotfiles.git"
 _dotfiles="$HOME/.dotfiles"
 
 _platform=$(uname)

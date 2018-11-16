@@ -7,7 +7,7 @@ This repository hosts my personal dotfiles as well as machine provisioning and w
 Darwin:
 
 ```shell
-$ curl -sL https://raw.githubusercontent.com/sirn/dotfiles/master/bootstrap.sh | sh -s - -r \
+$ curl -sL "https://git.sr.ht/~sirn/dotfiles/blob/master/bootstrap.sh" | sh -s - -r \
     -p console \
     -p desktop \
     -p services
@@ -16,7 +16,7 @@ $ curl -sL https://raw.githubusercontent.com/sirn/dotfiles/master/bootstrap.sh |
 FreeBSD:
 
 ```shell
-$ fetch -o - https://raw.githubusercontent.com/sirn/dotfiles/master/bootstrap.sh | sh -s - -r \
+$ fetch -o - "https://git.sr.ht/~sirn/dotfiles/blob/master/bootstrap.sh" | sh -s - -r \
     -p console \
     -p desktop \
     -p services
