@@ -69,6 +69,7 @@ env_paths:
   - "{{ansible_env.HOME}}/.local/bin"
   - "{{ansible_env.HOME}}/.cargo/bin"
   - "/usr/local/opt/node@8/bin"
+  - "/usr/local/opt/libressl/bin"
   - "{{asdf_shims}}"
   - "{{ansible_env.PATH}}"
 

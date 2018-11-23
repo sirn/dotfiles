@@ -63,15 +63,17 @@ ports_packages:
   - net/google-cloud-sdk
   - net/mosh
   - net/socat
+  - ports-mgmt/synth
   - security/ca_root_nss
   - security/git-crypt
   - security/gnupg
   - security/libressl
   - shells/bash
   - shells/zsh
+  - sysutils/ansible@py36
   - sysutils/coreutils
   - sysutils/direnv
-  - sysutils/duplicity
+  - sysutils/duplicity@py27
   - sysutils/entr
   - sysutils/fswatch-mon
   - sysutils/helm

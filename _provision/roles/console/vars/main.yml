@@ -90,7 +90,7 @@ nodejs_packages:
   - eslint
   - prettier
   - pulp
-  - purescript
+  - purescript@0.12.0
   - solc
   - solium
   - stylelint

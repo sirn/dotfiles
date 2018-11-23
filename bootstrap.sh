@@ -196,7 +196,7 @@ common_ansible_run() {
 #
 
 bootstrap_darwin() {
-    export PATH=$PATH:$HOME/.local/bin:/usr/local/bin
+    export PATH=$HOME/.local/bin:/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
     export HOMEBREW_NO_EMOJI=1
     export HOMEBREW_NO_ANALYTICS=1
 
@@ -261,7 +261,7 @@ bootstrap_darwin() {
 #
 
 bootstrap_freebsd() {
-    export PATH=$PATH:$HOME/.local/bin:/usr/local/bin
+    export PATH=$HOME/.local/bin:/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
     export LANG=en_US.UTF-8
 
     # Perma-disable FreeBSD repo as we'll be exclusively using Synth.

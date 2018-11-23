@@ -3,7 +3,6 @@
 
 (setq python-shell-interpreter "python3")
 
-
 (use-package anaconda-mode
   :commands (anaconda-mode anaconda-eldoc-mode)
   :diminish anaconda-mode

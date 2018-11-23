@@ -13,7 +13,7 @@ export XDG_DATA_HOME=$HOME/.data
 export XDG_STATE_HOME=$HOME/.state
 
 PATH=/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
-PATH=$PATH:$HOME/.local/bin
+PATH=$HOME/.local/bin:$PATH
 
 
 #
@@ -21,17 +21,17 @@ PATH=$PATH:$HOME/.local/bin
 #
 
 # Erlang
-PATH=$PATH:$HOME/.cache/rebar3/bin
+PATH=$HOME/.cache/rebar3/bin:$PATH
 
 # Golang
 export GOPATH=$HOME/Dev/go/
-PATH=$PATH:$HOME/Dev/go/bin
+PATH=$HOME/Dev/go/bin:$PATH
 
 # Node
-PATH=$PATH:$HOME/.local/var/npm/bin
+PATH=$HOME/.local/var/npm/bin:$PATH
 
 # Rust
-PATH=$PATH:$HOME/.cargo/bin
+PATH=$HOME/.cargo/bin:$PATH
 if hash rustc 2>/dev/null; then
     RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
     export RUST_SRC_PATH
@@ -44,14 +44,15 @@ fi
 
 case "$(uname)" in
     Darwin )
-        PATH=$PATH:/usr/local/opt/gpg-agent/bin
-        PATH=$PATH:/usr/local/opt/node@8/bin
+        PATH=/usr/local/opt/gpg-agent/bin:$PATH
+        PATH=/usr/local/opt/node@8/bin:$PATH
 
         if hash brew 2>/dev/null; then
             export HOMEBREW_NO_ANALYTICS=1
             export HOMEBREW_NO_AUTO_UPDATE=1
             export OPENSSL_INCLUDE_DIR=/usr/local/opt/libressl/include
             export OPENSSL_LIB_DIR=/usr/local/opt/libressl/lib
+            export PATH=/usr/local/opt/libressl/bin:$PATH
         fi
 
         if [ -f /usr/libexec/java_home ]; then
@@ -60,7 +61,7 @@ case "$(uname)" in
         fi
 
         if [ -d /Applications/mpv.app/Contents/MacOS ]; then
-            PATH=$PATH:/Applications/mpv.app/Contents/MacOS
+            PATH=/Applications/mpv.app/Contents/MacOS:$PATH
         fi
 
         if [ -d "/Applications/VMware Fusion.app" ]; then
