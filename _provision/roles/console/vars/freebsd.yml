@@ -36,6 +36,7 @@ ports_packages:
   - databases/postgresql96-client
   - devel/autoconf
   - devel/binutils
+  - devel/ccache
   - devel/cmake
   - devel/git
   - devel/git-lfs

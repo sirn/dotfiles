@@ -11,11 +11,23 @@
     warn: no
     creates: /usr/src/Makefile
 
-- name: copy ports configurations
+- name: ensure configuration directories
+  become: yes
+  file:
+    path: "{{item}}"
+    state: directory
+  with_items:
+    - /usr/local/etc/synth
+    - /root/.ccache
+
+- name: copy build configurations
   become: yes
   copy:
-    src: synth/make.conf
-    dest: /usr/local/etc/synth/LiveSystem-make.conf
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+  with_items:
+    - { src: synth/make.conf, dest: /usr/local/etc/synth/LiveSystem-make.conf }
+    - { src: ccache/ccache.conf, dest: /root/.ccache/ccache.conf }
 
 
 ## Install FreeBSD ports packages

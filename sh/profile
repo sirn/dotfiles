@@ -68,6 +68,12 @@ case "$(uname)" in
             export VAGRANT_VMWARE_CLONE_DIRECTORY="$HOME/Virtual Machines"
         fi
         ;;
+    FreeBSD )
+        if [ -d /usr/local/libexec/ccache ]; then
+            export PATH=/usr/local/libexec/ccache:$PATH
+            export CCACHE_PATH=/usr/bin:/usr/local/bin
+        fi
+        ;;
 esac
 
 
