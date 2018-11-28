@@ -90,6 +90,7 @@ ports_packages:
   - sysutils/tree
   - sysutils/vagrant
   - sysutils/zfstools
+  - textproc/groff
   - textproc/hs-pandoc
   - textproc/jq
   - textproc/py-asciinema@py36

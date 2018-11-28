@@ -26,8 +26,9 @@
     src: "{{item.src}}"
     dest: "{{item.dest}}"
   with_items:
-    - { src: synth/make.conf, dest: /usr/local/etc/synth/LiveSystem-make.conf }
+    - { src: base/src.conf, dest: /etc/src.conf }
     - { src: ccache/ccache.conf, dest: /root/.ccache/ccache.conf }
+    - { src: synth/make.conf, dest: /usr/local/etc/synth/LiveSystem-make.conf }
 
 
 ## Install FreeBSD ports packages
