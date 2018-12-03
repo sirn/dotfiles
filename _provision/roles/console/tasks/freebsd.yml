@@ -36,9 +36,10 @@
 
 - name: install ports packages via synth
   become: yes
-  command: /usr/local/bin/synth install {{ports_packages|join(" ")}}
-  register: synth_install
-  changed_when: synth_install.stdout.find("The most recent version of packages are already installed") == -1
+  synth:
+    name: "{{ports_packages}}"
+    state: present
+  when: ports_packages
 
 
 ## Configure system

@@ -4,9 +4,9 @@
 
 - name: install openntpd via synth
   become: yes
-  command: synth install net/openntpd
-  register: synth_openntpd_install
-  changed_when: synth_openntpd_install.stdout.find("The most recent version of packages are already installed") == -1
+  synth:
+    name: net/openntpd
+    state: latest
   notify:
     - restart openntpd rc service
 
