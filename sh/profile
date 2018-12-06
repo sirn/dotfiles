@@ -24,8 +24,9 @@ PATH=$HOME/.local/bin:$PATH
 PATH=$HOME/.cache/rebar3/bin:$PATH
 
 # Golang
-export GOPATH=$HOME/Dev/go/
+GOPATH=$HOME/Dev/go/
 PATH=$HOME/Dev/go/bin:$PATH
+export GOPATH
 
 # Node
 PATH=$HOME/.local/var/npm/bin:$PATH
@@ -52,7 +53,6 @@ case "$(uname)" in
             export HOMEBREW_NO_AUTO_UPDATE=1
             export OPENSSL_INCLUDE_DIR=/usr/local/opt/libressl/include
             export OPENSSL_LIB_DIR=/usr/local/opt/libressl/lib
-            export PATH=/usr/local/opt/libressl/bin:$PATH
         fi
 
         if [ -f /usr/libexec/java_home ]; then
@@ -60,17 +60,18 @@ case "$(uname)" in
             export JAVA_HOME
         fi
 
-        if [ -d /Applications/mpv.app/Contents/MacOS ]; then
-            PATH=/Applications/mpv.app/Contents/MacOS:$PATH
+        if [ -d "/Applications/VMware Fusion.app" ]; then
+            VAGRANT_VMWARE_CLONE_DIRECTORY="$HOME/Virtual Machines"
+            export VAGRANT_VMWARE_CLONE_DIRECTORY
         fi
 
-        if [ -d "/Applications/VMware Fusion.app" ]; then
-            export VAGRANT_VMWARE_CLONE_DIRECTORY="$HOME/Virtual Machines"
-        fi
+        PATH=/Applications/mpv.app/Contents/MacOS:$PATH
+        PATH=/Library/TeX/texbin:$PATH
+        PATH=/usr/local/opt/libressl/bin:$PATH
         ;;
     FreeBSD )
         if [ -d /usr/local/libexec/ccache ]; then
-            export PATH=/usr/local/libexec/ccache:$PATH
+            PATH=/usr/local/libexec/ccache:$PATH
             export CCACHE_PATH=/usr/bin:/usr/local/bin
         fi
         ;;
