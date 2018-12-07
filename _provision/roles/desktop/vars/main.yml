@@ -17,7 +17,7 @@ cask_desktop_packages:
   - charles
   - cleanmymac
   - coconutbattery
-  - discord
+  - firefox
   - font-ia-writer-duospace
   - font-ibm-plex
   - font-iosevka
@@ -51,7 +51,6 @@ cask_desktop_packages:
   - screens
   - sketch
   - swinsian
-  - telegram
   - the-unarchiver
   - vagrant
   - veracrypt
@@ -81,12 +80,10 @@ mas_desktop_packages:
   - { id: 587512244, app: "Kaleidoscope" }
   - { id: 603637384, app: "Name Mangler 3" }
   - { id: 775737590, app: "iA Writer" }
-  - { id: 803453959, app: "Slack" }
   - { id: 889428659, app: "xScope" }
   - { id: 890031187, app: "Marked 2" }
   - { id: 937984704, app: "Amphetamine" }
   - { id: 975937182, app: "Fantastical 2" }
-  - { id: 1121192229, app: "Better" }
   - { id: 1287445660, app: "Agenda" }
   - { id: 1289378661, app: "Twitterrific" }
   - { id: 1333542190, app: "1Password 7" }
