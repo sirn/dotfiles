@@ -1,5 +1,5 @@
 Host *
-  User sirn
-  PreferredAuthentications publickey
-  ControlMaster auto
-  ControlPath ~/.ssh/ssh-%r@%h:%p
+     User sirn
+     PreferredAuthentications publickey
+     ControlMaster auto
+     ControlPath ~/.ssh/ssh-%r@%h:%p
