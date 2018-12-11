@@ -1,7 +1,8 @@
 #!/bin/sh
 
-if [ -d /usr/ports ]; then
-    portsnap cron
-    portsnap fetch
-    portsnap update
+portsnap auto
+
+if hash synth 2>/dev/null; then
+    synth prepare-system
+    synth purge-distfiles
 fi

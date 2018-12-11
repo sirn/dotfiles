@@ -268,14 +268,7 @@ bootstrap_freebsd() {
     sudo mkdir -p /usr/local/etc/pkg/repos
     echo "FreeBSD: { enabled: no }" | sudo tee /usr/local/etc/pkg/repos/10_freebsd.conf >/dev/null
 
-    if [ ! -d /usr/ports/ports-mgmt/synth ]; then
-        sudo portsnap fetch --interactive
-        sudo portsnap extract
-    elif [ "$_first_run" = "1" ]; then
-        sudo portsnap fetch --interactive
-        sudo portsnap extract
-        sudo portsnap update
-    fi
+    sudo portsnap auto --interactive
 
     if ! hash synth 2>/dev/null; then
         echo_wait 'Synth is not installed. Installing...'
