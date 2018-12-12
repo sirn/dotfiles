@@ -1,6 +1,6 @@
 # Dotfiles
 
-This repository hosts my personal dotfiles as well as machine provisioning and workflow scripts.
+This repository hosts my personal dotfiles as well as machine provisioning and workflow scripts. This repository come with no warranty. It may wipe your boot disk, eat your pet, etc. I like to experiment with my setup and this repository reflect that. Use it at your own risk!
 
 ## Usage
 

@@ -21,7 +21,6 @@
     name: "{{python3_packages}}"
     state: latest
     executable: "{{python3_version_path}}/bin/pip"
-    chdir: "{{python3_version_path}}"
     extra_args: --no-binary
 
 

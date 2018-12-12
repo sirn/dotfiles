@@ -33,7 +33,7 @@ gmake_bin: gmake
 ports_packages:
   - converters/base64
   - converters/cocot
-  - databases/postgresql96-client
+  - databases/postgresql10-client
   - devel/autoconf
   - devel/binutils
   - devel/ccache
@@ -50,13 +50,12 @@ ports_packages:
   - editors/neovim
   - emulators/virtualbox-ose-nox11
   - ftp/curl
-  - ftp/lftp
   - graphics/GraphicsMagick
   - graphics/graphviz
   - java/openjdk8-jre
   - lang/execline
   - lang/expect
-  - lang/gcc
+  - lang/gcc7
   - misc/compat8x
   - multimedia/ffmpeg
   - multimedia/rtmpdump

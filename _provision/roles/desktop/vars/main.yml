@@ -51,6 +51,7 @@ cask_desktop_packages:
   - screens
   - sketch
   - swinsian
+  - telegram
   - the-unarchiver
   - vagrant
   - veracrypt

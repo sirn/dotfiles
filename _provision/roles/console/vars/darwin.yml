@@ -28,7 +28,6 @@ brew_packages:
   - kubernetes-cli
   - kubernetes-helm
   - leiningen
-  - lftp
   - libressl
   - mercurial
   - moreutils

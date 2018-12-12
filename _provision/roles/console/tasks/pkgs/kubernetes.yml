@@ -15,14 +15,14 @@
 - name: install jsonnet
   pip:
     name: "jsonnet"
-    state: latest
+    version: "0.11.2"
+    state: present
     executable: "{{python3_version_path}}/bin/pip"
-    chdir: "{{python3_version_path}}"
   environment:
     MAKE: "{{gmake_bin}}"
     CXX: "{{gxx_bin}}"
-    CXXFLAGS: "{% if gcc_rpath %}-Wl,-rpath={{gcc_rpath}} {% endif %}-std=c++11 -fPIC -Iinclude -Ithird_party/md5"
-    LDFLAGS: "{% if gcc_rpath %}-Wl,-rpath={{gcc_rpath}} -L{{gcc_rpath}}{% endif %}"
+    CXXFLAGS: "-I/usr/local/include{% if gcc_rpath %} -Wl,-rpath={{gcc_rpath}} {% endif %}-std=c++11 -fPIC -Iinclude -Ithird_party/md5"
+    LDFLAGS: "-L/usr/local/lib{% if gcc_rpath %} -Wl,-rpath={{gcc_rpath}} -L{{gcc_rpath}}{% endif %}"
 
 
 ## Kapitan
@@ -31,9 +31,9 @@
 - name: install kapitan
   pip:
     name: "kapitan"
-    state: latest
+    version: "0.20.1"
+    state: present
     executable: "{{python3_version_path}}/bin/pip"
-    chdir: "{{python3_version_path}}"
 
 - name: update python3 shims for kapitan
   command: "{{asdf_bin}}/asdf reshim python3"

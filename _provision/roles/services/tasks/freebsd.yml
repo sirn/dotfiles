@@ -5,5 +5,5 @@
 - include_tasks: "freebsd/nfs.yml"
 - include_tasks: "freebsd/openntpd.yml"
 - include_tasks: "freebsd/pf.yml"
-- include_tasks: "freebsd/portsnap.yml"
+- include_tasks: "freebsd/ports.yml"
 - include_tasks: "freebsd/zfstools.yml"

@@ -1,0 +1,10 @@
+---
+## Configure ports
+##
+
+- name: enable ports periodic
+  become: yes
+  copy:
+    src: ports/periodic.sh
+    dest: /usr/local/etc/periodic/daily/900.ports
+    mode: 0755

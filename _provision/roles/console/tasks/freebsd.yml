@@ -45,6 +45,16 @@
 ## Configure system
 ##
 
+- name: configure bootloader
+  become: yes
+  lineinfile:
+    path: /boot/loader.conf
+    line: "{{item.key}}={{item.value}}"
+    regexp: "^(# ?)?{{item.key}}="
+  with_items:
+    - { key: "cc_htcp_load", value: "YES" }
+    - { key: "kern.racct.enable", value: "1" }
+
 - name: configure sysctl
   become: yes
   lineinfile:
@@ -52,9 +62,10 @@
     line: "{{item.key}}={{item.value}}"
     regexp: "^(# ?)?{{item.key}}="
   with_items:
-    - { key: "security.bsd.see_other_uids", value: "0" }
     - { key: "kern.maxfiles", value: "5242880" }
     - { key: "kern.maxfilesperproc", value: "524288" }
+    - { key: "net.inet.tcp.cc.algorithm", value: "htcp" }
+    - { key: "security.bsd.see_other_uids", value: "0" }
 
 - name: configure periodic logging
   become: yes
@@ -103,27 +114,3 @@
     name: "{{ansible_user_id}}"
     groups: vboxusers
     append: yes
-
-
-## Setup terminfo
-##
-
-- name: setup 24-bits terminfo
-  become: yes
-  shell: |
-    if ! infocmp xterm-24bits >/dev/null 2>&1; then
-      tic -s -x {{ansible_env.HOME}}/.dotfiles/_var/terminfo-24bit.src
-      ( \
-        printf "\n"
-        printf "# These entries do not have 24-bit support, they are added\n"
-        printf "# so those built against system termcap do not fail.\n"
-        printf "# --"
-        tic -C -K -s -x {{ansible_env.HOME}}/.dotfiles/_var/terminfo-24bit.src
-      ) >> /usr/share/misc/termcap
-      cd /usr/share/misc
-      cap_mkdb termcap
-      exit 9
-    fi
-  register: terminfo_register
-  failed_when: terminfo_register.rc != 0 and terminfo_register.rc != 9
-  changed_when: terminfo_register.rc == 9

@@ -151,6 +151,9 @@ common_ansible_run() {
     _ansible_config="$_dotfiles/_provision/ansible.cfg"
     _opts="-i $_dotfiles/_provision/hosts"
 
+    # Sanitizing
+    #
+
     if [ "$_ansible_bin" = "" ]; then
         _ansible_bin=ansible-playbook
     fi
@@ -167,6 +170,9 @@ common_ansible_run() {
         _opts="$_opts $*"
     fi
 
+    # Handle provisioning profiles
+    #
+
     _skip_console=1
     _skip_desktop=1
     _skip_services=1
@@ -182,6 +188,9 @@ common_ansible_run() {
     [ $_skip_console  = 1 ] && _opts="$_opts --skip-tags=console"
     [ $_skip_desktop  = 1 ] && _opts="$_opts --skip-tags=desktop"
     [ $_skip_services = 1 ] && _opts="$_opts --skip-tags=services"
+
+    # Running
+    #
 
     # shellcheck disable=SC2086
     if ! env ANSIBLE_CONFIG="$_ansible_config" "$_ansible_bin" "$_playbook" $_opts; then
@@ -200,12 +209,18 @@ bootstrap_darwin() {
     export HOMEBREW_NO_EMOJI=1
     export HOMEBREW_NO_ANALYTICS=1
 
+    # SDK and command-line tools
+    #
+
     xcode-select --install 2>/dev/null
 
     _sdk="/Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg"
     if [ -e "$_sdk" ] && [ ! -f /usr/lib/bundle1.o ]; then
         sudo /usr/sbin/installer -pkg "$_sdk" -target /
     fi
+
+    # Homebrew
+    #
 
     if ! hash brew 2>/dev/null; then
         echo_wait 'Homebrew is not installed. Installing...'
@@ -214,6 +229,9 @@ bootstrap_darwin() {
     fi
 
     /usr/local/bin/brew update
+
+    # Ansible
+    #
 
     if [ ! -f "$_ansible_python" ]; then
         echo_wait 'Python is not installed. Installing...'
@@ -226,6 +244,9 @@ bootstrap_darwin() {
     fi
 
     common_ansible_run "$@"
+
+    # Desktop packages
+    #
 
     for p in $_profile; do
         case "$p" in
@@ -243,9 +264,15 @@ bootstrap_darwin() {
         esac
     done
 
+    # Console packages
+    #
+
     if [ "$*" = "" ]; then
         /usr/local/bin/brew upgrade
     fi
+
+    # Cleanups
+    #
 
     # Some weird packages will randomly chmod /usr/local/Cellar
     if [ -d /usr/local/Cellar ]; then
@@ -264,16 +291,52 @@ bootstrap_freebsd() {
     export PATH=$HOME/.local/bin:/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
     export LANG=en_US.UTF-8
 
+    # FreeBSD Ports
+    #
+
+    _ports_base="https://svn.freebsd.org/ports/branches/"
+    _ports_branch=$(svnlite ls $_ports_base | awk '/^2.*Q./ { c = $0 } END { gsub("/$", "", c); print c }')
+    _ports_url="$_ports_base$_ports_branch"
+
+    if [ -f /usr/ports/Makefile ] && [ ! -d /usr/ports/.svn ]; then
+        echo 'FreeBSD ports tree is already exists but it is not managed by SVN.'
+        printf 'Do you want to delete existing files and switch to quarterly branch? [y/N]: '
+
+        read -r _resp
+        case $_resp in
+            [Yy]* ) sudo find /usr/ports -mindepth 1 -delete;;
+            * ) echo "OK, not switching to $_ports_branch.";;
+        esac
+    fi
+
+    if [ -d /usr/ports/.svn ]; then
+        _ports_cur=$(svnlite info /usr/ports |awk '/^URL:/ { print $2 }')
+
+        if [ "$_ports_cur" = "$_ports_url" ]; then
+            sudo svnlite update /usr/ports
+        else
+            echo "Switching ports tree to $_ports_branch..."
+            sudo svnlite switch "$_ports_url" /usr/ports
+        fi
+    else
+        echo "Cloning ports tree from $_ports_branch branch..."
+        sudo svnlite co "$_ports_url" /usr/ports
+    fi
+
+    # Synth
+    #
+
     # Perma-disable FreeBSD repo as we'll be exclusively using Synth.
     sudo mkdir -p /usr/local/etc/pkg/repos
     echo "FreeBSD: { enabled: no }" | sudo tee /usr/local/etc/pkg/repos/10_freebsd.conf >/dev/null
-
-    sudo portsnap auto --interactive
 
     if ! hash synth 2>/dev/null; then
         echo_wait 'Synth is not installed. Installing...'
         sudo make -C /usr/ports/ports-mgmt/synth -DBATCH install clean
     fi
+
+    # Ansible
+    #
 
     if [ ! -f "$_ansible_python" ]; then
         echo_wait 'Python is not installed. Installing...'
@@ -286,6 +349,9 @@ bootstrap_freebsd() {
     fi
 
     common_ansible_run "$@"
+
+    # Console packages
+    #
 
     if [ "$*" = "" ]; then
         sudo /usr/local/bin/synth upgrade-system
