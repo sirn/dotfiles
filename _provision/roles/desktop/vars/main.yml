@@ -86,5 +86,4 @@ mas_desktop_packages:
   - { id: 937984704, app: "Amphetamine" }
   - { id: 975937182, app: "Fantastical 2" }
   - { id: 1287445660, app: "Agenda" }
-  - { id: 1289378661, app: "Twitterrific" }
   - { id: 1333542190, app: "1Password 7" }
