@@ -56,7 +56,6 @@ cask_desktop_packages:
   - vagrant
   - veracrypt
   - virtualbox
-  - virtualbox-extension-pack
   - viscosity
   - xquartz
 
