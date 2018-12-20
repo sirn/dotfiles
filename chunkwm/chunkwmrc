@@ -89,14 +89,18 @@ chunkc core::load tiling.so
 # https://github.com/koekeishiya/chunkwm/wiki/Useful-tips-and-workarounds
 #
 
-chunkc tiling::rule --owner Arq                 --state float &
-chunkc tiling::rule --owner FaceTime            --state float &
-chunkc tiling::rule --owner Fantastical         --state float &
-chunkc tiling::rule --owner VirtualBox VM       --state float &
-chunkc tiling::rule --owner \"1Password 7\"     --state float &
-chunkc tiling::rule --owner \"CleanMyMac X\"    --state float &
-chunkc tiling::rule --owner iBooks              --state float &
-chunkc tiling::rule --owner mpv                 --state float &
+chunkc tiling::rule --owner Arq                  --state float &
+chunkc tiling::rule --owner FaceTime             --state float &
+chunkc tiling::rule --owner Fantastical          --state float &
+chunkc tiling::rule --owner Loopback             --state float &
+chunkc tiling::rule --owner OBS                  --state float &
+chunkc tiling::rule --owner VirtualBox VM        --state float &
+chunkc tiling::rule --owner \"1Password 7\"      --state float &
+chunkc tiling::rule --owner \"Keyboard Maestro\" --state float &
+chunkc tiling::rule --owner \"Audio Hijack\"     --state float &
+chunkc tiling::rule --owner \"CleanMyMac X\"     --state float &
+chunkc tiling::rule --owner iBooks               --state float &
+chunkc tiling::rule --owner mpv                  --state float &
 
 chunkc tiling::rule --owner Twitterrific \
        --grid-layout 1:4:3:0:1:1 \
@@ -114,20 +118,3 @@ chunkc tiling::rule --owner iTunes \
        --name MiniPlayer \
        --grid-layout 5:7:6:0:1:1 \
        --state float &
-
-# Desktop 5
-chunkc tiling::rule --owner LINE                --desktop 5 --follow-desktop &
-chunkc tiling::rule --owner Messages            --desktop 5 --follow-desktop &
-chunkc tiling::rule --owner Spotify             --desktop 5 --follow-desktop &
-chunkc tiling::rule --owner Swinsian            --desktop 5 --follow-desktop &
-chunkc tiling::rule --owner \"Audirvana Plus\"  --desktop 5 --follow-desktop &
-
-chunkc tiling::rule --owner iTunes \
-       --except MiniPlayer \
-       --desktop 5 \
-       --follow-desktop &
-
-chunkc tiling::rule --owner OmniFocus \
-       --except "^$" \
-       --desktop 5 \
-       --follow-desktop &
