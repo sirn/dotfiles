@@ -1,7 +1,12 @@
 ;; Note: need to be included before counsel/swiper (same repo)
 (use-package ivy
   :diminish ivy-mode
-  :straight t
+  :straight (ivy :type git
+                 :host github
+                 :repo "abo-abo/swiper"
+                 ;; https://github.com/raxod502/prescient.el/issues/19
+                 ;; https://github.com/abo-abo/swiper/pull/1863
+                 :branch "d3c0341")
 
   :preface
   (eval-when-compile
@@ -11,7 +16,7 @@
   (setq ivy-use-virtual-buffers t)
 
   :config
-  (ivy-mode 1))
+  (ivy-mode t))
 
 
 (use-package counsel
@@ -106,6 +111,5 @@
 (use-package swiper
   :after ivy
   :straight t
-
   :bind
   (("\C-s" . swiper)))
