@@ -1,5 +1,5 @@
 server_names = ['gridns-sg']
-listen_addresses = ['127.0.0.1:15353', '[::1]:15353']
+listen_addresses = ['127.0.0.1:53', '[::1]:53']
 max_clients = 250
 
 ipv4_servers = true
@@ -16,7 +16,7 @@ timeout = 2500
 keepalive = 30
 cert_refresh_delay = 240
 
-fallback_resolver = '8.8.8.8:53'
+fallback_resolver = '1.1.1.1:53'
 ignore_system_dns = true
 netprobe_timeout = 30
 
@@ -26,7 +26,7 @@ log_files_max_backups = 1
 
 block_ipv6 = false
 
-cache = false
+cache = true
 cache_size = 512
 cache_min_ttl = 600
 cache_max_ttl = 86400

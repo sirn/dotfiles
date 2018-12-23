@@ -82,18 +82,8 @@
 
 - name: initialize chunkwm taps
   homebrew_tap:
-    tap: "{{item}}"
+    tap: crisidev/chunkwm
     state: present
-  with_items:
-    - crisidev/chunkwm
-    - koekeishiya/formulae
-
-- name: ensure chunkwm directories
-  file:
-    path: "{{item}}"
-    state: directory
-  with_items:
-    - ~/.local/var/logs
 
 - name: install chunkwm
   homebrew:
@@ -104,12 +94,9 @@
     - restart chunkwm launchd service
 
 - name: enable chunkwm service
-  template:
-    src: chunkwm/io.github.koekeishiya.chunkwm.plist.j2
-    dest: ~/Library/LaunchAgents/io.github.koekeishiya.chunkwm.plist
-  notify:
-    - restart chunkwm launchd service
-
+  brew_services:
+    name: chunkwm
+    state: started
 
 
 ## Install skhd
@@ -117,6 +104,11 @@
 ## Skhd is only relevant in desktop context; so it is installed here
 ## instead of in services.
 ##
+
+- name: initialize skhd tap
+  homebrew_tap:
+    tap: koekeishiya/formulae
+    state: present
 
 - name: install skhd
   homebrew:
@@ -126,8 +118,6 @@
     - restart skhd launchd service
 
 - name: enable skhd service
-  template:
-    src: chunkwm/io.github.koekeishiya.skhd.plist.j2
-    dest: ~/Library/LaunchAgents/io.github.koekeishiya.skhd.plist
-  notify:
-    - restart skhd launchd service
+  brew_services:
+    name: skhd
+    state: started

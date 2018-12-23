@@ -13,23 +13,11 @@
 ## Configure dnscrypt-proxy
 ##
 
-- name: ensure dnscrypt-proxy directories
-  become: yes
-  file:
-    path: "{{item}}"
-    state: directory
-    recurse: yes
-    owner: nobody
-    group: nobody
-  with_items:
-    - /usr/local/svcs/dnscrypt-proxy/etc
-    - /usr/local/svcs/dnscrypt-proxy/var
-
 - name: configure dnscrypt-proxy
   become: yes
   copy:
     src: dnscrypt-proxy/dnscrypt-proxy.toml
-    dest: /usr/local/svcs/dnscrypt-proxy/etc/dnscrypt-proxy.toml
+    dest: /usr/local/etc/dnscrypt-proxy.toml
     owner: nobody
     group: nobody
   notify:
@@ -41,8 +29,6 @@
 
 - name: enable dnscrypt-proxy service
   become: yes
-  copy:
-    src: dnscrypt-proxy/com.github.jedisct1.dnscrypt-proxy.plist
-    dest: /Library/LaunchDaemons/com.github.jedisct1.dnscrypt-proxy.plist
-  notify:
-    - restart dnscrypt-proxy launchd service
+  brew_services:
+    name: dnscrypt-proxy
+    state: started

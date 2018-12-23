@@ -1,22 +1,14 @@
 ---
 - name: restart dnscrypt-proxy launchd service
   become: yes
-  shell: |
-    launchctl unload /Library/LaunchDaemons/com.github.jedisct1.dnscrypt-proxy.plist &&
-    launchctl load /Library/LaunchDaemons/com.github.jedisct1.dnscrypt-proxy.plist
-  ignore_errors: yes
+  brew_services:
+    name: dnscrypt-proxy
+    state: restarted
 
-- name: restart user-env launchd service
+- name: restart userenv launchd service
   shell: |
-    launchctl unload ~/Library/LaunchAgents/th.in.grid.user-env.plist &&
-    launchctl load ~/Library/LaunchAgents/th.in.grid.user-env.plist
-  ignore_errors: yes
-
-- name: restart unbound launchd service
-  become: yes
-  shell: |
-    launchctl unload /Library/LaunchDaemons/net.unbound.unbound.plist &&
-    launchctl load /Library/LaunchDaemons/net.unbound.unbound.plist
+    launchctl unload ~/Library/LaunchAgents/th.in.grid.userenv.plist &&
+    launchctl load ~/Library/LaunchAgents/th.in.grid.userenv.plist
   ignore_errors: yes
 
 - name: restart devd rc service

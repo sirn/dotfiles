@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>th.in.grid.env</string>
+  <string>th.in.grid.userenv</string>
   <key>ProgramArguments</key>
   <array>
     <string>/bin/bash</string>
