@@ -49,7 +49,7 @@
   (add-to-list 'winum-assign-functions 'gr/winum-assign-func)
 
   (setq winum-auto-setup-mode-line nil)
-  (setq winum-scope 'visible)
+  (setq winum-scope 'frame-local)
   (winum-mode)
 
   (with-eval-after-load 'evil-leader
