@@ -65,6 +65,7 @@
     - { key: "kern.maxfiles", value: "5242880" }
     - { key: "kern.maxfilesperproc", value: "524288" }
     - { key: "net.inet.tcp.cc.algorithm", value: "htcp" }
+    - { key: "net.link.tap.up_on_open", value: "1" }
     - { key: "security.bsd.see_other_uids", value: "0" }
 
 - name: configure periodic logging

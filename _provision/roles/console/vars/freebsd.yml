@@ -22,11 +22,11 @@ pf_ext_if: "{{ansible_interfaces[0]}}"
 
 fuse_ld: gold
 
-gcc_bin: /usr/local/bin/gcc7
+gcc_bin: /usr/local/bin/gcc8
 
-gcc_rpath: /usr/local/lib/gcc7
+gcc_rpath: /usr/local/lib/gcc8
 
-gxx_bin: /usr/local/bin/g++7
+gxx_bin: /usr/local/bin/g++8
 
 gmake_bin: gmake
 
@@ -55,7 +55,7 @@ ports_packages:
   - java/openjdk8-jre
   - lang/execline
   - lang/expect
-  - lang/gcc7
+  - lang/gcc8
   - misc/compat8x
   - multimedia/ffmpeg
   - multimedia/rtmpdump

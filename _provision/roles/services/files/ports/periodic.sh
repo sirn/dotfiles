@@ -18,3 +18,5 @@ else
     echo "Switching ports tree to $_ports_branch..."
     svnlite switch "$_ports_url" /usr/ports
 fi
+
+make -C /usr/ports -j "$(sysctl -n hw.ncpu)" index
