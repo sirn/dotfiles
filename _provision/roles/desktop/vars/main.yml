@@ -86,3 +86,4 @@ mas_desktop_packages:
   - { id: 1121192229, app: "Better" }
   - { id: 1287445660, app: "Agenda" }
   - { id: 1333542190, app: "1Password 7" }
+  - { id: 1384080005, app: "Tweetbot" }

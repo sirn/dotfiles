@@ -114,3 +114,12 @@ chunkc tiling::rule --owner iTunes \
        --name MiniPlayer \
        --grid-layout 5:7:6:0:1:1 \
        --state float &
+
+chunkc tiling::rule --owner Tweetbot \
+       --name \"Main Window\" \
+       --grid-layout 1:4:3:0:1:1 \
+       --state float &
+
+chunkc tiling::rule --owner Tweetbot \
+       --except \"Main Window\" \
+       --state float &
