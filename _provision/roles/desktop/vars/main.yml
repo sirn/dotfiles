@@ -49,8 +49,6 @@ cask_desktop_packages:
   - paw
   - screens
   - sketch
-  - swinsian
-  - telegram
   - the-unarchiver
   - vagrant
   - veracrypt
@@ -75,7 +73,6 @@ mas_desktop_packages:
   - { id: 413965349, app: "Soulver" }
   - { id: 497799835, app: "Xcode" }
   - { id: 523620159, app: "CleanMyDrive 2" }
-  - { id: 539883307, app: "LINE" }
   - { id: 587512244, app: "Kaleidoscope" }
   - { id: 603637384, app: "Name Mangler 3" }
   - { id: 775737590, app: "iA Writer" }
@@ -86,4 +83,3 @@ mas_desktop_packages:
   - { id: 1121192229, app: "Better" }
   - { id: 1287445660, app: "Agenda" }
   - { id: 1333542190, app: "1Password 7" }
-  - { id: 1384080005, app: "Tweetbot" }
