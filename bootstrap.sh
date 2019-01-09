@@ -81,7 +81,6 @@ reset_config() {
 }
 
 _profile=""
-_first_run="1"
 
 # shellcheck disable=SC1090
 if [ -f "$_config_file" ]; then
@@ -138,7 +137,6 @@ mkdir -p "$(dirname "$_config_file")"
 
 cat <<-EOF > "$_config_file"
 _profile="$_profile"
-_first_run="0"
 EOF
 
 
@@ -232,11 +230,6 @@ bootstrap_darwin() {
 
     # Ansible
     #
-
-    if [ ! -f "$_ansible_python" ]; then
-        echo_wait 'Python is not installed. Installing...'
-        /usr/local/bin/brew install python@3
-    fi
 
     if [ ! -f "$_ansible_bin" ]; then
         echo_wait 'Ansible is not installed. Installing...'
@@ -338,14 +331,9 @@ bootstrap_freebsd() {
     # Ansible
     #
 
-    if [ ! -f "$_ansible_python" ]; then
-        echo_wait 'Python is not installed. Installing...'
-        sudo /usr/local/bin/synth install security/ca_root_nss lang/python36
-    fi
-
     if [ ! -f "$_ansible_bin" ]; then
         echo_wait 'Ansible is not installed. Installing...'
-        sudo /usr/local/bin/synth install sysutils/ansible@py36
+        sudo /usr/local/bin/synth install security/ca_root_nss sysutils/ansible@py36
     fi
 
     common_ansible_run "$@"
