@@ -328,6 +328,8 @@ bootstrap_freebsd() {
         sudo make -C /usr/ports/ports-mgmt/synth -DBATCH install clean
     fi
 
+    sudo synth status
+
     # Ansible
     #
 
