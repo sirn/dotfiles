@@ -48,7 +48,6 @@ ports_packages:
   - devel/mercurial@py27
   - editors/emacs@nox
   - editors/neovim
-  - emulators/virtualbox-ose-nox11
   - ftp/curl
   - graphics/GraphicsMagick
   - graphics/graphviz
@@ -87,7 +86,6 @@ ports_packages:
   - sysutils/terraform
   - sysutils/tmux
   - sysutils/tree
-  - sysutils/vagrant
   - sysutils/zfstools
   - textproc/groff
   - textproc/hs-pandoc

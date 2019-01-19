@@ -60,4 +60,3 @@
   with_items:
     - 01_dnscrypt
     - 01_unbound
-    - 01_vagrant

@@ -60,15 +60,11 @@ case "$(uname)" in
             export JAVA_HOME
         fi
 
-        if [ -d "/Applications/VMware Fusion.app" ]; then
-            VAGRANT_VMWARE_CLONE_DIRECTORY="$HOME/Virtual Machines"
-            export VAGRANT_VMWARE_CLONE_DIRECTORY
-        fi
-
         PATH=/Applications/mpv.app/Contents/MacOS:$PATH
         PATH=/Library/TeX/texbin:$PATH
         PATH=/usr/local/opt/libressl/bin:$PATH
         ;;
+
     FreeBSD )
         if [ -d /usr/local/libexec/ccache ]; then
             PATH=/usr/local/libexec/ccache:$PATH

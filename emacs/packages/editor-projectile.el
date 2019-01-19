@@ -16,7 +16,6 @@
 
   :config
   (projectile-mode t)
-  (add-to-list 'projectile-project-root-files "Vagrantfile" t)
 
   (with-eval-after-load 'magit-branch
     (defun gr/projectile-invalidate-cache-adv (&rest _args)

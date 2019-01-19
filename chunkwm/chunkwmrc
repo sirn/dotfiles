@@ -94,7 +94,6 @@ chunkc tiling::rule --owner FaceTime             --state float &
 chunkc tiling::rule --owner Fantastical          --state float &
 chunkc tiling::rule --owner Loopback             --state float &
 chunkc tiling::rule --owner OBS                  --state float &
-chunkc tiling::rule --owner VirtualBox VM        --state float &
 chunkc tiling::rule --owner \"1Password 7\"      --state float &
 chunkc tiling::rule --owner \"Audio Hijack\"     --state float &
 chunkc tiling::rule --owner \"CleanMyMac X\"     --state float &

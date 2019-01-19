@@ -50,9 +50,7 @@ cask_desktop_packages:
   - screens
   - sketch
   - the-unarchiver
-  - vagrant
   - veracrypt
-  - virtualbox
   - viscosity
   - xquartz
 
