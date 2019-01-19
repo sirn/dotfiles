@@ -1,7 +1,7 @@
 #!/bin/sh
 
 print_usage() {
-    echo "Usage: $0 [-h] [-r [app...]] [-e [app...]] [-d [app...]]"
+    echo "Usage: $0 [-h] OPTS"
     echo
     echo "    -h   Print this help."
     echo "    -s   Scan for Sparkle-enabled apps."
