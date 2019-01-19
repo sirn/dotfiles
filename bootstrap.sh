@@ -287,33 +287,20 @@ bootstrap_freebsd() {
     # FreeBSD Ports
     #
 
-    _ports_base="https://svn.freebsd.org/ports/branches/"
-    _ports_branch=$(svnlite ls $_ports_base | awk '/^2.*Q./ { c = $0 } END { gsub("/$", "", c); print c }')
-    _ports_url="$_ports_base$_ports_branch"
-
-    if [ -f /usr/ports/Makefile ] && [ ! -d /usr/ports/.svn ]; then
-        echo 'FreeBSD ports tree is already exists but it is not managed by SVN.'
-        printf 'Do you want to delete existing files and switch to quarterly branch? [y/N]: '
+    if [ -f /usr/ports/Makefile ] && [ -d /usr/ports/.svn ]; then
+        printf "FreeBSD ports tree is already exists but it is managed by SVN.\\n"
+        printf "This means you're running on quarterly branch or something.\\n"
+        printf 'Do you want to delete existing files and switch to portsnap? [y/N]: '
 
         read -r _resp
         case $_resp in
             [Yy]* ) sudo find /usr/ports -mindepth 1 -delete;;
-            * ) echo "OK, not switching to $_ports_branch.";;
+            * ) echo "OK, not switching to portsnap.";;
         esac
     fi
 
-    if [ -d /usr/ports/.svn ]; then
-        _ports_cur=$(svnlite info /usr/ports |awk '/^URL:/ { print $2 }')
-
-        if [ "$_ports_cur" = "$_ports_url" ]; then
-            sudo svnlite update /usr/ports
-        else
-            echo "Switching ports tree to $_ports_branch..."
-            sudo svnlite switch "$_ports_url" /usr/ports
-        fi
-    else
-        echo "Cloning ports tree from $_ports_branch branch..."
-        sudo svnlite co "$_ports_url" /usr/ports
+    if [ ! -d /usr/ports/.svn ]; then
+        sudo portsnap auto
     fi
 
     # Synth

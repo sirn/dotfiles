@@ -1,0 +1,8 @@
+---
+- name: configure emacs undo list prune
+  cron:
+    name: "emacs undo list cron"
+    minute: 0
+    hour: "*"
+    job: "find {{ansible_env.HOME}}/.emacs.d/undo -type f -mtime +1d -delete"
+    state: present
