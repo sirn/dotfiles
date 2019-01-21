@@ -7,7 +7,7 @@
   (eval-when-compile
     (declare-function ivy-mode nil))
 
-  ;; :init
+  :init
   (setq ivy-use-virtual-buffers t)
 
   :config
@@ -23,6 +23,7 @@
   (("C-c C-r" . ivy-resume)
    ("C-x C-b" . ivy-switch-buffer)
    ("C-x C-f" . counsel-find-file)
+   ("M-x"     . counsel-M-x)
 
    :map minibuffer-local-map
    ("C-r"     . counsel-minibuffer-history)
@@ -48,6 +49,9 @@
   (with-eval-after-load 'evil-leader
     (evil-leader/set-key
       "bb" 'ivy-switch-buffer
+      "br" 'counsel-recentf
+      "dv" 'counsel-describe-variable
+      "df" 'counsel-describe-function
       "/"  'counsel-rg)))
 
 
@@ -88,6 +92,21 @@
 
   :config
   (ivy-prescient-mode t))
+
+
+(use-package ivy-rich
+  :straight t
+  :after (ivy counsel)
+
+  :preface
+  (eval-when-compile
+    (declare-function ivy-rich-mode nil))
+
+  :init
+  (setq ivy-rich-path-style 'abbrev)
+
+  :config
+  (ivy-rich-mode t))
 
 
 (use-package prescient
