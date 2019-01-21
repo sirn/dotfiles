@@ -299,10 +299,6 @@ bootstrap_freebsd() {
         esac
     fi
 
-    if [ ! -d /usr/ports/.svn ]; then
-        sudo portsnap auto
-    fi
-
     # Synth
     #
 
@@ -314,8 +310,6 @@ bootstrap_freebsd() {
         echo_wait 'Synth is not installed. Installing...'
         sudo make -C /usr/ports/ports-mgmt/synth -DBATCH install clean
     fi
-
-    sudo synth status
 
     # Ansible
     #

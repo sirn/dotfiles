@@ -18,6 +18,10 @@ pf_allowed_ports:
     port: "60000:61000"
     proto: udp
 
+pf_nat:
+  - name: Bhyve NAT
+    network: "10.100.10.1/24"
+
 pf_ext_if: "{{ansible_interfaces[0]}}"
 
 fuse_ld: gold
@@ -46,8 +50,10 @@ ports_packages:
   - devel/jsonnet
   - devel/leiningen
   - devel/mercurial@py27
+  - dns/dnsmasq
   - editors/emacs@nox
   - editors/neovim
+  - emulators/qemu-utils
   - ftp/curl
   - graphics/GraphicsMagick
   - graphics/graphviz
@@ -70,11 +76,13 @@ ports_packages:
   - shells/bash
   - shells/zsh
   - sysutils/ansible@py36
+  - sysutils/bhyve-firmware
   - sysutils/coreutils
   - sysutils/direnv
   - sysutils/duplicity@py27
   - sysutils/entr
   - sysutils/fswatch-mon
+  - sysutils/grub2-bhyve
   - sysutils/helm
   - sysutils/kubectl
   - sysutils/lsof
@@ -86,6 +94,7 @@ ports_packages:
   - sysutils/terraform
   - sysutils/tmux
   - sysutils/tree
+  - sysutils/vm-bhyve
   - sysutils/zfstools
   - textproc/groff
   - textproc/hs-pandoc

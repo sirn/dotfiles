@@ -15,6 +15,11 @@ rdr pass on {{pf_ext_if}} inet proto {{spec.proto}} from any to {{pf_ext_if}} po
 rdr pass on {{pf_ext_if}} inet6 proto {{spec.proto}} from any to {{pf_ext_if}} port {{spec.port}} -> {{private_ipv6}} port {{spec.dest_port}}
 {% endif %}
 {% endfor %}
+{% for spec in pf_nat|default([], true) %}
+
+# {{spec.name}}
+nat on {{pf_ext_if}} from {{spec.network}} to any -> ({{pf_ext_if}})
+{% endfor %}
 
 
 ## Queueing

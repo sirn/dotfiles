@@ -31,9 +31,9 @@ _tag="pf_ifnet"
 _prefix="pfifnet"
 
 hook_up() {
-    ( \
-      echo "pass in on $1 inet all"
-      echo "pass in on $1 inet6 all"
+    (
+        echo "pass in on $1 inet all"
+        echo "pass in on $1 inet6 all"
     ) | pfctl -a "$_prefix/$1" -f -
     logger -t "$_tag" "Added pf anchor for $1."
 }
