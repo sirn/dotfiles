@@ -60,7 +60,6 @@ cask_taps:
 
 cask_packages:
   - google-cloud-sdk
-  - minikube
 
 clang_bin: /usr/bin/clang
 

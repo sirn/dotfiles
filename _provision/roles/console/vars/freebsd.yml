@@ -86,7 +86,6 @@ ports_packages:
   - sysutils/helm
   - sysutils/kubectl
   - sysutils/lsof
-  - sysutils/minikube
   - sysutils/moreutils
   - sysutils/packer
   - sysutils/password-store
