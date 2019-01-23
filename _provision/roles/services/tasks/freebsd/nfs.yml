@@ -12,6 +12,8 @@
     - nfs_server_enable="YES"
     - mountd_enable="YES"
     - rpcbind_enable="YES"
+    - rpc_lockd_enable="YES"
+    - rpc_statd_enable="YES"
 
 - name: ensure exports file exists
   become: yes
@@ -28,6 +30,8 @@
   become: yes
   service: name={{item}} enabled=yes state=started
   with_items:
-    - rpcbind
-    - mountd
     - nfsd
+    - mountd
+    - lockd
+    - statd
+    - rpcbind
