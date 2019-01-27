@@ -100,6 +100,7 @@
 
   :preface
   (eval-when-compile
+    (defvar ivy-rich-path-style)
     (declare-function ivy-rich-mode nil))
 
   :init
