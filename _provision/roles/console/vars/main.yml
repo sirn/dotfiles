@@ -1,5 +1,5 @@
 ---
-asdf_version: "0.6.0"
+asdf_version: "0.6.3"
 
 asdf_path: "{{ansible_env.HOME}}/.asdf"
 
@@ -44,15 +44,15 @@ dots_links:
   - source: ~/.dotfiles/zsh/zprofile
     dest: ~/.zprofile
 
-elixir_version: "1.7.3"
+elixir_version: "1.8.0"
 
 elixir_version_path: "{{ansible_env.HOME}}/.asdf/installs/elixir/{{elixir_version}}"
 
-erlang_version: "21.0.9"
+erlang_version: "21.2.4"
 
 erlang_version_path: "{{ansible_env.HOME}}/.asdf/installs/erlang/{{erlang_version}}"
 
-golang_version: "1.11"
+golang_version: "1.11.5"
 
 golang_version_path: "{{ansible_env.HOME}}/.asdf/installs/golang/{{golang_version}}"
 
@@ -102,7 +102,7 @@ nodejs_packages:
   - typescript
   - yarn
 
-python3_version: "3.6.6"
+python3_version: "3.7.2"
 
 python3_version_path: "{{ansible_env.HOME}}/.asdf/installs/python3/{{python3_version}}"
 

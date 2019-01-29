@@ -1,5 +1,5 @@
 ---
-clang_bin: /usr/bin/clang
+clang_bin: /usr/local/libexec/ccache/clang
 
 env_paths:
   - "{{ansible_env.HOME}}/.local/bin"
@@ -26,11 +26,11 @@ pf_ext_if: "{{ansible_interfaces[0]}}"
 
 fuse_ld: gold
 
-gcc_bin: /usr/local/bin/gcc8
+gcc_bin: /usr/local/libexec/ccache/gcc
 
-gcc_rpath: /usr/local/lib/gcc8
+gcc_rpath: /usr/local/libexec/ccache/gcc
 
-gxx_bin: /usr/local/bin/g++8
+gxx_bin: /usr/local/libexec/ccache/g++
 
 gmake_bin: gmake
 
@@ -60,7 +60,7 @@ ports_packages:
   - java/openjdk8-jre
   - lang/execline
   - lang/expect
-  - lang/gcc8
+  - lang/gcc
   - misc/compat8x
   - multimedia/ffmpeg
   - multimedia/rtmpdump
@@ -73,7 +73,6 @@ ports_packages:
   - security/git-crypt
   - security/gnupg
   - security/libressl
-  - shells/bash
   - shells/zsh
   - sysutils/ansible@py36
   - sysutils/bhyve-firmware

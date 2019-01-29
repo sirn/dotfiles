@@ -17,7 +17,6 @@
 #
 # This script does exactly that.
 #
-set -xe
 
 ZPOOL=zboot
 MOUNTPOINT=/tmp/$ZPOOL
@@ -40,6 +39,8 @@ if [ "$(id -u)" != "0" ] || [ -z "$SUDO_USER" ]; then
     echo "Must be run with sudo."
     exit 1
 fi
+
+set -xe
 
 
 ## Setup ZFS
