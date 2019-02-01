@@ -32,8 +32,10 @@ _prefix="pfifnet"
 
 hook_up() {
     (
-        echo "pass in on $1 inet all"
-        echo "pass in on $1 inet6 all"
+        printf "icmp6_types=\"{ 128, 133, 134, 135, 136, 137 }\"\\n"
+        printf "pass in on %s inet all\\n" "$1"
+        printf "pass in on %s inet6 all\\n" "$1"
+        printf "pass in on %s inet6 proto icmp6 all icmp6-type \$icmp6_types keep state\\n" "$1"
     ) | pfctl -a "$_prefix/$1" -f -
     logger -t "$_tag" "Added pf anchor for $1."
 }

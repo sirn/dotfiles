@@ -19,10 +19,13 @@ pf_allowed_ports:
     proto: udp
 
 pf_nat:
-  - name: Bhyve NAT
+  - name: Bhyve VIMAGE NAT
     network: "10.100.10.1/24"
 
-pf_ext_if: "{{ansible_interfaces[0]}}"
+  - name: Iocage VIMAGE NAT
+    network: "10.100.20.1/24"
+
+pf_ext_if: ix0
 
 fuse_ld: gold
 

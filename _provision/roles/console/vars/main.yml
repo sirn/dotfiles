@@ -89,8 +89,10 @@ nodejs_packages:
   - bower
   - eslint
   - prettier
-  - pulp
-  - purescript@0.12.0
+  ## PureScript/GHC in general is broken under FreeBSD 12 for now due to
+  ## the inode64 changes since FreeBSD 12.
+  # - pulp
+  # - purescript
   - solc
   - solium
   - stylelint
