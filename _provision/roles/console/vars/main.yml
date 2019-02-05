@@ -77,7 +77,7 @@ ksonnet_version: "0.12.0"
 
 kube_ps1_version: "0.6.0"
 
-kubectx_version: "5a1366b"
+kubectx_version: "0.6.3"
 
 nim_version: "0.19.0"
 

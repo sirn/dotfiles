@@ -15,14 +15,14 @@
 - name: install jsonnet
   pip:
     name: "jsonnet"
-    version: "0.11.2"
+    version: "0.12.1"
     state: present
     executable: "{{python3_version_path}}/bin/pip"
   environment:
     MAKE: "{{gmake_bin}}"
-    CXX: "{{gxx_bin}}"
-    CXXFLAGS: "-I/usr/local/include{% if gcc_rpath %} -Wl,-rpath={{gcc_rpath}} {% endif %}-std=c++11 -fPIC -Iinclude -Ithird_party/md5"
-    LDFLAGS: "-L/usr/local/lib{% if gcc_rpath %} -Wl,-rpath={{gcc_rpath}} -L{{gcc_rpath}}{% endif %}"
+    CC: clang
+    CXX: clang++
+    CXXFLAGS: -fPIC -Iinclude -Ithird_party/md5 -Ithird_party/json -std=c++11
 
 
 ## Kapitan
@@ -31,7 +31,7 @@
 - name: install kapitan
   pip:
     name: "kapitan"
-    version: "0.20.1"
+    version: "0.22.3"
     state: present
     executable: "{{python3_version_path}}/bin/pip"
 
@@ -68,7 +68,7 @@
   git:
     repo: https://github.com/ahmetb/kubectx.git
     dest: ~/.local/src/kubectx
-    version: "{{kubectx_version}}"
+    version: "v{{kubectx_version}}"
 
 - name: link kubectx and kubens
   file:

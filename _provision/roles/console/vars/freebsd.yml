@@ -29,11 +29,11 @@ pf_ext_if: ix0
 
 fuse_ld: gold
 
-gcc_bin: /usr/local/libexec/ccache/gcc
+gcc_bin: gcc
 
-gcc_rpath: /usr/local/libexec/ccache/gcc
+gcc_rpath: gcc
 
-gxx_bin: /usr/local/libexec/ccache/g++
+gxx_bin: g++
 
 gmake_bin: gmake
 
