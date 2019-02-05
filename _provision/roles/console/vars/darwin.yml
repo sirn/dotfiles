@@ -46,6 +46,7 @@ brew_packages:
   - s6
   - shellcheck
   - socat
+  - sshfs
   - terraform
   - tmux
   - trash

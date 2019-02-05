@@ -84,6 +84,7 @@ ports_packages:
   - sysutils/duplicity@py27
   - sysutils/entr
   - sysutils/fswatch-mon
+  - sysutils/fusefs-sshfs
   - sysutils/grub2-bhyve
   - sysutils/helm
   - sysutils/kubectl

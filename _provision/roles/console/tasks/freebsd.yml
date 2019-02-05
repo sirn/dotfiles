@@ -53,6 +53,7 @@
     regexp: "^(# ?)?{{item.key}}="
   with_items:
     - { key: "cc_htcp_load", value: "YES" }
+    - { key: "fuse_load", value: "YES" }
     - { key: "kern.racct.enable", value: "1" }
 
 - name: configure sysctl
@@ -67,6 +68,7 @@
     - { key: "net.inet.tcp.cc.algorithm", value: "htcp" }
     - { key: "net.link.tap.up_on_open", value: "1" }
     - { key: "security.bsd.see_other_uids", value: "0" }
+    - { key: "vfs.usermount", value: "1" }
 
 - name: configure periodic logging
   become: yes
@@ -79,3 +81,14 @@
     - daily_output="/var/log/daily.log"
     - weekly_output="/var/log/weekly.log"
     - monthly_output="/var/log/monthly.log"
+
+
+## Configure user
+##
+
+- name: add current user to operator group
+  become: yes
+  user:
+    name: "{{ansible_user_id}}"
+    groups: operator
+    append: yes
