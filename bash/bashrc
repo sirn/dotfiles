@@ -4,6 +4,33 @@
 #
 
 #
+# Aliases
+#
+
+alias ls="ls -G"
+alias ll="ls -lh"
+alias la="ls -alh"
+alias ka="k -hA"
+alias kk="k -h"
+
+if hash nvim 2>/dev/null; then
+    alias nvi="nvim"
+    alias vi="nvim"
+    alias vim="nvim"
+fi
+
+if hash hub 2>/dev/null; then
+    alias git="hub"
+fi
+
+if hash emacsclient 2>/dev/null; then
+    export EDITOR="emacsclient -c -a ''"
+    alias emacs="emacsclient -c -a ''"
+    alias crontab="env EDITOR=vi crontab"
+fi
+
+
+#
 # GPG
 #
 
@@ -13,12 +40,54 @@ fi
 
 
 #
-# PS1
+# Prompt command hooks
 #
 
+_window_update_title() {
+    printf "\e]0;%s\a" "$(pwd)"
+
+    if [[ "$TERM_PROGRAM" == "Apple_Terminal" ]]; then
+        printf '\e]7;file://%s%s\a' "$HOSTNAME" "${PWD// /%20}"
+    fi
+}
+
 case "$TERM" in
-    xterm* | eshell* | rxvt* | screen* )
-        export PS1='[\u@\h \w]\$ '
+    xterm* | rxvt* | screen* )
+        PROMPT_COMMAND='
+        _window_update_title
+        ' # end-quote
+        ;;
+
+    * )
+        ;;
+esac
+
+
+#
+# Prompt
+#
+
+_prompt_abbrev_path() {
+    ps="\w"
+    printf "%s" "${ps@P}"| sed 's/\([^[:punct:]]\)[^\/]*\//\1\//g'
+}
+
+_prompt_git() {
+    if git rev-parse --quiet 2>/dev/null; then
+        printf "%s" "$(git rev-parse --abbrev-ref HEAD)"
+        if ! git diff --cached --quiet; then printf "\\033[0;32m*"; fi
+        if ! git diff --quiet; then          printf "\\033[0;33m*"; fi
+        printf "\\033[0;0m "
+    fi
+}
+
+case "$TERM" in
+    xterm* | rxvt* )
+        export PS1='\h $(_prompt_abbrev_path) $(_prompt_git)\$ '
+        ;;
+
+    screen* )
+        export PS1='$(_prompt_abbrev_path) $(_prompt_git)\$ '
         ;;
 
     * )
