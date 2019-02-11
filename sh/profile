@@ -92,6 +92,26 @@ fi
 
 
 #
+# Direnv
+#
+
+if hash direnv 2>/dev/null; then
+    eval "$(direnv hook tcsh)"
+fi
+
+
+#
+# asdf
+#
+
+# shellcheck disable=SC1090
+if [ -d "$HOME/.asdf" ]; then
+    . "$HOME/.asdf/asdf.sh"
+    . "$HOME/.asdf/completions/asdf.bash"
+fi
+
+
+#
 # Finalizing
 #
 

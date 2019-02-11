@@ -6,8 +6,8 @@
 # Do not use zsh if TERM is dumb. This is to make TRAMP work when
 # connecting to a machine with the current Zsh profile.
 if [ "$TERM" = "dumb" ]; then
-    SHELL=sh
-    exec sh -i
+    SHELL=tcsh
+    exec $SHELL -i
 fi
 
 # Otherwise we use zplug to manage everything.
