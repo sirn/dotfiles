@@ -15,3 +15,8 @@ fi
 if hash hub 2>/dev/null; then
     alias git="hub"
 fi
+
+if hash emacsclient 2>/dev/null; then
+    export EDITOR="emacsclient -c -a ''"
+    alias emacs="emacsclient -c -a ''"
+fi

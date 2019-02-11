@@ -1,10 +1,20 @@
 #!/usr/local/bin/env zsh
 
-autoload -Uz add-zsh-hook
+case "$TERM" in
+    xterm* | rxvt* | screen* )
+        autoload -Uz add-zsh-hook
 
-_window_update_title_hook () {
-    local _window_title="\e]0;$(pwd)\a"
-    printf "$_window_title"
-}
+        _window_update_title_hook () {
+            local _window_title="\e]0;$(pwd)\a"
+            printf "$_window_title"
+        }
 
-add-zsh-hook precmd _window_update_title_hook
+        add-zsh-hook precmd _window_update_title_hook
+        ;;
+
+    eterm* )
+        ;;
+
+    * )
+        ;;
+esac
