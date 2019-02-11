@@ -76,7 +76,7 @@ ports_packages:
   - security/git-crypt
   - security/gnupg
   - security/libressl
-  - shells/zsh
+  - shells/bash
   - sysutils/ansible@py36
   - sysutils/bhyve-firmware
   - sysutils/coreutils

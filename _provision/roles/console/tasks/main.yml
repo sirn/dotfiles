@@ -78,10 +78,6 @@
   tags:
     - rust
 
-- import_tasks: "pkgs/zsh.yml"
-  tags:
-    - zsh
-
 
 ## Setup links
 ##
@@ -100,3 +96,19 @@
     state: link
     force: yes
   with_items: "{{dots_links}}"
+
+
+## Setup user shells
+##
+
+- name: ensure bash is in available shells
+  become: yes
+  lineinfile:
+    path: /etc/shells
+    line: /usr/local/bin/bash
+
+- name: set user default shell
+  become: yes
+  user:
+    name: "{{ansible_user_id}}"
+    shell: /usr/local/bin/bash

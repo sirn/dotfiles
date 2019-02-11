@@ -6,6 +6,7 @@ brew_packages:
   - aria2
   - asciinema
   - autoconf
+  - bash
   - carthage
   - cocoapods
   - cocot
@@ -55,7 +56,6 @@ brew_packages:
   - xhyve
   - xz
   - youtube-dl
-  - zsh
 
 cask_taps:
 

@@ -38,11 +38,11 @@ dots_links:
   - source: ~/.dotfiles/tmux/tmux.conf
     dest: ~/.tmux.conf
 
-  - source: ~/.dotfiles/zsh/zshrc
-    dest: ~/.zshrc
+  - source: ~/.dotfiles/bash/bashrc
+    dest: ~/.bashrc
 
-  - source: ~/.dotfiles/zsh/zprofile
-    dest: ~/.zprofile
+  - source: ~/.dotfiles/bash/bash_profile
+    dest: ~/.bash_profile
 
 elixir_version: "1.8.0"
 

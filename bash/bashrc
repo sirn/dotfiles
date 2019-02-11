@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+#
+# ~/.bashrc
+#
+
+#
+# GPG
+#
+
+if hash gpg-connect-agent 2>/dev/null; then
+    gpg-connect-agent updatestartuptty /bye >/dev/null
+fi
+
+
+#
+# PS1
+#
+
+case "$TERM" in
+    xterm* | eshell* | rxvt* | screen* )
+        export PS1='[\u@\h \w]\$ '
+        ;;
+
+    * )
+        export PS1='\$ '
+        ;;
+esac
