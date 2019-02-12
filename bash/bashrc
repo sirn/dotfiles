@@ -68,15 +68,35 @@ esac
 #
 
 _prompt_abbrev_path() {
-    ps="\w"
-    printf "%s" "${ps@P}"| sed 's/\([^[:punct:]]\)[^\/]*\//\1\//g'
+    local _ps
+    _ps="\w"
+    printf "%s" "${_ps@P}"| sed 's/\([^[:punct:]]\)[^\/]*\//\1\//g'
 }
 
 _prompt_git() {
-    if git rev-parse --quiet 2>/dev/null; then
-        printf "%s" "$(git rev-parse --abbrev-ref HEAD)"
-        if ! git diff --cached --quiet; then printf "\\033[0;32m*"; fi
-        if ! git diff --quiet; then          printf "\\033[0;33m*"; fi
+    local _branch
+    local _changed
+    local _staged
+
+    _branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+
+    if [[ -n "$_branch" ]]; then
+        while read -r p; do
+            case "${p:0:1}" in
+                1 )
+                    [[ "${p:2:1}" == "M" ]] && _staged=1
+                    [[ "${p:3:1}" == "M" ]] && _changed=1
+                    ;;
+
+                * )
+                    _changed=1
+                    ;;
+            esac
+        done < <(git status --porcelain=v2 2>/dev/null)
+
+        printf "%s" "$_branch"
+        [[ $_staged == 1 ]]  && printf "\\033[0;32m*"
+        [[ $_changed == 1 ]] && printf "\\033[0;33m*"
         printf "\\033[0;0m "
     fi
 }
