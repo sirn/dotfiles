@@ -78,7 +78,7 @@ _prompt_git() {
     local _changed
     local _staged
 
-    _branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+    _branch="$(\git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 
     if [[ -n "$_branch" ]]; then
         while read -r p; do
@@ -92,7 +92,7 @@ _prompt_git() {
                     _changed=1
                     ;;
             esac
-        done < <(git status --porcelain=v2 2>/dev/null)
+        done < <(\git status --porcelain=v2 2>/dev/null)
 
         printf "%s" "$_branch"
         [[ $_staged == 1 ]]  && printf "\\033[0;32m*"
