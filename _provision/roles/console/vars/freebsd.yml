@@ -98,6 +98,7 @@ ports_packages:
   - sysutils/tree
   - sysutils/vm-bhyve
   - sysutils/zfstools
+  - textproc/fzf
   - textproc/groff
   - textproc/hs-pandoc
   - textproc/jq

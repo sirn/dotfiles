@@ -31,11 +31,33 @@ fi
 
 
 #
+# History
+#
+
+export HISTSIZE=10000
+export HISEFILESIZE=10000
+
+
+#
 # GPG
 #
 
 if hash gpg-connect-agent 2>/dev/null; then
     gpg-connect-agent updatestartuptty /bye >/dev/null
+fi
+
+
+#
+# Fzf
+#
+
+# shellcheck disable=SC1091
+if [[ -d /usr/local/share/examples/fzf/shell ]]; then
+    . /usr/local/share/examples/fzf/shell/completion.bash
+    . /usr/local/share/examples/fzf/shell/key-bindings.bash
+elif [[ -d /usr/local/opt/fzf/shell ]]; then
+    . /usr/local/opt/fzf/shell/completion.bash
+    . /usr/local/opt/fzf/shell/key-bindings.bash
 fi
 
 

@@ -16,6 +16,7 @@ brew_packages:
   - duplicity
   - ffmpeg
   - fswatch
+  - fzf
   - git
   - git-crypt
   - git-lfs
