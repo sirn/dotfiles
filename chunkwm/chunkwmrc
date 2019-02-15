@@ -129,6 +129,10 @@ chunkc tiling::rule \
        --state float &
 
 chunkc tiling::rule \
+       --owner Qbserve \
+       --state float &
+
+chunkc tiling::rule \
        --owner \"The Unarchiver\" \
        --state float &
 
