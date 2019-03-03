@@ -14,7 +14,9 @@ dump.rdb
 # Per-project files
 *.iml
 *.pyc
+.dev/
 .dir-locals.el
+.env
 .envrc
 .gems/
 .generators/
