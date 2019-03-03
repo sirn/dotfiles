@@ -118,8 +118,6 @@
     (declare-function prescient-persist-mode nil))
 
   :config
-  (add-to-list 'ivy-prescient-excluded-commands 'counsel-rg)
-  (add-to-list 'ivy-prescient-excluded-commands 'counsel-projectile-rg)
   (prescient-persist-mode t))
 
 
