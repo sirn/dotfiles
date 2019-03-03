@@ -15,6 +15,7 @@
  ("counsel-projectile" . "d64e5275c578a494102852c466a3696bde466739")
  ("dash.el" . "26f065fd607cdf1a68e7987b9360accc2d0cbfb6")
  ("diminish.el" . "565a983a39d2e2cffab5df13b34f3b6116723208")
+ ("docker-tramp.el" . "8e2b671eff7a81af43b76d9dfcf94ddaa8333a23")
  ("dockerfile-mode" . "7223d92718f78fa3ab15667cdb2ed90cfeb579e7")
  ("dtrt-indent" . "9ab9cb9d7f391fb09f61c9289c51c36374ddbcbb")
  ("emacs-ansible" . "8a097176d6772b6667254dbbe19c5fb64527bf5d")
