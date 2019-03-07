@@ -12,6 +12,7 @@ alias ll="ls -lh"
 alias la="ls -alh"
 alias ka="k -hA"
 alias kk="k -h"
+alias sshi="ssh -F /dev/null -o UserKnownHostsFile=/dev/null"
 
 if hash nvim 2>/dev/null; then
     alias nvi="nvim"
