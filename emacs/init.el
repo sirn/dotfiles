@@ -19,6 +19,12 @@
       (load (file-name-sans-extension private-init-file))))
 
 
+;; Local configurations
+(let ((local-init-file "~/.emacs.d/local.el"))
+  (if (file-exists-p local-init-file)
+      (load (file-name-sans-extension local-init-file))))
+
+
 ;; SSL cert
 (eval-when-compile
   (defvar gnutls-trustfiles))
