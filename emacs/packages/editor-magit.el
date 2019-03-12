@@ -4,7 +4,6 @@
 
 
 (use-package magit
-  :commands magit-status
   :diminish (auto-revert-mode magit-auto-revert-mode)
   :straight t
 
@@ -14,4 +13,9 @@
       "gs" 'magit-status))
 
   :config
-  (setq magit-push-current-set-remote-if-missing t))
+  (setq magit-remote-set-if-missing t))
+
+
+(use-package forge
+  :straight t
+  :after magit)
