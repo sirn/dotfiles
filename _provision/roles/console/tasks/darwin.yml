@@ -41,22 +41,3 @@
     name: "{{cask_packages}}"
     state: present
   when: cask_packages
-
-
-## Setup sudoers
-##
-
-- name: prepare sudoers directory
-  file:
-    path: /etc/sudoers.d
-    state: directory
-    recurse: yes
-
-- name: adding sudoers configurations
-  become: yes
-  copy:
-    src: "sudoers/{{item}}"
-    dest: "/etc/sudoers.d/{{item}}"
-  with_items:
-    - 01_dnscrypt
-    - 01_unbound

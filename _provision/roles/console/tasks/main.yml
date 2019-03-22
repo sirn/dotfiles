@@ -28,15 +28,15 @@
   tags:
     - asdf
 
-- import_tasks: "asdf/elixir.yml"
-  tags:
-    - asdf
-    - elixir
-
 - import_tasks: "asdf/erlang.yml"
   tags:
     - asdf
     - erlang
+
+- import_tasks: "asdf/elixir.yml"
+  tags:
+    - asdf
+    - elixir
 
 - import_tasks: "asdf/golang.yml"
   tags:
@@ -65,10 +65,6 @@
 - import_tasks: "pkgs/haskell.yml"
   tags:
     - haskell
-
-- import_tasks: "pkgs/kubernetes.yml"
-  tags:
-    - kubernetes
 
 - import_tasks: "pkgs/nodejs.yml"
   tags:

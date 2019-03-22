@@ -63,13 +63,6 @@ golang_goroot: "{{golang_version_path}}/go"
 golang_path: "{{golang_gopath}}/bin:{{golang_goroot}}/bin:{{env_path}}"
 
 golang_packages:
-  - github.com/Masterminds/glide
-  - github.com/mitchellh/gox
-  - github.com/nsf/gocode
-  - github.com/rogpeppe/godef
-  - golang.org/x/tools/cmd/goimports
-  - golang.org/x/tools/cmd/gorename
-  - golang.org/x/tools/cmd/guru
 
 haskell_stack_packages:
 
@@ -109,12 +102,7 @@ python3_version: "3.7.2"
 python3_version_path: "{{ansible_env.HOME}}/.asdf/installs/python3/{{python3_version}}"
 
 python3_packages:
-  - autoflake
   - black
-  - flake8
-  - ipython
-  - jupyter
-  - numpy
   - pip
   - pipenv
   - pre-commit
@@ -127,9 +115,6 @@ ruby_version: "2.5.3"
 ruby_version_path: "{{ansible_env.HOME}}/.asdf/installs/ruby/{{ruby_version}}"
 
 ruby_packages:
-  - bundler
-  - middleman
-  - pry
   - sqlint
 
 rust_components:

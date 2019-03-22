@@ -2,7 +2,6 @@
 ## Include sub-packages
 ##
 
-- include_tasks: "freebsd/emacstools.yml"
 - include_tasks: "freebsd/nfs.yml"
 - include_tasks: "freebsd/openntpd.yml"
 - include_tasks: "freebsd/pf.yml"

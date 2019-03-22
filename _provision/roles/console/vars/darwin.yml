@@ -8,14 +8,12 @@ brew_packages:
   - autoconf
   - bash
   - carthage
-  - cocoapods
   - cocot
   - coreutils
   - curl
   - direnv
   - duplicity
   - ffmpeg
-  - fswatch
   - fzf
   - git
   - git-crypt
@@ -23,12 +21,8 @@ brew_packages:
   - gpg
   - graphicsmagick
   - graphviz
-  - hub
   - ipcalc
   - jq
-  - jsonnet
-  - kubernetes-cli
-  - kubernetes-helm
   - leiningen
   - libressl
   - mercurial
@@ -37,7 +31,6 @@ brew_packages:
   - neovim
   - node@8
   - openssh
-  - packer
   - pandoc
   - pass
   - pinentry-mac
@@ -45,7 +38,6 @@ brew_packages:
   - reattach-to-user-namespace
   - ripgrep
   - rtmpdump
-  - s6
   - shellcheck
   - socat
   - sshfs
@@ -54,14 +46,12 @@ brew_packages:
   - trash
   - tree
   - w3m
-  - xhyve
   - xz
   - youtube-dl
 
 cask_taps:
 
 cask_packages:
-  - google-cloud-sdk
 
 clang_bin: /usr/bin/clang
 
