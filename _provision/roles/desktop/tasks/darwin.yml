@@ -68,9 +68,9 @@
 
 - name: initialize mac app store apps
   command: mas install "{{item.id}}"
-  with_items: "{{mas_desktop_packages}}"
   args:
     creates: "/Applications/{{item.app}}.app"
+  with_items: "{{mas_desktop_packages}}"
   when: mas_desktop_packages
 
 

@@ -30,6 +30,7 @@
     GOPATH: "{{golang_gopath}}"
     GOROOT: "{{golang_goroot}}"
   with_items: "{{golang_packages}}"
+  when: golang_packages
 
 
 ## Setting default

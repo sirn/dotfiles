@@ -23,6 +23,7 @@
     name: "{{item}}"
     global: true
     state: latest
-  with_items: "{{nodejs_packages}}"
   environment:
     PATH: "{{env_path}}"
+  with_items: "{{nodejs_packages}}"
+  when: nodejs_packages

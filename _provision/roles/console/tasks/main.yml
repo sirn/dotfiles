@@ -84,6 +84,7 @@
     state: directory
     recurse: yes
   with_items: "{{dots}}"
+  when: dots
 
 - name: link files and directories
   file:
@@ -92,6 +93,7 @@
     state: link
     force: yes
   with_items: "{{dots_links}}"
+  when: dots_links
 
 
 ## Setup user shells

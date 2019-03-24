@@ -26,6 +26,7 @@
     user_install: false
     executable: "{{ruby_version_path}}/bin/gem"
   with_items: "{{ruby_packages}}"
+  when: ruby_packages
 
 
 ## Setting default
