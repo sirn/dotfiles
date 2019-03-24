@@ -142,7 +142,7 @@ zfs mount zboot
 echo "Root partition need to be unlocked to continue."
 get_pass "Enter GELI password"
 
-for SPEC in root1.key:gpt/root1 root2.key:gpt/root2 swap.key:mirror/swap; do
+for SPEC in root1.key:gpt/root1 data1.key:gpt/data1 swap1.key:gpt/swap1; do
     KEY="/bootpool/boot/keys/\${SPEC%%:*}"
     DISK="/dev/\${SPEC##*:}"
     if ! echo "\$PASSWORD" | geli attach -j - -k "\$KEY" "\$DISK"; then
