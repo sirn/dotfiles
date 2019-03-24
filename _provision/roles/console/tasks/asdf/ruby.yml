@@ -4,9 +4,8 @@
 
 - name: install ruby plugin via asdf
   git:
-    repo: https://github.com/sirn/asdf-ruby.git
+    repo: https://github.com/asdf-vm/asdf-ruby.git
     dest: "{{asdf_path}}/plugins/ruby"
-    version: "fix-patch"
 
 # Some packages e.g. ruby ffi doesn't support building with clang on FreeBSD.
 # Ruby will use the CC used to build Ruby itself, so we're setting CC here.
