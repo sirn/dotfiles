@@ -74,7 +74,7 @@ make installworld distribution \
 touch $WORKDIR/etc/rc.conf
 touch $WORKDIR/etc/fstab
 
-for KEY in hostname ifconfig_ix0 defaultrouter; do
+for KEY in hostname ifconfig_vtnet0 defaultrouter; do
     sysrc -R $WORKDIR $KEY="$(sysrc -n "$KEY")"
 done
 
@@ -142,7 +142,7 @@ zfs mount zboot
 echo "Root partition need to be unlocked to continue."
 get_pass "Enter GELI password"
 
-for SPEC in root1.key:gpt/root1 data1.key:gpt/data1 swap1.key:gpt/swap1; do
+for SPEC in root1.key:gpt/root1 swap1.key:gpt/swap1; do
     KEY="/bootpool/boot/keys/\${SPEC%%:*}"
     DISK="/dev/\${SPEC##*:}"
     if ! echo "\$PASSWORD" | geli attach -j - -k "\$KEY" "\$DISK"; then

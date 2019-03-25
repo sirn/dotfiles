@@ -22,7 +22,7 @@ pf_nat:
   - name: Iocage VIMAGE NAT
     network: "10.100.20.1/24"
 
-pf_ext_if: ix0
+pf_ext_if: vtnet0
 
 fuse_ld: gold
 
