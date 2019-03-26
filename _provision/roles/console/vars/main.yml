@@ -83,7 +83,8 @@ nodejs_packages:
   - eslint
   - prettier
   ## PureScript/GHC in general is broken under FreeBSD 12 for now due to
-  ## the inode64 changes since FreeBSD 12.
+  ## the inode64 changes since FreeBSD 12. See also:
+  ## https://github.com/commercialhaskell/stack/issues/4503
   # - pulp
   # - purescript
   - solc

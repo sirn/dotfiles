@@ -23,6 +23,8 @@ brew_packages:
   - graphviz
   - ipcalc
   - jq
+  - kubernetes-cli
+  - kubernetes-helm
   - leiningen
   - libressl
   - mercurial
@@ -52,6 +54,7 @@ brew_packages:
 cask_taps:
 
 cask_packages:
+  - google-cloud-sdk
 
 clang_bin: /usr/bin/clang
 
@@ -68,8 +71,6 @@ env_path: "{{env_paths|join(\":\")}}"
 fuse_ld: no
 
 gcc_bin: /usr/bin/clang
-
-gcc_rpath: no
 
 gxx_bin: /usr/bin/clang++
 

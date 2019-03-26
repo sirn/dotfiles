@@ -26,13 +26,11 @@ pf_ext_if: vtnet0
 
 fuse_ld: gold
 
-gcc_bin: gcc
+gcc_bin: /usr/local/bin/gcc
 
-gcc_rpath: gcc
+gxx_bin: /usr/local/bin/g++
 
-gxx_bin: g++
-
-gmake_bin: gmake
+gmake_bin: /usr/local/bin/gmake
 
 ports_packages:
   - converters/base64
@@ -62,6 +60,7 @@ ports_packages:
   - multimedia/ffmpeg
   - multimedia/rtmpdump
   - net-mgmt/ipcalc
+  - net/google-cloud-sdk
   - net/mosh
   - net/socat
   - ports-mgmt/synth
@@ -74,6 +73,8 @@ ports_packages:
   - sysutils/coreutils
   - sysutils/direnv
   - sysutils/duplicity@py27
+  - sysutils/helm
+  - sysutils/kubectl
   - sysutils/lsof
   - sysutils/moreutils
   - sysutils/password-store

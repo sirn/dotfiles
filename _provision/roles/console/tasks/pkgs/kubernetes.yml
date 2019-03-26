@@ -1,0 +1,60 @@
+---
+- name: ensure local directory
+  file:
+    path: "{{item}}"
+    state: directory
+    recurse: yes
+  with_items:
+    - ~/.local/bin
+    - ~/.local/src
+
+
+## Jsonnet
+##
+
+- name: install jsonnet
+  pip:
+    name: "jsonnet"
+    version: "0.12.1"
+    state: present
+    executable: "{{python3_version_path}}/bin/pip"
+  environment:
+    MAKE: "{{gmake_bin}}"
+    CC: clang
+    CXX: clang++
+    CXXFLAGS: -fPIC -Iinclude -Ithird_party/md5 -Ithird_party/json -std=c++11
+
+
+## Kapitan
+##
+
+- name: install kapitan
+  pip:
+    name: "kapitan"
+    version: "0.22.3"
+    state: present
+    executable: "{{python3_version_path}}/bin/pip"
+
+- name: update python3 shims for kapitan
+  command: "{{asdf_bin}}/asdf reshim python3"
+  changed_when: false
+
+
+## Kubectx
+##
+
+- name: clone kubectx
+  git:
+    repo: https://github.com/ahmetb/kubectx.git
+    dest: ~/.local/src/kubectx
+    version: "v{{kubectx_version}}"
+
+- name: link kubectx and kubens
+  file:
+    src: "~/.local/src/kubectx/{{item}}"
+    path: "~/.local/bin/{{item}}"
+    state: link
+    force: yes
+  with_items:
+    - kubectx
+    - kubens

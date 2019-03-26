@@ -66,6 +66,10 @@
   tags:
     - haskell
 
+- import_tasks: "pkgs/kubernetes.yml"
+  tags:
+    - kubernetes
+
 - import_tasks: "pkgs/nodejs.yml"
   tags:
     - nodejs
