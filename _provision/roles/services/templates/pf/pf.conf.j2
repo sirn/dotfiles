@@ -49,6 +49,7 @@ pass in on {{pf_ext_if}} inet proto {{spec.proto}} from any to any port {{spec.p
 pass in on {{pf_ext_if}} inet6 proto {{spec.proto}} from any to any port {{spec.port}} keep state
 
 {% endfor %}
-# Filter anchor
-anchor "pfifnet/*"
+# Local filter anchor
 anchor "pflocal/*"
+anchor "pfifnet/*"
+load anchor "pflocal/pfconf" from "/usr/local/etc/pf.conf"

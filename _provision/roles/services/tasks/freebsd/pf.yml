@@ -8,6 +8,13 @@
     path: /etc/pf
     state: directory
 
+- name: ensure local pf configuration file exists
+  become: yes
+  copy:
+    content: ""
+    dest: /usr/local/etc/pf.conf
+    force: no
+
 - name: configure main pf configurations
   become: yes
   template:
