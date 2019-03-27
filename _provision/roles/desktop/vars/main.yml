@@ -73,6 +73,8 @@ mas_desktop_packages:
   - { id: 603637384, app: "Name Mangler 3" }
   - { id: 775737590, app: "iA Writer" }
   - { id: 890031187, app: "Marked 2" }
+  - { id: 967805235, app: "Paste" }
   - { id: 975937182, app: "Fantastical 2" }
   - { id: 1287445660, app: "Agenda" }
   - { id: 1333542190, app: "1Password 7" }
+  - { id: 1435957248, app: "Drafts" }
