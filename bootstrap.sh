@@ -26,6 +26,7 @@ print_usage() {
     printe
     printe "    -p PROFILE      A name of profile to run."
     printe "    -s FLAVOR       A flavor of a profile."
+    printe "    -f              Force executing scripts."
     printe
     printe "PROFILE:"
     printe
@@ -44,14 +45,16 @@ print_usage() {
 }
 
 OPTIND=1
+FORCE=0
 
 profiles=""
 flavors=""
 
-while getopts "p:s:" opt; do
+while getopts "p:s:f" opt; do
     case "$opt" in
         p ) profiles="$profiles $OPTARG";;
         s ) flavors="$flavors $OPTARG";;
+        f ) FORCE=1;;
         * ) print_usage; exit 1;;
     esac
 done
@@ -61,6 +64,8 @@ shift $((OPTIND-1))
 if [ "${1:-}" = "--" ]; then
     shift
 fi
+
+export FORCE
 
 
 ## Sanity check

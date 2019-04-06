@@ -28,12 +28,12 @@ _make_link() {
         return
     fi
 
-    if [ -f "$dest" ] && [ ! -L "$dest" ]; then
+    if [ "$(normalize_bool "$FORCE")" != "1" ] && [ -f "$dest" ] && [ ! -L "$dest" ]; then
         printe "$dest already exists and is not a link, skipping"
         return
     fi
 
-    if [ "$(readlink "$dest")" != "$src" ]; then
+    if [ "$(normalize_bool "$FORCE")" = "1" ] || [ "$(readlink "$dest")" != "$src" ]; then
         mkdir -p "$(dirname "$dest")"
         rm -f "$dest"
         ln -s "$src" "$dest"

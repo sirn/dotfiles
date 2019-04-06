@@ -26,7 +26,7 @@ _find_conf() {
 }
 
 
-## Shell
+## Main
 ##
 
 conf_dir="../../var/bootstrap"
@@ -39,7 +39,9 @@ if [ -z "$conf_file" ] || [ ! -f "$conf_file" ]; then
     exit
 fi
 
+
 printe_msg "Using shell configuration defined in ${conf_file##../../}"
+
 shell="$(cat "$conf_file")"
 
 if [ -z "$shell" ]; then
@@ -51,6 +53,7 @@ if ! hash "$shell" 2>/dev/null; then
     printe_err "$shell is not a valid shell, aborting"
     exit 1
 fi
+
 
 shell_bin="$(command -v "$shell")"
 

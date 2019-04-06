@@ -10,6 +10,11 @@ cd "$base_dir" || exit 1
 . ../../share/bootstrap/funcs.sh
 . ../../share/bootstrap/compat.sh
 
+if [ "$(uname)" != "FreeBSD" ]; then
+    printe_err "Not a FreeBSD system"
+    exit 1
+fi
+
 
 ## Setup
 ##
