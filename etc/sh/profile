@@ -29,7 +29,7 @@ export GOPATH
 
 # Rust
 PATH=$HOME/.cargo/bin:$PATH
-if hash rustc 2>/dev/null; then
+if command -v rustc >/dev/null; then
     RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
     export RUST_SRC_PATH
 fi
@@ -43,7 +43,7 @@ case "$(uname)" in
         PATH=/usr/local/opt/gpg-agent/bin:$PATH
         PATH=/usr/local/opt/node@8/bin:$PATH
 
-        if hash brew 2>/dev/null; then
+        if command -v brew >/dev/null; then
             export HOMEBREW_NO_ANALYTICS=1
             export HOMEBREW_NO_AUTO_UPDATE=1
             export OPENSSL_INCLUDE_DIR=/usr/local/opt/libressl/include
@@ -65,7 +65,7 @@ esac
 ## GPG agent
 ##
 
-if hash gpgconf 2>/dev/null; then
+if command -v gpgconf >/dev/null; then
     unset SSH_AGENT_PID
 
     if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
