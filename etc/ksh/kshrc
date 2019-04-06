@@ -1,0 +1,52 @@
+#!/usr/bin/env ksh
+#
+# ~/.kshrc
+#
+
+## Aliases
+##
+
+alias ls='ls -G'
+alias ll='ls -lh'
+alias la='ls -alh'
+alias ka='k -hA'
+alias kk='k -h'
+
+alias scp='rsync --archive --xattrs --acls --progress --rsh=ssh'
+alias sshi='ssh -F /dev/null -o UserKnownHostsFile=/dev/null'
+
+if hash nvim 2>/dev/null; then
+    alias nvi="nvim"
+    alias vi="nvim"
+    alias vim="nvim"
+fi
+
+if hash emacsclient 2>/dev/null; then
+    alias emacs='$HOME/.dotfiles/bin/emacsclient.sh'
+    EDITOR="$HOME/.dotfiles/bin/emacsclient.sh"; export EDITOR
+fi
+
+
+## History
+##
+
+HISTFILE="$HOME/.ksh_history"; export HISTFILE
+HISTSIZE=10000; export HISTSIZE
+
+
+## GPG
+##
+
+if hash gpg-connect-agent 2>/dev/null; then
+    gpg-connect-agent updatestartuptty /bye >/dev/null
+fi
+
+
+## Prompt
+##
+
+case "$TERM" in
+    xterm* | rxvt* ) PS1='\h \w \$ '; export PS1;;
+    screen* ) PS1='\w \$ '; export PS1;;
+    * ) PS1='\$ '; export PS1;;
+esac

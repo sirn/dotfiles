@@ -4,28 +4,46 @@
 #
 
 base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
+platform=$(uname | tr '[:upper:]' '[:lower:]')
 
 cd "$base_dir" || exit 1
 . ../../share/bootstrap/funcs.sh
 . ../../share/bootstrap/compat.sh
 
 
+## Utils
+##
+
+_find_conf() {
+    pathlist=$*; shift
+
+    for path in $pathlist; do
+        if [ -f "$path" ]; then
+            printf "%s\\n" "$path"
+            return
+        fi
+    done
+}
+
+
 ## Shell
 ##
 
-shellspec="../../var/bootstrap/shell.txt"
+conf_dir="../../var/bootstrap"
+conf_file=$(_find_conf "$conf_dir/${platform}/shell.txt" "$conf_dir/shell.txt")
 
 printe_h2 "Setting current user shell..."
 
-if [ ! -f "$shellspec" ]; then
-    printe_msg "Shell spec is not configured, skipping"
+if [ -z "$conf_file" ] || [ ! -f "$conf_file" ]; then
+    printe_msg "Shell configuration could not be found, skipping"
     exit
 fi
 
-shell="$(cat "$shellspec")"
+printe_msg "Using shell configuration defined in ${conf_file##../../}"
+shell="$(cat "$conf_file")"
 
 if [ -z "$shell" ]; then
-    printe_msg "Shell spec is not configured, skipping"
+    printe_msg "Shell configuration seems to be empty, skipping"
     exit
 fi
 

@@ -2,18 +2,15 @@ GraphicsMagick
 aria2
 autoconf
 base64
-bash
 ca_root_nss
 cocot
 compat8x-amd64
 curl
-direnv
 duplicity
 emacs-nox
 execline
 expect
 ffmpeg
-fzf
 gcc
 git
 git-crypt
@@ -32,6 +29,7 @@ mosh
 neovim
 node8
 npm-node8
+oksh
 openjdk8-jre
 password-store
 postgresql10-client

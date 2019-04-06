@@ -16,9 +16,8 @@ PATH=/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 PATH=$HOME/.local/bin:$PATH
 
 
-#
-# Language runtime
-#
+## Language runtime
+##
 
 # Erlang
 PATH=$HOME/.cache/rebar3/bin:$PATH
@@ -36,9 +35,8 @@ if hash rustc 2>/dev/null; then
 fi
 
 
-#
-# Platform-specific
-#
+## Platform-specific
+##
 
 case "$(uname)" in
     Darwin )
@@ -64,9 +62,8 @@ case "$(uname)" in
 esac
 
 
-#
-# GPG agent
-#
+## GPG agent
+##
 
 if hash gpgconf 2>/dev/null; then
     unset SSH_AGENT_PID
@@ -81,28 +78,22 @@ if hash gpgconf 2>/dev/null; then
 fi
 
 
-#
-# Direnv
-#
-
-if hash direnv 2>/dev/null; then
-    eval "$(direnv hook "$SHELL")"
-fi
-
-
-#
-# asdf
-#
+## asdf
+##
 
 # shellcheck disable=SC1090
 if [ -d "$HOME/.asdf" ]; then
     . "$HOME/.asdf/asdf.sh"
-    . "$HOME/.asdf/completions/asdf.bash"
 fi
 
 
-#
-# Finalizing
-#
+## Finalizing
+##
+
+case "$(basename "$SHELL")" in
+    ksh | oksh )
+        export ENV="$HOME/.kshrc"
+        ;;
+esac
 
 export PATH
