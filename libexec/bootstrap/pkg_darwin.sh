@@ -81,7 +81,7 @@ _install_pkg() {
     pkglist=$1; shift
 
     if [ ! -f "$pkglist" ]; then
-        printe_info "${pkglist##../../} could not be found, skipping"
+        printe_info "${pkglist##../../} not found, skipping"
         return
     fi
 

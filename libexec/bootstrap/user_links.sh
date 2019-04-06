@@ -49,7 +49,7 @@ _make_links() {
     linklist=$1; shift
 
     if [ ! -f "$linklist" ]; then
-        printe_info "${linklist##../../} could not be found, skipping"
+        printe_info "${linklist##../../} not found, skipping"
         return
     fi
 

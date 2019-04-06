@@ -35,7 +35,7 @@ conf_file=$(_find_conf "$conf_dir/${platform}/shell.txt" "$conf_dir/shell.txt")
 printe_h2 "Setting current user shell..."
 
 if [ -z "$conf_file" ] || [ ! -f "$conf_file" ]; then
-    printe_info "Shell configuration could not be found, skipping"
+    printe_info "Shell configuration not found, skipping"
     exit
 fi
 

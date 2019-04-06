@@ -22,7 +22,7 @@ fi
 _start_service() {
     service=$1; shift
 
-    if [ "$(_service_running "$1")" = "0" ]; then
+    if [ "$(_service_running "$service")" = "0" ]; then
         run_root service "$service" onestart
     fi
 }
