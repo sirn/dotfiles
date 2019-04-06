@@ -1,0 +1,1 @@
+racer: racer --vers ~2.0.0

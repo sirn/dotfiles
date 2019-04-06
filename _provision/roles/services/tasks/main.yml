@@ -1,5 +1,0 @@
----
-## Include platform-specific playbooks
-##
-
-- include_tasks: "{{ansible_os_family|lower}}.yml"

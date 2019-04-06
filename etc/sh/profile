@@ -1,0 +1,108 @@
+#!/bin/sh
+#
+# ~/.profile
+#
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export EDITOR=vi
+
+export XDG_CONFIG_HOME=$HOME/.config
+export XDG_CACHE_HOME=$HOME/.cache
+export XDG_DATA_HOME=$HOME/.data
+export XDG_STATE_HOME=$HOME/.state
+
+PATH=/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+PATH=$HOME/.local/bin:$PATH
+
+
+#
+# Language runtime
+#
+
+# Erlang
+PATH=$HOME/.cache/rebar3/bin:$PATH
+
+# Golang
+GOPATH=$HOME/Dev/go/
+PATH=$HOME/Dev/go/bin:$PATH
+export GOPATH
+
+# Rust
+PATH=$HOME/.cargo/bin:$PATH
+if hash rustc 2>/dev/null; then
+    RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
+    export RUST_SRC_PATH
+fi
+
+
+#
+# Platform-specific
+#
+
+case "$(uname)" in
+    Darwin )
+        PATH=/usr/local/opt/gpg-agent/bin:$PATH
+        PATH=/usr/local/opt/node@8/bin:$PATH
+
+        if hash brew 2>/dev/null; then
+            export HOMEBREW_NO_ANALYTICS=1
+            export HOMEBREW_NO_AUTO_UPDATE=1
+            export OPENSSL_INCLUDE_DIR=/usr/local/opt/libressl/include
+            export OPENSSL_LIB_DIR=/usr/local/opt/libressl/lib
+        fi
+
+        if [ -f /usr/libexec/java_home ]; then
+            JAVA_HOME=$(/usr/libexec/java_home)
+            export JAVA_HOME
+        fi
+
+        PATH=/Applications/mpv.app/Contents/MacOS:$PATH
+        PATH=/Library/TeX/texbin:$PATH
+        PATH=/usr/local/opt/libressl/bin:$PATH
+        ;;
+esac
+
+
+#
+# GPG agent
+#
+
+if hash gpgconf 2>/dev/null; then
+    unset SSH_AGENT_PID
+
+    if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
+        SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+        export SSH_AUTH_SOCK
+    fi
+
+    GPG_TTY=$(tty)
+    export GPG_TTY
+fi
+
+
+#
+# Direnv
+#
+
+if hash direnv 2>/dev/null; then
+    eval "$(direnv hook "$SHELL")"
+fi
+
+
+#
+# asdf
+#
+
+# shellcheck disable=SC1090
+if [ -d "$HOME/.asdf" ]; then
+    . "$HOME/.asdf/asdf.sh"
+    . "$HOME/.asdf/completions/asdf.bash"
+fi
+
+
+#
+# Finalizing
+#
+
+export PATH

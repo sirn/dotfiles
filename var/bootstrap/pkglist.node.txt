@@ -1,0 +1,13 @@
+bower
+eslint
+prettier
+solc
+solium
+stylelint
+stylelint-config-recommended
+stylelint-config-recommended-scss
+stylelint-scss
+tern
+tslint
+typescript
+yarn

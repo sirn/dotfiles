@@ -1,0 +1,8 @@
+black
+ipwhois
+pip
+pipenv
+pre-commit
+proselint
+pylint
+virtualenv

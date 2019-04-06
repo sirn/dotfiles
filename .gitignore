@@ -17,3 +17,6 @@ ssh/config.d/*
 
 # Ansible stuff
 *.retry
+
+# Runtime
+.config
