@@ -10,7 +10,6 @@
  ("company-anaconda" . "0ab70de1740e67cee451abcf3685c7525ff9e95a")
  ("company-ansible" . "c31efced8a9b461de5982ed94c234fda3df96f10")
  ("company-mode" . "20fe01542bf7665ba90f9fe1a86cbe0eea4d9f8a")
- ("company-tabnine" . "2d63df791027ec2bcc8956be6b7078d17f95217c")
  ("counsel-notmuch" . "a4a1562935e4180c42524c51609d1283e9be0688")
  ("counsel-projectile" . "d64e5275c578a494102852c466a3696bde466739")
  ("dash.el" . "f1ffdf7beb8b4fc6aa156873162c98f84b9465bd")

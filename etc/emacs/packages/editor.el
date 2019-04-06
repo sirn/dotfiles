@@ -63,19 +63,6 @@
   (company-prescient-mode t))
 
 
-(use-package company-tabnine
-  :after company
-  :straight t
-  :if (not (eq system-type 'berkeley-unix))
-
-  :preface
-  (eval-when-compile
-    (declare-function company-tabnine nil))
-
-  :config
-  (add-to-list 'company-backends 'company-tabnine))
-
-
 (use-package dtrt-indent
   :diminish dtrt-indent-mode
   :straight t
