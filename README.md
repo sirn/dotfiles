@@ -4,25 +4,12 @@ This repository hosts my personal dotfiles as well as machine provisioning and w
 
 ## Usage
 
-Darwin:
-
 ```shell
-$ curl -sL "https://git.sr.ht/~sirn/dotfiles/blob/master/bootstrap.sh" | sh -s - -r \
-    -p console \
-    -p desktop \
-    -p services
+$ mkdir -p $HOME/.dotfiles
+$ cd $HOME/.dotfiles
+$ curl -sSL https://git.sr.ht/~sirn/dotfiles/archive/master.tar.gz | tar -xvzf - --strip-components=1
+$ ./bootstrap.sh
 ```
-
-FreeBSD:
-
-```shell
-$ fetch -o - "https://git.sr.ht/~sirn/dotfiles/blob/master/bootstrap.sh" | sh -s - -r \
-    -p console \
-    -p desktop \
-    -p services
-```
-
-Subsequent run, use `./dotfiles/bootstrap.sh`.
 
 ## License
 
