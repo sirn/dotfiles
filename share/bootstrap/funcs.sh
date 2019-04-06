@@ -20,7 +20,7 @@ printe_msg() {
 }
 
 printe_err() {
-    printe "$0: $*"
+    printe "$(basename "$0"): $*"
 }
 
 

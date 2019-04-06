@@ -1,0 +1,10 @@
+etc/aria2/aria2.conf                      $HOME/.aria2/aria2.conf
+etc/bash/bash_profile                     $HOME/.bash_profile
+etc/bash/bashrc                           $HOME/.bashrc
+etc/emacs/init.el                         $HOME/.emacs.d/init.el
+etc/emacs/straight/versions/default.el    $HOME/.emacs.d/straight/versions/default.el
+etc/git/gitconfig                         $HOME/.gitconfig
+etc/hg/hgrc                               $HOME/.hgrc
+etc/sh/profile                            $HOME/.profile
+etc/ssh/config                            $HOME/.ssh/config
+etc/tmux/tmux.conf                        $HOME/.tmux.conf

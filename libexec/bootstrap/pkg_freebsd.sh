@@ -30,7 +30,7 @@ _install_pkg() {
         printe_h2 "Installing packages from ${pkglist##../../}..."
         run_root xargs pkg install -y < "$pkglist"
     else
-        printe_msg "${pkglist##../../} could not be found, skipping."
+        printe_msg "${pkglist##../../} could not be found, skipping"
     fi
 }
 
