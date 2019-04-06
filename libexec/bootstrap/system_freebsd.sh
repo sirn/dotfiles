@@ -4,11 +4,11 @@
 #
 
 base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
-flavors=$*
 
 cd "$base_dir" || exit 1
 . ../../share/bootstrap/funcs.sh
 . ../../share/bootstrap/compat.sh
+. ../../share/bootstrap/freebsd.sh
 
 if [ "$(uname)" != "FreeBSD" ]; then
     printe_err "Not a FreeBSD system"
@@ -19,18 +19,12 @@ fi
 ## Utils
 ##
 
-_start_if_not() {
+_start_service() {
     service=$1; shift
 
-    if ! status="$(run_root service "$service" status 2>&1)"; then
-        printe_err "$service does not appears to be a valid service, exiting"
-        exit 1
+    if [ "$(_service_running "$1")" = "0" ]; then
+        run_root service "$service" onestart
     fi
-
-    case "$(printf "%s" "$status" | tr '[:upper:]' '[:lower:]')" in
-        *"is running"* | *"enabled"* ) ;;
-        * ) run_root service "$service" onestart;;
-    esac
 }
 
 
@@ -49,9 +43,9 @@ run_root sysrc rpcbind_enable=YES
 run_root sysrc rpc_lockd_enable=YES
 run_root sysrc rpc_statd_enable=YES
 
-_start_if_not nfsd
-_start_if_not mountd
-_start_if_not rpcbind
+_start_service nfsd
+_start_service mountd
+_start_service rpcbind
 
 
 ## PF
@@ -67,19 +61,19 @@ if [ "$(normalize_bool "$FORCE")" = "1" ] || [ ! -f /etc/pf.conf ]; then
     run_root chmod 0600 /etc/pf.conf
     pf_updated=1
 else
-    printe_msg "/etc/pf.conf is already exists, not overwriting"
+    printe "/etc/pf.conf already exists, not overwriting"
 fi
 
 run_root sysrc pf_enable=YES
 
-_start_if_not pf
+_start_service pf
 
 if [ "$pf_updated" = "1" ]; then
     if ! run_root pfctl -nf /etc/pf.conf; then
-        printe_err "/etc/pf.conf was updated but contained errors, not proceeding"
+        printe_err "/etc/pf.conf has been updated but contained errors, exiting"
         exit 1
     fi
 
     run_root pfctl -F all -f /etc/pf.conf
-    printe "pf reloaded, internet connection might be interrupted"
+    printe "/etc/pf.conf has been updated, internet connection might be interrupted"
 fi

@@ -4,6 +4,7 @@
 #
 
 base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
+platform=$(uname | tr '[:upper:]' '[:lower:]')
 asdf_dir="$HOME/.asdf"
 
 cd "$base_dir" || exit 1
@@ -31,10 +32,11 @@ _do_install() {
 
     if [ ! -d "$asdf_dir/installs/$plugin/$version" ]; then
         install="_install"
+        platform_install="_install_${plugin}_${platform}"
 
-        if [ "$(command -v "_install_${plugin}")x" != "x" ]; then
-            printe_msg "Running custom installation script for $plugin..."
-            install="_install_${plugin}"
+        if [ "$(command -v "$platform_install")x" != "x" ]; then
+            printe_info "Running $platform installation script for $plugin..."
+            install="$platform_install"
         fi
 
         "$install" "$plugin" "$version"
@@ -71,29 +73,46 @@ _install() {
     _asdf_env asdf install "$plugin" "$version"
 }
 
-_install_ruby() {
+_install_python3_darwin() {
     plugin=$1; shift
     version=$1; shift
 
-    case "$(uname)" in
-        FreeBSD )
-            if ! hash gcc 2>/dev/null; then
-                printe_err "Building Ruby on FreeBSD requires GCC"
-                exit 1
-            fi
+    if [ ! -d /usr/local/opt/zlib ]; then
+        printe_err "Building Python on Darwin requires Zlib"
+        printe_err "Try \`brew install zlib\`"
+        exit 1
+    fi
 
-            # For GCC, see https://github.com/ffi/ffi/issues/622
-            # For DTrace, see https://github.com/rbenv/ruby-build/issues/1272
-            env \
-                CC="gcc" \
-                CXX="g++" \
-                RUBY_CONFIGURE_OPTS="--disable-dtrace" \
-                _asdf_env asdf install "$plugin" "$version"
-            ;;
-        * )
-            _asdf_env asdf install "$plugin" "$version"
-            ;;
-    esac
+    if [ ! -d /usr/local/opt/sqlite3 ]; then
+        printe_err "Building Python on Darwin requires SQLite 3"
+        printe_err "Try \`brew install sqlite3\`"
+        exit 1
+    fi
+
+    # See https://github.com/pyenv/pyenv/issues/1219
+    _asdf_env env \
+        LDFLAGS="-L/usr/local/opt/zlib/lib -L/usr/local/opt/sqlite3/lib" \
+        CPPFLAGS="-I/usr/local/opt/zlib/include -I/usr/local/opt/sqlite3/include" \
+        asdf install "$plugin" "$version"
+}
+
+_install_ruby_freebsd() {
+    plugin=$1; shift
+    version=$1; shift
+
+    if ! hash gcc 2>/dev/null; then
+        printe_err "Building Ruby on FreeBSD requires GCC"
+        printe_err "Try \`pkg install gcc\`"
+        exit 1
+    fi
+
+    # For GCC, see https://github.com/ffi/ffi/issues/622
+    # For DTrace, see https://github.com/rbenv/ruby-build/issues/1272
+    _asdf_env env \
+        CC="gcc" \
+        CXX="g++" \
+        RUBY_CONFIGURE_OPTS="--disable-dtrace" \
+        asdf install "$plugin" "$version"
 }
 
 

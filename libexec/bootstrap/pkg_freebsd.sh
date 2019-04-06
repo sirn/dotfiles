@@ -16,6 +16,22 @@ if [ "$(uname)" != "FreeBSD" ]; then
 fi
 
 
+## Utils
+##
+
+_install_pkg() {
+    pkglist=$1; shift
+
+    if [ ! -f "$pkglist" ]; then
+        printe_info "${pkglist##../../} could not be found, skipping"
+        return
+    fi
+
+    printe_h2 "Installing packages from ${pkglist##../../}..."
+    run_root xargs pkg install -y < "$pkglist"
+}
+
+
 ## Setup
 ##
 
@@ -23,21 +39,6 @@ if [ ! -x /usr/local/sbin/pkg ]; then
     printe_h2 "Bootstrapping pkgng..."
     run_root ASSUME_ALWAYS_YES=yes pkg bootstrap
 fi
-
-
-## Utils
-##
-
-_install_pkg() {
-    pkglist=$1; shift
-
-    if [ -f "$pkglist" ]; then
-        printe_h2 "Installing packages from ${pkglist##../../}..."
-        run_root xargs pkg install -y < "$pkglist"
-    else
-        printe_msg "${pkglist##../../} could not be found, skipping"
-    fi
-}
 
 
 ## Installs

@@ -1,0 +1,68 @@
+# Note: this file is processed in order
+
+tap crisidev/chunkwm
+tap homebrew/cask-drivers
+tap homebrew/cask-fonts
+tap homebrew/cask-versions
+tap koekeishiya/formulae
+tap railwaycat/emacsmacport
+
+brew emacs-mac
+brew chunkwm
+brew skhd
+
+cask alfred
+cask arq
+cask bartender
+cask charles
+cask cleanmymac
+cask coconutbattery
+cask font-ia-writer-duospace
+cask font-ibm-plex
+cask font-iosevka
+cask font-lato
+cask font-noto-mono
+cask font-noto-sans
+cask font-noto-sans-cjk-jp
+cask font-noto-sans-thai
+cask font-noto-serif
+cask font-noto-serif-cjk-jp
+cask font-noto-serif-thai
+cask font-open-sans
+cask font-roboto
+cask font-roboto-condensed
+cask font-roboto-mono
+cask font-roboto-slab
+cask font-source-code-pro
+cask font-source-sans-pro
+cask hazel
+cask imagealpha
+cask imageoptim
+cask iterm2
+cask keyboard-maestro
+cask logitech-options
+cask mactex
+cask mpv
+cask omnifocus
+cask omnigraffle
+cask omnioutliner
+cask screens
+cask sketch
+cask the-unarchiver
+cask veracrypt
+cask viscosity
+cask xquartz
+
+mas 407963104 Pixelmator
+mas 411643860 DaisyDisk
+mas 413965349 Soulver
+mas 497799835 Xcode
+mas 523620159 CleanMyDrive 2
+mas 603637384 Name Mangler 3
+mas 775737590 iA Writer
+mas 890031187 Marked 2
+mas 967805235 Paste
+mas 975937182 Fantastical 2
+mas 1287445660 Agenda
+mas 1333542190 1Password 7
+mas 1435957248 Drafts

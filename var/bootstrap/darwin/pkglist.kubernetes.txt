@@ -1,0 +1,4 @@
+# Note: this file is processed in order
+
+brew kubernetes-cli
+brew kubernetes-helm

@@ -3,35 +3,39 @@
 # ~/.profile
 #
 
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-export EDITOR=vi
+LC_ALL=en_US.UTF-8; export LC_ALL
+LANG=en_US.UTF-8; export LANG
+EDITOR="vi"; export EDITOR
 
-export XDG_CONFIG_HOME=$HOME/.config
-export XDG_CACHE_HOME=$HOME/.cache
-export XDG_DATA_HOME=$HOME/.data
-export XDG_STATE_HOME=$HOME/.state
+XDG_CONFIG_HOME=$HOME/.config; export XDG_CONFIG_HOME
+XDG_CACHE_HOME=$HOME/.cache; export XDG_CACHE_HOME
+XDG_DATA_HOME=$HOME/.data; export XDG_DATA_HOME
+XDG_STATE_HOME=$HOME/.state; export XDG_STATE_HOME
 
-PATH=/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
-PATH=$HOME/.local/bin:$PATH
+PATH=$HOME/.local/bin:/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 
 
 ## Language runtime
 ##
 
 # Erlang
+#
+
 PATH=$HOME/.cache/rebar3/bin:$PATH
 
 # Golang
-GOPATH=$HOME/Dev/go/
+#
+
+GOPATH=$HOME/Dev/go/; export GOPATH
 PATH=$HOME/Dev/go/bin:$PATH
-export GOPATH
 
 # Rust
+#
+
 PATH=$HOME/.cargo/bin:$PATH
+
 if command -v rustc >/dev/null; then
-    RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
-    export RUST_SRC_PATH
+    RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"; export RUST_SRC_PATH
 fi
 
 
@@ -43,21 +47,14 @@ case "$(uname)" in
         PATH=/usr/local/opt/gpg-agent/bin:$PATH
         PATH=/usr/local/opt/node@8/bin:$PATH
 
-        if command -v brew >/dev/null; then
-            export HOMEBREW_NO_ANALYTICS=1
-            export HOMEBREW_NO_AUTO_UPDATE=1
-            export OPENSSL_INCLUDE_DIR=/usr/local/opt/libressl/include
-            export OPENSSL_LIB_DIR=/usr/local/opt/libressl/lib
-        fi
+        HOMEBREW_NO_ANALYTICS=1; export HOMEBREW_NO_ANALYTICS
 
         if [ -f /usr/libexec/java_home ]; then
-            JAVA_HOME=$(/usr/libexec/java_home)
-            export JAVA_HOME
+            JAVA_HOME=$(/usr/libexec/java_home); export JAVA_HOME
         fi
 
         PATH=/Applications/mpv.app/Contents/MacOS:$PATH
         PATH=/Library/TeX/texbin:$PATH
-        PATH=/usr/local/opt/libressl/bin:$PATH
         ;;
 esac
 
@@ -69,12 +66,10 @@ if command -v gpgconf >/dev/null; then
     unset SSH_AGENT_PID
 
     if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
-        SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
-        export SSH_AUTH_SOCK
+        SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"; export SSH_AUTH_SOCK
     fi
 
-    GPG_TTY=$(tty)
-    export GPG_TTY
+    GPG_TTY=$(tty); export GPG_TTY
 fi
 
 
@@ -92,7 +87,7 @@ fi
 
 case "$(basename "$SHELL")" in
     ksh | oksh )
-        export ENV="$HOME/.kshrc"
+        ENV="$HOME/.kshrc"; export ENV
         ;;
 esac
 

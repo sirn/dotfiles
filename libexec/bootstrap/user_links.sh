@@ -4,6 +4,7 @@
 #
 
 base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
+platform=$(uname | tr '[:upper:]' '[:lower:]')
 flavors=$*
 
 cd "$base_dir" || exit 1
@@ -33,34 +34,37 @@ _make_link() {
         return
     fi
 
-    if [ "$(normalize_bool "$FORCE")" = "1" ] || [ "$(readlink "$dest")" != "$src" ]; then
-        mkdir -p "$(dirname "$dest")"
-        rm -f "$dest"
-        ln -s "$src" "$dest"
-        printe "$dest has been linked to $src"
-    else
-        printe "$dest is already linked"
+    if [ "$(normalize_bool "$FORCE")" != "1" ] && [ "$(readlink "$dest")" = "$src" ]; then
+        printe "$dest already linked"
+        return
     fi
+
+    mkdir -p "$(dirname "$dest")"
+    rm -f "$dest"
+    ln -s "$src" "$dest"
+    printe "$dest has been linked to $src"
 }
 
 _make_links() {
     linklist=$1; shift
 
-    if [ -f "$linklist" ]; then
-        printe_h2 "Linking files in ${linklist##../../}..."
-        while read -r spec; do
-            case "$spec" in
-                "#"* | "" ) continue;;
-                *) spec="${spec%%#*}";;
-            esac
-
-            eval set -- "$spec"
-
-            _make_link "$@"
-        done < "$linklist"
-    else
-        printe_msg "${linklist##../../} could not be found, skipping"
+    if [ ! -f "$linklist" ]; then
+        printe_info "${linklist##../../} could not be found, skipping"
+        return
     fi
+
+    printe_h2 "Linking files in ${linklist##../../}..."
+
+    while read -r spec; do
+        case "$spec" in
+            "#"* | "" ) continue;;
+            *) spec="${spec%%#*}";;
+        esac
+
+        eval set -- "$spec"
+
+        _make_link "$@"
+    done < "$linklist"
 }
 
 
@@ -68,9 +72,9 @@ _make_links() {
 ##
 
 _make_links "../../var/bootstrap/links.txt"
-_make_links "../../var/bootstrap/freebsd/links.txt"
+_make_links "../../var/bootstrap/${platform}/links.txt"
 
 for flavor in $flavors; do
     _make_links "../../var/bootstrap/links.${flavor}.txt"
-    _make_links "../../var/bootstrap/freebsd/links.${flavor}.txt"
+    _make_links "../../var/bootstrap/${platform}/links.${flavor}.txt"
 done

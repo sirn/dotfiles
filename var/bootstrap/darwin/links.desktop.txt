@@ -1,0 +1,2 @@
+etc/chunkwm/skhdrc                         $HOME/.skhdrc
+etc/chunkwm/chunkwmrc                      $HOME/.chunkwmrc

@@ -1,6 +1,6 @@
 #!/bin/sh -e
 #
-# Configure current user shell on FreeBSD.
+# Configure current user shell.
 #
 
 base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
@@ -35,17 +35,17 @@ conf_file=$(_find_conf "$conf_dir/${platform}/shell.txt" "$conf_dir/shell.txt")
 printe_h2 "Setting current user shell..."
 
 if [ -z "$conf_file" ] || [ ! -f "$conf_file" ]; then
-    printe_msg "Shell configuration could not be found, skipping"
+    printe_info "Shell configuration could not be found, skipping"
     exit
 fi
 
 
-printe_msg "Using shell configuration defined in ${conf_file##../../}"
+printe_info "Using shell configuration defined in ${conf_file##../../}"
 
 shell="$(cat "$conf_file")"
 
 if [ -z "$shell" ]; then
-    printe_msg "Shell configuration seems to be empty, skipping"
+    printe "Shell configuration seems to be empty, skipping"
     exit
 fi
 
@@ -58,7 +58,7 @@ fi
 shell_bin="$(command -v "$shell")"
 
 if ! grep -q "$shell_bin" /etc/shells; then
-    printe_msg "Adding $shell_bin to /etc/shells..."
+    printe_info "Adding $shell_bin to /etc/shells..."
     printf "%s\\n" "$shell_bin" | run_root tee -a /etc/shells > /dev/null
 fi
 

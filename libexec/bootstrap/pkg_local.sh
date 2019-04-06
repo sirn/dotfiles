@@ -4,6 +4,7 @@
 #
 
 base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
+platform=$(uname | tr '[:upper:]' '[:lower:]')
 flavors=$*
 
 cd "$base_dir" || exit 1
@@ -16,7 +17,7 @@ cd "$base_dir" || exit 1
 
 printe_h2 "Installing rust..."
 
-if [ -x "$HOME/.cargo/bin/rustup" ]; then
+if [ ! -x "$HOME/.cargo/bin/rustup" ]; then
     fetch_url - https://sh.rustup.rs | sh -s - -y --no-modify-path
 fi
 
@@ -33,11 +34,12 @@ if [ -f "$rust_pkglist" ]; then
         bin="${spec%%:*}"
         install="${spec##$bin:}"
 
-        if [ ! -f "$HOME/.cargo/bin/$bin" ]; then
-            eval "$HOME/.cargo/bin/cargo" install "$install"
-        else
-            printe "$bin is already installed"
+        if [ -f "$HOME/.cargo/bin/$bin" ]; then
+            printe "$bin already installed"
+            continue
         fi
+
+        eval "$HOME/.cargo/bin/cargo" install "$install"
     done < "$rust_pkglist"
 fi
 
@@ -47,11 +49,18 @@ fi
 
 printe_h2 "Installing node packages..."
 
-npm set prefix="$HOME/.local"
+_node_env() {
+    case "$platform" in
+        darwin ) env PATH="/usr/local/opt/node@8/bin:$PATH" "$@";;
+        * ) "$@";;
+    esac
+}
+
+_node_env npm set prefix="$HOME/.local"
 node_pkglist="../../var/bootstrap/pkglist.node.txt"
 
 if [ -f "$node_pkglist" ]; then
-    xargs npm install -g < "$node_pkglist"
+    _node_env xargs npm install -g < "$node_pkglist"
 fi
 
 
@@ -60,10 +69,10 @@ fi
 
 printe_h2 "Installing haskell..."
 
-case "$(uname)" in
-    FreeBSD )
-        printe_msg "Haskell Stack is not available under FreeBSD at this moment"
-        printe_msg "See also https://github.com/commercialhaskell/stack/issues/4503"
+case "$platform" in
+    freebsd )
+        printe "Haskell Stack is not available under FreeBSD at this moment"
+        printe "See also https://github.com/commercialhaskell/stack/issues/4503"
         ;;
 
     * )
@@ -80,7 +89,7 @@ case "$(uname)" in
         #
 
         printe_h2 "Installing purescript..."
-        npm install -g pulp purescript
+        _node_env npm install -g pulp purescript
         ;;
 esac
 
@@ -89,14 +98,10 @@ esac
 ##
 
 if [ "$(has_args "kubernetes" "$flavors")" = "1" ]; then
-    case "$(uname)" in
-        Linux ) ;;
-        * )
-            if ! hash clang 2>/dev/null; then
-                printe_err "Kubernetes flavor requires Clang on non-Linux"
-                exit 1
-            fi
-    esac
+    if ! hash clang 2>/dev/null; then
+        printe_err "Kubernetes flavor requires Clang"
+        exit 1
+    fi
 
     # Kubectx
     #

@@ -1,0 +1,49 @@
+# Note: this file is processed in order
+
+tap beeftornado/rmtree
+tap sirn/oksh
+
+brew aria2
+brew asciinema
+brew autoconf
+brew carthage
+brew cocot
+brew curl
+brew dnscrypt-proxy
+brew duplicity
+brew ffmpeg
+brew git
+brew git-crypt
+brew git-lfs
+brew gnupg
+brew graphicsmagick
+brew graphviz
+brew ipcalc
+brew jq
+brew leiningen
+brew mercurial
+brew mosh
+brew neovim
+brew node@8
+brew oksh
+brew openssh
+brew pandoc
+brew pass
+brew pinentry-mac
+brew postgresql
+brew reattach-to-user-namespace
+brew ripgrep
+brew rtmpdump
+brew shellcheck
+brew socat
+brew sshfs
+brew terraform
+brew tmux
+brew trash
+brew tree
+brew w3m
+brew xz
+brew youtube-dl
+brew zlib
+
+cask google-cloud-sdk
