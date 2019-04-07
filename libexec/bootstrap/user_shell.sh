@@ -11,36 +11,21 @@ cd "$base_dir" || exit 1
 . ../../share/bootstrap/compat.sh
 
 
-## Utils
-##
-
-_find_conf() {
-    pathlist=$*; shift
-
-    for path in $pathlist; do
-        if [ -f "$path" ]; then
-            printf "%s\\n" "$path"
-            return
-        fi
-    done
-}
-
-
 ## Main
 ##
 
-conf_dir="../../var/bootstrap"
-conf_file=$(_find_conf "$conf_dir/${platform}/shell.txt" "$conf_dir/shell.txt")
+conf_file=""
 
-printe_h2 "Setting current user shell..."
+for f in $(mangle_file "../../var/bootstrap/shell.txt" "$platform"); do
+    conf_file=$f
+done
 
-if [ -z "$conf_file" ] || [ ! -f "$conf_file" ]; then
+if [ -z "$conf_file" ]; then
     printe_info "Shell configuration not found, skipping"
     exit
 fi
 
-
-printe_info "Using shell configuration defined in ${conf_file##../../}"
+printe_h2 "Setting current user shell from ${conf_file##../../}..."
 
 shell="$(cat "$conf_file")"
 
@@ -53,7 +38,6 @@ if ! hash "$shell" 2>/dev/null; then
     printe_err "$shell is not a valid shell, aborting"
     exit 1
 fi
-
 
 shell_bin="$(command -v "$shell")"
 

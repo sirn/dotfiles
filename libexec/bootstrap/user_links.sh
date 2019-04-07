@@ -45,15 +45,14 @@ _make_link() {
     printe "$dest has been linked to $src"
 }
 
-_make_links() {
-    linklist=$1; shift
 
-    if [ ! -f "$linklist" ]; then
-        printe_info "${linklist##../../} not found, skipping"
-        return
-    fi
+## Links
+##
 
-    printe_h2 "Linking files in ${linklist##../../}..."
+linklist="../../var/bootstrap/links.txt"
+
+for f in $(mangle_file "$linklist" "$platform" "$flavors"); do
+    printe_h2 "Linking files in ${f##../../}..."
 
     while read -r spec; do
         case "$spec" in
@@ -64,17 +63,5 @@ _make_links() {
         eval set -- "$spec"
 
         _make_link "$@"
-    done < "$linklist"
-}
-
-
-## Links
-##
-
-_make_links "../../var/bootstrap/links.txt"
-_make_links "../../var/bootstrap/${platform}/links.txt"
-
-for flavor in $flavors; do
-    _make_links "../../var/bootstrap/links.${flavor}.txt"
-    _make_links "../../var/bootstrap/${platform}/links.${flavor}.txt"
+    done < "$f"
 done

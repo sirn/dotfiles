@@ -77,3 +77,39 @@ git_clone_update() {
         printe "$path has been successfully updated"
     fi
 }
+
+mangle_filename() {
+    path=$1; shift
+    platform=$1; shift
+    flavors=$*
+
+    dir=$(dirname "$path")
+    base=$(basename "$path")
+
+    printf "%s\\n" "$dir/$base"
+
+    if [ -n "$platform" ] && [ "$platform" != "none" ]; then
+        printf "%s\\n" "$dir/$platform/$base"
+    fi
+
+    if [ -n "$flavors" ]; then
+        for flavor in $flavors; do
+            ext=${base##*\.}
+            name=${base%*\.${ext}}
+
+            printf "%s\\n" "$dir/$name.$flavor.$ext"
+
+            if [ -n "$platform" ] && [ "$platform" != "none" ]; then
+                printf "%s\\n" "$dir/$platform/$name.$flavor.$ext"
+            fi
+        done
+    fi
+}
+
+mangle_file() {
+    for f in $(mangle_filename "$@"); do
+        if [ -f "$f" ]; then
+            printf "%s\\n" "$f"
+        fi
+    done
+}

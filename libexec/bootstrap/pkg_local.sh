@@ -27,8 +27,8 @@ fi
 
 rust_pkglist="../../var/bootstrap/pkglist.rust.txt"
 
-if [ -f "$rust_pkglist" ]; then
-    printe_h2 "Installing rust packages..."
+for f in $(mangle_file "$rust_pkglist" "$platform" "$flavors"); do
+    printe_h2 "Installing rust packages from ${f##../../}..."
 
     while read -r spec; do
         bin="${spec%%:*}"
@@ -40,14 +40,12 @@ if [ -f "$rust_pkglist" ]; then
         fi
 
         eval "$HOME/.cargo/bin/cargo" install "$install"
-    done < "$rust_pkglist"
-fi
+    done < "$f"
+done
 
 
 ## Node
 ##
-
-printe_h2 "Installing node packages..."
 
 _node_env() {
     case "$platform" in
@@ -57,11 +55,13 @@ _node_env() {
 }
 
 _node_env npm set prefix="$HOME/.local"
+
 node_pkglist="../../var/bootstrap/pkglist.node.txt"
 
-if [ -f "$node_pkglist" ]; then
-    _node_env xargs npm install -g < "$node_pkglist"
-fi
+for f in $(mangle_file "$node_pkglist" "$platform" "$flavors"); do
+    printe_h2 "Installing node packages from ${f##../../}..."
+    _node_env xargs npm install -g < "$f"
+done
 
 
 ## Haskell and friends

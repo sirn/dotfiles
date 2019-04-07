@@ -77,34 +77,6 @@ _do_mas_install() {
     mas install "$pkg_id"
 }
 
-_install_pkg() {
-    pkglist=$1; shift
-
-    if [ ! -f "$pkglist" ]; then
-        printe_info "${pkglist##../../} not found, skipping"
-        return
-    fi
-
-    printe_h2 "Installing packages from ${pkglist##../../}..."
-
-    while read -r spec; do
-        case "$spec" in
-            "#"* | "" ) continue;;
-            *) spec="${spec%%#*}";;
-        esac
-
-        eval set -- "$spec"
-
-        case "$1" in
-            tap  ) shift; _do_tap "$@";;
-            brew ) shift; _do_install "$@";;
-            cask ) shift; _do_cask_install "$@";;
-            mas )  shift; _do_mas_install "$@";;
-            * ) printe_err "Unknown directive: $1";;
-        esac
-    done < "$pkglist"
-}
-
 
 ## Setup
 ##
@@ -131,10 +103,27 @@ _do_install mas
 ## Installs
 ##
 
-_install_pkg "../../var/bootstrap/darwin/pkglist.txt"
+pkglist="../../var/bootstrap/darwin/pkglist.txt"
 
-for flavor in $flavors; do
-    _install_pkg "../../var/bootstrap/darwin/pkglist.${flavor}.txt"
+for f in $(mangle_file "$pkglist" none "$flavors"); do
+    printe_h2 "Installing packages from ${f##../../}..."
+
+    while read -r spec; do
+        case "$spec" in
+            "#"* | "" ) continue;;
+            *) spec="${spec%%#*}";;
+        esac
+
+        eval set -- "$spec"
+
+        case "$1" in
+            tap  ) shift; _do_tap "$@";;
+            brew ) shift; _do_install "$@";;
+            cask ) shift; _do_cask_install "$@";;
+            mas )  shift; _do_mas_install "$@";;
+            * ) printe_err "Unknown directive: $1";;
+        esac
+    done < "$f"
 done
 
 

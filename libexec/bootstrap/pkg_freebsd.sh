@@ -16,22 +16,6 @@ if [ "$(uname)" != "FreeBSD" ]; then
 fi
 
 
-## Utils
-##
-
-_install_pkg() {
-    pkglist=$1; shift
-
-    if [ ! -f "$pkglist" ]; then
-        printe_info "${pkglist##../../} not found, skipping"
-        return
-    fi
-
-    printe_h2 "Installing packages from ${pkglist##../../}..."
-    run_root xargs pkg install -y < "$pkglist"
-}
-
-
 ## Setup
 ##
 
@@ -44,10 +28,11 @@ fi
 ## Installs
 ##
 
-_install_pkg "../../var/bootstrap/freebsd/pkglist.txt"
+pkglist="../../var/bootstrap/freebsd/pkglist.txt"
 
-for flavor in $flavors; do
-    _install_pkg "../../var/bootstrap/freebsd/pkglist.${flavor}.txt"
+for f in $(mangle_file "$pkglist" none "$flavors"); do
+    printe_h2 "Installing packages from ${f##../../}..."
+    run_root xargs pkg install -y < "$f"
 done
 
 

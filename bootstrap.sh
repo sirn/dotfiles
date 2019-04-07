@@ -50,11 +50,12 @@ FORCE=0
 profiles=""
 flavors=""
 
-while getopts "p:s:f" opt; do
+while getopts "hp:s:f" opt; do
     case "$opt" in
         p ) profiles="$profiles $OPTARG";;
         s ) flavors="$flavors $OPTARG";;
         f ) FORCE=1;;
+        h ) print_usage; exit 2;;
         * ) print_usage; exit 1;;
     esac
 done

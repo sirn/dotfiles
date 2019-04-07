@@ -5,6 +5,7 @@
 
 base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
 platform=$(uname | tr '[:upper:]' '[:lower:]')
+flavors=$*
 asdf_dir="$HOME/.asdf"
 
 cd "$base_dir" || exit 1
@@ -56,10 +57,12 @@ _do_pkginst() {
     pkglist="../../var/bootstrap/pkglist.${plugin}.txt"
 
     # shellcheck disable=SC2086
-    if [ -f "$pkglist" ]; then
-        printe_h2 "Installing ${plugin} packages..."
-        _asdf_env xargs $instcmd < "$pkglist"
-    fi
+    for f in $(mangle_filename "$pkglist" "$platform" "$flavors"); do
+        if [ -f "$f" ]; then
+            printe_h2 "Installing ${plugin} packages from ${f##../../}..."
+            _asdf_env xargs $instcmd < "$f"
+        fi
+    done
 }
 
 
@@ -123,7 +126,11 @@ printe_h2 "Installing asdf..."
 
 git_clone_update https://github.com/asdf-vm/asdf.git "$asdf_dir"
 
-if [ -f "../../var/bootstrap/asdf.txt" ]; then
+asdf_spec="../../var/bootstrap/asdf.txt"
+
+for f in $(mangle_file "$asdf_spec" "$platform" "$flavors"); do
+    printe_h2 "Installing asdf packages from ${f##../../}..."
+
     while read -r spec; do
         case "$spec" in
             "#"* | "" ) continue;;
@@ -138,5 +145,5 @@ if [ -f "../../var/bootstrap/asdf.txt" ]; then
             pkginst ) shift; _do_pkginst "$@";;
             * ) printe_err "Unknown directive: $1";;
         esac
-    done < "../../var/bootstrap/asdf.txt"
-fi
+    done < "$f"
+done
