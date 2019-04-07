@@ -8,7 +8,6 @@ base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
 cd "$base_dir" || exit 1
 . ../../share/bootstrap/funcs.sh
 . ../../share/bootstrap/compat.sh
-. ../../share/bootstrap/freebsd.sh
 
 if [ "$(uname)" != "FreeBSD" ]; then
     printe_err "Not a FreeBSD system"
@@ -22,7 +21,7 @@ fi
 _start_service() {
     service=$1; shift
 
-    if [ "$(_service_running "$service")" = "0" ]; then
+    if [ "$(service_running "$service")" = "0" ]; then
         run_root service "$service" onestart
     fi
 }

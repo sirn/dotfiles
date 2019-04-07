@@ -78,6 +78,9 @@ git_clone_update() {
     fi
 }
 
+# mangle_filename() - takes path, platform and flavors and return a penumeration
+# of {path, platform, flavors} pair. If none is given as a platform, then no
+# platform resolution will be performed.
 mangle_filename() {
     path=$1; shift
     platform=$1; shift
@@ -106,10 +109,29 @@ mangle_filename() {
     fi
 }
 
+# mangle_file() - similar to mangle_filename() but only returns file that exists.
 mangle_file() {
     for f in $(mangle_filename "$@"); do
         if [ -f "$f" ]; then
             printf "%s\\n" "$f"
         fi
     done
+}
+
+# mangle_file1() - similar to mangle_file() but only returns the most specific
+# file that exists, in an order of: {filename, platform}, {filename}. This
+# function doesn't accept flavors, as it doesn't make sense to do so.
+mangle_file1() {
+    path=$1; shift
+    platform=$1; shift
+
+    for f in $(mangle_filename "$path" "$platform"); do
+        if [ -f "$f" ]; then
+            conf_file="$f"
+        fi
+    done
+
+    if [ -n "$conf_file" ]; then
+        printf "%s\\n" "$conf_file"
+    fi
 }

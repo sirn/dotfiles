@@ -9,7 +9,6 @@ flavors=$*
 cd "$base_dir" || exit 1
 . ../../share/bootstrap/funcs.sh
 . ../../share/bootstrap/compat.sh
-. ../../share/bootstrap/darwin.sh
 
 if [ "$(uname)" != "Darwin" ]; then
     printe_err "Not a FreeBSD system"
@@ -46,12 +45,12 @@ fi
 ##
 
 if [ "$(has_args "desktop" "$flavors")" = "1" ]; then
-    if [ "$(_service_running chunkwm)" != "1" ]; then
+    if [ "$(service_running chunkwm)" != "1" ]; then
         printe_h2 "Setting up chunkwm..."
         brew services start chunkwm
     fi
 
-    if [ "$(_service_running skhd)" != "1" ]; then
+    if [ "$(service_running skhd)" != "1" ]; then
         printe_h2 "Setting up skhd..."
         brew services start skhd
     fi

@@ -14,11 +14,7 @@ cd "$base_dir" || exit 1
 ## Main
 ##
 
-conf_file=""
-
-for f in $(mangle_file "../../var/bootstrap/shell.txt" "$platform"); do
-    conf_file=$f
-done
+conf_file="$(mangle_file1 "../../var/bootstrap/shell.txt" "$platform")"
 
 if [ -z "$conf_file" ]; then
     printe_info "Shell configuration not found, skipping"

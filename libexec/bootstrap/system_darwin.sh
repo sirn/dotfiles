@@ -8,7 +8,6 @@ base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
 cd "$base_dir" || exit 1
 . ../../share/bootstrap/funcs.sh
 . ../../share/bootstrap/compat.sh
-. ../../share/bootstrap/darwin.sh
 
 if [ "$(uname)" != "Darwin" ]; then
     printe_err "Not a Darwin system"
@@ -22,7 +21,7 @@ fi
 printe_h2 "Setting up dnscrypt-proxy..."
 
 dnscrypt_conf="/usr/local/etc/dnscrypt-proxy.toml"
-dnscrypt_started="$(_service_running dnscrypt-proxy)"
+dnscrypt_started="$(service_running dnscrypt-proxy)"
 dnscrypt_updated=0
 
 if [ "$(normalize_bool "$FORCE")" = "1" ] || [ ! -f "$dnscrypt_conf" ]; then
