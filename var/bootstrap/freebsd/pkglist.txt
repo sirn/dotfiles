@@ -23,7 +23,6 @@ hs-pandoc
 ipcalc
 jq
 leiningen
-lsof
 mercurial
 mosh
 neovim
@@ -38,7 +37,6 @@ py36-asciinema
 ripgrep
 rtmpdump
 socat
-synth
 terraform
 tmux
 tree
