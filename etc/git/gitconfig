@@ -24,6 +24,9 @@
 	default = nothing
 	gpgSign = if-asked
 
+[gpg]
+	program = gpg2
+
 [status]
 	short = true
 	branch = true

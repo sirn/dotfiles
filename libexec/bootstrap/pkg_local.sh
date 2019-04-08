@@ -15,34 +15,59 @@ cd "$base_dir" || exit 1
 ## Rust
 ##
 
-_rust_env() {
-    case "$platform" in
-        openbsd ) "$@";;
-        * ) env PATH="$HOME/.cargo/bin:$PATH" "$@";;
-    esac
-}
+printe_h2 "Installing rust..."
 
 case "$platform" in
     openbsd )
-        if ! hash cargo 2>dev/null; then
+        _rust_env() {
+            "$@"
+        }
+
+        if ! hash cargo 2>/dev/null; then
             printe "Rustup is (unfortunately) not available for OpenBSD"
             printe "You may still install rust with \`pkg_add rust\`"
+        else
+            if [ ! -f "$HOME/.cargo/bin/rustfmt" ]; then
+                _rust_env cargo install rustfmt
+            else
+                printe "rustfmt already installed"
+            fi
+
+            rust_ver="$(rustc --version | awk '{ print $2 }')"
+            rust_src_base="$HOME/lib/rustlib/src/rust"
+            rust_src_url="https://github.com/rust-lang/rust/archive/${rust_ver}.tar.gz"
+            rust_src_ver="$rust_src_base/rust-${rust_ver}"
+
+            if [ ! -d "$rust_src_ver" ]; then
+                mkdir -p "$rust_src_base"
+                fetch_url - "$rust_src_url" | tar -C "$rust_src_base" -xzf -
+            fi
+
+            if [ "$(readlink "$rust_src_base/src")" = "$rust_src_ver/src" ]; then
+                printe "rust-src is already linked"
+            else
+                rm -rf "$rust_src_base/src"
+                ln -s "$rust_src_ver/src" "$rust_src_base/src"
+                printe "rust-src has been linked to $rust_src_ver"
+            fi
         fi
         ;;
     * )
-        printe_h2 "Installing rust..."
+        _rust_env() {
+            env PATH="$HOME/.cargo/bin:$PATH" "$@"
+        }
 
         if [ ! -x "$HOME/.cargo/bin/rustup" ]; then
             fetch_url - https://sh.rustup.rs | sh -s - -y --no-modify-path
         fi
 
-        "$HOME/.cargo/bin/rustup" update
-        "$HOME/.cargo/bin/rustup" component add rust-src
-        "$HOME/.cargo/bin/rustup" component add rustfmt-preview
+        _rust_env rustup update
+        _rust_env rustup component add rust-src
+        _rust_env rustup component add rustfmt
         ;;
 esac
 
-if _rust_env hash rust 2>/dev/null; then
+_rust_env; if hash cargo 2>/dev/null; then
     rust_pkglist="../../var/bootstrap/pkglist.rust.txt"
 
     for f in $(mangle_file "$rust_pkglist" "$platform" "$flavors"); do
@@ -57,7 +82,7 @@ if _rust_env hash rust 2>/dev/null; then
                 continue
             fi
 
-            eval "$HOME/.cargo/bin/cargo" install "$install"
+            eval _rust_env cargo install "$install"
         done < "$f"
     done
 fi
@@ -66,12 +91,19 @@ fi
 ## Node
 ##
 
-_node_env() {
-    case "$platform" in
-        darwin ) env PATH="/usr/local/opt/node@10/bin:$PATH" "$@";;
-        * ) "$@";;
-    esac
-}
+case "$platform" in
+    darwin )
+        _node_env() {
+            env PATH="/usr/local/opt/node@10/bin:$PATH" "$@"
+        }
+        ;;
+
+    * )
+        _node_env() {
+            "$@"
+        }
+        ;;
+esac
 
 _node_env npm set prefix="$HOME/.local"
 
@@ -88,30 +120,43 @@ done
 
 haskell_pkglist="../../var/bootstrap/pkglist.haskell.txt"
 
-_haskell_env() {
-    case "$platform" in
-        openbsd )
-            # Cabal packages need to be built in /usr/local/cabal on OpenBSD
-            # https://deftly.net/posts/2017-10-12-using-cabal-on-openbsd.html
-            if [ ! -d /usr/local/cabal/build ]; then
-                run_root mkdir -p /usr/local/cabal/build
-                run_root chown -R $USER:wheel /usr/local/cabal
-            fi
-
-            if [ ! -L "$HOME/.cabal" ]; then
-                rm -rf "$HOME/.cabal"
-                ln -s /usr/local/cabal "$HOME/.cabal"
-            fi
-
+case "$platform" in
+    openbsd )
+        _haskell_env() {
             env TMPDIR=/usr/local/cabal/build "$@"
-            ;;
-        * ) "$@";;
-    esac
-}
+        }
+
+        # Cabal packages need to be built in /usr/local/cabal on OpenBSD
+        # https://deftly.net/posts/2017-10-12-using-cabal-on-openbsd.html
+        if [ ! -d /usr/local/cabal/build ]; then
+            run_root mkdir -p /usr/local/cabal/build
+            run_root chown -R "$USER:wheel" /usr/local/cabal
+        fi
+
+        if [ ! -L "$HOME/.cabal" ]; then
+            rm -rf "$HOME/.cabal"
+            ln -s /usr/local/cabal "$HOME/.cabal"
+        fi
+        ;;
+
+    * )
+        _haskell_env() {
+            "$@"
+        }
+        ;;
+esac
+
+# Cabal >= 2.4.0.0 replaces update/install with v1-update/v1-install
+# See https://github.com/haskell/cabal/blob/master/cabal-install/changelog
+haskell_cabal_prefix=""
+
+if [ "$(version_gte "2.4.0.0" "$(cabal --numeric-version)")" = "1" ]; then
+    haskell_cabal_prefix="v1-"
+fi
 
 if [ ! -d "$HOME/.cabal/packages/hackage.haskell.org" ]; then
     printe_h2 "Updating haskell cabal package index..."
-    _haskell_env cabal v1-update
+    _haskell_env cabal "${haskell_cabal_prefix}update"
 fi
 
 for f in $(mangle_file "$haskell_pkglist" "$platform" "$flavors"); do
@@ -126,7 +171,7 @@ for f in $(mangle_file "$haskell_pkglist" "$platform" "$flavors"); do
             continue
         fi
 
-        eval _haskell_env cabal v1-install "$install"
+        eval _haskell_env cabal "${haskell_cabal_prefix}install" "$install"
     done < "$f"
 done
 
@@ -136,7 +181,7 @@ done
 
 if [ "$(has_args "kubernetes" "$flavors")" = "1" ]; then
     if ! hash clang 2>/dev/null; then
-        printe_err "Kubernetes flavor requires Clang"
+        printe_err "Kubernetes flavor requires clang"
         exit 1
     fi
 

@@ -80,18 +80,32 @@ _install() {
     _asdf_env asdf install "$plugin" "$version"
 }
 
+_install_erlang_openbsd() {
+    plugin=$1; shift
+    version=$1; shift
+
+    if ! hash autoconf-2.69; then
+        printe_err "Building erlang on OpenBSD requires autoconf 2.69"
+        printe_err "Try \`pkg_add autoconf%2.69\`"
+    fi
+
+    _asdf_env env \
+        AUTOCONF_VERSION=2.69 \
+        asdf install "$plugin" "$version"
+}
+
 _install_python_darwin() {
     plugin=$1; shift
     version=$1; shift
 
     if [ ! -d /usr/local/opt/zlib ]; then
-        printe_err "Building Python on Darwin requires Zlib"
+        printe_err "Building python on Darwin requires zlib"
         printe_err "Try \`brew install zlib\`"
         exit 1
     fi
 
     if [ ! -d /usr/local/opt/sqlite3 ]; then
-        printe_err "Building Python on Darwin requires SQLite 3"
+        printe_err "Building python on Darwin requires sqlite3"
         printe_err "Try \`brew install sqlite3\`"
         exit 1
     fi
@@ -108,7 +122,7 @@ _install_ruby_freebsd() {
     version=$1; shift
 
     if ! hash gcc 2>/dev/null; then
-        printe_err "Building Ruby on FreeBSD requires GCC"
+        printe_err "Building ruby on FreeBSD requires gcc"
         printe_err "Try \`pkg install gcc\`"
         exit 1
     fi

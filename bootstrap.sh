@@ -5,11 +5,16 @@
 
 set -e
 
-export LC_ALL=en_US.UTF-8
-export PATH=$HOME/.local/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
-
 base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
 platform=$(uname | tr '[:upper:]' '[:lower:]')
+
+LC_ALL=en_US.UTF-8;
+
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+PATH=$base_dir/libexec/linuxism:$HOME/.local/bin:$PATH
+
+export LC_ALL
+export PATH
 
 cd "$base_dir" || exit 1
 . share/bootstrap/compat.sh

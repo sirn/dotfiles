@@ -16,6 +16,7 @@ brew git
 brew git-crypt
 brew git-lfs
 brew gnupg
+brew go
 brew graphicsmagick
 brew graphviz
 brew ipcalc

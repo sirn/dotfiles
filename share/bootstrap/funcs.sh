@@ -61,6 +61,20 @@ has_args() {
     esac
 }
 
+version_gte() {
+    left=$1; shift
+    right=$1; shift
+
+    # https://havoc.io/post/shellsemver/
+    min_ver="$(printf "%s\\n%s" "$left" "$right" |
+        sort -t "." -n -k1,1 -k2,2 -k3,3 -k4,4 |
+        head -n 1)"
+
+    if [ "$left" = "$min_ver" ]; then
+        printf "1"
+    fi
+}
+
 
 ## Convenient funcs
 ##

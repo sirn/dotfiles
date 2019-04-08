@@ -6,12 +6,21 @@
 ## Aliases
 ##
 
-alias ls='ls -G'
+case "$(uname)" in
+    OpenBSD )
+        if hash colorls 2>/dev/null; then
+            alias ls="colorls -G"
+        fi
+    ;;
+    FreeBSD )
+        alias ls='ls -G'
+        ;;
+esac
+
 alias ll='ls -lh'
 alias la='ls -alh'
-alias ka='k -hA'
-alias kk='k -h'
 
+alias gpg='gpg2'
 alias scp='rsync --archive --xattrs --acls --progress --rsh=ssh'
 alias sshi='ssh -F /dev/null -o UserKnownHostsFile=/dev/null'
 

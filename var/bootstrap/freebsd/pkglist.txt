@@ -15,6 +15,7 @@ git
 git-crypt
 git-lfs
 gnupg
+go
 google-cloud-sdk
 graphviz
 hs-cabal-install
