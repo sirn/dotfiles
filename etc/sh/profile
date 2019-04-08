@@ -13,26 +13,12 @@ XDG_DATA_HOME=$HOME/.data; export XDG_DATA_HOME
 XDG_STATE_HOME=$HOME/.state; export XDG_STATE_HOME
 
 PATH=$HOME/.local/bin:/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
-
-
-## Language runtime
-##
-
-# Erlang
-#
-
 PATH=$HOME/.cache/rebar3/bin:$PATH
-
-# Golang
-#
-
-GOPATH=$HOME/Dev/go/; export GOPATH
-PATH=$HOME/Dev/go/bin:$PATH
-
-# Rust
-#
-
+PATH=$HOME/.cabal/bin:$PATH
 PATH=$HOME/.cargo/bin:$PATH
+
+GOPATH=$HOME/Dev/go; export GOPATH
+PATH=$GOPATH/bin:$PATH
 
 if command -v rustc >/dev/null; then
     RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"; export RUST_SRC_PATH

@@ -6,6 +6,7 @@ tap sirn/oksh
 brew aria2
 brew asciinema
 brew autoconf
+brew cabal-install
 brew carthage
 brew curl
 brew dnscrypt-proxy

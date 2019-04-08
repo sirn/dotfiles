@@ -67,31 +67,49 @@ done
 ## Haskell and friends
 ##
 
-printe_h2 "Installing haskell..."
+haskell_pkglist="../../var/bootstrap/pkglist.haskell.txt"
 
-case "$platform" in
-    freebsd )
-        printe "Haskell Stack is not available under FreeBSD at this moment"
-        printe "See also https://github.com/commercialhaskell/stack/issues/4503"
-        ;;
+_haskell_env() {
+    case "$platform" in
+        openbsd )
+            # Cabal packages need to be built in /usr/local/cabal on OpenBSD
+            # https://deftly.net/posts/2017-10-12-using-cabal-on-openbsd.html
+            if [ ! -d /usr/local/cabal/build ]; then
+                run_root mkdir -p /usr/local/cabal/build
+                run_root chown -R $USER:wheel /usr/local/cabal
+            fi
 
-    * )
-        # Haskell Stack
-        #
+            if [ ! -L "$HOME/.cabal" ]; then
+                rm -rf "$HOME/.cabal"
+                ln -s /usr/local/cabal "$HOME/.cabal"
+            fi
 
-        if [ -x "$HOME/.local/bin/stack" ]; then
-            "$HOME/.local/bin/stack" update
-        else
-            fetch_url - https://get.haskellstack.org/ | sh -s - -d "$HOME/.local/bin"
+            env TMPDIR=/usr/local/cabal/build "$@"
+            ;;
+        * ) "$@";;
+    esac
+}
+
+if [ ! -d "$HOME/.cabal/packages/hackage.haskell.org" ]; then
+    printe_h2 "Updating haskell cabal package index..."
+    _haskell_env cabal v1-update
+fi
+
+for f in $(mangle_file "$haskell_pkglist" "$platform" "$flavors"); do
+    printe_h2 "Installing haskell cabal packages from ${f##../../}..."
+
+    while read -r spec; do
+        bin="${spec%%:*}"
+        install="${spec##$bin:}"
+
+        if [ -f "$HOME/.cabal/bin/$bin" ]; then
+            printe "$bin already installed"
+            continue
         fi
 
-        # PureScript
-        #
-
-        printe_h2 "Installing purescript..."
-        _node_env npm install -g pulp purescript
-        ;;
-esac
+        eval _haskell_env cabal v1-install "$install"
+    done < "$f"
+done
 
 
 ## Kubernetes flavor
