@@ -23,7 +23,7 @@ brew leiningen
 brew mercurial
 brew mosh
 brew neovim
-brew node@8
+brew node@10
 brew oksh
 brew openssh
 brew pandoc

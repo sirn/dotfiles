@@ -49,7 +49,7 @@ done
 
 _node_env() {
     case "$platform" in
-        darwin ) env PATH="/usr/local/opt/node@8/bin:$PATH" "$@";;
+        darwin ) env PATH="/usr/local/opt/node@10/bin:$PATH" "$@";;
         * ) "$@";;
     esac
 }

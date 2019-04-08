@@ -25,8 +25,8 @@ leiningen
 mercurial
 mosh
 neovim
-node8
-npm-node8
+node10
+npm-node10
 oksh
 openjdk8-jre
 password-store

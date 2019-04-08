@@ -45,7 +45,7 @@ fi
 case "$(uname)" in
     Darwin )
         PATH=/usr/local/opt/gpg-agent/bin:$PATH
-        PATH=/usr/local/opt/node@8/bin:$PATH
+        PATH=/usr/local/opt/node@10/bin:$PATH
 
         HOMEBREW_NO_ANALYTICS=1; export HOMEBREW_NO_ANALYTICS
 
