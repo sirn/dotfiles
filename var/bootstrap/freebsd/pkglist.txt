@@ -3,7 +3,6 @@ aria2
 autoconf
 base64
 ca_root_nss
-cocot
 compat8x-amd64
 curl
 duplicity

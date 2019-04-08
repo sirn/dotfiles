@@ -33,11 +33,15 @@ _do_install() {
 
     if [ ! -d "$asdf_dir/installs/$plugin/$version" ]; then
         install="_install"
+        custom_install="_install_${plugin}"
         platform_install="_install_${plugin}_${platform}"
 
         if [ "$(command -v "$platform_install")x" != "x" ]; then
             printe_info "Running $platform installation script for $plugin..."
             install="$platform_install"
+        elif [ "$(command -v "$custom_install")x" != "x" ]; then
+            printe_info "Running custom installation script for $plugin..."
+            install="$custom_install"
         fi
 
         "$install" "$plugin" "$version"
@@ -76,7 +80,7 @@ _install() {
     _asdf_env asdf install "$plugin" "$version"
 }
 
-_install_python3_darwin() {
+_install_python_darwin() {
     plugin=$1; shift
     version=$1; shift
 

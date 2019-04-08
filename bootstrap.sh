@@ -75,14 +75,14 @@ export FORCE
 for p in $profiles; do
     case "$p" in
         pkg | system | user ) ;;
-        * ) printe_err "Unknown profile \`$p\`"; exit 1;;
+        * ) printe_err "Unknown profile: $p"; exit 1;;
     esac
 done
 
 for f in $flavors; do
     case "$f" in
         desktop | kubernetes ) ;;
-        * ) printe_err "Unknown flavor \`$f\`"; exit 1;;
+        * ) printe_err "Unknown flavor: $f"; exit 1;;
     esac
 done
 
@@ -99,7 +99,7 @@ for p in pkg system user; do
         runscript="$base_dir/libexec/bootstrap/${p}_${platform}.sh"
 
         if [ ! -f "$runscript" ]; then
-            printe_err "Profile \`${p}\` was not found for platform \`${platform}\`"
+            printe_err "Profile ${p} was not found for platform ${platform}"
             exit 1
         fi
 

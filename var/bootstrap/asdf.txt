@@ -6,20 +6,20 @@ plugin    elixir         https://github.com/asdf-vm/asdf-elixir.git
 plugin    erlang         https://github.com/asdf-vm/asdf-erlang.git
 plugin    golang         https://github.com/kennyp/asdf-golang.git
 plugin    nim            https://github.com/rfrancis/asdf-nim.git
-plugin    python3        https://github.com/tuvistavie/asdf-python.git
+plugin    python         https://github.com/tuvistavie/asdf-python.git
 plugin    ruby           https://github.com/asdf-vm/asdf-ruby.git
 
 # asdf versions to install
-# install <plugin_name>  <version>  <flag>
-install   elixir         1.8.1      global
-install   erlang         21.3.3     global
-install   golang         1.12.1     global
-install   nim            v0.19.4    global
-install   python3        3.7.3      global
-install   ruby           2.6.2      global
+# install <plugin_name>  <version>    <flag>
+install   elixir         1.8.1        global
+install   erlang         21.3.3       global
+install   golang         1.12.1       global
+install   nim            v0.19.4      global
+install   python         3.7.3        global
+install   ruby           2.6.2        global
 
 # command to install packages
 # read from pkglist.<plugin_name>.txt
 # pkginst <plugin_name>  <command>
-pkginst   python3        pip install -U
+pkginst   python         pip3 install -U
 pkginst   ruby           gem install --no-document

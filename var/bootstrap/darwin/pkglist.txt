@@ -7,7 +7,6 @@ brew aria2
 brew asciinema
 brew autoconf
 brew carthage
-brew cocot
 brew curl
 brew dnscrypt-proxy
 brew duplicity
