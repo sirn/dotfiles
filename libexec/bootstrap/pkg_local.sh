@@ -15,33 +15,52 @@ cd "$base_dir" || exit 1
 ## Rust
 ##
 
-printe_h2 "Installing rust..."
+_rust_env() {
+    case "$platform" in
+        openbsd ) "$@";;
+        * ) env PATH="$HOME/.cargo/bin:$PATH" "$@";;
+    esac
+}
 
-if [ ! -x "$HOME/.cargo/bin/rustup" ]; then
-    fetch_url - https://sh.rustup.rs | sh -s - -y --no-modify-path
-fi
+case "$platform" in
+    openbsd )
+        if ! hash cargo 2>dev/null; then
+            printe "Rustup is (unfortunately) not available for OpenBSD"
+            printe "You may still install rust with \`pkg_add rust\`"
+        fi
+        ;;
+    * )
+        printe_h2 "Installing rust..."
 
-"$HOME/.cargo/bin/rustup" update
-"$HOME/.cargo/bin/rustup" component add rust-src
-"$HOME/.cargo/bin/rustup" component add rustfmt-preview
-
-rust_pkglist="../../var/bootstrap/pkglist.rust.txt"
-
-for f in $(mangle_file "$rust_pkglist" "$platform" "$flavors"); do
-    printe_h2 "Installing rust packages from ${f##../../}..."
-
-    while read -r spec; do
-        bin="${spec%%:*}"
-        install="${spec##$bin:}"
-
-        if [ -f "$HOME/.cargo/bin/$bin" ]; then
-            printe "$bin already installed"
-            continue
+        if [ ! -x "$HOME/.cargo/bin/rustup" ]; then
+            fetch_url - https://sh.rustup.rs | sh -s - -y --no-modify-path
         fi
 
-        eval "$HOME/.cargo/bin/cargo" install "$install"
-    done < "$f"
-done
+        "$HOME/.cargo/bin/rustup" update
+        "$HOME/.cargo/bin/rustup" component add rust-src
+        "$HOME/.cargo/bin/rustup" component add rustfmt-preview
+        ;;
+esac
+
+if _rust_env hash rust 2>/dev/null; then
+    rust_pkglist="../../var/bootstrap/pkglist.rust.txt"
+
+    for f in $(mangle_file "$rust_pkglist" "$platform" "$flavors"); do
+        printe_h2 "Installing rust packages from ${f##../../}..."
+
+        while read -r spec; do
+            bin="${spec%%:*}"
+            install="${spec##$bin:}"
+
+            if [ -f "$HOME/.cargo/bin/$bin" ]; then
+                printe "$bin already installed"
+                continue
+            fi
+
+            eval "$HOME/.cargo/bin/cargo" install "$install"
+        done < "$f"
+    done
+fi
 
 
 ## Node
