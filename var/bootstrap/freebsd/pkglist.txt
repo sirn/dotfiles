@@ -10,7 +10,6 @@ emacs-nox
 execline
 expect
 ffmpeg
-gcc
 git
 git-crypt
 git-lfs
@@ -30,6 +29,7 @@ npm-node10
 oksh
 openjdk8-jre
 password-store
+pkgconf
 postgresql10-client
 py36-ansible
 py36-asciinema

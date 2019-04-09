@@ -18,6 +18,11 @@ cd "$base_dir" || exit 1
 
 PATH="$asdf_dir/bin:$asdf_dir/shims:$PATH"; export PATH
 
+if command -v cc >/dev/null; then
+    CC=cc; export CC
+    CXX=c++; export CXX
+fi
+
 
 ## Utils
 ##
@@ -53,7 +58,7 @@ _do_install() {
          asdf global "$plugin" "$version"
     fi
 
-     asdf reshim "$plugin"
+    asdf reshim "$plugin"
 }
 
 _do_pkginst() {
@@ -63,11 +68,9 @@ _do_pkginst() {
     pkglist="../../var/bootstrap/pkglist_${plugin}.txt"
 
     # shellcheck disable=SC2086
-    for f in $(mangle_filename "$pkglist" "$platform" "$flavors"); do
-        if [ -f "$f" ]; then
-            printe_h2 "Installing ${plugin} packages from ${f##../../}..."
-            xargs $instcmd < "$f"
-        fi
+    for f in $(mangle_file "$pkglist" "$platform" "$flavors"); do
+        printe_h2 "Installing ${plugin} packages from ${f##../../}..."
+        xargs $instcmd < "$f"
     done
 }
 
@@ -116,25 +119,6 @@ _install_python_darwin() {
     env \
         LDFLAGS="-L/usr/local/opt/zlib/lib -L/usr/local/opt/sqlite3/lib" \
         CPPFLAGS="-I/usr/local/opt/zlib/include -I/usr/local/opt/sqlite3/include" \
-        asdf install "$plugin" "$version"
-}
-
-_install_ruby_freebsd() {
-    plugin=$1; shift
-    version=$1; shift
-
-    if ! command -v gcc >/dev/null; then
-        printe_err "Building ruby on FreeBSD requires gcc"
-        printe_err "Try \`pkg install gcc\`"
-        exit 1
-    fi
-
-    # For GCC, see https://github.com/ffi/ffi/issues/622
-    # For DTrace, see https://github.com/rbenv/ruby-build/issues/1272
-    env \
-        CC="gcc" \
-        CXX="g++" \
-        RUBY_CONFIGURE_OPTS="--disable-dtrace" \
         asdf install "$plugin" "$version"
 }
 

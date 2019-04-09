@@ -195,30 +195,17 @@ fi
 ##
 
 if [ "$(has_args "kubernetes" "$flavors")" = "1" ]; then
-    if ! command -v clang >/dev/null; then
-        printe_err "Kubernetes flavor requires clang"
-        exit 1
-    fi
-
-    # Kubectx
-    #
-
     printe_h2 "Installing kubectx..."
 
     git_clone_update https://github.com/ahmetb/kubectx.git "$HOME/.local/src/kubectx"
     ln -fs "$HOME/.local/src/kubectx/kubectx" "$HOME/.local/bin/kubectx"
     ln -fs "$HOME/.local/src/kubectx/kubens" "$HOME/.local/bin/kubens"
 
-    # Kapitan
-    #
-
     printe_h2 "Installing kapitan..."
 
     env \
-        CC=clang \
-        CXX=clang++ \
         CXXFLAGS="-fPIC -Iinclude -Ithird_party/md5 -Ithird_party/json -std=c++11" \
         "$HOME/.asdf/shims/pip3" install -U kapitan
 
-    "$HOME/.asdf/bin/asdf" reshim python3
+    "$HOME/.asdf/bin/asdf" reshim python
 fi
