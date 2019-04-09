@@ -33,12 +33,12 @@ brew pass
 brew pinentry-mac
 brew postgresql
 brew reattach-to-user-namespace
-brew ripgrep
 brew rtmpdump
 brew shellcheck
 brew socat
 brew sshfs
 brew terraform
+brew the_silver_searcher
 brew tmux
 brew trash
 brew tree

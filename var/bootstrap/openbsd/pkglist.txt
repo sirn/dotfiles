@@ -30,11 +30,11 @@ neovim
 node
 password-store
 postgresql-client
-ripgrep
 rtmpdump
 rust
 socat
 terraform
+the_silver_searcher
 tree
 unzip--iconv
 w3m--

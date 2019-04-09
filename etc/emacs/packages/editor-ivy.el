@@ -52,7 +52,7 @@
       "br" 'counsel-recentf
       "dv" 'counsel-describe-variable
       "df" 'counsel-describe-function
-      "/"  'counsel-rg)))
+      "/"  'counsel-ag)))
 
 
 (use-package counsel-projectile
@@ -65,7 +65,7 @@
     (declare-function counsel-projectile-mode nil))
 
   :commands
-  (counsel-projectile-rg
+  (counsel-projectile-ag
    counsel-projectile-find-file
    counsel-projectile-switch-project
    counsel-projectile-switch-to-buffer)
@@ -73,7 +73,7 @@
   :init
   (with-eval-after-load 'evil-leader
     (evil-leader/set-key
-      "p/" 'counsel-projectile-rg
+      "p/" 'counsel-projectile-ag
       "pf" 'counsel-projectile-find-file
       "pp" 'counsel-projectile-switch-project
       "pb" 'counsel-projectile-switch-to-buffer))

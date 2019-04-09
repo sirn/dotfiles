@@ -33,10 +33,10 @@ password-store
 postgresql10-client
 py36-ansible
 py36-asciinema
-ripgrep
 rtmpdump
 socat
 terraform
+the_silver_searcher
 tmux
 tree
 w3m
