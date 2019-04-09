@@ -197,8 +197,6 @@
     (declare-function global-undo-tree-mode nil))
 
   :init
-  (setq undo-tree-auto-save-history t)
-  (setq undo-tree-history-directory-alist `(("." . "~/.emacs.d/undo")))
   (with-eval-after-load 'evil-leader
     (evil-leader/set-key
       "uv" 'undo-tree-visualize))
