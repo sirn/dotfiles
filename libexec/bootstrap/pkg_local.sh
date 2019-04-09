@@ -69,7 +69,7 @@ esac
 
 if command -v rustc >/dev/null; then
     rust_ver="$(rustc --version | awk '{ print $2 }')"
-    rust_src_base="$HOME/lib/rustlib/src/rust"
+    rust_src_base="$HOME/.local/lib/rustlib/src/rust"
 
     if [ ! -d "$rust_src_base/rust-${rust_ver}" ]; then
         mkdir -p "$rust_src_base"

@@ -21,13 +21,7 @@ GOPATH=$HOME/Dev/go; export GOPATH
 PATH=$GOPATH/bin:$PATH
 
 if command -v rustc >/dev/null; then
-    RUST_SRC_PATH="$HOME/lib/rustlib/src/rust/src"
-
-    if [ ! -d "$RUST_SRC_PATH" ]; then
-        RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
-    fi
-
-    export RUST_SRC_PATH
+    RUST_SRC_PATH="$HOME/.local/lib/rustlib/src/rust/src"; export RUST_SRC_PATH
 fi
 
 
