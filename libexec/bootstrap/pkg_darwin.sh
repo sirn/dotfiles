@@ -17,16 +17,16 @@ if [ "$(uname)" != "Darwin" ]; then
 fi
 
 
-## Utils
+## Environment variables
 ##
 
-_brew_env() {
-    env \
-        HOMEBREW_NO_EMOJI=1 \
-        HOMEBREW_NO_ANALYTICS=1 \
-        HOMEBREW_NO_COLOR=1 \
-        "$@"
-}
+HOMEBREW_NO_EMOJI=1; export HOMEBREW_NO_EMOJI
+HOMEBREW_NO_ANALYTICS=1; export HOMEBREW_NO_ANALYTICS
+HOMEBREW_NO_COLOR=1; export HOMEBREW_NO_COLOR
+
+
+## Utils
+##
 
 _do_tap() {
     tap=$1; shift
@@ -37,7 +37,7 @@ _do_tap() {
         return
     fi
 
-    _brew_env brew tap "$tap"
+    brew tap "$tap"
 }
 
 _do_install() {
@@ -49,7 +49,7 @@ _do_install() {
     fi
 
     printe "Installing $pkg..."
-    _brew_env brew install "$pkg"
+    brew install "$pkg"
 }
 
 _do_cask_install() {
@@ -61,7 +61,7 @@ _do_cask_install() {
     fi
 
     printe "Installing $pkg..."
-    _brew_env brew cask install "$pkg"
+    brew cask install "$pkg"
 }
 
 _do_mas_install() {

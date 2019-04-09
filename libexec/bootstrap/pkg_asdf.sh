@@ -13,12 +13,14 @@ cd "$base_dir" || exit 1
 . ../../share/bootstrap/compat.sh
 
 
-## Utils
+## Environment variables
 ##
 
-_asdf_env() {
-    env PATH="$asdf_dir/bin:$asdf_dir/shims:$PATH" "$@"
-}
+PATH="$asdf_dir/bin:$asdf_dir/shims:$PATH"; export PATH
+
+
+## Utils
+##
 
 _do_plugin() {
     plugin=$1; shift
@@ -48,23 +50,23 @@ _do_install() {
     fi
 
     if [ "$(has_args "global" "$*")" = "1" ]; then
-         _asdf_env asdf global "$plugin" "$version"
+         asdf global "$plugin" "$version"
     fi
 
-     _asdf_env asdf reshim "$plugin"
+     asdf reshim "$plugin"
 }
 
 _do_pkginst() {
     plugin=$1; shift
     instcmd=$*; shift
 
-    pkglist="../../var/bootstrap/pkglist.${plugin}.txt"
+    pkglist="../../var/bootstrap/pkglist_${plugin}.txt"
 
     # shellcheck disable=SC2086
     for f in $(mangle_filename "$pkglist" "$platform" "$flavors"); do
         if [ -f "$f" ]; then
             printe_h2 "Installing ${plugin} packages from ${f##../../}..."
-            _asdf_env xargs $instcmd < "$f"
+            xargs $instcmd < "$f"
         fi
     done
 }
@@ -77,19 +79,19 @@ _install() {
     plugin=$1; shift
     version=$1; shift
 
-    _asdf_env asdf install "$plugin" "$version"
+    asdf install "$plugin" "$version"
 }
 
 _install_erlang_openbsd() {
     plugin=$1; shift
     version=$1; shift
 
-    if ! hash autoconf-2.69; then
+    if ! command -v autoconf-2.69 >/dev/null; then
         printe_err "Building erlang on OpenBSD requires autoconf 2.69"
         printe_err "Try \`pkg_add autoconf%2.69\`"
     fi
 
-    _asdf_env env \
+    env \
         AUTOCONF_VERSION=2.69 \
         asdf install "$plugin" "$version"
 }
@@ -111,7 +113,7 @@ _install_python_darwin() {
     fi
 
     # See https://github.com/pyenv/pyenv/issues/1219
-    _asdf_env env \
+    env \
         LDFLAGS="-L/usr/local/opt/zlib/lib -L/usr/local/opt/sqlite3/lib" \
         CPPFLAGS="-I/usr/local/opt/zlib/include -I/usr/local/opt/sqlite3/include" \
         asdf install "$plugin" "$version"
@@ -121,7 +123,7 @@ _install_ruby_freebsd() {
     plugin=$1; shift
     version=$1; shift
 
-    if ! hash gcc 2>/dev/null; then
+    if ! command -v gcc >/dev/null; then
         printe_err "Building ruby on FreeBSD requires gcc"
         printe_err "Try \`pkg install gcc\`"
         exit 1
@@ -129,7 +131,7 @@ _install_ruby_freebsd() {
 
     # For GCC, see https://github.com/ffi/ffi/issues/622
     # For DTrace, see https://github.com/rbenv/ruby-build/issues/1272
-    _asdf_env env \
+    env \
         CC="gcc" \
         CXX="g++" \
         RUBY_CONFIGURE_OPTS="--disable-dtrace" \
