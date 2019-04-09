@@ -8,10 +8,8 @@ set -e
 base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
 platform=$(uname | tr '[:upper:]' '[:lower:]')
 
-LC_ALL=en_US.UTF-8;
-
-PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
-PATH=$base_dir/libexec/linuxism:$HOME/.local/bin:$PATH
+LC_ALL=en_US.UTF-8
+PATH=$HOME/.local/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 
 export LC_ALL
 export PATH
