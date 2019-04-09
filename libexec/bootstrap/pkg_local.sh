@@ -195,7 +195,7 @@ fi
 ##
 
 if [ "$(has_args "kubernetes" "$flavors")" = "1" ]; then
-    if ! command clang >/dev/null; then
+    if ! command -v clang >/dev/null; then
         printe_err "Kubernetes flavor requires clang"
         exit 1
     fi

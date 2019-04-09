@@ -6,13 +6,21 @@
 ## Aliases
 ##
 
-case "$(uname)" in
-    OpenBSD )
-        if hash colorls 2>/dev/null; then
+platform="$(uname | tr '[:upper:]' '[:lower:]')"
+
+case "$platform" in
+    openbsd )
+        alias scp='rsync --archive --progress --rsh=ssh'
+        if command -v colorls >/dev/null; then
             alias ls="colorls -G"
         fi
-    ;;
-    FreeBSD )
+        ;;
+    darwin )
+        alias scp='rsync --archive --acls --progress --rsh=ssh'
+        alias ls='ls -G'
+        ;;
+    * )
+        alias scp='rsync --archive --xattrs --acls --progress --rsh=ssh'
         alias ls='ls -G'
         ;;
 esac
@@ -21,16 +29,15 @@ alias ll='ls -lh'
 alias la='ls -alh'
 
 alias gpg='gpg2'
-alias scp='rsync --archive --xattrs --acls --progress --rsh=ssh'
 alias sshi='ssh -F /dev/null -o UserKnownHostsFile=/dev/null'
 
-if hash nvim 2>/dev/null; then
+if command -v nvim >/dev/null; then
     alias nvi="nvim"
     alias vi="nvim"
     alias vim="nvim"
 fi
 
-if hash emacsclient 2>/dev/null; then
+if command -v emacsclient >/dev/null; then
     alias emacs='$HOME/.dotfiles/bin/emacsclient.sh'
     EDITOR="$HOME/.dotfiles/bin/emacsclient.sh"; export EDITOR
 fi
@@ -46,7 +53,7 @@ HISTSIZE=10000; export HISTSIZE
 ## GPG
 ##
 
-if hash gpg-connect-agent 2>/dev/null; then
+if command -v gpg-connect-agent >/dev/null; then
     gpg-connect-agent updatestartuptty /bye >/dev/null
 fi
 
