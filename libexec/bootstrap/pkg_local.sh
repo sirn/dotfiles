@@ -74,6 +74,11 @@ _rust_env; if hash cargo 2>/dev/null; then
         printe_h2 "Installing rust packages from ${f##../../}..."
 
         while read -r spec; do
+            case "$spec" in
+                "#"* | "" ) continue;;
+                *) spec="${spec%%#*}";;
+            esac
+
             bin="${spec%%:*}"
             install="${spec##$bin:}"
 
@@ -163,6 +168,11 @@ for f in $(mangle_file "$haskell_pkglist" "$platform" "$flavors"); do
     printe_h2 "Installing haskell cabal packages from ${f##../../}..."
 
     while read -r spec; do
+        case "$spec" in
+            "#"* | "" ) continue;;
+            *) spec="${spec%%#*}";;
+        esac
+
         bin="${spec%%:*}"
         install="${spec##$bin:}"
 
