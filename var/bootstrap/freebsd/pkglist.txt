@@ -17,7 +17,9 @@ gnupg
 go
 google-cloud-sdk
 graphviz
+hs-ShellCheck
 hs-cabal-install
+hs-pandoc
 ipcalc
 jq
 leiningen

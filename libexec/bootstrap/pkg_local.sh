@@ -24,7 +24,7 @@ _prepare_wxallowed() {
         openbsd )
             wxdir="/usr/local/$name"
 
-            printe_h2 "$name requires wxallowed, setting up $wxdir..."
+            printe_info "$name requires wxallowed, setting up $wxdir..."
 
             if [ ! -d "$wxdir" ]; then
                 run_root mkdir -p "$wxdir"
@@ -59,7 +59,7 @@ case "$platform" in
         ;;
 
     * )
-        PATH="$HOME/.cargo/bin:$PATH"; export PATH
+        PATH="$HOME/.cargo/bin:$PATH"
 
         if [ ! -x "$HOME/.cargo/bin/rustup" ]; then
             fetch_url - https://sh.rustup.rs | sh -s - -y --no-modify-path
@@ -148,10 +148,16 @@ if command -v cabal >/dev/null; then
     case "$platform" in
         openbsd )
             mkdir -p "$HOME/.cabal/build"
-            TMPDIR=/usr/local/cabal/build; export TMPDIR
+
+            _haskell_cabal() {
+                env TMPDIR=/usr/local/cabal/build cabal "$@"
+            }
             ;;
 
         * )
+            _haskell_cabal() {
+                cabal "$@"
+            }
             ;;
     esac
 
@@ -165,7 +171,7 @@ if command -v cabal >/dev/null; then
 
     if [ ! -d "$HOME/.cabal/packages/hackage.haskell.org" ]; then
         printe_h2 "Updating haskell cabal package index..."
-        cabal "${haskell_cabal_prefix}update"
+        _haskell_cabal "${haskell_cabal_prefix}update"
     fi
 
     for f in $(mangle_file "$haskell_pkglist" "$platform" "$flavors"); do
@@ -185,7 +191,7 @@ if command -v cabal >/dev/null; then
                 continue
             fi
 
-            eval cabal "${haskell_cabal_prefix}install" "$install"
+            eval _haskell_cabal "${haskell_cabal_prefix}install" "$install"
         done < "$f"
     done
 fi
