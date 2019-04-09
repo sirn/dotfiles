@@ -88,6 +88,8 @@ fi
 rust_pkglist="../../var/bootstrap/pkglist_rust.txt"
 
 if command -v cargo >/dev/null; then
+    _prepare_wxallowed cargo "$HOME/.cargo"
+
     for f in $(mangle_file "$rust_pkglist" "$platform" "$flavors"); do
         printe_h2 "Installing rust packages from ${f##../../}..."
 
@@ -135,7 +137,7 @@ if command -v npm >/dev/null; then
 fi
 
 
-## Haskell and friends
+## Haskell
 ##
 
 haskell_pkglist="../../var/bootstrap/pkglist_haskell.txt"
