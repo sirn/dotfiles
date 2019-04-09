@@ -11,6 +11,7 @@ duplicity
 emacs--no_x11
 expect
 ffmpeg
+gdiff
 ghc
 git
 git-lfs

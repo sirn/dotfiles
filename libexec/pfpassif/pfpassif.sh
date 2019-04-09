@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 # A simple script to setup pf pass rule for dynamically created network
 # interfaces such as vboxnet using pf anchor. It is designed to be used
 # with devd(8).
