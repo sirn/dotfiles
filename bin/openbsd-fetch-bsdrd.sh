@@ -33,3 +33,4 @@ _key2="$(find /etc/signify/openbsd-??-base.pub | tail -2 | tail -1)"
 (signify -C -p "$_key1" -x SHA256.sig bsd.rd || signify -C -p "$_key2" -x SHA256.sig bsd.rd) || exit 1
 
 mv bsd.rd /
+chmod 700 /bsd.rd

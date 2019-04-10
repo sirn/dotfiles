@@ -15,7 +15,6 @@ export LC_ALL
 export PATH
 
 cd "$base_dir" || exit 1
-. share/bootstrap/compat.sh
 . share/bootstrap/funcs.sh
 
 

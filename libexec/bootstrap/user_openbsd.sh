@@ -8,7 +8,6 @@ flavors=$*
 
 cd "$base_dir" || exit 1
 . ../../share/bootstrap/funcs.sh
-. ../../share/bootstrap/compat.sh
 
 if [ "$(uname)" != "OpenBSD" ]; then
     printe_err "Not an OpenBSD system"

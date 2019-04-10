@@ -6,17 +6,16 @@
 base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
 platform=$(uname | tr '[:upper:]' '[:lower:]')
 flavors=$*
-asdf_dir="$HOME/.asdf"
+asdf_dir=$HOME/.asdf
 
 cd "$base_dir" || exit 1
 . ../../share/bootstrap/funcs.sh
-. ../../share/bootstrap/compat.sh
 
 
 ## Environment variables
 ##
 
-PATH="$asdf_dir/bin:$asdf_dir/shims:$PATH"; export PATH
+PATH=$asdf_dir/bin:$asdf_dir/shims:$PATH; export PATH
 
 if command -v cc >/dev/null; then
     CC=cc; export CC
@@ -39,19 +38,19 @@ _do_install() {
     version=$1; shift
 
     if [ ! -d "$asdf_dir/installs/$plugin/$version" ]; then
-        install="_install"
-        custom_install="_install_${plugin}"
-        platform_install="_install_${plugin}_${platform}"
+        install=_install
+        custom_install=_install_$plugin
+        platform_install=_install_${plugin}_$platform
 
         if [ "$(command -v "$platform_install")x" != "x" ]; then
             printe_info "Running $platform installation script for $plugin..."
-            install="$platform_install"
+            install=$platform_install
         elif [ "$(command -v "$custom_install")x" != "x" ]; then
             printe_info "Running custom installation script for $plugin..."
-            install="$custom_install"
+            install=$custom_install
         fi
 
-        "$install" "$plugin" "$version"
+        $install "$plugin" "$version"
     fi
 
     if [ "$(has_args "global" "$*")" = "1" ]; then
@@ -65,11 +64,11 @@ _do_pkginst() {
     plugin=$1; shift
     instcmd=$*; shift
 
-    pkglist="../../var/bootstrap/pkglist_${plugin}.txt"
+    pkglist=../../var/bootstrap/pkglist_$plugin.txt
 
     # shellcheck disable=SC2086
-    for f in $(mangle_file "$pkglist" "$platform" "$flavors"); do
-        printe_h2 "Installing ${plugin} packages from ${f##../../}..."
+    for f in $(mangle_file $pkglist $platform "$flavors"); do
+        printe_h2 "Installing $plugin packages from ${f##../../}..."
         xargs $instcmd < "$f"
     done
 }
@@ -130,20 +129,20 @@ printe_h2 "Installing asdf..."
 
 git_clone_update https://github.com/asdf-vm/asdf.git "$asdf_dir"
 
-asdf_spec="../../var/bootstrap/asdf.txt"
+asdf_spec=../../var/bootstrap/asdf.txt
 
 for f in $(mangle_file "$asdf_spec" "$platform" "$flavors"); do
     printe_h2 "Installing asdf packages from ${f##../../}..."
 
-    while read -r spec; do
-        case "$spec" in
+    while read -r line; do
+        case $line in
             "#"* | "" ) continue;;
-            *) spec="${spec%%#*}";;
+            *) line="${line%%#*}";;
         esac
 
-        eval set -- "$spec"
+        eval set -- "$line"
 
-        case "$1" in
+        case $1 in
             plugin )  shift; _do_plugin  "$@";;
             install ) shift; _do_install "$@";;
             pkginst ) shift; _do_pkginst "$@";;

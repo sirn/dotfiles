@@ -8,13 +8,12 @@ platform=$(uname | tr '[:upper:]' '[:lower:]')
 
 cd "$base_dir" || exit 1
 . ../../share/bootstrap/funcs.sh
-. ../../share/bootstrap/compat.sh
 
 
 ## Main
 ##
 
-conf_file="$(mangle_file1 "../../var/bootstrap/shell.txt" "$platform")"
+conf_file=$(mangle_file1 ../../var/bootstrap/shell.txt "$platform")
 
 if [ -z "$conf_file" ]; then
     printe_info "Shell configuration not found, skipping"
@@ -30,12 +29,10 @@ if [ -z "$shell" ]; then
     exit
 fi
 
-if ! hash "$shell" 2>/dev/null; then
+if ! shell_bin=$(command -v "$shell" >/dev/null); then
     printe_err "$shell is not a valid shell, aborting"
     exit 1
 fi
-
-shell_bin="$(command -v "$shell")"
 
 if ! grep -q "$shell_bin" /etc/shells; then
     printe_info "Adding $shell_bin to /etc/shells..."

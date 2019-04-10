@@ -8,7 +8,6 @@ flavors=$*
 
 cd "$base_dir" || exit 1
 . ../../share/bootstrap/funcs.sh
-. ../../share/bootstrap/compat.sh
 
 if [ "$(uname)" != "FreeBSD" ]; then
     printe_err "Not a FreeBSD system"
@@ -28,9 +27,9 @@ fi
 ## Installs
 ##
 
-pkglist="../../var/bootstrap/freebsd/pkglist.txt"
+pkglist=../../var/bootstrap/freebsd/pkglist.txt
 
-for f in $(mangle_file "$pkglist" none "$flavors"); do
+for f in $(mangle_file $pkglist none "$flavors"); do
     printe_h2 "Installing packages from ${f##../../}..."
     run_root xargs pkg install -y < "$f"
 done

@@ -4,12 +4,11 @@
 #
 
 base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
-brew_dir="/usr/local/Homebrew"
+brew_dir=/usr/local/Homebrew
 flavors=$*
 
 cd "$base_dir" || exit 1
 . ../../share/bootstrap/funcs.sh
-. ../../share/bootstrap/compat.sh
 
 if [ "$(uname)" != "Darwin" ]; then
     printe_err "Not a Darwin system"
@@ -31,7 +30,7 @@ HOMEBREW_NO_COLOR=1; export HOMEBREW_NO_COLOR
 _do_tap() {
     tap=$1; shift
 
-    repo="$(printf "%s" "$tap" | sed 's|\(.*\)/\([^/]*\)$|\1/homebrew-\2|')"
+    repo=$(printf "%s" "$tap" | sed 's|\(.*\)/\([^/]*\)$|\1/homebrew-\2|')
     if [ -d "$brew_dir/Library/Taps/$repo" ]; then
         printe "$tap already tapped"
         return
@@ -68,7 +67,7 @@ _do_mas_install() {
     pkg_id=$1; shift
     app_name=$*
 
-    if [ -d "/Applications/${app_name}.app" ]; then
+    if [ -d "/Applications/$app_name.app" ]; then
         printe "$app_name (mas) already installed"
         return
     fi
@@ -86,9 +85,9 @@ if [ ! -x /usr/local/bin/brew ]; then
 
     xcode-select --install 2>/dev/null
 
-    sdk="/Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg"
-    if [ -e "$sdk" ] && [ ! -f /usr/lib/bundle1.o ]; then
-        run_root /usr/sbin/installer -pkg "$sdk" -target /
+    sdk=/Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg
+    if [ -e $sdk ] && [ ! -f /usr/lib/bundle1.o ]; then
+        run_root /usr/sbin/installer -pkg $sdk -target /
     fi
 
     fetch_url - https://raw.githubusercontent.com/Homebrew/install/master/install | /usr/bin/ruby
@@ -103,18 +102,18 @@ _do_install mas
 ## Installs
 ##
 
-pkglist="../../var/bootstrap/darwin/pkglist.txt"
+pkglist=../../var/bootstrap/darwin/pkglist.txt
 
-for f in $(mangle_file "$pkglist" none "$flavors"); do
+for f in $(mangle_file $pkglist none "$flavors"); do
     printe_h2 "Installing packages from ${f##../../}..."
 
-    while read -r spec; do
-        case "$spec" in
+    while read -r line; do
+        case $line in
             "#"* | "" ) continue;;
-            *) spec="${spec%%#*}";;
+            *) line=${line%%#*};;
         esac
 
-        eval set -- "$spec"
+        eval set -- "$line"
 
         case "$1" in
             tap  ) shift; _do_tap "$@";;

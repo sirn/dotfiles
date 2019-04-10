@@ -7,7 +7,6 @@ base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
 
 cd "$base_dir" || exit 1
 . ../../share/bootstrap/funcs.sh
-. ../../share/bootstrap/compat.sh
 
 if [ "$(uname)" != "FreeBSD" ]; then
     printe_err "Not a FreeBSD system"
@@ -67,7 +66,7 @@ run_root sysrc pf_enable=YES
 
 _start_service pf
 
-if [ "$pf_updated" = "1" ]; then
+if [ $pf_updated = "1" ]; then
     if ! run_root pfctl -nf /etc/pf.conf; then
         printe_err "/etc/pf.conf has been updated but contained errors, exiting"
         exit 1
