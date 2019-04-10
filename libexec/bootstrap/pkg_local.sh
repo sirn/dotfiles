@@ -11,6 +11,13 @@ cd "$base_dir" || exit 1
 . ../../share/bootstrap/funcs.sh
 
 
+## Tmp
+##
+
+build_dir=$(mktemp -d)
+trap 'rm -rf $build_dir' 0 1 2 3 6 14 15
+
+
 ## Utils
 ##
 
@@ -184,21 +191,109 @@ if command -v cabal >/dev/null; then
 fi
 
 
-## Kubernetes flavor
+## Kubernetes
 ##
 
 if [ "$(has_args "kubernetes" "$flavors")" = "1" ]; then
     printe_h2 "Installing kubectx..."
 
     git_clone_update https://github.com/ahmetb/kubectx.git "$HOME/.local/src/kubectx"
-    ln -fs "$HOME/.local/src/kubectx/kubectx" "$HOME/.local/bin/kubectx"
-    ln -fs "$HOME/.local/src/kubectx/kubens" "$HOME/.local/bin/kubens"
+    make_link "$HOME/.local/src/kubectx/kubectx" "$HOME/.local/bin/kubectx"
+    make_link "$HOME/.local/src/kubectx/kubens" "$HOME/.local/bin/kubens"
+
+    ## Kapitan
+    ## <rant>I hope to never touch this again</rant>
+    ##
 
     printe_h2 "Installing kapitan..."
 
-    env \
-        CXXFLAGS="-fPIC -Iinclude -Ithird_party/md5 -Ithird_party/json -std=c++11" \
-        "$HOME/.asdf/shims/pip3" install -U kapitan
+    # Kapitan has a strict version lock and require updating other dependencies
+    # every time Kapitan is updated. We're locking the version here to ensure
+    # custom-built dependencies (e.g. py-cryptography) works.
+    kapitan_ver=0.23.0
+    cryptography_ver=2.6.1
+    jsonnet_ver=0.12.1
 
+    # py-cryptography doesn't work well under LibreSSL (e.g. OpenBSD) without
+    # patching the CFFI source to disable some OpenSSL features.
+    case $(openssl version) in
+        LibreSSL* )
+            printe_info "Patching py-cryptography for libressl..."
+
+            if "$HOME/.asdf/shims/python3" -c 'import cryptography' >/dev/null 2>&1; then
+                printe "py-cryptography is already installed, skipping"
+            else
+                fetch_gh_archive - "pyca/cryptography" "$cryptography_ver" | tar -C "$build_dir" -xzf -
+                cd "$build_dir/cryptography-$cryptography_ver" || exit 1
+                for filename in \
+                    security/py-cryptography/patches/patch-src__cffi_src_openssl_ssl_py \
+                    security/py-cryptography/patches/patch-src__cffi_src_openssl_x509_vfy_py; do
+                    fetch_gh_raw - \
+                            openbsd/ports \
+                            6fb634bd079c63a17a8f3f0a00a4e119b91bc9ad \
+                            $filename |
+                        patch -p0
+                done
+
+                "$HOME/.asdf/shims/pip3" install .
+                cd "$base_dir"
+            fi
+            ;;
+
+        * )
+            "$HOME/.asdf/shims/pip3" install cryptography==$cryptography_ver
+            ;;
+    esac
+
+    # py-jsonnet assumes make is GNU make and provides no way to override so
+    # we need to patch it to explicitly call gmake rather than make.
+    case $platform in
+        openbsd | freebsd )
+            printe_info "Patching jsonnet for $(uname)..."
+
+            if ! command -v gmake >/dev/null; then
+                printe_err "Building jsonnet on OpenBSD/FreeBSD requires gmake"
+                printe_err "Try \`pkg install gmake\` or \`pkg_add gmake\`"
+                exit 1
+            fi
+
+            if "$HOME/.asdf/shims/python3" -c 'import jsonnet' >/dev/null 2>&1; then
+                printe "jsonnet is already installed, skipping"
+            else
+                fetch_gh_archive - google/jsonnet "v$jsonnet_ver" | tar -C "$build_dir" -xzf -
+                cd "$build_dir/jsonnet-$jsonnet_ver" || exit 1
+                sed "s/'make'/'gmake'/g" < setup.py > setup.py.new
+                mv setup.py.new setup.py
+
+                # Jsonnet also assumes od is GNU-compatible *rage*
+                od_bin="od"
+
+                if [ "$platform" = "openbsd" ]; then
+                    if ! command -v ggod >/dev/null; then
+                        printe_err "Building jsonnet on OpenBSD requires coreutils"
+                        printe_err "Try \`pkg_add coreutils\`"
+                        exit 1
+                    fi
+
+                    od_bin=ggod
+                fi
+
+                env \
+                    OD=$od_bin \
+                    CC=cc \
+                    CXX=c++ \
+                    CXXFLAGS="-fPIC -Iinclude -Ithird_party/md5 -Ithird_party/json -std=c++11" \
+                    "$HOME/.asdf/shims/pip3" install .
+                cd "$base_dir"
+            fi
+            ;;
+
+        * )
+            env \
+                CXXFLAGS="-fPIC -Iinclude -Ithird_party/md5 -Ithird_party/json -std=c++11" \
+                "$HOME/.asdf/shims/pip3" install jsonnet==$jsonnet_ver
+    esac
+
+    env "$HOME/.asdf/shims/pip3" install kapitan==$kapitan_ver
     "$HOME/.asdf/bin/asdf" reshim python
 fi
