@@ -18,7 +18,7 @@ if [ "$(id -u)" != "0" ]; then
     exit 1
 fi
 
-_mirror_url="https://cloudflare.cdn.openbsd.org/pub/OpenBSD/snapshots/$(uname -m)"
+_mirror_url="https://cdn.openbsd.org/pub/OpenBSD/snapshots/$(uname -m)"
 _tmp="$(mktemp -d)"
 
 trap 'rm -rf $_tmp' 0 1 2 3 6 14 15
