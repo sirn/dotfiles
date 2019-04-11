@@ -191,6 +191,90 @@ if command -v cabal >/dev/null; then
 fi
 
 
+## Extra packages
+## These are packages that I use but not available under $platform
+##
+
+execline_ver=2.5.1.0
+skalibs_ver=2.8.0.1
+git_crypt_ver=0.6.0
+
+case $platform in
+    openbsd )
+        ## execline
+        ##
+
+        printe_h2 "Installing execline..."
+
+        if ! command -v gmake >/dev/null; then
+            printe_err "Building execline on OpenBSD requires gmake..."
+            printe_err "Try \`pkg_add gmake\`"
+            exit 1
+        fi
+
+        if [ -d "$HOME/.local/lib/skalibs" ]; then
+            printe "skalibs already installed"
+        else
+            fetch_gh_archive - skarnet/skalibs "v$skalibs_ver" | tar -C "$build_dir" -xzf -
+            cd "$build_dir/skalibs-$skalibs_ver" || exit 1
+            ./configure \
+                --disable-shared \
+                --prefix="$HOME/.local" \
+                --libdir="$HOME/.local/lib"
+            gmake install
+            cd "$base_dir" || exit 1
+        fi
+
+        if [ -x "$HOME/.local/bin/execlineb" ]; then
+            printe "execline already installed"
+        else
+            fetch_gh_archive - skarnet/execline "v$execline_ver" | tar -C "$build_dir" -xzf -
+            cd "$build_dir/execline-$execline_ver" || exit 1
+            ./configure \
+                --disable-shared \
+                --prefix="$HOME/.local" \
+                --with-include="$HOME/.local/include" \
+                --with-lib="$HOME/.local/lib" \
+                --with-sysdeps="$HOME/.local/lib/skalibs/sysdeps"
+            gmake install
+            cd "$base_dir" || exit 1
+        fi
+
+        ## git-crypt
+        ##
+
+        printe_h2 "Installing git-crypt..."
+
+        if [ -x "$HOME/.local/bin/git-crypt" ]; then
+            printe "git-crypt already installed"
+        else
+            fetch_gh_archive - AGWA/git-crypt "$git_crypt_ver" | tar -C "$build_dir" -xzf -
+            cd "$build_dir/git-crypt-${git_crypt_ver}" || exit 1
+            make
+            make PREFIX="$HOME/.local" install
+            cd "$base_dir" || exit 1
+        fi
+
+        ## Leiningen
+        ##
+
+        printe_h2 "Installing leiningen..."
+
+        if [ -x "$HOME/.local/bin/lein" ]; then
+            printe "leiningen already installed"
+        else
+            fetch_gh_raw "$HOME/.local/bin/lein" technomancy/leiningen stable bin/lein
+            chmod 0755 "$HOME/.local/bin/lein"
+            printe "leiningen has been successfully installed"
+        fi
+
+        ;;
+
+    * )
+        ;;
+esac
+
+
 ## Kubernetes
 ##
 
@@ -216,12 +300,12 @@ if [ "$(has_args "kubernetes" "$flavors")" = "1" ]; then
 
     # py-cryptography doesn't work well under LibreSSL (e.g. OpenBSD) without
     # patching the CFFI source to disable some OpenSSL features.
-    case $(openssl version) in
-        LibreSSL* )
+    case $(openssl version | tr '[:upper:]' '[:lower:]') in
+        libressl* )
             printe_info "Patching py-cryptography for libressl..."
 
             if "$HOME/.asdf/shims/python3" -c 'import cryptography' >/dev/null 2>&1; then
-                printe "py-cryptography is already installed, skipping"
+                printe "py-cryptography already installed"
             else
                 fetch_gh_archive - "pyca/cryptography" "$cryptography_ver" | tar -C "$build_dir" -xzf -
                 cd "$build_dir/cryptography-$cryptography_ver" || exit 1
@@ -236,7 +320,7 @@ if [ "$(has_args "kubernetes" "$flavors")" = "1" ]; then
                 done
 
                 "$HOME/.asdf/shims/pip3" install .
-                cd "$base_dir"
+                cd "$base_dir" || exit 1
             fi
             ;;
 
@@ -248,17 +332,17 @@ if [ "$(has_args "kubernetes" "$flavors")" = "1" ]; then
     # py-jsonnet assumes make is GNU make and provides no way to override so
     # we need to patch it to explicitly call gmake rather than make.
     case $platform in
-        openbsd | freebsd )
+        freebsd | openbsd )
             printe_info "Patching jsonnet for $(uname)..."
 
             if ! command -v gmake >/dev/null; then
-                printe_err "Building jsonnet on OpenBSD/FreeBSD requires gmake"
+                printe_err "Building jsonnet on FreeBSD/OpenBSD requires gmake"
                 printe_err "Try \`pkg install gmake\` or \`pkg_add gmake\`"
                 exit 1
             fi
 
             if "$HOME/.asdf/shims/python3" -c 'import jsonnet' >/dev/null 2>&1; then
-                printe "jsonnet is already installed, skipping"
+                printe "jsonnet already installed"
             else
                 fetch_gh_archive - google/jsonnet "v$jsonnet_ver" | tar -C "$build_dir" -xzf -
                 cd "$build_dir/jsonnet-$jsonnet_ver" || exit 1
@@ -284,7 +368,7 @@ if [ "$(has_args "kubernetes" "$flavors")" = "1" ]; then
                     CXX=c++ \
                     CXXFLAGS="-fPIC -Iinclude -Ithird_party/md5 -Ithird_party/json -std=c++11" \
                     "$HOME/.asdf/shims/pip3" install .
-                cd "$base_dir"
+                cd "$base_dir" || exit 1
             fi
             ;;
 

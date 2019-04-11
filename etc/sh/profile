@@ -13,6 +13,7 @@ XDG_DATA_HOME=$HOME/.data; export XDG_DATA_HOME
 XDG_STATE_HOME=$HOME/.state; export XDG_STATE_HOME
 
 PATH=$HOME/.local/bin:/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+PATH=$PATH:/usr/local/jdk-1.8.0/bin
 PATH=$HOME/.cache/rebar3/bin:$PATH
 PATH=$HOME/.cabal/bin:$PATH
 PATH=$HOME/.cargo/bin:$PATH
@@ -20,9 +21,7 @@ PATH=$HOME/.cargo/bin:$PATH
 GOPATH=$HOME/Dev/go; export GOPATH
 PATH=$GOPATH/bin:$PATH
 
-if command -v rustc >/dev/null; then
-    RUST_SRC_PATH="$HOME/.local/lib/rustlib/src/rust/src"; export RUST_SRC_PATH
-fi
+RUST_SRC_PATH="$HOME/.local/lib/rustlib/src/rust/src"; export RUST_SRC_PATH
 
 
 ## Platform-specific
