@@ -15,7 +15,9 @@ cd "$base_dir" || exit 1
 ##
 
 build_dir=$(mktemp -d)
-trap 'rm -rf $build_dir' 0 1 2 3 6 14 15
+if ! normalize_bool "$NO_CLEAN_BUILDDIR"; then
+    trap 'rm -rf $build_dir' 0 1 2 3 6 14 15
+fi
 
 
 ## Utils
@@ -197,6 +199,15 @@ git_crypt_ver=0.6.0
 
 case $platform in
     openbsd )
+        ## gcloud
+        ##
+
+        printe_h2 "Creating Google Cloud state directory..."
+
+        if file_absent "/usr/local/google-cloud-sdk/.install"; then
+            run_root mkdir -p /usr/local/google-cloud-sdk/.install
+        fi
+
         ## execline
         ##
 
@@ -263,6 +274,70 @@ esac
 ##
 
 if has_args "kubernetes" "$flavors"; then
+
+    case $platform in
+        openbsd )
+            ## Kubectl
+            ## Using master until updated vendor is in release:
+            ## https://github.com/kubernetes/kubernetes/tree/master/vendor
+            ##
+
+            printe_h2 "Installing kubectl..."
+            kubectl_ver=master
+
+            require_go "kubectl"
+
+            if file_absent "$HOME/.local/bin/kubectl"; then
+                fetch_gh_archive - kubernetes/kubernetes "$kubectl_ver" | tar -C "$build_dir" -xzf -
+                mkdir -p "$build_dir/go/src/k8s.io"
+                mv "$build_dir/kubernetes-$kubectl_ver" "$build_dir/go/src/k8s.io/kubernetes"
+
+                cd "$build_dir/go/src/k8s.io/kubernetes/cmd/kubectl" || exit 1
+                env GOPATH="$build_dir/go" \
+                    PATH="$build_dir/go/bin:$PATH" \
+                    go install .
+
+                cp "$build_dir/go/bin/kubectl" "$HOME/.local/bin/kubectl"
+                printe "kubectl has been successfully installed"
+
+                cd "$base_dir" || exit 1
+            fi
+
+            ## Helm
+            ##
+
+            printe_h2 "Installing helm..."
+            helm_ver=2.13.1
+
+            require_go "helm"
+            require_gmake "kubectl"
+
+            if file_absent "$HOME/.local/bin/helm"; then
+                fetch_gh_archive - helm/helm "v$helm_ver" | tar -C "$build_dir" -xzf -
+                mkdir -p "$build_dir/go/src/k8s.io"
+                mv "$build_dir/helm-$helm_ver" "$build_dir/go/src/k8s.io/helm"
+
+                cd "$build_dir/go/src/k8s.io/helm"
+                env GOPATH="$build_dir/go" \
+                    PATH="$build_dir/go/bin:$PATH" \
+                    gmake bootstrap build
+
+                cp "$build_dir/go/src/k8s.io/helm/bin/helm" "$HOME/.local/bin/helm"
+                cp "$build_dir/go/src/k8s.io/helm/bin/tiller" "$HOME/.local/bin/tiller"
+                printe "kubectl has been successfully installed"
+
+                cd "$base_dir" || exit 1
+            fi
+
+            ;;
+
+        * )
+            ;;
+    esac
+
+    ## Kubectx
+    ##
+
     printe_h2 "Installing kubectx..."
 
     git_clone_update https://github.com/ahmetb/kubectx.git "$HOME/.local/src/kubectx"
@@ -319,18 +394,17 @@ if has_args "kubernetes" "$flavors"; then
 
             require_gmake "jsonnet"
 
-            if "$HOME/.asdf/shims/python3" -c 'import jsonnet' >/dev/null 2>&1; then
+            if "$HOME/.asdf/shims/python3" -c 'import _jsonnet' >/dev/null 2>&1; then
                 printe "jsonnet already installed"
             else
                 fetch_gh_archive - google/jsonnet "v$jsonnet_ver" | tar -C "$build_dir" -xzf -
                 cd "$build_dir/jsonnet-$jsonnet_ver" || exit 1
 
-                # py-jsonnet assumes make is GNU make and provides no way to override so
-                # we need to patch it to explicitly call gmake rather than make.
+                # py-jsonnet assumes make is GNU make
                 sed "s/'make'/'gmake'/g" < setup.py > setup.py.new
                 mv setup.py.new setup.py
 
-                # Jsonnet also assumes od is GNU-compatible *rage*
+                # Jsonnet also assumes od is GNU-compatible
                 od_bin="od"
                 if [ "$platform" = "openbsd" ]; then
                     require_coreutils "jsonnet"

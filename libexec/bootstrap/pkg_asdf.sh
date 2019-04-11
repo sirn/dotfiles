@@ -16,7 +16,9 @@ cd "$base_dir" || exit 1
 ##
 
 build_dir=$(mktemp -d)
-trap 'rm -rf $build_dir' 0 1 2 3 6 14 15
+if ! normalize_bool "$NO_CLEAN_BUILDDIR"; then
+    trap 'rm -rf $build_dir' 0 1 2 3 6 14 15
+fi
 
 
 ## Environment variables
