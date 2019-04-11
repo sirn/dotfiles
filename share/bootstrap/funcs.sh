@@ -30,6 +30,7 @@ printe_err() {
     printe "$(basename "$0"): $*"
 }
 
+
 ## Compat
 ##
 
@@ -72,8 +73,8 @@ normalize_bool() {
     value=$1; shift
 
     case $value in
-        t* | T* | y* | Y* | 1 ) printf "1";;
-        * ) printf "0";;
+        t* | T* | y* | Y* | 1 ) return 0;;
+        * ) return 1;;
     esac
 }
 
@@ -87,10 +88,10 @@ has_args() {
 
     case $haystack in
         *" $needle" | "$needle "* | "$needle" | *" $needle "* )
-            printf "1"
+            return 0
             ;;
         * )
-            printf "0"
+            return 1
             ;;
     esac
 }
@@ -105,8 +106,10 @@ version_gte() {
         head -n 1)
 
     if [ "$left" = "$min_ver" ]; then
-        printf "1"
+        return 0
     fi
+
+    return 1
 }
 
 
@@ -141,6 +144,17 @@ fetch_gh_raw() {
     gh_path=$1; shift
 
     fetch_url "$output" "https://raw.githubusercontent.com/$gh_repo/$gh_ref/$gh_path"
+}
+
+file_absent() {
+    path=$1; shift
+
+    if [ -e "$path" ]; then
+        printe "$path already exists"
+        return 1
+    fi
+
+    return 0
 }
 
 mangle_filename() {
@@ -202,7 +216,7 @@ make_link() {
     src=$1; shift
     dest=$1; shift
 
-    if [ ! -f "$src" ]; then
+    if [ ! -e "$src" ]; then
         printe "$src doesn't exists, skipping..."
         return
     fi
@@ -272,6 +286,118 @@ _service_running_freebsd() {
             ;;
         * )
             printf "0"
+            ;;
+    esac
+}
+
+
+## Reqs
+##
+
+require_autoconf() {
+    what=$1; shift
+
+    if ! command -v autoconf >/dev/null; then
+        printe_err "Building $what on $(uname) requires autoconf"
+
+        case $(uname) in
+            OpenBSD ) printe_err "Try \`pkg_add metaauto autoconf%2.69\`";;
+            FreeBSD ) printe_err "Try \`pkg install autoconf\`";;
+            Darwin )  printe_err "Try \`brew install autoconf\`";;
+        esac
+
+        exit 1
+    fi
+}
+
+require_bash() {
+    what=$1; shift
+
+    if ! command -v bash >/dev/null; then
+        printe_err "Building $what on $(uname) requires bash"
+
+        case $(uname) in
+            OpenBSD ) printe_err "Try \`pkg_add bash\`";;
+            FreeBSD ) printe_err "Try \`pkg install bash\`";;
+            Darwin )  printe_err "Try \`brew install bash\`";;
+        esac
+
+        exit 1
+    fi
+}
+
+require_coreutils() {
+    what=$1; shift
+
+    if ! command -v gls >/dev/null; then
+        printe_err "Building $what on $(uname) requires coreutils"
+
+        case $(uname) in
+            OpenBSD ) printe_err "Try \`pkg_add coreutils\`";;
+            FreeBSD ) printe_err "Try \`pkg install coreutils\`";;
+            Darwin )  printe_err "Try \`brew install coreutils\`";;
+        esac
+
+        exit 1
+    fi
+}
+
+require_gmake() {
+    what=$1; shift
+
+    if ! command -v gmake >/dev/null; then
+        printe_err "Building $what on $(uname) requires gmake"
+
+        case $(uname) in
+            OpenBSD ) printe_err "Try \`pkg_add gmake\`";;
+            FreeBSD ) printe_err "Try \`pkg install gmake\`";;
+            Darwin )  printe_err "Try \`brew install gmake\`";;
+        esac
+
+        exit 1
+    fi
+}
+
+require_go() {
+    what=$1; shift
+
+    if ! command -v go >/dev/null; then
+        printe_err "Building $what on $(uname) requires go"
+
+        case $(uname) in
+            OpenBSD ) printe_err "Try \`pkg_add go\`";;
+            FreeBSD ) printe_err "Try \`pkg install go\`";;
+            Darwin )  printe_err "Try \`brew install go\`";;
+        esac
+
+        exit 1
+    fi
+}
+
+require_brew_sqlite3() {
+    what=$1; shift
+
+    case $(uname) in
+        Darwin )
+            if [ ! -d /usr/local/opt/sqlite3 ]; then
+                printe_err "Building $what on Darwin requires sqlite3"
+                printe_err "Try \`brew install sqlite3\`"
+                exit 1
+            fi
+            ;;
+    esac
+}
+
+require_brew_zlib() {
+    what=$1; shift
+
+    case $(uname) in
+        Darwin )
+            if [ ! -d /usr/local/opt/zlib ]; then
+                printe_err "Building $what on Darwin requires zlib"
+                printe_err "Try \`brew install zlib\`"
+                exit 1
+            fi
             ;;
     esac
 }

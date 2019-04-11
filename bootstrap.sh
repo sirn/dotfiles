@@ -97,7 +97,7 @@ fi
 ##
 
 for p in pkg system user; do
-    if [ "$(has_args "$p" "$profiles")" = "1" ]; then
+    if has_args "$p" "$profiles"; then
         runscript="$base_dir/libexec/bootstrap/${p}_${platform}.sh"
 
         if [ ! -f "$runscript" ]; then

@@ -30,9 +30,9 @@ _prepare_wxallowed() {
         openbsd )
             wxdir=/usr/local/$name
 
-            printe_info "$name requires wxallowed, setting up $wxdir..."
+            printe_h2 "Preparing wxallowed for $name..."
 
-            if [ ! -d "$wxdir" ]; then
+            if file_absent "$wxdir" 1; then
                 run_root mkdir -p "$wxdir"
                 run_root chown "$USER:wheel" "$wxdir"
             fi
@@ -48,6 +48,8 @@ _prepare_wxallowed() {
 ## Rust
 ##
 
+_prepare_wxallowed cargo "$HOME/.cargo"
+
 printe_h2 "Installing rust..."
 
 case $platform in
@@ -61,7 +63,7 @@ case $platform in
     * )
         PATH=$HOME/.cargo/bin:$PATH
 
-        if [ ! -x "$HOME/.cargo/bin/rustup" ]; then
+        if file_absent "$HOME/.cargo/bin/rustup"; then
             fetch_url - https://sh.rustup.rs | sh -s - -y --no-modify-path
         fi
         ;;
@@ -71,19 +73,17 @@ if command -v rustc >/dev/null; then
     rust_ver=$(rustc --version | awk '{ print $2 }')
     rust_src_base=$HOME/.local/lib/rustlib/src/rust
 
-    if [ ! -d "$rust_src_base/rust-$rust_ver" ]; then
+    if file_absent "$rust_src_base/rust-$rust_ver"; then
         mkdir -p "$rust_src_base"
         fetch_gh_archive - "rust-lang/rust" "$rust_ver" | tar -C "$rust_src_base" -xzf -
     fi
 
-    make_link "$rust_src_base/rust-$rust_ver/src" "$(readlink "$rust_src_base/src")"
+    make_link "$rust_src_base/rust-$rust_ver/src" "$rust_src_base/src"
 fi
 
 rust_pkglist=../../var/bootstrap/pkglist_rust.txt
 
 if command -v cargo >/dev/null; then
-    _prepare_wxallowed cargo "$HOME/.cargo"
-
     for f in $(mangle_file $rust_pkglist "$platform" "$flavors"); do
         printe_h2 "Installing rust packages from ${f##../../}..."
 
@@ -96,12 +96,9 @@ if command -v cargo >/dev/null; then
             bin=${line%%:*}
             install=${line##$bin:}
 
-            if [ -f "$HOME/.cargo/bin/$bin" ]; then
-                printe "$bin already installed"
-                continue
+            if file_absent "$HOME/.cargo/bin/$bin"; then
+                eval cargo install "$install"
             fi
-
-            eval cargo install "$install"
         done < "$f"
     done
 fi
@@ -122,12 +119,12 @@ esac
 node_pkglist=../../var/bootstrap/pkglist_node.txt
 
 if command -v npm >/dev/null; then
-    npm set prefix="$HOME/.local"
+   npm set prefix="$HOME/.local"
 
-    for f in $(mangle_file $node_pkglist "$platform" "$flavors"); do
-        printe_h2 "Installing node packages from ${f##../../}..."
-        xargs npm install -g < "$f"
-    done
+   for f in $(mangle_file $node_pkglist "$platform" "$flavors"); do
+       printe_h2 "Installing node packages from ${f##../../}..."
+       xargs npm install -g < "$f"
+   done
 fi
 
 
@@ -136,9 +133,9 @@ fi
 
 haskell_pkglist=../../var/bootstrap/pkglist_haskell.txt
 
-if command -v cabal >/dev/null; then
-    _prepare_wxallowed cabal "$HOME/.cabal"
+_prepare_wxallowed cabal "$HOME/.cabal"
 
+if command -v cabal >/dev/null; then
     case "$platform" in
         openbsd )
             mkdir -p "$HOME/.cabal/build"
@@ -159,11 +156,11 @@ if command -v cabal >/dev/null; then
     # See https://github.com/haskell/cabal/blob/master/cabal-install/changelog
     haskell_cabal_prefix=
 
-    if [ "$(version_gte 2.4.0.0 "$(cabal --numeric-version)")" = "1" ]; then
+    if version_gte 2.4.0.0 "$(cabal --numeric-version)"; then
         haskell_cabal_prefix=v1-
     fi
 
-    if [ ! -d "$HOME/.cabal/packages/hackage.haskell.org" ]; then
+    if file_absent "$HOME/.cabal/packages/hackage.haskell.org"; then
         printe_h2 "Updating haskell cabal package index..."
         _haskell_cabal "${haskell_cabal_prefix}update"
     fi
@@ -180,12 +177,9 @@ if command -v cabal >/dev/null; then
             bin=${line%%:*}
             install=${line##$bin:}
 
-            if [ -f "$HOME/.cabal/bin/$bin" ]; then
-                printe "$bin already installed"
-                continue
+            if file_absent "$HOME/.cabal/bin/$bin"; then
+                eval _haskell_cabal "${haskell_cabal_prefix}install" "$install"
             fi
-
-            eval _haskell_cabal "${haskell_cabal_prefix}install" "$install"
         done < "$f"
     done
 fi
@@ -206,15 +200,9 @@ case $platform in
 
         printe_h2 "Installing execline..."
 
-        if ! command -v gmake >/dev/null; then
-            printe_err "Building execline on OpenBSD requires gmake..."
-            printe_err "Try \`pkg_add gmake\`"
-            exit 1
-        fi
+        require_gmake "execline"
 
-        if [ -d "$HOME/.local/lib/skalibs" ]; then
-            printe "skalibs already installed"
-        else
+        if file_absent "$HOME/.local/lib/skalibs"; then
             fetch_gh_archive - skarnet/skalibs "v$skalibs_ver" | tar -C "$build_dir" -xzf -
             cd "$build_dir/skalibs-$skalibs_ver" || exit 1
             ./configure \
@@ -225,9 +213,7 @@ case $platform in
             cd "$base_dir" || exit 1
         fi
 
-        if [ -x "$HOME/.local/bin/execlineb" ]; then
-            printe "execline already installed"
-        else
+        if file_absent "$HOME/.local/bin/execlineb"; then
             fetch_gh_archive - skarnet/execline "v$execline_ver" | tar -C "$build_dir" -xzf -
             cd "$build_dir/execline-$execline_ver" || exit 1
             ./configure \
@@ -245,13 +231,11 @@ case $platform in
 
         printe_h2 "Installing git-crypt..."
 
-        if [ -x "$HOME/.local/bin/git-crypt" ]; then
-            printe "git-crypt already installed"
-        else
+        if file_absent "$HOME/.local/bin/git-crypt"; then
             fetch_gh_archive - AGWA/git-crypt "$git_crypt_ver" | tar -C "$build_dir" -xzf -
             cd "$build_dir/git-crypt-${git_crypt_ver}" || exit 1
             make
-            make PREFIX="$HOME/.local" install
+            make install PREFIX="$HOME/.local"
             cd "$base_dir" || exit 1
         fi
 
@@ -260,9 +244,7 @@ case $platform in
 
         printe_h2 "Installing leiningen..."
 
-        if [ -x "$HOME/.local/bin/lein" ]; then
-            printe "leiningen already installed"
-        else
+        if file_absent "$HOME/.local/bin/lein"; then
             fetch_gh_raw "$HOME/.local/bin/lein" technomancy/leiningen stable bin/lein
             chmod 0755 "$HOME/.local/bin/lein"
             printe "leiningen has been successfully installed"
@@ -278,7 +260,7 @@ esac
 ## Kubernetes
 ##
 
-if [ "$(has_args "kubernetes" "$flavors")" = "1" ]; then
+if has_args "kubernetes" "$flavors"; then
     printe_h2 "Installing kubectx..."
 
     git_clone_update https://github.com/ahmetb/kubectx.git "$HOME/.local/src/kubectx"
@@ -329,36 +311,27 @@ if [ "$(has_args "kubernetes" "$flavors")" = "1" ]; then
             ;;
     esac
 
-    # py-jsonnet assumes make is GNU make and provides no way to override so
-    # we need to patch it to explicitly call gmake rather than make.
     case $platform in
         freebsd | openbsd )
             printe_info "Patching jsonnet for $(uname)..."
 
-            if ! command -v gmake >/dev/null; then
-                printe_err "Building jsonnet on FreeBSD/OpenBSD requires gmake"
-                printe_err "Try \`pkg install gmake\` or \`pkg_add gmake\`"
-                exit 1
-            fi
+            require_gmake "jsonnet"
 
             if "$HOME/.asdf/shims/python3" -c 'import jsonnet' >/dev/null 2>&1; then
                 printe "jsonnet already installed"
             else
                 fetch_gh_archive - google/jsonnet "v$jsonnet_ver" | tar -C "$build_dir" -xzf -
                 cd "$build_dir/jsonnet-$jsonnet_ver" || exit 1
+
+                # py-jsonnet assumes make is GNU make and provides no way to override so
+                # we need to patch it to explicitly call gmake rather than make.
                 sed "s/'make'/'gmake'/g" < setup.py > setup.py.new
                 mv setup.py.new setup.py
 
                 # Jsonnet also assumes od is GNU-compatible *rage*
                 od_bin="od"
-
                 if [ "$platform" = "openbsd" ]; then
-                    if ! command -v ggod >/dev/null; then
-                        printe_err "Building jsonnet on OpenBSD requires coreutils"
-                        printe_err "Try \`pkg_add coreutils\`"
-                        exit 1
-                    fi
-
+                    require_coreutils "jsonnet"
                     od_bin=ggod
                 fi
 

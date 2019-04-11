@@ -23,7 +23,7 @@ dnscrypt_conf=/usr/local/etc/dnscrypt-proxy.toml
 dnscrypt_started=$(service_running dnscrypt-proxy)
 dnscrypt_updated=0
 
-if [ "$(normalize_bool "$FORCE")" = "1" ] || [ ! -f $dnscrypt_conf ]; then
+if normalize_bool "$FORCE" || [ ! -f $dnscrypt_conf ]; then
     run_root cp ../../share/examples/bootstrap/dnscrypt-proxy.toml $dnscrypt_conf
     run_root chmod 0644 $dnscrypt_conf
     run_root chown nobody:nobody $dnscrypt_conf

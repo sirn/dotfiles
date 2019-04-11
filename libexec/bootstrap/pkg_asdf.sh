@@ -88,10 +88,7 @@ _install_erlang_openbsd() {
     plugin=$1; shift
     version=$1; shift
 
-    if ! command -v autoconf-2.69 >/dev/null; then
-        printe_err "Building erlang on OpenBSD requires autoconf 2.69"
-        printe_err "Try \`pkg_add autoconf%2.69\`"
-    fi
+    require_autoconf "erlang"
 
     env \
         AUTOCONF_VERSION=2.69 \
@@ -102,17 +99,8 @@ _install_python_darwin() {
     plugin=$1; shift
     version=$1; shift
 
-    if [ ! -d /usr/local/opt/zlib ]; then
-        printe_err "Building python on Darwin requires zlib"
-        printe_err "Try \`brew install zlib\`"
-        exit 1
-    fi
-
-    if [ ! -d /usr/local/opt/sqlite3 ]; then
-        printe_err "Building python on Darwin requires sqlite3"
-        printe_err "Try \`brew install sqlite3\`"
-        exit 1
-    fi
+    require_brew_zlib "python"
+    require_brew_sqlite3 "python"
 
     # See https://github.com/pyenv/pyenv/issues/1219
     env \

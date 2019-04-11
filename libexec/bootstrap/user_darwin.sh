@@ -22,7 +22,7 @@ printe_h2 "Setting up userenv..."
 
 userenv_plist="$HOME/Library/LaunchAgents/th.in.grid.userenv.plist"
 
-if [ "$(normalize_bool "$FORCE")" = "1" ] || [ ! -f "$userenv_plist" ]; then
+if normalize_bool "$FORCE" || [ ! -f "$userenv_plist" ]; then
     cp ../../share/examples/bootstrap/th.in.grid.userenv.plist "$userenv_plist"
     chmod 0644 "$userenv_plist"
     launchctl load -w "$userenv_plist"

@@ -53,7 +53,7 @@ printe_h2 "Setting up pf..."
 
 pf_updated=0
 
-if [ "$(normalize_bool "$FORCE")" = "1" ] || [ ! -f /etc/pf.conf ]; then
+if normalize_bool "$FORCE" || [ ! -f /etc/pf.conf ]; then
     run_root cp ../../share/examples/bootstrap/pf.conf /etc/pf.conf
     run_root chown root:wheel /etc/pf.conf
     run_root chmod 0600 /etc/pf.conf
