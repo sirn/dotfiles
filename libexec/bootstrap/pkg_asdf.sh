@@ -12,6 +12,13 @@ cd "$base_dir" || exit 1
 . ../../share/bootstrap/funcs.sh
 
 
+## Tmp
+##
+
+build_dir=$(mktemp -d)
+trap 'rm -rf $build_dir' 0 1 2 3 6 14 15
+
+
 ## Environment variables
 ##
 
@@ -66,10 +73,23 @@ _do_pkginst() {
 
     pkglist=../../var/bootstrap/pkglist_$plugin.txt
 
+    pkginst=_pkginst
+    custom_pkginst=_pkginst_$plugin
+    platform_pkginst=_pkginst_${plugin}_$platform
+
     # shellcheck disable=SC2086
     for f in $(mangle_file $pkglist $platform "$flavors"); do
         printe_h2 "Installing $plugin packages from ${f##../../}..."
-        xargs $instcmd < "$f"
+
+        if [ "$(command -v "$platform_pkginst")x" != "x" ]; then
+            printe_info "Running $platform pkginst script for $plugin..."
+            pkginst=$platform_pkginst
+        elif [ "$(command -v "$custom_pkginst")x" != "x" ]; then
+            printe_info "Running custom pkginst script for $plugin..."
+            pkginst=$custom_pkginst
+        fi
+
+        $pkginst "$instcmd" "$f"
     done
 }
 
@@ -107,6 +127,33 @@ _install_python_darwin() {
         LDFLAGS="-L/usr/local/opt/zlib/lib -L/usr/local/opt/sqlite3/lib" \
         CPPFLAGS="-I/usr/local/opt/zlib/include -I/usr/local/opt/sqlite3/include" \
         asdf install "$plugin" "$version"
+}
+
+
+## Package installs
+##
+
+_pkginst() {
+    pkginst=$1; shift
+    filename=$1; shift
+
+    # shellcheck disable=SC2086
+    xargs $pkginst < "$filename"
+}
+
+# Workaround for SQLint requiring gtar
+# See https://github.com/lfittl/pg_query/pull/134
+_pkginst_ruby_openbsd() {
+    pkginst=$1; shift
+    filename=$1; shift
+
+    require_gtar "ruby packages"
+    mkdir -p "$build_dir/gnuisms"
+    ln -s /usr/local/bin/gtar "$build_dir/gnuisms/tar"
+
+    # shellcheck disable=SC2086
+    env PATH="$build_dir/gnuisms:$PATH" \
+        xargs $pkginst < "$filename"
 }
 
 

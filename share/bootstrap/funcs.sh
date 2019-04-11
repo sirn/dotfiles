@@ -358,6 +358,22 @@ require_gmake() {
     fi
 }
 
+require_gtar() {
+    what=$1; shift
+
+    if ! command -v gtar >/dev/null; then
+        printe_err "Building $what on $(uname) requires gtar"
+
+        case $(uname) in
+            OpenBSD ) printe_err "Try \`pkg_add gtar\`";;
+            FreeBSD ) printe_err "Try \`pkg install gtar\`";;
+            Darwin )  printe_err "Try \`brew install gtar\`";;
+        esac
+
+        exit 1
+    fi
+}
+
 require_go() {
     what=$1; shift
 

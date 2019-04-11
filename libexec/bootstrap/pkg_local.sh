@@ -97,7 +97,8 @@ if command -v cargo >/dev/null; then
             install=${line##$bin:}
 
             if file_absent "$HOME/.cargo/bin/$bin"; then
-                eval cargo install "$install"
+                # shellcheck disable=SC2086
+                cargo install $install
             fi
         done < "$f"
     done
@@ -178,7 +179,8 @@ if command -v cabal >/dev/null; then
             install=${line##$bin:}
 
             if file_absent "$HOME/.cabal/bin/$bin"; then
-                eval _haskell_cabal "${haskell_cabal_prefix}install" "$install"
+                # shellcheck disable=SC2086
+                _haskell_cabal "${haskell_cabal_prefix}install" $install
             fi
         done < "$f"
     done
