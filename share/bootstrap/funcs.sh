@@ -238,59 +238,6 @@ make_link() {
 }
 
 
-## Services management
-##
-
-service_running() {
-    service=$1; shift
-
-    platform=$(uname | tr '[:upper:]' '[:lower:]')
-    platform_svc=_service_running_$platform
-
-    if [ "$(command -v "$platform_svc")x" = "x" ]; then
-        printe_err "Don't know how to check service status for \`$platform\`"
-        exit 1
-    fi
-
-    "$platform_svc" "$service"
-}
-
-_service_running_darwin() {
-    service=$1; shift
-    status=$(brew services list | awk "\$1 == \"$service\" { print \$2 }")
-
-    if [ -z "$status" ]; then
-        printe_err "$service does not appears to be a valid service, exiting"
-        exit 1
-    fi
-
-    if [ "$status" = "started" ]; then
-        printf "1"
-        return
-    fi
-
-    printf "0"
-}
-
-_service_running_freebsd() {
-    service=$1; shift
-
-    if ! status=$(run_root service "$service" status 2>&1); then
-        printe_err "$service does not appears to be a valid service, exiting"
-        exit 1
-    fi
-
-    case $(printf "%s" "$status" | tr '[:upper:]' '[:lower:]') in
-        *"is running"* | *"enabled"* )
-            printf "1"
-            ;;
-        * )
-            printf "0"
-            ;;
-    esac
-}
-
-
 ## Reqs
 ##
 

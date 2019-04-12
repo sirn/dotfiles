@@ -43,14 +43,10 @@ fi
 ## must be run after link
 ##
 
-if [ "$(has_args "desktop" "$flavors")" = "1" ]; then
-    if [ "$(service_running chunkwm)" != "1" ]; then
-        printe_h2 "Setting up chunkwm..."
-        brew services start chunkwm
-    fi
+if has_args "desktop" "$flavors"; then
+    printe_h2 "Setting up chunkwm..."
+    brew services start chunkwm
 
-    if [ "$(service_running skhd)" != "1" ]; then
-        printe_h2 "Setting up skhd..."
-        brew services start skhd
-    fi
+    printe_h2 "Setting up skhd..."
+    brew services start skhd
 fi

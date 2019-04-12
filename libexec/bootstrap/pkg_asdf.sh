@@ -62,7 +62,7 @@ _do_install() {
         $install "$plugin" "$version"
     fi
 
-    if [ "$(has_args "global" "$*")" = "1" ]; then
+    if has_args "global" "$*"; then
          asdf global "$plugin" "$version"
     fi
 

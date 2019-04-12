@@ -14,18 +14,6 @@ if [ "$(uname)" != "FreeBSD" ]; then
 fi
 
 
-## Utils
-##
-
-_start_service() {
-    service=$1; shift
-
-    if [ "$(service_running "$service")" = "0" ]; then
-        run_root service "$service" onestart
-    fi
-}
-
-
 ## NFS
 ##
 
@@ -41,9 +29,9 @@ run_root sysrc rpcbind_enable=YES
 run_root sysrc rpc_lockd_enable=YES
 run_root sysrc rpc_statd_enable=YES
 
-_start_service nfsd
-_start_service mountd
-_start_service rpcbind
+run_root service nfsd onestart
+run_root service mountd onestart
+run_root service rpcbind onestart
 
 
 ## PF
@@ -53,8 +41,14 @@ printe_h2 "Setting up pf..."
 
 pf_updated=0
 
+if file_absent /usr/local/etc/pf.conf; then
+    run_root touch /usr/local/etc/pf.conf
+    run_root chown root:wheel /usr/local/etc/pf.conf
+    run_root chmod 0600 /usr/local/etc/pf.conf
+fi
+
 if normalize_bool "$FORCE" || [ ! -f /etc/pf.conf ]; then
-    run_root cp ../../share/examples/bootstrap/pf.conf /etc/pf.conf
+    run_root cp ../../share/examples/bootstrap/freebsd/pf.conf /etc/pf.conf
     run_root chown root:wheel /etc/pf.conf
     run_root chmod 0600 /etc/pf.conf
     pf_updated=1
@@ -63,8 +57,7 @@ else
 fi
 
 run_root sysrc pf_enable=YES
-
-_start_service pf
+run_root service pf onestart
 
 if [ $pf_updated = "1" ]; then
     if ! run_root pfctl -nf /etc/pf.conf; then
