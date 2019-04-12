@@ -26,6 +26,18 @@ for f in $(mangle_file $pkglist none "$flavors"); do
 done
 
 
+## Custom setup
+##
+
+# Restoring Google Cloud state directory
+run_root mkdir -p /usr/local/google-cloud-sdk/.install
+
+# Packages not available under OpenBSD Ports
+"../packages/execline.sh"
+"../packages/git-crypt.sh"
+"../packages/leiningen.sh"
+
+
 ## Hand-off
 ##
 

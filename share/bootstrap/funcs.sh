@@ -105,7 +105,7 @@ version_gte() {
         sort -t "." -n -k1,1 -k2,2 -k3,3 -k4,4 |
         head -n 1)
 
-    if [ "$left" = "$min_ver" ]; then
+    if [ "$right" = "$min_ver" ]; then
         return 0
     fi
 
