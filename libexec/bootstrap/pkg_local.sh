@@ -3,7 +3,7 @@
 # Install a package manually and locally.
 #
 
-root_dir=${BOOTSTRAP_ROOT:-../../}
+root_dir=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 flavors=$*
 
 platform=$(uname | tr '[:upper:]' '[:lower:]')

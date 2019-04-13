@@ -3,7 +3,7 @@
 # Sets up Darwin system.
 #
 
-root_dir=${BOOTSTRAP_ROOT:-../../}
+root_dir=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
 . "$root_dir/share/bootstrap/funcs.sh"

@@ -3,7 +3,7 @@
 # Configure current user on Darwin.
 #
 
-root_dir=${BOOTSTRAP_ROOT:-../../}
+root_dir=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 flavors=$*
 
 # shellcheck source=../../share/bootstrap/funcs.sh

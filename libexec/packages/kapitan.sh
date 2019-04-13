@@ -3,7 +3,7 @@
 # Install kapitan.
 #
 
-root_dir=${BOOTSTRAP_ROOT:-../../}
+root_dir=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 platform=$(uname | tr '[:upper:]' '[:lower:]')
 
 # shellcheck source=../../share/bootstrap/funcs.sh

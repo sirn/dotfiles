@@ -3,7 +3,7 @@
 # Install FreeBSD packages with Pkgng.
 #
 
-root_dir=${BOOTSTRAP_ROOT:-../../}
+root_dir=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 lookup_dir=${LOOKUP_ROOT:-$root_dir}
 flavors=$*
 
