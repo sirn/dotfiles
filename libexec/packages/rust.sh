@@ -84,7 +84,7 @@ if command -v cargo >/dev/null; then
             bin=${line%%:*}
             install=${line##$bin:}
 
-            if file_absent "$HOME/.cargo/bin/$bin"; then
+            if is_force || file_absent "$HOME/.cargo/bin/$bin"; then
                 # shellcheck disable=SC2086
                 cargo install $install
             fi

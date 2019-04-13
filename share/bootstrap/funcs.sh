@@ -116,6 +116,10 @@ version_gte() {
 ## Convenient funcs
 ##
 
+is_force() {
+    normalize_bool "$FORCE"
+}
+
 git_clone_update() {
     repo=$1; shift
     path=$1; shift
@@ -241,126 +245,32 @@ make_link() {
 ## Reqs
 ##
 
-require_autoconf() {
-    what=$1; shift
+require_bin() {
+    pkg=$1; shift
+    desc=$1
 
-    if ! command -v autoconf >/dev/null; then
-        printe_err "Building $what on $(uname) requires autoconf"
+    if ! command -v "$pkg" >/dev/null; then
+        printe_err "$pkg could not be found on the system"
 
-        case $(uname) in
-            OpenBSD ) printe_err "Try \`pkg_add metaauto autoconf%2.69\`";;
-            FreeBSD ) printe_err "Try \`pkg install autoconf\`";;
-            Darwin )  printe_err "Try \`brew install autoconf\`";;
-        esac
-
-        exit 1
-    fi
-}
-
-require_bash() {
-    what=$1; shift
-
-    if ! command -v bash >/dev/null; then
-        printe_err "Building $what on $(uname) requires bash"
-
-        case $(uname) in
-            OpenBSD ) printe_err "Try \`pkg_add bash\`";;
-            FreeBSD ) printe_err "Try \`pkg install bash\`";;
-            Darwin )  printe_err "Try \`brew install bash\`";;
-        esac
+        if [ -n "$desc" ]; then
+            printe_err "$desc"
+        fi
 
         exit 1
     fi
 }
 
-require_coreutils() {
-    what=$1; shift
+require_lib() {
+    lib=$1; shift
+    desc=$1
 
-    if ! command -v gls >/dev/null; then
-        printe_err "Building $what on $(uname) requires coreutils"
+    if ! pkg-config "$lib"; then
+        printe_err "$lib is required to be installed"
 
-        case $(uname) in
-            OpenBSD ) printe_err "Try \`pkg_add coreutils\`";;
-            FreeBSD ) printe_err "Try \`pkg install coreutils\`";;
-            Darwin )  printe_err "Try \`brew install coreutils\`";;
-        esac
-
-        exit 1
-    fi
-}
-
-require_gmake() {
-    what=$1; shift
-
-    if ! command -v gmake >/dev/null; then
-        printe_err "Building $what on $(uname) requires gmake"
-
-        case $(uname) in
-            OpenBSD ) printe_err "Try \`pkg_add gmake\`";;
-            FreeBSD ) printe_err "Try \`pkg install gmake\`";;
-            Darwin )  printe_err "Try \`brew install gmake\`";;
-        esac
+        if [ -n "$desc" ]; then
+            printe_err "$desc"
+        fi
 
         exit 1
     fi
-}
-
-require_gtar() {
-    what=$1; shift
-
-    if ! command -v gtar >/dev/null; then
-        printe_err "Building $what on $(uname) requires gtar"
-
-        case $(uname) in
-            OpenBSD ) printe_err "Try \`pkg_add gtar\`";;
-            FreeBSD ) printe_err "Try \`pkg install gtar\`";;
-            Darwin )  printe_err "Try \`brew install gtar\`";;
-        esac
-
-        exit 1
-    fi
-}
-
-require_go() {
-    what=$1; shift
-
-    if ! command -v go >/dev/null; then
-        printe_err "Building $what on $(uname) requires go"
-
-        case $(uname) in
-            OpenBSD ) printe_err "Try \`pkg_add go\`";;
-            FreeBSD ) printe_err "Try \`pkg install go\`";;
-            Darwin )  printe_err "Try \`brew install go\`";;
-        esac
-
-        exit 1
-    fi
-}
-
-require_sqlite3() {
-    what=$1; shift
-
-    case $(uname) in
-        Darwin )
-            if [ ! -d /usr/local/opt/sqlite3 ]; then
-                printe_err "Building $what on Darwin requires sqlite3"
-                printe_err "Try \`brew install sqlite3\`"
-                exit 1
-            fi
-            ;;
-    esac
-}
-
-require_zlib() {
-    what=$1; shift
-
-    case $(uname) in
-        Darwin )
-            if [ ! -d /usr/local/opt/zlib ]; then
-                printe_err "Building $what on Darwin requires zlib"
-                printe_err "Try \`brew install zlib\`"
-                exit 1
-            fi
-            ;;
-    esac
 }

@@ -26,7 +26,7 @@ fi
 kubectl_ver=master
 
 printe_h2 "Installing kubectl..."
-require_go "kubectl"
+require_bin go
 
 GOPATH="$build_dir/go"; export GOPATH
 PATH="$GOPATH/bin:$PATH"
@@ -35,7 +35,7 @@ PATH="$GOPATH/bin:$PATH"
 ## Setup
 ##
 
-if file_absent "$HOME/.local/bin/kubectl"; then
+if is_force || file_absent "$HOME/.local/bin/kubectl"; then
     fetch_gh_archive - kubernetes/kubernetes "$kubectl_ver" | tar -C "$build_dir" -xzf -
     mkdir -p "$build_dir/go/src/k8s.io"
     mv "$build_dir/kubernetes-$kubectl_ver" "$build_dir/go/src/k8s.io/kubernetes"

@@ -51,7 +51,7 @@ if command -v cabal >/dev/null; then
         cabal_prefix=v1-
     fi
 
-    if file_absent "$HOME/.cabal/packages/hackage.haskell.org"; then
+    if is_force || file_absent "$HOME/.cabal/packages/hackage.haskell.org"; then
         printe_h2 "Updating haskell cabal package index..."
         cabal "${cabal_prefix}update"
     fi
@@ -68,7 +68,7 @@ if command -v cabal >/dev/null; then
             bin=${line%%:*}
             install=${line##$bin:}
 
-            if file_absent "$HOME/.cabal/bin/$bin"; then
+            if is_force || file_absent "$HOME/.cabal/bin/$bin"; then
                 # shellcheck disable=SC2086
                 cabal "${cabal_prefix}install" $install
             fi

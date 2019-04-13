@@ -44,7 +44,7 @@ if file_absent /etc/pf.conf.local; then
     run_root chmod 0600 /etc/pf.conf.local
 fi
 
-if normalize_bool "$FORCE" || [ ! -f /etc/pf.conf ]; then
+if is_force || [ ! -f /etc/pf.conf ]; then
     run_root cp "$root_dir/etc/pf/pf.openbsd.conf" /etc/pf.conf
     run_root chown root:wheel /etc/pf.conf
     run_root chmod 0600 /etc/pf.conf

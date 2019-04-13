@@ -24,8 +24,14 @@ fi
 helm_ver=2.13.1
 
 printe_h2 "Installing helm..."
-require_go "helm"
-require_gmake "kubectl"
+
+require_bin go
+
+case $(uname) in
+    FreeBSD | OpenBSD )
+        require_bin gmake
+        ;;
+esac
 
 GOPATH="$build_dir/go"; export GOPATH
 PATH="$GOPATH/bin:$PATH"
@@ -34,7 +40,7 @@ PATH="$GOPATH/bin:$PATH"
 ## Setup
 ##
 
-if file_absent "$HOME/.local/bin/helm"; then
+if is_force || file_absent "$HOME/.local/bin/helm"; then
     fetch_gh_archive - helm/helm "v$helm_ver" | tar -C "$build_dir" -xzf -
     mkdir -p "$build_dir/go/src/k8s.io"
     mv "$build_dir/helm-$helm_ver" "$build_dir/go/src/k8s.io/helm"

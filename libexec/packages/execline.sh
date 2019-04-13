@@ -25,13 +25,18 @@ execline_ver=2.5.1.0
 skalibs_ver=2.8.0.1
 
 printe_h2 "Installing execline..."
-require_gmake "execline"
+
+case $(uname) in
+    FreeBSD | OpenBSD )
+        require_bin gmake
+        ;;
+esac
 
 
 ## Setup skalibs
 ##
 
-if file_absent "$HOME/.local/lib/skalibs"; then
+if is_force || file_absent "$HOME/.local/lib/skalibs"; then
     fetch_gh_archive - skarnet/skalibs "v$skalibs_ver" | tar -C "$build_dir" -xzf -
     cd "$build_dir/skalibs-$skalibs_ver" || exit 1
     ./configure \
@@ -45,7 +50,7 @@ fi
 ## Setup execline
 ##
 
-if file_absent "$HOME/.local/bin/execlineb"; then
+if is_force || file_absent "$HOME/.local/bin/execlineb"; then
     fetch_gh_archive - skarnet/execline "v$execline_ver" | tar -C "$build_dir" -xzf -
     cd "$build_dir/execline-$execline_ver" || exit 1
     ./configure \

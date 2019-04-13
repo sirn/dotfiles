@@ -112,7 +112,7 @@ _install_erlang_openbsd() {
     plugin=$1; shift
     version=$1; shift
 
-    require_autoconf "erlang"
+    require_bin autoconf
 
     env \
         AUTOCONF_VERSION=2.69 \
@@ -123,8 +123,17 @@ _install_python_darwin() {
     plugin=$1; shift
     version=$1; shift
 
-    require_zlib "python"
-    require_sqlite3 "python"
+    if [ ! -d /usr/local/opt/sqlite3 ]; then
+        printe_err "Building python on Darwin requires sqlite3"
+        printe_err "Try \`brew install sqlite3\`"
+        exit 1
+    fi
+
+    if [ ! -d /usr/local/opt/zlib ]; then
+        printe_err "Building $what on Darwin requires zlib"
+        printe_err "Try \`brew install zlib\`"
+        exit 1
+    fi
 
     # See https://github.com/pyenv/pyenv/issues/1219
     env \
@@ -151,7 +160,8 @@ _pkginst_ruby_openbsd() {
     pkginst=$1; shift
     filename=$1; shift
 
-    require_gtar "ruby packages"
+    require_bin gtar "Try \`pkg_add gtar\`"
+
     mkdir -p "$build_dir/gnuisms"
     ln -s /usr/local/bin/gtar "$build_dir/gnuisms/tar"
 

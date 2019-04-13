@@ -29,7 +29,7 @@ run_root brew services start dnscrypt-proxy
 
 dnscrypt_conf=/usr/local/etc/dnscrypt-proxy.toml
 
-if normalize_bool "$FORCE" || [ ! -f $dnscrypt_conf ]; then
+if is_force || [ ! -f $dnscrypt_conf ]; then
     run_root cp "$root_dir/etc/dnscrypt-proxy/dnscrypt-proxy.toml" $dnscrypt_conf
     run_root chmod 0644 $dnscrypt_conf
     run_root chown nobody:nobody $dnscrypt_conf

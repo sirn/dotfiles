@@ -29,7 +29,7 @@ printe_h2 "Installing git-crypt..."
 ## Setup
 ##
 
-if file_absent "$HOME/.local/bin/git-crypt"; then
+if is_force || file_absent "$HOME/.local/bin/git-crypt"; then
     fetch_gh_archive - AGWA/git-crypt "$git_crypt_ver" | tar -C "$build_dir" -xzf -
     cd "$build_dir/git-crypt-${git_crypt_ver}" || exit 1
     make

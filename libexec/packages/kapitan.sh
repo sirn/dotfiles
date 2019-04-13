@@ -6,6 +6,9 @@
 root_dir=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 platform=$(uname | tr '[:upper:]' '[:lower:]')
 
+python3="$HOME/.asdf/shims/python3"
+pip3="$HOME/.asdf/shims/pip3"
+
 # shellcheck source=../../share/bootstrap/funcs.sh
 . "$root_dir/share/bootstrap/funcs.sh"
 
@@ -37,7 +40,7 @@ printe_h2 "Installing kapitan..."
 ## patching the CFFI source to disable some OpenSSL features.
 ##
 
-if ! "$HOME/.asdf/shims/python3" -c 'import cryptography' >/dev/null 2>&1; then
+if is_force || ! "$python3" -c 'import cryptography' >/dev/null 2>&1; then
     case $(openssl version | tr '[:upper:]' '[:lower:]') in
         libressl* )
             printe_info "Patching py-cryptography for libressl..."
@@ -55,7 +58,7 @@ if ! "$HOME/.asdf/shims/python3" -c 'import cryptography' >/dev/null 2>&1; then
                     patch -p0
             done
 
-            "$HOME/.asdf/shims/pip3" install .
+            $pip3 install .
             ;;
 
         * )
@@ -70,11 +73,12 @@ fi
 ## assumes od is GNU-compatible.
 ##
 
-if ! "$HOME/.asdf/shims/python3" -c 'import _jsonnet' >/dev/null 2>&1; then
+if is_force || ! "$python3" -c 'import _jsonnet' >/dev/null 2>&1; then
     case $platform in
         freebsd | openbsd )
             printe_info "Patching py-jsonnet for $(uname)..."
-            require_gmake "py-jsonnet"
+
+            require_bin gmake
 
             fetch_gh_archive - google/jsonnet "v$jsonnet_ver" | tar -C "$build_dir" -xzf -
             cd "$build_dir/jsonnet-$jsonnet_ver" || exit 1
@@ -83,7 +87,7 @@ if ! "$HOME/.asdf/shims/python3" -c 'import _jsonnet' >/dev/null 2>&1; then
 
             od_bin="od"
             if [ "$platform" = "openbsd" ]; then
-                require_coreutils "jsonnet"
+                require_bin ggod "Try \`pkg_add coreutils\`"
                 od_bin=ggod
             fi
 
@@ -92,13 +96,13 @@ if ! "$HOME/.asdf/shims/python3" -c 'import _jsonnet' >/dev/null 2>&1; then
                 CC=cc \
                 CXX=c++ \
                 CXXFLAGS="-fPIC -Iinclude -Ithird_party/md5 -Ithird_party/json -std=c++11" \
-                "$HOME/.asdf/shims/pip3" install .
+                "$pip3" install .
             ;;
 
         * )
             env \
                 CXXFLAGS="-fPIC -Iinclude -Ithird_party/md5 -Ithird_party/json -std=c++11" \
-                "$HOME/.asdf/shims/pip3" install jsonnet==$jsonnet_ver
+                "$pip3" install jsonnet==$jsonnet_ver
             ;;
     esac
 fi
@@ -107,5 +111,5 @@ fi
 ## Setup kapitan
 ##
 
-env "$HOME/.asdf/shims/pip3" install kapitan==$kapitan_ver
+"$pip3" install kapitan==$kapitan_ver
 "$HOME/.asdf/bin/asdf" reshim python

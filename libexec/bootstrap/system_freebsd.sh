@@ -53,7 +53,7 @@ if file_absent /usr/local/etc/pf.conf; then
     run_root chmod 0600 /usr/local/etc/pf.conf
 fi
 
-if normalize_bool "$FORCE" || [ ! -f /etc/pf.conf ]; then
+if is_force || [ ! -f /etc/pf.conf ]; then
     run_root cp "$root_dir/etc/pf/pf.freebsd.conf" /etc/pf.conf
     run_root chown root:wheel /etc/pf.conf
     run_root chmod 0600 /etc/pf.conf

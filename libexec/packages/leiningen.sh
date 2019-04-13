@@ -14,7 +14,7 @@ root_dir=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 printe_h2 "Installing leiningen..."
 
-if file_absent "$HOME/.local/bin/lein"; then
+if is_force || file_absent "$HOME/.local/bin/lein"; then
     fetch_gh_raw "$HOME/.local/bin/lein" technomancy/leiningen stable bin/lein
     chmod 0755 "$HOME/.local/bin/lein"
     printe "leiningen has been successfully installed"
