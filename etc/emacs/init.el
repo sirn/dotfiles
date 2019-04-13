@@ -25,6 +25,10 @@
       (load (file-name-sans-extension local-init-file))))
 
 
+;; Local load path
+(add-to-list 'load-path "~/.local/share/emacs/site-lisp")
+
+
 ;; SSL cert
 (eval-when-compile
   (defvar gnutls-trustfiles))

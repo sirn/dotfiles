@@ -53,21 +53,6 @@
 
   (gr/insert-mode-line '(:eval (gr/mode-line-evil)) 1)
 
-  ;; Mode-Line for Notmuch
-
-  (defface gr/mode-line-notmuch '((t :inherit sml/global)) "" :group 'gr-mode-line-faces)
-
-  (defun gr/mode-line-notmuch ()
-    (if (and (executable-find "notmuch")
-             (fboundp 'notmuch-command-to-string))
-        (let ((unread (string-to-number (s-chomp (notmuch-command-to-string "count" "tag:unread")))))
-          (if (> unread 0)
-              (propertize (format "%d unread" unread)
-                          'face 'gr/mode-line-notmuch
-                          'help-echo "Notmuch")))))
-
-  (gr/insert-mode-line '(:eval (gr/mode-line-notmuch)))
-
   ;; Mode-Line for winum
 
   (defface gr/mode-line-winum '((t :inherit sml/global)) "" :group 'gr-mode-line-winum)
