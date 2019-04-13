@@ -3,10 +3,10 @@
 # Install Kubernetes CLI.
 #
 
-base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
+root_dir=${BOOTSTRAP_ROOT:-../../}
 
-cd "$base_dir" || exit 1
-. ../../share/bootstrap/funcs.sh
+# shellcheck source=../../share/bootstrap/funcs.sh
+. "$root_dir/share/bootstrap/funcs.sh"
 
 
 ## Tmp
@@ -44,6 +44,4 @@ if file_absent "$HOME/.local/bin/kubectl"; then
     go install .
     cp "$build_dir/go/bin/kubectl" "$HOME/.local/bin/kubectl"
     printe "kubectl has been successfully installed"
-
-    cd "$base_dir" || exit 1
 fi

@@ -3,10 +3,10 @@
 # Sets up OpenBSD system.
 #
 
-base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
+root_dir=${BOOTSTRAP_ROOT:-../../}
 
-cd "$base_dir" || exit 1
-. ../../share/bootstrap/funcs.sh
+# shellcheck source=../../share/bootstrap/funcs.sh
+. "$root_dir/share/bootstrap/funcs.sh"
 
 if [ "$(uname)" != "OpenBSD" ]; then
     printe_err "Not an OpenBSD system"
@@ -39,7 +39,7 @@ if file_absent /etc/pf.conf.local; then
 fi
 
 if normalize_bool "$FORCE" || [ ! -f /etc/pf.conf ]; then
-    run_root cp ../../share/examples/bootstrap/openbsd/pf.conf /etc/pf.conf
+    run_root cp "$root_dir/etc/pf/pf.openbsd.conf" /etc/pf.conf
     run_root chown root:wheel /etc/pf.conf
     run_root chmod 0600 /etc/pf.conf
 

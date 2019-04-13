@@ -3,12 +3,14 @@
 # Install rust packages.
 #
 
-base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
-platform=$(uname | tr '[:upper:]' '[:lower:]')
+root_dir=${BOOTSTRAP_ROOT:-../../}
+lookup_dir=${LOOKUP_ROOT:-$root_dir}
 flavors=$*
 
-cd "$base_dir" || exit 1
-. ../../share/bootstrap/funcs.sh
+platform=$(uname | tr '[:upper:]' '[:lower:]')
+
+# shellcheck source=../../share/bootstrap/funcs.sh
+. "$root_dir/share/bootstrap/funcs.sh"
 
 
 ## Preparation
@@ -67,11 +69,11 @@ fi
 ## Install packages
 ##
 
-rust_pkglist=../../var/bootstrap/pkglist_rust.txt
+rust_pkglist=$lookup_dir/var/bootstrap/pkglist_rust.txt
 
 if command -v cargo >/dev/null; then
-    for f in $(mangle_file $rust_pkglist "$platform" "$flavors"); do
-        printe_h2 "Installing rust packages from ${f##../../}..."
+    for f in $(mangle_file "$rust_pkglist" "$platform" "$flavors"); do
+        printe_h2 "Installing rust packages from ${f##$lookup_dir/}..."
 
         while read -r line; do
             case $line in

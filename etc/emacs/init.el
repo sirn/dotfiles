@@ -14,7 +14,7 @@
 
 
 ;; Private configurations
-(let ((private-init-file "~/.dotpriv/emacs/init.el"))
+(let ((private-init-file "~/.dotpriv/etc/emacs/init.el"))
   (if (file-exists-p private-init-file)
       (load (file-name-sans-extension private-init-file))))
 

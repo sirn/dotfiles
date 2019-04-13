@@ -3,12 +3,14 @@
 # Install node packages
 #
 
-base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
-platform=$(uname | tr '[:upper:]' '[:lower:]')
+root_dir=${BOOTSTRAP_ROOT:-../../}
+lookup_dir=${LOOKUP_ROOT:-$root_dir}
 flavors=$*
 
-cd "$base_dir" || exit 1
-. ../../share/bootstrap/funcs.sh
+platform=$(uname | tr '[:upper:]' '[:lower:]')
+
+# shellcheck source=../../share/bootstrap/funcs.sh
+. "$root_dir/share/bootstrap/funcs.sh"
 
 
 ## Setup environment
@@ -27,13 +29,13 @@ esac
 ## Setup
 ##
 
-node_pkglist=../../var/bootstrap/pkglist_node.txt
+node_pkglist=$lookup_dir/var/bootstrap/pkglist_node.txt
 
 if command -v npm >/dev/null; then
    npm set prefix="$HOME/.local"
 
-   for f in $(mangle_file $node_pkglist "$platform" "$flavors"); do
-       printe_h2 "Installing node packages from ${f##../../}..."
+   for f in $(mangle_file "$node_pkglist" "$platform" "$flavors"); do
+       printe_h2 "Installing node packages from ${f##$lookup_dir/}..."
        xargs npm install -g < "$f"
    done
 fi

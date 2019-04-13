@@ -139,12 +139,19 @@
 (use-package prettier-js
   :commands prettier-js-mode
   :diminish prettier-js-mode
-  :straight t
+  :straight (prettier-js :type git
+                         :host github
+                         :repo "prettier/prettier-emacs"
+                         :fork (:host github
+                                      :repo "sirn/prettier-emacs"
+                                      :branch "rcs-diff-program"))
 
   :init
   (setq prettier-js-args
         '("--trailing-comma" "all"
           "--tab-width" "4"))
+  (when (executable-find "gdiff")
+    (setq prettier-js-diff-command "gdiff"))
   (add-hook 'css-mode-hook 'prettier-js-mode)
   (add-hook 'js2-mode-hook 'prettier-js-mode)
   (add-hook 'json-mode-hook 'prettier-js-mode)

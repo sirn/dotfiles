@@ -3,11 +3,12 @@
 # Install FreeBSD packages with Pkgng.
 #
 
-base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
+root_dir=${BOOTSTRAP_ROOT:-../../}
+lookup_dir=${LOOKUP_ROOT:-$root_dir}
 flavors=$*
 
-cd "$base_dir" || exit 1
-. ../../share/bootstrap/funcs.sh
+# shellcheck source=../../share/bootstrap/funcs.sh
+. "$root_dir/share/bootstrap/funcs.sh"
 
 if [ "$(uname)" != "FreeBSD" ]; then
     printe_err "Not a FreeBSD system"
@@ -27,10 +28,10 @@ fi
 ## Installs
 ##
 
-pkglist=../../var/bootstrap/freebsd/pkglist.txt
+pkglist=$lookup_dir/var/bootstrap/freebsd/pkglist.txt
 
-for f in $(mangle_file $pkglist none "$flavors"); do
-    printe_h2 "Installing packages from ${f##../../}..."
+for f in $(mangle_file "$pkglist" none "$flavors"); do
+    printe_h2 "Installing packages from ${f##$lookup_dir/}..."
     run_root xargs pkg install -y < "$f"
 done
 
@@ -38,5 +39,5 @@ done
 ## Hand-off
 ##
 
-"$base_dir/pkg_asdf.sh" "$flavors"
-"$base_dir/pkg_local.sh" "$flavors"
+"$root_dir/libexec/bootstrap/pkg_asdf.sh" "$flavors"
+"$root_dir/libexec/bootstrap/pkg_local.sh" "$flavors"

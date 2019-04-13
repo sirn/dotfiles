@@ -3,20 +3,21 @@
 # Install a package manually and locally.
 #
 
-base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
-platform=$(uname | tr '[:upper:]' '[:lower:]')
+root_dir=${BOOTSTRAP_ROOT:-../../}
 flavors=$*
 
-cd "$base_dir" || exit 1
-. ../../share/bootstrap/funcs.sh
+platform=$(uname | tr '[:upper:]' '[:lower:]')
+
+# shellcheck source=../../share/bootstrap/funcs.sh
+. "$root_dir/share/bootstrap/funcs.sh"
 
 
 ## Build scripts
 ##
 
-"../packages/rust.sh"
-"../packages/node.sh"
-"../packages/haskell.sh"
+"$root_dir/libexec/packages/rust.sh"
+"$root_dir/libexec/packages/node.sh"
+"$root_dir/libexec/packages/haskell.sh"
 
 
 ## Kubernetes flavor
@@ -25,14 +26,14 @@ cd "$base_dir" || exit 1
 if has_args "kubernetes" "$flavors"; then
     case $platform in
         openbsd )
-            "../packages/kubernetes-cli.sh"
-            "../packages/kubernetes-helm.sh"
+            "$root_dir/libexec/packages/kubernetes-cli.sh"
+            "$root_dir/libexec/packages/kubernetes-helm.sh"
             ;;
 
         * )
             ;;
     esac
 
-    "../packages/kubectx.sh"
-    "../packages/kapitan.sh"
+    "$root_dir/libexec/packages/kubectx.sh"
+    "$root_dir/libexec/packages/kapitan.sh"
 fi

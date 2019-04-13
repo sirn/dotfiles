@@ -3,11 +3,11 @@
 # Install kapitan.
 #
 
-base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
+root_dir=${BOOTSTRAP_ROOT:-../../}
 platform=$(uname | tr '[:upper:]' '[:lower:]')
 
-cd "$base_dir" || exit 1
-. ../../share/bootstrap/funcs.sh
+# shellcheck source=../../share/bootstrap/funcs.sh
+. "$root_dir/share/bootstrap/funcs.sh"
 
 
 ## Tmp
@@ -56,7 +56,6 @@ if ! "$HOME/.asdf/shims/python3" -c 'import cryptography' >/dev/null 2>&1; then
             done
 
             "$HOME/.asdf/shims/pip3" install .
-            cd "$base_dir" || exit 1
             ;;
 
         * )
@@ -94,7 +93,6 @@ if ! "$HOME/.asdf/shims/python3" -c 'import _jsonnet' >/dev/null 2>&1; then
                 CXX=c++ \
                 CXXFLAGS="-fPIC -Iinclude -Ithird_party/md5 -Ithird_party/json -std=c++11" \
                 "$HOME/.asdf/shims/pip3" install .
-            cd "$base_dir" || exit 1
             ;;
 
         * )

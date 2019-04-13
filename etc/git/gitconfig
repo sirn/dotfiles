@@ -67,7 +67,7 @@
 #
 
 [include]
-	path = ~/.dotpriv/git/gitconfig
+	path = ~/.dotpriv/etc/git/gitconfig
 
 [include]
 	path = ~/.gitconfig_local

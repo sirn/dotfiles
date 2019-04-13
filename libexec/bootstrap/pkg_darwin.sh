@@ -3,12 +3,14 @@
 # Install Darwin packages with Brew and MAS.
 #
 
-base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
-brew_dir=/usr/local/Homebrew
+root_dir=${BOOTSTRAP_ROOT:-../../}
+lookup_dir=${LOOKUP_ROOT:-$root_dir}
 flavors=$*
 
-cd "$base_dir" || exit 1
-. ../../share/bootstrap/funcs.sh
+brew_dir=/usr/local/Homebrew
+
+# shellcheck source=../../share/bootstrap/funcs.sh
+. "$root_dir/share/bootstrap/funcs.sh"
 
 if [ "$(uname)" != "Darwin" ]; then
     printe_err "Not a Darwin system"
@@ -102,10 +104,10 @@ _do_install mas
 ## Installs
 ##
 
-pkglist=../../var/bootstrap/darwin/pkglist.txt
+pkglist=$lookup_dir/var/bootstrap/darwin/pkglist.txt
 
-for f in $(mangle_file $pkglist none "$flavors"); do
-    printe_h2 "Installing packages from ${f##../../}..."
+for f in $(mangle_file "$pkglist" none "$flavors"); do
+    printe_h2 "Installing packages from ${f##$lookup_dir/}..."
 
     while read -r line; do
         case $line in
@@ -129,5 +131,5 @@ done
 ## Hand-off
 ##
 
-"$base_dir/pkg_asdf.sh" "$flavors"
-"$base_dir/pkg_local.sh" "$flavors"
+"$root_dir/libexec/bootstrap/pkg_asdf.sh" "$flavors"
+"$root_dir/libexec/bootstrap/pkg_local.sh" "$flavors"

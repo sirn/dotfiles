@@ -3,10 +3,10 @@
 # Install Kubernetes Helm.
 #
 
-base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
+root_dir=${BOOTSTRAP_ROOT:-../../}
 
-cd "$base_dir" || exit 1
-. ../../share/bootstrap/funcs.sh
+# shellcheck source=../../share/bootstrap/funcs.sh
+. "$root_dir/share/bootstrap/funcs.sh"
 
 
 ## Tmp
@@ -45,6 +45,4 @@ if file_absent "$HOME/.local/bin/helm"; then
     cp "$build_dir/go/src/k8s.io/helm/bin/helm" "$HOME/.local/bin/helm"
     cp "$build_dir/go/src/k8s.io/helm/bin/tiller" "$HOME/.local/bin/tiller"
     printe "kubectl has been successfully installed"
-
-    cd "$base_dir" || exit 1
 fi

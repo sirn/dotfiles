@@ -3,10 +3,10 @@
 # Install execline.
 #
 
-base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
+root_dir=${BOOTSTRAP_ROOT:-../../}
 
-cd "$base_dir" || exit 1
-. ../../share/bootstrap/funcs.sh
+# shellcheck source=../../share/bootstrap/funcs.sh
+. "$root_dir/share/bootstrap/funcs.sh"
 
 
 ## Tmp
@@ -39,7 +39,6 @@ if file_absent "$HOME/.local/lib/skalibs"; then
         --prefix="$HOME/.local" \
         --libdir="$HOME/.local/lib"
     gmake install
-    cd "$base_dir" || exit 1
 fi
 
 
@@ -56,5 +55,4 @@ if file_absent "$HOME/.local/bin/execlineb"; then
         --with-lib="$HOME/.local/lib" \
         --with-sysdeps="$HOME/.local/lib/skalibs/sysdeps"
     gmake install
-    cd "$base_dir" || exit 1
 fi

@@ -3,13 +3,15 @@
 # Install language runtime and its packages with asdf version manager.
 #
 
-base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
-platform=$(uname | tr '[:upper:]' '[:lower:]')
+root_dir=${BOOTSTRAP_ROOT:-../../}
+lookup_dir=${LOOKUP_ROOT:-$root_dir}
 flavors=$*
+
+platform=$(uname | tr '[:upper:]' '[:lower:]')
 asdf_dir=$HOME/.asdf
 
-cd "$base_dir" || exit 1
-. ../../share/bootstrap/funcs.sh
+# shellcheck source=../../share/bootstrap/funcs.sh
+. "$root_dir/share/bootstrap/funcs.sh"
 
 
 ## Tmp
@@ -73,7 +75,7 @@ _do_pkginst() {
     plugin=$1; shift
     instcmd=$*; shift
 
-    pkglist=../../var/bootstrap/pkglist_$plugin.txt
+    pkglist=$lookup_dir/var/bootstrap/pkglist_$plugin.txt
 
     pkginst=_pkginst
     custom_pkginst=_pkginst_$plugin
@@ -81,7 +83,7 @@ _do_pkginst() {
 
     # shellcheck disable=SC2086
     for f in $(mangle_file $pkglist $platform "$flavors"); do
-        printe_h2 "Installing $plugin packages from ${f##../../}..."
+        printe_h2 "Installing $plugin packages from ${f##$lookup_dir/}..."
 
         if [ "$(command -v "$platform_pkginst")x" != "x" ]; then
             printe_info "Running $platform pkginst script for $plugin..."
@@ -166,10 +168,10 @@ printe_h2 "Installing asdf..."
 
 git_clone_update https://github.com/asdf-vm/asdf.git "$asdf_dir"
 
-asdf_spec=../../var/bootstrap/asdf.txt
+asdf_spec=$lookup_dir/var/bootstrap/asdf.txt
 
 for f in $(mangle_file "$asdf_spec" "$platform" "$flavors"); do
-    printe_h2 "Installing asdf packages from ${f##../../}..."
+    printe_h2 "Installing asdf packages from ${f##$lookup_dir/}..."
 
     while read -r line; do
         case $line in

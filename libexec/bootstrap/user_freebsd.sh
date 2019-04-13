@@ -3,11 +3,11 @@
 # Configure current user on FreeBSD.
 #
 
-base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
+root_dir=${BOOTSTRAP_ROOT:-../../}
 flavors=$*
 
-cd "$base_dir" || exit 1
-. ../../share/bootstrap/funcs.sh
+# shellcheck source=../../share/bootstrap/funcs.sh
+. "$root_dir/share/bootstrap/funcs.sh"
 
 if [ "$(uname)" != "FreeBSD" ]; then
     printe_err "Not a FreeBSD system"
@@ -18,5 +18,5 @@ fi
 ## Hand-off
 ##
 
-"$base_dir/user_shell.sh" "$flavors"
-"$base_dir/user_links.sh" "$flavors"
+"$root_dir/libexec/bootstrap/user_shell.sh" "$flavors"
+"$root_dir/libexec/bootstrap/user_links.sh" "$flavors"

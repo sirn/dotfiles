@@ -3,12 +3,14 @@
 # Install haskell packages.
 #
 
-base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
-platform=$(uname | tr '[:upper:]' '[:lower:]')
+root_dir=${BOOTSTRAP_ROOT:-../../}
+lookup_dir=${LOOKUP_ROOT:-$root_dir}
 flavors=$*
 
-cd "$base_dir" || exit 1
-. ../../share/bootstrap/funcs.sh
+platform=$(uname | tr '[:upper:]' '[:lower:]')
+
+# shellcheck source=../../share/bootstrap/funcs.sh
+. "$root_dir/share/bootstrap/funcs.sh"
 
 
 ## Preparation
@@ -41,7 +43,7 @@ esac
 ## Setup
 ##
 
-haskell_pkglist=../../var/bootstrap/pkglist_haskell.txt
+haskell_pkglist=$lookup_dir/var/bootstrap/pkglist_haskell.txt
 
 if command -v cabal >/dev/null; then
     # Cabal >= 2.4.0.0 replaces update/install with v1-update/v1-install
@@ -54,8 +56,8 @@ if command -v cabal >/dev/null; then
         cabal "${cabal_prefix}update"
     fi
 
-    for f in $(mangle_file $haskell_pkglist "$platform" "$flavors"); do
-        printe_h2 "Installing haskell cabal packages from ${f##../../}..."
+    for f in $(mangle_file "$haskell_pkglist" "$platform" "$flavors"); do
+        printe_h2 "Installing haskell cabal packages from ${f##$lookup_dir/}..."
 
         while read -r line; do
             case $line in

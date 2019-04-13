@@ -3,10 +3,10 @@
 # Sets up Darwin system.
 #
 
-base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
+root_dir=${BOOTSTRAP_ROOT:-../../}
 
-cd "$base_dir" || exit 1
-. ../../share/bootstrap/funcs.sh
+# shellcheck source=../../share/bootstrap/funcs.sh
+. "$root_dir/share/bootstrap/funcs.sh"
 
 if [ "$(uname)" != "Darwin" ]; then
     printe_err "Not a Darwin system"
@@ -24,7 +24,7 @@ run_root brew services start dnscrypt-proxy
 dnscrypt_conf=/usr/local/etc/dnscrypt-proxy.toml
 
 if normalize_bool "$FORCE" || [ ! -f $dnscrypt_conf ]; then
-    run_root cp ../../share/examples/bootstrap/dnscrypt-proxy.toml $dnscrypt_conf
+    run_root cp "$root_dir/etc/dnscrypt-proxy/dnscrypt-proxy.toml" $dnscrypt_conf
     run_root chmod 0644 $dnscrypt_conf
     run_root chown nobody:nobody $dnscrypt_conf
     run_root brew services restart dnscrypt-proxy

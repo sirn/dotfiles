@@ -3,12 +3,14 @@
 # Create links per the given spec.
 #
 
-base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
-platform=$(uname | tr '[:upper:]' '[:lower:]')
+root_dir=${BOOTSTRAP_ROOT:-../../}
+lookup_dir=${LOOKUP_ROOT:-$root_dir}
 flavors=$*
 
-cd "$base_dir" || exit 1
-. ../../share/bootstrap/funcs.sh
+platform=$(uname | tr '[:upper:]' '[:lower:]')
+
+# shellcheck source=../../share/bootstrap/funcs.sh
+. "$root_dir/share/bootstrap/funcs.sh"
 
 
 ## Utils
@@ -20,7 +22,7 @@ _make_link() {
 
     case $src in
         /* ) printe "$src cannot be an absolute path"; return;;
-        * ) src=$(cd "$(dirname "$base_dir/../../../")" || exit; pwd -P)/$src;;
+        * ) src=$lookup_dir/$src;;
     esac
 
     make_link "$src" "$dest"
@@ -30,10 +32,10 @@ _make_link() {
 ## Links
 ##
 
-linklist="../../var/bootstrap/links.txt"
+linklist="$lookup_dir/var/bootstrap/links.txt"
 
 for f in $(mangle_file "$linklist" "$platform" "$flavors"); do
-    printe_h2 "Linking files in ${f##../../}..."
+    printe_h2 "Linking files in ${f##$lookup_dir/}..."
 
     while read -r line; do
         case $line in

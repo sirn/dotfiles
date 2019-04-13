@@ -3,11 +3,12 @@
 # Install OpenBSD packages with Pkg.
 #
 
-base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
+root_dir=${BOOTSTRAP_ROOT:-../../}
+lookup_dir=${LOOKUP_ROOT:-$root_dir}
 flavors=$*
 
-cd "$base_dir" || exit 1
-. ../../share/bootstrap/funcs.sh
+# shellcheck source=../../share/bootstrap/funcs.sh
+. "$root_dir/share/bootstrap/funcs.sh"
 
 if [ "$(uname)" != "OpenBSD" ]; then
     printe_err "Not an OpenBSD system"
@@ -18,10 +19,10 @@ fi
 ## Installs
 ##
 
-pkglist=../../var/bootstrap/openbsd/pkglist.txt
+pkglist=$lookup_dir/var/bootstrap/openbsd/pkglist.txt
 
-for f in $(mangle_file $pkglist none "$flavors"); do
-    printe_h2 "Installing packages from ${f##../../}..."
+for f in $(mangle_file "$pkglist" none "$flavors"); do
+    printe_h2 "Installing packages from ${f##$lookup_dir/}..."
     run_root xargs pkg_add -D snap < "$f"
 done
 
@@ -33,13 +34,13 @@ done
 run_root mkdir -p /usr/local/google-cloud-sdk/.install
 
 # Packages not available under OpenBSD Ports
-"../packages/execline.sh"
-"../packages/git-crypt.sh"
-"../packages/leiningen.sh"
+"$root_dir/libexec/packages/execline.sh"
+"$root_dir/libexec/packages/git-crypt.sh"
+"$root_dir/libexec/packages/leiningen.sh"
 
 
 ## Hand-off
 ##
 
-"$base_dir/pkg_asdf.sh" "$flavors"
-"$base_dir/pkg_local.sh" "$flavors"
+"$root_dir/libexec/bootstrap/pkg_asdf.sh" "$flavors"
+"$root_dir/libexec/bootstrap/pkg_local.sh" "$flavors"

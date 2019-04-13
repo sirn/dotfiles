@@ -3,11 +3,11 @@
 # Configure current user on Darwin.
 #
 
-base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
+root_dir=${BOOTSTRAP_ROOT:-../../}
 flavors=$*
 
-cd "$base_dir" || exit 1
-. ../../share/bootstrap/funcs.sh
+# shellcheck source=../../share/bootstrap/funcs.sh
+. "$root_dir/share/bootstrap/funcs.sh"
 
 if [ "$(uname)" != "Darwin" ]; then
     printe_err "Not a FreeBSD system"
@@ -23,7 +23,7 @@ printe_h2 "Setting up userenv..."
 userenv_plist="$HOME/Library/LaunchAgents/th.in.grid.userenv.plist"
 
 if normalize_bool "$FORCE" || [ ! -f "$userenv_plist" ]; then
-    cp ../../share/examples/bootstrap/th.in.grid.userenv.plist "$userenv_plist"
+    cp "$root_dir/share/examples/launchd/th.in.grid.userenv.plist" "$userenv_plist"
     chmod 0644 "$userenv_plist"
     launchctl load -w "$userenv_plist"
     printe "$userenv_plist has been installed, you may need to relogin"
@@ -35,8 +35,8 @@ fi
 ## Hand-off
 ##
 
-"$base_dir/user_shell.sh" "$flavors"
-"$base_dir/user_links.sh" "$flavors"
+"$root_dir/libexec/bootstrap/user_shell.sh" "$flavors"
+"$root_dir/libexec/bootstrap/user_links.sh" "$flavors"
 
 
 ## Chunkwm/Skhd
