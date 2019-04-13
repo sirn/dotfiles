@@ -20,6 +20,9 @@ PATH=$HOME/.cargo/bin:$PATH
 GOPATH=$HOME/Dev/go; export GOPATH
 PATH=$GOPATH/bin:$PATH
 
+# Note: leading colon to append to default MANPATH
+MANPATH=:$HOME/.local/man; export MANPATH
+
 if [ -d /usr/local/jdk-1.8.0/bin ]; then
     PATH=$PATH:/usr/local/jdk-1.8.0/bin
 fi

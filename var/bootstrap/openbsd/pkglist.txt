@@ -8,6 +8,7 @@ cabal-install
 colorls
 coreutils
 curl
+doxygen
 duplicity
 emacs--no_x11
 expect

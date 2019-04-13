@@ -5,4 +5,5 @@ pipenv
 pre-commit
 proselint
 pylint
+sphinx
 virtualenv
