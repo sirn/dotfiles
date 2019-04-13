@@ -337,7 +337,7 @@ require_go() {
     fi
 }
 
-require_brew_sqlite3() {
+require_sqlite3() {
     what=$1; shift
 
     case $(uname) in
@@ -351,7 +351,7 @@ require_brew_sqlite3() {
     esac
 }
 
-require_brew_zlib() {
+require_zlib() {
     what=$1; shift
 
     case $(uname) in

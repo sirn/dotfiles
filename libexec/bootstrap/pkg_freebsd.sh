@@ -39,5 +39,7 @@ done
 ## Hand-off
 ##
 
-"$root_dir/libexec/bootstrap/pkg_asdf.sh" "$flavors"
-"$root_dir/libexec/bootstrap/pkg_local.sh" "$flavors"
+if [ "$root_dir" = "$lookup_dir" ]; then
+    "$root_dir/libexec/bootstrap/pkg_asdf.sh" "$flavors"
+    "$root_dir/libexec/bootstrap/pkg_local.sh" "$flavors"
+fi

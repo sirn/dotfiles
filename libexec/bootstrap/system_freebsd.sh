@@ -4,9 +4,15 @@
 #
 
 root_dir=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+lookup_dir=${LOOKUP_ROOT:-$root_dir}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
 . "$root_dir/share/bootstrap/funcs.sh"
+
+if [ "$root_dir" != "$lookup_dir" ]; then
+    printe_err "Cannot be included from different root"
+    exit 1
+fi
 
 if [ "$(uname)" != "FreeBSD" ]; then
     printe_err "Not a FreeBSD system"

@@ -39,8 +39,9 @@ PROFILE:
 
 FLAVOR:
 
-    desktop         Enable desktop flavor.
-    kubernetes      Install Kubernetes tools.
+    desktop         Install desktop packages.
+    kubernetes      Install Kubernetes packages.
+    mail            Install mail packages.
 
 Bootstrap script will default to \`pkg\` without any flavors
 if no profiles and flavors is given. Lookup path is default to
@@ -94,7 +95,7 @@ done
 
 for f in $flavors; do
     case "$f" in
-        desktop | kubernetes ) ;;
+        desktop | kubernetes | mail ) ;;
         * ) printe_err "Unknown flavor: $f"; exit 1;;
     esac
 done

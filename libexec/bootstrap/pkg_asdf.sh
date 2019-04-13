@@ -123,8 +123,8 @@ _install_python_darwin() {
     plugin=$1; shift
     version=$1; shift
 
-    require_brew_zlib "python"
-    require_brew_sqlite3 "python"
+    require_zlib "python"
+    require_sqlite3 "python"
 
     # See https://github.com/pyenv/pyenv/issues/1219
     env \

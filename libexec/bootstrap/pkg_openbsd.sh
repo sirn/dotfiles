@@ -27,20 +27,21 @@ for f in $(mangle_file "$pkglist" none "$flavors"); do
 done
 
 
-## Custom setup
-##
+if [ "$root_dir" = "$lookup_dir" ]; then
+    # Restore Google Cloud state directory
+    run_root mkdir -p /usr/local/google-cloud-sdk/.install
 
-# Restoring Google Cloud state directory
-run_root mkdir -p /usr/local/google-cloud-sdk/.install
-
-# Packages not available under OpenBSD Ports
-"$root_dir/libexec/packages/execline.sh"
-"$root_dir/libexec/packages/git-crypt.sh"
-"$root_dir/libexec/packages/leiningen.sh"
+    # Packages not available under OpenBSD Ports
+    "$root_dir/libexec/packages/execline.sh"
+    "$root_dir/libexec/packages/git-crypt.sh"
+    "$root_dir/libexec/packages/leiningen.sh"
+fi
 
 
 ## Hand-off
 ##
 
-"$root_dir/libexec/bootstrap/pkg_asdf.sh" "$flavors"
-"$root_dir/libexec/bootstrap/pkg_local.sh" "$flavors"
+if [ "$root_dir" = "$lookup_dir" ]; then
+    "$root_dir/libexec/bootstrap/pkg_asdf.sh" "$flavors"
+    "$root_dir/libexec/bootstrap/pkg_local.sh" "$flavors"
+fi
