@@ -244,12 +244,13 @@ make_link() {
 lineinfile() {
     OPTIND=1
 
-    while getopts "f:r:l:s:" opt; do
+    while getopts "f:r:l:s:S" opt; do
         case "$opt" in
             f ) file="$OPTARG";;
             r ) regexp="$OPTARG";;
             l ) line="$OPTARG";;
             s ) state="$OPTARG";;
+            S ) command="run_root sh";;
             * )
                 printe_err "Invalid flags given to lineinfile"
                 exit 1
@@ -267,26 +268,28 @@ lineinfile() {
         exit 1
     fi
 
-    if [ -z "$state" ]; then
-        state=present
-    fi
-
+    if [ -z "$command" ]; then command="sh"; fi
+    if [ -z "$state" ];   then state=present; fi
     if [ -z "$regexp" ]; then
         regexp=$(printf "%s" "$line" | sed 's|/|\\\\/|g')
     fi
 
     case "$state" in
         present )
-            awk "
-                s = /$regexp/ { print \"$line\"; run=1 }
-                ! s { print }
-                END { if (run != 1) print \"$line\" }
-            " < "$file" > "$file.new"
-            mv "$file.new" "$file"
+            $command <<EOF
+awk "
+    s = /$regexp/ { print \"$line\"; run=1 }
+    ! s { print }
+    END { if (run != 1) print \"$line\" }
+" < "$file" > "$file.new"
+mv "$file.new" "$file"
+EOF
             ;;
         absent )
-            awk "! /$searchstr/ { print }" < "$file" > "$file.new"
-            mv "$file.new" "$file"
+            $command <<EOF
+awk "! /$regexp/ { print }" < "$file" > "$file.new"
+mv "$file.new" "$file"
+EOF
             ;;
         * )
             printe_err "Unknown lineinfile state $state"
