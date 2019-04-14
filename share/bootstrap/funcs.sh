@@ -241,6 +241,60 @@ make_link() {
     printe "$dest has been linked to $src"
 }
 
+lineinfile() {
+    OPTIND=1
+
+    while getopts "f:r:l:s:" opt; do
+        case "$opt" in
+            f ) file="$OPTARG";;
+            r ) regexp="$OPTARG";;
+            l ) line="$OPTARG";;
+            s ) state="$OPTARG";;
+            * )
+                printe_err "Invalid flags given to lineinfile"
+                exit 1
+                ;;
+        esac
+    done
+
+    if [ -z "$line" ] && [ "$state" != "absent" ]; then
+        printe_err "line must be specified unless state is absent"
+        exit 1
+    fi
+
+    if [ -z "$file" ] || [ ! -f "$file" ]; then
+        printe_err "file must be present"
+        exit 1
+    fi
+
+    if [ -z "$state" ]; then
+        state=present
+    fi
+
+    if [ -z "$regexp" ]; then
+        regexp=$(printf "%s" "$line" | sed 's|/|\\\\/|g')
+    fi
+
+    case "$state" in
+        present )
+            awk "
+                s = /$regexp/ { print \"$line\"; run=1 }
+                ! s { print }
+                END { if (run != 1) print \"$line\" }
+            " < "$file" > "$file.new"
+            mv "$file.new" "$file"
+            ;;
+        absent )
+            awk "! /$searchstr/ { print }" < "$file" > "$file.new"
+            mv "$file.new" "$file"
+            ;;
+        * )
+            printe_err "Unknown lineinfile state $state"
+            exit 1
+            ;;
+    esac
+}
+
 
 ## Reqs
 ##
