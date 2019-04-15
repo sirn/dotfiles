@@ -21,6 +21,15 @@ if [ "$(uname)" != "OpenBSD" ]; then
 fi
 
 
+## Tmp
+##
+
+build_dir=$(mktemp -d)
+if ! normalize_bool "$NO_CLEAN_BUILDDIR"; then
+    trap 'rm -rf $build_dir' 0 1 2 3 6 14 15
+fi
+
+
 ## NFS
 ##
 
@@ -39,11 +48,14 @@ run_root rcctl start portmap mountd nfsd
 
 printe_h2 "Setting up pf..."
 
-if file_absent /etc/pf.conf.local; then
-    run_root touch /etc/pf.conf.local
-    run_root chown root:wheel /etc/pf.conf.local
-    run_root chmod 0600 /etc/pf.conf.local
-fi
+for file in pf.conf.local pf.trusted; do
+    if file_absent /etc/$file; then
+        run_root touch /etc/$file
+        run_root chown root:wheel /etc/$file
+        run_root chmod 0600 /etc/$file
+        printe "/etc/$file successfully created"
+    fi
+done
 
 if is_force || [ ! -f /etc/pf.conf ]; then
     run_root cp "$root_dir/etc/pf/pf.openbsd.conf" /etc/pf.conf
@@ -60,6 +72,25 @@ if is_force || [ ! -f /etc/pf.conf ]; then
 else
     printe "/etc/pf.conf already exists, not overwriting"
 fi
+
+
+## PF/NFSD
+##
+
+printe_h2 "Installing pfnfsd crontab..."
+
+cronline="@reboot $root_dir/libexec/pfnfsd/periodic.sh vio0"
+tmpcron=$build_dir/crontab.pfnfsd
+run_root crontab -u root -l > "$tmpcron" 2>/dev/null || true
+
+lineinfile \
+    -f "$tmpcron" \
+    -l "$cronline" \
+    -r pfnfsd\\/periodic.sh \
+    -s present
+
+run_root crontab -u root - < "$tmpcron"
+printe "pfnfsd crontab successfully installed"
 
 
 ## Tunings flavor
@@ -114,15 +145,15 @@ s = /ffs rw/ {
   print
 } ! s { print }
 ' < /etc/fstab > /etc/fstab.new
-
-if diff -u /etc/fstab /etc/fstab.new >/dev/null; then
-    printf >&2 "/etc/fstab already updated\\n"
-    rm /etc/fstab.new
-    exit
-fi
-
-printf >&2 "/etc/fstab.new has been written!\\n"
-printf >&2 "Please inspect the file and run: mv /etc/fstab.new /etc/fstab\\n"
-printf >&2 "Not doing this automatically because it may render the system unbootable.\\n"
 EOF
+
+    if run_root diff -u /etc/fstab /etc/fstab.new >/dev/null; then
+        printe "/etc/fstab already updated"
+        run_root rm /etc/fstab.new
+        exit
+    fi
+
+    printe "/etc/fstab.new has been written!"
+    printe "Please inspect the file and run: mv /etc/fstab.new /etc/fstab"
+    printe "Not doing this automatically because it may render the system unbootable."
 fi

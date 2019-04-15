@@ -20,6 +20,15 @@ if [ "$(uname)" != "FreeBSD" ]; then
 fi
 
 
+## Tmp
+##
+
+build_dir=$(mktemp -d)
+if ! normalize_bool "$NO_CLEAN_BUILDDIR"; then
+    trap 'rm -rf $build_dir' 0 1 2 3 6 14 15
+fi
+
+
 ## NFS
 ##
 
@@ -47,11 +56,14 @@ printe_h2 "Setting up pf..."
 
 pf_updated=0
 
-if file_absent /usr/local/etc/pf.conf; then
-    run_root touch /usr/local/etc/pf.conf
-    run_root chown root:wheel /usr/local/etc/pf.conf
-    run_root chmod 0600 /usr/local/etc/pf.conf
-fi
+for file in pf.conf pf.trusted; do
+    if file_absent /usr/local/etc/$file; then
+        run_root touch /usr/local/etc/$file
+        run_root chown root:wheel /usr/local/etc/$file
+        run_root chmod 0600 /usr/local/etc/$file
+        printe "/usr/local/etc/$file successfully created"
+    fi
+done
 
 if is_force || [ ! -f /etc/pf.conf ]; then
     run_root cp "$root_dir/etc/pf/pf.freebsd.conf" /etc/pf.conf
@@ -74,3 +86,22 @@ if [ $pf_updated = "1" ]; then
     run_root pfctl -F all -f /etc/pf.conf
     printe "/etc/pf.conf has been updated, internet connection might be interrupted"
 fi
+
+
+## PF/NFSD
+##
+
+printe_h2 "Installing pfnfsd crontab..."
+
+cronline="@reboot $root_dir/libexec/pfnfsd/periodic.sh vtnet0"
+tmpcron=$build_dir/crontab.pfnfsd
+run_root crontab -u root -l > "$tmpcron" 2>/dev/null || true
+
+lineinfile \
+    -f "$tmpcron" \
+    -l "$cronline" \
+    -r pfnfsd\\/periodic.sh \
+    -s present
+
+run_root crontab -u root - < "$tmpcron"
+printe "pfnfsd crontab successfully installed"
