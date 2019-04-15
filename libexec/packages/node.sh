@@ -35,7 +35,7 @@ if command -v npm >/dev/null; then
    npm set prefix="$HOME/.local"
 
    for f in $(mangle_file "$node_pkglist" "$platform" "$flavors"); do
-       printe_h2 "Installing node packages from ${f##$lookup_dir/}..."
+       printe_h2 "Installing node packages from $f..."
        xargs npm install -g < "$f"
    done
 fi

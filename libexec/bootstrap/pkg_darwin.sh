@@ -107,7 +107,7 @@ _do_install mas
 pkglist=$lookup_dir/var/bootstrap/darwin/pkglist.txt
 
 for f in $(mangle_file "$pkglist" none "$flavors"); do
-    printe_h2 "Installing packages from ${f##$lookup_dir/}..."
+    printe_h2 "Installing packages from $f..."
 
     while read -r line; do
         case $line in

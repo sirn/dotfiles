@@ -73,7 +73,7 @@ rust_pkglist=$lookup_dir/var/bootstrap/pkglist_rust.txt
 
 if command -v cargo >/dev/null; then
     for f in $(mangle_file "$rust_pkglist" "$platform" "$flavors"); do
-        printe_h2 "Installing rust packages from ${f##$lookup_dir/}..."
+        printe_h2 "Installing rust packages from $f..."
 
         while read -r line; do
             case $line in

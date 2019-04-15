@@ -22,7 +22,7 @@ fi
 pkglist=$lookup_dir/var/bootstrap/openbsd/pkglist.txt
 
 for f in $(mangle_file "$pkglist" none "$flavors"); do
-    printe_h2 "Installing packages from ${f##$lookup_dir/}..."
+    printe_h2 "Installing packages from $f..."
     run_root xargs pkg_add -D snap < "$f"
 done
 

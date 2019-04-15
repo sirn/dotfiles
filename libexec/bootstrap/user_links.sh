@@ -35,7 +35,7 @@ _make_link() {
 linklist="$lookup_dir/var/bootstrap/links.txt"
 
 for f in $(mangle_file "$linklist" "$platform" "$flavors"); do
-    printe_h2 "Linking files in ${f##$lookup_dir/}..."
+    printe_h2 "Linking files in $f..."
 
     while read -r line; do
         case $line in

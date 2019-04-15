@@ -83,7 +83,7 @@ _do_pkginst() {
 
     # shellcheck disable=SC2086
     for f in $(mangle_file $pkglist $platform "$flavors"); do
-        printe_h2 "Installing $plugin packages from ${f##$lookup_dir/}..."
+        printe_h2 "Installing $plugin packages from $f..."
 
         if [ "$(command -v "$platform_pkginst")x" != "x" ]; then
             printe_info "Running $platform pkginst script for $plugin..."
@@ -181,7 +181,7 @@ git_clone_update https://github.com/asdf-vm/asdf.git "$asdf_dir"
 asdf_spec=$lookup_dir/var/bootstrap/asdf.txt
 
 for f in $(mangle_file "$asdf_spec" "$platform" "$flavors"); do
-    printe_h2 "Installing asdf packages from ${f##$lookup_dir/}..."
+    printe_h2 "Installing asdf packages from $f..."
 
     while read -r line; do
         case $line in
