@@ -24,8 +24,11 @@ case $platform in
             # See also: https://deftly.net/posts/2017-10-12-using-cabal-on-openbsd.html
             if file_absent /usr/local/cabal; then
                 run_root mkdir -p /usr/local/cabal
-                run_root mkdir -p /usr/local/cabal/build
                 run_root chown "$USER:wheel" /usr/local/cabal
+            fi
+
+            if file_absent /usr/local/cabal/build; then
+                run_root mkdir -p /usr/local/cabal/build
                 run_root chown "$USER:wheel" /usr/local/cabal/build
             fi
 
@@ -57,7 +60,7 @@ if command -v cabal >/dev/null; then
     fi
 
     for f in $(mangle_file "$haskell_pkglist" "$platform" "$flavors"); do
-        printe_h2 "Installing haskell cabal packages from ${f##$lookup_dir/}..."
+        printe_h2 "Installing haskell cabal packages from $f..."
 
         while read -r line; do
             case $line in
