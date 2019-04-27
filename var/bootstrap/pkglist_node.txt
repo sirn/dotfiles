@@ -10,4 +10,5 @@ stylelint-scss
 tern
 tslint
 typescript
+wscat
 yarn
