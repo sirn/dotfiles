@@ -192,7 +192,12 @@
 
   :config
   (require 'smartparens-config)
-  (smartparens-global-mode t))
+  (smartparens-global-mode t)
+  (add-hook 'clojure-mode-hook 'turn-off-smartparens-mode)
+  (add-hook 'emacs-lisp-mode-hook 'turn-off-smartparens-mode)
+  (add-hook 'common-lisp-mode-hook 'turn-off-smartparens-mode)
+  (add-hook 'scheme-mode-hook 'turn-off-smartparens-mode)
+  (add-hook 'lisp-mode-hook 'turn-off-smartparens-mode))
 
 
 (use-package undo-tree
