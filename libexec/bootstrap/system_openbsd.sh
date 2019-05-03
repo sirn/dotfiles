@@ -98,37 +98,6 @@ printe "pfnfsd crontab successfully installed"
 ##
 
 if has_args tunings "$flavors"; then
-    printe_h2 "Tuning system..."
-
-    if [ ! -f /etc/sysctl.conf ]; then
-        run_root touch /etc/sysctl.conf
-    fi
-
-    for l in \
-        kern.maxvnodes=768000 \
-                      kern.maxfiles=32768 \
-                      kern.maxclusters=256000 \
-                      kern.seminfo.semmni=1024 \
-                      kern.seminfo.semmns=4096 \
-                      kern.shminfo.shmmax=805306368 \
-                      kern.bufcachepercent=90
-    do
-        printe "${l}"
-
-        key=${l%%=*}
-        value=${l##*$key=}
-
-        if [ "$(sysctl -n "$key")" != "$value" ]; then
-            run_root sysctl "$l" >/dev/null
-        fi
-
-        lineinfile \
-            -S \
-            -f /etc/sysctl.conf \
-            -r "$key=" \
-            -l "$l"
-    done
-
     printe_h2 "Tuning filesystem..."
 
     run_root sh <<EOF
