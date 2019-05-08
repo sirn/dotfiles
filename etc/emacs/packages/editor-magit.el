@@ -18,4 +18,11 @@
 
 (use-package forge
   :straight t
-  :after magit)
+  :after magit
+
+  :config
+
+  ;; BUG: https://github.com/magit/ghub/issues/81
+  (setq ghub-use-workaround-for-emacs-bug nil)
+  (when (< emacs-major-version 27)
+    (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")))

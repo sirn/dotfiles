@@ -1,4 +1,5 @@
 (use-package auth-source
+  :after epa
   :straight t
 
   :preface
@@ -6,7 +7,7 @@
     (defvar auth-sources))
 
   :config
-  (setq auth-sources '()))
+  (setq auth-sources '((:source "~/.emacs.d/authinfo.gpg"))))
 
 
 (use-package auth-source-pass
