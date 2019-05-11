@@ -8,7 +8,6 @@
   (declare-function mac-auto-operator-composition-mode nil))
 
 
-(scroll-bar-mode -1)
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 
@@ -18,12 +17,15 @@
   (when (display-graphic-p frame)
     (let ((w (window-system frame)))
       (cond
-       ((eq w 'x) (set-frame-font "PragmataPro Mono 11" nil t))
+       ((eq w 'x)
+	(scroll-bar-mode -1)
+	(set-frame-font "PragmataPro Mono 11" nil t))
        ((eq w 'mac)
         (progn
           ;; macOS will "float" Emacs window if menu-bar-mode is disabled.
           ;; (e.g. not sticky to Spaces and no fullscreen support)
           (menu-bar-mode 1)
+	  (scroll-bar-mode -1)
           (set-frame-font "PragmataPro Mono 14" nil t)
           (when (boundp 'mac-auto-operator-composition-mode)
             (mac-auto-operator-composition-mode))))))))
