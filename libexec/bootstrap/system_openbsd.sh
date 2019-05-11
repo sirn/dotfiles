@@ -21,6 +21,17 @@ if [ "$(uname)" != "OpenBSD" ]; then
 fi
 
 
+## Getting primary network interface
+##
+
+netif=$(ifconfig | awk '! /^lo|^pf|^enc|^\t/ { FS=":"; print $1; exit }')
+
+if ! ifconfig "$netif" >/dev/null 2>&1; then
+    printe_err "Could not determine primary network interface"
+    exit 1
+fi
+
+
 ## Tmp
 ##
 
@@ -35,12 +46,12 @@ fi
 
 printe_h2 "Setting up nfsd..."
 
-if [ ! -f /etc/exports ]; then
-    run_root touch /etc/exports
+if [ -f /etc/exports ]; then
+    run_root rcctl enable portmap mountd nfsd
+    run_root rcctl start portmap mountd nfsd
+else
+    printe "/etc/exports must already be configured"
 fi
-
-run_root rcctl enable portmap mountd nfsd
-run_root rcctl start portmap mountd nfsd
 
 
 ## PF
@@ -59,6 +70,12 @@ done
 
 if is_force || [ ! -f /etc/pf.conf ]; then
     run_root cp "$root_dir/etc/pf/pf.openbsd.conf" /etc/pf.conf
+    lineinfile -S \
+        -f /etc/pf.conf \
+        -l "ext_if=$netif" \
+        -r "^ext_if=" \
+        -s present
+
     run_root chown root:wheel /etc/pf.conf
     run_root chmod 0600 /etc/pf.conf
 
@@ -79,18 +96,22 @@ fi
 
 printe_h2 "Installing pfnfsd crontab..."
 
-cronline="@reboot $root_dir/libexec/pfnfsd/periodic.sh vio0"
-tmpcron=$build_dir/crontab.pfnfsd
-run_root crontab -u root -l > "$tmpcron" 2>/dev/null || true
+if [ -f /etc/exports ]; then
+    cronline="@reboot $root_dir/libexec/pfnfsd/periodic.sh $netif"
+    tmpcron=$build_dir/crontab.pfnfsd
+    run_root crontab -u root -l > "$tmpcron" 2>/dev/null || true
 
-lineinfile \
-    -f "$tmpcron" \
-    -l "$cronline" \
-    -r pfnfsd\\/periodic.sh \
-    -s present
+    lineinfile \
+        -f "$tmpcron" \
+        -l "$cronline" \
+        -r pfnfsd\\/periodic.sh \
+        -s present
 
-run_root crontab -u root - < "$tmpcron"
-printe "pfnfsd crontab successfully installed"
+    run_root crontab -u root - < "$tmpcron"
+    printe "pfnfsd crontab successfully installed"
+else
+    printe "nfsd has not been setup"
+fi
 
 
 ## Tunings flavor
