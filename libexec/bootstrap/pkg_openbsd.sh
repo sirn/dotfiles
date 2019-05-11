@@ -26,6 +26,9 @@ for f in $(mangle_file "$pkglist" none "$flavors"); do
     run_root xargs pkg_add -D snap < "$f"
 done
 
+if ! pkg_info -q -e "emacs-*"; then
+    run_root pkg_add -D snap emacs--no_x11
+fi
 
 if [ "$root_dir" = "$lookup_dir" ]; then
     # Restore Google Cloud state directory

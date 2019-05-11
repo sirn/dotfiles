@@ -12,7 +12,7 @@ XDG_CACHE_HOME=$HOME/.cache; export XDG_CACHE_HOME
 XDG_DATA_HOME=$HOME/.data; export XDG_DATA_HOME
 XDG_STATE_HOME=$HOME/.state; export XDG_STATE_HOME
 
-PATH=$HOME/.local/bin:/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+PATH=$HOME/.local/bin:/sbin:/bin:/usr/X11R6/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 PATH=$HOME/.cache/rebar3/bin:$PATH
 PATH=$HOME/.cabal/bin:$PATH
 PATH=$HOME/.cargo/bin:$PATH

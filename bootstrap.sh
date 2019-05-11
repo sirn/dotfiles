@@ -1,9 +1,7 @@
-#!/bin/sh
+#!/bin/sh -e
 #
 # Script to setup personal workspace.
 #
-
-set -e
 
 base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
 platform=$(uname | tr '[:upper:]' '[:lower:]')

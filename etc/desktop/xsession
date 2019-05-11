@@ -1,0 +1,41 @@
+#!/bin/sh -e
+#
+# Script to setup X session.
+#
+
+# shellcheck source=../sh/profile
+if [ -f "$HOME/.profile" ]; then
+    . "$HOME/.profile"
+fi
+
+xrdb -merge "$HOME/.Xresources"
+xset b off
+xsetroot -solid dimgray
+
+xclock \
+    -digital \
+    -update 1 \
+    -bg dimgray \
+    -fg white \
+    -face 'sans-11:bold' \
+    -geometry 500x40+20+0 \
+    -render &
+
+# Only run vmwh if it's exists (e.g. OpenBSD) and not already running.
+# Having multiple vmwh process will cause race condition on clipboard
+# since all process will attempt to write clipboard at the same time.
+if command -v vmwh >/dev/null; then
+    if [ -f "$HOME/.vmwh.pid" ]; then
+        vmwh_pid=$(cat "$HOME/.vmwh.pid")
+        if ! ps -o pid= -p "$vmwh_pid" >/dev/null; then
+            rm "$HOME/.vmwh.pid"
+        fi
+    fi
+
+    if [ ! -f "$HOME/.vmwh.pid" ]; then
+        vmwh &
+        echo "$!" > "$HOME/.vmwh.pid"
+    fi
+fi
+
+exec cwm

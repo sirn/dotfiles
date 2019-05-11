@@ -1,15 +1,26 @@
 !-- Xft --!
-Xft.dpi: 144
-Xft.autohint: 0
-Xft.lcdfilter: lcddefault
-Xft.hintstyle: hintnone
-Xft.hinting: 1
 Xft.antialias: 1
+Xft.autohint: 0
+Xft.dpi: 185
+Xft.hinting: 1
+Xft.hintstyle: hintnone
+Xft.lcdfilter: lcddefault
 Xft.rgba: rgb
 
 !-- URxvt --!
 URxvt*background: Black
 URxvt*foreground: White
 URxvt*scrollBar: false
-URxvt.font: xft:Source Code Pro:size=11
-URxvt.boldfont: xft:Source Code Pro Bold:size=11
+URxvt.boldfont: xft:PragmataPro Mono:size=11
+URxvt.font: xft:PragmataPro Mono:size=11
+
+!-- XTerm --!
+XTerm*background: black
+XTerm*faceName: PragmataPro Mono
+XTerm*faceSize: 11
+XTerm*foreground: lightgray
+XTerm*loginShell: true
+XTerm*metaSendsEscape: true
+XTerm*renderFont: true
+XTerm*selectToClipboard: true
+XTerm*termName: xterm-256color

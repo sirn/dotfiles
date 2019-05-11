@@ -10,7 +10,6 @@ coreutils
 curl
 doxygen
 duplicity
-emacs--no_x11
 expect
 ffmpeg
 gdiff
