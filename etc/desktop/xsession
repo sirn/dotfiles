@@ -12,14 +12,28 @@ xrdb -merge "$HOME/.Xresources"
 xset b off
 xsetroot -solid "#2f3640"
 
-xclock \
-    -digital \
-    -update 1 \
-    -bg "#2f3640" \
-    -fg white \
-    -face 'sans-11:bold' \
-    -geometry 500x40+20+0 \
-    -render &
+if command -v trayer >/dev/null; then
+    trayer \
+        --edge top \
+        --align right \
+        --widthtype request \
+        --height 40 \
+        --padding 20 \
+        --transparent true \
+        --alpha 0 \
+        --tint 0xff2f3640 &
+fi
+
+if command -v xclock >/dev/null; then
+    xclock \
+        -digital \
+        -update 1 \
+        -bg "#2f3640" \
+        -fg "#7f8fa6" \
+        -face 'sans-11:bold' \
+        -geometry 500x40+20+0 \
+        -render &
+fi
 
 # Only run vmwh if it's exists (e.g. OpenBSD) and not already running.
 # Having multiple vmwh process will cause race condition on clipboard

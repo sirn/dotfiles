@@ -6,3 +6,4 @@ emacs--gtk3
 noto-cjk
 noto-emoji
 noto-fonts
+trayer

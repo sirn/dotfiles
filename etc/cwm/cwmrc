@@ -19,6 +19,7 @@ command     xterm          "xterm"
 
 # Ignore
 ignore      xclock
+ignore      panel
 
 # Binding
 bind-key    M-v            window-vtile
