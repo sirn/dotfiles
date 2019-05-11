@@ -1,9 +1,3 @@
-;; macOS will "float" Emacs window if menu-bar-mode is disabled.
-;; (e.g. not sticky to Spaces and no fullscreen support)
-(when (not (eq window-system 'mac))
-  (menu-bar-mode -1))
-
-
 (setq-default frame-title-format '("%f"))
 (line-number-mode 1)
 (column-number-mode 1)
@@ -14,12 +8,27 @@
   (declare-function mac-auto-operator-composition-mode nil))
 
 
-(when (display-graphic-p)
-  (set-frame-font "PragmataPro Mono 14" nil t)
-  (scroll-bar-mode -1)
-  (tool-bar-mode -1)
-  (when (boundp 'mac-auto-operator-composition-mode)
-    (mac-auto-operator-composition-mode)))
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+
+
+(defun gr/make-frame-func (frame)
+  "Setup frame attributes after a FRAME is created."
+  (if (display-graphic-p frame)
+    (let ((w (window-system frame)))
+      (cond
+       ((eq w 'x) (set-frame-font "PragmataPro Mono 11" nil t))
+       ((eq w 'mac)
+        (progn
+          ;; macOS will "float" Emacs window if menu-bar-mode is disabled.
+          ;; (e.g. not sticky to Spaces and no fullscreen support)
+          (menu-bar-mode 1)
+          (set-frame-font "PragmataPro Mono 14" nil t)
+          (when (boundp 'mac-auto-operator-composition-mode)
+            (mac-auto-operator-composition-mode))))))))
+
+(add-hook 'after-make-frame-functions 'gr/make-frame-func)
 
 
 (use-package git-gutter
