@@ -129,20 +129,9 @@ chunkc tiling::rule \
        --state float &
 
 chunkc tiling::rule \
-       --owner Qbserve \
-       --state float &
-
-chunkc tiling::rule \
        --owner \"The Unarchiver\" \
        --state float &
 
 chunkc tiling::rule \
-       --owner Tweetbot \
-       --name \"Main Window\" \
-       --grid-layout 1:4:3:0:1:1 \
-       --state float &
-
-chunkc tiling::rule \
-       --owner Tweetbot \
-       --except \"Main Window\" \
+       --owner \"VMware Fusion\" \
        --state float &

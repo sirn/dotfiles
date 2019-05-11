@@ -50,3 +50,8 @@ cmd + shift - 4 -> : chunkc border::clear
 ctrl + alt - a : chunkc tiling::desktop --layout bsp
 ctrl + alt - s : chunkc tiling::desktop --layout monocle
 ctrl + alt - d : chunkc tiling::desktop --layout float
+
+# general options
+.blacklist [
+    "vmware fusion"
+]
