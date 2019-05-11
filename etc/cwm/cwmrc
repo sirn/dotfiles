@@ -4,8 +4,13 @@ gap         60 20 20 20
 snapdist    20
 
 # Borders
-borderwidth 3
-color       activeborder   "#0f6288"
+borderwidth 5
+color       activeborder   "#0097e6"
+color       inactiveborder "#353b48"
+color       menubg         "#f5f6fa"
+color       menufg         "#dcdde1"
+color       font           "#2f3640"
+color       selfont        "#0097e6"
 
 # Commands
 command     chromium       "chrome"

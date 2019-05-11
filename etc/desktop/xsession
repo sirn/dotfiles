@@ -10,12 +10,12 @@ fi
 
 xrdb -merge "$HOME/.Xresources"
 xset b off
-xsetroot -solid dimgray
+xsetroot -solid "#2f3640"
 
 xclock \
     -digital \
     -update 1 \
-    -bg dimgray \
+    -bg "#2f3640" \
     -fg white \
     -face 'sans-11:bold' \
     -geometry 500x40+20+0 \

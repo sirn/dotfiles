@@ -1,3 +1,4 @@
 etc/cwm/cwmrc                              $HOME/.cwmrc
 etc/desktop/Xresources                     $HOME/.Xresources
 etc/desktop/xsession                       $HOME/.xsession
+etc/desktop/fonts.conf                     $HOME/.fonts.conf

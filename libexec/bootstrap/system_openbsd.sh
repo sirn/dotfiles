@@ -114,6 +114,19 @@ else
 fi
 
 
+## Desktop flavor
+##
+
+if has_args desktop "$flavors"; then
+    printe_h2 "Configuring XenoDM..."
+    run_root mkdir -p /etc/X11/xenodm
+    run_root cp "$root_dir/etc/xenodm/Xsetup_0" /etc/X11/xenodm/Xsetup_0
+    run_root chown root:wheel /etc/X11/xenodm/Xsetup_0
+    run_root chmod 0755 /etc/X11/xenodm/Xsetup_0
+    printe "/etc/X11/xenodm/Xsetup_0 has been updated"
+fi
+
+
 ## Tunings flavor
 ## See also https://dataswamp.org/~solene/2016-09-28-22.html
 ##
