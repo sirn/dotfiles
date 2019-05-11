@@ -15,7 +15,7 @@
 
 (defun gr/make-frame-func (frame)
   "Setup frame attributes after a FRAME is created."
-  (if (display-graphic-p frame)
+  (when (display-graphic-p frame)
     (let ((w (window-system frame)))
       (cond
        ((eq w 'x) (set-frame-font "PragmataPro Mono 11" nil t))
@@ -29,6 +29,7 @@
             (mac-auto-operator-composition-mode))))))))
 
 (add-hook 'after-make-frame-functions 'gr/make-frame-func)
+(add-hook 'after-init-hook `(lambda () (gr/make-frame-func (selected-frame))))
 
 
 (use-package git-gutter
