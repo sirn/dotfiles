@@ -3,6 +3,7 @@ ansible
 aria2
 asciinema
 autoconf%2.69
+automake%1.16
 base64
 cabal-install
 colorls
