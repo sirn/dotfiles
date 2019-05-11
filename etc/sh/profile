@@ -47,6 +47,9 @@ case "$(uname)" in
         PATH=/Applications/mpv.app/Contents/MacOS:$PATH
         PATH=/Library/TeX/texbin:$PATH
         ;;
+    OpenBSD )
+        ulimit -c 0
+        ;;
 esac
 
 
