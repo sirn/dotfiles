@@ -6,19 +6,20 @@
 ## Aliases
 ##
 
-platform="$(uname | tr '[:upper:]' '[:lower:]')"
+case "$(uname)" in
+    Darwin )
+        alias scp='rsync --archive --acls --progress --rsh=ssh'
+        alias ls='ls -G'
+        ;;
 
-case "$platform" in
-    openbsd )
+    OpenBSD )
         alias scp='rsync --archive --progress --rsh=ssh'
+
         if command -v colorls >/dev/null; then
             alias ls="colorls -G"
         fi
         ;;
-    darwin )
-        alias scp='rsync --archive --acls --progress --rsh=ssh'
-        alias ls='ls -G'
-        ;;
+
     * )
         alias scp='rsync --archive --xattrs --acls --progress --rsh=ssh'
         alias ls='ls -G'

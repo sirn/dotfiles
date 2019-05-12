@@ -47,7 +47,9 @@ case "$(uname)" in
         PATH=/Applications/mpv.app/Contents/MacOS:$PATH
         PATH=/Library/TeX/texbin:$PATH
         ;;
+
     OpenBSD )
+        # shellcheck disable=SC2039
         ulimit -c 0
         ;;
 esac
@@ -70,8 +72,8 @@ fi
 ## asdf
 ##
 
-# shellcheck disable=SC1090
 if [ -d "$HOME/.asdf" ]; then
+    # shellcheck source=../../../.asdf/asdf.sh
     . "$HOME/.asdf/asdf.sh"
 fi
 
