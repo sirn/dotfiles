@@ -40,26 +40,6 @@ if ! normalize_bool "$NO_CLEAN_BUILDDIR"; then
 fi
 
 
-## NFS
-##
-
-printe_h2 "Setting up nfsd..."
-
-if [ -f /etc/exports ]; then
-    run_root sysrc nfs_server_enable=YES
-    run_root sysrc mountd_enable=YES
-    run_root sysrc rpcbind_enable=YES
-    run_root sysrc rpc_lockd_enable=YES
-    run_root sysrc rpc_statd_enable=YES
-
-    run_root service nfsd onestart
-    run_root service mountd onestart
-    run_root service rpcbind onestart
-else
-    printe "/etc/exports must already be configured"
-fi
-
-
 ## PF
 ##
 
@@ -105,12 +85,22 @@ if [ $pf_updated = "1" ]; then
 fi
 
 
-## PF/NFSD
+## NFS
 ##
 
-printe_h2 "Installing pfnfsd crontab..."
+printe_h2 "Setting up nfsd..."
 
 if [ -f /etc/exports ]; then
+    run_root sysrc nfs_server_enable=YES
+    run_root sysrc mountd_enable=YES
+    run_root sysrc rpcbind_enable=YES
+    run_root sysrc rpc_lockd_enable=YES
+    run_root sysrc rpc_statd_enable=YES
+
+    run_root service nfsd onestart
+    run_root service mountd onestart
+    run_root service rpcbind onestart
+
     cronline="@reboot $root_dir/libexec/pfnfsd/periodic.sh $netif"
     tmpcron=$build_dir/crontab.pfnfsd
     run_root crontab -u root -l > "$tmpcron" 2>/dev/null || true
@@ -124,5 +114,5 @@ if [ -f /etc/exports ]; then
     run_root crontab -u root - < "$tmpcron"
     printe "pfnfsd crontab successfully installed"
 else
-    printe "nfsd has not been setup"
+    printe "/etc/exports must already be configured"
 fi

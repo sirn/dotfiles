@@ -41,19 +41,6 @@ if ! normalize_bool "$NO_CLEAN_BUILDDIR"; then
 fi
 
 
-## NFS
-##
-
-printe_h2 "Setting up nfsd..."
-
-if [ -f /etc/exports ]; then
-    run_root rcctl enable portmap mountd nfsd
-    run_root rcctl start portmap mountd nfsd
-else
-    printe "/etc/exports must already be configured"
-fi
-
-
 ## PF
 ##
 
@@ -91,12 +78,17 @@ else
 fi
 
 
-## PF/NFSD
+## NFS
 ##
 
 printe_h2 "Installing pfnfsd crontab..."
 
 if [ -f /etc/exports ]; then
+    printe_h2 "Setting up nfsd..."
+
+    run_root rcctl enable portmap mountd nfsd
+    run_root rcctl start portmap mountd nfsd
+
     cronline="@reboot $root_dir/libexec/pfnfsd/periodic.sh $netif"
     tmpcron=$build_dir/crontab.pfnfsd
     run_root crontab -u root -l > "$tmpcron" 2>/dev/null || true
@@ -110,7 +102,7 @@ if [ -f /etc/exports ]; then
     run_root crontab -u root - < "$tmpcron"
     printe "pfnfsd crontab successfully installed"
 else
-    printe "nfsd has not been setup"
+    printe "/etc/exports must already be configured"
 fi
 
 
