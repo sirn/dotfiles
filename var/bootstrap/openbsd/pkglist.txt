@@ -32,7 +32,6 @@ neovim
 node
 password-store
 pkgconf
-postgresql-client
 rtmpdump
 rust
 socat

@@ -32,7 +32,6 @@ oksh
 openjdk8-jre
 password-store
 pkgconf
-postgresql10-client
 py36-ansible
 py36-asciinema
 rtmpdump

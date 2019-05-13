@@ -31,7 +31,6 @@ brew openssh
 brew pandoc
 brew pass
 brew pinentry-mac
-brew postgresql
 brew reattach-to-user-namespace
 brew rtmpdump
 brew shellcheck
