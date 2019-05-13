@@ -78,6 +78,20 @@ else
 fi
 
 
+## NTP
+##
+
+printe_h2 "Configuring ntpd..."
+
+lineinfile -S \
+    -f /etc/rc.conf.local \
+    -l "ntpd_flags=-s" \
+    -r "^ntpd_flags=" \
+    -s present
+
+run_root rcctl restart ntpd
+
+
 ## NFS
 ##
 
