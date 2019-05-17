@@ -61,7 +61,6 @@ mas 523620159 CleanMyDrive 2
 mas 603637384 Name Mangler 3
 mas 775737590 iA Writer
 mas 890031187 Marked 2
-mas 967805235 Paste
 mas 975937182 Fantastical 2
 mas 1287445660 Agenda
 mas 1333542190 1Password 7
