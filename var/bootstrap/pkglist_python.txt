@@ -2,6 +2,7 @@ black
 ipwhois
 pip
 pipenv
+poetry
 pre-commit
 proselint
 pylint

@@ -33,17 +33,3 @@
     (defun gr/setup-company-python ()
       (set (make-local-variable 'company-backends) '(company-anaconda)))
     (add-hook 'python-mode-hook 'gr/setup-company-python)))
-
-
-(use-package pipenv
-  :diminish pipenv-mode
-  :straight t
-
-  :commands
-  (pipenv-mode
-   pipenv-activate)
-
-  :init
-  (with-eval-after-load 'projectile
-    (with-eval-after-load 'flycheck
-      (add-hook 'python-mode-hook 'pipenv-mode))))

@@ -54,10 +54,10 @@
   (defvar straight-process-buffer))
 
 (setq straight-recipes-gnu-elpa-use-mirror t)
-(let ((bootstrap-version 4)
-      (bootstrap-file (expand-file-name
-                       "straight/repos/straight.el/bootstrap.el"
-                       user-emacs-directory)))
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
         (url-retrieve-synchronously

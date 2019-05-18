@@ -146,6 +146,11 @@
                                       :repo "sirn/prettier-emacs"
                                       :branch "rcs-diff-program"))
 
+  :preface
+  (eval-when-compile
+    (defvar prettier-js-args)
+    (defvar prettier-js-diff-command))
+
   :init
   (setq prettier-js-args
         '("--trailing-comma" "all"
