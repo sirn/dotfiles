@@ -116,7 +116,7 @@ chunkc tiling::rule \
        --state float &
 
 chunkc tiling::rule \
-       --owner iBooks \
+       --owner Books \
        --state float &
 
 chunkc tiling::rule \
