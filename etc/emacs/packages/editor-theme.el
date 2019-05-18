@@ -23,6 +23,10 @@
     (defvar color-13)
     (defvar color-14)
     (defvar color-15)
+    (defvar tao-theme-use-boxes)
+    (defvar tao-theme-use-sepia)
+    (defvar tao-theme-yin-palette)
+    (declare-function tao-with-color-variables nil)
     (declare-function gr/echo-area-setup-face nil))
 
   :init
