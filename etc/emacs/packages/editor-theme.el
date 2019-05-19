@@ -42,6 +42,7 @@
 
      `(warning                  ((t (:foreground "DarkOrange" :weight bold))))
      `(error                    ((t (:foreground "Red1" :weight bold))))
+     `(transient-separator      ((t :inherit background :foreground ,color-10 :underline t)))
 
      ;; Custom faces for ansible
      ;;
