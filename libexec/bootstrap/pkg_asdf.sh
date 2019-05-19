@@ -124,13 +124,13 @@ _install_python_darwin() {
     version=$1; shift
 
     if [ ! -d /usr/local/opt/sqlite3 ]; then
-        printe_err "Building python on Darwin requires sqlite3"
+        printe_err "Building python on darwin requires sqlite3"
         printe_err "Try \`brew install sqlite3\`"
         exit 1
     fi
 
     if [ ! -d /usr/local/opt/zlib ]; then
-        printe_err "Building $what on Darwin requires zlib"
+        printe_err "Building python on darwin requires zlib"
         printe_err "Try \`brew install zlib\`"
         exit 1
     fi

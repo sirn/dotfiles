@@ -39,5 +39,4 @@ terraform
 the_silver_searcher
 tree
 unzip--iconv
-w3m--
 youtube-dl

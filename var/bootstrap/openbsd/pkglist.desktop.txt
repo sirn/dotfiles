@@ -7,3 +7,4 @@ noto-cjk
 noto-emoji
 noto-fonts
 trayer
+w3m--image
