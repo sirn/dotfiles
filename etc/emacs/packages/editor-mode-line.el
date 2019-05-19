@@ -6,6 +6,7 @@
   (eval-when-compile
     (declare-function gr/insert-mode-line nil)
     (declare-function sml/setup nil)
+    (defvar sml/no-confirm-load-theme)
     (defvar sml/theme))
 
   :init
