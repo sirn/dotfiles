@@ -17,6 +17,7 @@ cask bartender
 cask charles
 cask cleanmymac
 cask coconutbattery
+cask firefox
 cask font-ia-writer-duospace
 cask font-ibm-plex
 cask font-iosevka

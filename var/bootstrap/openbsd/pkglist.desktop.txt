@@ -1,8 +1,8 @@
 adobe-source-code-pro
 adobe-source-sans-pro
 adobe-source-serif-pro
-chromium
 emacs--gtk3
+firefox
 noto-cjk
 noto-emoji
 noto-fonts

@@ -13,7 +13,7 @@ color       font           "#2f3640"
 color       selfont        "#0097e6"
 
 # Commands
-command     chromium       "chrome"
+command     firefox        "firefox"
 command     emacs          "emacsclient -c -a ''"
 command     xterm          "xterm"
 
