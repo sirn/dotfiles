@@ -17,7 +17,7 @@ gdiff
 ghc
 git
 git-lfs
-gnupg-2.2.12
+gnupg-2.2.12p0
 go
 google-cloud-sdk
 graphviz
