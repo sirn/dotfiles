@@ -141,6 +141,17 @@ fetch_gh_archive() {
     fetch_url "$output" "https://github.com/$gh_repo/archive/$gh_ref.tar.gz"
 }
 
+fetch_gh_release() {
+    output=$1; shift
+    gh_repo=$1; shift
+    gh_release=$1; shift
+    gh_filename=$1; shift
+
+    fetch_url \
+        "$output" \
+        "https://github.com/$gh_repo/releases/download/$gh_release/$gh_filename"
+}
+
 fetch_gh_raw() {
     output=$1; shift
     gh_repo=$1; shift
@@ -148,6 +159,13 @@ fetch_gh_raw() {
     gh_path=$1; shift
 
     fetch_url "$output" "https://raw.githubusercontent.com/$gh_repo/$gh_ref/$gh_path"
+}
+
+verify_shasum() {
+    filepath=$1; shift
+    shasum=$1; shift
+
+    echo "$shasum  $filepath" | sha256 -c -
 }
 
 file_absent() {

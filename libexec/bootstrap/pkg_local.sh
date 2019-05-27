@@ -21,6 +21,7 @@ fi
 ## Build scripts
 ##
 
+"$root_dir/libexec/packages/erlang.sh"
 "$root_dir/libexec/packages/rust.sh"
 "$root_dir/libexec/packages/node.sh"
 "$root_dir/libexec/packages/haskell.sh"
