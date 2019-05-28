@@ -21,9 +21,10 @@ fi
 ## Preparation
 ##
 
-# Using master until updated vendor is in release:
+# Using 1.16 since we required an updated vendor:
 # See https://github.com/kubernetes/kubernetes/tree/master/vendor
-kubectl_ver=master
+kubectl_ver=1.16.0-alpha.0
+kubectl_sha256=cc8c1214d311d9b78b3e6376d4cff6ad6c98df10df31ad887464623ec0684b53
 
 printe_h2 "Installing kubectl..."
 require_bin go
@@ -36,7 +37,13 @@ PATH="$GOPATH/bin:$PATH"
 ##
 
 if is_force || file_absent "$HOME/.local/bin/kubectl"; then
-    fetch_gh_archive - kubernetes/kubernetes "$kubectl_ver" | tar -C "$build_dir" -xzf -
+    cd "$build_dir" || exit 1
+
+    fetch_gh_archive kubectl.tar.gz kubernetes/kubernetes "v$kubectl_ver"
+    verify_shasum kubectl.tar.gz $kubectl_sha256
+    tar -C "$build_dir" -xzf kubectl.tar.gz
+    rm kubectl.tar.gz
+
     mkdir -p "$build_dir/go/src/k8s.io"
     mv "$build_dir/kubernetes-$kubectl_ver" "$build_dir/go/src/k8s.io/kubernetes"
 

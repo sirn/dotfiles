@@ -22,6 +22,7 @@ fi
 ##
 
 helm_ver=2.13.1
+helm_sha256=328f355050ebaecf6420aba85e44c1e86c1aa429991ec9102cc2b28ba9bc5536
 
 printe_h2 "Installing helm..."
 
@@ -41,7 +42,13 @@ PATH="$GOPATH/bin:$PATH"
 ##
 
 if is_force || file_absent "$HOME/.local/bin/helm"; then
-    fetch_gh_archive - helm/helm "v$helm_ver" | tar -C "$build_dir" -xzf -
+    cd "$build_dir" || exit 1
+
+    fetch_gh_archive helm.tar.gz helm/helm "v$helm_ver"
+    verify_shasum helm.tar.gz $helm_sha256
+    tar -C "$build_dir" -xzf helm.tar.gz
+    rm helm.tar.gz
+
     mkdir -p "$build_dir/go/src/k8s.io"
     mv "$build_dir/helm-$helm_ver" "$build_dir/go/src/k8s.io/helm"
 

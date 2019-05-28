@@ -29,8 +29,12 @@ fi
 ##
 
 kapitan_ver=0.23.0
+
 cryptography_ver=2.6.1
+cryptography_sha256=e6b77dddc068dcbb13c193602d7a40dc0bb348ceb107b14be083e42afa24ab83
+
 jsonnet_ver=0.12.1
+jsonnet_sha256=257c6de988f746cc90486d9d0fbd49826832b7a2f0dbdb60a515cc8a2596c950
 
 printe_h2 "Installing kapitan..."
 
@@ -44,8 +48,13 @@ if is_force || ! "$python3" -c 'import cryptography' >/dev/null 2>&1; then
     case $(openssl version | tr '[:upper:]' '[:lower:]') in
         libressl* )
             printe_info "Patching py-cryptography for libressl..."
+            cd "$build_dir" || exit 1
 
-            fetch_gh_archive - "pyca/cryptography" "$cryptography_ver" | tar -C "$build_dir" -xzf -
+            fetch_gh_archive cryptography.tar.gz pyca/cryptography "$cryptography_ver"
+            verify_shasum cryptography.tar.gz $cryptography_sha256
+            tar -C "$build_dir" -xzf cryptography.tar.gz
+            rm cryptography.tar.gz
+
             cd "$build_dir/cryptography-$cryptography_ver" || exit 1
 
             for filename in \
@@ -77,10 +86,15 @@ if is_force || ! "$python3" -c 'import _jsonnet' >/dev/null 2>&1; then
     case $platform in
         freebsd | openbsd )
             printe_info "Patching py-jsonnet for $(uname)..."
+            cd "$build_dir" || exit 1
 
             require_bin gmake
 
-            fetch_gh_archive - google/jsonnet "v$jsonnet_ver" | tar -C "$build_dir" -xzf -
+            fetch_gh_archive jsonnet.tar.gz google/jsonnet "v$jsonnet_ver"
+            verify_shasum jsonnet.tar.gz $jsonnet_sha256
+            tar -C "$build_dir" -xzf jsonnet.tar.gz
+            rm jsonnet.tar.gz
+
             cd "$build_dir/jsonnet-$jsonnet_ver" || exit 1
             sed "s/'make'/'gmake'/g" < setup.py > setup.py.new
             mv setup.py.new setup.py
