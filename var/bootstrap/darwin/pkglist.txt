@@ -11,6 +11,7 @@ brew carthage
 brew curl
 brew dnscrypt-proxy
 brew duplicity
+brew entr
 brew ffmpeg
 brew git
 brew git-crypt

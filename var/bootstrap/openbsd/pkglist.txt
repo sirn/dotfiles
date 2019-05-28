@@ -11,6 +11,7 @@ coreutils
 curl
 doxygen
 duplicity
+entr
 expect
 ffmpeg
 gdiff

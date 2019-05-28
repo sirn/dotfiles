@@ -7,6 +7,7 @@ compat8x-amd64
 curl
 duplicity
 emacs-nox
+entr
 execline
 expect
 ffmpeg
