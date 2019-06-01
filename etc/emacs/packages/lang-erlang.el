@@ -6,40 +6,46 @@
   :preface
   (eval-when-compile
     (defvar inferior-erlang-machine-options)
-    (declare-function gr/erlang-rebar-locate-root nil)
-    (declare-function gr/erlang-rebar-code-path nil)
-    (declare-function gr/erlang-rebar-include-path nil)
-    (declare-function gr/erlang-rebar-hook nil))
+    (declare-function gr/erlang-rebar3-locate-root nil)
+    (declare-function gr/erlang-rebar3-compile nil)
+    (declare-function gr/erlang-rebar3-hook nil)
+    (declare-function gr/erlang-rebar3-wrap-maybe nil))
 
   :init
-  (defun gr/erlang-rebar-locate-root ()
+  (defun gr/erlang-rebar3-locate-root ()
     (locate-dominating-file default-directory "rebar.config"))
 
-  (defun gr/erlang-rebar-code-path ()
-    (split-string (shell-command-to-string "rebar3 path -s :") ":"))
+  ;; Copy of inferior-erlang-compile with r3:compile(). instead of c(path).
+  (defun gr/erlang-rebar3-compile (_arg)
+    (interactive "P")
+    (save-some-buffers)
+    (inferior-erlang-prepare-for-input)
+    (with-current-buffer inferior-erlang-buffer
+      (when (fboundp 'compilation-forget-errors)
+        (compilation-forget-errors)))
+    (let (end)
+      (setq end (inferior-erlang-send-command "r3:compile()." nil))
+      (sit-for 0)
+      (inferior-erlang-wait-prompt)
+      (with-current-buffer inferior-erlang-buffer
+        (setq compilation-error-list nil)
+        (set-marker compilation-parsing-end end)))
+    (setq compilation-last-buffer inferior-erlang-buffer))
 
-  (defun gr/erlang-rebar-include-path ()
-    (split-string (shell-command-to-string "find . -iname include -type d")))
+  (defun gr/erlang-rebar3-hook ()
+    (when-let ((default-directory (gr/erlang-rebar3-locate-root)))
+      (setq-local inferior-erlang-machine "rebar3")
+      (setq-local inferior-erlang-machine-options '("shell"))
+      (setq-local inferior-erlang-shell-type nil)
+      (setq-local erlang-compile-function 'gr/erlang-rebar3-compile)))
 
-  (defun gr/erlang-rebar-hook ()
-    (let ((default-directory (gr/erlang-rebar-locate-root)))
-      (when default-directory
-        (progn
-          (make-local-variable 'flycheck-erlang-library-path)
-          (make-local-variable 'flycheck-erlang-include-path)
-          (make-local-variable 'inferior-erlang-machine-options)
-          (let ((paths (gr/erlang-rebar-code-path)))
-            (progn
-              (setq flycheck-erlang-library-path paths)
-              (add-to-list 'inferior-erlang-machine-options "-pa" t)
-              (dolist (path paths)
-                (add-to-list 'inferior-erlang-machine-options path t))))
-          (dolist (path (gr/erlang-rebar-include-path))
-            (add-to-list 'flycheck-erlang-include-path path t))))))
+  (defun gr/erlang-rebar3-wrap-maybe (orig-fun &rest args)
+    (if-let ((default-directory (gr/erlang-rebar3-locate-root)))
+        (apply orig-fun args)
+      (apply orig-fun args)))
 
-  (with-eval-after-load 'flycheck
-    (add-hook 'erlang-mode-hook 'gr/erlang-rebar-hook))
+  (add-hook 'erlang-mode-hook 'gr/erlang-rebar3-hook)
+  (advice-add 'inferior-erlang :around 'gr/erlang-rebar3-wrap-maybe)
 
   :config
-  (setq erlang-compile-extra-opts '(debug_info))
   (require 'erlang-start))
