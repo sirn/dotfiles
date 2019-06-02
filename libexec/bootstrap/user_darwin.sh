@@ -45,6 +45,18 @@ fi
 "$root_dir/libexec/bootstrap/user_links.sh" "$flavors"
 
 
+## IPFS
+##
+
+printe_h2 "Setting up ipfs..."
+
+if [ ! -d "$HOME/.ipfs" ]; then
+    ipfs init
+fi
+
+brew services start ipfs
+
+
 ## Chunkwm/Skhd
 ## must be run after link
 ##

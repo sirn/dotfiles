@@ -21,6 +21,7 @@ brew go
 brew graphicsmagick
 brew graphviz
 brew ipcalc
+brew ipfs
 brew jq
 brew leiningen
 brew mercurial
