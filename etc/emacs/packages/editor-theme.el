@@ -40,32 +40,38 @@
     (custom-theme-set-faces
      'tao-yin
 
-     `(warning                  ((t (:foreground "DarkOrange" :weight bold))))
-     `(error                    ((t (:foreground "Red1" :weight bold))))
+     `(warning                    ((t (:foreground "DarkOrange" :weight bold))))
+     `(error                      ((t (:foreground "Red1" :weight bold))))
 
      ;; Custom faces for ansible
      ;;
-     `(ansible::task-label-face ((t (:foreground ,color-9))))
-     `(ansible::section-face    ((t (:foreground ,color-13 :weight bold))))
+     `(ansible::task-label-face   ((t (:foreground ,color-9))))
+     `(ansible::section-face      ((t (:foreground ,color-13 :weight bold))))
+
+     ;; Custom faces for company
+     ;; Remove fixed-pitch
+     `(company-tooltip            ((t (:background ,color-5 :foreground ,color-11))))
+     `(company-tooltip-annotation ((t (:inherit company-tooltip :foreground ,color-9))))
+     `(company-tooltip-common     ((t (:inherit company-tooltip :foreground ,color-11))))
 
      ;; Custom faces for flycheck
-     `(flycheck-error           ((t (:foreground "Red1" :weight bold :underline t))))
-     `(flycheck-warning         ((t (:foreground "DarkOrange" :weight bold :underline t))))
-     `(flycheck-info            ((t (:foreground "ForestGreen" :weight bold :underline t))))
-     `(flycheck-fringe-error    ((t (:foreground "Red1"))))
-     `(flycheck-fringe-warning  ((t (:foreground "DarkOrange"))))
-     `(flycheck-fringe-info     ((t (:foreground "ForestGreen"))))
+     `(flycheck-error             ((t (:foreground "Red1" :weight bold :underline t))))
+     `(flycheck-warning           ((t (:foreground "DarkOrange" :weight bold :underline t))))
+     `(flycheck-info              ((t (:foreground "ForestGreen" :weight bold :underline t))))
+     `(flycheck-fringe-error      ((t (:foreground "Red1"))))
+     `(flycheck-fringe-warning    ((t (:foreground "DarkOrange"))))
+     `(flycheck-fringe-info       ((t (:foreground "ForestGreen"))))
 
      ;; Custom faces for mode-line and smart-mode-line
      ;; [prefix(sudo/git/projectile)]folder/filename
      ;;
-     `(mode-line                ((t (:background ,color-5 :inherit default))))
-     `(sml/prefix               ((t (:foreground ,color-15))))
-     `(sml/sudo                 ((t (:foreground "Red" :inherit sml/prefix))))
-     `(sml/git                  ((t (:inherit sml/prefix))))
-     `(sml/projectile           ((t (:inherit sml/prefix))))
-     `(sml/folder               ((t (:foreground ,color-10))))
-     `(sml/filename             ((t (:foreground ,color-10 :weight bold))))
+     `(mode-line                  ((t (:background ,color-5 :inherit default))))
+     `(sml/prefix                 ((t (:foreground ,color-15))))
+     `(sml/sudo                   ((t (:foreground "Red" :inherit sml/prefix))))
+     `(sml/git                    ((t (:inherit sml/prefix))))
+     `(sml/projectile             ((t (:inherit sml/prefix))))
+     `(sml/folder                 ((t (:foreground ,color-10))))
+     `(sml/filename               ((t (:foreground ,color-10 :weight bold))))
 
      ;; Custom faces for web-mode
      ;;
