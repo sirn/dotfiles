@@ -5,7 +5,13 @@
 
   :preface
   (eval-when-compile
+    (defvar erlang-compile-function)
+    (defvar inferior-erlang-machine)
     (defvar inferior-erlang-machine-options)
+    (defvar inferior-erlang-shell-type)
+    (declare-function inferior-erlang-prepare-for-input nil)
+    (declare-function inferior-erlang-send-command nil)
+    (declare-function inferior-erlang-wait-prompt nil)
     (declare-function gr/erlang-rebar3-locate-root nil)
     (declare-function gr/erlang-rebar3-compile nil)
     (declare-function gr/erlang-rebar3-hook nil)
