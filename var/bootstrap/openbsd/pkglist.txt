@@ -6,7 +6,7 @@ curl
 ffmpeg
 gdiff
 git
-gnupg-2.2.12p0
+gnupg-2.2.12
 gtar--static
 jdk%1.8
 mercurial
