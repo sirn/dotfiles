@@ -39,8 +39,9 @@ _run() {
         run_root pkg_add w3m--
     fi
 
+    "$BOOTSTRAP_ROOT/libexec/bootstrap/pkg_asdf.sh" "$FLAVORS"
+
     if [ "$BOOTSTRAP_ROOT" = "$LOOKUP_ROOT" ]; then
-        "$BOOTSTRAP_ROOT/libexec/bootstrap/pkg_asdf.sh" "$FLAVORS"
         "$BOOTSTRAP_ROOT/libexec/bootstrap/pkg_local.sh" "$FLAVORS"
     fi
 }
@@ -52,9 +53,9 @@ _run_dev() {
         run_root mkdir -p /usr/local/google-cloud-sdk/.install
 
         # Packages not available under OpenBSD Ports
-        "$BOOTSTRAP_ROOT/libexec/packages/execline.sh"
-        "$BOOTSTRAP_ROOT/libexec/packages/git-crypt.sh"
-        "$BOOTSTRAP_ROOT/libexec/packages/leiningen.sh"
+        "$BOOTSTRAP_ROOT/libexec/packages/execline.sh" "$FLAVORS"
+        "$BOOTSTRAP_ROOT/libexec/packages/git-crypt.sh" "$FLAVORS"
+        "$BOOTSTRAP_ROOT/libexec/packages/leiningen.sh" "$FLAVORS"
     fi
 }
 

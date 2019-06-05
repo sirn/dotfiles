@@ -68,6 +68,7 @@ _setup_pf() {
 _setup_ntpd() {
     printe_h2 "Configuring ntpd..."
 
+    run_root touch /etc/rc.conf.local
     lineinfile -S \
                -f /etc/rc.conf.local \
                -l "ntpd_flags=-s" \
@@ -123,37 +124,6 @@ _run_desktop() {
     run_root chown root:wheel /etc/X11/xenodm/Xsetup_0
     run_root chmod 0755 /etc/X11/xenodm/Xsetup_0
     printe "/etc/X11/xenodm/Xsetup_0 has been updated"
-}
-
-_run_tunings() {
-    ## See also https://dataswamp.org/~solene/2016-09-28-22.html
-    printe_h2 "Tuning filesystem..."
-
-    run_root sh <<EOF
-awk '
-s = /ffs rw/ {
-  if (\$4 !~ /noatime/) {
-    if (\$4 == "rw") { sub("rw", "rw,noatime") }
-    else { sub("rw,", "rw,noatime,") }
-  }
-  if (\$4 !~ /softdep/) {
-    if (\$4 == "rw") { sub("rw", "rw,softdep") }
-    else { sub("rw,", "rw,softdep,") }
-  }
-  print
-} ! s { print }
-' < /etc/fstab > /etc/fstab.new
-EOF
-
-    if run_root diff -u /etc/fstab /etc/fstab.new >/dev/null; then
-        printe "/etc/fstab already updated"
-        run_root rm /etc/fstab.new
-        exit
-    fi
-
-    printe "/etc/fstab.new has been written!"
-    printe "Please inspect the file and run: mv /etc/fstab.new /etc/fstab"
-    printe "Not doing this automatically because it may render the system unbootable."
 }
 
 run_with_flavors "$FLAVORS"

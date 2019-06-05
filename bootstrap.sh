@@ -42,7 +42,6 @@ FLAVOR:
     dev             Install development packages.
     kubernetes      Install Kubernetes packages.
     mail            Install mail packages.
-    tunings         Tune the system.
 
 Bootstrap script will default to \`pkg\` without any FLAVORS
 if no PROFILES and FLAVORS is given. Lookup path is default to
@@ -96,7 +95,7 @@ done
 
 for f in $FLAVORS; do
     case "$f" in
-        dev | desktop | kubernetes | mail | tunings | backups ) ;;
+        dev | desktop | kubernetes | mail | backups ) ;;
         * ) printe_err "Unknown flavor: $f"; exit 1;;
     esac
 done

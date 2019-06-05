@@ -30,8 +30,9 @@ _run() {
         run_root xargs pkg install -y < "$f"
     done
 
+    "$BOOTSTRAP_ROOT/libexec/bootstrap/pkg_asdf.sh" "$FLAVORS"
+
     if [ "$BOOTSTRAP_ROOT" = "$LOOKUP_ROOT" ]; then
-        "$BOOTSTRAP_ROOT/libexec/bootstrap/pkg_asdf.sh" "$FLAVORS"
         "$BOOTSTRAP_ROOT/libexec/bootstrap/pkg_local.sh" "$FLAVORS"
     fi
 }

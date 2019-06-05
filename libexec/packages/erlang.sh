@@ -9,6 +9,7 @@ BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 . "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
 
 FLAVORS=$*
+ESCRIPT_PATH=$HOME/.asdf/shims/escript
 
 REBAR3_VER=3.10.0
 REBAR3_SHA256=5887a6228fec0a81d45416f53623563166d46b73b52638e6aaef6fa30d7ea5e7
@@ -30,7 +31,7 @@ _run_dev() {
         verify_shasum "$REBAR3_PATH" $REBAR3_SHA256
         chmod 755 "$REBAR3_PATH"
 
-        "$REBAR3_PATH" local install
+        "$ESCRIPT_PATH" "$REBAR3_PATH" local install
     fi
 }
 

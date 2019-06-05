@@ -19,25 +19,25 @@ PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
 ##
 
 _run_dev() {
-    "$BOOTSTRAP_ROOT/libexec/packages/erlang.sh"
-    "$BOOTSTRAP_ROOT/libexec/packages/rust.sh"
-    "$BOOTSTRAP_ROOT/libexec/packages/node.sh"
-    "$BOOTSTRAP_ROOT/libexec/packages/haskell.sh"
+    "$BOOTSTRAP_ROOT/libexec/packages/erlang.sh" "$FLAVORS"
+    "$BOOTSTRAP_ROOT/libexec/packages/rust.sh" "$FLAVORS"
+    "$BOOTSTRAP_ROOT/libexec/packages/node.sh" "$FLAVORS"
+    "$BOOTSTRAP_ROOT/libexec/packages/haskell.sh" "$FLAVORS"
 }
 
 _run_kubernetes() {
     case $PLATFORM in
         openbsd )
-            "$BOOTSTRAP_ROOT/libexec/packages/kubernetes-cli.sh"
-            "$BOOTSTRAP_ROOT/libexec/packages/kubernetes-helm.sh"
+            "$BOOTSTRAP_ROOT/libexec/packages/kubernetes-cli.sh" "$FLAVORS"
+            "$BOOTSTRAP_ROOT/libexec/packages/kubernetes-helm.sh" "$FLAVORS"
             ;;
 
         * )
             ;;
     esac
 
-    "$BOOTSTRAP_ROOT/libexec/packages/kubectx.sh"
-    "$BOOTSTRAP_ROOT/libexec/packages/kapitan.sh"
+    "$BOOTSTRAP_ROOT/libexec/packages/kubectx.sh" "$FLAVORS"
+    "$BOOTSTRAP_ROOT/libexec/packages/kapitan.sh" "$FLAVORS"
 }
 
 run_with_flavors "$FLAVORS"

@@ -1,4 +1,6 @@
 etc/aria2/aria2.conf                      $HOME/.aria2/aria2.conf
+etc/emacs/init.el                         $HOME/.emacs.d/init.el
+etc/emacs/straight/versions/default.el    $HOME/.emacs.d/straight/versions/default.el
 etc/git/gitconfig                         $HOME/.gitconfig
 etc/hg/hgrc                               $HOME/.hgrc
 etc/ksh/kshrc                             $HOME/.kshrc

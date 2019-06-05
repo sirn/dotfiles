@@ -95,9 +95,9 @@ _setup_rust_pkg() {
 ##
 
 _run() {
-    setup_rust
-    setup_rust_src
-    setup_rust_pkg
+    _setup_rust
+    _setup_rust_src
+    _setup_rust_pkg
 }
 
 run_with_flavors "$FLAVORS"
