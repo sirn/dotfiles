@@ -6,12 +6,10 @@ curl
 emacs-nox
 ffmpeg
 git
-gnupg
 mercurial
 mosh
 oksh
 openjdk8-jre
-password-store
 rtmpdump
 the_silver_searcher
 tmux

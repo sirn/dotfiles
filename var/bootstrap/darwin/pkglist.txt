@@ -7,14 +7,11 @@ brew aria2
 brew curl
 brew ffmpeg
 brew git
-brew gnupg
 brew ipfs
 brew mercurial
 brew mosh
 brew oksh
 brew openssh
-brew pass
-brew pinentry-mac
 brew reattach-to-user-namespace
 brew rtmpdump
 brew the_silver_searcher

@@ -13,24 +13,10 @@ ensure_paths required same_root
 ensure_platform "Darwin"
 
 FLAVORS=$*
-USERENV_PLIST="$HOME/Library/LaunchAgents/th.in.grid.userenv.plist"
 
 
 ## Setup
 ##
-
-_setup_userenv() {
-    printe_h2 "Setting up userenv..."
-
-    if is_force || [ ! -f "$USERENV_PLIST" ]; then
-        cp "$BOOTSTRAP_ROOT/share/examples/launchd/th.in.grid.userenv.plist" "$USERENV_PLIST"
-        chmod 0644 "$USERENV_PLIST"
-        launchctl load -w "$USERENV_PLIST"
-        printe "$USERENV_PLIST has been installed, you may need to relogin"
-    else
-        printe "$USERENV_PLIST already exists"
-    fi
-}
 
 _setup_ipfs() {
     printe_h2 "Setting up ipfs..."
@@ -47,7 +33,6 @@ _setup_ipfs() {
 ##
 
 _run() {
-    _setup_userenv
     _setup_ipfs
 
     "$BOOTSTRAP_ROOT/libexec/bootstrap/user_shell.sh" "$FLAVORS"

@@ -6,12 +6,10 @@ curl
 ffmpeg
 gdiff
 git
-gnupg-2.2.12
 gtar--static
 jdk%1.8
 mercurial
 mosh
-password-store
 rtmpdump
 the_silver_searcher
 unzip--iconv
