@@ -3,19 +3,18 @@
 # Install Darwin packages with Brew and MAS.
 #
 
-root_dir=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
-lookup_dir=${LOOKUP_ROOT:-$root_dir}
-flavors=$*
-
-brew_dir=/usr/local/Homebrew
+BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+LOOKUP_ROOT=${LOOKUP_ROOT:-$BOOTSTRAP_ROOT}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$root_dir/share/bootstrap/funcs.sh"
+. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
 
-if [ "$(uname)" != "Darwin" ]; then
-    printe_err "Not a Darwin system"
-    exit 1
-fi
+ensure_paths required
+ensure_platform "Darwin"
+
+FLAVORS=$*
+BREW_DIR=/usr/local/Homebrew
+BREW_PKGLIST=$LOOKUP_ROOT/var/bootstrap/darwin/pkglist.txt
 
 
 ## Environment variables
@@ -33,7 +32,7 @@ _do_tap() {
     tap=$1; shift
 
     repo=$(printf "%s" "$tap" | sed 's|\(.*\)/\([^/]*\)$|\1/homebrew-\2|')
-    if [ -d "$brew_dir/Library/Taps/$repo" ]; then
+    if [ -d "$BREW_DIR/Library/Taps/$repo" ]; then
         printe "$tap already tapped"
         return
     fi
@@ -82,56 +81,58 @@ _do_mas_install() {
 ## Setup
 ##
 
-if [ ! -x /usr/local/bin/brew ]; then
-    printe_h2 "Bootstrapping Homebrew..."
+_setup_env() {
+    if [ ! -x /usr/local/bin/brew ]; then
+        printe_h2 "Bootstrapping Homebrew..."
 
-    xcode-select --install 2>/dev/null
+        xcode-select --install 2>/dev/null
 
-    sdk=/Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg
-    if [ -e $sdk ] && [ ! -f /usr/lib/bundle1.o ]; then
-        run_root /usr/sbin/installer -pkg $sdk -target /
+        sdk=/Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg
+        if [ -e $sdk ] && [ ! -f /usr/lib/bundle1.o ]; then
+            run_root /usr/sbin/installer -pkg $sdk -target /
+        fi
+
+        fetch_url - https://raw.githubusercontent.com/Homebrew/install/master/install | /usr/bin/ruby
     fi
 
-    fetch_url - https://raw.githubusercontent.com/Homebrew/install/master/install | /usr/bin/ruby
-fi
+    printe_h2 "Installing runtime requisites..."
 
-printe_h2 "Installing runtime requisites..."
-
-_do_cask_install java
-_do_install mas
+    _do_cask_install java
+    _do_install mas
+}
 
 
 ## Installs
 ##
 
-pkglist=$lookup_dir/var/bootstrap/darwin/pkglist.txt
+_run() {
+    _setup_env
 
-for f in $(mangle_file "$pkglist" none "$flavors"); do
-    printe_h2 "Installing packages from $f..."
+    for f in $(mangle_file "$BREW_PKGLIST" none "$FLAVORS"); do
+        printe_h2 "Installing packages from $f..."
 
-    while read -r line; do
-        case $line in
-            "#"* | "" ) continue;;
-            *) line=${line%%#*};;
-        esac
+        while read -r line; do
+            case $line in
+                "#"* | "" ) continue;;
+                *) line=${line%%#*};;
+            esac
 
-        eval set -- "$line"
+            eval set -- "$line"
 
-        case "$1" in
-            tap  ) shift; _do_tap "$@";;
-            brew ) shift; _do_install "$@";;
-            cask ) shift; _do_cask_install "$@";;
-            mas )  shift; _do_mas_install "$@";;
-            * ) printe_err "Unknown directive: $1";;
-        esac
-    done < "$f"
-done
+            case "$1" in
+                tap  ) shift; _do_tap "$@";;
+                brew ) shift; _do_install "$@";;
+                cask ) shift; _do_cask_install "$@";;
+                mas )  shift; _do_mas_install "$@";;
+                * ) printe_err "Unknown directive: $1";;
+            esac
+        done < "$f"
+    done
 
+    if [ "$BOOTSTRAP_ROOT" = "$LOOKUP_ROOT" ]; then
+        "$BOOTSTRAP_ROOT/libexec/bootstrap/pkg_asdf.sh" "$FLAVORS"
+        "$BOOTSTRAP_ROOT/libexec/bootstrap/pkg_local.sh" "$FLAVORS"
+    fi
+}
 
-## Hand-off
-##
-
-if [ "$root_dir" = "$lookup_dir" ]; then
-    "$root_dir/libexec/bootstrap/pkg_asdf.sh" "$flavors"
-    "$root_dir/libexec/bootstrap/pkg_local.sh" "$flavors"
-fi
+run_with_flavors "$FLAVORS"

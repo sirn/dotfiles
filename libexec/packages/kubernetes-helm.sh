@@ -3,59 +3,56 @@
 # Install Kubernetes Helm.
 #
 
-root_dir=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$root_dir/share/bootstrap/funcs.sh"
+. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
+
+FLAVORS=$*
+BUILD_DIR=$(make_temp)
+
+HELM_VER=2.13.1
+HELM_SHA256=328f355050ebaecf6420aba85e44c1e86c1aa429991ec9102cc2b28ba9bc5536
 
 
-## Tmp
+## Environment variables
 ##
 
-build_dir=$(mktemp -d)
-if ! normalize_bool "$NO_CLEAN_BUILDDIR"; then
-    trap 'rm -rf $build_dir' 0 1 2 3 6 14 15
-fi
-
-
-## Preparation
-##
-
-helm_ver=2.13.1
-helm_sha256=328f355050ebaecf6420aba85e44c1e86c1aa429991ec9102cc2b28ba9bc5536
-
-printe_h2 "Installing helm..."
-
-require_bin go
-
-case $(uname) in
-    FreeBSD | OpenBSD )
-        require_bin gmake
-        ;;
-esac
-
-GOPATH="$build_dir/go"; export GOPATH
+GOPATH="$BUILD_DIR/go"; export GOPATH
 PATH="$GOPATH/bin:$PATH"
 
 
-## Setup
+## Run
 ##
 
-if is_force || file_absent "$HOME/.local/bin/helm"; then
-    cd "$build_dir" || exit 1
+_run_kubernetes() {
+    printe_h2 "Installing helm..."
 
-    fetch_gh_archive helm.tar.gz helm/helm "v$helm_ver"
-    verify_shasum helm.tar.gz $helm_sha256
-    tar -C "$build_dir" -xzf helm.tar.gz
-    rm helm.tar.gz
+    if is_force || file_absent "$HOME/.local/bin/helm"; then
+        cd "$BUILD_DIR" || exit 1
 
-    mkdir -p "$build_dir/go/src/k8s.io"
-    mv "$build_dir/helm-$helm_ver" "$build_dir/go/src/k8s.io/helm"
+        require_bin go
+        case $(uname) in
+            FreeBSD | OpenBSD )
+                require_bin gmake
+                ;;
+        esac
 
-    cd "$build_dir/go/src/k8s.io/helm"
-    gmake bootstrap build
+        fetch_gh_archive helm.tar.gz helm/helm "v$HELM_VER"
+        verify_shasum helm.tar.gz $HELM_SHA256
+        tar -C "$BUILD_DIR" -xzf helm.tar.gz
+        rm helm.tar.gz
 
-    cp "$build_dir/go/src/k8s.io/helm/bin/helm" "$HOME/.local/bin/helm"
-    cp "$build_dir/go/src/k8s.io/helm/bin/tiller" "$HOME/.local/bin/tiller"
-    printe "kubectl has been successfully installed"
-fi
+        mkdir -p "$BUILD_DIR/go/src/k8s.io"
+        mv "$BUILD_DIR/helm-$HELM_VER" "$BUILD_DIR/go/src/k8s.io/helm"
+
+        cd "$BUILD_DIR/go/src/k8s.io/helm"
+        gmake bootstrap build
+
+        cp "$BUILD_DIR/go/src/k8s.io/helm/bin/helm" "$HOME/.local/bin/helm"
+        cp "$BUILD_DIR/go/src/k8s.io/helm/bin/tiller" "$HOME/.local/bin/tiller"
+        printe "kubectl has been successfully installed"
+    fi
+}
+
+run_with_flavors "$FLAVORS"

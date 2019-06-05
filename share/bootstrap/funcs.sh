@@ -179,6 +179,16 @@ file_absent() {
     return 0
 }
 
+make_temp() {
+    build_dir=$(mktemp -d)
+
+    if ! normalize_bool "$NO_CLEAN_BUILDDIR"; then
+        trap 'rm -rf $build_dir' 0 1 2 3 6 14 15
+    fi
+
+    echo "$build_dir"
+}
+
 mangle_filename() {
     path=$1; shift
     platform=$1; shift
@@ -317,8 +327,40 @@ EOF
 }
 
 
-## Reqs
+## Guards
 ##
+
+ensure_platform() {
+    platform=$1; shift
+
+    if [ "$(uname)" != "$platform" ]; then
+        printe_err "This script can only be run on $platform"
+        exit 1
+    fi
+}
+
+ensure_paths() {
+    flags=$*
+
+    if has_args required "$flags"; then
+        if [ -z "$BOOTSTRAP_ROOT" ]; then
+            printe_err "BOOTSTRAP_ROOT is not set."
+            exit 1
+        fi
+
+        if [ -z "$LOOKUP_ROOT" ]; then
+            printe_err "LOOKUP_ROOT is not set."
+            exit 1
+        fi
+    fi
+
+    if has_args same_root "$flags"; then
+        if [ "$BOOTSTRAP_ROOT" != "$LOOKUP_ROOT" ]; then
+            printe_err "Cannot be included from different LOOKUP_ROOT"
+            exit 1
+        fi
+    fi
+}
 
 require_bin() {
     pkg=$1; shift
@@ -348,4 +390,24 @@ require_lib() {
 
         exit 1
     fi
+}
+
+
+## Runner
+##
+
+run_with_flavors() {
+    flavors=$*
+
+    if [ "$(command -v _run)x" != "x" ]; then
+        _run "$flavors"
+    fi
+
+    for flavor in $flavors; do
+        run_command="_run_$flavor"
+
+        if [ "$(command -v "$run_command")x" != "x" ]; then
+            "$run_command" "$flavors"
+        fi
+    done
 }

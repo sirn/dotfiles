@@ -3,20 +3,22 @@
 # Install node packages
 #
 
-root_dir=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
-lookup_dir=${LOOKUP_ROOT:-$root_dir}
-flavors=$*
-
-platform=$(uname | tr '[:upper:]' '[:lower:]')
+BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+LOOKUP_ROOT=${LOOKUP_ROOT:-$BOOTSTRAP_ROOT}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$root_dir/share/bootstrap/funcs.sh"
+. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
+
+FLAVORS=$*
+PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
+
+NODE_PKGLIST=$LOOKUP_ROOT/var/bootstrap/pkglist_node.txt
 
 
-## Setup environment
+## Environment variables
 ##
 
-case $platform in
+case $PLATFORM in
     darwin )
         PATH=/usr/local/opt/node@10/bin:$PATH
         ;;
@@ -26,16 +28,18 @@ case $platform in
 esac
 
 
-## Setup
+## Run
 ##
 
-node_pkglist=$lookup_dir/var/bootstrap/pkglist_node.txt
+_run() {
+    if command -v npm >/dev/null; then
+       npm set prefix="$HOME/.local"
 
-if command -v npm >/dev/null; then
-   npm set prefix="$HOME/.local"
+       for f in $(mangle_file "$NODE_PKGLIST" "$PLATFORM" "$FLAVORS"); do
+           printe_h2 "Installing node packages from $f..."
+           xargs npm install -g < "$f"
+       done
+    fi
+}
 
-   for f in $(mangle_file "$node_pkglist" "$platform" "$flavors"); do
-       printe_h2 "Installing node packages from $f..."
-       xargs npm install -g < "$f"
-   done
-fi
+run_with_flavors "$FLAVORS"

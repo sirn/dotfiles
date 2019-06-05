@@ -3,30 +3,26 @@
 # Install language runtime and its packages with asdf version manager.
 #
 
-root_dir=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
-lookup_dir=${LOOKUP_ROOT:-$root_dir}
-flavors=$*
-
-platform=$(uname | tr '[:upper:]' '[:lower:]')
-asdf_dir=$HOME/.asdf
+BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+LOOKUP_ROOT=${LOOKUP_ROOT:-$BOOTSTRAP_ROOT}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$root_dir/share/bootstrap/funcs.sh"
+. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
 
+ensure_paths required
 
-## Tmp
-##
+FLAVORS=$*
+PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
+BUILD_DIR=$(make_temp)
 
-build_dir=$(mktemp -d)
-if ! normalize_bool "$NO_CLEAN_BUILDDIR"; then
-    trap 'rm -rf $build_dir' 0 1 2 3 6 14 15
-fi
+ASDF_DIR=$HOME/.asdf
+ASDF_SPEC=$LOOKUP_ROOT/var/bootstrap/asdf.txt
 
 
 ## Environment variables
 ##
 
-PATH=$asdf_dir/bin:$asdf_dir/shims:$PATH; export PATH
+PATH=$ASDF_DIR/bin:$ASDF_DIR/shims:$PATH; export PATH
 
 if command -v cc >/dev/null; then
     CC=cc; export CC
@@ -41,20 +37,20 @@ _do_plugin() {
     plugin=$1; shift
     repo=$1; shift
 
-    git_clone_update "$repo" "$asdf_dir/plugins/$plugin"
+    git_clone_update "$repo" "$ASDF_DIR/plugins/$plugin"
 }
 
 _do_install() {
     plugin=$1; shift
     version=$1; shift
 
-    if [ ! -d "$asdf_dir/installs/$plugin/$version" ]; then
+    if [ ! -d "$ASDF_DIR/installs/$plugin/$version" ]; then
         install=_install
         custom_install=_install_$plugin
-        platform_install=_install_${plugin}_$platform
+        platform_install=_install_${plugin}_$PLATFORM
 
         if [ "$(command -v "$platform_install")x" != "x" ]; then
-            printe_info "Running $platform installation script for $plugin..."
+            printe_info "Running $PLATFORM installation script for $plugin..."
             install=$platform_install
         elif [ "$(command -v "$custom_install")x" != "x" ]; then
             printe_info "Running custom installation script for $plugin..."
@@ -75,19 +71,19 @@ _do_pkginst() {
     plugin=$1; shift
     instcmd=$*; shift
 
-    pkglist=$lookup_dir/var/bootstrap/pkglist_$plugin.txt
+    pkglist=$LOOKUP_ROOT/var/bootstrap/pkglist_$plugin.txt
 
     pkginst=_pkginst
     custom_pkginst=_pkginst_$plugin
-    platform_pkginst=_pkginst_${plugin}_$platform
+    PLATFORM_pkginst=_pkginst_${plugin}_$PLATFORM
 
     # shellcheck disable=SC2086
-    for f in $(mangle_file $pkglist $platform "$flavors"); do
+    for f in $(mangle_file $pkglist $PLATFORM "$FLAVORS"); do
         printe_h2 "Installing $plugin packages from $f..."
 
-        if [ "$(command -v "$platform_pkginst")x" != "x" ]; then
-            printe_info "Running $platform pkginst script for $plugin..."
-            pkginst=$platform_pkginst
+        if [ "$(command -v "$PLATFORM_pkginst")x" != "x" ]; then
+            printe_info "Running $PLATFORM pkginst script for $plugin..."
+            pkginst=$PLATFORM_pkginst
         elif [ "$(command -v "$custom_pkginst")x" != "x" ]; then
             printe_info "Running custom pkginst script for $plugin..."
             pkginst=$custom_pkginst
@@ -162,11 +158,11 @@ _pkginst_ruby_openbsd() {
 
     require_bin gtar "Try \`pkg_add gtar\`"
 
-    mkdir -p "$build_dir/gnuisms"
-    ln -s /usr/local/bin/gtar "$build_dir/gnuisms/tar"
+    mkdir -p "$BUILD_DIR/gnuisms"
+    ln -s /usr/local/bin/gtar "$BUILD_DIR/gnuisms/tar"
 
     # shellcheck disable=SC2086
-    env PATH="$build_dir/gnuisms:$PATH" \
+    env PATH="$BUILD_DIR/gnuisms:$PATH" \
         xargs $pkginst < "$filename"
 }
 
@@ -174,28 +170,29 @@ _pkginst_ruby_openbsd() {
 ## Installs
 ##
 
-printe_h2 "Installing asdf..."
+_run() {
+    printe_h2 "Installing asdf..."
 
-git_clone_update https://github.com/asdf-vm/asdf.git "$asdf_dir"
+    git_clone_update https://github.com/asdf-vm/asdf.git "$ASDF_DIR"
+    for f in $(mangle_file "$ASDF_SPEC" "$PLATFORM" "$FLAVORS"); do
+        printe_h2 "Installing asdf packages from $f..."
 
-asdf_spec=$lookup_dir/var/bootstrap/asdf.txt
+        while read -r line; do
+            case $line in
+                "#"* | "" ) continue;;
+                *) line="${line%%#*}";;
+            esac
 
-for f in $(mangle_file "$asdf_spec" "$platform" "$flavors"); do
-    printe_h2 "Installing asdf packages from $f..."
+            eval set -- "$line"
 
-    while read -r line; do
-        case $line in
-            "#"* | "" ) continue;;
-            *) line="${line%%#*}";;
-        esac
+            case $1 in
+                plugin )  shift; _do_plugin  "$@";;
+                install ) shift; _do_install "$@";;
+                pkginst ) shift; _do_pkginst "$@";;
+                * ) printe_err "Unknown directive: $1";;
+            esac
+        done < "$f"
+    done
+}
 
-        eval set -- "$line"
-
-        case $1 in
-            plugin )  shift; _do_plugin  "$@";;
-            install ) shift; _do_install "$@";;
-            pkginst ) shift; _do_pkginst "$@";;
-            * ) printe_err "Unknown directive: $1";;
-        esac
-    done < "$f"
-done
+run_with_flavors "$FLAVORS"

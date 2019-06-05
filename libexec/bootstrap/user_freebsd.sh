@@ -3,26 +3,24 @@
 # Configure current user on FreeBSD.
 #
 
-root_dir=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
-lookup_dir=${LOOKUP_ROOT:-$root_dir}
-flavors=$*
+BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+LOOKUP_ROOT=${LOOKUP_ROOT:-$BOOTSTRAP_ROOT}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$root_dir/share/bootstrap/funcs.sh"
+. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
 
-if [ "$root_dir" != "$lookup_dir" ]; then
-    printe_err "Cannot be included from different root"
-    exit 1
-fi
+ensure_paths required same_root
+ensure_platform "FreeBSD"
 
-if [ "$(uname)" != "FreeBSD" ]; then
-    printe_err "Not a FreeBSD system"
-    exit 1
-fi
+FLAVORS=$*
 
 
-## Hand-off
+## Run
 ##
 
-"$root_dir/libexec/bootstrap/user_shell.sh" "$flavors"
-"$root_dir/libexec/bootstrap/user_links.sh" "$flavors"
+_run() {
+    "$BOOTSTRAP_ROOT/libexec/bootstrap/user_shell.sh" "$FLAVORS"
+    "$BOOTSTRAP_ROOT/libexec/bootstrap/user_links.sh" "$FLAVORS"
+}
+
+run_with_flavors "$FLAVORS"

@@ -3,14 +3,17 @@
 # Create links per the given spec.
 #
 
-root_dir=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
-lookup_dir=${LOOKUP_ROOT:-$root_dir}
-flavors=$*
-
-platform=$(uname | tr '[:upper:]' '[:lower:]')
+BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+LOOKUP_ROOT=${LOOKUP_ROOT:-$BOOTSTRAP_ROOT}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$root_dir/share/bootstrap/funcs.sh"
+. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
+
+ensure_paths required
+
+FLAVORS=$*
+PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
+LINKLIST="$LOOKUP_ROOT/var/bootstrap/links.txt"
 
 
 ## Utils
@@ -22,29 +25,31 @@ _make_link() {
 
     case $src in
         /* ) printe "$src cannot be an absolute path"; return;;
-        * ) src=$lookup_dir/$src;;
+        * ) src=$LOOKUP_ROOT/$src;;
     esac
 
     make_link "$src" "$dest"
 }
 
 
-## Links
+## Run
 ##
 
-linklist="$lookup_dir/var/bootstrap/links.txt"
+_run() {
+    for f in $(mangle_file "$LINKLIST" "$PLATFORM" "$FLAVORS"); do
+        printe_h2 "Linking files in $f..."
 
-for f in $(mangle_file "$linklist" "$platform" "$flavors"); do
-    printe_h2 "Linking files in $f..."
+        while read -r line; do
+            case $line in
+                "#"* | "" ) continue;;
+                *) line=${line%%#*};;
+            esac
 
-    while read -r line; do
-        case $line in
-            "#"* | "" ) continue;;
-            *) line=${line%%#*};;
-        esac
+            eval set -- "$line"
 
-        eval set -- "$line"
+            _make_link "$@"
+        done < "$f"
+    done
+}
 
-        _make_link "$@"
-    done < "$f"
-done
+run_with_flavors "$FLAVORS"

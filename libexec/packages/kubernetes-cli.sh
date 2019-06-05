@@ -3,52 +3,51 @@
 # Install Kubernetes CLI.
 #
 
-root_dir=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$root_dir/share/bootstrap/funcs.sh"
+. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
 
-
-## Tmp
-##
-
-build_dir=$(mktemp -d)
-if ! normalize_bool "$NO_CLEAN_BUILDDIR"; then
-    trap 'rm -rf $build_dir' 0 1 2 3 6 14 15
-fi
-
-
-## Preparation
-##
+FLAVORS=$*
+BUILD_DIR=$(make_temp)
 
 # Using 1.16 since we required an updated vendor:
 # See https://github.com/kubernetes/kubernetes/tree/master/vendor
-kubectl_ver=1.16.0-alpha.0
-kubectl_sha256=cc8c1214d311d9b78b3e6376d4cff6ad6c98df10df31ad887464623ec0684b53
+KUBECTL_VER=1.16.0-alpha.0
+KUBECTL_SHA256=cc8c1214d311d9b78b3e6376d4cff6ad6c98df10df31ad887464623ec0684b53
 
-printe_h2 "Installing kubectl..."
-require_bin go
 
-GOPATH="$build_dir/go"; export GOPATH
+## Environment variables
+##
+
+GOPATH="$BUILD_DIR/go"; export GOPATH
 PATH="$GOPATH/bin:$PATH"
 
 
-## Setup
+## Run
 ##
 
-if is_force || file_absent "$HOME/.local/bin/kubectl"; then
-    cd "$build_dir" || exit 1
+_run_kubernetes() {
+    printe_h2 "Installing kubectl..."
 
-    fetch_gh_archive kubectl.tar.gz kubernetes/kubernetes "v$kubectl_ver"
-    verify_shasum kubectl.tar.gz $kubectl_sha256
-    tar -C "$build_dir" -xzf kubectl.tar.gz
-    rm kubectl.tar.gz
+    if is_force || file_absent "$HOME/.local/bin/kubectl"; then
+        cd "$BUILD_DIR" || exit 1
 
-    mkdir -p "$build_dir/go/src/k8s.io"
-    mv "$build_dir/kubernetes-$kubectl_ver" "$build_dir/go/src/k8s.io/kubernetes"
+        require_bin go
 
-    cd "$build_dir/go/src/k8s.io/kubernetes/cmd/kubectl" || exit 1
-    go install .
-    cp "$build_dir/go/bin/kubectl" "$HOME/.local/bin/kubectl"
-    printe "kubectl has been successfully installed"
-fi
+        fetch_gh_archive kubectl.tar.gz kubernetes/kubernetes "v$KUBECTL_VER"
+        verify_shasum kubectl.tar.gz $KUBECTL_SHA256
+        tar -C "$BUILD_DIR" -xzf kubectl.tar.gz
+        rm kubectl.tar.gz
+
+        mkdir -p "$BUILD_DIR/go/src/k8s.io"
+        mv "$BUILD_DIR/kubernetes-$KUBECTL_VER" "$BUILD_DIR/go/src/k8s.io/kubernetes"
+
+        cd "$BUILD_DIR/go/src/k8s.io/kubernetes/cmd/kubectl" || exit 1
+        go install .
+        cp "$BUILD_DIR/go/bin/kubectl" "$HOME/.local/bin/kubectl"
+        printe "kubectl has been successfully installed"
+    fi
+}
+
+run_with_flavors "$FLAVORS"

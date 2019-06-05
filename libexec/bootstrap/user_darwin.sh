@@ -3,68 +3,63 @@
 # Configure current user on Darwin.
 #
 
-root_dir=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
-lookup_dir=${LOOKUP_ROOT:-$root_dir}
-flavors=$*
+BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+LOOKUP_ROOT=${LOOKUP_ROOT:-$BOOTSTRAP_ROOT}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$root_dir/share/bootstrap/funcs.sh"
+. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
 
-if [ "$root_dir" != "$lookup_dir" ]; then
-    printe_err "Cannot be included from different root"
-    exit 1
-fi
+ensure_paths required same_root
+ensure_platform "Darwin"
 
-if [ "$(uname)" != "Darwin" ]; then
-    printe_err "Not a FreeBSD system"
-    exit 1
-fi
+FLAVORS=$*
+USERENV_PLIST="$HOME/Library/LaunchAgents/th.in.grid.userenv.plist"
 
 
-## Userenv
+## Setup
 ##
 
-printe_h2 "Setting up userenv..."
+_setup_userenv() {
+    printe_h2 "Setting up userenv..."
 
-userenv_plist="$HOME/Library/LaunchAgents/th.in.grid.userenv.plist"
+    if is_force || [ ! -f "$USERENV_PLIST" ]; then
+        cp "$BOOTSTRAP_ROOT/share/examples/launchd/th.in.grid.userenv.plist" "$USERENV_PLIST"
+        chmod 0644 "$USERENV_PLIST"
+        launchctl load -w "$USERENV_PLIST"
+        printe "$USERENV_PLIST has been installed, you may need to relogin"
+    else
+        printe "$USERENV_PLIST already exists"
+    fi
+}
 
-if is_force || [ ! -f "$userenv_plist" ]; then
-    cp "$root_dir/share/examples/launchd/th.in.grid.userenv.plist" "$userenv_plist"
-    chmod 0644 "$userenv_plist"
-    launchctl load -w "$userenv_plist"
-    printe "$userenv_plist has been installed, you may need to relogin"
-else
-    printe "$userenv_plist already exists"
-fi
+_setup_ipfs() {
+    printe_h2 "Setting up ipfs..."
+
+    if [ ! -d "$HOME/.ipfs" ]; then
+        ipfs init
+    fi
+
+    brew services start ipfs
+}
 
 
-## Hand-off
+## Run
 ##
 
-"$root_dir/libexec/bootstrap/user_shell.sh" "$flavors"
-"$root_dir/libexec/bootstrap/user_links.sh" "$flavors"
+_run() {
+    _setup_userenv
+    _setup_ipfs
 
+    "$BOOTSTRAP_ROOT/libexec/bootstrap/user_shell.sh" "$FLAVORS"
+    "$BOOTSTRAP_ROOT/libexec/bootstrap/user_links.sh" "$FLAVORS"
+}
 
-## IPFS
-##
-
-printe_h2 "Setting up ipfs..."
-
-if [ ! -d "$HOME/.ipfs" ]; then
-    ipfs init
-fi
-
-brew services start ipfs
-
-
-## Chunkwm/Skhd
-## must be run after link
-##
-
-if has_args "desktop" "$flavors"; then
+_run_desktop() {
     printe_h2 "Setting up chunkwm..."
     brew services start chunkwm
 
     printe_h2 "Setting up skhd..."
     brew services start skhd
-fi
+}
+
+run_with_flavors "$FLAVORS"

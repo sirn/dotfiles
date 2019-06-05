@@ -1,0 +1,28 @@
+# Note: this file is processed in order
+
+brew autoconf
+brew cabal-install
+brew carthage
+brew dnscrypt-proxy
+brew duplicity
+brew entr
+brew git-crypt
+brew git-lfs
+brew go
+brew graphicsmagick
+brew graphviz
+brew ipcalc
+brew jq
+brew leiningen
+brew neovim
+brew node@10
+brew pandoc
+brew shellcheck
+brew socat
+brew sshfs
+brew terraform
+brew tree
+brew xz
+brew zlib
+
+cask google-cloud-sdk

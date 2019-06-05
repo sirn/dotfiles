@@ -3,127 +3,123 @@
 # Install kapitan.
 #
 
-root_dir=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
-platform=$(uname | tr '[:upper:]' '[:lower:]')
-
-python3="$HOME/.asdf/shims/python3"
-pip3="$HOME/.asdf/shims/pip3"
+BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$root_dir/share/bootstrap/funcs.sh"
+. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
+
+FLAVORS=$*
+BUILD_DIR=$(make_temp)
+
+PYTHON3="$HOME/.asdf/shims/python3"
+PIP3="$HOME/.asdf/shims/pip3"
+
+KAPITAN_VER=0.23.0
+
+CRYPTOGRAPHY_VER=2.6.1
+CRYPTOGRAPHY_SHA256=e6b77dddc068dcbb13c193602d7a40dc0bb348ceb107b14be083e42afa24ab83
+
+JSONNET_VER=0.12.1
+JSONNET_SHA256=257c6de988f746cc90486d9d0fbd49826832b7a2f0dbdb60a515cc8a2596c950
 
 
-## Tmp
+## Setup
 ##
 
-build_dir=$(mktemp -d)
-if ! normalize_bool "$NO_CLEAN_BUILDDIR"; then
-    trap 'rm -rf $build_dir' 0 1 2 3 6 14 15
-fi
+_setup_cryptography() {
+    if is_force || ! "$PYTHON3" -c 'import cryptography' >/dev/null 2>&1; then
+        case $(openssl version | tr '[:upper:]' '[:lower:]') in
+            libressl* )
+                # py-cryptography doesn't work well under LibreSSL (e.g. OpenBSD) without
+                # patching the CFFI source to disable some OpenSSL features.
+
+                printe_info "Patching py-cryptography for libressl..."
+                cd "$BUILD_DIR" || exit 1
+
+                fetch_gh_archive cryptography.tar.gz pyca/cryptography "$CRYPTOGRAPHY_VER"
+                verify_shasum cryptography.tar.gz $CRYPTOGRAPHY_SHA256
+                tar -C "$BUILD_DIR" -xzf cryptography.tar.gz
+                rm cryptography.tar.gz
+
+                cd "$BUILD_DIR/cryptography-$CRYPTOGRAPHY_VER" || exit 1
+
+                for filename in \
+                    security/py-cryptography/patches/patch-src__cffi_src_openssl_ssl_py \
+                        security/py-cryptography/patches/patch-src__cffi_src_openssl_x509_vfy_py; do
+                    fetch_gh_raw - \
+                                 openbsd/ports \
+                                 6fb634bd079c63a17a8f3f0a00a4e119b91bc9ad \
+                                 $filename |
+                        patch -p0
+                done
+
+                $PIP3 install .
+                ;;
+
+            * )
+                ;;
+        esac
+    fi
+}
+
+_setup_jsonnet() {
+    if is_force || ! "$PYTHON3" -c 'import _jsonnet' >/dev/null 2>&1; then
+        case $PLATFORM in
+            freebsd | openbsd )
+                # We need to patch setup.py to explicitly call gmake instead of make
+                # because py-jsonnet setup.py assumes make is gmake. py-jsonnet also
+                # assumes od is GNU-compatible.
+
+                printe_info "Patching py-jsonnet for $(uname)..."
+                cd "$BUILD_DIR" || exit 1
+
+                require_bin gmake
+
+                fetch_gh_archive jsonnet.tar.gz google/jsonnet "v$JSONNET_VER"
+                verify_shasum jsonnet.tar.gz $JSONNET_SHA256
+                tar -C "$BUILD_DIR" -xzf jsonnet.tar.gz
+                rm jsonnet.tar.gz
+
+                cd "$BUILD_DIR/jsonnet-$JSONNET_VER" || exit 1
+                sed "s/'make'/'gmake'/g" < setup.py > setup.py.new
+                mv setup.py.new setup.py
+
+                od_bin="od"
+                if [ "$PLATFORM" = "openbsd" ]; then
+                    require_bin ggod "Try \`pkg_add coreutils\`"
+                    od_bin=ggod
+                fi
+
+                env \
+                    OD=$od_bin \
+                    CC=cc \
+                    CXX=c++ \
+                    CXXFLAGS="-fPIC -Iinclude -Ithird_party/md5 -Ithird_party/json -std=c++11" \
+                    "$PIP3" install .
+                ;;
+
+            * )
+                env \
+                    CXXFLAGS="-fPIC -Iinclude -Ithird_party/md5 -Ithird_party/json -std=c++11" \
+                    "$PIP3" install jsonnet==$JSONNET_VER
+                ;;
+        esac
+    fi
+}
 
 
-## Preparation
-## Kapitan has a strict version lock and require updating other dependencies
-## every time Kapitan is updated. We're locking the version here to ensure
-## custom-built dependencies (e.g. py-cryptography) works.
+## Run
 ##
 
-kapitan_ver=0.23.0
+_run_kubernetes() {
+    printe_h2 "Installing kapitan..."
 
-cryptography_ver=2.6.1
-cryptography_sha256=e6b77dddc068dcbb13c193602d7a40dc0bb348ceb107b14be083e42afa24ab83
+    _setup_cryptography
+    _setup_jsonnet
 
-jsonnet_ver=0.12.1
-jsonnet_sha256=257c6de988f746cc90486d9d0fbd49826832b7a2f0dbdb60a515cc8a2596c950
+    $PIP3 install kapitan==$KAPITAN_VER
+    "$HOME/.asdf/bin/asdf" reshim python
+}
 
-printe_h2 "Installing kapitan..."
-
-
-## Setup py-cryptography
-## py-cryptography doesn't work well under LibreSSL (e.g. OpenBSD) without
-## patching the CFFI source to disable some OpenSSL features.
-##
-
-if is_force || ! "$python3" -c 'import cryptography' >/dev/null 2>&1; then
-    case $(openssl version | tr '[:upper:]' '[:lower:]') in
-        libressl* )
-            printe_info "Patching py-cryptography for libressl..."
-            cd "$build_dir" || exit 1
-
-            fetch_gh_archive cryptography.tar.gz pyca/cryptography "$cryptography_ver"
-            verify_shasum cryptography.tar.gz $cryptography_sha256
-            tar -C "$build_dir" -xzf cryptography.tar.gz
-            rm cryptography.tar.gz
-
-            cd "$build_dir/cryptography-$cryptography_ver" || exit 1
-
-            for filename in \
-                security/py-cryptography/patches/patch-src__cffi_src_openssl_ssl_py \
-                    security/py-cryptography/patches/patch-src__cffi_src_openssl_x509_vfy_py; do
-                fetch_gh_raw - \
-                             openbsd/ports \
-                             6fb634bd079c63a17a8f3f0a00a4e119b91bc9ad \
-                             $filename |
-                    patch -p0
-            done
-
-            $pip3 install .
-            ;;
-
-        * )
-            ;;
-    esac
-fi
-
-
-## Setup py-jsonnet
-## We need to patch setup.py to explicitly call gmake instead of make
-## because py-jsonnet setup.py assumes make is gmake. py-jsonnet also
-## assumes od is GNU-compatible.
-##
-
-if is_force || ! "$python3" -c 'import _jsonnet' >/dev/null 2>&1; then
-    case $platform in
-        freebsd | openbsd )
-            printe_info "Patching py-jsonnet for $(uname)..."
-            cd "$build_dir" || exit 1
-
-            require_bin gmake
-
-            fetch_gh_archive jsonnet.tar.gz google/jsonnet "v$jsonnet_ver"
-            verify_shasum jsonnet.tar.gz $jsonnet_sha256
-            tar -C "$build_dir" -xzf jsonnet.tar.gz
-            rm jsonnet.tar.gz
-
-            cd "$build_dir/jsonnet-$jsonnet_ver" || exit 1
-            sed "s/'make'/'gmake'/g" < setup.py > setup.py.new
-            mv setup.py.new setup.py
-
-            od_bin="od"
-            if [ "$platform" = "openbsd" ]; then
-                require_bin ggod "Try \`pkg_add coreutils\`"
-                od_bin=ggod
-            fi
-
-            env \
-                OD=$od_bin \
-                CC=cc \
-                CXX=c++ \
-                CXXFLAGS="-fPIC -Iinclude -Ithird_party/md5 -Ithird_party/json -std=c++11" \
-                "$pip3" install .
-            ;;
-
-        * )
-            env \
-                CXXFLAGS="-fPIC -Iinclude -Ithird_party/md5 -Ithird_party/json -std=c++11" \
-                "$pip3" install jsonnet==$jsonnet_ver
-            ;;
-    esac
-fi
-
-
-## Setup kapitan
-##
-
-"$pip3" install kapitan==$kapitan_ver
-"$HOME/.asdf/bin/asdf" reshim python
+run_with_flavors "$FLAVORS"

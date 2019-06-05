@@ -3,43 +3,37 @@
 # Install FreeBSD packages with Pkgng.
 #
 
-root_dir=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
-lookup_dir=${LOOKUP_ROOT:-$root_dir}
-flavors=$*
+BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+LOOKUP_ROOT=${LOOKUP_ROOT:-$BOOTSTRAP_ROOT}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$root_dir/share/bootstrap/funcs.sh"
+. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
 
-if [ "$(uname)" != "FreeBSD" ]; then
-    printe_err "Not a FreeBSD system"
-    exit 1
-fi
+ensure_paths required
+ensure_platform "FreeBSD"
 
-
-## Setup
-##
-
-if [ ! -x /usr/local/sbin/pkg ]; then
-    printe_h2 "Bootstrapping pkgng..."
-    run_root ASSUME_ALWAYS_YES=yes pkg bootstrap
-fi
+FLAVORS=$*
+PKG_PKGLIST=$LOOKUP_ROOT/var/bootstrap/freebsd/pkglist.txt
 
 
 ## Installs
 ##
 
-pkglist=$lookup_dir/var/bootstrap/freebsd/pkglist.txt
+_run() {
+    if [ ! -x /usr/local/sbin/pkg ]; then
+        printe_h2 "Bootstrapping pkgng..."
+        run_root ASSUME_ALWAYS_YES=yes pkg bootstrap
+    fi
 
-for f in $(mangle_file "$pkglist" none "$flavors"); do
-    printe_h2 "Installing packages from $f..."
-    run_root xargs pkg install -y < "$f"
-done
+    for f in $(mangle_file "$PKG_PKGLIST" none "$FLAVORS"); do
+        printe_h2 "Installing packages from $f..."
+        run_root xargs pkg install -y < "$f"
+    done
 
+    if [ "$BOOTSTRAP_ROOT" = "$LOOKUP_ROOT" ]; then
+        "$BOOTSTRAP_ROOT/libexec/bootstrap/pkg_asdf.sh" "$FLAVORS"
+        "$BOOTSTRAP_ROOT/libexec/bootstrap/pkg_local.sh" "$FLAVORS"
+    fi
+}
 
-## Hand-off
-##
-
-if [ "$root_dir" = "$lookup_dir" ]; then
-    "$root_dir/libexec/bootstrap/pkg_asdf.sh" "$flavors"
-    "$root_dir/libexec/bootstrap/pkg_local.sh" "$flavors"
-fi
+run_with_flavors "$FLAVORS"

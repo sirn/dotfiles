@@ -1,0 +1,3 @@
+etc/emacs/init.el                         $HOME/.emacs.d/init.el
+etc/emacs/straight/versions/default.el    $HOME/.emacs.d/straight/versions/default.el
+etc/proselint/proselintrc                 $HOME/.proselintrc

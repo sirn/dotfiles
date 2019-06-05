@@ -3,8 +3,8 @@
 # Script to setup personal workspace.
 #
 
-base_dir=$(cd "$(dirname "$0")/" || exit; pwd -P)
-platform=$(uname | tr '[:upper:]' '[:lower:]')
+BASE_DIR=$(cd "$(dirname "$0")/" || exit; pwd -P)
+PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
 
 LC_ALL=en_US.UTF-8
 PATH=$HOME/.local/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
@@ -12,14 +12,14 @@ PATH=$HOME/.local/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sb
 export LC_ALL
 export PATH
 
-cd "$base_dir" || exit 1
+cd "$BASE_DIR" || exit 1
 . share/bootstrap/funcs.sh
 
 
 ## Arguments handling
 ##
 
-usage_msg="\
+USAGE_MSG="\
 Usage: $0 [OPTS...]
 
 OPTS:
@@ -39,31 +39,32 @@ FLAVOR:
 
     backups         Install backup packages.
     desktop         Install desktop packages.
+    dev             Install development packages.
     kubernetes      Install Kubernetes packages.
     mail            Install mail packages.
     tunings         Tune the system.
 
-Bootstrap script will default to \`pkg\` without any flavors
-if no profiles and flavors is given. Lookup path is default to
+Bootstrap script will default to \`pkg\` without any FLAVORS
+if no PROFILES and FLAVORS is given. Lookup path is default to
 the current directory and ~/.dotpriv.
 " # EOF
 
 print_usage() {
-    printe "$usage_msg"
+    printe "$USAGE_MSG"
 }
 
 OPTIND=1
 FORCE=0
 
-profiles=""
-flavors=""
-lookup_path=""
+PROFILES=""
+FLAVORS=""
+LOOKUP_PATH=""
 
 while getopts "hp:s:l:f" opt; do
     case "$opt" in
-        p ) profiles="$profiles $OPTARG";;
-        s ) flavors="$flavors $OPTARG";;
-        l ) lookup_path="$lookup_path $OPTARG";;
+        p ) PROFILES="$PROFILES $OPTARG";;
+        s ) FLAVORS="$FLAVORS $OPTARG";;
+        l ) LOOKUP_PATH="$LOOKUP_PATH $OPTARG";;
         f ) FORCE=1;;
         h ) print_usage; exit 2;;
         * ) print_usage; exit 1;;
@@ -72,8 +73,8 @@ done
 
 shift $((OPTIND-1))
 
-if [ -z "$lookup_path" ]; then
-    lookup_path="$base_dir $HOME/.dotpriv"
+if [ -z "$LOOKUP_PATH" ]; then
+    LOOKUP_PATH="$BASE_DIR $HOME/.dotpriv"
 fi
 
 if [ "${1:-}" = "--" ]; then
@@ -86,22 +87,22 @@ export FORCE
 ## Sanity check
 ##
 
-for p in $profiles; do
+for p in $PROFILES; do
     case "$p" in
         pkg | system | user ) ;;
         * ) printe_err "Unknown profile: $p"; exit 1;;
     esac
 done
 
-for f in $flavors; do
+for f in $FLAVORS; do
     case "$f" in
-        desktop | kubernetes | mail | tunings | backups ) ;;
+        dev | desktop | kubernetes | mail | tunings | backups ) ;;
         * ) printe_err "Unknown flavor: $f"; exit 1;;
     esac
 done
 
-if [ -z "$profiles" ]; then
-    profiles="pkg"
+if [ -z "$PROFILES" ]; then
+    PROFILES="pkg"
 fi
 
 
@@ -109,26 +110,26 @@ fi
 ##
 
 for p in pkg system user; do
-    if has_args "$p" "$profiles"; then
+    if has_args "$p" "$PROFILES"; then
         run=0
 
-        for b in $lookup_path; do
-            runscript="$b/libexec/bootstrap/${p}_${platform}.sh"
+        for b in $LOOKUP_PATH; do
+            runscript="$b/libexec/bootstrap/${p}_${PLATFORM}.sh"
 
             if [ ! -f "$runscript" ]; then
                 continue
             fi
 
             LOOKUP_ROOT="$b"; export LOOKUP_ROOT
-            BOOTSTRAP_ROOT="$base_dir"; export BOOTSTRAP_ROOT
+            BOOTSTRAP_ROOT="$BASE_DIR"; export BOOTSTRAP_ROOT
 
             run=1
             printe_h1 "Running ${runscript}..."
-            "$runscript" "$flavors"
+            "$runscript" "$FLAVORS"
         done
 
         if [ $run != 1 ]; then
-            printe_err "Profile ${p} was not found for platform ${platform}"
+            printe_err "Profile ${p} was not found for PLATFORM ${PLATFORM}"
             exit 1
         fi
     fi
