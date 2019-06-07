@@ -26,7 +26,7 @@ _check_installed() {
     spec=${spec%%%*}    # pkg%version stem
 
     case "$spec" in
-        *"-"*[0-9] ) ;; # probably a stem with version number
+        *"-"[0-9]* ) ;; # probably a stem with version number
         * ) spec="$spec-*";;
     esac
 
@@ -36,13 +36,13 @@ _check_installed() {
 _do_pkg_install() {
     pkg=$1; shift
 
-    if _check_installed "$1"; then
+    if _check_installed "$pkg"; then
         printe "$pkg (pkg) already installed"
         return
     fi
 
     printe "Installing $pkg (pkg)..."
-    pkg install -y "$pkg"
+    run_root pkg_add "$pkg"
 }
 
 _do_exec() {
@@ -71,7 +71,7 @@ _run() {
                 exec )  shift; _do_exec "$@";;
                 * ) printe_err "Unknown directive: $1";;
             esac
-        done
+        done < "$f"
     done
 
     # Only install emacs--no_x11 when other variant of Emacs hasn't been
