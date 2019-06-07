@@ -1,26 +1,33 @@
-GraphicsMagick
-autoconf
-duplicity
-entr
-execline
-expect
-git-crypt
-git-lfs
-go
-google-cloud-sdk
-graphviz
-hs-ShellCheck
-hs-cabal-install
-hs-pandoc
-ipcalc
-jq
-leiningen
-neovim
-node10
-npm-node10
-pkgconf
-py36-ansible
-py36-asciinema
-socat
-terraform
-tree
+# Note: this file is processed in order
+
+pkgng GraphicsMagick
+pkgng autoconf
+pkgng duplicity
+pkgng entr
+pkgng execline
+pkgng expect
+pkgng git-crypt
+pkgng git-lfs
+pkgng go
+pkgng google-cloud-sdk
+pkgng graphviz
+pkgng hs-ShellCheck
+pkgng hs-cabal-install
+pkgng hs-pandoc
+pkgng ipcalc
+pkgng jq
+pkgng leiningen
+pkgng neovim
+pkgng node10
+pkgng npm-node10
+pkgng pkgconf
+pkgng py36-ansible
+pkgng py36-asciinema
+pkgng socat
+pkgng terraform
+pkgng tree
+
+exec libexec/packages/erlang.sh
+exec libexec/packages/rust.sh
+exec libexec/packages/node.sh
+exec libexec/packages/haskell.sh

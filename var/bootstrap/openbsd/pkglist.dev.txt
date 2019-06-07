@@ -1,24 +1,35 @@
-GraphicsMagick
-ansible
-autoconf%2.69
-automake%1.16
-cabal-install
-doxygen
-duplicity
-entr
-expect
-ghc
-git-lfs
-go
-google-cloud-sdk
-graphviz
-ipcalc
-jq
-metaauto
-neovim
-node
-pkgconf
-rust
-socat
-terraform
-tree
+# Note: this file is processed in order
+
+pkg GraphicsMagick
+pkg ansible
+pkg autoconf%2.69
+pkg automake%1.16
+pkg cabal-install
+pkg doxygen
+pkg duplicity
+pkg entr
+pkg expect
+pkg ghc
+pkg git-lfs
+pkg go
+pkg google-cloud-sdk
+pkg graphviz
+pkg ipcalc
+pkg jq
+pkg metaauto
+pkg neovim
+pkg node
+pkg pkgconf
+pkg rust
+pkg socat
+pkg terraform
+pkg tree
+
+exec libexec/packages/execline.sh
+exec libexec/packages/git-crypt.sh
+exec libexec/packages/leiningen.sh
+
+exec libexec/packages/erlang.sh
+exec libexec/packages/rust.sh
+exec libexec/packages/node.sh
+exec libexec/packages/haskell.sh

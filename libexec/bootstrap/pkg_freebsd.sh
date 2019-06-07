@@ -16,25 +16,55 @@ FLAVORS=$*
 PKG_PKGLIST=$LOOKUP_ROOT/var/bootstrap/freebsd/pkglist.txt
 
 
-## Installs
+## Utils
 ##
 
-_run() {
+_do_pkgng_install() {
+    pkg=$1; shift
+    pkg install -y "$pkg"
+}
+
+_do_exec() {
+    path=$1; shift
+    "$LOOKUP_ROOT/$path" "$FLAVORS"
+}
+
+
+## Setup
+##
+
+_setup_env() {
     if [ ! -x /usr/local/sbin/pkg ]; then
         printe_h2 "Bootstrapping pkgng..."
         run_root ASSUME_ALWAYS_YES=yes pkg bootstrap
     fi
+}
+
+
+## Runs
+##
+
+_run() {
+    _setup_env
 
     for f in $(mangle_file "$PKG_PKGLIST" none "$FLAVORS"); do
         printe_h2 "Installing packages from $f..."
-        run_root xargs pkg install -y < "$f"
+
+        while read -r line; do
+            case $line in
+                "#"* | "" ) continue;;
+                *) line=${line%%#*};;
+            esac
+
+            eval set -- "$line"
+
+            case "$1" in
+                pkgng ) shift; _do_pkgng_install "$@";;
+                exec )  shift; _do_exec "$@";;
+                * ) printe_err "Unknown directive: $1";;
+            esac
+        done < "$f"
     done
-
-    "$BOOTSTRAP_ROOT/libexec/bootstrap/pkg_asdf.sh" "$FLAVORS"
-
-    if [ "$BOOTSTRAP_ROOT" = "$LOOKUP_ROOT" ]; then
-        "$BOOTSTRAP_ROOT/libexec/bootstrap/pkg_local.sh" "$FLAVORS"
-    fi
 }
 
 run_with_flavors "$FLAVORS"

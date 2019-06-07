@@ -1,7 +1,6 @@
 # Note: this file is processed in order
 
-macports kubectl
-
+exec libexec/packages/kubernetes-cli.sh
 exec libexec/packages/kubernetes-helm.sh
 exec libexec/packages/kubectx.sh
 exec libexec/packages/kapitan.sh

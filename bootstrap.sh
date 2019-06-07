@@ -7,7 +7,7 @@ BASE_DIR=$(cd "$(dirname "$0")/" || exit; pwd -P)
 PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
 
 LC_ALL=en_US.UTF-8
-PATH=$HOME/.local/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+PATH=$HOME/.local/bin:/opt/local/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 
 export LC_ALL
 export PATH

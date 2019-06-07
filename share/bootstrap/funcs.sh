@@ -7,6 +7,7 @@
 NEWLINE='
 '
 
+
 ## Printing
 ##
 
@@ -181,11 +182,6 @@ file_absent() {
 
 make_temp() {
     build_dir=$(mktemp -d)
-
-    if ! normalize_bool "$NO_CLEAN_BUILDDIR"; then
-        trap 'rm -rf $build_dir' 0 1 2 3 6 14 15
-    fi
-
     echo "$build_dir"
 }
 
@@ -411,3 +407,11 @@ run_with_flavors() {
         fi
     done
 }
+
+
+## Cleanups
+##
+
+if ! normalize_bool "$NO_CLEAN_BUILDDIR"; then
+    trap 'rm -rf $BUILD_DIR' 0 1 2 3 6 14 15
+fi

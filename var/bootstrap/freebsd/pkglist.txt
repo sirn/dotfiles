@@ -1,17 +1,21 @@
-aria2
-base64
-ca_root_nss
-compat8x-amd64
-curl
-emacs-nox
-ffmpeg
-git
-mercurial
-mosh
-oksh
-openjdk8-jre
-rtmpdump
-the_silver_searcher
-tmux
-w3m
-youtube_dl
+# Note: this file is processed in order
+
+pkgng aria2
+pkgng base64
+pkgng ca_root_nss
+pkgng compat8x-amd64
+pkgng curl
+pkgng emacs-nox
+pkgng ffmpeg
+pkgng git
+pkgng mercurial
+pkgng mosh
+pkgng oksh
+pkgng openjdk8-jre
+pkgng rtmpdump
+pkgng the_silver_searcher
+pkgng tmux
+pkgng w3m
+pkgng youtube_dl
+
+exec libexec/bootstrap/pkg_asdf.sh

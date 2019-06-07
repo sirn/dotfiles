@@ -13,55 +13,39 @@ ensure_paths required
 ensure_platform "Darwin"
 
 FLAVORS=$*
-BREW_DIR=/usr/local/Homebrew
-BREW_PKGLIST=$LOOKUP_ROOT/var/bootstrap/darwin/pkglist.txt
+BUILD_DIR=$(make_temp)
+PLATFORM_VERS=$(sw_vers -productVersion)
 
+MAS=/opt/local/bin/mas
+MAS_MAX_PLATFORM=10.14
 
-## Environment variables
-##
+MACPORTS=/opt/local/bin/port
+MACPORTS_VER=2.5.4
+MACPORTS_SHA256=592e4a021588f37348fe7b806c202e4d77f75bcff1a0b20502d5f1177c2c21ff
+MACPORTS_WIP=$HOME/Dev/src/github.com/sirn/macports-wip
 
-HOMEBREW_NO_EMOJI=1; export HOMEBREW_NO_EMOJI
-HOMEBREW_NO_ANALYTICS=1; export HOMEBREW_NO_ANALYTICS
-HOMEBREW_NO_COLOR=1; export HOMEBREW_NO_COLOR
+PKGLIST=$LOOKUP_ROOT/var/bootstrap/darwin/pkglist.txt
 
 
 ## Utils
 ##
 
-_do_tap() {
-    tap=$1; shift
-
-    repo=$(printf "%s" "$tap" | sed 's|\(.*\)/\([^/]*\)$|\1/homebrew-\2|')
-    if [ -d "$BREW_DIR/Library/Taps/$repo" ]; then
-        printe "$tap already tapped"
-        return
-    fi
-
-    brew tap "$tap"
-}
-
-_do_install() {
+_do_macports_install() {
     pkg=$1; shift
 
-    if [ -d "/usr/local/Cellar/$pkg" ]; then
-        printe "$pkg already installed"
-        return
+    case "$($MACPORTS installed "$pkg" 2>&1)" in
+        "None of the"* ) ;;
+        * )
+            printe "$pkg (macports) already installed"
+            return
+            ;;
+    esac
+
+    printe "Installing $pkg (macports)..."
+
+    if ! run_root $MACPORTS -n install "$pkg"; then
+        printe_info "$pkg (macports) failed to install, skipping..."
     fi
-
-    printe "Installing $pkg..."
-    brew install "$pkg"
-}
-
-_do_cask_install() {
-    pkg=$1; shift
-
-    if [ -d "/usr/local/Caskroom/$pkg" ]; then
-        printe "$pkg (cask) already installed"
-        return
-    fi
-
-    printe "Installing $pkg..."
-    brew cask install "$pkg"
 }
 
 _do_mas_install() {
@@ -73,8 +57,21 @@ _do_mas_install() {
         return
     fi
 
+    if ! $(version_gte "$MAS_MAX_PLATFORM" "$PLATFORM_VERS"); then
+        printe "mas is not available, please manually install $app_name"
+        return
+    fi
+
     printe "Installing $app_name (mas)..."
-    mas install "$pkg_id"
+
+    if ! mas install "$pkg_id"; then
+        printe_info "$app_name (mas) failed to install, skipping..."
+    fi
+}
+
+_do_exec() {
+    path=$1; shift
+    "$LOOKUP_ROOT/$path" "$FLAVORS"
 }
 
 
@@ -82,33 +79,40 @@ _do_mas_install() {
 ##
 
 _setup_env() {
-    if [ ! -x /usr/local/bin/brew ]; then
-        printe_h2 "Bootstrapping Homebrew..."
+    if [ ! -x $MACPORTS ]; then
+        printe_h2 "Bootstrapping MacPorts..."
 
         xcode-select --install 2>/dev/null
+        cd "$BUILD_DIR" || exit 1
 
-        sdk=/Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg
-        if [ -e $sdk ] && [ ! -f /usr/lib/bundle1.o ]; then
-            run_root /usr/sbin/installer -pkg $sdk -target /
-        fi
+        fetch_gh_archive macports.tar.gz macports/macports-base v$MACPORTS_VER
+        verify_shasum macports.tar.gz $MACPORTS_SHA256
+        tar -C "$BUILD_DIR" -xzf macports.tar.gz
+        rm macports.tar.gz
 
-        fetch_url - https://raw.githubusercontent.com/Homebrew/install/master/install | /usr/bin/ruby
+        cd "$BUILD_DIR/MacPorts-$MACPORTS_VER" || exit 1
+        ./configure && make
+        run_root make install
     fi
 
-    printe_h2 "Installing runtime requisites..."
-
-    _do_cask_install java
-    _do_install mas
+    if $(version_gte "$MAS_MAX_PLATFORM" "$PLATFORM_VERS"); then
+        if [ ! -x $MAS ]; then
+            printe_h2 "Bootstrapping mas..."
+            run_root $MACPORTS -N install mas
+        fi
+    else
+        printe_info "mas command line utility requires macOS <= 10.14"
+    fi
 }
 
 
-## Installs
+## Runs
 ##
 
 _run() {
     _setup_env
 
-    for f in $(mangle_file "$BREW_PKGLIST" none "$FLAVORS"); do
+    for f in $(mangle_file "$PKGLIST" none "$FLAVORS"); do
         printe_h2 "Installing packages from $f..."
 
         while read -r line; do
@@ -120,20 +124,13 @@ _run() {
             eval set -- "$line"
 
             case "$1" in
-                tap  ) shift; _do_tap "$@";;
-                brew ) shift; _do_install "$@";;
-                cask ) shift; _do_cask_install "$@";;
-                mas )  shift; _do_mas_install "$@";;
+                macports ) shift; _do_macports_install "$@";;
+                mas )      shift; _do_mas_install "$@";;
+                exec )     shift; _do_exec "$@";;
                 * ) printe_err "Unknown directive: $1";;
             esac
         done < "$f"
     done
-
-    "$BOOTSTRAP_ROOT/libexec/bootstrap/pkg_asdf.sh" "$FLAVORS"
-
-    if [ "$BOOTSTRAP_ROOT" = "$LOOKUP_ROOT" ]; then
-        "$BOOTSTRAP_ROOT/libexec/bootstrap/pkg_local.sh" "$FLAVORS"
-    fi
 }
 
 run_with_flavors "$FLAVORS"

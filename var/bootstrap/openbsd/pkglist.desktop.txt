@@ -1,10 +1,12 @@
-adobe-source-code-pro
-adobe-source-sans-pro
-adobe-source-serif-pro
-emacs--gtk3
-firefox
-noto-cjk
-noto-emoji
-noto-fonts
-trayer
-w3m--image
+# Note: this file is processed in order
+
+pkg adobe-source-code-pro
+pkg adobe-source-sans-pro
+pkg adobe-source-serif-pro
+pkg emacs--gtk3
+pkg firefox
+pkg noto-cjk
+pkg noto-emoji
+pkg noto-fonts
+pkg trayer
+pkg w3m--image

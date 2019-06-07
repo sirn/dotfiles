@@ -15,19 +15,6 @@ PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
 NODE_PKGLIST=$LOOKUP_ROOT/var/bootstrap/pkglist_node.txt
 
 
-## Environment variables
-##
-
-case $PLATFORM in
-    darwin )
-        PATH=/usr/local/opt/node@10/bin:$PATH
-        ;;
-
-    * )
-        ;;
-esac
-
-
 ## Run
 ##
 

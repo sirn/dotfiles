@@ -1,21 +1,21 @@
 # Note: this file is processed in order
 
-tap beeftornado/rmtree
-tap sirn/oksh
+macports aria2
+macports curl
+macports emacs
+macports ffmpeg
+macports git
+macports mercurial
+macports mksh
+macports openssh
+macports rtmpdump
+macports the_silver_searcher
+macports tmux
+macports tmux-pasteboard
+macports w3m
+macports youtube-dl
 
-brew aria2
-brew curl
-brew ffmpeg
-brew git
-brew ipfs
-brew mercurial
-brew mosh
-brew oksh
-brew openssh
-brew reattach-to-user-namespace
-brew rtmpdump
-brew the_silver_searcher
-brew tmux
-brew trash
-brew w3m
-brew youtube-dl
+# Broken in 10.15
+#macports mosh
+
+exec libexec/bootstrap/pkg_asdf.sh

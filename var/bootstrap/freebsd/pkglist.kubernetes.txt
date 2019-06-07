@@ -1,2 +1,7 @@
-kubectl
-helm
+# Note: this file is processed in order
+
+pkgng kubectl
+pkgng helm
+
+exec libexec/packages/kubectx.sh
+exec libexec/packages/kapitan.sh
