@@ -46,7 +46,7 @@ I like to make my system reproducible. I mostly work on iPad Pro, by using [Blin
 
 The `bootstrap.sh` script is in fact evolved from Ansible! Ansible has serve this repository well for several years, however to use Ansible to bootstrap the current system from scratch require some sort of shell script to bootstrap Ansible and the packaging system itself.
 
-This led to a problem: I need to have half of the bootstrap process in shell script and another half in Ansible. For example, in case of Darwin (macOS), I need to install SDK, install Homebrew, install Python 3 and install Ansible from a shell script to be able to provision a local machine.
+This led to a problem: I need to have half of the bootstrap process in shell script and another half in Ansible. For example, in case of Darwin (macOS), I need to install SDK, install MacPorts, install Python 3 and install Ansible from a shell script to be able to provision a local machine.
 
 One day, I thought, why don't I try to do everything in shell script? POSIX sh, even, to ensure compatibility. The result is the current incarnation of this repository.
 

@@ -2,6 +2,7 @@
 
 macports aria2
 macports curl
+macports dnscrypt-proxy
 macports emacs
 macports ffmpeg
 macports git

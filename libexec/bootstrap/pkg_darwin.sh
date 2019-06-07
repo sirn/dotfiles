@@ -1,6 +1,6 @@
 #!/bin/sh -e
 #
-# Install Darwin packages with Brew and MAS.
+# Install Darwin packages with MacPorts and MAS.
 #
 
 BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}

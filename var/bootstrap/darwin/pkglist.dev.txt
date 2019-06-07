@@ -3,7 +3,6 @@
 macports GraphicsMagick
 macports autoconf
 macports carthage
-macports dnscrypt-proxy
 macports duplicity
 macports entr
 macports git-crypt

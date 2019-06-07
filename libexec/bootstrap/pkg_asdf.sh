@@ -119,22 +119,22 @@ _install_python_darwin() {
     plugin=$1; shift
     version=$1; shift
 
-    if [ ! -d /usr/local/opt/sqlite3 ]; then
+    if [ ! -d /opt/local/lib/libz.dylib ]; then
         printe_err "Building python on darwin requires sqlite3"
-        printe_err "Try \`brew install sqlite3\`"
+        printe_err "Try \`port install sqlite3\`"
         exit 1
     fi
 
-    if [ ! -d /usr/local/opt/zlib ]; then
+    if [ ! -d /opt/local/lib/libsqlite3.dylib ]; then
         printe_err "Building python on darwin requires zlib"
-        printe_err "Try \`brew install zlib\`"
+        printe_err "Try \`port install zlib\`"
         exit 1
     fi
 
     # See https://github.com/pyenv/pyenv/issues/1219
     env \
-        LDFLAGS="-L/usr/local/opt/zlib/lib -L/usr/local/opt/sqlite3/lib" \
-        CPPFLAGS="-I/usr/local/opt/zlib/include -I/usr/local/opt/sqlite3/include" \
+        LDFLAGS="-L/opt/local/lib" \
+        CPPFLAGS="-I/opt/local/include" \
         asdf install "$plugin" "$version"
 }
 
