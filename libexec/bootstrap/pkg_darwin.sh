@@ -22,7 +22,6 @@ MAS_MAX_PLATFORM=10.14
 MACPORTS=/opt/local/bin/port
 MACPORTS_VER=2.5.4
 MACPORTS_SHA256=592e4a021588f37348fe7b806c202e4d77f75bcff1a0b20502d5f1177c2c21ff
-MACPORTS_WIP=$HOME/Dev/src/github.com/sirn/macports-wip
 
 PKGLIST=$LOOKUP_ROOT/var/bootstrap/darwin/pkglist.txt
 
@@ -57,7 +56,7 @@ _do_mas_install() {
         return
     fi
 
-    if ! $(version_gte "$MAS_MAX_PLATFORM" "$PLATFORM_VERS"); then
+    if ! version_gte "$MAS_MAX_PLATFORM" "$PLATFORM_VERS"; then
         printe "mas is not available, please manually install $app_name"
         return
     fi
@@ -95,7 +94,7 @@ _setup_env() {
         run_root make install
     fi
 
-    if $(version_gte "$MAS_MAX_PLATFORM" "$PLATFORM_VERS"); then
+    if version_gte "$MAS_MAX_PLATFORM" "$PLATFORM_VERS"; then
         if [ ! -x $MAS ]; then
             printe_h2 "Bootstrapping mas..."
             run_root $MACPORTS -N install mas
