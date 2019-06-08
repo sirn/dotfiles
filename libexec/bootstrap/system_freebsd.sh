@@ -113,6 +113,9 @@ _setup_nfsd() {
     if [ -f /etc/exports ]; then
         netif=$(_get_netif)
 
+        pfnfsd=/usr/local/libexec/pfnfsd.sh
+        nfscron=/usr/local/libexec/pfnfsd_periodic.sh
+
         run_root sysrc nfs_server_enable=YES
         run_root sysrc mountd_enable=YES
         run_root sysrc rpcbind_enable=YES
@@ -123,17 +126,34 @@ _setup_nfsd() {
         run_root service mountd onestart
         run_root service rpcbind onestart
 
-        cronline="@reboot $BOOTSTRAP_ROOT/libexec/pfnfsd/periodic.sh $netif"
+        # Having root executing script from a user directory sounds dangerous
+        # so let's install nfscron into libexec first.
+        if is_force || [ ! -x "$pfnfsd" ]; then
+            run_root mkdir -p "$(dirname $pfnfsd)"
+            run_root cp "$BOOTSTRAP_ROOT/libexec/pfnfsd/pfnfsd.sh" $pfnfsd
+            run_root chown root:wheel $pfnfsd
+            run_root chmod 0700 $pfnfsd
+        fi
+
+        if is_force || [ ! -x "$nfscron" ]; then
+            run_root mkdir -p "$(dirname $nfscron)"
+            run_root cp "$BOOTSTRAP_ROOT/libexec/pfnfsd/periodic.sh" $nfscron
+            run_root root:wheel $nfscron
+            run_root chmod 0700 $nfscron
+        fi
+
+        cronline="@reboot $nfscron $netif"
         tmpcron=$BUILD_DIR/crontab.pfnfsd
         run_root crontab -u root -l > "$tmpcron" 2>/dev/null || true
 
         lineinfile \
             -f "$tmpcron" \
             -l "$cronline" \
-            -r pfnfsd\\/periodic.sh \
+            -r pfnfsd \
             -s present
 
         run_root crontab -u root - < "$tmpcron"
+        run_root sh $nfscron "$netif"
         printe "pfnfsd crontab successfully installed"
     else
         printe "/etc/exports must already be configured"
@@ -141,7 +161,7 @@ _setup_nfsd() {
 }
 
 
-## Run
+## Runs
 ##
 
 _run() {

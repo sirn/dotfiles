@@ -3,7 +3,7 @@
 # Periodically run pfnfsd.sh
 #
 
-base_dir=$(cd "$(dirname "$0")/../.." || exit; pwd -P)
+base_dir=$(cd "$(dirname "$0")" || exit; pwd -P)
 interface=$1; shift
 
 if [ "$(id -u)" != "0" ]; then
@@ -28,4 +28,4 @@ case $(uname) in
         ;;
 esac
 
-exec "$base_dir/libexec/pfnfsd/pfnfsd.sh" -i "$interface" | pfctl -a pfnfsd -f -
+exec "$base_dir/pfnfsd.sh" -i "$interface" | pfctl -a pfnfsd -f -
