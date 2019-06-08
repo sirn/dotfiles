@@ -16,15 +16,37 @@ FLAVORS=$*
 BUILD_DIR=$(make_temp)
 
 
-## Getting primary network interface
+## Utils
 ##
 
-NETIF=$(ifconfig | awk '! /^lo|^pf|^enc|^\t/ { FS=":"; print $1; exit }')
+_get_netif() {
+    netif=$(ifconfig | awk '! /^lo|^pf|^enc|^\t/ { FS=":"; print $1; exit }')
 
-if ! ifconfig "$NETIF" >/dev/null 2>&1; then
-    printe_err "Could not determine primary network interface"
-    exit 1
-fi
+    if ! ifconfig "$netif" >/dev/null 2>&1; then
+        printe_err "Could not determine primary network interface"
+        exit 1
+    fi
+
+    echo "$netif"
+}
+
+_get_sshd_port() {
+    sshd_config=/etc/ssh/sshd_config
+
+    if [ ! -f $sshd_config ]; then
+        printe_err "sshd configuration could not be found"
+        exit 1
+    fi
+
+    sshd_port=$(awk '/^#? ?Port/ { print $NF }' < $sshd_config)
+
+    if [ -z "$sshd_port" ]; then
+        printe_err "Could not determine sshd port"
+        exit 1
+    fi
+
+    echo "$sshd_port"
+}
 
 
 ## Setup
@@ -43,12 +65,24 @@ _setup_pf() {
     done
 
     if is_force || [ ! -f /etc/pf.conf ]; then
+        netif=$(_get_netif)
+        sshd_port=$(_get_sshd_port)
+
         run_root cp "$BOOTSTRAP_ROOT/etc/pf/pf.openbsd.conf" /etc/pf.conf
-        lineinfile -S \
-                   -f /etc/pf.conf \
-                   -l "ext_if=$NETIF" \
-                   -r "^ext_if=" \
-                   -s present
+
+        lineinfile \
+            -S \
+            -f /etc/pf.conf \
+            -l "ext_if=$netif" \
+            -r "^ext_if=" \
+            -s present
+
+        lineinfile \
+            -S \
+            -f /etc/pf.conf \
+            -l "sshd_port=$sshd_port" \
+            -r "^sshd_port=" \
+            -s present
 
         run_root chown root:wheel /etc/pf.conf
         run_root chmod 0600 /etc/pf.conf
@@ -69,11 +103,12 @@ _setup_ntpd() {
     printe_h2 "Configuring ntpd..."
 
     run_root touch /etc/rc.conf.local
-    lineinfile -S \
-               -f /etc/rc.conf.local \
-               -l "ntpd_flags=-s" \
-               -r "^ntpd_flags=" \
-               -s present
+    lineinfile \
+        -S \
+        -f /etc/rc.conf.local \
+        -l "ntpd_flags=-s" \
+        -r "^ntpd_flags=" \
+        -s present
 
     run_root rcctl restart ntpd
 }
@@ -83,11 +118,12 @@ _setup_nfsd() {
 
     if [ -f /etc/exports ]; then
         printe_h2 "Setting up nfsd..."
+        netif=$(_get_netif)
 
         run_root rcctl enable portmap mountd nfsd
         run_root rcctl start portmap mountd nfsd
 
-        cronline="@reboot $BOOTSTRAP_ROOT/libexec/pfnfsd/periodic.sh $NETIF"
+        cronline="@reboot $BOOTSTRAP_ROOT/libexec/pfnfsd/periodic.sh $netif"
         tmpcron=$BUILD_DIR/crontab.pfnfsd
         run_root crontab -u root -l > "$tmpcron" 2>/dev/null || true
 
