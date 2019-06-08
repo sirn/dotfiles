@@ -63,7 +63,7 @@ fi
 ##
 
 case "$TERM" in
-    xterm* | rxvt* ) PS1="$(hostname -s) \$PWD \$ "; export PS1;;
-    screen* ) PS1="\$PWD \$ "; export PS1;;
+    xterm* | rxvt* ) PS1="\h \w \$ "; export PS1;;
+    screen* ) PS1="\w \$ "; export PS1;;
     * ) PS1="\$ "; export PS1;;
 esac
