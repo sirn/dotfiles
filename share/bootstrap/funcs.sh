@@ -166,6 +166,11 @@ verify_shasum() {
     filepath=$1; shift
     shasum=$1; shift
 
+    if ! command -v sha256 2>/dev/null; then
+        printe_info "No sha256 binary found, skipping checksum..."
+        return 0
+    fi
+
     echo "$shasum  $filepath" | sha256 -c -
 }
 
