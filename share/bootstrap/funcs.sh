@@ -121,16 +121,31 @@ is_force() {
     normalize_bool "$FORCE"
 }
 
-git_clone_update() {
+git_clone() {
     repo=$1; shift
     path=$1; shift
+    ref=$1
+
+    if [ -z "$ref" ]; then
+        ref=master
+    fi
 
     if [ ! -d "$path" ]; then
         git clone "$repo" "$path"
-    else
-        git -C "$path" checkout -q master
-        git -C "$path" pull -q origin master
+        git -C "$path" checkout "$ref"
+
+    elif [ "$(git -C "$path" describe --all)" = "heads/$ref" ]; then
+        git -C "$path" checkout -q "$ref"
+        git -C "$path" pull -q origin "$ref"
         printe "$path has been successfully updated"
+
+    elif [ "$(git -C "$path" describe 2>&1)" != "$ref" ] &&
+         [ "$(git -C "$path" rev-parse --short HEAD)" != "$ref" ]; then
+        git -C "$path" fetch origin
+        git -C "$path" checkout "$ref"
+
+    else
+        printe "$path is already at $ref"
     fi
 }
 

@@ -1,11 +1,11 @@
 # Note: this file is processed in order
 
 # asdf plugins to install
-# plugin  <plugin_name>  <repo_url>
-plugin    elixir         https://github.com/asdf-vm/asdf-elixir.git
-plugin    erlang         https://github.com/asdf-vm/asdf-erlang.git
-plugin    python         https://github.com/tuvistavie/asdf-python.git
-plugin    ruby           https://github.com/asdf-vm/asdf-ruby.git
+# plugin  <plugin_name>  <repo_url>                                       <version>
+plugin    elixir         https://github.com/asdf-vm/asdf-elixir.git       780a865
+plugin    erlang         https://github.com/asdf-vm/asdf-erlang.git       3934206
+plugin    python         https://github.com/tuvistavie/asdf-python.git    cec7aa0
+plugin    ruby           https://github.com/asdf-vm/asdf-ruby.git         de1fb60
 
 # asdf versions to install
 # install <plugin_name>  <version>    <flag>

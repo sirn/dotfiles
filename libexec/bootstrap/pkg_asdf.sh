@@ -36,8 +36,9 @@ fi
 _do_plugin() {
     plugin=$1; shift
     repo=$1; shift
+    ref=$1
 
-    git_clone_update "$repo" "$ASDF_DIR/plugins/$plugin"
+    git_clone "$repo" "$ASDF_DIR/plugins/$plugin" "$ref"
 }
 
 _do_install() {
@@ -173,7 +174,7 @@ _pkginst_ruby_openbsd() {
 _run() {
     printe_h2 "Installing asdf..."
 
-    git_clone_update https://github.com/asdf-vm/asdf.git "$ASDF_DIR"
+    git_clone https://github.com/asdf-vm/asdf.git "$ASDF_DIR" v0.7.2
     for f in $(mangle_file "$ASDF_SPEC" "$PLATFORM" "$FLAVORS"); do
         printe_h2 "Installing asdf packages from $f..."
 
