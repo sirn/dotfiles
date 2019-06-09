@@ -138,7 +138,7 @@ _setup_nfsd() {
         if is_force || [ ! -x "$nfscron" ]; then
             run_root mkdir -p "$(dirname $nfscron)"
             run_root cp "$BOOTSTRAP_ROOT/libexec/pfnfsd/periodic.sh" $nfscron
-            run_root root:wheel $nfscron
+            run_root chown root:wheel $nfscron
             run_root chmod 0700 $nfscron
         fi
 
