@@ -7,6 +7,7 @@ umask 077
 LC_ALL=en_US.UTF-8; export LC_ALL
 LANG=en_US.UTF-8; export LANG
 EDITOR="vi"; export EDITOR
+VISUAL="emacs"; export VISUAL
 
 XDG_CONFIG_HOME=$HOME/.config; export XDG_CONFIG_HOME
 XDG_CACHE_HOME=$HOME/.cache; export XDG_CACHE_HOME
