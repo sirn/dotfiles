@@ -81,7 +81,7 @@ _setup_env() {
     if [ ! -x $MACPORTS ]; then
         printe_h2 "Bootstrapping MacPorts..."
 
-        xcode-select --install 2>/dev/null
+        xcode-select --install 2>/dev/null || true
         cd "$BUILD_DIR" || exit 1
 
         fetch_gh_archive macports.tar.gz macports/macports-base v$MACPORTS_VER
@@ -89,9 +89,10 @@ _setup_env() {
         tar -C "$BUILD_DIR" -xzf macports.tar.gz
         rm macports.tar.gz
 
-        cd "$BUILD_DIR/MacPorts-$MACPORTS_VER" || exit 1
+        cd "$BUILD_DIR/macports-base-$MACPORTS_VER" || exit 1
         ./configure && make
         run_root make install
+        run_root $MACPORTS sync
     fi
 
     if version_gte "$MAS_MAX_PLATFORM" "$PLATFORM_VERS"; then
