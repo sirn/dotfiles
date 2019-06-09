@@ -2,10 +2,6 @@
 
 macports emacs-mac-app
 
-# Broken in 10.15
-#macports mpv
-#macports veracrypt
-
 mas 407963104 Pixelmator
 mas 411643860 DaisyDisk
 mas 413965349 Soulver

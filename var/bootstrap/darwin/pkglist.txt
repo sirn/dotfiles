@@ -4,19 +4,14 @@ macports aria2
 macports curl
 macports dnscrypt-proxy
 macports emacs
-macports ffmpeg
 macports git
 macports mercurial
+macports oksh
 macports openssh
-macports rtmpdump
 macports the_silver_searcher
 macports tmux
 macports tmux-pasteboard
 macports w3m
-macports youtube-dl
-
-# WIP
-#macports oksh
 
 # Broken in 10.15
 #macports mosh

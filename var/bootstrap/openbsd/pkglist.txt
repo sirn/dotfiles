@@ -5,16 +5,13 @@ pkg base64
 pkg colorls
 pkg coreutils
 pkg curl
-pkg ffmpeg
 pkg gdiff
 pkg git
 pkg gtar--static
 pkg jdk%1.8
 pkg mercurial
 pkg mosh
-pkg rtmpdump
 pkg the_silver_searcher
 pkg unzip--iconv
-pkg youtube-dl
 
 exec libexec/bootstrap/pkg_asdf.sh

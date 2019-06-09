@@ -6,16 +6,13 @@ pkgng ca_root_nss
 pkgng compat8x-amd64
 pkgng curl
 pkgng emacs-nox
-pkgng ffmpeg
 pkgng git
 pkgng mercurial
 pkgng mosh
 pkgng oksh
 pkgng openjdk8-jre
-pkgng rtmpdump
 pkgng the_silver_searcher
 pkgng tmux
 pkgng w3m
-pkgng youtube_dl
 
 exec libexec/bootstrap/pkg_asdf.sh
