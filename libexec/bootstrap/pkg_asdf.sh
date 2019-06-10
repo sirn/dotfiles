@@ -76,15 +76,15 @@ _do_pkginst() {
 
     pkginst=_pkginst
     custom_pkginst=_pkginst_$plugin
-    PLATFORM_pkginst=_pkginst_${plugin}_$PLATFORM
+    platform_pkginst=_pkginst_${plugin}_$PLATFORM
 
     # shellcheck disable=SC2086
     for f in $(mangle_file $pkglist $PLATFORM "$FLAVORS"); do
         printe_h2 "Installing $plugin packages from $f..."
 
-        if [ "$(command -v "$PLATFORM_pkginst")x" != "x" ]; then
+        if [ "$(command -v "$platform_pkginst")x" != "x" ]; then
             printe_info "Running $PLATFORM pkginst script for $plugin..."
-            pkginst=$PLATFORM_pkginst
+            pkginst=$platform_pkginst
         elif [ "$(command -v "$custom_pkginst")x" != "x" ]; then
             printe_info "Running custom pkginst script for $plugin..."
             pkginst=$custom_pkginst
