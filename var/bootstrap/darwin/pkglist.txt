@@ -17,4 +17,8 @@ macports w3m
 # https://github.com/macports/macports-ports/pull/4566
 #macports mosh
 
+# Not available
+# https://github.com/macports/macports-ports/pull/4583
+#macports ipfs
+
 exec libexec/bootstrap/pkg_asdf.sh
