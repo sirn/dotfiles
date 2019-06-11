@@ -17,12 +17,15 @@ macports leiningen
 macports neovim
 macports nodejs10
 macports pandoc
-macports shellcheck
 macports socat
 macports terraform
 macports tree
 macports xz
 macports zlib
+
+# Outdated
+# https://github.com/macports/macports-ports/pull/4577
+#macports shellcheck
 
 exec libexec/packages/erlang.sh
 exec libexec/packages/haskell.sh
