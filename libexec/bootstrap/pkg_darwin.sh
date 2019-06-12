@@ -42,7 +42,7 @@ _do_macports_install() {
 
     printe "Installing $pkg (macports)..."
 
-    if ! run_root $MACPORTS -n install "$pkg"; then
+    if ! run_root $MACPORTS -n install "$pkg" "$@"; then
         printe_info "$pkg (macports) failed to install, skipping..."
     fi
 }

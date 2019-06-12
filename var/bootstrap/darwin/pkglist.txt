@@ -1,7 +1,7 @@
 # Note: this file is processed in order
 
-macports aria2
-macports curl
+macports aria2 +sqlite3
+macports curl +darwinssl +http2
 macports dnscrypt-proxy
 macports emacs
 macports git
