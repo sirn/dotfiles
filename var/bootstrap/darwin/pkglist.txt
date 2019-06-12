@@ -5,6 +5,7 @@ macports curl
 macports dnscrypt-proxy
 macports emacs
 macports git
+macports ipfs
 macports mercurial
 macports oksh
 macports openssh
@@ -16,9 +17,5 @@ macports w3m
 # Broken in 10.15
 # https://github.com/macports/macports-ports/pull/4566
 #macports mosh
-
-# Not available
-# https://github.com/macports/macports-ports/pull/4583
-#macports ipfs
 
 exec libexec/bootstrap/pkg_asdf.sh
