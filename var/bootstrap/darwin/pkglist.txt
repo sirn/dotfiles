@@ -7,15 +7,12 @@ macports emacs
 macports git
 macports ipfs
 macports mercurial
+macports mosh
 macports oksh
 macports openssh
 macports the_silver_searcher
 macports tmux
 macports tmux-pasteboard
 macports w3m
-
-# Broken in 10.15
-# https://github.com/macports/macports-ports/pull/4566
-#macports mosh
 
 exec libexec/bootstrap/pkg_asdf.sh
