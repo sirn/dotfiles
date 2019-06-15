@@ -17,7 +17,6 @@ pkg graphviz
 pkg ipcalc
 pkg jq
 pkg metaauto
-pkg neovim
 pkg node
 pkg pkgconf
 pkg rust

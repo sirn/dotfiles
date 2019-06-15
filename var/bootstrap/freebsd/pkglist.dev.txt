@@ -17,7 +17,6 @@ pkgng hs-pandoc
 pkgng ipcalc
 pkgng jq
 pkgng leiningen
-pkgng neovim
 pkgng node10
 pkgng npm-node10
 pkgng pkgconf

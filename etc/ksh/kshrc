@@ -6,41 +6,20 @@
 ## Aliases
 ##
 
-case "$(uname)" in
-    Darwin )
-        alias scp='rsync --archive --acls --progress --rsh=ssh'
-        alias ls='ls -G'
-        ;;
+alias ls='ls'
 
-    OpenBSD )
-        alias scp='rsync --archive --progress --rsh=ssh'
-
-        if command -v colorls >/dev/null; then
-            alias ls="colorls -G"
-        fi
-        ;;
-
-    * )
-        alias scp='rsync --archive --xattrs --acls --progress --rsh=ssh'
-        alias ls='ls -G'
-        ;;
-esac
+if command -v colorls >/dev/null; then
+    alias ls="colorls -G"
+fi
 
 alias ll='ls -lh'
 alias la='ls -alh'
-
 alias gpg='gpg2'
 alias sshi='ssh -F /dev/null -o UserKnownHostsFile=/dev/null'
 
-if command -v nvim >/dev/null; then
-    alias nvi="nvim"
-    alias vi="nvim"
-    alias vim="nvim"
-fi
-
 if command -v emacsclient >/dev/null; then
-    alias emacs='$HOME/.dotfiles/bin/emacsclient.sh'
-    EDITOR="$HOME/.dotfiles/bin/emacsclient.sh"; export EDITOR
+    alias emacs='$HOME/.dotfiles/bin/emacsclient'
+    EDITOR="$HOME/.dotfiles/bin/emacsclient"; export EDITOR
 fi
 
 

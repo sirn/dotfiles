@@ -14,7 +14,6 @@ macports hs-cabal-install
 macports ipcalc
 macports jq
 macports leiningen
-macports neovim
 macports nodejs10
 macports pandoc
 macports socat
