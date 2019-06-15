@@ -1,4 +1,5 @@
-(("alchemist.el" . "6f99367511ae209f8fe2c990779764bbb4ccb6ed")
+(("Fill-Column-Indicator" . "a284bb50789c97d7ef9021214260b3ce7cc220e3")
+ ("alchemist.el" . "6f99367511ae209f8fe2c990779764bbb4ccb6ed")
  ("anaconda-mode" . "2becd12a2e69ee2353ac7dcf7692a53177508f71")
  ("ansible-doc.el" . "86083a7bb2ed0468ca64e52076b06441a2f8e9e0")
  ("auth-password-store" . "3935e6c978034add44daa77042759e780759f164")
@@ -120,4 +121,4 @@
  ("yaml-mode" . "40067a10ac1360f0b9533f0bbbb2eea128e2574d")
  ("yasnippet" . "e45e3de357fbd4289fcfa3dd26aaa7be357fb0b8")
  ("yasnippet-snippets" . "15e4b08f7484c049d6b043263c5e09bc73846e32"))
-:saturn
+:neptune

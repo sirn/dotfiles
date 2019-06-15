@@ -75,4 +75,10 @@
 
      ;; Custom faces for web-mode
      ;;
-     `(web-mode-block-attr-name-face ((t (:foreground ,color-13 :weight bold)))))))
+     `(web-mode-block-attr-name-face ((t (:foreground ,color-13 :weight bold)))))
+
+    (custom-theme-set-variables
+     'tao-yin
+
+     ;; Custom color for fill-column-indicator
+     `(fci-rule-color             ,color-5))))

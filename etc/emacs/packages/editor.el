@@ -48,7 +48,12 @@
    ("C-l"      . company-complete-selection))
 
   :config
-  (global-company-mode t))
+  (global-company-mode t)
+  (with-eval-after-load 'fill-column-indicator
+    (defun gr/company-fci-advice (command)
+      (when (string= "show" command) (turn-off-fci-mode))
+      (when (string= "hide" command) (turn-on-fci-mode)))
+    (advice-add 'company-call-frontends :before 'gr/company-fci-advice)))
 
 
 (use-package company-prescient
