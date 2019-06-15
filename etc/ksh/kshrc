@@ -6,7 +6,7 @@
 ## Aliases
 ##
 
-alias ls='ls'
+alias ls='ls -G'
 
 if command -v colorls >/dev/null; then
     alias ls="colorls -G"
