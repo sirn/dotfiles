@@ -12,7 +12,6 @@ macports oksh
 macports openssh
 macports the_silver_searcher
 macports tmux
-macports tmux-pasteboard
 macports w3m
 
 exec libexec/bootstrap/pkg_asdf.sh
