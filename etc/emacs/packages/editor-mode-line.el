@@ -40,15 +40,18 @@
 
   ;; Mode-Line for evil-mode
 
-  (defface gr/mode-line-evil '((t :inherit sml/global)) "" :group 'gr-mode-line-faces)
+  (defface gr/mode-line-evil
+    '((t :inherit sml/global)) ""
+    :group 'gr-mode-line-faces)
 
   (defun gr/mode-line-evil ()
     (when (boundp 'evil-state)
       (propertize (format "%8s "
-                          (cond ((not (evil-visual-state-p)) (upcase (symbol-name evil-state)))
-                                ((eq evil-visual-selection 'block) "V-BLOCK")
-                                ((eq evil-visual-selection 'line) "V-LINE")
-                                (t "VISUAL")))
+                    (cond ((not (evil-visual-state-p))
+                           (upcase (symbol-name evil-state)))
+                          ((eq evil-visual-selection 'block) "V-BLOCK")
+                          ((eq evil-visual-selection 'line) "V-LINE")
+                          (t "VISUAL")))
                   'face 'gr/mode-line-evil
                   'help-echo "Evil mode")))
 
@@ -56,7 +59,9 @@
 
   ;; Mode-Line for winum
 
-  (defface gr/mode-line-winum '((t :inherit sml/global)) "" :group 'gr-mode-line-winum)
+  (defface gr/mode-line-winum
+    '((t :inherit sml/global)) ""
+    :group 'gr-mode-line-winum)
 
   (defun gr/mode-line-winum ()
     (if (fboundp 'winum-get-number-string)

@@ -9,7 +9,9 @@
     (declare-function gr/ansible-maybe-enable nil))
 
   :init
-  (setq gr/ansible-filename-re ".*\\(main\.yml\\|site\.yml\\|encrypted\.yml\\|roles/.+\.yml\\|group_vars/.+\\|host_vars/.+\\)")
+  (setq gr/ansible-filename-re
+    ".*\\(main\.yml\\|site\.yml\\|encrypted\.yml\\|roles/.+\.yml\\|group_vars/.+\\|host_vars/.+\\)")
+
   (defun gr/ansible-maybe-enable ()
     (and (stringp buffer-file-name)
          (string-match gr/ansible-filename-re buffer-file-name)))

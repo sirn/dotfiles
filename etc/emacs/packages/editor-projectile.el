@@ -22,4 +22,5 @@
       (projectile-invalidate-cache nil))
 
     (advice-add 'magit-checkout :after 'gr/projectile-invalidate-cache-adv)
-    (advice-add 'magit-branch-and-checkout :after 'gr/projectile-invalidate-cache-adv)))
+    (advice-add 'magit-branch-and-checkout
+      :after 'gr/projectile-invalidate-cache-adv)))

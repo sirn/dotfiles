@@ -58,15 +58,22 @@
   (defvar straight-recipes-gnu-elpa-use-mirror)
   (defvar straight-process-buffer))
 
-(setq straight-recipes-gnu-elpa-use-mirror t)
+(defvar bootstrap-url)
 (defvar bootstrap-version)
+
+(setq straight-recipes-gnu-elpa-use-mirror t)
+(setq bootstrap-url
+  "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el")
+
 (let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+        (expand-file-name
+          "straight/repos/straight.el/bootstrap.el"
+          user-emacs-directory))
       (bootstrap-version 5))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
         (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         bootstrap-url
          'silent 'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))
@@ -83,8 +90,12 @@
 
 
 ;; Packages
-(let ((loaded (mapcar #'file-name-sans-extension (delq nil (mapcar #'car load-history)))))
-  (dolist (file (directory-files "~/.dotfiles/etc/emacs/packages" t ".+\\.elc?$"))
+(let ((loaded (mapcar
+                #'file-name-sans-extension
+                (delq nil (mapcar #'car load-history)))))
+  (dolist (file (directory-files
+                  "~/.dotfiles/etc/emacs/packages"
+                  t ".+\\.elc?$"))
     (let ((library (file-name-sans-extension file)))
       (unless (member library loaded)
         (load library nil t)
@@ -103,5 +114,7 @@
 (add-hook
  'after-init-hook
  `(lambda ()
-    (let ((elapsed (float-time (time-subtract (current-time) emacs-start-time))))
+    (let ((elapsed (float-time (time-subtract
+                                 (current-time)
+                                 emacs-start-time))))
       (message "Loading %s...done (%.3fs)" ,load-file-name elapsed t))))
