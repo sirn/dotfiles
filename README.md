@@ -23,18 +23,7 @@ The `bootstrap.sh` script has few configurations available, namely:
 
 The `bootstrap.sh` script itself does nothing but handling arguments and dispatching to an appropriate entrypoint script located in `libexec/bootstrap` at each lookup path location. The script to be executed will depends on the name of the profile and the operating it is running.
 
-For example, running a `pkg` profile (`-p pkg`) on macOS that has lookup path of `/foo` and `/bar` (`-l /foo -l /bar`) will result in `/foo/libexec/bootstrap/pkg_darwin.sh` and `/bar/libexec/bootstrap/pkg_darwin.sh` getting called.
-
-When the entrypoint script get called, `bootstrap.sh` will also pass flavors as script arguments. The entrypoint script may use the given flavor to selectively install packages according to the flavor. For scripts that use external data sources (such as `var/bootstrap/pkglist.txt`), they will lookup such source in the following order:
-
--   `file/path/source.txt`
--   `file/path/source.flavor.txt`
--   `file/path/osname/source.txt`
--   `file/path/osname/source.flavor.txt`
-
-This allow me to have separate sets of packages to be installed for GUI desktop-enabled machine (`pkglist.desktop.txt`) and for terminal use (`pkglist.txt`), and in other situations, without having to install unneeded packages. `var/bootstrap/darwin` is a good example for this.
-
-This repository and bootstrap scripts are designed for personal needs, but if you have any questions about the setup, feel free to contact me at [sirn@ogsite.net](mailto:sirn@ogsite.net).
+For example, running a `pkg` profile (`-p pkg`) on macOS that has lookup path of `/foo` and `/bar` (`-l /foo -l /bar`) will result in `/foo/libexec/bootstrap/pkg_darwin.sh` and `/bar/libexec/bootstrap/pkg_darwin.sh` getting called. `bootstrap.sh` will also pass flavors as script arguments and the entrypoint script may selectively install packages according to the flavor.
 
 ## FAQs
 
@@ -53,10 +42,6 @@ One day, I thought, why don't I try to do everything in shell script? POSIX sh, 
 ### What is `.dotpriv`?
 
 `.dotpriv` is a private dotfiles repository that supplement this repository using lookup path mechanism described in _How it works_. It contained configurations not published here due to privacy and security reasons.
-
-### Congratulations on building a [Rube Goldberg machine](https://en.wikipedia.org/wiki/Rube_Goldberg_machine)
-
-That's not a question.
 
 ## License
 
