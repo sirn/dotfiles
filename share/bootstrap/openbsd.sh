@@ -1,6 +1,6 @@
 #!/bin/sh -e
 #
-# Install OpenBSD packages with Pkgng.
+# Install OpenBSD packages with Pkg.
 #
 
 ## Package installation
@@ -20,7 +20,7 @@ _check_installed() {
     pkg_info -q -e "$spec"
 }
 
-_do_pkg_install() {
+_do_pkg() {
     pkg=$1; shift
 
     if _check_installed "$pkg"; then

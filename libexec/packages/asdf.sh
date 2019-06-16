@@ -41,7 +41,6 @@ _run_dev() {
         pre-commit \
         proselint \
         pylint \
-        sphinx \
         virtualenv
 
     _asdf_pkg ruby gem install --no-document sqlint

@@ -8,8 +8,8 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 # shellcheck source=../../share/bootstrap/funcs.sh
 . "$BASE_DIR/share/bootstrap/funcs.sh"
 
-# shellcheck source=../../share/bootstrap/freebsd.sh
-. "$BASE_DIR/share/bootstrap/freebsd.sh"
+# shellcheck source=../../share/bootstrap/openbsd.sh
+. "$BASE_DIR/share/bootstrap/openbsd.sh"
 
 _run() {
     printe_h2 "Installing packages..."
