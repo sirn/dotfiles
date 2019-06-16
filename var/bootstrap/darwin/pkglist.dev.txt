@@ -15,6 +15,7 @@ macports ipcalc
 macports jq
 macports leiningen
 macports nodejs10
+macports npm6
 macports pandoc
 macports socat
 macports terraform
