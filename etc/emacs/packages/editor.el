@@ -25,7 +25,9 @@
 
   :preface
   (eval-when-compile
-    (declare-function global-company-mode nil))
+    (declare-function global-company-mode nil)
+    (declare-function turn-on-fci-mode nil)
+    (declare-function turn-off-fci-mode nil))
 
   :init
   (setq company-idle-delay 0.1)
