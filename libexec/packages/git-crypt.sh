@@ -8,7 +8,6 @@ BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 # shellcheck source=../../share/bootstrap/funcs.sh
 . "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
 
-FLAVORS=$*
 BUILD_DIR=$(make_temp)
 
 GITCRYPT_VER=0.6.0
@@ -18,7 +17,7 @@ GITCRYPT_SHA256=777c0c7aadbbc758b69aff1339ca61697011ef7b92f1d1ee9518a8ee7702bb78
 ## Run
 ##
 
-_run_dev() {
+_run() {
     printe_h2 "Installing git-crypt..."
 
     if is_force || file_absent "$HOME/.local/bin/git-crypt"; then
@@ -35,4 +34,4 @@ _run_dev() {
     fi
 }
 
-run_with_flavors "$FLAVORS"
+_run

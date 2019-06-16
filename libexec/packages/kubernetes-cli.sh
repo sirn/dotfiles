@@ -8,7 +8,6 @@ BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 # shellcheck source=../../share/bootstrap/funcs.sh
 . "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
 
-FLAVORS=$*
 BUILD_DIR=$(make_temp)
 
 # Using 1.16 since we required an updated vendor:
@@ -27,13 +26,16 @@ PATH="$GOPATH/bin:$PATH"
 ## Run
 ##
 
-_run_kubernetes() {
+_run() {
     printe_h2 "Installing kubectl..."
+
+    if ! command -v go >/dev/null; then
+        printe_info "go is not installed, skipping..."
+        return
+    fi
 
     if is_force || file_absent "$HOME/.local/bin/kubectl"; then
         cd "$BUILD_DIR" || exit 1
-
-        require_bin go
 
         fetch_gh_archive kubectl.tar.gz kubernetes/kubernetes "v$KUBECTL_VER"
         verify_shasum kubectl.tar.gz $KUBECTL_SHA256
@@ -52,4 +54,4 @@ _run_kubernetes() {
     fi
 }
 
-run_with_flavors "$FLAVORS"
+_run

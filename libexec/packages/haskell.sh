@@ -42,40 +42,45 @@ _prepare_openbsd() {
 ##
 
 _run() {
-    if command -v cabal >/dev/null; then
-        if [ "$(command -v "_prepare_$PLATFORM")x" != "x" ]; then
-            "_prepare_$PLATFORM"
-        fi
-
-        # Cabal >= 2.4.0.0 replaces update/install with v1-update/v1-install
-        if version_gte "$(cabal --numeric-version)" 2.4.0.0; then
-            cabal_prefix=v1-
-        fi
-
-        if is_force || file_absent "$HOME/.cabal/packages/hackage.haskell.org"; then
-            printe_h2 "Updating haskell cabal package index..."
-            cabal "${cabal_prefix}update"
-        fi
-
-        for f in $(mangle_file "$HASKELL_PKGLIST" "$PLATFORM" "$FLAVORS"); do
-            printe_h2 "Installing haskell cabal packages from $f..."
-
-            while read -r line; do
-                case $line in
-                    "#"* | "" ) continue;;
-                    *) line=${line%%#*};;
-                esac
-
-                bin=${line%%:*}
-                install=${line##$bin:}
-
-                if is_force || file_absent "$HOME/.cabal/bin/$bin"; then
-                    # shellcheck disable=SC2086
-                    cabal "${cabal_prefix}install" $install
-                fi
-            done < "$f"
-        done
+    if ! command -v cabal >/dev/null; then
+        printe_h2 "Installing haskell cabal packages..."
+        printe_info "cabal is not installed, skipping..."
+        return
     fi
+
+    if [ "$(command -v "_prepare_$PLATFORM")x" != "x" ]; then
+        "_prepare_$PLATFORM"
+    fi
+
+    # Cabal >= 2.4.0.0 replaces update/install with v1-update/v1-install
+    if version_gte "$(cabal --numeric-version)" 2.4.0.0; then
+        cabal_prefix=v1-
+    fi
+
+    if is_force ||
+            file_absent "$HOME/.cabal/packages/hackage.haskell.org"; then
+        printe_h2 "Updating haskell cabal package index..."
+        cabal "${cabal_prefix}update"
+    fi
+
+    for f in $(mangle_file "$HASKELL_PKGLIST" "$PLATFORM" "$FLAVORS"); do
+        printe_h2 "Installing haskell cabal packages from $f..."
+
+        while read -r line; do
+            case $line in
+                "#"* | "" ) continue;;
+                *) line=${line%%#*};;
+            esac
+
+            bin=${line%%:*}
+            install=${line##$bin:}
+
+            if is_force || file_absent "$HOME/.cabal/bin/$bin"; then
+                # shellcheck disable=SC2086
+                cabal "${cabal_prefix}install" $install
+            fi
+        done < "$f"
+    done
 }
 
-run_with_flavors "$FLAVORS"
+_run

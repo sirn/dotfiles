@@ -101,4 +101,4 @@ _run() {
     _setup_rust_pkg
 }
 
-run_with_flavors "$FLAVORS"
+_run

@@ -19,14 +19,18 @@ NODE_PKGLIST=$LOOKUP_ROOT/var/bootstrap/pkglist_node.txt
 ##
 
 _run() {
-    if command -v npm >/dev/null; then
-       npm set prefix="$HOME/.local"
-
-       for f in $(mangle_file "$NODE_PKGLIST" "$PLATFORM" "$FLAVORS"); do
-           printe_h2 "Installing node packages from $f..."
-           xargs npm install -g < "$f"
-       done
+    if ! command -v npm >/dev/null; then
+       printe_h2 "Installing node packages..."
+       printe_info "npm is not installed, skipping..."
+       return
     fi
+
+    npm set prefix="$HOME/.local"
+
+    for f in $(mangle_file "$NODE_PKGLIST" "$PLATFORM" "$FLAVORS"); do
+        printe_h2 "Installing node packages from $f..."
+        xargs npm install -g < "$f"
+    done
 }
 
-run_with_flavors "$FLAVORS"
+_run

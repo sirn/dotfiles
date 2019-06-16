@@ -8,7 +8,6 @@ BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 # shellcheck source=../../share/bootstrap/funcs.sh
 . "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
 
-FLAVORS=$*
 BUILD_DIR=$(make_temp)
 
 HELM_VER=2.13.1
@@ -25,13 +24,17 @@ PATH="$GOPATH/bin:$PATH"
 ## Run
 ##
 
-_run_kubernetes() {
+_run() {
     printe_h2 "Installing helm..."
+
+    if ! command -v go >/dev/null; then
+        printe_info "go is not installed, skipping..."
+        return
+    fi
 
     if is_force || file_absent "$HOME/.local/bin/helm"; then
         cd "$BUILD_DIR" || exit 1
 
-        require_bin go
         case $(uname) in
             FreeBSD | OpenBSD )
                 require_bin gmake
@@ -55,4 +58,4 @@ _run_kubernetes() {
     fi
 }
 
-run_with_flavors "$FLAVORS"
+_run

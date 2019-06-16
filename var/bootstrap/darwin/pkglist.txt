@@ -14,4 +14,4 @@ macports the_silver_searcher
 macports tmux
 macports w3m
 
-exec libexec/bootstrap/pkg_asdf.sh
+exec libexec/packages/asdf.sh

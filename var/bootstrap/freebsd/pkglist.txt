@@ -15,4 +15,4 @@ pkgng the_silver_searcher
 pkgng tmux
 pkgng w3m
 
-exec libexec/bootstrap/pkg_asdf.sh
+exec libexec/packages/asdf.sh

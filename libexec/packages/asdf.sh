@@ -9,8 +9,6 @@ LOOKUP_ROOT=${LOOKUP_ROOT:-$BOOTSTRAP_ROOT}
 # shellcheck source=../../share/bootstrap/funcs.sh
 . "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
 
-ensure_paths required
-
 FLAVORS=$*
 PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
 BUILD_DIR=$(make_temp)
@@ -196,4 +194,4 @@ _run() {
     done
 }
 
-run_with_flavors "$FLAVORS"
+_run

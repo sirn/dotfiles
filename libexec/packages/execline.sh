@@ -8,7 +8,6 @@ BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 # shellcheck source=../../share/bootstrap/funcs.sh
 . "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
 
-FLAVORS=$*
 BUILD_DIR=$(make_temp)
 
 EXECLINE_VER=2.5.1.0
@@ -21,7 +20,7 @@ SKALIBS_SHA256=88a6000634cf8477b8649604984534fee11997ac0c08a271881a4974e30968f5
 ## Runs
 ##
 
-_run_dev() {
+_run() {
     printe_h2 "Installing execline..."
 
     case $(uname) in
@@ -65,4 +64,4 @@ _run_dev() {
     fi
 }
 
-run_with_flavors "$FLAVORS"
+_run

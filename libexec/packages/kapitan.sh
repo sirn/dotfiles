@@ -9,7 +9,6 @@ PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
 # shellcheck source=../../share/bootstrap/funcs.sh
 . "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
 
-FLAVORS=$*
 BUILD_DIR=$(make_temp)
 
 PYTHON3="$HOME/.asdf/shims/python3"
@@ -124,8 +123,13 @@ _setup_jsonnet() {
 ## Run
 ##
 
-_run_kubernetes() {
+_run() {
     printe_h2 "Installing kapitan..."
+
+    if [ ! -e "$PYTHON3" ]; then
+        printe_info "$PYTHON3 does not exists, skipping..."
+        return
+    fi
 
     _setup_cryptography
     _setup_jsonnet
@@ -134,4 +138,4 @@ _run_kubernetes() {
     "$HOME/.asdf/bin/asdf" reshim python
 }
 
-run_with_flavors "$FLAVORS"
+_run

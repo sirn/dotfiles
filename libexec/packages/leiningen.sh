@@ -8,8 +8,6 @@ BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 # shellcheck source=../../share/bootstrap/funcs.sh
 . "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
 
-FLAVORS=$*
-
 LEIN_VER=2.9.1
 LEIN_SHA256=32acacc8354627724d27231bed8fa190d7df0356972e2fd44ca144c084ad4fc7
 
@@ -17,7 +15,7 @@ LEIN_SHA256=32acacc8354627724d27231bed8fa190d7df0356972e2fd44ca144c084ad4fc7
 ## Run
 ##
 
-_run_dev() {
+_run() {
     printe_h2 "Installing leiningen..."
 
     if is_force || file_absent "$HOME/.local/bin/lein"; then
@@ -35,4 +33,4 @@ _run_dev() {
     fi
 }
 
-run_with_flavors "$FLAVORS"
+_run

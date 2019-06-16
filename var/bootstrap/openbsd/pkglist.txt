@@ -14,4 +14,4 @@ pkg mosh
 pkg the_silver_searcher
 pkg unzip--iconv
 
-exec libexec/bootstrap/pkg_asdf.sh
+exec libexec/packages/asdf.sh
