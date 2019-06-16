@@ -80,6 +80,18 @@
   (add-hook 'prog-mode-hook 'dtrt-indent-mode))
 
 
+(use-package editorconfig
+  :diminish editorconfig-mode
+  :straight t
+
+  :preface
+  (eval-when-compile
+    (declare-function editorconfig-mode nil))
+
+  :config
+  (editorconfig-mode 1))
+
+
 (use-package eldoc
   :straight t
   :diminish eldoc-mode)

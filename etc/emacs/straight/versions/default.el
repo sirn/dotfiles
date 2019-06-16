@@ -18,6 +18,7 @@
  ("docker-tramp.el" . "8e2b671eff7a81af43b76d9dfcf94ddaa8333a23")
  ("dockerfile-mode" . "ed73e82dcc636dad00d1a8c3b32a49136d25ee60")
  ("dtrt-indent" . "9ab9cb9d7f391fb09f61c9289c51c36374ddbcbb")
+ ("editorconfig-emacs" . "efc1ff4b1c3422d6e231b1c01138becab4b9eded")
  ("emacs-ansible" . "8a097176d6772b6667254dbbe19c5fb64527bf5d")
  ("emacs-async" . "bd68cc1ab1ac6af890e250bdaa12ffb1cb9649be")
  ("emacs-elixir" . "694d133e847e9a6db6abd1c19850cec6d867ccce")
