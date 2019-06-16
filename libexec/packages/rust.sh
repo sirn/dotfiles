@@ -3,25 +3,15 @@
 # Install rust packages.
 #
 
-ROOT_DIR=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
-LOOKUP_ROOT=${LOOKUP_ROOT:-$ROOT_DIR}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$ROOT_DIR/share/bootstrap/funcs.sh"
-
-FLAVORS=$*
-PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
-
-RUST_PKGLIST=$LOOKUP_ROOT/var/bootstrap/pkglist_rust.txt
-
-
-## Setup
-## https://deftly.net/posts/2017-10-12-using-cabal-on-openbsd.html
-##
+. "$BASE_DIR/share/bootstrap/funcs.sh"
 
 _setup_rust() {
-    case $PLATFORM in
-        openbsd )
+    case $(uname) in
+        OpenBSD )
+            # https://deftly.net/posts/2017-10-12-using-cabal-on-openbsd.html
             if command -v cargo >/dev/null; then
                 printe_h2 "Preparing wxallowed for cargo..."
 
@@ -34,8 +24,8 @@ _setup_rust() {
             else
                 printe_h2 "Installing rust..."
 
-                printe "Rustup is not available under OpenBSD"
-                printe "Try \`pkg_add rust\`"
+                printe_info "Rustup is not available under OpenBSD"
+                printe_info "Try \`pkg_add rust\`"
             fi
             ;;
 
@@ -68,37 +58,28 @@ _setup_rust_src() {
     fi
 }
 
-_setup_rust_pkg() {
-    if command -v cargo >/dev/null; then
-        for f in $(mangle_file "$RUST_PKGLIST" "$PLATFORM" "$FLAVORS"); do
-            printe_h2 "Installing rust packages from $f..."
+_do_cargo_install() {
+    bin=$1; shift
 
-            while read -r line; do
-                case $line in
-                    "#"* | "" ) continue;;
-                    *) line=${line%%#*};;
-                esac
-
-                bin=${line%%:*}
-                install=${line##$bin:}
-
-                if is_force || file_absent "$HOME/.cargo/bin/$bin"; then
-                    # shellcheck disable=SC2086
-                    cargo install $install
-                fi
-            done < "$f"
-        done
+    if is_force || file_absent "$HOME/.cargo/bin/$bin"; then
+        cargo install "$@"
     fi
 }
-
-
-## Run
-##
 
 _run() {
     _setup_rust
     _setup_rust_src
-    _setup_rust_pkg
+
+    if ! command -v cargo >/dev/null; then
+        printe_info "cargo is not installed, skipping..."
+        return 1
+    fi
 }
 
-_run
+_run_dev() {
+    # racer >= 2.1 requires nightly which we cannot use
+    _do_cargo_install racer racer --vers ~2.0.0
+    _do_cargo_install rustfmt rustfmt
+}
+
+run_with_flavors "$@"

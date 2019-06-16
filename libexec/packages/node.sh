@@ -3,34 +3,37 @@
 # Install node packages
 #
 
-BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
-LOOKUP_ROOT=${LOOKUP_ROOT:-$BOOTSTRAP_ROOT}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
-
-FLAVORS=$*
-PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
-
-NODE_PKGLIST=$LOOKUP_ROOT/var/bootstrap/pkglist_node.txt
-
-
-## Run
-##
+. "$BASE_DIR/share/bootstrap/funcs.sh"
 
 _run() {
     if ! command -v npm >/dev/null; then
        printe_h2 "Installing node packages..."
        printe_info "npm is not installed, skipping..."
-       return
+       return 1
     fi
 
     npm set prefix="$HOME/.local"
-
-    for f in $(mangle_file "$NODE_PKGLIST" "$PLATFORM" "$FLAVORS"); do
-        printe_h2 "Installing node packages from $f..."
-        xargs npm install -g < "$f"
-    done
 }
 
-_run
+_run_dev() {
+    npm install -g \
+        bower \
+        eslint \
+        prettier \
+        solc \
+        solium \
+        stylelint \
+        stylelint-config-recommended \
+        stylelint-config-recommended-scss \
+        stylelint-scss \
+        tern \
+        tslint \
+        typescript \
+        wscat \
+        yarn
+}
+
+run_with_flavors "$@"

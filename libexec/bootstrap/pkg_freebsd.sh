@@ -3,35 +3,13 @@
 # Install FreeBSD packages with Pkgng.
 #
 
-BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
-LOOKUP_ROOT=${LOOKUP_ROOT:-$BOOTSTRAP_ROOT}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
+. "$BASE_DIR/share/bootstrap/funcs.sh"
 
-ensure_paths required
-ensure_platform "FreeBSD"
-
-FLAVORS=$*
-PKG_PKGLIST=$LOOKUP_ROOT/var/bootstrap/freebsd/pkglist.txt
-
-
-## Utils
-##
-
-_do_pkgng_install() {
-    pkg=$1; shift
-    pkg install -y "$pkg"
-}
-
-_do_exec() {
-    path=$1; shift
-    "$LOOKUP_ROOT/$path" "$FLAVORS"
-}
-
-
-## Setup
-##
+# shellcheck source=../../share/bootstrap/freebsd.sh
+. "$BASE_DIR/share/bootstrap/freebsd.sh"
 
 _setup_env() {
     if [ ! -x /usr/local/sbin/pkg ]; then
@@ -40,31 +18,69 @@ _setup_env() {
     fi
 }
 
-
-## Runs
-##
-
 _run() {
     _setup_env
 
-    for f in $(mangle_file "$PKG_PKGLIST" none "$FLAVORS"); do
-        printe_h2 "Installing packages from $f..."
+    printe_h2 "Installing packages..."
+    _do_pkgng aria2
+    _do_pkgng base64
+    _do_pkgng ca_root_nss
+    _do_pkgng compat8x-amd64
+    _do_pkgng curl
+    _do_pkgng emacs-nox
+    _do_pkgng git
+    _do_pkgng mercurial
+    _do_pkgng mosh
+    _do_pkgng oksh
+    _do_pkgng openjdk8-jre
+    _do_pkgng the_silver_searcher
+    _do_pkgng tmux
+    _do_pkgng w3m
 
-        while read -r line; do
-            case $line in
-                "#"* | "" ) continue;;
-                *) line=${line%%#*};;
-            esac
-
-            eval set -- "$line"
-
-            case "$1" in
-                pkgng ) shift; _do_pkgng_install "$@";;
-                exec )  shift; _do_exec "$@";;
-                * ) printe_err "Unknown directive: $1";;
-            esac
-        done < "$f"
-    done
+    sh "$BASE_DIR/libexec/packages/asdf.sh" "$@"
 }
 
-run_with_flavors "$FLAVORS"
+_run_dev() {
+    printe_h2 "Installing dev packages..."
+    _do_pkgng GraphicsMagick
+    _do_pkgng autoconf
+    _do_pkgng duplicity
+    _do_pkgng entr
+    _do_pkgng execline
+    _do_pkgng expect
+    _do_pkgng git-crypt
+    _do_pkgng git-lfs
+    _do_pkgng go
+    _do_pkgng google-cloud-sdk
+    _do_pkgng graphviz
+    _do_pkgng hs-ShellCheck
+    _do_pkgng hs-cabal-install
+    _do_pkgng hs-pandoc
+    _do_pkgng ipcalc
+    _do_pkgng jq
+    _do_pkgng leiningen
+    _do_pkgng node10
+    _do_pkgng npm-node10
+    _do_pkgng pkgconf
+    _do_pkgng py36-ansible
+    _do_pkgng py36-asciinema
+    _do_pkgng socat
+    _do_pkgng terraform
+    _do_pkgng tree
+
+    sh "$BASE_DIR/libexec/packages/erlang.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/rust.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/node.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"
+}
+
+_run_kubernetes() {
+    printe_h2 "Installing kubernetes packages..."
+    _do_pkgng kubectl
+    _do_pkgng helm
+
+    sh "$BASE_DIR/libexec/packages/kubectx.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/kapitan.sh" "$@"
+}
+
+run_with_flavors "$@"

@@ -114,12 +114,8 @@ version_gte() {
 }
 
 
-## Convenient funcs
+## Fetching
 ##
-
-is_force() {
-    normalize_bool "$FORCE"
-}
 
 git_clone() {
     repo=$1; shift
@@ -137,7 +133,7 @@ git_clone() {
     elif [ "$(git -C "$path" describe --all)" = "heads/$ref" ]; then
         git -C "$path" checkout -q "$ref"
         git -C "$path" pull -q origin "$ref"
-        printe "$path has been successfully updated"
+        printe_info "$path has been successfully updated"
 
     elif [ "$(git -C "$path" describe 2>&1)" != "$ref" ] &&
          [ "$(git -C "$path" rev-parse --short HEAD)" != "$ref" ]; then
@@ -145,7 +141,7 @@ git_clone() {
         git -C "$path" checkout "$ref"
 
     else
-        printe "$path is already at $ref"
+        printe_info "$path is already at $ref"
     fi
 }
 
@@ -179,6 +175,50 @@ fetch_gh_raw() {
         "https://raw.githubusercontent.com/$gh_repo/$gh_ref/$gh_path"
 }
 
+
+## Sysinfo
+##
+
+get_netif() {
+    netif=$(ifconfig | awk '
+! /^lo|^pf|^enc|^gif|^stf|^br|^\t/ {
+    FS=":"; print $1; exit
+}')
+
+    if ! ifconfig "$netif" >/dev/null 2>&1; then
+        printe_err "Could not determine primary network interface"
+        exit 1
+    fi
+
+    echo "$netif"
+}
+
+get_sshd_port() {
+    sshd_config=/etc/ssh/sshd_config
+
+    if [ ! -f $sshd_config ]; then
+        printe_err "sshd configuration could not be found"
+        exit 1
+    fi
+
+    sshd_port=$(awk '/^#? ?Port/ { print $NF }' < $sshd_config)
+
+    if [ -z "$sshd_port" ]; then
+        printe_err "Could not determine sshd port"
+        exit 1
+    fi
+
+    echo "$sshd_port"
+}
+
+
+## Utilities
+##
+
+is_force() {
+    normalize_bool "$FORCE"
+}
+
 verify_shasum() {
     filepath=$1; shift
     shasum=$1; shift
@@ -195,72 +235,11 @@ file_absent() {
     path=$1; shift
 
     if [ -e "$path" ]; then
-        printe "$path already exists"
+        printe_info "$path already exists"
         return 1
     fi
 
     return 0
-}
-
-make_temp() {
-    build_dir=$(mktemp -d)
-    echo "$build_dir"
-}
-
-mangle_filename() {
-    path=$1; shift
-    platform=$1; shift
-    flavors=$*
-
-    dir=$(dirname "$path")
-    base=$(basename "$path")
-
-    printf "%s\\n" "$dir/$base"
-
-    if [ -n "$platform" ] && [ "$platform" != "none" ]; then
-        printf "%s\\n" "$dir/$platform/$base"
-    fi
-
-    if [ -n "$flavors" ]; then
-        for flavor in $flavors; do
-            ext=${base##*\.}
-            name=${base%*\.${ext}}
-
-            printf "%s\\n" "$dir/$name.$flavor.$ext"
-
-            if [ -n "$platform" ] && [ "$platform" != "none" ]; then
-                printf "%s\\n" "$dir/$platform/$name.$flavor.$ext"
-            fi
-        done
-    fi
-}
-
-# mangle_file() - similar to mangle_filename() but only returns file
-# that exists.
-mangle_file() {
-    for f in $(mangle_filename "$@"); do
-        if [ -f "$f" ]; then
-            printf "%s\\n" "$f"
-        fi
-    done
-}
-
-# mangle_file1() - similar to mangle_file() but only returns the most specific
-# file that exists, in an order of: {filename, platform}, {filename}. This
-# function doesn't accept flavors, as it doesn't make sense to do so.
-mangle_file1() {
-    path=$1; shift
-    platform=$1; shift
-
-    for f in $(mangle_filename "$path" "$platform"); do
-        if [ -f "$f" ]; then
-            conf_file="$f"
-        fi
-    done
-
-    if [ -n "$conf_file" ]; then
-        printf "%s\\n" "$conf_file"
-    fi
 }
 
 make_link() {
@@ -345,41 +324,25 @@ EOF
     esac
 }
 
+change_shell() {
+    target_shell=$1; shift
+
+    if ! target_shell_bin=$(command -v "$target_shell"); then
+        printe_err "$target_shell is not a valid shell, aborting"
+        exit 1
+    fi
+
+    if ! grep -q "$target_shell_bin" /etc/shells; then
+        printe_info "Adding $target_shell_bin to /etc/shells..."
+        printf "%s\\n" "$target_shell_bin" | run_root tee -a /etc/shells
+    fi
+
+    run_root chsh -s "$target_shell_bin" "$USER"
+}
+
 
 ## Guards
 ##
-
-ensure_platform() {
-    platform=$1; shift
-
-    if [ "$(uname)" != "$platform" ]; then
-        printe_err "This script can only be run on $platform"
-        exit 1
-    fi
-}
-
-ensure_paths() {
-    flags=$*
-
-    if has_args required "$flags"; then
-        if [ -z "$BOOTSTRAP_ROOT" ]; then
-            printe_err "BOOTSTRAP_ROOT is not set."
-            exit 1
-        fi
-
-        if [ -z "$LOOKUP_ROOT" ]; then
-            printe_err "LOOKUP_ROOT is not set."
-            exit 1
-        fi
-    fi
-
-    if has_args same_root "$flags"; then
-        if [ "$BOOTSTRAP_ROOT" != "$LOOKUP_ROOT" ]; then
-            printe_err "Cannot be included from different LOOKUP_ROOT"
-            exit 1
-        fi
-    fi
-}
 
 require_bin() {
     pkg=$1; shift
@@ -419,7 +382,9 @@ run_with_flavors() {
     flavors=$*
 
     if [ "$(command -v _run)x" != "x" ]; then
-        _run "$flavors"
+        if ! _run "$flavors"; then
+            return
+        fi
     fi
 
     for flavor in $flavors; do
@@ -430,12 +395,3 @@ run_with_flavors() {
         fi
     done
 }
-
-
-## Cleanups
-##
-
-if ! normalize_bool "$NO_CLEAN_BUILDDIR"; then
-    # shellcheck disable=SC2153
-    trap 'rm -rf $BUILD_DIR' 0 1 2 3 6 14 15
-fi

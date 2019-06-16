@@ -3,24 +3,33 @@
 # Configure current user on FreeBSD.
 #
 
-BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
-LOOKUP_ROOT=${LOOKUP_ROOT:-$BOOTSTRAP_ROOT}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
-
-ensure_paths required same_root
-ensure_platform "FreeBSD"
-
-FLAVORS=$*
-
-
-## Run
-##
+. "$BASE_DIR/share/bootstrap/funcs.sh"
 
 _run() {
-    "$BOOTSTRAP_ROOT/libexec/bootstrap/user_shell.sh" "$FLAVORS"
-    "$BOOTSTRAP_ROOT/libexec/bootstrap/user_links.sh" "$FLAVORS"
+    printe_h2 "Installing links..."
+    make_link "$BASE_DIR/etc/aria2/aria2.conf" "$HOME/.aria2/aria2.conf"
+    make_link \
+        "$BASE_DIR/etc/emacs/straight/versions/default.el" \
+        "$HOME/.emacs.d/straight/versions/default.el"
+
+    make_link "$BASE_DIR/etc/emacs/init.el" "$HOME/.emacs.d/init.el"
+    make_link "$BASE_DIR/etc/git/gitconfig" "$HOME/.gitconfig"
+    make_link "$BASE_DIR/etc/hg/hgrc" "$HOME/.hgrc"
+    make_link "$BASE_DIR/etc/ksh/kshrc" "$HOME/.kshrc"
+    make_link "$BASE_DIR/etc/sh/profile" "$HOME/.profile"
+    make_link "$BASE_DIR/etc/ssh/config" "$HOME/.ssh/config"
+    make_link "$BASE_DIR/etc/tmux/tmux.conf" "$HOME/.tmux.conf"
+
+    printe_h2 "Changing user shell..."
+    change_shell oksh
 }
 
-run_with_flavors "$FLAVORS"
+_run_dev() {
+    printe_h2 "Installing dev links..."
+    make_link "$BASE_DIR/etc/proselint/proselintrc" "$HOME/.proselintrc"
+}
+
+run_with_flavors "$@"

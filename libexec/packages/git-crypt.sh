@@ -3,19 +3,18 @@
 # Install git-crypt.
 #
 
-BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
+. "$BASE_DIR/share/bootstrap/funcs.sh"
 
-BUILD_DIR=$(make_temp)
+if [ -z "$BUILD_DIR" ]; then
+    BUILD_DIR=$(mktemp -d)
+    trap 'rm -rf $BUILD_DIR' 0 1 2 3 6 14 15
+fi
 
 GITCRYPT_VER=0.6.0
 GITCRYPT_SHA256=777c0c7aadbbc758b69aff1339ca61697011ef7b92f1d1ee9518a8ee7702bb78
-
-
-## Run
-##
 
 _run() {
     printe_h2 "Installing git-crypt..."

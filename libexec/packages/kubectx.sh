@@ -3,16 +3,12 @@
 # Install kubectx.
 #
 
-BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
+. "$BASE_DIR/share/bootstrap/funcs.sh"
 
 KUBECTX_VERSION=0.6.3
-
-
-## Run
-##
 
 _run() {
     printe_h2 "Installing kubectx..."

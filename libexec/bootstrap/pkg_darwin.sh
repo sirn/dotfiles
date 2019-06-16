@@ -3,79 +3,21 @@
 # Install Darwin packages with MacPorts and MAS.
 #
 
-BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
-LOOKUP_ROOT=${LOOKUP_ROOT:-$BOOTSTRAP_ROOT}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
+. "$BASE_DIR/share/bootstrap/funcs.sh"
 
-ensure_paths required
-ensure_platform "Darwin"
+# shellcheck source=../../share/bootstrap/darwin.sh
+. "$BASE_DIR/share/bootstrap/darwin.sh"
 
-FLAVORS=$*
-BUILD_DIR=$(make_temp)
-PLATFORM_VERS=$(sw_vers -productVersion)
+if [ -z "$BUILD_DIR" ]; then
+    BUILD_DIR=$(mktemp -d)
+    trap 'rm -rf $BUILD_DIR' 0 1 2 3 6 14 15
+fi
 
-MAS=/opt/local/bin/mas
-MAS_MAX_PLATFORM=10.14
-
-MACPORTS=/opt/local/bin/port
 MACPORTS_VER=2.5.4
 MACPORTS_SHA256=592e4a021588f37348fe7b806c202e4d77f75bcff1a0b20502d5f1177c2c21ff
-
-PKGLIST=$LOOKUP_ROOT/var/bootstrap/darwin/pkglist.txt
-
-
-## Utils
-##
-
-_do_macports_install() {
-    pkg=$1; shift
-
-    case "$($MACPORTS installed "$pkg" 2>&1)" in
-        "None of the"* ) ;;
-        * )
-            printe "$pkg (macports) already installed"
-            return
-            ;;
-    esac
-
-    printe "Installing $pkg (macports)..."
-
-    if ! run_root $MACPORTS -n install "$pkg" "$@"; then
-        printe_info "$pkg (macports) failed to install, skipping..."
-    fi
-}
-
-_do_mas_install() {
-    pkg_id=$1; shift
-    app_name=$*
-
-    if [ -d "/Applications/$app_name.app" ]; then
-        printe "$app_name (mas) already installed"
-        return
-    fi
-
-    if ! version_gte "$MAS_MAX_PLATFORM" "$PLATFORM_VERS"; then
-        printe "mas is not available, please manually install $app_name"
-        return
-    fi
-
-    printe "Installing $app_name (mas)..."
-
-    if ! mas install "$pkg_id"; then
-        printe_info "$app_name (mas) failed to install, skipping..."
-    fi
-}
-
-_do_exec() {
-    path=$1; shift
-    "$LOOKUP_ROOT/$path" "$FLAVORS"
-}
-
-
-## Setup
-##
 
 _setup_env() {
     if [ ! -x $MACPORTS ]; then
@@ -95,7 +37,7 @@ _setup_env() {
         run_root $MACPORTS sync
     fi
 
-    if version_gte "$MAS_MAX_PLATFORM" "$PLATFORM_VERS"; then
+    if version_gte "$MAS_PLATFORM" "$PLATFORM_VERS"; then
         if [ ! -x $MAS ]; then
             printe_h2 "Bootstrapping mas..."
             run_root $MACPORTS -N install mas
@@ -105,32 +47,84 @@ _setup_env() {
     fi
 }
 
-
-## Runs
-##
-
 _run() {
     _setup_env
 
-    for f in $(mangle_file "$PKGLIST" none "$FLAVORS"); do
-        printe_h2 "Installing packages from $f..."
+    printe_h2 "Installing packages..."
+    _do_macports aria2 +sqlite3
+    _do_macports curl +darwinssl +http2
+    _do_macports dnscrypt-proxy
+    _do_macports emacs
+    _do_macports git
+    _do_macports ipfs
+    _do_macports mercurial
+    _do_macports mosh
+    _do_macports oksh
+    _do_macports openssh
+    _do_macports the_silver_searcher
+    _do_macports tmux
+    _do_macports w3m
 
-        while read -r line; do
-            case $line in
-                "#"* | "" ) continue;;
-                *) line=${line%%#*};;
-            esac
-
-            eval set -- "$line"
-
-            case "$1" in
-                macports ) shift; _do_macports_install "$@";;
-                mas )      shift; _do_mas_install "$@";;
-                exec )     shift; _do_exec "$@";;
-                * ) printe_err "Unknown directive: $1";;
-            esac
-        done < "$f"
-    done
+    sh "$BASE_DIR/libexec/packages/asdf.sh" "$@"
 }
 
-run_with_flavors "$FLAVORS"
+_run_desktop() {
+    printe_h2 "Installing desktop packages..."
+    _do_macports emacs-mac-app
+
+    _do_mas 407963104 Pixelmator
+    _do_mas 411643860 DaisyDisk
+    _do_mas 413965349 Soulver
+    _do_mas 497799835 Xcode
+    _do_mas 603637384 Name Mangler 3
+    _do_mas 775737590 iA Writer
+    _do_mas 975937182 Fantastical 2
+    _do_mas 1333542190 1Password 7
+    _do_mas 1435957248 Drafts
+}
+
+_run_dev() {
+    printe_h2 "Installing dev packages..."
+    _do_macports GraphicsMagick
+    _do_macports autoconf
+    _do_macports carthage
+    _do_macports duplicity
+    _do_macports entr
+    _do_macports git-crypt
+    _do_macports git-lfs
+    _do_macports go
+    _do_macports google-cloud-sdk
+    _do_macports graphviz
+    _do_macports hs-cabal-install
+    _do_macports ipcalc
+    _do_macports jq
+    _do_macports leiningen
+    _do_macports nodejs10
+    _do_macports npm6
+    _do_macports pandoc
+    _do_macports socat
+    _do_macports terraform
+    _do_macports tree
+    _do_macports xz
+    _do_macports zlib
+
+    # Outdated
+    # https://github.com/macports/macports-ports/pull/4577
+    #_do_macports shellcheck
+
+    sh "$BASE_DIR/libexec/packages/erlang.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/node.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/rust.sh" "$@"
+}
+
+_run_kubernetes() {
+    printe_h2 "Installing kubernetes packages..."
+    _do_macports kubectl
+    _do_macports helm
+
+    sh "$BASE_DIR/libexec/packages/kubectx.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/kapitan.sh" "$@"
+}
+
+run_with_flavors "$@"

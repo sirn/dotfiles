@@ -3,17 +3,13 @@
 # Install leiningen.
 #
 
-BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
+. "$BASE_DIR/share/bootstrap/funcs.sh"
 
 LEIN_VER=2.9.1
 LEIN_SHA256=32acacc8354627724d27231bed8fa190d7df0356972e2fd44ca144c084ad4fc7
-
-
-## Run
-##
 
 _run() {
     printe_h2 "Installing leiningen..."
@@ -29,7 +25,7 @@ _run() {
 
         mv "$HOME/.local/bin/lein.new" "$HOME/.local/bin/lein"
         chmod 0755 "$HOME/.local/bin/lein"
-        printe "leiningen has been successfully installed"
+        printe_info "leiningen has been successfully installed"
     fi
 }
 

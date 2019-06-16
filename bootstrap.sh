@@ -120,9 +120,6 @@ for p in pkg system user; do
                 continue
             fi
 
-            LOOKUP_ROOT="$b"; export LOOKUP_ROOT
-            BOOTSTRAP_ROOT="$BASE_DIR"; export BOOTSTRAP_ROOT
-
             run=1
             printe_h1 "Running ${runscript}..."
             "$runscript" "$FLAVORS"

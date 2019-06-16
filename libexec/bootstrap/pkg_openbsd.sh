@@ -3,76 +3,98 @@
 # Install OpenBSD packages with Pkg.
 #
 
-BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
-LOOKUP_ROOT=${LOOKUP_ROOT:-$BOOTSTRAP_ROOT}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
+. "$BASE_DIR/share/bootstrap/funcs.sh"
 
-ensure_paths required
-ensure_platform "OpenBSD"
-
-FLAVORS=$*
-PKG_PKGLIST=$LOOKUP_ROOT/var/bootstrap/openbsd/pkglist.txt
-
-
-## Utils
-##
-
-_check_installed() {
-    spec=$1; shift
-
-    spec=${spec%%--*}   # pkg--flavor stem
-    spec=${spec%%%*}    # pkg%version stem
-
-    case "$spec" in
-        *"-"[0-9]* ) ;; # probably a stem with version number
-        * ) spec="$spec-*";;
-    esac
-
-    pkg_info -q -e "$spec"
-}
-
-_do_pkg_install() {
-    pkg=$1; shift
-
-    if _check_installed "$pkg"; then
-        printe "$pkg (pkg) already installed"
-        return
-    fi
-
-    printe "Installing $pkg (pkg)..."
-    run_root pkg_add "$pkg"
-}
-
-_do_exec() {
-    path=$1; shift
-    "$LOOKUP_ROOT/$path" "$FLAVORS"
-}
-
-
-## Runs
-##
+# shellcheck source=../../share/bootstrap/freebsd.sh
+. "$BASE_DIR/share/bootstrap/freebsd.sh"
 
 _run() {
-    for f in $(mangle_file "$PKG_PKGLIST" none "$FLAVORS"); do
-        printe_h2 "Installing packages from $f..."
+    printe_h2 "Installing packages..."
+    _do_pkg aria2
+    _do_pkg base64
+    _do_pkg colorls
+    _do_pkg coreutils
+    _do_pkg curl
+    _do_pkg gdiff
+    _do_pkg git
+    _do_pkg gtar--static
+    _do_pkg jdk%1.8
+    _do_pkg mercurial
+    _do_pkg mosh
+    _do_pkg the_silver_searcher
+    _do_pkg unzip--iconv
 
-        while read -r line; do
-            case $line in
-                "#"* | "" ) continue;;
-                *) line=${line%%#*};;
-            esac
+    sh "$BASE_DIR/libexec/packages/asdf.sh" "$@"
+}
 
-            eval set -- "$line"
+_run_desktop() {
+    printe_h2 "Installing desktop packages..."
+    _do_pkg adobe-source-code-pro
+    _do_pkg adobe-source-sans-pro
+    _do_pkg adobe-source-serif-pro
+    _do_pkg emacs--gtk3
+    _do_pkg firefox
+    _do_pkg noto-cjk
+    _do_pkg noto-emoji
+    _do_pkg noto-fonts
+    _do_pkg trayer
+    _do_pkg w3m--image
+}
 
-            case "$1" in
-                pkg )   shift; _do_pkg_install "$@";;
-                exec )  shift; _do_exec "$@";;
-                * ) printe_err "Unknown directive: $1";;
-            esac
-        done < "$f"
-    done
+_run_dev() {
+    printe_h2 "Installing dev packages..."
+    _do_pkg GraphicsMagick
+    _do_pkg ansible
+    _do_pkg autoconf%2.69
+    _do_pkg automake%1.16
+    _do_pkg cabal-install
+    _do_pkg doxygen
+    _do_pkg duplicity
+    _do_pkg entr
+    _do_pkg expect
+    _do_pkg ghc
+    _do_pkg git-lfs
+    _do_pkg go
+    _do_pkg google-cloud-sdk
+    _do_pkg graphviz
+    _do_pkg ipcalc
+    _do_pkg jq
+    _do_pkg metaauto
+    _do_pkg node
+    _do_pkg pkgconf
+    _do_pkg rust
+    _do_pkg socat
+    _do_pkg terraform
+    _do_pkg tree
+
+    sh "$BASE_DIR/libexec/packages/execline.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/git-crypt.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/leiningen.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/erlang.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/rust.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/node.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"
+
+    # Restore Google Cloud state directory. This is required for kubectl
+    # to be able to authenticate with Google Cloud.
+    if [ -d /usr/local/google-cloud-sdk ]; then
+        run_root mkdir -p /usr/local/google-cloud-sdk/.install
+    fi
+}
+
+_run_kubernetes() {
+    printe_h2 "Installing kubernetes packages..."
+    sh "$BASE_DIR/libexec/packages/kubernetes-cli.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/kubernetes-helm.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/kubectx.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/kapitan.sh" "$@"
+}
+
+_run_all() {
+    run_with_flavors "$@"
 
     # Only install emacs--no_x11 when other variant of Emacs hasn't been
     # installed (e.g. desktop flavor installs emacs--gtk3)
@@ -88,12 +110,4 @@ _run() {
     fi
 }
 
-# Restore Google Cloud state directory. This is required for kubectl
-# to be able to authenticate with Google Cloud.
-_run_dev() {
-    if [ -d /usr/local/google-cloud-sdk ]; then
-        run_root mkdir -p /usr/local/google-cloud-sdk/.install
-    fi
-}
-
-run_with_flavors "$FLAVORS"
+_run_all "$@"

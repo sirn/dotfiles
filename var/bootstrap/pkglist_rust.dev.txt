@@ -1,3 +1,0 @@
-# racer >= 2.1 requires nightly which we cannot use
-racer: racer --vers ~2.0.0
-rustfmt: rustfmt

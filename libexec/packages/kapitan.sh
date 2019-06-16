@@ -3,13 +3,15 @@
 # Install kapitan.
 #
 
-BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
-PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
+. "$BASE_DIR/share/bootstrap/funcs.sh"
 
-BUILD_DIR=$(make_temp)
+if [ -z "$BUILD_DIR" ]; then
+    BUILD_DIR=$(mktemp -d)
+    trap 'rm -rf $BUILD_DIR' 0 1 2 3 6 14 15
+fi
 
 PYTHON3="$HOME/.asdf/shims/python3"
 PIP3="$HOME/.asdf/shims/pip3"
@@ -26,10 +28,6 @@ security/py-cryptography/patches/patch-src__cffi_src_openssl_x509_vfy_py
 
 JSONNET_VER=0.12.1
 JSONNET_SHA256=257c6de988f746cc90486d9d0fbd49826832b7a2f0dbdb60a515cc8a2596c950
-
-
-## Setup
-##
 
 _setup_cryptography() {
     if is_force || ! "$PYTHON3" -c 'import cryptography' >/dev/null 2>&1; then
@@ -72,8 +70,8 @@ _setup_cryptography() {
 
 _setup_jsonnet() {
     if is_force || ! "$PYTHON3" -c 'import _jsonnet' >/dev/null 2>&1; then
-        case $PLATFORM in
-            freebsd | openbsd )
+        case $(uname) in
+            FreeBSD | OpenBSD )
                 # We need to patch setup.py to explicitly call gmake instead of
                 # make because py-jsonnet setup.py assumes make is gmake.
                 # py-jsonnet also assumes od is GNU-compatible.
@@ -93,7 +91,7 @@ _setup_jsonnet() {
                 mv setup.py.new setup.py
 
                 od_bin="od"
-                if [ "$PLATFORM" = "openbsd" ]; then
+                if [ "$(uname)" = "OpenBSD" ]; then
                     require_bin ggod "Try \`pkg_add coreutils\`"
                     od_bin=ggod
                 fi
@@ -118,10 +116,6 @@ _setup_jsonnet() {
         esac
     fi
 }
-
-
-## Run
-##
 
 _run() {
     printe_h2 "Installing kapitan..."

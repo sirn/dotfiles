@@ -3,26 +3,22 @@
 # Install Kubernetes Helm.
 #
 
-BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
+. "$BASE_DIR/share/bootstrap/funcs.sh"
 
-BUILD_DIR=$(make_temp)
+if [ -z "$BUILD_DIR" ]; then
+    BUILD_DIR=$(mktemp -d)
+    trap 'rm -rf $BUILD_DIR' 0 1 2 3 6 14 15
+fi
 
 HELM_VER=2.13.1
 HELM_SHA256=328f355050ebaecf6420aba85e44c1e86c1aa429991ec9102cc2b28ba9bc5536
 
-
-## Environment variables
-##
-
-GOPATH="$BUILD_DIR/go"; export GOPATH
+GOPATH="$BUILD_DIR/go"
 PATH="$GOPATH/bin:$PATH"
-
-
-## Run
-##
+export GOPATH
 
 _run() {
     printe_h2 "Installing helm..."

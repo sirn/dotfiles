@@ -3,22 +3,20 @@
 # Install execline.
 #
 
-BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
+. "$BASE_DIR/share/bootstrap/funcs.sh"
 
-BUILD_DIR=$(make_temp)
+if [ -z "$BUILD_DIR" ]; then
+    BUILD_DIR=$(mktemp -d)
+    trap 'rm -rf $BUILD_DIR' 0 1 2 3 6 14 15
+fi
 
 EXECLINE_VER=2.5.1.0
 EXECLINE_SHA256=965a915ebf158e221b1c56078a54dfa55b09b9b51a0a25edc7013ae1e12e3f33
-
 SKALIBS_VER=2.8.0.1
 SKALIBS_SHA256=88a6000634cf8477b8649604984534fee11997ac0c08a271881a4974e30968f5
-
-
-## Runs
-##
 
 _run() {
     printe_h2 "Installing execline..."

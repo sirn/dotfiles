@@ -3,28 +3,24 @@
 # Install Kubernetes CLI.
 #
 
-BOOTSTRAP_ROOT=${BOOTSTRAP_ROOT:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 # shellcheck source=../../share/bootstrap/funcs.sh
-. "$BOOTSTRAP_ROOT/share/bootstrap/funcs.sh"
+. "$BASE_DIR/share/bootstrap/funcs.sh"
 
-BUILD_DIR=$(make_temp)
+if [ -z "$BUILD_DIR" ]; then
+    BUILD_DIR=$(mktemp -d)
+    trap 'rm -rf $BUILD_DIR' 0 1 2 3 6 14 15
+fi
 
 # Using 1.16 since we required an updated vendor:
 # See https://github.com/kubernetes/kubernetes/tree/master/vendor
 KUBECTL_VER=1.16.0-alpha.0
 KUBECTL_SHA256=cc8c1214d311d9b78b3e6376d4cff6ad6c98df10df31ad887464623ec0684b53
 
-
-## Environment variables
-##
-
-GOPATH="$BUILD_DIR/go"; export GOPATH
+GOPATH="$BUILD_DIR/go"
 PATH="$GOPATH/bin:$PATH"
-
-
-## Run
-##
+export GOPATH
 
 _run() {
     printe_h2 "Installing kubectl..."
@@ -50,7 +46,7 @@ _run() {
         cd "$BUILD_DIR/go/src/k8s.io/kubernetes/cmd/kubectl" || exit 1
         go install .
         cp "$BUILD_DIR/go/bin/kubectl" "$HOME/.local/bin/kubectl"
-        printe "kubectl has been successfully installed"
+        printe_info "kubectl has been successfully installed"
     fi
 }
 
