@@ -19,15 +19,19 @@ alias sshi='ssh -F /dev/null -o UserKnownHostsFile=/dev/null'
 
 if command -v emacsclient >/dev/null; then
     alias emacs='$HOME/.dotfiles/bin/emacsclient'
-    EDITOR="$HOME/.dotfiles/bin/emacsclient"; export EDITOR
+    EDITOR="$HOME/.dotfiles/bin/emacsclient"
+    export EDITOR
 fi
 
 
 ## History
 ##
 
-HISTFILE="$HOME/.ksh_history"; export HISTFILE
-HISTSIZE=10000; export HISTSIZE
+HISTFILE="$HOME/.ksh_history"
+HISTSIZE=10000
+
+export HISTFILE
+export HISTSIZE
 
 
 ## GPG
@@ -42,7 +46,9 @@ fi
 ##
 
 case "$TERM" in
-    xterm* | rxvt* ) PS1="\h \w \$ "; export PS1;;
-    screen* ) PS1="\w \$ "; export PS1;;
-    * ) PS1="\$ "; export PS1;;
+    xterm* | rxvt* ) PS1="\h \w \$ ";;
+    screen* ) PS1="\w \$ ";;
+    * ) PS1="\$ ";;
 esac
+
+export PS1

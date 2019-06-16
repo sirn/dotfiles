@@ -4,28 +4,42 @@
 #
 umask 077
 
-LC_ALL=en_US.UTF-8; export LC_ALL
-LANG=en_US.UTF-8; export LANG
-EDITOR="vi"; export EDITOR
-VISUAL="emacs"; export VISUAL
+LC_ALL=en_US.UTF-8
+LANG=en_US.UTF-8
+EDITOR="vi"
+VISUAL="emacs"
 
-XDG_CONFIG_HOME=$HOME/.config; export XDG_CONFIG_HOME
-XDG_CACHE_HOME=$HOME/.cache; export XDG_CACHE_HOME
-XDG_DATA_HOME=$HOME/.data; export XDG_DATA_HOME
-XDG_STATE_HOME=$HOME/.state; export XDG_STATE_HOME
+export LC_ALL
+export LANG
+export EDITOR
+export VISUAL
 
-PATH=$HOME/.local/bin:/sbin:/bin:/usr/X11R6/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+XDG_CONFIG_HOME=$HOME/.config
+XDG_CACHE_HOME=$HOME/.cache
+XDG_DATA_HOME=$HOME/.data
+XDG_STATE_HOME=$HOME/.state
+
+export XDG_CONFIG_HOME
+export XDG_CACHE_HOME
+export XDG_DATA_HOME
+export XDG_STATE_HOME
+
+PATH=/sbin:/bin:/usr/X11R6/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+PATH=$HOME/.local/bin:$PATH
 PATH=$HOME/.cache/rebar3/bin:$PATH
 PATH=$HOME/.cabal/bin:$PATH
 PATH=$HOME/.cargo/bin:$PATH
 
-GOPATH=$HOME/Dev/go; export GOPATH
+GOPATH=$HOME/Dev/go
 PATH=$GOPATH/bin:$PATH
+export GOPATH
 
 # Note: leading colon to append to default MANPATH
-MANPATH=:$HOME/.local/man; export MANPATH
+MANPATH=:$HOME/.local/man
+export MANPATH
 
-RUST_SRC_PATH="$HOME/.local/lib/rustlib/src/rust/src"; export RUST_SRC_PATH
+RUST_SRC_PATH="$HOME/.local/lib/rustlib/src/rust/src"
+export RUST_SRC_PATH
 
 
 ## Platform-specific
@@ -36,7 +50,8 @@ case "$(uname)" in
         PATH=/opt/local/bin:$PATH
 
         if [ -f /usr/libexec/java_home ]; then
-            JAVA_HOME=$(/usr/libexec/java_home); export JAVA_HOME
+            JAVA_HOME=$(/usr/libexec/java_home)
+            export JAVA_HOME
         fi
 
         PATH=$PATH:/Applications/mpv.app/Contents/MacOS
@@ -60,10 +75,12 @@ if command -v gpgconf >/dev/null; then
     unset SSH_AGENT_PID
 
     if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
-        SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"; export SSH_AUTH_SOCK
+        SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+        export SSH_AUTH_SOCK
     fi
 
-    GPG_TTY=$(tty); export GPG_TTY
+    GPG_TTY=$(tty)
+    export GPG_TTY
 fi
 
 
@@ -80,7 +97,8 @@ fi
 ##
 
 if [ -n "$KSH_VERSION" ]; then
-   ENV="$HOME/.kshrc"; export ENV
+    ENV="$HOME/.kshrc"
+    export ENV
 fi
 
 export PATH
