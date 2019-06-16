@@ -16,6 +16,7 @@ RUST_PKGLIST=$LOOKUP_ROOT/var/bootstrap/pkglist_rust.txt
 
 
 ## Setup
+## https://deftly.net/posts/2017-10-12-using-cabal-on-openbsd.html
 ##
 
 _setup_rust() {
@@ -24,7 +25,6 @@ _setup_rust() {
             if command -v cargo >/dev/null; then
                 printe_h2 "Preparing wxallowed for cargo..."
 
-                # See also: https://deftly.net/posts/2017-10-12-using-cabal-on-openbsd.html
                 if file_absent /usr/local/cargo; then
                     run_root mkdir -p /usr/local/cargo
                     run_root chown "$USER:wheel" /usr/local/cargo
@@ -60,7 +60,8 @@ _setup_rust_src() {
 
         if file_absent "$rust_src_base/rust-$rust_ver"; then
             mkdir -p "$rust_src_base"
-            fetch_gh_archive - "rust-lang/rust" "$rust_ver" | tar -C "$rust_src_base" -xzf -
+            fetch_gh_archive - "rust-lang/rust" "$rust_ver" |
+                tar -C "$rust_src_base" -xzf -
         fi
 
         make_link "$rust_src_base/rust-$rust_ver/src" "$rust_src_base/src"

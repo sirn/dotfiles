@@ -88,12 +88,16 @@ _setup_pf() {
         run_root chmod 0600 /etc/pf.conf
 
         if ! run_root pfctl -nf /etc/pf.conf; then
-            printe_err "/etc/pf.conf has been updated but contained errors, exiting"
+            printe_err "\
+/etc/pf.conf has been updated but contained errors, exiting\
+"
             exit 1
         fi
 
         run_root pfctl -F all -f /etc/pf.conf
-        printe "/etc/pf.conf has been updated, internet connection might be interrupted"
+        printe "\
+/etc/pf.conf has been updated, internet connection might be interrupted\
+"
     else
         printe "/etc/pf.conf already exists, not overwriting"
     fi

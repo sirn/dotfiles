@@ -28,7 +28,10 @@ _setup_ipfs() {
     fi
 
     if is_force || [ ! -f "$IPFS_PLIST" ]; then
-        cp "$BOOTSTRAP_ROOT/share/examples/launchd/io.ipfs.ipfs.plist" "$IPFS_PLIST"
+        cp \
+            "$BOOTSTRAP_ROOT/share/examples/launchd/io.ipfs.ipfs.plist" \
+            "$IPFS_PLIST"
+
         chmod 0644 "$IPFS_PLIST"
         launchctl load -w "$IPFS_PLIST"
         printe "$IPFS_PLIST has been installed, you may need to relogin"

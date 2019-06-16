@@ -76,16 +76,19 @@ for line in $(rpcinfo -p); do
 
     case "$proto" in
         udp | tcp )
-            printf \
-                "pass in on %s inet proto %s from %s to %s port %s keep state\\n" \
+            printf "\
+pass in on %s inet proto %s from %s to %s port %s keep state
+" \
                 "$ext_if" "$proto" "$from_addr" "$ext_if" "$port"
 
             if [ $enable_ipv6 = 1 ]; then
-                printf \
-                    "pass in on %s inet6 proto %s from %s to %s port %s keep state\\n" \
+                printf "\
+pass in on %s inet6 proto %s from %s to %s port %s keep state
+" \
                     "$ext_if" "$proto" "$from_addr" "$ext_if" "$port"
             fi
             ;;
+
         * )
             continue
             ;;

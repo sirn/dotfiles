@@ -26,7 +26,10 @@ _setup_dnscrypt() {
     run_root port load dnscrypt-proxy
 
     if is_force || [ ! -f $DNSCRYPT_SUDOERS ]; then
-        run_root cp "$BOOTSTRAP_ROOT/share/examples/sudoers.d/01_dnscrypt.darwin" $DNSCRYPT_SUDOERS
+        run_root cp \
+                 "$BOOTSTRAP_ROOT/share/examples/sudoers.d/01_dnscrypt.darwin" \
+                 $DNSCRYPT_SUDOERS
+
         run_root chmod 0644 $DNSCRYPT_SUDOERS
         run_root chown root:staff $DNSCRYPT_SUDOERS
     else
@@ -34,7 +37,10 @@ _setup_dnscrypt() {
     fi
 
     if is_force || [ ! -f $DNSCRYPT_CONF ]; then
-        run_root cp "$BOOTSTRAP_ROOT/etc/dnscrypt-proxy/dnscrypt-proxy.toml" $DNSCRYPT_CONF
+        run_root cp \
+                 "$BOOTSTRAP_ROOT/etc/dnscrypt-proxy/dnscrypt-proxy.toml" \
+                 $DNSCRYPT_CONF
+
         run_root chmod 0644 $DNSCRYPT_CONF
         run_root chown nobody:nobody $DNSCRYPT_CONF
         run_root port unload dnscrypt-proxy

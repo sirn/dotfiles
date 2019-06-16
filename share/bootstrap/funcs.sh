@@ -174,7 +174,9 @@ fetch_gh_raw() {
     gh_ref=$1; shift
     gh_path=$1; shift
 
-    fetch_url "$output" "https://raw.githubusercontent.com/$gh_repo/$gh_ref/$gh_path"
+    fetch_url \
+        "$output" \
+        "https://raw.githubusercontent.com/$gh_repo/$gh_ref/$gh_path"
 }
 
 verify_shasum() {
@@ -233,7 +235,8 @@ mangle_filename() {
     fi
 }
 
-# mangle_file() - similar to mangle_filename() but only returns file that exists.
+# mangle_file() - similar to mangle_filename() but only returns file
+# that exists.
 mangle_file() {
     for f in $(mangle_filename "$@"); do
         if [ -f "$f" ]; then
@@ -433,5 +436,6 @@ run_with_flavors() {
 ##
 
 if ! normalize_bool "$NO_CLEAN_BUILDDIR"; then
+    # shellcheck disable=SC2153
     trap 'rm -rf $BUILD_DIR' 0 1 2 3 6 14 15
 fi

@@ -32,12 +32,13 @@
 _prefix="pfpassif"
 
 hook_up() {
-    (
-        printf "icmp6_types=\"{ 128, 133, 134, 135, 136, 137 }\"\\n"
-        printf "pass in on %s inet all\\n" "$1"
-        printf "pass in on %s inet6 all\\n" "$1"
-        printf "pass in on %s inet6 proto icmp6 all icmp6-type \$icmp6_types keep state\\n" "$1"
-    ) | pfctl -a "$_prefix/$1" -f -
+    printf "\
+icmp6_types=\"{ 128, 133, 134, 135, 136, 137 }\"
+pass in on %s inet all
+pass in on %s inet6 all
+pass in on %s inet6 proto icmp6 all icmp6-type \$icmp6_types keep state
+" \
+           "$1" "$1" "$1" | pfctl -a "$_prefix/$1" -f -
     logger -t "$_prefix" "Added pf anchor for $1."
 }
 

@@ -41,7 +41,9 @@ _run_kubernetes() {
         rm kubectl.tar.gz
 
         mkdir -p "$BUILD_DIR/go/src/k8s.io"
-        mv "$BUILD_DIR/kubernetes-$KUBECTL_VER" "$BUILD_DIR/go/src/k8s.io/kubernetes"
+        mv \
+            "$BUILD_DIR/kubernetes-$KUBECTL_VER" \
+            "$BUILD_DIR/go/src/k8s.io/kubernetes"
 
         cd "$BUILD_DIR/go/src/k8s.io/kubernetes/cmd/kubectl" || exit 1
         go install .

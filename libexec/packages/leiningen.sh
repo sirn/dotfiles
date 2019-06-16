@@ -21,7 +21,12 @@ _run_dev() {
     printe_h2 "Installing leiningen..."
 
     if is_force || file_absent "$HOME/.local/bin/lein"; then
-        fetch_gh_raw "$HOME/.local/bin/lein.new" technomancy/leiningen $LEIN_VER bin/lein
+        fetch_gh_raw \
+            "$HOME/.local/bin/lein.new" \
+            technomancy/leiningen \
+            $LEIN_VER \
+            bin/lein
+
         verify_shasum "$HOME/.local/bin/lein.new" $LEIN_SHA256
 
         mv "$HOME/.local/bin/lein.new" "$HOME/.local/bin/lein"

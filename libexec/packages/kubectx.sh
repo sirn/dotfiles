@@ -18,7 +18,11 @@ KUBECTX_VERSION=0.6.3
 _run_kubernetes() {
     printe_h2 "Installing kubectx..."
 
-    git_clone https://github.com/ahmetb/kubectx.git "$HOME/.local/src/kubectx" v$KUBECTX_VERSION
+    git_clone \
+        https://github.com/ahmetb/kubectx.git \
+        "$HOME/.local/src/kubectx" \
+        v$KUBECTX_VERSION
+
     make_link "$HOME/.local/src/kubectx/kubectx" "$HOME/.local/bin/kubectx"
     make_link "$HOME/.local/src/kubectx/kubens" "$HOME/.local/bin/kubens"
 }
