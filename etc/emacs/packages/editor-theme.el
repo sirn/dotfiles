@@ -40,6 +40,7 @@
     (custom-theme-set-faces
      'tao-yin
 
+     `(default                    ((t (:foreground ,color-10))))
      `(warning                    ((t (:foreground "DarkOrange" :weight bold))))
      `(error                      ((t (:foreground "Red1" :weight bold))))
 
