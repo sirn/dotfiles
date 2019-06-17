@@ -53,6 +53,13 @@ _run() {
     change_shell oksh
 }
 
+_run_desktop() {
+    printe_h2 "Installing desktop links..."
+    make_link \
+        "$BASE_DIR/etc/alacritty/alacritty.yml" \
+        "$HOME/.config/alacritty/alacritty.yml"
+}
+
 _run_dev() {
     printe_h2 "Installing dev links..."
     make_link "$BASE_DIR/etc/proselint/proselintrc" "$HOME/.proselintrc"
