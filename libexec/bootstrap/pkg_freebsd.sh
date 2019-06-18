@@ -15,6 +15,9 @@ _setup_env() {
     if [ ! -x /usr/local/sbin/pkg ]; then
         printe_h2 "Bootstrapping pkgng..."
         run_root ASSUME_ALWAYS_YES=yes pkg bootstrap
+    else
+        printe_h2 "Updating pkg..."
+        pkg update -q
     fi
 }
 
