@@ -130,7 +130,7 @@ git_clone() {
         git clone "$repo" "$path"
         git -C "$path" checkout "$ref"
 
-    elif [ "$(git -C "$path" describe --all)" = "heads/$ref" ]; then
+    elif [ "$(git -C "$path" describe --all 2>&1)" = "heads/$ref" ]; then
         git -C "$path" checkout -q "$ref"
         git -C "$path" pull -q origin "$ref"
         printe_info "$path has been successfully updated"
