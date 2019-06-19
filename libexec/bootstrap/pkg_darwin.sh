@@ -20,7 +20,7 @@ MACPORTS_VER=2.5.4
 MACPORTS_SHA256=592e4a021588f37348fe7b806c202e4d77f75bcff1a0b20502d5f1177c2c21ff
 
 _setup_env() {
-    if [ ! -x $MACPORTS ]; then
+    if is_force || [ ! -x $MACPORTS ]; then
         printe_h2 "Bootstrapping MacPorts..."
 
         xcode-select --install 2>/dev/null || true
@@ -38,9 +38,9 @@ _setup_env() {
     fi
 
     if version_gte "$MAS_PLATFORM" "$PLATFORM_VERS"; then
-        if [ ! -x $MAS ]; then
+        if is_force || [ ! -x $MAS ]; then
             printe_h2 "Bootstrapping mas..."
-            run_root $MACPORTS -N install mas
+            run_root $MACPORTS -Nf install mas
         fi
     else
         printe_info "mas command line utility requires macOS <= 10.14"
