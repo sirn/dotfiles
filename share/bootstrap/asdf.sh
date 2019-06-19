@@ -77,15 +77,9 @@ _asdf_install_python_darwin() {
     plugin=$1; shift
     version=$1; shift
 
-    if [ ! -d /opt/local/lib/libz.dylib ]; then
+    if [ ! -f /opt/local/lib/libsqlite3.dylib ]; then
         printe_err "Building python on darwin requires sqlite3"
         printe_err "Try \`port install sqlite3\`"
-        exit 1
-    fi
-
-    if [ ! -d /opt/local/lib/libsqlite3.dylib ]; then
-        printe_err "Building python on darwin requires zlib"
-        printe_err "Try \`port install zlib\`"
         exit 1
     fi
 
