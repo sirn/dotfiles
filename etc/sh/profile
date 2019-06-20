@@ -76,6 +76,10 @@ esac
 ## Local
 ##
 
+if [ -d "$HOME/.cache/rebar3/bin" ]; then
+    PATH=$PATH:$HOME/.cache/rebar3/bin
+fi
+
 for rbpath in "$HOME"/.gem/ruby/?.?/bin; do
     if [ -d "$rbpath" ]; then
         PATH=$PATH:$rbpath
