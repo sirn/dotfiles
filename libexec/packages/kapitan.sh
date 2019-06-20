@@ -13,8 +13,8 @@ if [ -z "$BUILD_DIR" ]; then
     trap 'rm -rf $BUILD_DIR' 0 1 2 3 6 14 15
 fi
 
-PYTHON3="$HOME/.asdf/shims/python3"
-PIP3="$HOME/.asdf/shims/pip3"
+PYTHON3=
+PIP3=
 
 KAPITAN_VER=0.23.0
 
@@ -59,7 +59,7 @@ _setup_cryptography() {
                         patch -p0
                 done
 
-                $PIP3 install .
+                $PIP3 install --user .
                 ;;
 
             * )
@@ -103,7 +103,7 @@ _setup_jsonnet() {
                     CXXFLAGS="-fPIC \
 -Iinclude -Ithird_party/md5 -Ithird_party/json \
 -std=c++11" \
-                    "$PIP3" install .
+                    "$PIP3" install --user .
                 ;;
 
             * )
@@ -111,7 +111,7 @@ _setup_jsonnet() {
                     CXXFLAGS="-fPIC \
 -Iinclude -Ithird_party/md5 -Ithird_party/json \
 -std=c++11" \
-                    "$PIP3" install jsonnet==$JSONNET_VER
+                    "$PIP3" install --user jsonnet==$JSONNET_VER
                 ;;
         esac
     fi
@@ -120,16 +120,18 @@ _setup_jsonnet() {
 _run() {
     printe_h2 "Installing kapitan..."
 
-    if [ ! -e "$PYTHON3" ]; then
-        printe_info "$PYTHON3 does not exists, skipping..."
-        return
-    fi
+    for ver in 3.7 3.6 3; do
+        if command -v pip$ver >/dev/null; then
+           PIP3=pip$ver
+           PYTHON3=python$ver
+           break
+        fi
+    done
 
     _setup_cryptography
     _setup_jsonnet
 
-    $PIP3 install kapitan==$KAPITAN_VER
-    "$HOME/.asdf/bin/asdf" reshim python
+    $PIP3 install --user kapitan==$KAPITAN_VER
 }
 
 _run

@@ -26,8 +26,6 @@ _run() {
     _do_pkg mosh
     _do_pkg the_silver_searcher
     _do_pkg unzip--iconv
-
-    sh "$BASE_DIR/libexec/packages/asdf.sh" "$@"
 }
 
 _run_desktop() {
@@ -53,7 +51,9 @@ _run_dev() {
     _do_pkg cabal-install
     _do_pkg doxygen
     _do_pkg duplicity
+    _do_pkg elixir
     _do_pkg entr
+    _do_pkg erlang%21
     _do_pkg expect
     _do_pkg ghc
     _do_pkg git-lfs
@@ -65,6 +65,9 @@ _run_dev() {
     _do_pkg metaauto
     _do_pkg node
     _do_pkg pkgconf
+    _do_pkg py3-pip
+    _do_pkg python%3
+    _do_pkg ruby%2.6
     _do_pkg rust
     _do_pkg socat
     _do_pkg terraform
@@ -72,11 +75,13 @@ _run_dev() {
 
     sh "$BASE_DIR/libexec/packages/execline.sh" "$@"
     sh "$BASE_DIR/libexec/packages/git-crypt.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/leiningen.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/erlang.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/rust.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/node.sh" "$@"
     sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/leiningen.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/node.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/python.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/rebar3.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/ruby.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/rust.sh" "$@"
 
     # Restore Google Cloud state directory. This is required for kubectl
     # to be able to authenticate with Google Cloud.

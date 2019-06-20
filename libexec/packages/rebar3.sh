@@ -1,6 +1,6 @@
 #!/bin/sh -e
 #
-# Install Erlang utilities
+# Install rebar3
 #
 
 BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
@@ -8,7 +8,8 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 # shellcheck source=../../share/bootstrap/funcs.sh
 . "$BASE_DIR/share/bootstrap/funcs.sh"
 
-ESCRIPT=$HOME/.asdf/shims/escript
+ESCRIPT=
+ERL=
 
 REBAR3_VER=3.10.0
 REBAR3_SHA256=5887a6228fec0a81d45416f53623563166d46b73b52638e6aaef6fa30d7ea5e7
@@ -18,8 +19,21 @@ REBAR3_PATH=$REBAR3_HOME/bin/rebar3
 _run() {
     printe_h2 "Installing rebar3..."
 
-    if [ ! -e "$ESCRIPT" ]; then
-        printe_info "$ESCRIPT does not exists, skipping..."
+    for ver in 22 21 20 ""; do
+        if command -v erl$ver >/dev/null; then
+           ESCRIPT=escript$ver
+           ERL=erl$ver
+           break
+        fi
+    done
+
+    if [ -z "$ESCRIPT" ]; then
+        printe_info "escript is not installed, skipping..."
+        return
+    fi
+
+    if [ -z "$ERL" ]; then
+        printe_info "erl is not installed, skipping..."
         return
     fi
 
@@ -31,6 +45,10 @@ _run() {
         chmod 755 "$REBAR3_PATH"
 
         "$ESCRIPT" "$REBAR3_PATH" local install
+
+        sed "s|erl|$ERL|" "$REBAR3_PATH" > "$REBAR3_PATH.new"
+        mv "$REBAR3_PATH.new" "$REBAR3_PATH"
+        chmod +x "$REBAR3_PATH"
     fi
 }
 

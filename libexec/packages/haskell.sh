@@ -64,6 +64,7 @@ _run() {
 _run_dev() {
     case $(uname) in
         OpenBSD )
+            printe_h2 "Installing haskell cabal dev packages..."
             _do_cabal_install shellcheck ShellCheck
             _do_cabal_install pandoc pandoc
             ;;

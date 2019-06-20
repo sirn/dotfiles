@@ -19,6 +19,7 @@ _run() {
 }
 
 _run_dev() {
+    printe_h2 "Installing npm dev packages..."
     npm install -g \
         bower \
         eslint \

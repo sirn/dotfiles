@@ -122,7 +122,7 @@ for p in pkg system user; do
 
             run=1
             printe_h1 "Running ${runscript}..."
-            "$runscript" "$FLAVORS"
+            sh "$runscript" "$FLAVORS"
         done
 
         if [ $run != 1 ]; then

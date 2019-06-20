@@ -78,6 +78,7 @@ _run() {
 
 _run_dev() {
     # racer >= 2.1 requires nightly which we cannot use
+    printe_h2 "Installing rust dev packages..."
     _do_cargo_install racer racer --vers ~2.0.0
     _do_cargo_install rustfmt rustfmt
 }

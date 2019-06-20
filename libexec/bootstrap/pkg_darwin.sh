@@ -64,8 +64,6 @@ _run() {
     _do_macports the_silver_searcher
     _do_macports tmux
     _do_macports w3m
-
-    sh "$BASE_DIR/libexec/packages/asdf.sh" "$@"
 }
 
 _run_desktop() {
@@ -89,7 +87,9 @@ _run_dev() {
     _do_macports autoconf
     _do_macports carthage
     _do_macports duplicity
+    _do_macports elixir
     _do_macports entr
+    _do_macports erlang
     _do_macports git-crypt
     _do_macports git-lfs
     _do_macports go
@@ -102,6 +102,10 @@ _run_dev() {
     _do_macports nodejs10
     _do_macports npm6
     _do_macports pandoc
+    _do_macports py37-pip
+    _do_macports python37
+    _do_macports rebar3
+    _do_macports ruby26
     _do_macports socat
     _do_macports terraform
     _do_macports tree
@@ -112,7 +116,6 @@ _run_dev() {
     # https://github.com/macports/macports-ports/pull/4577
     #_do_macports shellcheck
 
-    sh "$BASE_DIR/libexec/packages/erlang.sh" "$@"
     sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"
     sh "$BASE_DIR/libexec/packages/node.sh" "$@"
     sh "$BASE_DIR/libexec/packages/rust.sh" "$@"

@@ -39,8 +39,6 @@ _run() {
     _do_pkgng the_silver_searcher
     _do_pkgng tmux
     _do_pkgng w3m
-
-    sh "$BASE_DIR/libexec/packages/asdf.sh" "$@"
 }
 
 _run_dev() {
@@ -48,7 +46,9 @@ _run_dev() {
     _do_pkgng GraphicsMagick
     _do_pkgng autoconf
     _do_pkgng duplicity
+    _do_pkgng elixir
     _do_pkgng entr
+    _do_pkgng erlang
     _do_pkgng execline
     _do_pkgng expect
     _do_pkgng git-crypt
@@ -67,11 +67,14 @@ _run_dev() {
     _do_pkgng pkgconf
     _do_pkgng py36-ansible
     _do_pkgng py36-asciinema
+    _do_pkgng py36-pip
+    _do_pkgng python36
+    _do_pkgng rebar3
+    _do_pkgng ruby
     _do_pkgng socat
     _do_pkgng terraform
     _do_pkgng tree
 
-    sh "$BASE_DIR/libexec/packages/erlang.sh" "$@"
     sh "$BASE_DIR/libexec/packages/rust.sh" "$@"
     sh "$BASE_DIR/libexec/packages/node.sh" "$@"
     sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"

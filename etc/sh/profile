@@ -25,13 +25,10 @@ export XDG_DATA_HOME
 export XDG_STATE_HOME
 
 PATH=/sbin:/bin:/usr/X11R6/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
-PATH=$HOME/.local/bin:$PATH
-PATH=$HOME/.cache/rebar3/bin:$PATH
-PATH=$HOME/.cabal/bin:$PATH
-PATH=$HOME/.cargo/bin:$PATH
+PATH=$PATH:$HOME/.local/bin:$HOME/.cabal/bin:$HOME/.cargo/bin
 
 GOPATH=$HOME/Dev/go
-PATH=$GOPATH/bin:$PATH
+PATH=$PATH:$GOPATH/bin
 export GOPATH
 
 # Note: leading colon to append to default MANPATH
@@ -54,6 +51,12 @@ case "$(uname)" in
             export JAVA_HOME
         fi
 
+        for pypath in "$HOME"/Library/Python/?.?/bin; do
+            if [ -d "$pypath" ]; then
+                PATH=$PATH:$pypath
+            fi
+        done
+
         PATH=$PATH:/Applications/mpv.app/Contents/MacOS
         ;;
 
@@ -61,11 +64,23 @@ case "$(uname)" in
         # shellcheck disable=SC2039
         ulimit -c 0
 
-        if [ -d /usr/local/jdk-1.8.0/bin ]; then
-            PATH=$PATH:/usr/local/jdk-1.8.0/bin
-        fi
+        for jdkpath in /usr/local/jdk-*/bin; do
+            if [ -d "$jdkpath" ]; then
+                PATH=$PATH:$jdkpath
+            fi
+        done
         ;;
 esac
+
+
+## Local
+##
+
+for rbpath in "$HOME"/.gem/ruby/?.?/bin; do
+    if [ -d "$rbpath" ]; then
+        PATH=$PATH:$rbpath
+    fi
+done
 
 
 ## GPG agent
@@ -81,15 +96,6 @@ if command -v gpgconf >/dev/null; then
 
     GPG_TTY=$(tty)
     export GPG_TTY
-fi
-
-
-## asdf
-##
-
-if [ -d "$HOME/.asdf" ]; then
-    # shellcheck source=../../../.asdf/asdf.sh
-    . "$HOME/.asdf/asdf.sh"
 fi
 
 
