@@ -27,7 +27,7 @@ JSONNET_VER=0.12.1
 JSONNET_SHA256=257c6de988f746cc90486d9d0fbd49826832b7a2f0dbdb60a515cc8a2596c950
 
 _setup_cryptography() {
-    if is_force || ! python3 -c 'import cryptography' >/dev/null 2>&1; then
+    if is_force || ! pip3 show cryptography==$PYCRYPT_VER >/dev/null 2>&1; then
         case $(openssl version | tr '[:upper:]' '[:lower:]') in
             libressl* )
                 # py-cryptography doesn't build under LibreSSL (e.g. OpenBSD)
@@ -66,7 +66,7 @@ _setup_cryptography() {
 }
 
 _setup_jsonnet() {
-    if is_force || ! python3 -c 'import _jsonnet' >/dev/null 2>&1; then
+    if is_force || ! pip3 show jsonnet==$JSONNET_VER >/dev/null 2>&1; then
         case $(uname) in
             FreeBSD | OpenBSD )
                 # We need to patch setup.py to explicitly call gmake instead of
