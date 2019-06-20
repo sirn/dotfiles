@@ -73,6 +73,29 @@ _run_dev() {
     _do_pkg terraform
     _do_pkg tree
 
+    printe_h2 "Installing default ruby links..."
+    run_root make_link /usr/local/bin/bundle26 /usr/local/bin/bundle
+    run_root make_link /usr/local/bin/bundler26 /usr/local/bin/bundler
+    run_root make_link /usr/local/bin/erb26 /usr/local/bin/erb
+    run_root make_link /usr/local/bin/gem26 /usr/local/bin/gem
+    run_root make_link /usr/local/bin/irb26 /usr/local/bin/irb
+    run_root make_link /usr/local/bin/rake26 /usr/local/bin/rake
+    run_root make_link /usr/local/bin/rdoc26 /usr/local/bin/rdoc
+    run_root make_link /usr/local/bin/ri26 /usr/local/bin/ri
+    run_root make_link /usr/local/bin/ruby26 /usr/local/bin/ruby
+
+    printe_h2 "Installing default erlang links..."
+    run_root make_link /usr/local/bin/ct_run21 /usr/local/bin/ct_run
+    run_root make_link /usr/local/bin/dialyzer21 /usr/local/bin/dialyzer
+    run_root make_link /usr/local/bin/epmd21 /usr/local/bin/epmd
+    run_root make_link /usr/local/bin/erl21 /usr/local/bin/erl
+    run_root make_link /usr/local/bin/erl_call21 /usr/local/bin/erl_call
+    run_root make_link /usr/local/bin/erlc21 /usr/local/bin/erlc
+    run_root make_link /usr/local/bin/escript21 /usr/local/bin/escript
+    run_root make_link /usr/local/bin/run_erl21 /usr/local/bin/run_erl
+    run_root make_link /usr/local/bin/to_erl21 /usr/local/bin/to_erl
+    run_root make_link /usr/local/bin/typer21 /usr/local/bin/typer
+
     sh "$BASE_DIR/libexec/packages/execline.sh" "$@"
     sh "$BASE_DIR/libexec/packages/git-crypt.sh" "$@"
     sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"

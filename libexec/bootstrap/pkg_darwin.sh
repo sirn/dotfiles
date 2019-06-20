@@ -43,7 +43,7 @@ _setup_env() {
             run_root $MACPORTS -Nf install mas
         fi
     else
-        printe_info "mas command line utility requires macOS <= 10.14"
+        printe_info "mas command line utility requires macOS <= $MAS_PLATFORM"
     fi
 }
 
@@ -102,6 +102,7 @@ _run_dev() {
     _do_macports nodejs10
     _do_macports npm6
     _do_macports pandoc
+    _do_macports py37-ansible
     _do_macports py37-pip
     _do_macports python37
     _do_macports rebar3
@@ -115,6 +116,12 @@ _run_dev() {
     # Outdated
     # https://github.com/macports/macports-ports/pull/4577
     #_do_macports shellcheck
+
+    printe_h2 "Installing default versions..."
+    run_root port select ansible py37-ansible
+    run_root port select pip3 pip37
+    run_root port select python3 python37
+    run_root port select ruby ruby26
 
     sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"
     sh "$BASE_DIR/libexec/packages/node.sh" "$@"

@@ -13,9 +13,6 @@ if [ -z "$BUILD_DIR" ]; then
     trap 'rm -rf $BUILD_DIR' 0 1 2 3 6 14 15
 fi
 
-PYTHON3=
-PIP3=
-
 KAPITAN_VER=0.23.0
 
 PYCRYPT_VER=2.6.1
@@ -30,7 +27,7 @@ JSONNET_VER=0.12.1
 JSONNET_SHA256=257c6de988f746cc90486d9d0fbd49826832b7a2f0dbdb60a515cc8a2596c950
 
 _setup_cryptography() {
-    if is_force || ! "$PYTHON3" -c 'import cryptography' >/dev/null 2>&1; then
+    if is_force || ! python3 -c 'import cryptography' >/dev/null 2>&1; then
         case $(openssl version | tr '[:upper:]' '[:lower:]') in
             libressl* )
                 # py-cryptography doesn't build under LibreSSL (e.g. OpenBSD)
@@ -59,7 +56,7 @@ _setup_cryptography() {
                         patch -p0
                 done
 
-                $PIP3 install --user .
+                pip3 install --user .
                 ;;
 
             * )
@@ -69,7 +66,7 @@ _setup_cryptography() {
 }
 
 _setup_jsonnet() {
-    if is_force || ! "$PYTHON3" -c 'import _jsonnet' >/dev/null 2>&1; then
+    if is_force || ! python3 -c 'import _jsonnet' >/dev/null 2>&1; then
         case $(uname) in
             FreeBSD | OpenBSD )
                 # We need to patch setup.py to explicitly call gmake instead of
@@ -103,7 +100,7 @@ _setup_jsonnet() {
                     CXXFLAGS="-fPIC \
 -Iinclude -Ithird_party/md5 -Ithird_party/json \
 -std=c++11" \
-                    "$PIP3" install --user .
+                    pip3 install --user .
                 ;;
 
             * )
@@ -111,7 +108,7 @@ _setup_jsonnet() {
                     CXXFLAGS="-fPIC \
 -Iinclude -Ithird_party/md5 -Ithird_party/json \
 -std=c++11" \
-                    "$PIP3" install --user jsonnet==$JSONNET_VER
+                    pip3 install --user jsonnet==$JSONNET_VER
                 ;;
         esac
     fi
@@ -120,18 +117,15 @@ _setup_jsonnet() {
 _run() {
     printe_h2 "Installing kapitan..."
 
-    for ver in 3.7 3.6 3; do
-        if command -v pip$ver >/dev/null; then
-           PIP3=pip$ver
-           PYTHON3=python$ver
-           break
-        fi
-    done
+    if ! command -v pip3 >/dev/null; then
+        printe_info "pip3 is not installed, skipping..."
+        return 1
+    fi
 
     _setup_cryptography
     _setup_jsonnet
 
-    $PIP3 install --user kapitan==$KAPITAN_VER
+    pip3 install --user kapitan==$KAPITAN_VER
 }
 
 _run
