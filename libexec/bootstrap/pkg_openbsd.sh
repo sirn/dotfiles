@@ -101,6 +101,7 @@ _run_dev() {
     run_root ln -sf /usr/local/bin/pip3.6 /usr/local/bin/pip3
     run_root ln -sf /usr/local/bin/pyvenv-3.6 /usr/local/bin/pyvenv
 
+    sh "$BASE_DIR/libexec/packages/cloudflared.sh" "$@"
     sh "$BASE_DIR/libexec/packages/execline.sh" "$@"
     sh "$BASE_DIR/libexec/packages/git-crypt.sh" "$@"
     sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"

@@ -123,6 +123,7 @@ _run_dev() {
     run_root port select python3 python37
     run_root port select ruby ruby26
 
+    sh "$BASE_DIR/libexec/packages/cloudflared.sh" "$@"
     sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"
     sh "$BASE_DIR/libexec/packages/node.sh" "$@"
     sh "$BASE_DIR/libexec/packages/python.sh" "$@"
