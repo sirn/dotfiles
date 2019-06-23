@@ -22,6 +22,7 @@
  ("emacs-ansible" . "8a097176d6772b6667254dbbe19c5fb64527bf5d")
  ("emacs-async" . "bd68cc1ab1ac6af890e250bdaa12ffb1cb9649be")
  ("emacs-elixir" . "694d133e847e9a6db6abd1c19850cec6d867ccce")
+ ("emacs-emamux" . "39f57786b2cdd3844888df42d71c7bd251f07158")
  ("emacs-git-gutter" . "00c05264af046b5ce248e5b0bc42f117d9c27a09")
  ("emacs-go-eldoc" . "cbbd2ea1e94a36004432a9ac61414cb5a95a39bd")
  ("emacs-hcl-mode" . "0f2c5ec7e7bcf77c8548e8cac8721ea935ca1b5e")
