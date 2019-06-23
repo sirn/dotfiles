@@ -36,6 +36,8 @@ _run() {
     _do_pkgng mosh
     _do_pkgng oksh
     _do_pkgng openjdk8-jre
+    _do_pkgng pstree
+    _do_pkgng socat
     _do_pkgng the_silver_searcher
     _do_pkgng tmux
     _do_pkgng w3m

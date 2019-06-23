@@ -24,6 +24,8 @@ _run() {
     _do_pkg jdk%1.8
     _do_pkg mercurial
     _do_pkg mosh
+    _do_pkg pstree
+    _do_pkg socat
     _do_pkg the_silver_searcher
     _do_pkg unzip--iconv
 }

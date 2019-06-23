@@ -61,6 +61,8 @@ _run() {
     _do_macports mosh
     _do_macports oksh
     _do_macports openssh
+    _do_macports pstree
+    _do_macports socat
     _do_macports the_silver_searcher
     _do_macports tmux
     _do_macports w3m
