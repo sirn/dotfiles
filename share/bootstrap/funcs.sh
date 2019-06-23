@@ -222,13 +222,20 @@ is_force() {
 verify_shasum() {
     filepath=$1; shift
     shasum=$1; shift
+    cmd=
 
-    if ! command -v sha256 >/dev/null; then
+    if command -v sha256 >/dev/null; then
+        cmd=sha256
+    elif command -v shasum >/dev/null; then
+        cmd=shasum
+    fi
+
+    if [ -z "$cmd" ]; then
         printe_info "No sha256 binary found, skipping checksum..."
         return 0
     fi
 
-    echo "$shasum  $filepath" | sha256 -c -
+    echo "$shasum  $filepath" | "$cmd" -c -
 }
 
 file_absent() {
