@@ -26,11 +26,13 @@ _run() {
 
     printe_h2 "Installing packages..."
     _do_pkgng aria2
+    _do_pkgng aspell
     _do_pkgng base64
     _do_pkgng ca_root_nss
     _do_pkgng compat8x-amd64
     _do_pkgng curl
     _do_pkgng emacs-nox
+    _do_pkgng en-aspell
     _do_pkgng git
     _do_pkgng mercurial
     _do_pkgng mosh
@@ -41,6 +43,7 @@ _run() {
     _do_pkgng the_silver_searcher
     _do_pkgng tmux
     _do_pkgng w3m
+    _do_pkgng weechat
 }
 
 _run_dev() {

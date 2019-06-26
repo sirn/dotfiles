@@ -14,6 +14,7 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 _run() {
     printe_h2 "Installing packages..."
     _do_pkg aria2
+    _do_pkg aspell
     _do_pkg base64
     _do_pkg colorls
     _do_pkg coreutils
@@ -28,6 +29,8 @@ _run() {
     _do_pkg socat
     _do_pkg the_silver_searcher
     _do_pkg unzip--iconv
+    _do_pkg weechat
+    _do_pkg weechat-python
 }
 
 _run_desktop() {

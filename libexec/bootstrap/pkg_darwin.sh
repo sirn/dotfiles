@@ -52,6 +52,8 @@ _run() {
 
     printe_h2 "Installing packages..."
     _do_macports aria2 +sqlite3
+    _do_macports aspell
+    _do_macports aspell-dict-en
     _do_macports curl +darwinssl +http2
     _do_macports dnscrypt-proxy
     _do_macports emacs
@@ -66,6 +68,7 @@ _run() {
     _do_macports the_silver_searcher
     _do_macports tmux
     _do_macports w3m
+    _do_macports weechat +python36 +aspell
 }
 
 _run_desktop() {
