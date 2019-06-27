@@ -8,6 +8,8 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 # shellcheck source=../../share/bootstrap/funcs.sh
 . "$BASE_DIR/share/bootstrap/funcs.sh"
 
+PLATFORM=$(get_platform)
+
 if [ -z "$BUILD_DIR" ]; then
     BUILD_DIR=$(mktemp -d)
     trap 'rm -rf $BUILD_DIR' 0 1 2 3 6 14 15
@@ -21,8 +23,8 @@ SKALIBS_SHA256=88a6000634cf8477b8649604984534fee11997ac0c08a271881a4974e30968f5
 _run() {
     printe_h2 "Installing execline..."
 
-    case $(uname) in
-        FreeBSD | OpenBSD )
+    case $PLATFORM in
+        freebsd | openbsd )
             require_bin gmake
             ;;
     esac

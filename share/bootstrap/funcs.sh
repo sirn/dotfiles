@@ -179,6 +179,10 @@ fetch_gh_raw() {
 ## Sysinfo
 ##
 
+get_platform() {
+    uname | tr '[:upper:]' '[:lower:]'
+}
+
 get_netif() {
     netif=$(ifconfig | awk '
 ! /^lo|^pf|^enc|^gif|^stf|^br|^\t/ {

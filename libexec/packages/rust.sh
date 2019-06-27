@@ -8,9 +8,11 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 # shellcheck source=../../share/bootstrap/funcs.sh
 . "$BASE_DIR/share/bootstrap/funcs.sh"
 
+PLATFORM=$(get_platform)
+
 _setup_rust() {
-    case $(uname) in
-        OpenBSD )
+    case $PLATFORM in
+        openbsd )
             # https://deftly.net/posts/2017-10-12-using-cabal-on-openbsd.html
             if command -v cargo >/dev/null; then
                 printe_h2 "Preparing wxallowed for cargo..."

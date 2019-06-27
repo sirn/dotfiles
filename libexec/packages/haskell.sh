@@ -9,7 +9,7 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 . "$BASE_DIR/share/bootstrap/funcs.sh"
 
 CABAL_PREFIX=
-PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
+PLATFORM=$(get_platform)
 
 _prepare_openbsd() {
     printe_h2 "Preparing wxallowed for cabal..."
@@ -62,8 +62,8 @@ _run() {
 }
 
 _run_dev() {
-    case $(uname) in
-        OpenBSD )
+    case $PLATFORM in
+        openbsd )
             printe_h2 "Installing haskell cabal dev packages..."
             _do_cabal_install shellcheck ShellCheck
             _do_cabal_install pandoc pandoc

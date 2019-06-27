@@ -8,6 +8,8 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 # shellcheck source=../../share/bootstrap/funcs.sh
 . "$BASE_DIR/share/bootstrap/funcs.sh"
 
+PLATFORM=$(get_platform)
+
 if [ -z "$BUILD_DIR" ]; then
     BUILD_DIR=$(mktemp -d)
     trap 'rm -rf $BUILD_DIR' 0 1 2 3 6 14 15
@@ -67,13 +69,13 @@ _setup_cryptography() {
 
 _setup_jsonnet() {
     if is_force || ! pip3 show jsonnet==$JSONNET_VER >/dev/null 2>&1; then
-        case $(uname) in
-            FreeBSD | OpenBSD )
+        case $PLATFORM in
+            freebsd | openbsd )
                 # We need to patch setup.py to explicitly call gmake instead of
                 # make because py-jsonnet setup.py assumes make is gmake.
                 # py-jsonnet also assumes od is GNU-compatible.
 
-                printe_info "Patching py-jsonnet for $(uname)..."
+                printe_info "Patching py-jsonnet for $PLATFORM..."
                 cd "$BUILD_DIR" || exit 1
 
                 require_bin gmake
@@ -88,7 +90,7 @@ _setup_jsonnet() {
                 mv setup.py.new setup.py
 
                 od_bin="od"
-                if [ "$(uname)" = "OpenBSD" ]; then
+                if [ "$PLATFORM" = "openbsd" ]; then
                     require_bin ggod "Try \`pkg_add coreutils\`"
                     od_bin=ggod
                 fi
