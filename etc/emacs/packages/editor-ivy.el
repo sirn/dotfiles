@@ -105,7 +105,7 @@
 
   :init
   (setq ivy-rich-path-style 'abbrev)
-  (setq ivy-format-function 'ivy-format-function-line)
+  (add-to-list 'ivy-format-functions-alist 'ivy-format-function-line)
 
   :config
   (ivy-rich-mode t))

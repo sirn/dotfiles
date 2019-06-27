@@ -12,7 +12,10 @@
   (setq projectile-switch-project-action 'projectile-dired)
   (with-eval-after-load 'evil-leader
     (evil-leader/set-key
-      "pk" 'projectile-kill-buffers))
+      "pk" 'projectile-kill-buffers
+      "pr" 'projectile-run-project
+      "p'" 'projectile-run-eshell
+      "p!" 'projectile-run-async-shell-command-in-root))
 
   :config
   (projectile-mode t)

@@ -34,6 +34,22 @@
 (add-hook 'after-init-hook `(lambda () (gr/make-frame-func (selected-frame))))
 
 
+(use-package ace-window
+  :straight t
+
+  :preface
+  (eval-when-compile
+    (defvar aw-dispatch-always))
+
+  :init
+  (setq aw-dispatch-always t)
+
+  (define-key global-map (kbd "M-o") 'ace-window)
+  (with-eval-after-load 'evil-leader
+    (evil-leader/set-key
+      "ww" 'ace-window)))
+
+
 (use-package fill-column-indicator
   :diminish fci-mode
   :straight t
@@ -57,35 +73,3 @@
 
   :config
   (global-git-gutter-mode t))
-
-
-(use-package winum
-  :straight t
-
-  :preface
-  (eval-when-compile
-    (declare-function winum-mode nil))
-
-  :config
-  (defun gr/winum-assign-func ()
-    (when (and (boundp 'neo-buffer-name)
-               (string= (buffer-name) neo-buffer-name)
-               (eq (selected-window) (frame-first-window))) 0))
-  (add-to-list 'winum-assign-functions 'gr/winum-assign-func)
-
-  (setq winum-auto-setup-mode-line nil)
-  (setq winum-scope 'frame-local)
-  (winum-mode)
-
-  (with-eval-after-load 'evil-leader
-    (evil-leader/set-key
-      "0" 'winum-select-window-0
-      "1" 'winum-select-window-1
-      "2" 'winum-select-window-2
-      "3" 'winum-select-window-3
-      "4" 'winum-select-window-4
-      "5" 'winum-select-window-5
-      "6" 'winum-select-window-6
-      "7" 'winum-select-window-7
-      "8" 'winum-select-window-8
-      "9" 'winum-select-window-9)))
