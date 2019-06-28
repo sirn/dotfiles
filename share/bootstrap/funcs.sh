@@ -36,25 +36,13 @@ printe_err() {
 ##
 
 run_root() {
-    if   hash doas 2>/dev/null; then doas "$@"
-    elif hash sudo 2>/dev/null; then sudo "$@"
+    if command -v doas >/dev/null; then
+        doas "$@"
+    elif command -v sudo >/dev/null; then
+        sudo "$@"
     else
         print_err "Cannot escalate privileges"
         printe_err "%s: Try installing \`doas\` or \`sudo\`"
-        exit 1
-    fi
-}
-
-fetch_url() {
-    output=$1; shift
-    url=$1; shift
-
-    if   hash curl 2>/dev/null;  then curl -sSL -o "$output" "$url"
-    elif hash fetch 2>/dev/null; then fetch -q -o "$output" "$url"
-    elif hash ftp 2>/dev/null;   then ftp -V -o "$output" "$url"
-    else
-        printe_err "Cannot fetch URL"
-        printe_err "Try installing \`curl\`"
         exit 1
     fi
 }
@@ -129,19 +117,69 @@ git_clone() {
     if [ ! -d "$path" ]; then
         git clone "$repo" "$path"
         git -C "$path" checkout "$ref"
-
     elif [ "$(git -C "$path" describe --all 2>&1)" = "heads/$ref" ]; then
         git -C "$path" checkout -q "$ref"
         git -C "$path" pull -q origin "$ref"
         printe_info "$path has been successfully updated"
-
     elif [ "$(git -C "$path" describe 2>&1)" != "$ref" ] &&
          [ "$(git -C "$path" rev-parse --short HEAD)" != "$ref" ]; then
         git -C "$path" fetch origin
         git -C "$path" checkout "$ref"
-
     else
         printe_info "$path is already at $ref"
+    fi
+}
+
+fetch_url() {
+    output=$1; shift
+    url=$1; shift
+    tmpfile=$(mktemp)
+
+    if command -v aria2c >/dev/null; then
+        printe_info "Downloading $url with aria2..."
+        if ! aria2c -q \
+             -d "$(dirname "$tmpfile")" \
+             -o "$(basename "$tmpfile")" \
+             "$url"; then
+            rm "$tmpfile"
+            exit 1
+        fi
+    elif command -v curl >/dev/null; then
+        printe_info "Downloading $url with curl..."
+        if ! curl -sSL -o "$tmpfile" "$url"; then
+            rm "$tmpfile"
+            exit 1
+        fi
+    elif command -v fetch >/dev/null; then
+        printe_info "Downloading $url with fetch..."
+        if ! fetch -q -o "$tmpfile" "$url"; then
+            rm "$tmpfile"
+            exit 1
+        fi
+    elif command -v wget >/dev/null; then
+        printe_info "Downloading $url with wget..."
+        if ! wget -q -O "$tmpfile" "$url"; then
+            rm "$tmpfile"
+            exit 1
+        fi
+    elif command -v ftp >/dev/null; then
+        printe_info "Downloading $url with ftp..."
+        if ! ftp -V -o "$tmpfile" "$url"; then
+            rm "$tmpfile"
+            exit 1
+        fi
+    else
+        printe_err "Cannot fetch URL"
+        printe_err "Try installing \`curl\`"
+        rm "$tmpfile"
+        exit 1
+    fi
+
+    if [ "$output" = "-" ]; then
+        cat "$tmpfile"
+        rm "$tmpfile"
+    else
+        mv "$tmpfile" "$output"
     fi
 }
 
@@ -184,12 +222,37 @@ get_platform() {
 }
 
 get_netif() {
-    netif=$(ifconfig | awk '
-! /^lo|^pf|^enc|^gif|^stf|^br|^\t/ {
-    FS=":"; print $1; exit
-}')
+    netif=
 
-    if ! ifconfig "$netif" >/dev/null 2>&1; then
+    case $(get_platform) in
+        openbsd )
+            for f in /etc/hostname.*; do
+                if [ ! -f "$f" ]; then
+                    continue
+                fi
+
+                n=${f##${f%%.*}.}
+                if ifconfig "$n" >/dev/null 2>&1; then
+                    netif=$n
+                    break
+                fi
+            done
+            ;;
+
+        freebsd )
+            for i in $(ifconfig -l -u); do
+                if ifconfig "$i" |grep -q ether; then
+                    netif=$i
+                    break
+                fi
+            done
+            ;;
+
+        * )
+            ;;
+    esac
+
+    if [ -z "$netif" ]; then
         printe_err "Could not determine primary network interface"
         exit 1
     fi
@@ -258,18 +321,20 @@ make_link() {
     dest=$1; shift
 
     if [ ! -e "$src" ]; then
-        printe "$src doesn't exists, skipping..."
+        printe "$src does not exists, skipping..."
         return
     fi
 
-    if [ -f "$dest" ] && [ ! -L "$dest" ]; then
-        printe "$dest already exists and is not a link, skipping"
-        return
-    fi
+    if ! is_force; then
+        if [ -f "$dest" ] && [ ! -L "$dest" ]; then
+            printe "$dest already exists and is not a link, skipping"
+            return
+        fi
 
-    if [ "$(readlink "$dest")" = "$src" ]; then
-        printe "$dest already linked"
-        return
+        if [ "$(readlink "$dest")" = "$src" ]; then
+            printe "$dest already linked"
+            return
+        fi
     fi
 
     mkdir -p "$(dirname "$dest")"
@@ -340,6 +405,16 @@ change_shell() {
 
     if ! target_shell_bin=$(command -v "$target_shell"); then
         printe_err "$target_shell is not a valid shell, aborting"
+        exit 1
+    fi
+
+    if [ "$SHELL" = "$target_shell_bin" ]; then
+        printe_info "Already running $target_shell, skipping..."
+        exit
+    fi
+
+    if ! command -v chsh >/dev/null; then
+        printe_err "chsh is not available, aborting"
         exit 1
     fi
 
