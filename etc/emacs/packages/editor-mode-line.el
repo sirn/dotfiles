@@ -3,7 +3,8 @@
   :straight t
 
   :preface
-  (declare-function minions-mode nil)
+  (eval-when-compile
+    (declare-function minions-mode nil))
 
   :init
   (with-eval-after-load 'evil-leader
@@ -14,11 +15,12 @@
   (minions-mode t))
 
 
-(use-package doom-modeline
+(use-package mood-line
   :straight t
 
   :preface
-  (declare-function doom-modeline-mode nil)
+  (eval-when-compile
+    (declare-function mood-line-mode nil))
 
   :config
-  (doom-modeline-mode t))
+  (mood-line-mode t))
