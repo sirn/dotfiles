@@ -39,6 +39,7 @@ _run_desktop() {
     _do_pkg adobe-source-sans-pro
     _do_pkg adobe-source-serif-pro
     _do_pkg emacs--gtk3
+    _do_pkg feh
     _do_pkg firefox
     _do_pkg noto-cjk
     _do_pkg noto-emoji

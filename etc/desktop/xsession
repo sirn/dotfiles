@@ -8,48 +8,80 @@ if [ -f "$HOME/.profile" ]; then
     . "$HOME/.profile"
 fi
 
-xrdb -merge "$HOME/.Xresources"
-xset b off
-xsetroot -solid "#2f3640"
 
-if command -v trayer >/dev/null; then
-    trayer \
-        --edge top \
-        --align right \
-        --widthtype request \
-        --height 40 \
-        --padding 20 \
-        --transparent true \
-        --alpha 0 \
-        --tint 0xff2f3640 &
-fi
+## Utils
+##
 
-if command -v xclock >/dev/null; then
-    xclock \
-        -digital \
-        -update 1 \
-        -bg "#2f3640" \
-        -fg "#7f8fa6" \
-        -face 'sans-11:bold' \
-        -geometry 500x40+20+0 \
-        -render &
-fi
+run_background() {
+    pidname=$1; shift
 
-# Only run vmwh if it's exists (e.g. OpenBSD) and not already running.
-# Having multiple vmwh process will cause race condition on clipboard
-# since all process will attempt to write clipboard at the same time.
-if command -v vmwh >/dev/null; then
-    if [ -f "$HOME/.vmwh.pid" ]; then
-        vmwh_pid=$(cat "$HOME/.vmwh.pid")
-        if ! ps -o pid= -p "$vmwh_pid" >/dev/null; then
-            rm "$HOME/.vmwh.pid"
+    rundir="$HOME/.local/run"
+    pidfile="$rundir/$pidname"
+    mkdir -p "$rundir"
+
+    if [ -f "$pidfile" ]; then
+        pid=$(cat "$pidfile")
+
+        # BusyBox ps doesn't have ps -p
+        if [ -d /proc ] && [ ! -d /proc/"$pid" ]; then
+            rm "$pidfile"
+        elif ! ps -o pid= -p "$pid" >/dev/null; then
+            rm "$pidfile"
         fi
     fi
 
-    if [ ! -f "$HOME/.vmwh.pid" ]; then
-        vmwh &
-        echo "$!" > "$HOME/.vmwh.pid"
+    if [ ! -f "$pidfile" ]; then
+        "$@" &
+        echo "$!" > "$pidfile"
     fi
+}
+
+
+## Xrdb
+##
+
+for f in "$HOME/.Xresources" "$HOME/.Xresources.local"; do
+    if [ -f "$f" ]; then
+        xrdb -merge "$f"
+    fi
+done
+
+
+## Desktop
+##
+
+xset b off || true
+xsetroot -solid "#2f3640" || true
+if command -v feh >/dev/null && [ -f "$HOME/.wallpaper" ]; then
+    feh --bg-fill "$HOME/.wallpaper" &
 fi
+
+
+## Helper programs
+##
+
+# Window composition; should be disabled on low powered device such as
+# Intel Compute Stick, otherwise screen drawing would be really slow.
+if command -v compton >/dev/null; then
+    compton -b
+fi
+
+# Adjusting display temperature
+if command -v redshift >/dev/null && [ -f "$HOME/.config/redshift.cfg" ]; then
+    run_background \
+        redshift.pid \
+        redshift -c "$HOME/.config/redshift.cfg"
+fi
+
+# VMware clipboard sharing for OpenBSD
+if command -v vmwh >/dev/null; then
+    run_background \
+        vmwh.pid \
+        vmwh
+fi
+
+
+## WM
+##
 
 exec cwm

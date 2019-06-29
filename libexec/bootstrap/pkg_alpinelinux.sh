@@ -54,6 +54,7 @@ _run() {
 _run_desktop() {
     printe_h2 "Installing desktop packages..."
     _do_apk emacs-x11
+    _do_apk feh
     _do_apk firefox@testing
     _do_apk font-adobe-source-code-pro@testing
     _do_apk font-noto
