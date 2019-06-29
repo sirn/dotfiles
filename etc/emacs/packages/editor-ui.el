@@ -10,8 +10,6 @@
 
 (tool-bar-mode -1)
 (menu-bar-mode -1)
-(add-to-list 'default-frame-alist '(foreground-color . "white"))
-(add-to-list 'default-frame-alist '(background-color . "black"))
 
 
 (defun gr/make-frame-func (frame)
