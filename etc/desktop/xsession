@@ -66,8 +66,12 @@ if command -v compton >/dev/null; then
     compton -b
 fi
 
-# Adjusting display temperature
+# Adjust display temperature
 if command -v redshift >/dev/null && [ -f "$HOME/.config/redshift.cfg" ]; then
+    if [ -f "$HOME/.local/run/redshift.pid" ]; then
+        kill $(cat "$HOME/.local/run/redshift.pid")
+    fi
+
     run_background \
         redshift.pid \
         redshift -c "$HOME/.config/redshift.cfg"
