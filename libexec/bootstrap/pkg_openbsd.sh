@@ -35,16 +35,14 @@ _run() {
 
 _run_desktop() {
     printe_h2 "Installing desktop packages..."
-    _do_pkg adobe-source-code-pro
-    _do_pkg adobe-source-sans-pro
-    _do_pkg adobe-source-serif-pro
     _do_pkg emacs--gtk3
     _do_pkg feh
     _do_pkg firefox
-    _do_pkg noto-cjk
     _do_pkg noto-emoji
     _do_pkg noto-fonts
     _do_pkg w3m--image
+
+    sh "$BASE_DIR/libexec/packages/fontinst.sh" "$@"
 }
 
 _run_dev() {
@@ -137,14 +135,14 @@ _run_all() {
     # Only install emacs--no_x11 when other variant of Emacs hasn't been
     # installed (e.g. desktop flavor installs emacs--gtk3)
     if ! _check_installed emacs; then
-        run_root pkg_add emacs--no_x11
+        _do_pkg emacs--no_x11
     fi
 
     # Only install w3m-- when other variant of w3m hasn't been installed
     # (e.g. desktop flavor installs w3m--image which is required by emacs-w3m
     # when running under GUI mode)
     if ! _check_installed w3m; then
-        run_root pkg_add w3m--
+        _do_pkg w3m--
     fi
 }
 

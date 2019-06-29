@@ -56,12 +56,8 @@ _run_desktop() {
     _do_apk emacs-x11
     _do_apk feh
     _do_apk firefox@testing
-    _do_apk font-adobe-source-code-pro@testing
     _do_apk font-noto
     _do_apk font-noto-emoji@testing
-    _do_apk font-noto-thai
-    _do_apk ttf-droid
-    _do_apk ttf-droid-nonlatin
     _do_apk xset
     _do_apk xsetroot
 

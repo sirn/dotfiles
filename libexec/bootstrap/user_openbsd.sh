@@ -32,7 +32,9 @@ _run_desktop() {
     make_link "$BASE_DIR/etc/cwm/cwmrc" "$HOME/.cwmrc"
     make_link "$BASE_DIR/etc/desktop/Xresources" "$HOME/.Xresources"
     make_link "$BASE_DIR/etc/desktop/xsession" "$HOME/.xsession"
-    make_link "$BASE_DIR/etc/desktop/fonts.conf" "$HOME/.fonts.conf"
+    make_link \
+        "$BASE_DIR/etc/desktop/fonts.conf" \
+        "$HOME/.config/fontconfig/fonts.conf"
 }
 
 _run_dev() {
