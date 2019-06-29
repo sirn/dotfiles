@@ -43,7 +43,6 @@ _run_desktop() {
     _do_pkg noto-cjk
     _do_pkg noto-emoji
     _do_pkg noto-fonts
-    _do_pkg trayer
     _do_pkg w3m--image
 }
 

@@ -6,10 +6,12 @@
 ## Aliases
 ##
 
-alias ls='ls -G'
-
 if command -v colorls >/dev/null; then
     alias ls="colorls -G"
+elif ls --version 2>&1 |grep -qe "BusyBox" -e "GNU"; then
+    alias ls="ls --color"
+elif ls -G 2>&1; then
+    alias ls="ls -G"
 fi
 
 alias ll='ls -lh'

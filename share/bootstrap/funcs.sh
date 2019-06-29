@@ -218,7 +218,15 @@ fetch_gh_raw() {
 ##
 
 get_platform() {
-    uname | tr '[:upper:]' '[:lower:]'
+    platform=$(uname | tr '[:upper:]' '[:lower:]')
+
+    if [ "$platform" = "linux" ]; then
+        if [ -f /etc/alpine-release ]; then
+            platform=alpinelinux
+        fi
+    fi
+
+    echo "$platform"
 }
 
 get_netif() {
@@ -295,6 +303,8 @@ verify_shasum() {
         cmd=sha256
     elif command -v shasum >/dev/null; then
         cmd=shasum
+    elif command -v sha256sum >/dev/null; then
+        cmd=sha256sum
     fi
 
     if [ -z "$cmd" ]; then
@@ -410,7 +420,7 @@ change_shell() {
 
     if [ "$SHELL" = "$target_shell_bin" ]; then
         printe_info "Already running $target_shell, skipping..."
-        exit
+        return
     fi
 
     if ! command -v chsh >/dev/null; then
