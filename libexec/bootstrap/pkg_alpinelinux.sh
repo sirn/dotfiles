@@ -26,7 +26,7 @@ _run() {
     printe_h2 "Installing packages..."
 
     # Conflict with ubase
-    if ! _check_installed acct; then
+    if _check_installed acct; then
         run_root apk del acct
     fi
 
@@ -53,6 +53,12 @@ _run() {
 
 _run_desktop() {
     printe_h2 "Installing desktop packages..."
+
+    # Conflict with emacs-x11
+    if _check_installed emacs-nox; then
+        run_root apk del emacs-nox
+    fi
+
     _do_apk emacs-x11
     _do_apk feh
     _do_apk firefox@testing
@@ -60,6 +66,7 @@ _run_desktop() {
     _do_apk font-noto-emoji@testing
     _do_apk xset
     _do_apk xsetroot
+    _do_apk xterm
 
     sh "$BASE_DIR/libexec/packages/fontinst.sh" "$@"
 }

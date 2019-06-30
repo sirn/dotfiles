@@ -37,7 +37,7 @@ _install_font() {
 
     find "$srcdir" \
          \( -iname "*.ttf" -or -iname "*.ttc" \) \
-         -exec mv {\} "$dest" \;
+         -exec mv \{\} "$dest" \;
 
     touch "$dest/.installed"
 }
