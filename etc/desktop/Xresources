@@ -6,6 +6,9 @@ Xft.hintstyle: hintnone
 Xft.lcdfilter: lcddefault
 Xft.rgba: rgb
 
+!-- Idiocracy --!
+*VT100*backarrowKey: false
+
 !-- URxvt --!
 URxvt*background: Black
 URxvt*foreground: White
