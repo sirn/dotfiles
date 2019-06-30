@@ -135,16 +135,7 @@ fetch_url() {
     url=$1; shift
     tmpfile=$(mktemp)
 
-    if command -v aria2c >/dev/null; then
-        printe_info "Downloading $url with aria2..."
-        if ! aria2c -q \
-             -d "$(dirname "$tmpfile")" \
-             -o "$(basename "$tmpfile")" \
-             "$url"; then
-            rm "$tmpfile"
-            exit 1
-        fi
-    elif command -v curl >/dev/null; then
+    if command -v curl >/dev/null; then
         printe_info "Downloading $url with curl..."
         if ! curl -sSL -o "$tmpfile" "$url"; then
             rm "$tmpfile"
