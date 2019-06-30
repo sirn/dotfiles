@@ -59,11 +59,13 @@ _run_desktop() {
         run_root apk del emacs-nox
     fi
 
+    _do_apk cwm
     _do_apk emacs-x11
     _do_apk feh
     _do_apk firefox@testing
     _do_apk font-noto
     _do_apk font-noto-emoji@testing
+    _do_apk redshift
     _do_apk xset
     _do_apk xsetroot
     _do_apk xterm
