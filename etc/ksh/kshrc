@@ -6,11 +6,12 @@
 ## Aliases
 ##
 
+# shellcheck disable=SC2010
 if command -v colorls >/dev/null; then
     alias ls="colorls -G"
 elif ls --version 2>&1 |grep -qe "BusyBox" -e "GNU"; then
     alias ls="ls --color"
-elif ls -G 2>&1; then
+elif ls -G >/dev/null 2>&1 ; then
     alias ls="ls -G"
 fi
 
