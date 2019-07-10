@@ -75,6 +75,10 @@ _run_desktop() {
     printe_h2 "Installing desktop packages..."
     _do_macports emacs-mac-app
 
+    # Pending PR
+    # https://github.com/macports/macports-ports/pull/4787
+    #_do_macports mpv
+
     _do_mas 407963104 Pixelmator
     _do_mas 411643860 DaisyDisk
     _do_mas 413965349 Soulver
@@ -110,6 +114,7 @@ _run_dev() {
     _do_macports py37-ansible
     _do_macports py37-pip
     _do_macports python37
+    _do_macports qemu +target_arm +target_riscv64
     _do_macports rebar3
     _do_macports ruby26
     _do_macports socat

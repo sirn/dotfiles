@@ -56,8 +56,6 @@ case "$(uname)" in
                 PATH=$PATH:$pypath
             fi
         done
-
-        PATH=$PATH:/Applications/mpv.app/Contents/MacOS
         ;;
 
     OpenBSD )
