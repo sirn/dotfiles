@@ -31,7 +31,6 @@ _run() {
     _do_pkgng ca_root_nss
     _do_pkgng compat8x-amd64
     _do_pkgng curl
-    _do_pkgng emacs-nox
     _do_pkgng en-aspell
     _do_pkgng git
     _do_pkgng mercurial
@@ -44,6 +43,20 @@ _run() {
     _do_pkgng tmux
     _do_pkgng w3m
     _do_pkgng weechat
+}
+
+_run_desktop() {
+    printe_h2 "Installing desktop packages..."
+    _do_pkgng cwm
+    _do_pkgng emacs
+    _do_pkgng firefox
+    _do_pkgng noto
+    _do_pkgng redshift
+    _do_pkgng xset
+    _do_pkgng xsetroot
+    _do_pkgng xterm
+
+    sh "$BASE_DIR/libexec/packages/fontinst.sh" "$@"
 }
 
 _run_dev() {
@@ -96,4 +109,14 @@ _run_kubernetes() {
     sh "$BASE_DIR/libexec/packages/kapitan.sh" "$@"
 }
 
-run_with_flavors "$@"
+_run_all() {
+    run_with_flavors "$@"
+
+    # Only install emacs-nox when other variant of Emacs hasn't been
+    # installed (e.g. desktop flavor installs emacs-x11)
+    if ! _check_installed emacs; then
+        _do_pkgng emacs-nox
+    fi
+}
+
+_run_all "$@"
