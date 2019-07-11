@@ -86,6 +86,7 @@ _run_dev() {
     _do_pkgng py36-ansible
     _do_pkgng py36-asciinema
     _do_pkgng py36-pip
+    _do_pkgng python3
     _do_pkgng python36
     _do_pkgng rebar3
     _do_pkgng ruby
