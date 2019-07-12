@@ -254,7 +254,17 @@
 
 (use-package visual-regexp-steroids
   :after visual-regexp
-  :straight t)
+  :straight t
+
+  :preface
+  (eval-when-compile
+    (defvar vr/command-python))
+
+  :init
+  (setq vr/command-python
+    (format "%s %s"
+      "python3"
+      (straight--repos-file "visual-regexp-steroids.el/regexp.py"))))
 
 
 (use-package yasnippet
