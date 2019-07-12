@@ -17,7 +17,7 @@ _setup_env() {
         run_root ASSUME_ALWAYS_YES=yes pkg bootstrap
     else
         printe_h2 "Updating pkg..."
-        pkg update -q
+        run_root pkg update -q
     fi
 }
 
