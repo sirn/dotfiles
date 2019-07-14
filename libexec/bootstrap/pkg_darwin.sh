@@ -74,10 +74,7 @@ _run() {
 _run_desktop() {
     printe_h2 "Installing desktop packages..."
     _do_macports emacs-mac-app
-
-    # Pending PR
-    # https://github.com/macports/macports-ports/pull/4787
-    #_do_macports mpv
+    _do_macports mpv
 
     _do_mas 407963104 Pixelmator
     _do_mas 411643860 DaisyDisk
