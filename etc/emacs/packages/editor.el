@@ -18,6 +18,19 @@
       "jl" 'avy-goto-line)))
 
 
+(use-package apheleia
+  :straight (apheleia :host github :repo "raxod502/apheleia")
+
+  :preface
+  (eval-when-compile
+    (defvar apheleia-mode-alist)
+    (declare-function apheleia-global-mode nil))
+
+  :config
+  (apheleia-global-mode t)
+  (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier)))
+
+
 (use-package company
   :demand t
   :diminish company-mode
@@ -153,33 +166,6 @@
   (add-hook 'common-lisp-mode-hook 'parinfer-mode)
   (add-hook 'scheme-mode-hook 'parinfer-mode)
   (add-hook 'lisp-mode-hook 'parinfer-mode))
-
-
-(use-package prettier-js
-  :commands prettier-js-mode
-  :diminish prettier-js-mode
-  :straight (prettier-js :type git
-                         :host github
-                         :repo "prettier/prettier-emacs"
-                         :fork (:host github
-                                      :repo "sirn/prettier-emacs"
-                                      :branch "rcs-diff-program"))
-
-  :preface
-  (eval-when-compile
-    (defvar prettier-js-args)
-    (defvar prettier-js-diff-command))
-
-  :init
-  (setq prettier-js-args
-        '("--trailing-comma" "all"
-          "--tab-width" "4"))
-  (when (executable-find "gdiff")
-    (setq prettier-js-diff-command "gdiff"))
-  (add-hook 'css-mode-hook 'prettier-js-mode)
-  (add-hook 'js2-mode-hook 'prettier-js-mode)
-  (add-hook 'json-mode-hook 'prettier-js-mode)
-  (add-hook 'markdown-mode-hook 'prettier-js-mode))
 
 
 (use-package rainbow-delimiters

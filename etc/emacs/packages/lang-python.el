@@ -14,15 +14,6 @@
     (add-hook 'python-mode-hook 'anaconda-eldoc-mode)))
 
 
-(use-package blacken
-  :commands blacken-mode
-  :diminish blacken-mode
-  :straight t
-
-  :init
-  (add-hook 'python-mode-hook 'blacken-mode))
-
-
 (use-package company-anaconda
   :after anaconda-mode
   :commands company-anaconda

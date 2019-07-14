@@ -33,7 +33,4 @@
 (use-package go-mode
   :straight t
   :interpreter "go"
-  :mode "\\.go\\'"
-
-  :init
-  (add-hook 'before-save-hook 'gofmt-before-save))
+  :mode "\\.go\\'")
