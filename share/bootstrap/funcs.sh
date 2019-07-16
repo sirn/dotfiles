@@ -213,7 +213,7 @@ get_platform() {
 
     if [ "$platform" = "linux" ]; then
         if [ -f /etc/alpine-release ]; then
-            platform=alpinelinux
+            platform=alpine
         fi
     fi
 

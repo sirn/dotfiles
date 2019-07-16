@@ -8,8 +8,8 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 # shellcheck source=../../share/bootstrap/funcs.sh
 . "$BASE_DIR/share/bootstrap/funcs.sh"
 
-# shellcheck source=../../share/bootstrap/alpinelinux.sh
-. "$BASE_DIR/share/bootstrap/alpinelinux.sh"
+# shellcheck source=../../share/bootstrap/alpine.sh
+. "$BASE_DIR/share/bootstrap/alpine.sh"
 
 _setup_env() {
     lineinfile \
