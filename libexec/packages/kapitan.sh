@@ -15,6 +15,7 @@ if [ -z "$BUILD_DIR" ]; then
     trap 'rm -rf $BUILD_DIR' 0 1 2 3 6 14 15
 fi
 
+PIP=
 KAPITAN_VER=0.23.0
 
 PYCRYPT_VER=2.6.1
@@ -29,7 +30,7 @@ JSONNET_VER=0.12.1
 JSONNET_SHA256=257c6de988f746cc90486d9d0fbd49826832b7a2f0dbdb60a515cc8a2596c950
 
 _setup_cryptography() {
-    if is_force || ! pip3 show cryptography==$PYCRYPT_VER >/dev/null 2>&1; then
+    if is_force || ! $PIP show cryptography==$PYCRYPT_VER >/dev/null 2>&1; then
         case $(openssl version | tr '[:upper:]' '[:lower:]') in
             libressl* )
                 # py-cryptography doesn't build under LibreSSL (e.g. OpenBSD)
@@ -58,7 +59,7 @@ _setup_cryptography() {
                         patch -p0
                 done
 
-                pip3 install --user .
+                $PIP install --user .
                 ;;
 
             * )
@@ -68,7 +69,7 @@ _setup_cryptography() {
 }
 
 _setup_jsonnet() {
-    if is_force || ! pip3 show jsonnet==$JSONNET_VER >/dev/null 2>&1; then
+    if is_force || ! $PIP show jsonnet==$JSONNET_VER >/dev/null 2>&1; then
         case $PLATFORM in
             freebsd | openbsd )
                 # We need to patch setup.py to explicitly call gmake instead of
@@ -102,7 +103,7 @@ _setup_jsonnet() {
                     CXXFLAGS="-fPIC \
 -Iinclude -Ithird_party/md5 -Ithird_party/json \
 -std=c++11" \
-                    pip3 install --user .
+                    $PIP install --user .
                 ;;
 
             * )
@@ -110,7 +111,7 @@ _setup_jsonnet() {
                     CXXFLAGS="-fPIC \
 -Iinclude -Ithird_party/md5 -Ithird_party/json \
 -std=c++11" \
-                    pip3 install --user jsonnet==$JSONNET_VER
+                    $PIP install --user jsonnet==$JSONNET_VER
                 ;;
         esac
     fi
@@ -118,8 +119,9 @@ _setup_jsonnet() {
 
 _run() {
     printe_h2 "Installing kapitan..."
+    PIP=$(detect_pip3)
 
-    if ! command -v pip3 >/dev/null; then
+    if [ -z "$PIP" ]; then
         printe_info "pip3 is not installed, skipping..."
         return 1
     fi
@@ -127,7 +129,7 @@ _run() {
     _setup_cryptography
     _setup_jsonnet
 
-    pip3 install --user kapitan==$KAPITAN_VER
+    $PIP install --user kapitan==$KAPITAN_VER
 }
 
 _run

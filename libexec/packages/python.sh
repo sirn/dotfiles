@@ -8,8 +8,12 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 # shellcheck source=../../share/bootstrap/funcs.sh
 . "$BASE_DIR/share/bootstrap/funcs.sh"
 
+PIP=
+
 _run() {
-    if ! command -v pip3 >/dev/null; then
+    PIP=$(detect_pip3)
+
+    if [ -z "$PIP" ]; then
        printe_h2 "Installing python3 packages..."
        printe_info "pip3 is not installed, skipping..."
        return 1
@@ -17,7 +21,7 @@ _run() {
 }
 
 _run_dev() {
-    pip3 install --user \
+    $PIP install --user \
          black \
          ipwhois \
          pip \
