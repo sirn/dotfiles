@@ -3,7 +3,7 @@
  ("alchemist.el" . "6f99367511ae209f8fe2c990779764bbb4ccb6ed")
  ("anaconda-mode" . "24aa81ba62f13d7bb505a03fe244181c461fec68")
  ("ansible-doc.el" . "86083a7bb2ed0468ca64e52076b06441a2f8e9e0")
- ("apheleia" . "f2ae6c7f29f282b2774edd984c5dc194e6c9c451")
+ ("apheleia" . "1258aa6a441726a3516206837cefb67e68cc4917")
  ("auth-password-store" . "a40196e4bff7cfe1139dd744dc6a76f9404552cb")
  ("avy" . "66886e265cf41c6061dc70440eb5b61fad8f48e0")
  ("circe" . "6ccd4b494cbae9d28091217654f052eaea321007")
