@@ -28,7 +28,7 @@ printe_info() {
 }
 
 printe_err() {
-    printf >&2 "%s: %s" "$(basename "$0")" "$@"
+    printf >&2 "%s: %s\\n" "$(basename "$0")" "$@"
 }
 
 
