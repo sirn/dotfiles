@@ -5,22 +5,22 @@
 
 BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
-# shellcheck source=../../share/bootstrap/funcs.sh
-. "$BASE_DIR/share/bootstrap/funcs.sh"
+cd "$(dirname "$0")" || exit 1
+. "../../share/bootstrap/utils.sh"
 
 CABAL_PREFIX=
 PLATFORM=$(get_platform)
 
 _prepare_openbsd() {
-    printe_h2 "Preparing wxallowed for cabal..."
+    printe_info "Preparing wxallowed for cabal..."
 
     # See also: https://deftly.net/posts/2017-10-12-using-cabal-on-openbsd.html
-    if file_absent /usr/local/cabal; then
+    if [ ! -f /usr/local/cabal ]; then
         run_root mkdir -p /usr/local/cabal
         run_root chown "$USER:wheel" /usr/local/cabal
     fi
 
-    if file_absent /usr/local/cabal/build; then
+    if [ ! -f /usr/local/cabal/build ]; then
         run_root mkdir -p /usr/local/cabal/build
         run_root chown "$USER:wheel" /usr/local/cabal/build
     fi
@@ -31,18 +31,22 @@ _prepare_openbsd() {
     export TMPDIR
 }
 
-_do_cabal_install() {
+_cabal_install() {
     bin=$1; shift
 
-    if is_force || file_absent "$HOME/.cabal/bin/$bin"; then
-        cabal "${CABAL_PREFIX}install" "$@"
+    if ! forced && [ -f "$HOME/.cabal/bin/$bin" ]; then
+        printe_info "$HOME/.cabal/bin/$bin already exists, skipping..."
+        return
     fi
+
+    cabal "${CABAL_PREFIX}install" "$@"
 }
 
 _run() {
+    printe_h2 "Installing haskell packages..."
+
     if ! command -v cabal >/dev/null; then
-        printe_h2 "Installing haskell cabal packages..."
-        printe_info "cabal is not installed, skipping..."
+        printe_info "cabal is not installed, skipping haskell packages..."
         return 1
     fi
 
@@ -55,18 +59,24 @@ _run() {
         CABAL_PREFIX=v1-
     fi
 
-    if is_force || file_absent "$HOME/.cabal/packages/hackage.haskell.org"; then
-        printe_h2 "Updating haskell cabal package index..."
-        cabal "${CABAL_PREFIX}update"
+    hackage_repo=$HOME/.cabal/packages/hackage.haskell.org
+
+    if ! forced && [ -d "$hackage_repo" ]; then
+        printe_info "$hackage_repo already exists, skipping..."
+        return
     fi
+
+    printe_h2 "Updating haskell cabal package index..."
+    cabal "${CABAL_PREFIX}update"
 }
 
 _run_dev() {
     case $PLATFORM in
         openbsd )
             printe_h2 "Installing haskell cabal dev packages..."
-            _do_cabal_install shellcheck ShellCheck
-            _do_cabal_install pandoc pandoc
+
+            _cabal_install shellcheck ShellCheck
+            _cabal_install pandoc pandoc
             ;;
 
         * )

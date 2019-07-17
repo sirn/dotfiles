@@ -5,11 +5,13 @@
 
 BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
-# shellcheck source=../../share/bootstrap/funcs.sh
-. "$BASE_DIR/share/bootstrap/funcs.sh"
+cd "$(dirname "$0")" || exit 1
+. "../../share/bootstrap/utils.sh"
+. "../../share/bootstrap/utils_alpine.sh"
 
 _run() {
     printe_h2 "Installing links..."
+
     make_link "$BASE_DIR/etc/aria2/aria2.conf" "$HOME/.aria2/aria2.conf"
     make_link \
         "$BASE_DIR/etc/emacs/straight/versions/default.el" \
@@ -24,11 +26,13 @@ _run() {
     make_link "$BASE_DIR/etc/tmux/tmux.conf" "$HOME/.tmux.conf"
 
     printe_h2 "Changing user shell..."
+
     change_shell ksh
 }
 
 _run_desktop() {
     printe_h2 "Installing desktop links..."
+
     make_link "$BASE_DIR/etc/cwm/cwmrc" "$HOME/.cwmrc"
     make_link "$BASE_DIR/etc/desktop/Xresources" "$HOME/.Xresources"
     make_link "$BASE_DIR/etc/desktop/xsession" "$HOME/.xsession"
@@ -39,6 +43,7 @@ _run_desktop() {
 
 _run_dev() {
     printe_h2 "Installing dev links..."
+
     make_link "$BASE_DIR/etc/proselint/proselintrc" "$HOME/.proselintrc"
 }
 

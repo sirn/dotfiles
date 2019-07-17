@@ -5,78 +5,80 @@
 
 BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
-# shellcheck source=../../share/bootstrap/funcs.sh
-. "$BASE_DIR/share/bootstrap/funcs.sh"
-
-# shellcheck source=../../share/bootstrap/openbsd.sh
-. "$BASE_DIR/share/bootstrap/openbsd.sh"
+cd "$(dirname "$0")" || exit 1
+. "../../share/bootstrap/utils.sh"
+. "../../share/bootstrap/utils_openbsd.sh"
 
 _run() {
     printe_h2 "Installing packages..."
-    _do_pkg aria2
-    _do_pkg aspell
-    _do_pkg base64
-    _do_pkg colorls
-    _do_pkg coreutils
-    _do_pkg curl
-    _do_pkg gdiff
-    _do_pkg git
-    _do_pkg gtar--static
-    _do_pkg jdk%1.8
-    _do_pkg mercurial
-    _do_pkg mosh
-    _do_pkg pstree
-    _do_pkg socat
-    _do_pkg the_silver_searcher
-    _do_pkg unzip--iconv
-    _do_pkg weechat
-    _do_pkg weechat-python
+
+    pkg_install aria2
+    pkg_install aspell
+    pkg_install base64
+    pkg_install colorls
+    pkg_install coreutils
+    pkg_install curl
+    pkg_install gdiff
+    pkg_install git
+    pkg_install gtar--static
+    pkg_install jdk%1.8
+    pkg_install mercurial
+    pkg_install mosh
+    pkg_install pstree
+    pkg_install socat
+    pkg_install the_silver_searcher
+    pkg_install unzip--iconv
+    pkg_install weechat
+    pkg_install weechat-python
 }
 
 _run_desktop() {
     printe_h2 "Installing desktop packages..."
-    _do_pkg emacs--gtk3
-    _do_pkg feh
-    _do_pkg firefox
-    _do_pkg noto-emoji
-    _do_pkg noto-fonts
-    _do_pkg w3m--image
+
+    pkg_install emacs--gtk3
+    pkg_install feh
+    pkg_install firefox
+    pkg_install noto-emoji
+    pkg_install noto-fonts
+    pkg_install w3m--image
 
     sh "$BASE_DIR/libexec/packages/fontinst.sh" "$@"
 }
 
 _run_dev() {
     printe_h2 "Installing dev packages..."
-    _do_pkg GraphicsMagick
-    _do_pkg ansible
-    _do_pkg autoconf%2.69
-    _do_pkg automake%1.16
-    _do_pkg cabal-install
-    _do_pkg doxygen
-    _do_pkg duplicity
-    _do_pkg elixir
-    _do_pkg entr
-    _do_pkg erlang%21
-    _do_pkg expect
-    _do_pkg ghc
-    _do_pkg git-lfs
-    _do_pkg go
-    _do_pkg google-cloud-sdk
-    _do_pkg graphviz
-    _do_pkg ipcalc
-    _do_pkg jq
-    _do_pkg metaauto
-    _do_pkg node
-    _do_pkg pkgconf
-    _do_pkg py3-pip
-    _do_pkg python%3
-    _do_pkg ruby%2.6
-    _do_pkg rust
-    _do_pkg socat
-    _do_pkg terraform
-    _do_pkg tree
+
+    pkg_install GraphicsMagick
+    pkg_install ansible
+    pkg_install autoconf%2.69
+    pkg_install automake%1.16
+    pkg_install cabal-install
+    pkg_install doxygen
+    pkg_install duplicity
+    pkg_install elixir
+    pkg_install entr
+    pkg_install erlang%21
+    pkg_install expect
+    pkg_install ghc
+    pkg_install git-lfs
+    pkg_install go
+    pkg_install google-cloud-sdk
+    pkg_install graphviz
+    pkg_install ipcalc
+    pkg_install jq
+    pkg_install metaauto
+    pkg_install node
+    pkg_install pkgconf
+    pkg_install py3-pip
+    pkg_install python%3
+    pkg_install ruby%2.6
+    pkg_install rust
+    pkg_install socat
+    pkg_install terraform
+    pkg_install tree
 
     printe_info "Installing default ruby links..."
+
     run_root ln -sf /usr/local/bin/bundle26 /usr/local/bin/bundle
     run_root ln -sf /usr/local/bin/bundler26 /usr/local/bin/bundler
     run_root ln -sf /usr/local/bin/erb26 /usr/local/bin/erb
@@ -88,6 +90,7 @@ _run_dev() {
     run_root ln -sf /usr/local/bin/ruby26 /usr/local/bin/ruby
 
     printe_info "Installing default erlang links..."
+
     run_root ln -sf /usr/local/bin/ct_run21 /usr/local/bin/ct_run
     run_root ln -sf /usr/local/bin/dialyzer21 /usr/local/bin/dialyzer
     run_root ln -sf /usr/local/bin/epmd21 /usr/local/bin/epmd
@@ -100,6 +103,7 @@ _run_dev() {
     run_root ln -sf /usr/local/bin/typer21 /usr/local/bin/typer
 
     printe_info "Installing default python links..."
+
     run_root ln -sf /usr/local/bin/easy_install-3.6 /usr/local/bin/easy_install
     run_root ln -sf /usr/local/bin/pip3.6 /usr/local/bin/pip3
     run_root ln -sf /usr/local/bin/pyvenv-3.6 /usr/local/bin/pyvenv
@@ -134,15 +138,15 @@ _run_all() {
 
     # Only install emacs--no_x11 when other variant of Emacs hasn't been
     # installed (e.g. desktop flavor installs emacs--gtk3)
-    if ! _check_installed emacs; then
-        _do_pkg emacs--no_x11
+    if ! pkg_installed emacs; then
+        pkg_install emacs--no_x11
     fi
 
     # Only install w3m-- when other variant of w3m hasn't been installed
     # (e.g. desktop flavor installs w3m--image which is required by emacs-w3m
     # when running under GUI mode)
-    if ! _check_installed w3m; then
-        _do_pkg w3m--
+    if ! pkg_installed w3m; then
+        pkg_install w3m--
     fi
 }
 

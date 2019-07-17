@@ -5,15 +5,11 @@
 
 BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
-# shellcheck source=../../share/bootstrap/funcs.sh
-. "$BASE_DIR/share/bootstrap/funcs.sh"
+cd "$(dirname "$0")" || exit 1
+. "../../share/bootstrap/utils.sh"
+. "../../share/bootstrap/buildenv.sh"
 
 PLATFORM=$(get_platform)
-
-if [ -z "$BUILD_DIR" ]; then
-    BUILD_DIR=$(mktemp -d)
-    trap 'rm -rf $BUILD_DIR' 0 1 2 3 6 14 15
-fi
 
 PIP=
 KAPITAN_VER=0.23.0
@@ -30,97 +26,110 @@ JSONNET_VER=0.12.1
 JSONNET_SHA256=257c6de988f746cc90486d9d0fbd49826832b7a2f0dbdb60a515cc8a2596c950
 
 _setup_cryptography() {
-    if is_force || ! $PIP show cryptography==$PYCRYPT_VER >/dev/null 2>&1; then
-        case $(openssl version | tr '[:upper:]' '[:lower:]') in
-            libressl* )
-                # py-cryptography doesn't build under LibreSSL (e.g. OpenBSD)
-                # without patching the CFFI source to disable some OpenSSL
-                # features.
-
-                printe_info "Patching py-cryptography for libressl..."
-                cd "$BUILD_DIR" || exit 1
-
-                fetch_gh_archive \
-                    cryptography.tar.gz \
-                    pyca/cryptography \
-                    "$PYCRYPT_VER"
-
-                verify_shasum cryptography.tar.gz $PYCRYPT_SHA256
-                tar -C "$BUILD_DIR" -xzf cryptography.tar.gz
-                rm cryptography.tar.gz
-
-                cd "$BUILD_DIR/cryptography-$PYCRYPT_VER" || exit 1
-
-                for filename in $PYCRYPT_OPENBSD_PATCHES; do
-                    fetch_gh_raw - \
-                                 openbsd/ports \
-                                 "$PYCRYPT_OPENBSD_PATCH_COMMIT" \
-                                 "$filename" |
-                        patch -p0
-                done
-
-                $PIP install --user .
-                ;;
-
-            * )
-                ;;
-        esac
+    if ! forced && $PIP show cryptography==$PYCRYPT_VER >/dev/null 2>&1; then
+        printe_info "py-cryptography already installed"
+        return
     fi
+
+    case $(openssl version | tr '[:upper:]' '[:lower:]') in
+        libressl* )
+            # py-cryptography doesn't build under LibreSSL (e.g. OpenBSD)
+            # without patching the CFFI source to disable some OpenSSL
+            # features.
+
+            printe_info "Patching py-cryptography for libressl..."
+            cd "$BUILD_DIR" || exit 1
+
+            fetch_gh_archive \
+                cryptography.tar.gz \
+                pyca/cryptography \
+                "$PYCRYPT_VER"
+
+            verify_shasum cryptography.tar.gz $PYCRYPT_SHA256
+            tar -C "$BUILD_DIR" -xzf cryptography.tar.gz
+            rm cryptography.tar.gz
+
+            cd "$BUILD_DIR/cryptography-$PYCRYPT_VER" || exit 1
+
+            for filename in $PYCRYPT_OPENBSD_PATCHES; do
+                fetch_gh_raw - \
+                             openbsd/ports \
+                             "$PYCRYPT_OPENBSD_PATCH_COMMIT" \
+                             "$filename" |
+                    patch -p0
+            done
+
+            $PIP install --user .
+            ;;
+
+        * )
+            ;;
+    esac
 }
 
 _setup_jsonnet() {
-    if is_force || ! $PIP show jsonnet==$JSONNET_VER >/dev/null 2>&1; then
-        case $PLATFORM in
-            freebsd | openbsd )
-                # We need to patch setup.py to explicitly call gmake instead of
-                # make because py-jsonnet setup.py assumes make is gmake.
-                # py-jsonnet also assumes od is GNU-compatible.
-
-                printe_info "Patching py-jsonnet for $PLATFORM..."
-                cd "$BUILD_DIR" || exit 1
-
-                require_bin gmake
-
-                fetch_gh_archive jsonnet.tar.gz google/jsonnet "v$JSONNET_VER"
-                verify_shasum jsonnet.tar.gz $JSONNET_SHA256
-                tar -C "$BUILD_DIR" -xzf jsonnet.tar.gz
-                rm jsonnet.tar.gz
-
-                cd "$BUILD_DIR/jsonnet-$JSONNET_VER" || exit 1
-                sed "s/'make'/'gmake'/g" < setup.py > setup.py.new
-                mv setup.py.new setup.py
-
-                od_bin="od"
-                if [ "$PLATFORM" = "openbsd" ]; then
-                    require_bin ggod "Try \`pkg_add coreutils\`"
-                    od_bin=ggod
-                fi
-
-                env \
-                    OD=$od_bin \
-                    CC=cc \
-                    CXX=c++ \
-                    CXXFLAGS="-fPIC \
--Iinclude -Ithird_party/md5 -Ithird_party/json \
--std=c++11" \
-                    $PIP install --user .
-                ;;
-
-            * )
-                env \
-                    CXXFLAGS="-fPIC \
--Iinclude -Ithird_party/md5 -Ithird_party/json \
--std=c++11" \
-                    $PIP install --user jsonnet==$JSONNET_VER
-                ;;
-        esac
+    if ! forced && $PIP show jsonnet==$JSONNET_VER >/dev/null 2>&1; then
+        printe_info "py-jsonnet already installed"
+        return
     fi
+
+    case $PLATFORM in
+        freebsd | openbsd )
+            printe_info "Patching py-jsonnet for $PLATFORM..."
+
+            if ! command -v gmake >/dev/null; then
+                printe_info "gmake is required to be installed, skipping.."
+                return
+            fi
+
+            # py-jsonnet also assumes od is GNU-compatible.
+            od_bin="od"
+            if [ "$PLATFORM" = "openbsd" ]; then
+                od_bin="ggod"
+            fi
+
+            if ! command -v $od_bin >/dev/null; then
+                printe_info "$od_bin is required to be installed, skipping..."
+                return
+            fi
+
+            cd "$BUILD_DIR" || exit 1
+
+            fetch_gh_archive jsonnet.tar.gz google/jsonnet "v$JSONNET_VER"
+            verify_shasum jsonnet.tar.gz $JSONNET_SHA256
+            tar -C "$BUILD_DIR" -xzf jsonnet.tar.gz
+            rm jsonnet.tar.gz
+
+            # We need to patch setup.py to explicitly call gmake instead of
+            # make because py-jsonnet setup.py assumes make is gmake.
+            cd "$BUILD_DIR/jsonnet-$JSONNET_VER" || exit 1
+            sed "s/'make'/'gmake'/g" < setup.py > setup.py.new
+            mv setup.py.new setup.py
+
+            env \
+                OD=$od_bin \
+                CC=cc \
+                CXX=c++ \
+                CXXFLAGS="-fPIC \
+-Iinclude -Ithird_party/md5 -Ithird_party/json \
+-std=c++11" \
+                $PIP install --user .
+            ;;
+
+        * )
+            env \
+                CXXFLAGS="-fPIC \
+-Iinclude -Ithird_party/md5 -Ithird_party/json \
+-std=c++11" \
+                $PIP install --user jsonnet==$JSONNET_VER
+            ;;
+    esac
 }
 
 _run() {
     printe_h2 "Installing kapitan..."
-    PIP=$(detect_pip3)
 
+    PIP=$(detect_pip3)
     if [ -z "$PIP" ]; then
         printe_info "pip3 is not installed, skipping..."
         return 1

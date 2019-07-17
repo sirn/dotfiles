@@ -5,28 +5,9 @@
 
 BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
-# shellcheck source=../../share/bootstrap/funcs.sh
-. "$BASE_DIR/share/bootstrap/funcs.sh"
-
-if [ -z "$BUILD_DIR" ]; then
-    BUILD_DIR=$(mktemp -d)
-    trap 'rm -rf $BUILD_DIR' 0 1 2 3 6 14 15
-fi
-
-
-## Utils
-##
-
-_fontdir_absent() {
-    dest=$1; shift
-
-    if [ -f "$dest/.installed" ]; then
-        printe_info "$dest already exists"
-        return 1
-    fi
-
-    return 0
-}
+cd "$(dirname "$0")" || exit 1
+. "../../share/bootstrap/utils.sh"
+. "../../share/bootstrap/buildenv.sh"
 
 _install_font() {
     srcdir=$1; shift
@@ -42,10 +23,6 @@ _install_font() {
     touch "$dest/.installed"
 }
 
-
-## Installers
-##
-
 _install_font_gh() {
     name=$1; shift
     repo=$1; shift
@@ -53,20 +30,22 @@ _install_font_gh() {
     ver=$1; shift
 
     fontdir=$HOME/.data/fonts/$name
-    if is_force || _fontdir_absent "$fontdir"; then
-        cd "$BUILD_DIR" || exit 1
 
-        fetch_gh_archive \
-            "$name.tar.gz" \
-            "$repo" \
-            "$ver"
-
-        verify_shasum "$name.tar.gz" "$shasum"
-        tar -C "$BUILD_DIR" -xzf "$name.tar.gz"
-        _install_font \
-            "$BUILD_DIR/$name-$(echo "$ver" | tr "/" "-")" \
-            "$fontdir"
+    if ! forced && [ -f "$fontdir/.installed" ]; then
+        printe_info "$fontdir already exists, skipping..."
+        return
     fi
+
+    cd "$BUILD_DIR" || exit 1
+
+    fetch_gh_archive \
+        "$name.tar.gz" \
+        "$repo" \
+        "$ver"
+
+    verify_shasum "$name.tar.gz" "$shasum"
+    tar -C "$BUILD_DIR" -xzf "$name.tar.gz"
+    _install_font "$BUILD_DIR/$name-$(echo "$ver" | tr "/" "-")" "$fontdir"
 }
 
 _install_font_url() {
@@ -77,36 +56,33 @@ _install_font_url() {
     fontdir=$HOME/.data/fonts/$name
     basename=$(basename "$url")
 
-    if is_force || _fontdir_absent "$fontdir"; then
-        cd "$BUILD_DIR" || exit 1
-
-        fetch_url "$basename" "$url"
-        verify_shasum "$basename" "$shasum"
-
-        case "$basename" in
-            *.tar.gz )
-                tar -C "$BUILD_DIR" -xzf "$basename"
-                ;;
-
-            *.zip )
-                mkdir -p "$BUILD_DIR/$name"
-                unzip -d "$BUILD_DIR/$name" "$basename"
-                ;;
-
-            *.ttf | *.ttc )
-                mkdir -p "$BUILD_DIR/$name"
-                mv "$basename" "$BUILD_DIR/$name/"
-        esac
-
-        _install_font \
-            "$BUILD_DIR/$name" \
-            "$fontdir"
+    if ! forced && [ -f "$fontdir" ]; then
+        printe_info "$fontdir already exists, skipping..."
+        return
     fi
+
+    cd "$BUILD_DIR" || exit 1
+
+    fetch_url "$basename" "$url"
+    verify_shasum "$basename" "$shasum"
+
+    case "$basename" in
+        *.tar.gz )
+            tar -C "$BUILD_DIR" -xzf "$basename"
+            ;;
+
+        *.zip )
+            mkdir -p "$BUILD_DIR/$name"
+            unzip -d "$BUILD_DIR/$name" "$basename"
+            ;;
+
+        *.ttf | *.ttc )
+            mkdir -p "$BUILD_DIR/$name"
+            mv "$basename" "$BUILD_DIR/$name/"
+    esac
+
+    _install_font "$BUILD_DIR/$name" "$fontdir"
 }
-
-
-## Run
-##
 
 _run() {
     printe_h2 "Installing fonts..."

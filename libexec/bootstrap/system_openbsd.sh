@@ -5,24 +5,21 @@
 
 BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
-# shellcheck source=../../share/bootstrap/funcs.sh
-. "$BASE_DIR/share/bootstrap/funcs.sh"
-
-if [ -z "$BUILD_DIR" ]; then
-    BUILD_DIR=$(mktemp -d)
-    trap 'rm -rf $BUILD_DIR' 0 1 2 3 6 14 15
-fi
+cd "$(dirname "$0")" || exit 1
+. "../../share/bootstrap/utils.sh"
+. "../../share/bootstrap/utils_openbsd.sh"
+. "../../share/bootstrap/buildenv.sh"
 
 _setup_pf() {
     printe_h2 "Setting up pf..."
 
-    if ! is_force && [ -f /etc/pf.conf ]; then
-        printe_info "/etc/pf.conf already exists, not overwriting"
+    if ! forced && [ -f /etc/pf.conf ]; then
+        printe_info "/etc/pf.conf already exists, skipping..."
         return
     fi
 
     for file in pf.conf.local pf.trusted; do
-        if file_absent /etc/$file; then
+        if [ ! -f /etc/$file ]; then
             run_root touch /etc/$file
             run_root chown root:wheel /etc/$file
             run_root chmod 0600 /etc/$file
@@ -99,14 +96,14 @@ _setup_nfsd() {
 
     # Having root executing script from a user directory sounds dangerous
     # so let's install nfscron into libexec first.
-    if is_force || [ ! -x "$pfnfsd" ]; then
+    if forced || [ ! -x "$pfnfsd" ]; then
         run_root mkdir -p "$(dirname $pfnfsd)"
         run_root cp "$BASE_DIR/libexec/pfnfsd/pfnfsd.sh" $pfnfsd
         run_root chown root:wheel $pfnfsd
         run_root chmod 0700 $pfnfsd
     fi
 
-    if is_force || [ ! -x "$nfscron" ]; then
+    if forced || [ ! -x "$nfscron" ]; then
         run_root mkdir -p "$(dirname $nfscron)"
         run_root cp "$BASE_DIR/libexec/pfnfsd/periodic.sh" $nfscron
         run_root chown root:wheel $nfscron

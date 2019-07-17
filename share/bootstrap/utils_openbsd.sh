@@ -3,10 +3,7 @@
 # Install OpenBSD packages with Pkg.
 #
 
-## Package installation
-##
-
-_check_installed() {
+pkg_installed() {
     spec=$1; shift
 
     spec=${spec%%--*}    # pkg--flavor stem
@@ -20,10 +17,10 @@ _check_installed() {
     pkg_info -q -e "$spec"
 }
 
-_do_pkg() {
+pkg_install() {
     pkg=$1; shift
 
-    if _check_installed "$pkg"; then
+    if pkg_installed "$pkg"; then
         printe "$pkg (pkg) already installed"
         return
     fi

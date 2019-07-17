@@ -28,7 +28,7 @@ printe_info() {
 }
 
 printe_err() {
-    printe "$(basename "$0"): $*"
+    printf >&2 "%s: %s" "$(basename "$0")" "$@"
 }
 
 
@@ -41,8 +41,8 @@ run_root() {
     elif command -v sudo >/dev/null; then
         sudo "$@"
     else
-        print_err "Cannot escalate privileges"
-        printe_err "%s: Try installing \`doas\` or \`sudo\`"
+        printe_err "Cannot escalate privileges"
+        printe_err "Try installing \`doas\` or \`sudo\`"
         exit 1
     fi
 }
@@ -60,7 +60,6 @@ trim() {
 
 normalize_bool() {
     value=$1; shift
-
     case $value in
         t* | T* | y* | Y* | 1 ) return 0;;
         * ) return 1;;
@@ -126,7 +125,7 @@ git_clone() {
         git -C "$path" fetch origin
         git -C "$path" checkout "$ref"
     else
-        printe_info "$path is already at $ref"
+        printe_info "$path already at $ref"
     fi
 }
 
@@ -281,7 +280,7 @@ get_sshd_port() {
 ## Utilities
 ##
 
-is_force() {
+forced() {
     normalize_bool "$FORCE"
 }
 
@@ -306,34 +305,23 @@ verify_shasum() {
     echo "$shasum  $filepath" | "$cmd" -c -
 }
 
-file_absent() {
-    path=$1; shift
-
-    if [ -e "$path" ]; then
-        printe_info "$path already exists"
-        return 1
-    fi
-
-    return 0
-}
-
 make_link() {
     src=$1; shift
     dest=$1; shift
 
     if [ ! -e "$src" ]; then
-        printe "$src does not exists, skipping..."
+        printe_info "$src does not exists, skipping..."
         return
     fi
 
-    if ! is_force; then
+    if ! forced; then
         if [ -f "$dest" ] && [ ! -L "$dest" ]; then
-            printe "$dest already exists and is not a link, skipping"
+            printe_info "$dest already exists and is not a link, skipping..."
             return
         fi
 
         if [ "$(readlink "$dest")" = "$src" ]; then
-            printe "$dest already linked"
+            printe_info "$dest already linked"
             return
         fi
     fi
@@ -341,7 +329,7 @@ make_link() {
     mkdir -p "$(dirname "$dest")"
     rm -f "$dest"
     ln -s "$src" "$dest"
-    printe "$dest has been linked to $src"
+    printe_info "$dest has been linked to $src"
 }
 
 lineinfile() {
@@ -425,40 +413,6 @@ change_shell() {
     fi
 
     run_root chsh -s "$target_shell_bin" "$USER"
-}
-
-
-## Guards
-##
-
-require_bin() {
-    pkg=$1; shift
-    desc=$1
-
-    if ! command -v "$pkg" >/dev/null; then
-        printe_err "$pkg could not be found on the system"
-
-        if [ -n "$desc" ]; then
-            printe_err "$desc"
-        fi
-
-        exit 1
-    fi
-}
-
-require_lib() {
-    lib=$1; shift
-    desc=$1
-
-    if ! pkg-config "$lib"; then
-        printe_err "$lib is required to be installed"
-
-        if [ -n "$desc" ]; then
-            printe_err "$desc"
-        fi
-
-        exit 1
-    fi
 }
 
 

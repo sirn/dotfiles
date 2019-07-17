@@ -3,18 +3,15 @@
 # Shared functions for Alpine Linux
 #
 
-## Package installation
-##
-
-_check_installed() {
+apk_installed() {
     pkg=$1; shift
     apk info -qe "$pkg"
 }
 
-_do_apk() {
+apk_install() {
     pkg=$1; shift
 
-    if _check_installed "$pkg"; then
+    if apk_installed "$pkg"; then
         printe "$pkg (apk) already installed"
         return
     fi

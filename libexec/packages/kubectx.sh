@@ -5,8 +5,8 @@
 
 BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
-# shellcheck source=../../share/bootstrap/funcs.sh
-. "$BASE_DIR/share/bootstrap/funcs.sh"
+cd "$(dirname "$0")" || exit 1
+. "../../share/bootstrap/utils.sh"
 
 KUBECTX_VERSION=0.6.3
 
