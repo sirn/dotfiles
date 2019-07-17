@@ -34,8 +34,7 @@ _run_dev() {
         tern \
         tslint \
         typescript \
-        wscat \
-        yarn
+        wscat
 }
 
 run_with_flavors "$@"
