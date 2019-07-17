@@ -39,6 +39,7 @@ _run() {
         "$worksrc/cloudflared"
 
     cd "$worksrc/cloudflared/cmd/cloudflared" || exit 1
+    mkdir -p "$HOME/.local/bin"
     go install .
     cp "$BUILD_DIR/go/bin/cloudflared" "$HOME/.local/bin/cloudflared"
     printe_info "cloudflared has been successfully installed"
