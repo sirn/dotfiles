@@ -393,8 +393,8 @@ change_shell() {
     target_shell=$1; shift
 
     if ! target_shell_bin=$(command -v "$target_shell"); then
-        printe_err "$target_shell is not a valid shell, aborting"
-        exit 1
+        printe_err "$target_shell is not a valid shell, skipping..."
+        return
     fi
 
     if [ "$SHELL" = "$target_shell_bin" ]; then
@@ -403,8 +403,8 @@ change_shell() {
     fi
 
     if ! command -v chsh >/dev/null; then
-        printe_err "chsh is not available, aborting"
-        exit 1
+        printe_err "chsh is not available, skipping..."
+        return
     fi
 
     if ! grep -q "$target_shell_bin" /etc/shells; then
