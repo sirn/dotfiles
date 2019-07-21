@@ -56,7 +56,7 @@ _install_font_url() {
     fontdir=$HOME/.data/fonts/$name
     basename=$(basename "$url")
 
-    if ! forced && [ -f "$fontdir" ]; then
+    if ! forced && [ -f "$fontdir/.installed" ]; then
         printe_info "$fontdir already exists, skipping..."
         return
     fi
