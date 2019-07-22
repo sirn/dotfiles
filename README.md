@@ -5,6 +5,7 @@ This repository hosts my personal dotfiles as well as machine provisioning and w
 -   Alpine: [![builds.sr.ht status](https://builds.sr.ht/~sirn/dotfiles/alpine.yml.svg)](https://builds.sr.ht/~sirn/dotfiles/alpine.yml?)
 -   FreeBSD: [![builds.sr.ht status](https://builds.sr.ht/~sirn/dotfiles/freebsd.yml.svg)](https://builds.sr.ht/~sirn/dotfiles/freebsd.yml?)
 -   OpenBSD: [![builds.sr.ht status](https://builds.sr.ht/~sirn/dotfiles/openbsd.yml.svg)](https://builds.sr.ht/~sirn/dotfiles/openbsd.yml?)
+-   Ubuntu: [![builds.sr.ht status](https://builds.sr.ht/~sirn/dotfiles/ubuntu.yml.svg)](https://builds.sr.ht/~sirn/dotfiles/ubuntu.yml?)
 
 ## Usage
 
