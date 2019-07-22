@@ -6,7 +6,7 @@
 apt_installed() {
     pkg=$1; shift
     dpkg --get-selections |
-        awk '$2 == "install" { print $1 }' |
+        awk '$2 == "install" { split($1, s, ":"); print s[1] }' |
         grep -q ^"$pkg"$
 }
 
