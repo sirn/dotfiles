@@ -11,9 +11,7 @@ apt_installed() {
 }
 
 apt_bootstrap() {
-    if ! apt_installed software-properties-common; then
-        run_root apt-get install -y software-properties-common
-    fi
+    apt_install software-properties-common
 }
 
 apt_setup_ppa() {
@@ -38,7 +36,7 @@ apt_install() {
     fi
 
     printe "Installing $pkg (apt)..."
-    run_root apt-get install -y "$pkg"
+    run_root env DEBIAN_FRONTEND=noninteractive apt-get install -y "$pkg"
 }
 
 snap_installed() {
