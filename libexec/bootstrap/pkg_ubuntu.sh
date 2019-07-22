@@ -12,6 +12,7 @@ cd "$(dirname "$0")" || exit 1
 _run() {
     printe_h2 "Installing packages..."
 
+    apt_bootstrap
     apt_setup_ppa ppa:dysfunctionalprogramming/oksh
     apt_setup_ppa ppa:kelleyk/emacs
 

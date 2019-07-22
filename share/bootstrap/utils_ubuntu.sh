@@ -10,6 +10,12 @@ apt_installed() {
         grep -q ^"$pkg"$
 }
 
+apt_bootstrap() {
+    if ! apt_installed software-properties-common; then
+        run_root apt-get install -y software-properties-common
+    fi
+}
+
 apt_setup_ppa() {
     ppa=$1; shift
     ppa=${ppa#ppa:}
