@@ -36,11 +36,7 @@ _run_desktop() {
     printe_h2 "Installing desktop packages..."
 
     pkg_install emacs--gtk3
-    pkg_install feh
     pkg_install firefox
-    pkg_install noto-emoji
-    pkg_install noto-fonts
-    pkg_install w3m--image
 
     sh "$BASE_DIR/libexec/packages/fontinst.sh" "$@"
 }

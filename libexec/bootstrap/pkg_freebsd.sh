@@ -37,14 +37,8 @@ _run() {
 _run_desktop() {
     printe_h2 "Installing desktop packages..."
 
-    pkgng_install cwm
     pkgng_install emacs
     pkgng_install firefox
-    pkgng_install noto
-    pkgng_install redshift
-    pkgng_install xset
-    pkgng_install xsetroot
-    pkgng_install xterm
 
     sh "$BASE_DIR/libexec/packages/fontinst.sh" "$@"
 }

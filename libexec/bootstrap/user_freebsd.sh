@@ -30,6 +30,14 @@ _run() {
     change_shell oksh
 }
 
+_run_desktop() {
+    printe_h2 "Installing desktop links..."
+
+    make_link \
+        "$BASE_DIR/etc/desktop/fonts.conf" \
+        "$HOME/.config/fontconfig/fonts.conf"
+}
+
 _run_dev() {
     printe_h2 "Installing dev links..."
 

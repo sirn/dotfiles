@@ -47,16 +47,8 @@ _run_desktop() {
         run_root apk del emacs-nox
     fi
 
-    apk_install cwm
     apk_install emacs-x11
-    apk_install feh
     apk_install firefox@testing
-    apk_install font-noto
-    apk_install font-noto-emoji@testing
-    apk_install redshift
-    apk_install xset
-    apk_install xsetroot
-    apk_install xterm
 
     sh "$BASE_DIR/libexec/packages/fontinst.sh" "$@"
 }
