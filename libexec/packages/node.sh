@@ -23,6 +23,7 @@ _run_dev() {
     npm install -g \
         bower \
         eslint \
+        npm-upgrade \
         npx \
         prettier \
         solc \
