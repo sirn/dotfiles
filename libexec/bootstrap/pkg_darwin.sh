@@ -28,6 +28,7 @@ _run() {
     macports_install oksh
     macports_install openssh
     macports_install pstree
+    macports_install qemu +target_arm +target_riscv64
     macports_install socat
     macports_install the_silver_searcher
     macports_install tmux
@@ -77,7 +78,6 @@ _run_dev() {
     macports_install py37-ansible
     macports_install py37-pip
     macports_install python37
-    macports_install qemu +target_arm +target_riscv64
     macports_install rebar3
     macports_install ruby26
     macports_install socat
