@@ -22,13 +22,15 @@ _run() {
     apt_install build-essential
     apt_install curl
     apt_install git
-    apt_install oksh
     apt_install mercurial
     apt_install mosh
+    apt_install oksh
     apt_install openjdk-8-jre
+    apt_install ovmf
+    apt_install qemu
+    apt_install silversearcher-ag
     apt_install socat
     apt_install sqlite3
-    apt_install silversearcher-ag
     apt_install tmux
     apt_install w3m
     apt_install weechat
@@ -43,9 +45,59 @@ _run_desktop() {
     fi
 
     apt_install emacs26
+    apt_install virt-manager
     snap_install firefox
 
     sh "$BASE_DIR/libexec/packages/fontinst.sh" "$@"
+}
+
+_run_dev() {
+    printe_h2 "Installing dev packages..."
+
+    apt_setup_repo \
+        https://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc \
+        https://packages.erlang-solutions.com/ubuntu LSB_RELEASE contrib
+
+    apt_setup_repo \
+        https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
+        https://deb.nodesource.com/node_10.x LSB_RELEASE main
+
+    apt_setup_ppa ppa:ansible/ansible
+    apt_setup_ppa ppa:brightbox/ruby-ng
+    apt_setup_ppa ppa:longsleep/golang-backports
+
+    apt_install ansible
+    apt_install cabal-install
+    apt_install duplicity
+    apt_install elixir
+    apt_install entr
+    apt_install erlang
+    apt_install git-crypt
+    apt_install git-lfs
+    apt_install golang-go
+    apt_install graphicsmagick
+    apt_install graphviz
+    apt_install ipcalc
+    apt_install jq
+    apt_install leiningen
+    apt_install nodejs
+    apt_install pandoc
+    apt_install python3-pip
+    apt_install python3
+    apt_install ruby2.6
+    apt_install shellcheck
+    apt_install socat
+    apt_install tree
+
+    snap_install google-cloud-sdk --classic
+
+    sh "$BASE_DIR/libexec/packages/cloudflared.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/node.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/python.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/rebar3.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/rust.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/terraform.sh" "$@"
 }
 
 _run_all() {
