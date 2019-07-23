@@ -25,7 +25,7 @@ export XDG_DATA_HOME
 export XDG_STATE_HOME
 
 PATH=/sbin:/bin:/usr/X11R6/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
-PATH=$PATH:$HOME/.local/bin:$HOME/.cabal/bin:$HOME/.cargo/bin
+PATH=$PATH:$HOME/.local/bin:$HOME/.cabal/bin:$HOME/.cargo/bin:/snap/bin
 
 GOPATH=$HOME/Dev/go
 PATH=$PATH:$GOPATH/bin
