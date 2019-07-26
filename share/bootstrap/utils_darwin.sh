@@ -44,7 +44,7 @@ macports_install() {
             ;;
     esac
 
-    printe "Installing $pkg (macports)..."
+    printe_h2 "Installing $pkg (macports)..."
 
     if ! run_root $MACPORTS -n install "$pkg" "$@"; then
         printe_info "$pkg (macports) failed to install, skipping..."
@@ -55,7 +55,7 @@ macports_select() {
     sel=$1; shift
     pkg=$1; shift
 
-    printe "Selecting $pkg as default version for $sel (macports)..."
+    printe_info "Selecting $pkg as default version for $sel (macports)..."
     run_root $MACPORTS select "$sel" "$pkg"
 }
 
@@ -89,7 +89,7 @@ mas_install() {
         return
     fi
 
-    printe "Installing $app_name (mas)..."
+    printe_h2 "Installing $app_name (mas)..."
 
     if ! "$MAS" install "$pkg_id"; then
         printe_info "$app_name (mas) failed to install, skipping..."

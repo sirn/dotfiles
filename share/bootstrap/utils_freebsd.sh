@@ -26,6 +26,6 @@ pkgng_install() {
         return
     fi
 
-    printe "Installing $pkg (pkg)..."
+    printe_h2 "Installing $pkg (pkg)..."
     run_root pkg install -Uy "$pkg"
 }
