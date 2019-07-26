@@ -48,6 +48,10 @@ fi
 ## Prompt
 ##
 
+if [ -n "$TILIX_ID" ] && [ -f /etc/profile.d/vte.sh ]; then
+    . /etc/profile.d/vte.sh
+fi
+
 case "$TERM" in
     xterm* | rxvt* ) PS1="\h \w \$ ";;
     screen* ) PS1="\w \$ ";;
