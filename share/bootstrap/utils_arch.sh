@@ -20,6 +20,8 @@ ccm_bootstrap() {
     printe_h2 "Bootstrapping ccm..."
 
     if [ -f /etc/artix-release ]; then
+        run_root pacman -S --asdeps --noconfirm artools rsync
+
         repo=\~sirn/aur-clean-chroot-manager-artix
         url=https://git.sr.ht/$repo/archive/master.tar.gz
         pkgdir=$PKGBUILD_ROOT/clean-chroot-manager-artix
@@ -28,6 +30,7 @@ ccm_bootstrap() {
         fetch_url - $url | tar -C "$pkgdir" -xzf - --strip-components=1
         cd "$pkgdir" || exit 1
     else
+        run_root pacman -S --asdeps --noconfirm devtools rsync
         aur_fetch clean-chroot-manager
         cd "$PKGBUILD_ROOT/clean-chroot-manager" || exit 1
     fi
