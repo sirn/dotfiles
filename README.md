@@ -3,6 +3,7 @@
 This repository hosts my personal dotfiles as well as machine provisioning and workflow scripts. This repository come with no warranty. It may wipe your boot disk, eat your pet, etc. I like to experiment with my setup and this repository reflect that. Use it at your own risk.
 
 -   FreeBSD: [![builds.sr.ht status](https://builds.sr.ht/~sirn/dotfiles/freebsd.yml.svg)](https://builds.sr.ht/~sirn/dotfiles/freebsd.yml?)
+-   Arch Linux: [![builds.sr.ht status](https://builds.sr.ht/~sirn/dotfiles/freebsd.yml.svg)](https://builds.sr.ht/~sirn/dotfiles/arch.yml?)
 
 ## Usage
 
@@ -31,7 +32,7 @@ For example, running a `pkg` profile (`-p pkg`) on macOS that has lookup path of
 
 ### Why?
 
-I like to make my system reproducible. I mostly work on iPad Pro, by using [Blink.sh](http://www.blink.sh) to remote into a workspace running FreeBSD or OpenBSD depending on the phase of the moon. I also work on macOS sometimes, and I like to be able to run a single command to get everything in sync.
+I like to make my system reproducible. I mostly work on iPad Pro, by using [Blink.sh](http://www.blink.sh) to remote into a workspace running FreeBSD or Artix Linux depending on the phase of the moon. I also work on macOS sometimes, and I like to be able to run a single command to get everything in sync.
 
 ### Why not [Ansible](https://www.ansible.com)?
 
