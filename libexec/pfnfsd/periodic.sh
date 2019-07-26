@@ -12,13 +12,6 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 case $(uname) in
-    OpenBSD )
-        for svc in portmap mountd nfsd; do
-            while ! rcctl check $svc >/dev/null 2>&1; do
-                sleep 10
-            done
-        done
-        ;;
     FreeBSD )
         for svc in rpcbind mountd nfsd; do
             while ! service $svc onestatus >/dev/null 2>&1; do

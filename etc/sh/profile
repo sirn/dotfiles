@@ -57,14 +57,6 @@ case "$(uname)" in
             fi
         done
         ;;
-
-    OpenBSD )
-        # shellcheck disable=SC2039
-        ulimit -c 0
-
-        for jdkpath in /usr/local/jdk-*/bin; do
-            if [ -d "$jdkpath" ]; then
-                PATH=$PATH:$jdkpath
             fi
         done
         ;;

@@ -8,39 +8,16 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 cd "$(dirname "$0")" || exit 1
 . "../../share/bootstrap/utils.sh"
 
-PLATFORM=$(get_platform)
-
 _setup_rust() {
-    case $PLATFORM in
-        openbsd )
-            # https://deftly.net/posts/2017-10-12-using-cabal-on-openbsd.html
-            if ! command -v cargo >/dev/null; then
-                printe_info "rustup is not available under OpenBSD, skipping..."
-                return
-            fi
+    PATH=$HOME/.cargo/bin:$PATH
+    rustup_path=$HOME/.cargo/bin/rustup
 
-            printe_info "Preparing wxallowed for cargo..."
+    if ! forced && [ -f "$rustup_path" ]; then
+        printe_info "$rustup_path already exists, skipping..."
+        return
+    fi
 
-            if [ ! -f /usr/local/cargo ]; then
-                run_root mkdir -p /usr/local/cargo
-                run_root chown "$USER:wheel" /usr/local/cargo
-            fi
-
-            make_link /usr/local/cargo "$HOME/.cargo"
-            ;;
-
-        * )
-            PATH=$HOME/.cargo/bin:$PATH
-            rustup_path=$HOME/.cargo/bin/rustup
-
-            if ! forced && [ -f "$rustup_path" ]; then
-                printe_info "$rustup_path already exists, skipping..."
-                return
-            fi
-
-            fetch_url - https://sh.rustup.rs | sh -s - -y --no-modify-path
-            ;;
-    esac
+    fetch_url - https://sh.rustup.rs | sh -s - -y --no-modify-path
 }
 
 _setup_rust_src() {

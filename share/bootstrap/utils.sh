@@ -211,11 +211,7 @@ get_platform() {
     platform=$(uname | tr '[:upper:]' '[:lower:]')
 
     if [ "$platform" = "linux" ]; then
-        if [ -f /etc/os-release ] && grep -q ubuntu /etc/os-release; then
-            platform=ubuntu
-        elif [ -f /etc/os-release ] && grep -q debian /etc/os-release; then
-            platform=debian
-        elif [ -f /etc/alpine-release ]; then
+        if [ -f /etc/alpine-release ]; then
             platform=alpine
         elif [ -f /etc/arch-release ]; then
             platform=arch
@@ -231,20 +227,6 @@ get_netif() {
     netif=
 
     case $(get_platform) in
-        openbsd )
-            for f in /etc/hostname.*; do
-                if [ ! -f "$f" ]; then
-                    continue
-                fi
-
-                n=${f##${f%%.*}.}
-                if ifconfig "$n" >/dev/null 2>&1; then
-                    netif=$n
-                    break
-                fi
-            done
-            ;;
-
         freebsd )
             for i in $(ifconfig -l -u); do
                 if ifconfig "$i" |grep -q ether; then

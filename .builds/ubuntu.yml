@@ -1,8 +1,0 @@
----
-image: ubuntu/lts
-sources:
-  - https://git.sr.ht/~sirn/dotfiles
-tasks:
-  - setup: |
-      cd dotfiles
-      ./bootstrap.sh
