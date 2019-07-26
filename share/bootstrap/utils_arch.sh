@@ -36,6 +36,8 @@ ccm_bootstrap() {
     fi
 
     makepkg -Ci --noconfirm
+    run_root ccm64
+    run_root mkdir -p /scratch/.chroot64
 }
 
 ccm_install() {
