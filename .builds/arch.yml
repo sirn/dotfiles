@@ -5,4 +5,4 @@ sources:
 tasks:
   - setup: |
       cd dotfiles
-      ./bootstrap.sh
+      env AUR_CHROOT=n ./bootstrap.sh
