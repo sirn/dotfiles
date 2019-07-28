@@ -102,6 +102,15 @@ if command -v gpgconf >/dev/null; then
 fi
 
 
+## Desktop
+##
+
+case "${XDG_SESSION_TYPE}" in
+    wayland | x11 ) [ -f "$HOME/.desktoprc" ] && . "$HOME/.desktoprc";;
+    * ) ;;
+esac
+
+
 ## Finalizing
 ##
 
