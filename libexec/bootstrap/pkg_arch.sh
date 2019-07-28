@@ -53,7 +53,7 @@ _run_dev() {
     pacman_install duplicity
     pacman_install elixir
     pacman_install entr
-    pacman_install erlang
+    pacman_install erlang-nox
     pacman_install git-crypt
     pacman_install git-lfs
     pacman_install go
