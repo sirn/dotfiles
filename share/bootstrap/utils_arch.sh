@@ -4,6 +4,7 @@
 #
 
 PKGBUILD_ROOT=$HOME/.data/pkgbuild
+AUR_CHROOT=${AUR_CHROOT:-y}
 
 aur_fetch() {
     pkg=$1; shift
@@ -12,35 +13,49 @@ aur_fetch() {
     fetch_url - "$url" | tar -C "$PKGBUILD_ROOT" -xzf -
 }
 
-ccm_bootstrap() {
-    if command -v ccm64 >/dev/null; then
-        return
-    fi
+aur_bootstrap() {
+    if normalize_bool "$AUR_CHROOT"; then
+        if command -v ccm64 >/dev/null; then
+            return
+        fi
 
-    printe_h2 "Bootstrapping ccm..."
+        printe_h2 "Bootstrapping ccm..."
 
-    if [ -f /etc/artix-release ]; then
-        run_root pacman -S --asdeps --noconfirm artools rsync
+        if [ -f /etc/artix-release ]; then
+            run_root pacman -S --asdeps --noconfirm artools rsync
 
-        repo=\~sirn/aur-clean-chroot-manager-artix
-        url=https://git.sr.ht/$repo/archive/master.tar.gz
-        pkgdir=$PKGBUILD_ROOT/clean-chroot-manager-artix
+            repo=\~sirn/aur-clean-chroot-manager-artix
+            url=https://git.sr.ht/$repo/archive/master.tar.gz
+            pkgdir=$PKGBUILD_ROOT/clean-chroot-manager-artix
 
-        mkdir -p "$pkgdir"
-        fetch_url - $url | tar -C "$pkgdir" -xzf - --strip-components=1
-        cd "$pkgdir" || exit 1
+            mkdir -p "$pkgdir"
+            fetch_url - $url | tar -C "$pkgdir" -xzf - --strip-components=1
+            cd "$pkgdir" || exit 1
+        else
+            run_root pacman -S --asdeps --noconfirm devtools rsync
+            aur_fetch clean-chroot-manager
+            cd "$PKGBUILD_ROOT/clean-chroot-manager" || exit 1
+        fi
+
+        makepkg -Ci --noconfirm
+        run_root ccm64
+        run_root mkdir -p /scratch/.chroot64
     else
-        run_root pacman -S --asdeps --noconfirm devtools rsync
-        aur_fetch clean-chroot-manager
-        cd "$PKGBUILD_ROOT/clean-chroot-manager" || exit 1
-    fi
+        if command -v yay >/dev/null; then
+            return
+        fi
 
-    makepkg -Ci --noconfirm
-    run_root ccm64
-    run_root mkdir -p /scratch/.chroot64
+        printe_h2 "Bootstrapping Yay (chroot unrequested)..."
+
+        run_root pacman -S --noconfirm git
+        run_root pacman -S --asdeps --noconfirm go
+        aur_fetch yay
+        cd "$PKGBUILD_ROOT/yay" || exit 1
+        makepkg -Ci --noconfirm
+    fi
 }
 
-ccm_install() {
+aur_install() {
     pkg=$1; shift
 
     if pacman_installed "$pkg"; then
@@ -48,20 +63,25 @@ ccm_install() {
         return
     fi
 
-    printe_h2 "Installing $pkg (pacman via ccm)..."
+    if normalize_boolean "$AUR_CHROOT"; then
+        printe_h2 "Installing $pkg (ccm)..."
 
-    for n in "$PKGBUILD_ROOT/$pkg/"*".pkg.tar.xz"; do
-        if [ -f "$n" ]; then
-            printe_info "$n found and may be outdated, removing..."
-            rm "$n"
-        fi
-    done
+        for n in "$PKGBUILD_ROOT/$pkg/"*".pkg.tar.xz"; do
+            if [ -f "$n" ]; then
+                printe_info "$n found and may be outdated, removing..."
+                rm "$n"
+            fi
+        done
 
-    aur_fetch "$pkg"
-    cd "$PKGBUILD_ROOT/$pkg"
+        aur_fetch "$pkg"
+        cd "$PKGBUILD_ROOT/$pkg"
 
-    run_root ccm64 s
-    run_root pacman -U --noconfirm "$PKGBUILD_ROOT/$pkg/"*".pkg.tar.xz"
+        run_root ccm64 s
+        run_root pacman -U --noconfirm "$PKGBUILD_ROOT/$pkg/"*".pkg.tar.xz"
+    else
+        printe_h2 "Installing $pkg (yay)..."
+        run_root yay -S --noconfirm "$pkg"
+    fi
 }
 
 pacman_installed() {

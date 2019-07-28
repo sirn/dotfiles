@@ -12,7 +12,7 @@ cd "$(dirname "$0")" || exit 1
 _run() {
     printe_h2 "Installing packages..."
 
-    ccm_bootstrap
+    aur_bootstrap
 
     pacman_install aria2
     pacman_install aspell
@@ -28,7 +28,7 @@ _run() {
     pacman_install w3m
     pacman_install weechat
 
-    ccm_install oksh
+    aur_install oksh
 }
 
 _run_desktop() {
@@ -73,7 +73,7 @@ _run_dev() {
     pacman_install tree
     pacman_install xz
 
-    ccm_install google-cloud-sdk
+    aur_install google-cloud-sdk
 
     sh "$BASE_DIR/libexec/packages/cloudflared.sh" "$@"
     sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"
@@ -97,7 +97,7 @@ _run_kubernetes() {
     printe_h2 "Installing kubernetes packages..."
 
     pacman_install kubectl
-    ccm_install kubernetes-helm
+    aur_install kubernetes-helm
 
     sh "$BASE_DIR/libexec/packages/kubectx.sh" "$@"
     sh "$BASE_DIR/libexec/packages/kapitan.sh" "$@"
