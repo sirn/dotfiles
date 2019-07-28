@@ -63,7 +63,7 @@ aur_install() {
         return
     fi
 
-    if normalize_boolean "$AUR_CHROOT"; then
+    if normalize_bool "$AUR_CHROOT"; then
         printe_h2 "Installing $pkg (ccm)..."
 
         for n in "$PKGBUILD_ROOT/$pkg/"*".pkg.tar.xz"; do
