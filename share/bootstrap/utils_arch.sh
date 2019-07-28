@@ -14,6 +14,11 @@ aur_fetch() {
 }
 
 aur_bootstrap() {
+    if ! pacman_installed -g base-devel >/dev/null 2>&1; then
+        printe_h2 "Bootstrapping base-devel..."
+        pacman_install base-devel
+    fi
+
     if normalize_bool "$AUR_CHROOT"; then
         if command -v ccm64 >/dev/null; then
             return
@@ -22,7 +27,7 @@ aur_bootstrap() {
         printe_h2 "Bootstrapping ccm..."
 
         if [ -f /etc/artix-release ]; then
-            run_root pacman -S --asdeps --noconfirm artools rsync
+            pacman_install --asdeps artools rsync
 
             repo=\~sirn/aur-clean-chroot-manager-artix
             url=https://git.sr.ht/$repo/archive/master.tar.gz
@@ -85,8 +90,7 @@ aur_install() {
 }
 
 pacman_installed() {
-    pkg=$1; shift
-    pacman -Qq "$pkg" >/dev/null 2>&1
+    pacman -Qq "$@" >/dev/null 2>&1
 }
 
 pacman_install() {
@@ -98,5 +102,5 @@ pacman_install() {
     fi
 
     printe_h2 "Installing $pkg (pacman)..."
-    run_root pacman -S --noconfirm "$pkg"
+    run_root pacman -S --noconfirm "$pkg" "$@"
 }
