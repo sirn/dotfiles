@@ -85,7 +85,7 @@ aur_install() {
         run_root pacman -U --noconfirm "$PKGBUILD_ROOT/$pkg/"*".pkg.tar.xz"
     else
         printe_h2 "Installing $pkg (yay)..."
-        run_root yay -S --noconfirm "$pkg"
+        yay -S --noconfirm "$pkg"
     fi
 }
 
