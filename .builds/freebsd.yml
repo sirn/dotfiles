@@ -3,6 +3,9 @@ image: freebsd/latest
 sources:
   - https://git.sr.ht/~sirn/dotfiles
 tasks:
+  - prepare: |
+      sudo pkg update
+      sudo pkg upgrade -y
   - setup: |
       cd dotfiles
       ./bootstrap.sh

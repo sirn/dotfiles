@@ -3,6 +3,8 @@ image: archlinux
 sources:
   - https://git.sr.ht/~sirn/dotfiles
 tasks:
+  - prepare: |
+      sudo pacman -Sy
   - setup: |
       cd dotfiles
       env AUR_CHROOT=n ./bootstrap.sh
