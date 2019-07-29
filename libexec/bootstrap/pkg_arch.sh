@@ -39,8 +39,14 @@ _run_desktop() {
         run_root pacman -Rns --noconfirm emacs-nox
     fi
 
+    # Conflict with qemu-headless
+    if pacman_installed qemu-headless; then
+        run_root pacman -Rns --noconfirm qemu-headless
+    fi
+
     pacman_install emacs
     pacman_install firefox
+    pacman_install qemu
 
     sh "$BASE_DIR/libexec/packages/fontinst.sh" "$@"
 }
@@ -83,16 +89,6 @@ _run_dev() {
     sh "$BASE_DIR/libexec/packages/rust.sh" "$@"
 }
 
-_run_all() {
-    run_with_flavors "$@"
-
-    # Only install emacs-nox when other variant of Emacs hasn't been
-    # installed (e.g. desktop flavor installs GTK emacs)
-    if ! pacman_installed emacs; then
-        pacman_install emacs-nox
-    fi
-}
-
 _run_kubernetes() {
     printe_h2 "Installing kubernetes packages..."
 
@@ -101,6 +97,24 @@ _run_kubernetes() {
 
     sh "$BASE_DIR/libexec/packages/kubectx.sh" "$@"
     sh "$BASE_DIR/libexec/packages/kapitan.sh" "$@"
+}
+
+_run_all() {
+    run_with_flavors "$@"
+
+    printe_h2 "Installing extra packages..."
+
+    # Only install emacs-nox when other variant of Emacs hasn't been
+    # installed (e.g. desktop flavor installs GTK emacs)
+    if ! pacman_installed emacs; then
+        pacman_install emacs-nox
+    fi
+
+    # Only install qemu when other variant of QEMU hasn't been installed
+    # installed (e.g. desktop flavor installs GTK QEMU)
+    if ! pacman_installed qemu; then
+        pacman_install qemu-headless
+    fi
 }
 
 _run_all "$@"
