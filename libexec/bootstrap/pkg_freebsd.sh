@@ -99,6 +99,8 @@ _run_kubernetes() {
 _run_all() {
     run_with_flavors "$@"
 
+    printe_h2 "Installing extra packages..."
+
     # Only install emacs-nox when other variant of Emacs hasn't been
     # installed (e.g. desktop flavor installs emacs-x11)
     if ! pkgng_installed emacs; then
