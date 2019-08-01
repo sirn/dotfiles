@@ -5,7 +5,7 @@ sources:
 tasks:
   - prepare: |
       sudo pacman -Sy
-      sudo pacman -S base-devel
+      sudo pacman -S --noconfirm base-devel
   - setup: |
       cd dotfiles
       env AUR_CHROOT=n ./bootstrap.sh
