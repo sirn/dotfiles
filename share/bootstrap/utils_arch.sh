@@ -3,7 +3,7 @@
 # Shared functions for Arch Linux
 #
 
-PKGBUILD_ROOT=$HOME/.data/pkgbuild
+PKGBUILD_ROOT=${XDG_DATA_HOME:-$HOME/.local/share}/pkgbuild
 AUR_CHROOT=${AUR_CHROOT:-y}
 
 aur_fetch() {

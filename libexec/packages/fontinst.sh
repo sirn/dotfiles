@@ -29,7 +29,7 @@ _install_font_gh() {
     shasum=$1; shift
     ver=$1; shift
 
-    fontdir=$HOME/.data/fonts/$name
+    fontdir=${XDG_DATA_HOME:-$HOME/.local/share}/fonts/$name
 
     if ! forced && [ -f "$fontdir/.installed" ]; then
         printe_info "$fontdir already exists, skipping..."
@@ -53,7 +53,7 @@ _install_font_url() {
     url=$1; shift
     shasum=$1; shift
 
-    fontdir=$HOME/.data/fonts/$name
+    fontdir=${XDG_DATA_HOME:-$HOME/.local/share}/fonts/$name
     basename=$(basename "$url")
 
     if ! forced && [ -f "$fontdir/.installed" ]; then
