@@ -27,7 +27,7 @@ aur_bootstrap() {
         printe_h2 "Bootstrapping ccm..."
 
         if [ -f /etc/artix-release ]; then
-            pacman_install --asdeps artools rsync
+            run_root pacman -S --asdeps artools rsync
 
             repo=\~sirn/aur-clean-chroot-manager-artix
             url=https://git.sr.ht/$repo/archive/master.tar.gz
