@@ -14,11 +14,6 @@ aur_fetch() {
 }
 
 aur_bootstrap() {
-    if ! pacman_installed -g base-devel >/dev/null 2>&1; then
-        printe_h2 "Bootstrapping base-devel..."
-        pacman_install base-devel
-    fi
-
     if normalize_bool "$AUR_CHROOT"; then
         if command -v ccm64 >/dev/null; then
             return
