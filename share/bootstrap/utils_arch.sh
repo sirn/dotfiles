@@ -85,7 +85,10 @@ aur_install() {
 }
 
 pacman_installed() {
-    pacman -Qq "$@" >/dev/null 2>&1
+    pkg=$1; shift
+    if [ "$(pacman -Qq "$pkg" 2>&1)" != "$pkg" ]; then
+        return 1
+    fi
 }
 
 pacman_install() {
