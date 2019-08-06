@@ -21,21 +21,25 @@ aur_bootstrap() {
 
         printe_h2 "Bootstrapping ccm..."
 
-        if [ -f /etc/artix-release ]; then
-            run_root pacman -S --asdeps artools rsync
+        case $(get_arch_variant) in
+            artix-* )
+                run_root pacman -S --asdeps artools rsync
 
-            repo=\~sirn/aur-clean-chroot-manager-artix
-            url=https://git.sr.ht/$repo/archive/master.tar.gz
-            pkgdir=$PKGBUILD_ROOT/clean-chroot-manager-artix
+                repo=\~sirn/aur-clean-chroot-manager-artix
+                url=https://git.sr.ht/$repo/archive/master.tar.gz
+                pkgdir=$PKGBUILD_ROOT/clean-chroot-manager-artix
 
-            mkdir -p "$pkgdir"
-            fetch_url - $url | tar -C "$pkgdir" -xzf - --strip-components=1
-            cd "$pkgdir" || exit 1
-        else
-            run_root pacman -S --asdeps --noconfirm devtools rsync
-            aur_fetch clean-chroot-manager
-            cd "$PKGBUILD_ROOT/clean-chroot-manager" || exit 1
-        fi
+                mkdir -p "$pkgdir"
+                fetch_url - $url | tar -C "$pkgdir" -xzf - --strip-components=1
+                cd "$pkgdir" || exit 1
+                ;;
+
+            * )
+                run_root pacman -S --asdeps --noconfirm devtools rsync
+                aur_fetch clean-chroot-manager
+                cd "$PKGBUILD_ROOT/clean-chroot-manager" || exit 1
+                ;;
+        esac
 
         makepkg -Ci --noconfirm
         run_root ccm64
@@ -101,4 +105,18 @@ pacman_install() {
 
     printe_h2 "Installing $pkg (pacman)..."
     run_root pacman -S --noconfirm "$pkg" "$@"
+}
+
+get_arch_variant() {
+    variant=unknown
+
+    if [ -f /etc/artix-release ] && pacman_installed runit; then
+        variant=artix-runit
+    elif [ -f /etc/artix-release ] && pacman_installed openrc; then
+        variant=artix-openrc
+    elif [ -f /etc/arch-release ]; then
+        variant=arch
+    fi
+
+    echo "$variant"
 }
