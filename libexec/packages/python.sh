@@ -26,11 +26,9 @@ _run_dev() {
          black \
          ipwhois \
          pip \
-         pipenv \
          poetry \
          pre-commit \
          proselint \
-         pylint \
          virtualenv
 }
 
