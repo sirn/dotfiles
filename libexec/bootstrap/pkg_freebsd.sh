@@ -27,6 +27,7 @@ _run() {
     pkgng_install oksh
     pkgng_install openjdk8-jre
     pkgng_install pstree
+    pkgng_install py36-tmuxp
     pkgng_install socat
     pkgng_install the_silver_searcher
     pkgng_install tmux

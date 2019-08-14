@@ -25,6 +25,7 @@ _run() {
     pacman_install sqlite
     pacman_install the_silver_searcher
     pacman_install tmux
+    pacman_install tmuxp
     pacman_install w3m
     pacman_install weechat
 

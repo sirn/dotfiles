@@ -28,6 +28,7 @@ _run() {
     macports_install oksh
     macports_install openssh
     macports_install pstree
+    macports_install py37-tmuxp
     macports_install qemu +target_arm +target_riscv64
     macports_install socat
     macports_install the_silver_searcher
