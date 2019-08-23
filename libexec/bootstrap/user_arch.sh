@@ -27,7 +27,7 @@ _run() {
 
     printe_h2 "Changing user shell..."
 
-    change_shell ksh
+    change_shell oksh
 }
 
 _run_desktop() {
