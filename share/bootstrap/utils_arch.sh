@@ -8,9 +8,17 @@ AUR_CHROOT=${AUR_CHROOT:-y}
 
 aur_fetch() {
     pkg=$1; shift
-    url=https://aur.archlinux.org/cgit/aur.git/snapshot/$pkg.tar.gz
-    mkdir -p "$PKGBUILD_ROOT"
-    fetch_url - "$url" | tar -C "$PKGBUILD_ROOT" -xzf -
+
+    if command -v git >/dev/null; then
+        git_clone \
+            "https://aur.archlinux.org/$pkg.git" \
+            "$PKGBUILD_ROOT/$pkg" \
+            master
+    else
+        url=https://aur.archlinux.org/cgit/aur.git/snapshot/$pkg.tar.gz
+        mkdir -p "$PKGBUILD_ROOT"
+        fetch_url - "$url" | tar -C "$PKGBUILD_ROOT" -xzf -
+    fi
 }
 
 aur_bootstrap() {
