@@ -133,12 +133,6 @@ _run() {
         https://assets.ubuntu.com/v1/fad7939b-ubuntu-font-family-0.83.zip \
         456d7d42797febd0d7d4cf1b782a2e03680bb4a5ee43cc9d06bda172bac05b42
 
-    ## Inter Fonts
-    _install_font_url \
-        inter \
-        https://github.com/rsms/inter/releases/download/v3.9/Inter-3.9.zip \
-        445f71a2c6d0a64c11649533346ded15eb28c1be97b5866910f786da78ab4dbb
-
     ## Droid Sans
     ## Using local mirror, since Droid Sans has been removed from Google Fonts
     ## in favor for Noto, but Noto Thai wasn't really designed for reading
