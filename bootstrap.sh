@@ -13,7 +13,7 @@ cd "$BASE_DIR" || exit 1
 ##
 
 LC_ALL=en_US.UTF-8
-PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+PATH=/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/bin:/usr/local/sbin
 PATH=$HOME/.local/bin:/opt/local/bin:$PATH
 PLATFORM=$(get_platform)
 
