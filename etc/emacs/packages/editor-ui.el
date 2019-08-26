@@ -26,7 +26,7 @@
             ;; (e.g. not sticky to Spaces and no fullscreen support)
             (menu-bar-mode 1)
             (scroll-bar-mode -1)
-            (set-frame-font "PragmataPro Mono 14" nil t)
+            (set-frame-font "PragmataPro Mono 13" nil t)
             (when (boundp 'mac-auto-operator-composition-mode)
               (mac-auto-operator-composition-mode))))))))
 
