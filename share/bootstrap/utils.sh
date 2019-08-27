@@ -211,7 +211,11 @@ get_platform() {
     platform=$(uname | tr '[:upper:]' '[:lower:]')
 
     if [ "$platform" = "linux" ]; then
-        if [ -f /etc/alpine-release ]; then
+        if [ -f /etc/os-release ] && grep -q ubuntu /etc/os-release; then
+            platform=ubuntu
+        elif [ -f /etc/os-release ] && grep -q debian /etc/os-release; then
+            platform=debian
+        elif [ -f /etc/alpine-release ]; then
             platform=alpine
         elif [ -f /etc/arch-release ]; then
             platform=arch
