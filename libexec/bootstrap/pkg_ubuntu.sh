@@ -40,6 +40,8 @@ _run() {
 _run_desktop() {
     printe_h2 "Installing desktop packages..."
 
+    apt_setup_ppa ppa:unit193/encryption
+
     # Conflict with emacs-x11
     if apt_installed emacs26-nox; then
         run_root apt-get remove -y emacs26-nox
@@ -48,6 +50,7 @@ _run_desktop() {
     apt_install emacs26
     apt_install firefox
     apt_install virt-manager
+    apt_install veracrypt
 
     sh "$BASE_DIR/libexec/packages/fontinst.sh" "$@"
 }
