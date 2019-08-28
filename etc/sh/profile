@@ -47,6 +47,7 @@ export RUST_SRC_PATH
 appendpath "$HOME/.local/bin"
 appendpath "$HOME/.cabal/bin"
 appendpath "$HOME/.cargo/bin"
+appendpath "$XDG_DATA_HOME/pytools/bin"
 appendpath "$GOPATH/bin"
 
 

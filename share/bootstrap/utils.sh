@@ -410,37 +410,6 @@ change_shell() {
 }
 
 
-## Language-specific
-##
-
-detect_pip3() {
-    pip=
-
-    if command -v pip3 >/dev/null; then
-        pip=pip3
-    fi
-
-    # FreeBSD for example uses pip-3.x and pip as a binary name so we
-    # need to extend our search for those if one is in $PATH.
-    if [ -z "$PIP" ]; then
-        OLDIFS=$IFS; IFS=:
-
-        for path in $PATH; do
-            for p in "$path/pip-3."*; do
-                if [ -x "$p" ]; then
-                    pip=$p
-                    break
-                fi
-            done
-        done
-
-        IFS=$OLDIFS
-    fi
-
-    echo "$pip"
-}
-
-
 ## Runner
 ##
 
