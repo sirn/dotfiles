@@ -12,10 +12,9 @@ cd "$(dirname "$0")" || exit 1
 PLATFORM=$(get_platform)
 
 PIP=
-KAPITAN_VER=0.23.0
+PYTOOLS=${XDG_DATA_HOME:-$HOME/.local/share}/pytools
 
-PYCRYPT_VER=2.6.1
-PYCRYPT_SHA256=e6b77dddc068dcbb13c193602d7a40dc0bb348ceb107b14be083e42afa24ab83
+KAPITAN_VER=0.23.0
 
 JSONNET_VER=0.12.1
 JSONNET_SHA256=257c6de988f746cc90486d9d0fbd49826832b7a2f0dbdb60a515cc8a2596c950
@@ -60,7 +59,7 @@ _setup_jsonnet() {
                 CXXFLAGS="-fPIC \
 -Iinclude -Ithird_party/md5 -Ithird_party/json \
 -std=c++11" \
-                $PIP install --user .
+                $PIP install .
             ;;
 
         * )
@@ -68,7 +67,7 @@ _setup_jsonnet() {
                 CXXFLAGS="-fPIC \
 -Iinclude -Ithird_party/md5 -Ithird_party/json \
 -std=c++11" \
-                $PIP install --user jsonnet==$JSONNET_VER
+                $PIP install jsonnet==$JSONNET_VER
             ;;
     esac
 }
@@ -76,16 +75,14 @@ _setup_jsonnet() {
 _run() {
     printe_h2 "Installing kapitan..."
 
-    PIP=$(detect_pip3)
-    if [ -z "$PIP" ]; then
-        printe_info "pip3 is not installed, skipping..."
+    PIP="$PYTOOLS/bin/pip3"
+    if [ ! -f "$PIP" ]; then
+        printe_info "Python environment not initialized, skipping..."
         return 1
     fi
 
-    _setup_cryptography
     _setup_jsonnet
-
-    $PIP install --user kapitan==$KAPITAN_VER
+    $PIP install kapitan==$KAPITAN_VER
 }
 
 _run
