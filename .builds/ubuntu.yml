@@ -3,6 +3,8 @@ image: ubuntu/lts
 sources:
   - https://git.sr.ht/~sirn/dotfiles
 tasks:
+  - prepare: |
+      sudo apt-get update
   - setup: |
       cd dotfiles
       ./bootstrap.sh
