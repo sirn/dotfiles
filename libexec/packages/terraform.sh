@@ -20,6 +20,11 @@ _run() {
         return
     fi
 
+    if ! command -v unzip >/dev/null; then
+        printe_info "unzip binary does not exists, skipping..."
+        return 1
+    fi
+
     cd "$BUILD_DIR" || exit 1
 
     if command -v arch >/dev/null; then

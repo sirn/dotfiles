@@ -34,6 +34,7 @@ _run() {
     apt_install sqlite3
     apt_install tmux
     apt_install tmuxp
+    apt_install unzip
     apt_install w3m
     apt_install weechat
 }

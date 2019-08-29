@@ -61,6 +61,15 @@ _install_font_url() {
         return
     fi
 
+    case "$basename" in
+        *.zip )
+            if ! command -v unzip >/dev/null; then
+                printe_info "unzip binary does not exists, skipping..."
+                return 1
+            fi
+            ;;
+    esac
+
     cd "$BUILD_DIR" || exit 1
 
     fetch_url "$basename" "$url"
