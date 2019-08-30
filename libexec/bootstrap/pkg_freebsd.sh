@@ -69,8 +69,6 @@ _run_dev() {
     pkgng_install node10
     pkgng_install npm-node10
     pkgng_install pkgconf
-    pkgng_install py36-ansible
-    pkgng_install py36-asciinema
     pkgng_install py36-pip
     pkgng_install python3
     pkgng_install python36

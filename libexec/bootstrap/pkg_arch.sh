@@ -55,7 +55,6 @@ _run_desktop() {
 _run_dev() {
     printe_h2 "Installing dev packages..."
 
-    pacman_install ansible
     pacman_install cabal-install
     pacman_install duplicity
     pacman_install elixir

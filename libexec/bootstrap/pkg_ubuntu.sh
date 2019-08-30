@@ -68,11 +68,9 @@ _run_dev() {
         https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
         https://deb.nodesource.com/node_10.x LSB_RELEASE main
 
-    apt_setup_ppa ppa:ansible/ansible
     apt_setup_ppa ppa:brightbox/ruby-ng
     apt_setup_ppa ppa:longsleep/golang-backports
 
-    apt_install ansible
     apt_install cabal-install
     apt_install duplicity
     apt_install elixir

@@ -38,6 +38,7 @@ _run_dev() {
     printe_h2 "Installing python dev packages..."
 
     "$PYTOOLS/bin/pip3" install \
+         ansible \
          black \
          ipwhois \
          pip \

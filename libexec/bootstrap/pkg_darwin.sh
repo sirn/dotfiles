@@ -76,7 +76,6 @@ _run_dev() {
     macports_install nodejs10
     macports_install npm6
     macports_install pandoc
-    macports_install py37-ansible
     macports_install py37-pip
     macports_install python37
     macports_install rebar3
@@ -91,7 +90,6 @@ _run_dev() {
     # https://github.com/macports/macports-ports/pull/4577
     #macports_install shellcheck
 
-    macports_select ansible py37-ansible
     macports_select pip3 pip37
     macports_select python3 python37
     macports_select ruby ruby26
