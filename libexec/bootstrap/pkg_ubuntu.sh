@@ -14,7 +14,6 @@ _run() {
 
     apt_bootstrap
     apt_setup_ppa ppa:dysfunctionalprogramming/oksh
-    apt_setup_ppa ppa:kelleyk/emacs
 
     apt_install aptitude
     apt_install aria2
@@ -37,17 +36,14 @@ _run() {
     apt_install unzip
     apt_install w3m
     apt_install weechat
+
+    snap_install emacs --classic
 }
 
 _run_desktop() {
     printe_h2 "Installing desktop packages..."
 
     apt_setup_ppa ppa:unit193/encryption
-
-    # Conflict with emacs-x11
-    if apt_installed emacs26-nox; then
-        run_root apt-get remove -y emacs26-nox
-    fi
 
     apt_install emacs26
     apt_install firefox
@@ -64,13 +60,6 @@ _run_dev() {
         https://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc \
         https://packages.erlang-solutions.com/ubuntu LSB_RELEASE contrib
 
-    apt_setup_repo \
-        https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
-        https://deb.nodesource.com/node_10.x LSB_RELEASE main
-
-    apt_setup_ppa ppa:brightbox/ruby-ng
-    apt_setup_ppa ppa:longsleep/golang-backports
-
     apt_install cabal-install
     apt_install duplicity
     apt_install elixir
@@ -78,22 +67,23 @@ _run_dev() {
     apt_install erlang
     apt_install git-crypt
     apt_install git-lfs
-    apt_install golang-go
     apt_install graphicsmagick
     apt_install graphviz
     apt_install ipcalc
     apt_install jq
     apt_install leiningen
-    apt_install nodejs
     apt_install pandoc
-    apt_install python3-pip
     apt_install python3
-    apt_install ruby2.6
+    apt_install python3-pip
     apt_install shellcheck
     apt_install socat
     apt_install tree
 
+    snap_install go --classic
     snap_install google-cloud-sdk --classic
+    snap_install node --classic --channel 10/stable
+    snap_install ruby --classic
+    snap_install shellcheck
 
     sh "$BASE_DIR/libexec/packages/cloudflared.sh" "$@"
     sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"
@@ -116,12 +106,6 @@ _run_kubernetes() {
 
 _run_all() {
     run_with_flavors "$@"
-
-    # Only install emacs-nox when other variant of Emacs hasn't been
-    # installed (e.g. desktop flavor installs emacs)
-    if ! apt_installed emacs26; then
-        apt_install emacs26-nox
-    fi
 }
 
 _run_all "$@"
