@@ -45,7 +45,6 @@ _run_desktop() {
 
     apt_setup_ppa ppa:unit193/encryption
 
-    apt_install emacs26
     apt_install firefox
     apt_install virt-manager
     apt_install veracrypt
