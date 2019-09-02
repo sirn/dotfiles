@@ -13,7 +13,7 @@ apt_installed() {
 apt_bootstrap() {
     for pkg in aptitude software-properties-common; do
         if ! apt_installed $pkg; then
-            env DEBIAN_FRONTEND=noninteractive apt-get install -y $pkg
+            run_root env DEBIAN_FRONTEND=noninteractive apt-get install -y $pkg
         fi
     done
 }
