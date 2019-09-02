@@ -71,10 +71,17 @@ _run_dev() {
         https://packages.cloud.google.com/apt/doc/apt-key.gpg \
         http://packages.cloud.google.com/apt cloud-sdk main
 
+    apt_setup_repo \
+        https://download.docker.com/linux/ubuntu/gpg \
+        https://download.docker.com/linux/ubuntu LSB_RELEASE stable
+
     apt_setup_ppa ppa:brightbox/ruby-ng
     apt_setup_ppa ppa:longsleep/golang-backports
 
     apt_install cabal-install
+    apt_install containerd.io+M
+    apt_install docker-ce
+    apt_install docker-ce-cli+M
     apt_install duplicity
     apt_install elixir
     apt_install entr
