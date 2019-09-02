@@ -1,6 +1,6 @@
 #!/bin/sh -e
 #
-# Install Ubuntu Linux packages with apt and snap.
+# Install Ubuntu Linux packages with apt.
 #
 
 BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
@@ -68,6 +68,10 @@ _run_dev() {
         https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
         https://deb.nodesource.com/node_10.x LSB_RELEASE main
 
+    apt_setup_repo \
+        https://packages.cloud.google.com/apt/doc/apt-key.gpg \
+        http://packages.cloud.google.com/apt cloud-sdk main
+
     apt_setup_ppa ppa:brightbox/ruby-ng
     apt_setup_ppa ppa:longsleep/golang-backports
 
@@ -79,6 +83,7 @@ _run_dev() {
     apt_install git-crypt
     apt_install git-lfs
     apt_install golang-go
+    apt_install google-cloud-sdk
     apt_install graphicsmagick
     apt_install graphviz
     apt_install ipcalc
@@ -86,14 +91,12 @@ _run_dev() {
     apt_install leiningen
     apt_install nodejs
     apt_install pandoc
-    apt_install python3-pip
     apt_install python3
+    apt_install python3-pip
     apt_install ruby2.6
     apt_install shellcheck
     apt_install socat
     apt_install tree
-
-    snap_install google-cloud-sdk --classic
 
     sh "$BASE_DIR/libexec/packages/cloudflared.sh" "$@"
     sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"

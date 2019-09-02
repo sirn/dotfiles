@@ -73,20 +73,3 @@ apt_install() {
     printe "Installing $pkg (apt)..."
     run_root env DEBIAN_FRONTEND=noninteractive apt-get install -y "$pkg"
 }
-
-snap_installed() {
-    pkg=$1; shift
-    snap list "$pkg" >/dev/null 2>&1
-}
-
-snap_install() {
-    pkg=$1; shift
-
-    if snap_installed "$pkg"; then
-        printe "$pkg (snap) already installed"
-        return
-    fi
-
-    printe "Installing $pkg (snap)..."
-    run_root snap install "$pkg" "$@"
-}
