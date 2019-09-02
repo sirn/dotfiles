@@ -85,16 +85,6 @@ _run_dev() {
     sh "$BASE_DIR/libexec/packages/rust.sh" "$@"
 }
 
-_run_kubernetes() {
-    printe_h2 "Installing kubernetes packages..."
-
-    pkgng_install kubectl
-    pkgng_install helm
-
-    sh "$BASE_DIR/libexec/packages/kubectx.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/kapitan.sh" "$@"
-}
-
 _run_all() {
     run_with_flavors "$@"
 

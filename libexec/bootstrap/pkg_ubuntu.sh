@@ -104,16 +104,6 @@ _run_dev() {
     sh "$BASE_DIR/libexec/packages/terraform.sh" "$@"
 }
 
-_run_kubernetes() {
-    printe_h2 "Installing kubernetes packages..."
-
-    snap_install kubectl --classic
-    snap_install helm --classic
-
-    sh "$BASE_DIR/libexec/packages/kubectx.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/kapitan.sh" "$@"
-}
-
 _run_all() {
     run_with_flavors "$@"
 

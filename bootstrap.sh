@@ -45,7 +45,6 @@ FLAVOR:
     backups         Install backup packages.
     desktop         Install desktop packages.
     dev             Install development packages.
-    kubernetes      Install Kubernetes packages.
     mail            Install mail packages.
 
 Bootstrap script will default to \`pkg\` without any FLAVORS
@@ -100,7 +99,7 @@ done
 
 for f in $FLAVORS; do
     case "$f" in
-        dev | desktop | kubernetes | mail | backups ) ;;
+        dev | desktop | mail | backups ) ;;
         * ) printe_err "Unknown flavor: $f"; exit 1;;
     esac
 done
