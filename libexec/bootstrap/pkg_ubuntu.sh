@@ -16,7 +16,6 @@ _run() {
     apt_setup_ppa ppa:dysfunctionalprogramming/oksh
     apt_setup_ppa ppa:kelleyk/emacs
 
-    apt_install aptitude
     apt_install aria2
     apt_install aspell
     apt_install aspell-en

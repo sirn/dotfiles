@@ -11,7 +11,11 @@ apt_installed() {
 }
 
 apt_bootstrap() {
-    apt_install software-properties-common
+    for pkg in aptitude software-properties-common; do
+        if ! apt_installed $pkg; then
+            env DEBIAN_FRONTEND=noninteractive apt-get install -y $pkg
+        fi
+    done
 }
 
 apt_setup_repo() {
@@ -71,5 +75,5 @@ apt_install() {
     fi
 
     printe "Installing $pkg (apt)..."
-    run_root env DEBIAN_FRONTEND=noninteractive apt-get install -y "$pkg"
+    run_root env DEBIAN_FRONTEND=noninteractive aptitude install -y "$pkg"
 }
