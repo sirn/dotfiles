@@ -37,13 +37,13 @@ apt_setup_repo() {
         rm "$keyname.asc"
     fi
 
-    run_root apt-add-repository -y "deb $uri $suite $@"
+    run_root apt-add-repository -y "deb $uri $suite $*"
 }
 
 apt_setup_ppa() {
     ppa=$1; shift
     ppa=${ppa#ppa:}
-    ppa_url=https?://ppa.launchpad.net/$ppa/ubuntu
+    ppa_url="https?://ppa.launchpad.net/$ppa/ubuntu"
 
     if apt-cache policy | grep -Eq "$ppa_url"; then
         printe "$ppa (ppa) already added"
