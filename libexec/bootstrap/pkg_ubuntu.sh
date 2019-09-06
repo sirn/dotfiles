@@ -99,6 +99,7 @@ _run_dev() {
     apt_install pandoc
     apt_install python3
     apt_install python3-pip
+    apt_install python3-venv
     apt_install ruby2.6
     apt_install shellcheck
     apt_install socat
