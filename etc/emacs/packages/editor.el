@@ -72,6 +72,22 @@
     (advice-add 'company-call-frontends :before 'gr/company-fci-advice)))
 
 
+(use-package company-lsp
+  :after lsp-mode
+  :straight t
+  :commands company-lsp
+
+  :preface
+  (eval-when-compile
+    (defvar company-lsp-async)
+    (defvar company-backends))
+
+  :init
+  (setq company-lsp-async t)
+  (with-eval-after-load 'company
+    (push 'company-lsp company-backends)))
+
+
 (use-package company-prescient
   :after (company prescient)
   :straight t
@@ -113,18 +129,29 @@
 
 (use-package flycheck
   :diminish flycheck-mode
+  :commands flycheck-mode
+  :straight t)
+
+
+(use-package lsp-mode
   :straight t
+  :commands lsp)
+
+
+(use-package lsp-ui
+  :after flycheck
+  :straight t
+  :commands lsp-ui-mode
 
   :preface
   (eval-when-compile
-    (declare-function global-flycheck-mode nil))
+    (defvar lsp-ui-flycheck-enable)
+    (declare-function lsp-ui-mode nil))
 
   :init
-  (add-hook 'markdown-mode-hook 'flycheck-mode)
-  (add-hook 'text-mode-hook 'flycheck-mode)
-
-  :config
-  (global-flycheck-mode t))
+  (setq lsp-ui-flycheck-enable t)
+  (with-eval-after-load 'lsp-mode
+    (add-hook 'lsp-mode-hook 'lsp-ui-mode)))
 
 
 (use-package origami
@@ -256,29 +283,7 @@
 
 (use-package yasnippet
   :diminish yas-minor-mode
-  :straight t
-
-  :commands
-  (yas-reload-all
-   yas-minor-mode)
-
-  :init
-  (add-hook 'elixir-mode-hook 'yas-minor-mode)
-  (add-hook 'erlang-mode-hook 'yas-minor-mode)
-  (add-hook 'go-mode-hook 'yas-minor-mode)
-  (add-hook 'js2-mode-hook 'yas-minor-mode)
-  (add-hook 'latex-mode-hook 'yas-minor-mode)
-  (add-hook 'makefile-mode-hook 'yas-minor-mode)
-  (add-hook 'php-mode-hook 'yas-minor-mode)
-  (add-hook 'python-mode-hook 'yas-minor-mode)
-  (add-hook 'rust-mode-hook 'yas-minor-mode)
-  (add-hook 'sql-mode-hook 'yas-minor-mode)
-  (add-hook 'terraform-mode-hook 'yas-minor-mode)
-  (add-hook 'typescript-mode-hook 'yas-minor-mode)
-  (add-hook 'yaml-mode-hook 'yas-minor-mode)
-
-  :config
-  (yas-reload-all))
+  :straight t)
 
 
 (use-package yasnippet-snippets

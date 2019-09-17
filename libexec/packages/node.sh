@@ -23,6 +23,7 @@ _run_dev() {
     npm install -g \
         bower \
         eslint \
+        javascript-typescript-langserver \
         npm-upgrade \
         npx \
         prettier \

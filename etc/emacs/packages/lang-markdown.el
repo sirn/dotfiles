@@ -7,4 +7,5 @@
    ("\\.markdown\\'" . markdown-mode))
 
   :init
-  (setq markdown-command "pandoc"))
+  (setq markdown-command "pandoc")
+  (add-hook 'markdown-mode-hook 'flycheck-mode))

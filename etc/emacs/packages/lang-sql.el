@@ -1,6 +1,9 @@
 (use-package sql
   :mode ("\\.sql\\'" . sql-mode)
-  :straight t)
+  :straight t
+
+  :init
+  (add-hook 'sql-mode-hook 'flycheck-mode))
 
 
 (use-package sql-indent

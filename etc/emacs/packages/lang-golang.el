@@ -33,4 +33,7 @@
 (use-package go-mode
   :straight t
   :interpreter "go"
-  :mode "\\.go\\'")
+  :mode "\\.go\\'"
+
+  :init
+  (add-hook 'go-mode-hook 'flycheck-mode))

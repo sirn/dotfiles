@@ -50,6 +50,7 @@
         (apply orig-fun args)
       (apply orig-fun args)))
 
+  (add-hook 'erlang-mode-hook 'flycheck-mode)
   (add-hook 'erlang-mode-hook 'gr/erlang-rebar3-hook)
   (advice-add 'inferior-erlang :around 'gr/erlang-rebar3-wrap-maybe)
 

@@ -12,7 +12,9 @@
   (setq web-mode-enable-current-element-highlight t)
   (setq web-mode-enable-current-column-highlight t)
   (add-hook 'web-mode-hook 'emmet-mode)
-  (add-hook 'css-mode-hook 'emmet-mode))
+  (add-hook 'web-mode-hook 'flycheck-mode)
+  (add-hook 'css-mode-hook 'emmet-mode)
+  (add-hook 'css-mode-hook 'flycheck-mode))
 
 
 (use-package web-mode

@@ -40,12 +40,18 @@ _run_dev() {
     "$PYTOOLS/bin/pip3" install \
          ansible \
          black \
+         flake8 \
          ipwhois \
          pip \
          poetry \
          pre-commit \
          proselint \
-         virtualenv
+         pyls-black \
+         pyls-isort \
+         pyls-mypy \
+         python-language-server \
+         virtualenv \
+         git+https://github.com/emanspeaks/pyls-flake8.git#egg=pyls-flake8
 }
 
 run_with_flavors "$@"
