@@ -1,4 +1,8 @@
 #!/bin/sh
+#
+# Wrapper over pyls to run pyls within a project if pyproject.toml is define
+# and configured with poetry.
+#
 
 BASE=$(pwd -P) || exit 1
 
