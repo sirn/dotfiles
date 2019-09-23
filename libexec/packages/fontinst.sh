@@ -134,13 +134,15 @@ _run() {
         $adobe_gh/source-han-serif/releases/download/1.001R/SourceHanSerif.ttc \
         85cc634fa228286ca307803bbb4ca61f61fa821b3ed573f4f07c6f0c064426b5
 
-    ## Ubuntu Fonts
+    ## Hack Fonts
     ##
 
+    hack_gh=https://github.com/source-foundry/Hack
+
     _install_font_url \
-        ubuntu \
-        https://assets.ubuntu.com/v1/fad7939b-ubuntu-font-family-0.83.zip \
-        456d7d42797febd0d7d4cf1b782a2e03680bb4a5ee43cc9d06bda172bac05b42
+        hack \
+        $hack_gh/releases/download/v3.003/Hack-v3.003-ttf.tar.gz \
+        7f592d091cbd2472f39af96e6c280cde3c27cab50a9c88746feb42918aa1888f
 
     ## Droid Sans
     ## Using local mirror, since Droid Sans has been removed from Google Fonts
