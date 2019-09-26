@@ -1,73 +1,73 @@
 [branch]
-	autoSetupMerge = true
+    autoSetupMerge = true
 
 [color]
-	ui = auto
+    ui = auto
 
 [commit]
-	gpgSign = true
+    gpgSign = true
 
 [core]
-	excludesfile = ~/.dotfiles/etc/git/gitignore
-	quotepath = false
+    excludesfile = ~/.dotfiles/etc/git/gitignore
+    quotepath = false
 
 [filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
 
 [pull]
-        rebase = true
+    rebase = true
 
 [push]
-	default = nothing
-	gpgSign = if-asked
+    default = nothing
+    gpgSign = if-asked
 
 [gpg]
-	program = gpg2
+    program = gpg2
 
 [status]
-	short = true
-	branch = true
+    short = true
+    branch = true
 
 [user]
-	name = Kridsada Thanabulpong
-	email = sirn@ogsite.net
+    name = Kridsada Thanabulpong
+    email = sirn@ogsite.net
 
 #
 # Repo
 #
 
 [url "git@github.com:"]
-	insteadOf = "https://github.com/"
+    insteadOf = "https://github.com/"
 
 [url "git@gitlab.com:"]
-	insteadOf = "https://gitlab.com/"
+    insteadOf = "https://gitlab.com/"
 
 [url "git@git.sr.ht:"]
-	insteadOf = "https://git.sr.ht/"
+    insteadOf = "https://git.sr.ht/"
 
 #
 # Third-party
 #
 
 [ghq]
-	root = ~/Dev/src
-	root = ~/Dev/go/src
+    root = ~/Dev/src
+    root = ~/Dev/go/src
 
 [magit]
-	hideCampaign = true
+    hideCampaign = true
 
 [github]
-	user = sirn
+    user = sirn
 
 #
 # Overrides
 #
 
 [include]
-	path = ~/.dotpriv/etc/git/gitconfig
+    path = ~/.dotpriv/etc/git/gitconfig
 
 [include]
-	path = ~/.gitconfig_local
+    path = ~/.gitconfig_local
