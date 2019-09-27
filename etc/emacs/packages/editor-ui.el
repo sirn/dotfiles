@@ -12,6 +12,11 @@
 (menu-bar-mode -1)
 
 
+(defadvice load-theme
+  (before theme-dont-propagate activate)
+  (mapc #'disable-theme custom-enabled-themes))
+
+
 (defun gr/make-frame-func (frame)
   "Setup frame attributes after a FRAME is created."
   (when (display-graphic-p frame)
@@ -50,6 +55,13 @@
       "ww" 'ace-window)))
 
 
+(use-package kaolin-themes
+  :straight t
+
+  :config
+  (load-theme 'kaolin-dark t))
+
+
 (use-package fill-column-indicator
   :diminish fci-mode
   :straight t
@@ -73,3 +85,31 @@
 
   :config
   (global-git-gutter-mode t))
+
+
+(use-package minions
+  :after doom-modeline
+  :straight t
+
+  :preface
+  (eval-when-compile
+    (declare-function minions-mode nil))
+
+  :init
+  (with-eval-after-load 'evil-leader
+    (evil-leader/set-key
+      "bm" 'minions-minor-modes-menu))
+
+  :config
+  (minions-mode t))
+
+
+(use-package mood-line
+  :straight t
+
+  :preface
+  (eval-when-compile
+    (declare-function mood-line-mode nil))
+
+  :config
+  (mood-line-mode t))
