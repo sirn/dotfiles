@@ -1,30 +1,6 @@
 (use-package ansible
-  :after yaml-mode
   :commands ansible
-  :straight t
-
-  :preface
-  (eval-when-compile
-    (defvar gr/ansible-filename-re)
-    (declare-function gr/ansible-maybe-enable nil))
-
-  :init
-  (setq gr/ansible-filename-re
-    ".*\\(main\.yml\\|site\.yml\\|encrypted\.yml\\|roles/.+\.yml\\|group_vars/.+\\|host_vars/.+\\)")
-
-  (defun gr/ansible-maybe-enable ()
-    (and (stringp buffer-file-name)
-         (string-match gr/ansible-filename-re buffer-file-name)))
-  (defun gr/setup-ansible-maybe ()
-    (when (gr/ansible-maybe-enable)
-      (ansible t)))
-  (add-hook 'yaml-mode-hook 'gr/setup-ansible-maybe)
-  (add-hook 'ansible-hook 'ansible::auto-decrypt-encrypt)
-
-  :config
-  (defun gr/ansible-reset-buffer-modified ()
-    (set-buffer-modified-p nil))
-  (advice-add 'ansible::decrypt-buffer :after 'gr/ansible-reset-buffer-modified))
+  :straight t)
 
 
 (use-package ansible-doc
@@ -34,13 +10,7 @@
 
   :commands
   (ansible-doc
-   ansible-doc-mode)
-
-  :init
-  (defun gr/setup-ansible-doc ()
-    (ansible-doc-mode t))
-
-  (add-hook 'ansible-hook 'gr/setup-ansible-doc))
+   ansible-doc-mode))
 
 
 (use-package company-ansible
@@ -53,3 +23,31 @@
     (defun gr/setup-company-ansible ()
       (set (make-local-variable 'company-backends) '(company-ansible)))
     (add-hook 'ansible-hook 'gr/setup-company-ansible)))
+
+
+(use-package poly-ansible
+  :after polymode
+  :straight t
+
+  :preface
+  (eval-when-compile
+    (defvar pm-inner/jinja2 nil))
+
+  :mode
+  ("playbook\\.ya?ml\\'" . poly-ansible-mode)
+  ("/ansible/.*\\.ya?ml\\'" . poly-ansible-mode)
+  ("/\\(?:group\\|host\\)_vars/" . poly-ansible-mode)
+
+  :init
+  (with-eval-after-load 'fill-column-indicator
+    (add-hook 'ansible-hook 'fci-mode))
+
+  :config
+  (setq pm-inner/jinja2
+    (pm-inner-chunkmode :mode #'jinja2-mode
+                        :head-matcher "{[%{#][+-]?"
+                        :tail-matcher "[+-]?[%}#]}"
+                        :head-mode 'body
+                        :tail-mode 'body
+                        :head-adjust-face nil
+                        :tail-adjust-face nil)))

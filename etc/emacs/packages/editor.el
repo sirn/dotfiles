@@ -196,6 +196,10 @@
   (add-hook 'lisp-mode-hook 'parinfer-mode))
 
 
+(use-package polymode
+  :straight t)
+
+
 (use-package rainbow-delimiters
   :commands rainbow-delimiters-mode
   :straight t
