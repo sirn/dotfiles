@@ -13,3 +13,7 @@
   ;; which may not the contain necessary modules required by the distro package.
   (setq exec-path-from-shell-check-startup-files nil)
   (exec-path-from-shell-initialize))
+
+
+(with-eval-after-load 'flycheck
+  (add-hook 'sh-mode-hook 'flycheck-mode))
