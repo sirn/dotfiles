@@ -89,7 +89,7 @@
  ("php-mode" . "5ba2a16e1751446502652021942f59f2e36aea41")
  ("pinentry" . "cd942f755c38a7ac270ce858bb887ebdd59edd26")
  ("pkg-info" . "76ba7415480687d05a4353b27fea2ae02b8d9d61")
- ("poly-yaml-mode" . "58aa54287cfe53a35d6d125961cae8e04b3ecce3")
+ ("poly-yaml-mode" . "5b12f40e47d88bbb8784611b0d04a8ba5eac8216")
  ("polymode" . "01232ad3800e974938199c9ac07fad57fcec540c")
  ("prescient.el" . "95056580ed743da92b05aaf86f943ee05600c28d")
  ("prodigy.el" . "0a12eec1f001a4eef16b2c0c524f02f2647a4ff1")
