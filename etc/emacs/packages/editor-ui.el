@@ -59,7 +59,7 @@
   :straight t
 
   :config
-  (load-theme 'kaolin-dark t))
+  (load-theme 'kaolin-valley-dark t))
 
 
 (use-package fill-column-indicator
