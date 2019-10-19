@@ -215,6 +215,8 @@ get_platform() {
             platform=ubuntu
         elif [ -f /etc/os-release ] && grep -q debian /etc/os-release; then
             platform=debian
+        elif [ -f /etc/os-release ] && grep -q void /etc/os-release; then
+            platform=void
         elif [ -f /etc/alpine-release ]; then
             platform=alpine
         elif [ -f /etc/arch-release ]; then
