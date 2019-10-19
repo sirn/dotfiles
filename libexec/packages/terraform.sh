@@ -56,7 +56,7 @@ _run() {
     mkdir -p "$HOME/.local/bin"
     cp "$BUILD_DIR/terraform" "$HOME/.local/bin/terraform"
     chmod +x "$HOME/.local/bin/terraform"
-    printe_info "terraform has been successfully installed"
+    printe_info "terraform successfully installed"
 }
 
 _run

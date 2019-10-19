@@ -42,7 +42,7 @@ _run() {
     mkdir -p "$HOME/.local/bin"
     go install .
     cp "$BUILD_DIR/go/bin/cloudflared" "$HOME/.local/bin/cloudflared"
-    printe_info "cloudflared has been successfully installed"
+    printe_info "cloudflared successfully installed"
 }
 
 _run

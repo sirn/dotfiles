@@ -55,14 +55,14 @@ _setup_pf() {
 
     if ! run_root pfctl -nf /etc/pf.conf; then
         printe_err "\
-/etc/pf.conf has been updated but contained errors, exiting\
+/etc/pf.conf updated but contained errors, exiting\
 "
         exit 1
     fi
 
     run_root pfctl -F all -f /etc/pf.conf
     printe_info "\
-/etc/pf.conf has been updated, internet connection might be interrupted\
+/etc/pf.conf updated, internet connection might be interrupted\
 "
 }
 

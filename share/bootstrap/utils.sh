@@ -119,7 +119,7 @@ git_clone() {
     elif [ "$(git -C "$path" describe --all 2>&1)" = "heads/$ref" ]; then
         git -C "$path" checkout -q "$ref"
         git -C "$path" pull -q origin "$ref"
-        printe_info "$path has been successfully updated"
+        printe_info "$path successfully updated"
     elif [ "$(git -C "$path" describe 2>&1)" != "$ref" ] &&
          [ "$(git -C "$path" rev-parse --short HEAD)" != "$ref" ]; then
         git -C "$path" fetch origin
@@ -325,7 +325,7 @@ make_link() {
     mkdir -p "$(dirname "$dest")"
     rm -f "$dest"
     ln -s "$src" "$dest"
-    printe_info "$dest has been linked to $src"
+    printe_info "$dest linked to $src"
 }
 
 lineinfile() {
