@@ -33,15 +33,9 @@ _run() {
 _run_desktop() {
     printe_h2 "Installing desktop configurations..."
 
-    fontconf_conf=$HOME/.config/fontconfig/fonts.conf
-
-    if ! forced && [ -f "$fontconf_conf" ]; then
-        printe_info "$fontconf_conf already exists, skipping..."
-        return
-    fi
-
-    cp "$BASE_DIR/etc/desktop/fonts.conf.in" "$fontconf_conf"
-    printe_info "$fontconf_conf successfully created"
+    make_link \
+        "$BASE_DIR/etc/fontconfig/conf.d" \
+        "$HOME/.config/fontconfig/conf.d"
 }
 
 _run_dev() {

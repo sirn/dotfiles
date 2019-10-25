@@ -144,6 +144,16 @@ _run() {
         $hack_gh/releases/download/v3.003/Hack-v3.003-ttf.tar.gz \
         7f592d091cbd2472f39af96e6c280cde3c27cab50a9c88746feb42918aa1888f
 
+    ## Roboto
+    ##
+
+    roboto_gh=https://github.com/google/roboto
+
+    _install_font_url \
+        roboto \
+        $roboto_gh/releases/download/v2.138/roboto-android.zip \
+        c825453253f590cfe62557733e7173f9a421fff103b00f57d33c4ad28ae53baf
+
     ## Droid Sans
     ## Using local mirror, since Droid Sans has been removed from Google Fonts
     ## in favor for Noto, but Noto Thai wasn't really designed for reading
