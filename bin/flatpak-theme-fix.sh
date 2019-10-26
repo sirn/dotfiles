@@ -4,6 +4,24 @@
 # https://github.com/abiosoft/dotfiles/blob/master/flatpak/fixflatpaktheme.sh
 #
 
+CONFS="
+gtk-3.0/settings.ini
+fontconfig/fonts.conf
+fontconfig/conf.d
+" # END-QUOTE
+
+OVERRIDES="
+~/.config/gtk-3.0
+~/.config/fontconfig
+~/.local/share/fonts
+~/.dotfiles/etc/fontconfig
+" # END-QUOTE
+
+for fp in $OVERRIDES; do
+    printf >&2 "==> Enabling access to %s\\n" "$fp"
+    flatpak override --user --filesystem="$fp"
+done
+
 for appdir in $HOME/.var/app/*; do
     if [ ! -d "$appdir" ]; then
         continue
@@ -11,10 +29,14 @@ for appdir in $HOME/.var/app/*; do
 
     printf >&2 "==> Fixing %s...\\n" "$(basename "$appdir")"
 
-    for file in gtk-3.0/settings.ini fontconfig/fonts.conf; do
-        if [ -f "$HOME/.config/$file" ]; then
+    for file in $CONFS; do
+        if [ -L "$appdir/config/$file" ]; then
+            continue
+        fi
+
+        if [ -f "$HOME/.config/$file" ] || [ -d "$HOME/.config/$file" ]; then
             mkdir -p "$appdir/config/$(dirname "$file")"
-            cp "$HOME/.config/$file" "$appdir/config/$file"
+            ln -fs "$HOME/.config/$file" "$appdir/config/$file"
         fi
     done
 done
