@@ -54,6 +54,7 @@ _run_dev() {
     printe_h2 "Installing dev packages..."
 
     xbps_install \
+        GraphicsMagick \
         cabal-install \
         duplicity \
         elixir \
@@ -63,14 +64,14 @@ _run_dev() {
         git-lfs \
         go \
         google-cloud-sdk \
-        GraphicsMagick \
         graphviz \
         ipcalc \
         jq \
         nodejs-lts \
         pandoc \
-        python \
-        python-pip \
+        python3 \
+        python3-devel \
+        python3-pip \
         ruby \
         shellcheck \
         socat \
