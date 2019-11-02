@@ -22,7 +22,7 @@ for fp in $OVERRIDES; do
     flatpak override --user --filesystem="$fp"
 done
 
-for appdir in $HOME/.var/app/*; do
+for appdir in "$HOME"/.var/app/*; do
     if [ ! -d "$appdir" ]; then
         continue
     fi
