@@ -23,7 +23,6 @@ _run() {
         mercurial \
         mosh \
         python3-tmuxp \
-        qemu-user-static \
         socat \
         sqlite \
         the_silver_searcher \
@@ -75,6 +74,7 @@ _run_dev() {
         ruby \
         shellcheck \
         socat \
+        tcl \
         terraform \
         tree \
         xz

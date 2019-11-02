@@ -81,6 +81,7 @@ _run_dev() {
     macports_install rebar3
     macports_install ruby26
     macports_install socat
+    macports_install tcl
     macports_install terraform
     macports_install tree
     macports_install xz
