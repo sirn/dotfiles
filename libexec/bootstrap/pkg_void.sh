@@ -66,8 +66,10 @@ _run_dev() {
         graphviz \
         ipcalc \
         jq \
+        libressl-dev \
         nodejs-lts \
         pandoc \
+        patch \
         python3 \
         python3-devel \
         python3-pip \
