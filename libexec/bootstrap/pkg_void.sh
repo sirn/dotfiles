@@ -66,7 +66,7 @@ _run_dev() {
         graphviz \
         ipcalc \
         jq \
-        libressl-dev \
+        libressl-devel \
         nodejs-lts \
         pandoc \
         patch \
