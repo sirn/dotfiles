@@ -40,7 +40,6 @@
 
 
 (use-package evil-org
-  :after (evil org)
   :commands evil-org-mode
   :diminish evil-org-mode
   :straight t
@@ -57,7 +56,8 @@
     (evil-org-mode)
     (evil-org-set-key-theme '(navigation insert textobjects additional))
     (evil-org-agenda-set-keys))
-  (add-hook 'org-mode-hook 'gr/setup-evil-org))
+  (add-hook 'org-mode-hook 'gr/setup-evil-org)
+  (add-hook 'org-agenda-mode-hook 'gr/setup-evil-org))
 
 
 (use-package org
@@ -66,8 +66,29 @@
 
   :preface
   (eval-when-compile
+    (defvar org-capture-templates)
     (declare-function git-run nil)
     (declare-function org-babel-do-load-languages nil))
+
+  :init
+  (when (file-directory-p "~/Nextcloud/Org")
+    (setq org-directory "~/Nextcloud/Org")
+    (setq org-default-notes-file (concat org-directory "/inbox.org"))
+    (setq org-agenda-files (list org-directory))
+    (add-hook 'after-init-hook
+      '(lambda ()
+         (org-agenda-list)
+         (delete-other-windows))))
+  (with-eval-after-load 'evil-leader
+    (evil-leader/set-key
+      "oa" 'org-agenda-list
+      "oc" 'counsel-org-capture
+      "of" 'counsel-org-goto-all))
+  (setq org-capture-templates
+    '(("i" "Inbox" entry (file+headline org-default-notes-file "Inbox")
+        "* TODO %?\n  %t")
+      ("c" "Capture" entry (file+headline org-default-notes-file "Inbox")
+        "* TODO %?\n  %t\n  %i")))
 
   :config
   (org-babel-do-load-languages
