@@ -66,7 +66,12 @@
 
   :preface
   (eval-when-compile
+    (defvar org-agenda-file)
+    (defvar org-archive-file-header-format)
+    (defvar org-archive-location)
     (defvar org-capture-templates)
+    (defvar org-default-notes-file)
+    (defvar org-directory)
     (declare-function git-run nil)
     (declare-function org-babel-do-load-languages nil))
 
@@ -74,22 +79,35 @@
   (when (file-directory-p "~/Nextcloud/Org")
     (setq org-directory "~/Nextcloud/Org")
     (setq org-default-notes-file (concat org-directory "/inbox.org"))
+    (setq org-archive-location "archive/%s_archive::datetree/* Archived")
+    (setq org-archive-file-header-format "")
     (setq org-agenda-files (list org-directory))
     (add-hook 'after-init-hook
       '(lambda ()
          (org-agenda-list)
          (delete-other-windows))))
+
   (with-eval-after-load 'evil-leader
     (evil-leader/set-key
       "oa" 'org-agenda-list
       "oc" 'counsel-org-capture
       "of" 'counsel-org-goto-all))
+
   (setq org-capture-templates
     '(("i" "Inbox" entry (file+headline org-default-notes-file "Inbox")
         "* TODO %?\n  %t")
       ("c" "Capture" entry (file+headline org-default-notes-file "Inbox")
         "* TODO %?\n  %t\n  %i")))
 
+  (defun org-archive-done-tasks ()
+    (interactive)
+    (org-map-entries
+     (lambda ()
+       (org-archive-subtree)
+       (setq org-map-continue-from
+         (org-element-property :begin (org-element-at-point))))
+     "/DONE" 'agenda))
+
   :config
   (org-babel-do-load-languages
-   'org-babel-load-languages '((python . t))))
+    'org-babel-load-languages '((python . t))))
