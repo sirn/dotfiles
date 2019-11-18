@@ -100,9 +100,8 @@ _run_dev() {
          pyls-black \
          pyls-isort \
          pyls-mypy \
-         python-language-server \
-         virtualenv \
-         git+https://github.com/emanspeaks/pyls-flake8.git#egg=pyls-flake8
+         python-language-server[flake8] \
+         virtualenv
 }
 
 run_with_flavors "$@"
