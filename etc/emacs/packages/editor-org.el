@@ -66,13 +66,16 @@
 
   :preface
   (eval-when-compile
-    (defvar org-agenda-file)
+    (defvar org-agenda-files)
     (defvar org-archive-file-header-format)
     (defvar org-archive-location)
     (defvar org-capture-templates)
     (defvar org-default-notes-file)
+    (defvar org-refile-targets)
     (defvar org-directory)
+    (defvar org-map-continue-from)
     (declare-function git-run nil)
+    (declare-function org-archive-subtree nil)
     (declare-function org-babel-do-load-languages nil))
 
   :init
@@ -82,6 +85,8 @@
     (setq org-archive-location "archive/%s_archive::datetree/* Archived")
     (setq org-archive-file-header-format "")
     (setq org-agenda-files (list org-directory))
+    (setq org-refile-targets '((nil :maxlevel . 1)
+                               (org-agenda-files :maxlevel . 1)))
     (add-hook 'after-init-hook
       '(lambda ()
          (org-agenda-list)
