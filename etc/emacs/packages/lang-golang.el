@@ -16,8 +16,7 @@
   :straight t
 
   :init
-  (with-eval-after-load 'flycheck
-    (add-hook 'go-mode-hook 'flycheck-gometalinter-setup)))
+  (add-hook 'go-mode-hook 'flycheck-gometalinter-setup))
 
 
 (use-package go-eldoc

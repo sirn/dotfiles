@@ -20,5 +20,4 @@
   :straight t
 
   :init
-  (with-eval-after-load 'flycheck
-    (add-hook 'elixir-mode-hook 'flycheck-mix-setup)))
+  (add-hook 'elixir-mode-hook 'flycheck-mix-setup))

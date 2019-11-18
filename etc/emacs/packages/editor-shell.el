@@ -15,5 +15,6 @@
   (exec-path-from-shell-initialize))
 
 
-(with-eval-after-load 'flycheck
+(use-package sh-script
+  :init
   (add-hook 'sh-mode-hook 'flycheck-mode))
