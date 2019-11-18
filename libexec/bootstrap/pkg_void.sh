@@ -16,13 +16,14 @@ _run() {
         aria2 \
         aspell \
         aspell-en \
-        curl \
         cronie \
+        curl \
         git \
         loksh \
         mercurial \
         mosh \
         python3-tmuxp \
+        rsync \
         socat \
         sqlite \
         the_silver_searcher \
