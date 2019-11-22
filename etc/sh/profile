@@ -23,13 +23,13 @@ export XDG_CACHE_HOME
 export XDG_DATA_HOME
 export XDG_STATE_HOME
 
-prependpath() {
+appendpath() {
     case ":$PATH:" in
         *:"$1":*)
             ;;
 
         * )
-            PATH="${1:+$1:}$PATH"
+            PATH="${PATH:+$PATH:}$1"
             ;;
     esac
 }
@@ -44,11 +44,11 @@ export MANPATH
 RUST_SRC_PATH="$HOME/.local/lib/rustlib/src/rust/src"
 export RUST_SRC_PATH
 
-prependpath "$HOME/.local/bin"
-prependpath "$HOME/.cabal/bin"
-prependpath "$HOME/.cargo/bin"
-prependpath "$XDG_DATA_HOME/pytools/bin"
-prependpath "$GOPATH/bin"
+appendpath "$HOME/.local/bin"
+appendpath "$HOME/.cabal/bin"
+appendpath "$HOME/.cargo/bin"
+appendpath "$XDG_DATA_HOME/pytools/bin"
+appendpath "$GOPATH/bin"
 
 
 ## Platform-specific
@@ -56,7 +56,7 @@ prependpath "$GOPATH/bin"
 
 case "$(uname)" in
     Darwin )
-        prependpath /opt/local/bin
+        appendpath /opt/local/bin
 
         if [ -f /usr/libexec/java_home ]; then
             JAVA_HOME=$(/usr/libexec/java_home)
@@ -65,7 +65,7 @@ case "$(uname)" in
 
         for pypath in "$HOME"/Library/Python/?.?/bin; do
             if [ -d "$pypath" ]; then
-                prependpath "$pypath"
+                appendpath "$pypath"
             fi
         done
         ;;
@@ -76,12 +76,12 @@ esac
 ##
 
 if [ -d "$HOME/.cache/rebar3/bin" ]; then
-    prependpath "$HOME/.cache/rebar3/bin"
+    appendpath "$HOME/.cache/rebar3/bin"
 fi
 
 for rbpath in "$HOME"/.gem/ruby/?.?/bin; do
     if [ -d "$rbpath" ]; then
-        prependpath "$rbpath"
+        appendpath "$rbpath"
     fi
 done
 
@@ -118,4 +118,4 @@ ENV="$HOME/.kshrc"
 
 export ENV
 export PATH
-unset prependpath
+unset appendpath
