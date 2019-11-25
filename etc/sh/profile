@@ -23,73 +23,16 @@ export XDG_CACHE_HOME
 export XDG_DATA_HOME
 export XDG_STATE_HOME
 
-appendpath() {
-    case ":$PATH:" in
-        *:"$1":*)
-            ;;
 
-        * )
-            PATH="${PATH:+$PATH:}$1"
-            ;;
-    esac
-}
-
-GOPATH=$HOME/Dev/go
-export GOPATH
-
-# Note: leading colon to append to default MANPATH
-MANPATH=:$HOME/.local/man
-export MANPATH
-
-RUST_SRC_PATH="$HOME/.local/lib/rustlib/src/rust/src"
-export RUST_SRC_PATH
-
-appendpath "$HOME/.local/bin"
-appendpath "$HOME/.cabal/bin"
-appendpath "$HOME/.cargo/bin"
-appendpath "$XDG_DATA_HOME/pytools/bin"
-appendpath "$GOPATH/bin"
-
-
-## Platform-specific
+## Binary wrappers
+## alias doesn't work as login .profile
 ##
 
-case "$(uname | tr '[:upper:]' '[:lower:]')" in
-    darwin )
-        appendpath /opt/local/bin
-
-        if [ -f /usr/libexec/java_home ]; then
-            JAVA_HOME=$(/usr/libexec/java_home)
-            export JAVA_HOME
-        fi
-
-        for pypath in "$HOME"/Library/Python/?.?/bin; do
-            if [ -d "$pypath" ]; then
-                appendpath "$pypath"
-            fi
-        done
-        ;;
-esac
-
-
-## Local
-##
-
-if [ -d "$HOME/.cache/rebar3/bin" ]; then
-    appendpath "$HOME/.cache/rebar3/bin"
-fi
-
-for rbpath in "$HOME"/.gem/ruby/?.?/bin; do
-    if [ -d "$rbpath" ]; then
-        appendpath "$rbpath"
-    fi
-done
+PATH=$HOME/.dotfiles/libexec/fakebin:$PATH
 
 
 ## GPG agent
 ##
-
-alias gpg='gpg2'
 
 if command -v gpgconf >/dev/null; then
     unset SSH_AGENT_PID
@@ -104,9 +47,8 @@ fi
 ## Emacs
 ##
 
-if command -v emacsclient >/dev/null; then
-    alias emacs='$HOME/.dotfiles/bin/emacsclient.sh'
-    EDITOR="$HOME/.dotfiles/bin/emacsclient.sh"
+if command -v emacs >/dev/null; then
+    EDITOR="emacs"
     export EDITOR
 fi
 
@@ -118,4 +60,3 @@ ENV="$HOME/.kshrc"
 
 export ENV
 export PATH
-unset appendpath

@@ -1,0 +1,22 @@
+#!/bin/sh
+
+for n in /opt/local/bin /usr/local/bin /usr/bin; do
+    if [ -f "$n/emacs" ]; then
+        EMACS_PREFIX="$n"
+        break
+    fi
+done
+
+case "$@" in
+    *--daemon* )
+        exec $EMACS_PREFIX/emacs "$@"
+        ;;
+
+    * )
+        if [ -n "$TERM" ]; then
+            exec $EMACS_PREFIX/emacsclient -t -c -a '' "$@"
+        else
+            exec $EMACS_PREFIX/emacsclient -c -a '' "$@"
+        fi
+        ;;
+esac

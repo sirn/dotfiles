@@ -3,7 +3,7 @@
 # ~/.kshrc
 #
 
-# Exit early for non-interactive
+# Exit early for non-interactive shell
 #
 case "$-" in
     *i* )
@@ -25,10 +25,25 @@ export HISTFILE
 export HISTSIZE
 
 
+## Platform
+##
+
+unset PLATFORM
+unset OSID
+
+PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
+
+if [ -f /etc/os-release ]; then
+    OSID=$(awk '/^ID=/ {
+        match($0, "^.*=\"?([^\"]+)\"?$", a);
+        print a[1]
+    }' < /etc/os-release)
+fi
+
+
 ## Aliases
 ##
 
-# shellcheck disable=SC2010
 if command -v colorls >/dev/null; then
     alias ls="colorls -G"
 elif ls --version 2>&1 |grep -qe "BusyBox" -e "GNU"; then
@@ -41,16 +56,7 @@ alias ll='ls -lh'
 alias la='ls -alh'
 alias sshi='ssh -F /dev/null -o UserKnownHostsFile=/dev/null'
 
-if [ -f /etc/os-release ]; then
-    unset OS_RELEASE
-
-    OS_RELEASE=$(awk '/^ID=/ {
-        match($0, "^.*=\"?([^\"]+)\"?$", a);
-        print a[1]
-    }' < /etc/os-release)
-fi
-
-case "$OS_RELEASE" in
+case "$OSID" in
     void )
         if ! command -v xi >/dev/null; then
             alias xi="sudo xbps-install"
@@ -75,6 +81,67 @@ if command -v gpg-connect-agent >/dev/null; then
 fi
 
 
+## PATHs
+##
+
+prependpath() {
+    case ":$PATH:" in
+        *:"$1":*)
+            ;;
+
+        * )
+            PATH="${1:+$1:}$PATH"
+            ;;
+    esac
+}
+
+GOPATH=$HOME/Dev/go
+MANPATH=:$HOME/.local/man
+RUST_SRC_PATH="$HOME/.local/lib/rustlib/src/rust/src"
+
+export GOPATH
+export MANPATH
+export RUST_SRC_PATH
+
+prependpath "$HOME/.local/bin"
+prependpath "$HOME/.cabal/bin"
+prependpath "$HOME/.cargo/bin"
+prependpath "$XDG_DATA_HOME/pytools/bin"
+prependpath "$GOPATH/bin"
+
+case "$(uname | tr '[:upper:]' '[:lower:]')" in
+    darwin )
+        prependpath /opt/local/bin
+
+        if [ -f /usr/libexec/java_home ]; then
+            JAVA_HOME=$(/usr/libexec/java_home)
+            export JAVA_HOME
+        fi
+
+        for pypath in "$HOME"/Library/Python/?.?/bin; do
+            if [ -d "$pypath" ]; then
+                prependpath "$pypath"
+            fi
+        done
+        ;;
+esac
+
+
+## Local
+##
+
+if [ -d "$HOME/.cache/rebar3/bin" ]; then
+    prependpath "$HOME/.cache/rebar3/bin"
+fi
+
+for rbpath in "$HOME"/.gem/ruby/?.?/bin; do
+    if [ -d "$rbpath" ]; then
+        prependpath "$rbpath"
+    fi
+done
+
+
+
 ## Prompt
 ##
 
@@ -85,4 +152,6 @@ case "$TERM" in
 esac
 
 export PS1
-unset OS_RELEASE
+unset PLATFORM
+unset OSID
+unset prependpath
