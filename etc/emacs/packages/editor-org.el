@@ -90,8 +90,10 @@
                                (org-agenda-files :maxlevel . 1)))
     (add-hook 'after-init-hook
       '(lambda ()
-         (org-agenda-list)
-         (delete-other-windows))))
+         (org-agenda-list)))
+    (setq initial-buffer-choice
+      '(lambda ()
+         (get-buffer org-agenda-buffer-name))))
 
   (with-eval-after-load 'evil-leader
     (evil-leader/set-key
