@@ -59,7 +59,7 @@ alias sshi='ssh -F /dev/null -o UserKnownHostsFile=/dev/null'
 case "$OSID" in
     void )
         if ! command -v xi >/dev/null; then
-            alias xi="sudo xbps-install"
+            alias xi="sudo xbps-install -Su"
         fi
 
         alias xlocal="xbps-query -p repository -s $HOME"
