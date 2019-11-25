@@ -31,6 +31,7 @@ _run() {
         unzip \
         w3m \
         weechat \
+        xtools \
         zip
 }
 
