@@ -7,11 +7,6 @@
   :prefix 'gr)
 
 
-;; Hack
-(setenv "PATH" (concat "/opt/local/bin" (getenv "PATH")))
-(setq exec-path (nconc '("/opt/local/bin") exec-path))
-
-
 ;; Use custom file at alternate path
 (setq custom-file "~/.emacs.d/custom.el")
 (if (file-exists-p custom-file)
