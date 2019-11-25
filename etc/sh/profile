@@ -54,8 +54,8 @@ appendpath "$GOPATH/bin"
 ## Platform-specific
 ##
 
-case "$(uname)" in
-    Darwin )
+case "$(uname | tr '[:upper:]' '[:lower:]')" in
+    darwin )
         appendpath /opt/local/bin
 
         if [ -f /usr/libexec/java_home ]; then
@@ -89,6 +89,8 @@ done
 ## GPG agent
 ##
 
+alias gpg='gpg2'
+
 if command -v gpgconf >/dev/null; then
     unset SSH_AGENT_PID
 
@@ -96,19 +98,17 @@ if command -v gpgconf >/dev/null; then
         SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
         export SSH_AUTH_SOCK
     fi
-
-    GPG_TTY=$(tty)
-    export GPG_TTY
 fi
 
 
-## Desktop
+## Emacs
 ##
 
-case "${XDG_SESSION_TYPE}" in
-    wayland | x11 ) [ -f "$HOME/.desktoprc" ] && . "$HOME/.desktoprc";;
-    * ) ;;
-esac
+if command -v emacsclient >/dev/null; then
+    alias emacs='$HOME/.dotfiles/bin/emacsclient.sh'
+    EDITOR="$HOME/.dotfiles/bin/emacsclient.sh"
+    export EDITOR
+fi
 
 
 ## Finalizing

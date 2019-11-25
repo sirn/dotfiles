@@ -3,6 +3,28 @@
 # ~/.kshrc
 #
 
+# Exit early for non-interactive
+#
+case "$-" in
+    *i* )
+        ;;
+
+    * )
+        return 0
+        ;;
+esac
+
+
+## History
+##
+
+HISTFILE="$HOME/.ksh_history"
+HISTSIZE=10000
+
+export HISTFILE
+export HISTSIZE
+
+
 ## Aliases
 ##
 
@@ -17,40 +39,44 @@ fi
 
 alias ll='ls -lh'
 alias la='ls -alh'
-alias gpg='gpg2'
 alias sshi='ssh -F /dev/null -o UserKnownHostsFile=/dev/null'
 
-if command -v emacsclient >/dev/null; then
-    alias emacs='$HOME/.dotfiles/bin/emacsclient.sh'
-    EDITOR="$HOME/.dotfiles/bin/emacsclient.sh"
-    export EDITOR
+if [ -f /etc/os-release ]; then
+    unset OS_RELEASE
+
+    OS_RELEASE=$(awk '/^ID=/ {
+        match($0, "^.*=\"?([^\"]+)\"?$", a);
+        print a[1]
+    }' < /etc/os-release)
 fi
 
+case "$OS_RELEASE" in
+    void )
+        if ! command -v xi >/dev/null; then
+            alias xi="sudo xbps-install"
+        fi
 
-## History
-##
+        alias xlocal="xbps-query -p repository -s $HOME"
+        ;;
 
-HISTFILE="$HOME/.ksh_history"
-HISTSIZE=10000
-
-export HISTFILE
-export HISTSIZE
+    * )
+        ;;
+esac
 
 
 ## GPG
 ##
 
 if command -v gpg-connect-agent >/dev/null; then
+    GPG_TTY=$(tty)
+    export GPG_TTY
+
     gpg-connect-agent updatestartuptty /bye >/dev/null
 fi
 
 
 ## Prompt
 ##
-
-if [ -n "$TILIX_ID" ] && [ -f /etc/profile.d/vte.sh ]; then
-    . /etc/profile.d/vte.sh
-fi
 
 case "$TERM" in
     xterm* | rxvt* ) PS1="\h \w \$ ";;
@@ -59,3 +85,4 @@ case "$TERM" in
 esac
 
 export PS1
+unset OS_RELEASE
