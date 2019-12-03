@@ -78,6 +78,7 @@
     (defvar org-refile-targets)
     (declare-function git-run nil)
     (declare-function org-element-at-point nil)
+    (declare-function org-map-entries nil)
     (declare-function org-archive-subtree nil)
     (declare-function org-babel-do-load-languages nil))
 
