@@ -24,12 +24,15 @@
   :preface
   (eval-when-compile
     (defvar apheleia-mode-alist)
+    (defvar apheleia-formatters)
     (declare-function apheleia-global-mode nil))
 
   :config
   (apheleia-global-mode t)
+  (add-to-list 'apheleia-formatters '(mix . ("mix" "format" "-")))
   (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier)))
+  (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(elixir-mode . mix)))
 
 
 (use-package company
