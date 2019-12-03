@@ -71,9 +71,11 @@
     (defvar org-archive-location)
     (defvar org-capture-templates)
     (defvar org-default-notes-file)
-    (defvar org-refile-targets)
     (defvar org-directory)
+    (defvar org-highest-priority)
+    (defvar org-lowest-priority)
     (defvar org-map-continue-from)
+    (defvar org-refile-targets)
     (declare-function git-run nil)
     (declare-function org-element-at-point nil)
     (declare-function org-archive-subtree nil)
@@ -81,19 +83,22 @@
 
   :init
   (when (file-directory-p "~/Nextcloud/Org")
-    (setq org-directory "~/Nextcloud/Org")
-    (setq org-default-notes-file (concat org-directory "/inbox.org"))
-    (setq org-archive-location "archive/%s_archive::datetree/* Archived")
-    (setq org-archive-file-header-format "")
-    (setq org-agenda-files (list org-directory))
-    (setq org-refile-targets '((nil :maxlevel . 1)
-                               (org-agenda-files :maxlevel . 1)))
     (add-hook 'after-init-hook
       '(lambda ()
          (org-agenda-list)))
     (setq initial-buffer-choice
       '(lambda ()
          (get-buffer org-agenda-buffer-name))))
+
+  (setq org-directory "~/Nextcloud/Org")
+  (setq org-default-notes-file (concat org-directory "/inbox.org"))
+  (setq org-archive-location "archive/%s_archive::datetree/* Archived")
+  (setq org-lowest-priority ?F)
+  (setq org-highest-priority ?A)
+  (setq org-archive-file-header-format "")
+  (setq org-agenda-files (list org-directory))
+  (setq org-refile-targets '((nil :maxlevel . 1)
+                             (org-agenda-files :maxlevel . 1)))
 
   (with-eval-after-load 'evil-leader
     (evil-leader/set-key
