@@ -76,6 +76,7 @@
     (defvar org-lowest-priority)
     (defvar org-map-continue-from)
     (defvar org-refile-targets)
+    (defvar org-todo-keywords)
     (declare-function git-run nil)
     (declare-function org-element-at-point nil)
     (declare-function org-map-entries nil)
@@ -113,6 +114,11 @@
       ("c" "Capture" entry (file+headline org-default-notes-file "Inbox")
         "* TODO %?\n  %t\n  %i")))
 
+  (setq org-todo-keywords
+    '((sequence
+        "TODO(t)" "STARTED(s)" "WAITING(w)"
+        "|" "DONE(d)" "DROPPED(c)")))
+
   (defun org-archive-done-tasks ()
     (interactive)
     (org-map-entries
@@ -121,6 +127,15 @@
        (setq org-map-continue-from
          (org-element-property :begin (org-element-at-point))))
      "/DONE" 'agenda))
+
+  (defun org-archive-dropped-tasks ()
+    (interactive)
+    (org-map-entries
+     (lambda ()
+       (org-archive-subtree)
+       (setq org-map-continue-from
+         (org-element-property :begin (org-element-at-point))))
+     "/DROPPED" 'agenda))
 
   :config
   (org-babel-do-load-languages
