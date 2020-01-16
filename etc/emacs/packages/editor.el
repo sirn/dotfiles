@@ -29,10 +29,8 @@
 
   :config
   (apheleia-global-mode t)
-  (add-to-list 'apheleia-formatters '(mix . ("mix" "format" "-")))
   (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(elixir-mode . mix)))
+  (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier)))
 
 
 (use-package company
