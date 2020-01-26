@@ -56,7 +56,7 @@ _maybe_install_cryptography() {
             patch -p0
     done
 
-    $PIP install --user .
+    $PIP install .
 }
 
 _run() {
