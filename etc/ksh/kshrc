@@ -91,8 +91,7 @@ prependpath() {
     esac
 }
 
-GOPATH=$HOME/Dev/go
-MANPATH=:$HOME/.local/man
+GOPATH=$HOME/Dev/go/gopath:$HOME/Dev
 RUST_SRC_PATH="$HOME/.local/lib/rustlib/src/rust/src"
 
 export GOPATH
@@ -103,7 +102,23 @@ prependpath "$HOME/.local/bin"
 prependpath "$HOME/.cabal/bin"
 prependpath "$HOME/.cargo/bin"
 prependpath "$XDG_DATA_HOME/pytools/bin"
-prependpath "$GOPATH/bin"
+
+_gopaths=$GOPATH
+
+while true; do
+    if [ -z "$_gopaths" ]; then
+        break
+    fi
+
+    _gopath=${_gopaths%%:*}
+    prependpath "$_gopath/bin"
+
+    _gopaths=${_gopaths##$_gopath}
+    _gopaths=${_gopaths#:}
+done
+
+unset _gopath
+unset _gopaths
 
 case "$(uname | tr '[:upper:]' '[:lower:]')" in
     darwin )
@@ -114,11 +129,13 @@ case "$(uname | tr '[:upper:]' '[:lower:]')" in
             export JAVA_HOME
         fi
 
-        for pypath in "$HOME"/Library/Python/?.?/bin; do
-            if [ -d "$pypath" ]; then
-                prependpath "$pypath"
+        for _pypath in "$HOME"/Library/Python/?.?/bin; do
+            if [ -d "$_pypath" ]; then
+                prependpath "$_pypath"
             fi
         done
+
+        unset _pypath
         ;;
 esac
 

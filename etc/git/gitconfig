@@ -54,7 +54,7 @@
 
 [ghq]
     root = ~/Dev/src
-    root = ~/Dev/go/src
+    root = ~/Dev/go/gopath/src
 
 [magit]
     hideCampaign = true
