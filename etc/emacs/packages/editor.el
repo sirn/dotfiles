@@ -18,6 +18,22 @@
       "jl" 'avy-goto-line)))
 
 
+(use-package ace-link
+  :straight t
+
+  :preface
+  (eval-when-compile
+    (declare-function ace-link-setup-default nil))
+
+  :init
+  (with-eval-after-load 'evil-leader
+    (evil-leader/set-key
+      "jl" 'ace-link))
+
+  :config
+  (ace-link-setup-default))
+
+
 (use-package apheleia
   :straight (apheleia :host github :repo "raxod502/apheleia")
 

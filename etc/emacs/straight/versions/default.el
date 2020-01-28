@@ -1,5 +1,6 @@
 (("Fill-Column-Indicator" . "3d88b8a4a3eeabb8d1c9ef27d3c6f5d98517be77")
  ("ace-window" . "edbbb1b77c3fb939e4d9057443bc1897321d0095")
+ ("ace-link" . "f919f657efe158af57c5a02715799059eb3ee8fd")
  ("alchemist.el" . "6f99367511ae209f8fe2c990779764bbb4ccb6ed")
  ("annalist.el" . "134fa3f0fb91a636a1c005c483516d4b64905a6d")
  ("ansible-doc" . "86083a7bb2ed0468ca64e52076b06441a2f8e9e0")
