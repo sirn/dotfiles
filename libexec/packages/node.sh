@@ -21,7 +21,6 @@ _run_dev() {
     printe_h2 "Installing npm dev packages..."
 
     npm install -g \
-        bower \
         eslint \
         javascript-typescript-langserver \
         npm-upgrade \
@@ -34,7 +33,6 @@ _run_dev() {
         stylelint-config-recommended-scss \
         stylelint-scss \
         tern \
-        tslint \
         typescript \
         wscat
 }
