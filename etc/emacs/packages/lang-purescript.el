@@ -6,6 +6,7 @@
   :init
   (add-hook 'purescript-mode-hook 'turn-on-purescript-indentation)
   (add-hook 'purescript-mode-hook 'flycheck-mode)
+
   (with-eval-after-load 'purescript-indentation
     '(diminish 'purescript-indentation-mode)))
 

@@ -62,19 +62,6 @@
   (load-theme 'kaolin-valley-dark t))
 
 
-(use-package fill-column-indicator
-  :diminish fci-mode
-  :straight t
-
-  :preface
-  (eval-when-compile
-    (declare-function fci-mode nil))
-
-  :config
-  (setq-default fill-column 80)
-  (add-hook 'prog-mode-hook 'fci-mode))
-
-
 (use-package git-gutter
   :diminish git-gutter-mode
   :straight t

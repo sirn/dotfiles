@@ -4,6 +4,7 @@
 
   :preface
   (eval-when-compile
+    (defvar rust-format-on-save)
     (declare-function lsp nil))
 
   :init

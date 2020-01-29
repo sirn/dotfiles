@@ -28,7 +28,7 @@
   :init
   (with-eval-after-load 'evil-leader
     (evil-leader/set-key
-      "jl" 'ace-link))
+      "jL" 'ace-link))
 
   :config
   (ace-link-setup-default))
@@ -45,6 +45,8 @@
 
   :config
   (apheleia-global-mode t)
+  (add-to-list 'apheleia-formatters '(goimports . ("goimports")))
+  (add-to-list 'apheleia-mode-alist '(go-mode . goimports))
   (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier))
   (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier)))
 
@@ -56,9 +58,7 @@
 
   :preface
   (eval-when-compile
-    (declare-function global-company-mode nil)
-    (declare-function turn-on-fci-mode nil)
-    (declare-function turn-off-fci-mode nil))
+    (declare-function global-company-mode nil))
 
   :init
   (setq company-idle-delay 0.1)
@@ -81,12 +81,7 @@
    ("C-l"      . company-complete-selection))
 
   :config
-  (global-company-mode t)
-  (with-eval-after-load 'fill-column-indicator
-    (defun gr/company-fci-advice (command)
-      (when (string= "show" command) (turn-off-fci-mode))
-      (when (string= "hide" command) (turn-on-fci-mode)))
-    (advice-add 'company-call-frontends :before 'gr/company-fci-advice)))
+  (global-company-mode t))
 
 
 (use-package company-lsp
