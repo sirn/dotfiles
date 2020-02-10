@@ -46,7 +46,16 @@
   :config
   (apheleia-global-mode t)
   (add-to-list 'apheleia-formatters '(goimports . ("goimports")))
+  (add-to-list 'apheleia-formatters '(jsonnetfmt . ("jsonnetfmt"
+                                                     "--indent" "2"
+                                                     "--max-blank-lines" "2"
+                                                     "--sort-imports"
+                                                     "--string-style" "s"
+                                                     "--comment-style" "s"
+                                                     "--" "-")))
+
   (add-to-list 'apheleia-mode-alist '(go-mode . goimports))
+  (add-to-list 'apheleia-mode-alist '(jsonnet-mode . jsonnetfmt))
   (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier))
   (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier)))
 
