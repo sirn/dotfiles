@@ -83,6 +83,7 @@ _run_dev() {
     sh "$BASE_DIR/libexec/packages/node.sh" "$@"
     sh "$BASE_DIR/libexec/packages/python.sh" "$@"
     sh "$BASE_DIR/libexec/packages/rust.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/golang.sh" "$@"
 }
 
 _run_all() {
