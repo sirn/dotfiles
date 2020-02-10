@@ -68,6 +68,7 @@ _run_dev() {
         graphviz \
         ipcalc \
         jq \
+        jsonnet \
         libressl-devel \
         nodejs-lts \
         pandoc \
