@@ -11,7 +11,9 @@
             (stringp buffer-file-name)
             (not
               (string-match
-                (rx ".dotfiles/" (* nonl))
+                (rx (or ".dotfiles/"
+                      ".dotpriv/")
+                  (* nonl))
                 buffer-file-name)))
       (flycheck-mode t)))
 
