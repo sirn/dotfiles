@@ -34,6 +34,7 @@ _run_dev() {
     _go_get gocode github.com/nsf/gocode
     _go_get goimports golang.org/x/tools/cmd/goimports
     _go_get golint golang.org/x/lint/golint
+    _go_get gopls golang.org/x/tools/gopls
 }
 
 run_with_flavors "$@"
