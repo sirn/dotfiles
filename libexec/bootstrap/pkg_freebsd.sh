@@ -58,7 +58,6 @@ _run_dev() {
     pkgng_install git-crypt
     pkgng_install git-lfs
     pkgng_install go
-    pkgng_install google-cloud-sdk
     pkgng_install graphviz
     pkgng_install hs-ShellCheck
     pkgng_install hs-cabal-install
@@ -79,6 +78,8 @@ _run_dev() {
     pkgng_install tree
 
     sh "$BASE_DIR/libexec/packages/cloudflared.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/gcloud.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/kustomize.sh" "$@"
     sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"
     sh "$BASE_DIR/libexec/packages/node.sh" "$@"
     sh "$BASE_DIR/libexec/packages/python.sh" "$@"

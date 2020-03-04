@@ -68,7 +68,6 @@ _run_dev() {
     macports_install git-crypt
     macports_install git-lfs
     macports_install go
-    macports_install google-cloud-sdk
     macports_install graphviz
     macports_install hs-cabal-install
     macports_install ipcalc
@@ -97,6 +96,8 @@ _run_dev() {
     macports_select ruby ruby26
 
     sh "$BASE_DIR/libexec/packages/cloudflared.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/gcloud.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/kustomize.sh" "$@"
     sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"
     sh "$BASE_DIR/libexec/packages/node.sh" "$@"
     sh "$BASE_DIR/libexec/packages/python.sh" "$@"

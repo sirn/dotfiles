@@ -102,6 +102,7 @@ prependpath "$HOME/.local/bin"
 prependpath "$HOME/.cabal/bin"
 prependpath "$HOME/.cargo/bin"
 prependpath "$XDG_DATA_HOME/pytools/bin"
+prependpath "$HOME/.local/lib/google-cloud-sdk/bin"
 
 _gopaths=$GOPATH
 

@@ -64,7 +64,6 @@ _run_dev() {
         git-crypt \
         git-lfs \
         go \
-        google-cloud-sdk \
         graphviz \
         ipcalc \
         jq \
@@ -85,6 +84,8 @@ _run_dev() {
         xz
 
     sh "$BASE_DIR/libexec/packages/cloudflared.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/gcloud.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/kustomize.sh" "$@"
     sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"
     sh "$BASE_DIR/libexec/packages/node.sh" "$@"
     sh "$BASE_DIR/libexec/packages/python.sh" "$@"
