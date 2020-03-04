@@ -101,8 +101,8 @@ export RUST_SRC_PATH
 prependpath "$HOME/.local/bin"
 prependpath "$HOME/.cabal/bin"
 prependpath "$HOME/.cargo/bin"
-prependpath "$XDG_DATA_HOME/pytools/bin"
 prependpath "$HOME/.local/lib/google-cloud-sdk/bin"
+prependpath "$HOME/.local/lib/pytools/bin"
 
 _gopaths=$GOPATH
 

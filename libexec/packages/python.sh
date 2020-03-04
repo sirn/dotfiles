@@ -9,7 +9,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../share/bootstrap/utils.sh"
 . "../../share/bootstrap/buildenv.sh"
 
-PYTOOLS=${XDG_DATA_HOME:-$HOME/.local/share}/pytools
+PYTOOLS=$HOME/.local/lib/pytools
 PIP=$PYTOOLS/bin/pip3
 
 _run() {
