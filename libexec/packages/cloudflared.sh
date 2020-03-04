@@ -9,8 +9,8 @@ cd "$(dirname "$0")" || exit 1
 . "../../share/bootstrap/utils.sh"
 . "../../share/bootstrap/buildenv.sh"
 
-CFD_VER=2019.6.0
-CFD_SHA256=33df5722de9c43640fb287b62b619299ec89881cd1d193436636ac4fe2a097f4
+CFD_VER=2020.2.1
+CFD_SHA256=288a9c1fd352fb32c2d74194ab90b0502748c6d51c68421803b834cccf731501
 
 _run() {
     printe_h2 "Installing cloudflared..."
