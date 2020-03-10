@@ -35,7 +35,6 @@ _run() {
     tar -C "$BUILD_DIR" -xzf kustomize.tar.gz
     rm kustomize.tar.gz
 
-    unset GOPATH
     unset GO111MODULES
     worksrc=$BUILD_DIR/kustomize-kustomize-v$KUSTOMIZE_VER/kustomize
 

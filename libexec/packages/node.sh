@@ -21,8 +21,10 @@ _run_dev() {
     printe_h2 "Installing npm dev packages..."
 
     npm install -g \
+        bash-language-server \
         eslint \
         javascript-typescript-langserver \
+        npm \
         npm-upgrade \
         npx \
         prettier \
