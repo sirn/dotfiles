@@ -513,7 +513,8 @@ get a chance to run first, for example to set LSP configuration."
                   #'erlang-mode
                   #'purescript-mode
                   #'ruby-mode
-                  #'rust-mode))
+                  #'rust-mode
+                  #'sh-mode))
         (lsp))))
 
   (add-hook 'after-change-major-mode-hook #'gemacs--lsp-maybe-enable)

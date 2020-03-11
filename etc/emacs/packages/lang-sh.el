@@ -13,14 +13,4 @@
     (when (eq major-mode 'sh-mode)
       (setq mode-name (capitalize (symbol-name sh-shell)))))
 
-  (add-hook 'sh-mode-hook #'gemacs--sh-prettify-mode-line)
-
-  ;; Only activate the Bash LSP server in Bash code, not all shell
-  ;; script code. It's not very helpful to get Bash syntax errors
-  ;; while editing Zsh code.
-  (use-feature lsp-clients
-    :config
-    (gemacs-protect-macros
-      (setf (lsp--client-activation-fn (gethash 'bash-ls lsp-clients))
-            (lambda (&rest _)
-              (memq sh-shell '(sh bash)))))))
+  (add-hook 'sh-mode-hook #'gemacs--sh-prettify-mode-line))
