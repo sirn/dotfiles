@@ -3,7 +3,7 @@
 ;; This file wraps over an actual configuration for automatic loading
 ;; and byte-compilation.
 
-;; ----------------------------------------------------------------------------
+;; --------------------------------------------------------------------------
 ;;; Early configurations
 
 ;; Prevent package.el from modifying this file.
@@ -18,7 +18,7 @@
                       temporary-file-directory)))
 
 
-;; ----------------------------------------------------------------------------
+;; --------------------------------------------------------------------------
 ;;; Pre-initialization
 
 (require 'cl-lib)
@@ -42,7 +42,7 @@
   :link '(url-link :tag "GitHub" "https://github.com/sirn/dotfiles"))
 
 
-;; ----------------------------------------------------------------------------
+;; --------------------------------------------------------------------------
 ;;; GnuTLS
 
 (with-eval-after-load 'gnutls
@@ -60,7 +60,7 @@
       (add-to-list 'gnutls-trustfiles cert))))
 
 
-;; ----------------------------------------------------------------------------
+;; --------------------------------------------------------------------------
 ;;; Hooks
 
 (defcustom gemacs-after-init-hook nil
@@ -69,7 +69,7 @@
   :type 'hook)
 
 
-;; ----------------------------------------------------------------------------
+;; --------------------------------------------------------------------------
 ;;; Package management
 
 ;; Bootstrap the package manager, `straight.el'. straight.el is also used
@@ -115,7 +115,7 @@
 (use-package closql)
 (use-package s)
 
-;; ----------------------------------------------------------------------------
+;; --------------------------------------------------------------------------
 ;;; Convenient helpers
 
 ;; The following macros are taken from Radian
@@ -268,7 +268,7 @@ This is an `:around' advice for many different functions."
   (add-to-list 'use-package-keywords :leader))
 
 
-;; ----------------------------------------------------------------------------
+;; --------------------------------------------------------------------------
 ;;; Saner defaults
 
 (setq make-backup-files nil)
@@ -295,7 +295,7 @@ This is an `:around' advice for many different functions."
   (exec-path-from-shell-initialize))
 
 
-;; ----------------------------------------------------------------------------
+;; --------------------------------------------------------------------------
 ;;; Packages
 
 (let ((loaded (mapcar
@@ -313,7 +313,7 @@ This is an `:around' advice for many different functions."
   (turn-on-evil-mode))
 
 
-;; ----------------------------------------------------------------------------
+;; --------------------------------------------------------------------------
 ;;; Extra config
 
 (let ((private-init-file "~/.dotpriv/etc/emacs/init.el"))
@@ -321,7 +321,7 @@ This is an `:around' advice for many different functions."
     (load (file-name-sans-extension private-init-file))))
 
 
-;; ----------------------------------------------------------------------------
+;; --------------------------------------------------------------------------
 ;;; Finalizing
 
 (run-hooks 'gemacs-after-init-hook)

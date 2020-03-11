@@ -4,7 +4,7 @@
 ;; Many parts of this file are taken from Radian with some modifications.
 ;; https://github.com/raxod502/radian/blob/242c55c/emacs/radian.el
 
-;; ----------------------------------------------------------------------------
+;; --------------------------------------------------------------------------
 ;;; Editing behaviors
 
 (setq-default indent-tabs-mode nil)
@@ -189,7 +189,7 @@
   (add-hook 'prog-mode-hook #'gemacs--dtrt-maybe-enable))
 
 
-;; ----------------------------------------------------------------------------
+;; --------------------------------------------------------------------------
 ;;; Snippets
 
 (use-feature abbrev)
@@ -248,7 +248,7 @@ into what `lookup-key' and `define-key' want."
       #'gemacs--advice-company-overrides-yasnippet)))
 
 
-;; ----------------------------------------------------------------------------
+;; --------------------------------------------------------------------------
 ;;; Autocompletion
 
 (defvar-local gemacs--company-buffer-modified-counter nil
@@ -338,7 +338,7 @@ completions automatically when backspacing into a symbol."
   (company-prescient-mode +1))
 
 
-;; ----------------------------------------------------------------------------
+;; --------------------------------------------------------------------------
 ;;; Autoformatting
 
 (use-package apheleia
@@ -352,9 +352,9 @@ completions automatically when backspacing into a symbol."
       (funcall func)))
 
   (advice-add 'save-buffer :around #'gemacs--save-buffer-reformat-maybe)
+  (apheleia-global-mode +1)
 
   :config
-  (apheleia-global-mode +1)
   (add-to-list 'apheleia-formatters '(goimports . ("goimports")))
   (add-to-list 'apheleia-formatters '(jsonnetfmt . ("jsonnetfmt"
                                                      "--indent" "2"
@@ -370,7 +370,7 @@ completions automatically when backspacing into a symbol."
   (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier)))
 
 
-;; ----------------------------------------------------------------------------
+;; --------------------------------------------------------------------------
 ;;; Errors and documentation
 
 (use-package flycheck
@@ -494,7 +494,7 @@ area."
       #'gemacs--advice-disable-eldoc-on-flycheck)))
 
 
-;; ----------------------------------------------------------------------------
+;; --------------------------------------------------------------------------
 ;;; Language Server Protocol
 
 (use-package lsp-mode

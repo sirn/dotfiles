@@ -10,13 +10,13 @@
   :config
   (use-feature pinentry
     :config
-    (advice-add 'magit-start-git :before #'gemacs--gpg-update-tty)
-    (advice-add 'magit-call-git :before #'gemacs--gpg-update-tty))
+    (dolist (func '(magit-start-git magit-call-git))
+      (advice-add func :after #'gemacs--gpg-update-tty)))
 
   (use-feature projectile
     :config
-    (advice-add 'magit-checkout :after #'gemacs--projectile-invalidate-cache)
-    (advice-add 'magit-branch-and-checkout :after #'gemacs--projectile-invalidate-cache))
+    (dolist (func '(magit-checkout magit-branch-and-checkout))
+      (advice-add func :after #'gemacs--projectile-invalidate-cache)))
 
   :leader
   ("gs" #'magit-status))
