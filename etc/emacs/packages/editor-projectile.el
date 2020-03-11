@@ -1,29 +1,19 @@
-(use-package projectile
-  :diminish projectile-mode
-  :straight t
+;; -*- lexical-binding: t -*-
 
-  :preface
-  (eval-when-compile
-    (defvar projectile-project-root-files)
-    (declare-function projectile-mode nil)
-    (declare-function projectile-invalidate-cache nil))
+(use-package projectile
+  :defer 1
 
   :init
   (setq projectile-switch-project-action 'projectile-dired)
-  (with-eval-after-load 'evil-leader
-    (evil-leader/set-key
-      "pk" 'projectile-kill-buffers
-      "pr" 'projectile-run-project
-      "p'" 'projectile-run-eshell
-      "p!" 'projectile-run-async-shell-command-in-root))
+  (setq projectile-completion-system 'ivy)
 
   :config
-  (projectile-mode t)
+  (projectile-mode +1)
+  (defun gemacs--projectile-invalidate-cache (&rest _args)
+    (projectile-invalidate-cache nil))
 
-  (with-eval-after-load 'magit-branch
-    (defun gr/projectile-invalidate-cache-adv (&rest _args)
-      (projectile-invalidate-cache nil))
-
-    (advice-add 'magit-checkout :after 'gr/projectile-invalidate-cache-adv)
-    (advice-add 'magit-branch-and-checkout
-      :after 'gr/projectile-invalidate-cache-adv)))
+  :leader
+  ("pk" #'projectile-kill-buffers
+   "pr" #'projectile-run-project
+   "p'" #'projectile-run-eshell
+   "p!" #'projectile-run-async-shell-command-in-root))

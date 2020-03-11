@@ -1,18 +1,21 @@
+;; -*- lexical-binding: t -*-
+
 (use-package neotree
   :commands neotree-toggle
-  :straight t
+
+  :leader
+  ("pt" #'gridth--neotree-project-dir)
 
   :preface
   (eval-when-compile
-    (declare-function neo-global--window-exists-p nil)
-    (declare-function neotree-dir nil)
-    (declare-function neotree-find nil))
+    (declare-function neo-global--window-exists-p nil))
 
   :init
   (setq neo-autorefresh nil)
 
-  (with-eval-after-load 'projectile
-    (defun gr/neotree-project-dir ()
+  (use-feature projectile
+    :config
+    (defun gridth--neotree-project-dir ()
       (interactive)
       (let ((project-dir (projectile-project-root))
             (file-name (buffer-file-name)))
@@ -22,8 +25,4 @@
                 (progn
                   (neotree-dir project-dir)
                   (neotree-find file-name)))
-          (message "Could not find git project root."))))
-
-    (with-eval-after-load 'evil-leader
-      (evil-leader/set-key
-        "pt" 'gr/neotree-project-dir))))
+          (message "Could not find git project root."))))))

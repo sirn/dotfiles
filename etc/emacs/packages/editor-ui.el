@@ -1,102 +1,128 @@
-(setq-default frame-title-format '("%f"))
-(line-number-mode 1)
-(column-number-mode 1)
+;; -*- lexical-binding: t -*-
 
+;; Setup a minimalist frame without toolbar and menu bar, but also taking
+;; OS behavior quirks into consideration. This is done via `make-frame-func'
+;; to allow GUI `emacsclient' connecting to `emacs-server' to have different
+;; frame settings independent of CLI ones.
+
+(defvar gemacs-font "PragmataPro Mono")
+(defvar gemacs-font-size 11)
 
 (eval-when-compile
   (declare-function scroll-bar-mode nil)
   (declare-function mac-auto-operator-composition-mode nil))
 
-
+(setq-default frame-title-format '("%f"))
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 
-
-(defadvice load-theme
-  (before theme-dont-propagate activate)
-  (mapc #'disable-theme custom-enabled-themes))
-
-
-(defun gr/make-frame-func (frame)
+(defun gemacs--after-make-frame-func (frame)
   "Setup frame attributes after a FRAME is created."
-  (when (display-graphic-p frame)
+  (if (display-graphic-p frame)
     (let ((w (window-system frame)))
       (cond
         ((eq w 'x)
-          (scroll-bar-mode -1)
-          (set-frame-font "PragmataPro Mono 11" nil t))
+         (scroll-bar-mode -1)
+         (set-frame-font (format "%s %s" gemacs-font gemacs-font-size)
+           nil
+           t))
         ((eq w 'mac)
-          (progn
-            ;; macOS will "float" Emacs window if menu-bar-mode is disabled.
-            ;; (e.g. not sticky to Spaces and no fullscreen support)
-            (menu-bar-mode 1)
-            (scroll-bar-mode -1)
-            (set-frame-font "PragmataPro Mono 13" nil t)
-            (when (boundp 'mac-auto-operator-composition-mode)
-              (mac-auto-operator-composition-mode))))))))
+         ;; macOS will "float" Emacs window if menu-bar-mode is disabled.
+         ;; (e.g. not sticky to Spaces and no fullscreen support)
+         (menu-bar-mode 1)
+         (scroll-bar-mode -1)
+         ;; macOS display font size about x1.2 smaller than other Unices.
+         (set-frame-font (format "%s %s"
+                           gemacs-font
+                           (round (* gemacs-font-size 1.2)))
+           nil
+           t)
+         (when (boundp 'mac-auto-operator-composition-mode)
+           (mac-auto-operator-composition-mode)))))
 
-(add-hook 'after-make-frame-functions 'gr/make-frame-func)
-(add-hook 'after-init-hook `(lambda () (gr/make-frame-func (selected-frame))))
+    (progn
+      (eval-and-compile
+        (defun gemacs-scroll-down ()
+          "Scroll down three lines."
+          (interactive)
+          (scroll-down 3))
 
+        (defun gemacs-scroll-up ()
+          "Scroll up three lines."
+          (interactive)
+          (scroll-up 3)))
 
-(use-package ace-window
-  :straight t
+      (xterm-mouse-mode t)
+      (bind-key "<mouse-4>" #'gemacs-scroll-down)
+      (bind-key "<mouse-5>" #'gemacs-scroll-up))))
 
-  :preface
-  (eval-when-compile
-    (defvar aw-dispatch-always))
-
-  :init
-  (setq aw-dispatch-always t)
-
-  (define-key global-map (kbd "M-o") 'ace-window)
-  (with-eval-after-load 'evil-leader
-    (evil-leader/set-key
-      "ww" 'ace-window)))
-
-
-(use-package kaolin-themes
-  :straight t
-
-  :config
-  (load-theme 'kaolin-valley-dark t))
-
-
-(use-package git-gutter
-  :diminish git-gutter-mode
-  :straight t
-
-  :preface
-  (eval-when-compile
-    (declare-function global-git-gutter-mode nil))
-
-  :config
-  (global-git-gutter-mode t))
+(add-hook 'after-make-frame-functions #'gemacs--after-make-frame-func)
+(add-hook 'after-init-hook
+  `(lambda ()
+     (gemacs--after-make-frame-func (selected-frame))))
 
 
-(use-package minions
-  :after doom-modeline
-  :straight t
-
-  :preface
-  (eval-when-compile
-    (declare-function minions-mode nil))
+(use-package winum
+  :demand t
 
   :init
-  (with-eval-after-load 'evil-leader
-    (evil-leader/set-key
-      "bm" 'minions-minor-modes-menu))
+  (setq winum-auto-setup-mode-line nil)
+  (setq winum-scope 'frame-local)
 
   :config
-  (minions-mode t))
+  (winum-mode +1)
+
+  :leader
+  ("0" #'winum-select-window-0
+    "1" #'winum-select-window-1
+    "2" #'winum-select-window-2
+    "3" #'winum-select-window-3
+    "4" #'winum-select-window-4
+    "5" #'winum-select-window-5
+    "6" #'winum-select-window-6
+    "7" #'winum-select-window-7
+    "8" #'winum-select-window-8
+    "9" #'winum-select-window-9))
 
 
-(use-package mood-line
-  :straight t
+(use-package telephone-line)
 
-  :preface
-  (eval-when-compile
-    (declare-function mood-line-mode nil))
 
-  :config
-  (mood-line-mode t))
+(use-package kaolin-themes)
+
+
+(defun gemacs--disable-theme ()
+  "Disable theme propogation."
+  (mapc #'disable-theme custom-enabled-themes))
+
+(advice-add 'theme-dont-propagate :before #'gemacs--disable-theme)
+
+
+;; Enable theme as late as is humanly possible. This reduces
+;; frame flashing and other artifacts during startup.
+
+(add-hook 'gemacs-after-init-hook
+  `(lambda ()
+     (use-feature telephone-line
+       :demand t)
+
+     (use-feature telephone-line-config
+       :after telephone-line
+       :demand t
+
+       :config
+       (setq telephone-line-lhs
+         '((nil . (telephone-line-window-number-segment))
+           (evil . (telephone-line-evil-tag-segment))
+           (accent . (telephone-line-vc-segment
+                      telephone-line-erc-modified-channels-segment
+                      telephone-line-process-segment))
+           (nil . (telephone-line-projectile-segment
+                   telephone-line-buffer-segment))))
+
+       (telephone-line-mode +1))
+
+     (use-feature kaolin-themes
+       :demand t
+       :config
+       (load-theme 'kaolin-valley-dark t))))

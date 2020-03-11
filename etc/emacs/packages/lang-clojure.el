@@ -1,6 +1,3 @@
-(use-package clojure-mode
-  :straight t
-  :mode "\\.clj\\'"
+;; -*- lexical-binding: t -*-
 
-  :init
-  (add-hook 'clojure-mode-hook 'flycheck-mode))
+(use-package clojure-mode)

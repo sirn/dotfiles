@@ -1,13 +1,8 @@
-(use-package rust-mode
-  :mode ("\\.rs\\'" . rust-mode)
-  :straight t
+;; -*- lexical-binding: t -*-
 
-  :preface
-  (eval-when-compile
-    (defvar rust-format-on-save)
-    (declare-function lsp nil))
+(use-package rust-mode)
 
+
+(use-package racer
   :init
-  (setq rust-format-on-save t)
-  (add-hook 'rust-mode-hook 'lsp)
-  (add-hook 'rust-mode-hook 'flycheck-mode))
+  (add-hook 'rust-mode #'racer-mode))

@@ -1,9 +1,3 @@
-(use-package jsonnet-mode
-  :straight t
+;; -*- lexical-binding: t -*-
 
-  :mode
-   ("\\.jsonnet\\'" . jsonnet-mode)
-   ("\\.libsonnet\\'" . jsonnet-mode)
-
-  :init
-  (add-hook 'jsonnet-mode-hook 'flycheck-mode))
+(use-package jsonnet-mode)

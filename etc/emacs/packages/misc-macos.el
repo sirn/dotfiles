@@ -1,4 +1,6 @@
-(when (eq system-type 'darwin)
+;; -*- lexical-binding: t -*-
+
+(gemacs-when-compiletime (eq system-type 'darwin)
   (setq dired-use-ls-dired nil)
 
   (when (display-graphic-p)
@@ -28,20 +30,22 @@
 
 
   (use-package osx-trash
-    :straight t
+    :demand t
 
     :preface
-    (declare-function osx-trash-setup nil)
+    (eval-when-compile
+      (declare-function osx-trash-setup nil))
 
     :config
     (osx-trash-setup))
 
 
   (use-package pbcopy
-    :straight t
+    :demand t
 
     :preface
-    (declare-function turn-on-pbcopy nil)
+    (eval-when-compile
+      (declare-function turn-on-pbcopy nil))
 
     :config
     (turn-on-pbcopy)))

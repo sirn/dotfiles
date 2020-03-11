@@ -1,15 +1,14 @@
-(use-package eshell
-  :init
-  (with-eval-after-load 'evil-leader
-    (evil-leader/set-key
-      "'" 'eshell)))
+;; -*- lexical-binding: t -*-
+
+(use-feature eshell
+  :commands eshell
+
+  :leader
+  ("'" #'eshell))
 
 
 (use-package multi-term
   :commands multi-term
-  :straight t
 
-  :init
-  (with-eval-after-load 'evil-leader
-    (evil-leader/set-key
-      "\"" 'multi-term)))
+  :leader
+  ("\"" #'multi-term))

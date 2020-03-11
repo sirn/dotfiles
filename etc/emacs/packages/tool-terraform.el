@@ -1,3 +1,3 @@
-(use-package terraform-mode
-  :mode "\\.tf\\'"
-  :straight t)
+;; -*- lexical-binding: t -*-
+
+(use-package terraform-mode)

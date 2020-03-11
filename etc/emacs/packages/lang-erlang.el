@@ -1,8 +1,6 @@
-(use-package erlang
-  :interpreter "erl"
-  :mode ("\\.erl\\'" . erlang-mode)
-  :straight t
+;; -*- lexical-binding: t -*-
 
+(use-package erlang
   :preface
   (eval-when-compile
     (defvar erlang-compile-function)
@@ -12,17 +10,17 @@
     (declare-function inferior-erlang-prepare-for-input nil)
     (declare-function inferior-erlang-send-command nil)
     (declare-function inferior-erlang-wait-prompt nil)
-    (declare-function gr/erlang-rebar3-locate-root nil)
-    (declare-function gr/erlang-rebar3-compile nil)
-    (declare-function gr/erlang-rebar3-hook nil)
-    (declare-function gr/erlang-rebar3-wrap-maybe nil))
+    (declare-function gemacs--erlang-rebar3-locate-root nil)
+    (declare-function gemacs--erlang-rebar3-compile nil)
+    (declare-function gemacs--erlang-rebar3-hook nil)
+    (declare-function gemacs--erlang-rebar3-wrap-maybe nil))
 
   :init
-  (defun gr/erlang-rebar3-locate-root ()
+  (defun gemacs--erlang-rebar3-locate-root ()
     (locate-dominating-file default-directory "rebar.config"))
 
   ;; Copy of inferior-erlang-compile with r3:compile(). instead of c(path).
-  (defun gr/erlang-rebar3-compile (_arg)
+  (defun gemacs--erlang-rebar3-compile (_arg)
     (interactive "P")
     (save-some-buffers)
     (inferior-erlang-prepare-for-input)
@@ -38,21 +36,20 @@
         (set-marker compilation-parsing-end end)))
     (setq compilation-last-buffer inferior-erlang-buffer))
 
-  (defun gr/erlang-rebar3-hook ()
-    (when-let ((default-directory (gr/erlang-rebar3-locate-root)))
+  (defun gemacs--erlang-rebar3-hook ()
+    (when-let ((default-directory (gemacs--erlang-rebar3-locate-root)))
       (setq-local inferior-erlang-machine "rebar3")
       (setq-local inferior-erlang-machine-options '("shell"))
       (setq-local inferior-erlang-shell-type nil)
-      (setq-local erlang-compile-function 'gr/erlang-rebar3-compile)))
+      (setq-local erlang-compile-function 'gemacs--erlang-rebar3-compile)))
 
-  (defun gr/erlang-rebar3-wrap-maybe (orig-fun &rest args)
-    (if-let ((default-directory (gr/erlang-rebar3-locate-root)))
+  (defun gemacs--erlang-rebar3-wrap-maybe (orig-fun &rest args)
+    (if-let ((default-directory (gemacs--erlang-rebar3-locate-root)))
         (apply orig-fun args)
       (apply orig-fun args)))
 
-  (add-hook 'erlang-mode-hook 'flycheck-mode)
-  (add-hook 'erlang-mode-hook 'gr/erlang-rebar3-hook)
-  (advice-add 'inferior-erlang :around 'gr/erlang-rebar3-wrap-maybe)
+  (add-hook 'erlang-mode-hook #'gemacs--erlang-rebar3-hook)
+  (advice-add 'inferior-erlang :around #'gemacs--erlang-rebar3-wrap-maybe)
 
   :config
   (require 'erlang-start))

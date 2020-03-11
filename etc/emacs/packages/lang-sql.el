@@ -1,11 +1,7 @@
-(use-package sql
-  :mode ("\\.sql\\'" . sql-mode)
-  :straight t
+;; -*- lexical-binding: t -*-
 
-  :init
-  (add-hook 'sql-mode-hook 'flycheck-mode))
+(use-package sql)
 
 
 (use-package sql-indent
-  :after sql
-  :straight t)
+  :after sql)

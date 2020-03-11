@@ -36,6 +36,7 @@ _run_dev() {
         stylelint-scss \
         tern \
         typescript \
+        yaml-language-server \
         wscat
 }
 

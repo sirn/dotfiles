@@ -1,6 +1,3 @@
-(use-package nix-mode
-  :mode ("\\.nix\\'" . nix-mode)
-  :straight t
+;; -*- lexical-binding: t -*-
 
-  :init
-  (add-hook 'nix-mode-hook 'flycheck-mode))
+(use-package nix-mode)

@@ -1,19 +1,21 @@
+;; -*- lexical-binding: t -*-
+
 (use-package evil
-  :straight t
+  :demand t
 
   :init
-  (setq evil-want-integration t)
+  (setq evil-want-integration +1)
   (setq evil-want-keybinding nil)
   (setq evil-mode-line-format nil)
 
   :config
   (fset 'evil-visual-update-x-selection 'ignore)
-  (evil-mode t))
+  (evil-mode +1))
 
 
 (use-package evil-collection
   :after evil
-  :straight t
+  :demand t
 
   :preface
   (eval-when-compile
@@ -25,61 +27,47 @@
 
 (use-package evil-commentary
   :after evil
-  :diminish evil-commentary-mode
-  :straight t
-
-  :preface
-  (eval-when-compile
-    (declare-function evil-commentary-mode nil))
+  :demand t
 
   :config
-  (with-eval-after-load 'evil-commentary
-    (evil-commentary-mode t)))
+  (evil-commentary-mode +1))
 
 
 (use-package evil-leader
   :after evil
-  :straight t
+  :demand t
 
-  :preface
-  (eval-when-compile
-    (declare-function global-evil-leader-mode nil)
-    (declare-function evil-leader/set-leader nil)
-    (declare-function evil-leader/set-key nil))
+  :leader
+  ("wo" #'other-window
+   "wd" #'delete-window
+   "wD" #'delete-other-windows
+   "w-" #'split-window-below
+   "w/" #'split-window-right
+   "w=" #'balance-windows
+   "bd" #'kill-buffer
+   "bD" #'kill-buffer-and-window)
 
   :config
   (evil-leader/set-leader "<SPC>")
-  (global-evil-leader-mode 1)
-  (evil-leader/set-key
-    "wo" 'other-window
-    "wd" 'delete-window
-    "wD" 'delete-other-windows
-    "w-" 'split-window-below
-    "w/" 'split-window-right
-    "w=" 'balance-windows
-    "bd" 'kill-buffer
-    "bD" 'kill-buffer-and-window))
+  (global-evil-leader-mode +1))
 
 
 (use-package evil-matchit
   :after evil
-  :straight t
-
-  :preface
-  (eval-when-compile
-    (declare-function global-evil-matchit-mode nil))
+  :demand t
 
   :config
-  (global-evil-matchit-mode t))
+  (global-evil-matchit-mode +1))
+
+
+(use-package evil-magit
+  :after (evil magit)
+  :demand t)
 
 
 (use-package evil-surround
   :after evil
-  :straight t
-
-  :preface
-  (eval-when-compile
-    (declare-function global-evil-surround-mode nil))
+  :demand t
 
   :config
-  (global-evil-surround-mode t))
+  (global-evil-surround-mode +1))

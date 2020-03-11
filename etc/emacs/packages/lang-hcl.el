@@ -1,3 +1,3 @@
-(use-package hcl-mode
-  :mode ("\\.hcl\\'" . hcl-mode)
-  :straight t)
+;; -*- lexical-binding: t -*-
+
+(use-package hcl-mode)

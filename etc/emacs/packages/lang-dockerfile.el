@@ -1,6 +1,3 @@
-(use-package dockerfile-mode
-  :mode ("Dockerfile\\'" . dockerfile-mode)
-  :straight t
+;; -*- lexical-binding: t -*-
 
-  :init
-  (add-hook 'dockerfile-mode-hook 'flycheck-mode))
+(use-package dockerfile-mode)

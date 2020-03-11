@@ -1,38 +1,20 @@
-(use-package auth-source
-  :after epa
-  :straight t
+;; -*- lexical-binding: t -*-
 
-  :preface
-  (eval-when-compile
-    (defvar auth-sources))
-
-  :config
-  (setq auth-sources '((:source "~/.emacs.d/authinfo.gpg"))))
+(use-feature epg)
 
 
-(use-package auth-source-pass
-  :after (auth-source password-store)
-  :straight t
+(use-feature epa
+  :after epg
 
-  :preface
-  (eval-when-compile
-    (declare-function auth-source-pass-enable nil))
-
-  :config
-  (let ((dir (password-store-dir)))
-    (when (file-directory-p dir)
-      (auth-source-pass-enable))))
-
-
-(use-package password-store
-  :straight t)
+  :init
+  (setq epa-pinentry-mode 'loopback))
 
 
 (use-package pinentry
-  :straight t
+  :demand t
+  :after epg
 
   :config
-
   ;; Allow gpg-connect-agent in ssh-agent mode to forward pinentry to Emacs
   ;; since the ssh-agent protocol has no way to pass the TTY to gpg-agent.
   ;; See also --enable-ssh-support in gpg-agent(1)
@@ -45,34 +27,32 @@
   ;; needed by ssh.
   (setenv "INSIDE_EMACS" emacs-version)
 
-  (defun gr/gpg-update-tty (&rest _args)
+  (defun gemacs--gpg-update-tty (&rest _args)
     (shell-command
      "gpg-connect-agent updatestartuptty /bye"
      " *gpg-update-tty*"))
 
-  (with-eval-after-load 'magit
-    (advice-add 'magit-start-git :before 'gr/gpg-update-tty)
-    (advice-add 'magit-call-git :before 'gr/gpg-update-tty)))
+  (pinentry-start))
 
 
-(use-package epa
-  :after pinentry
-  :straight t
-
-  :preface
-  (eval-when-compile
-    (defvar epa-pinentry-mode))
-
-  :init
-  (setq epa-pinentry-mode 'loopback))
-
-
-(use-package epg
-  :straight t
-  :after epa
-
-  :preface
-  (declare-function pinentry-start nil)
+(use-feature auth-source
+  :demand t
 
   :config
-  (pinentry-start))
+  (setq auth-sources `(,(no-littering-expand-etc-file-name "authinfo.gpg")
+                       ,(expand-file-name "~/.authinfo.gpg")
+                       ,(expand-file-name "~/.netrc"))))
+
+
+(use-package password-store
+  :demand t)
+
+
+(use-package auth-source-pass
+  :demand t
+  :after (auth-source password-store)
+
+  :config
+  (let ((dir (password-store-dir)))
+    (when (file-directory-p dir)
+      (auth-source-pass-enable))))

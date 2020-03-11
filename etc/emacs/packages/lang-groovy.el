@@ -1,6 +1,3 @@
-(use-package groovy-mode
-  :mode ("\\.groovy\\'" . groovy-mode)
-  :straight t
+;; -*- lexical-binding: t -*-
 
-  :init
-  (add-hook 'groovy-mode-hook 'flycheck-mode))
+(use-package groovy-mode)

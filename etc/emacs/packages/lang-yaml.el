@@ -1,10 +1,14 @@
+;; -*- lexical-binding: t -*-
+
+(use-package yaml-mode)
+
+
 (use-package ansible
   :commands ansible
-  :straight t
 
   :preface
   (eval-when-compile
-    (declare-function gr/ansible-enable-maybe nil))
+    (declare-function gemacs--ansible-enable-maybe nil))
 
   :init
   (defun gr/ansible-enable-maybe ()
@@ -20,14 +24,10 @@
               buffer-file-name))
       (ansible t)))
 
-  (add-hook 'yaml-mode-hook 'gr/ansible-enable-maybe)
-  (add-hook 'ansible-hook 'ansible::auto-decrypt-encrypt))
+  (add-hook 'yaml-mode-hook 'gemacs--ansible-enable-maybe))
 
 
 (use-package ansible-doc
-  :diminish ansible-doc-mode
-  :straight t
-
   :commands
   (ansible-doc
    ansible-doc-mode))
@@ -35,18 +35,10 @@
 
 (use-package company-ansible
   :commands company-ansible
-  :straight t
 
   :init
-  (with-eval-after-load 'company
-    (defun gr/setup-company-ansible ()
+  (use-feature company
+    :config
+    (defun gemacs--setup-company-ansible ()
       (set (make-local-variable 'company-backends) '(company-ansible)))
-    (add-hook 'ansible-hook 'gr/setup-company-ansible)))
-
-
-(use-package yaml-mode
-  :mode ("\\.\\(yaml|yml\\)\\'" . yaml-mode)
-  :straight t
-
-  :init
-  (add-hook 'yaml-mode-hook 'flycheck-mode))
+    (add-hook 'ansible-hook #'gemacs--setup-company-ansible)))

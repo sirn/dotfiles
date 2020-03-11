@@ -1,6 +1,3 @@
-(use-package haskell-mode
-  :mode "\\.hs\\'"
-  :straight t
+;; -*- lexical-binding: t -*-
 
-  :init
-  (add-hook 'haskell-mode-hook 'flycheck-mode))
+(use-package haskell-mode)

@@ -1,28 +1,26 @@
-(eval-when-compile
-  (defvar sendmail-program))
+;; -*- lexical-binding: t -*-
 
-
-;; No deferred load to hook notmuch with messages.
 (use-package notmuch
-  :straight t
+  :defer 1
+  :commands notmuch
+
+  :preface
+  (eval-when-compile
+    (defvar sendmail-program))
 
   :init
-  (setq message-send-mail-function 'message-send-mail-with-sendmail)
+  (setq message-send-mail-function #'message-send-mail-with-sendmail)
   (setq message-sendmail-f-is-evil 't)
   (setq message-sendmail-envelope-from 'header)
   (setq sendmail-program "msmtp")
 
-  (with-eval-after-load 'evil-leader
-    (evil-leader/set-key
-      "mm" 'notmuch)))
+  :leader
+  ("mm" #'notmuch))
 
 
 (use-package counsel-notmuch
   :after counsel
   :commands counsel-notmuch
-  :straight t
 
-  :init
-  (with-eval-after-load 'evil-leader
-    (evil-leader/set-key
-      "m/" 'counsel-notmuch)))
+  :leader
+  ("m/" #'counsel-notmuch))
