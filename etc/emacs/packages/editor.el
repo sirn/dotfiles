@@ -36,6 +36,7 @@
 
 
 (use-package undo-tree
+  :demand t
   :leader
   ("uv" #'undo-tree-visualize)
 
@@ -43,14 +44,15 @@
   (eval-when-compile
     (declare-function global-undo-tree-mode nil))
 
-  :config
+  :init
   (setq undo-tree-enable-undo-in-region nil)
-  (setq undo-tree-auto-save-history t)
 
+  :config
   (dolist (func '(undo-tree-load-history undo-tree-save-history))
     (advice-add func :around #'gemacs--advice-inhibit-message))
 
   (global-undo-tree-mode +1))
+
 
 (use-feature subword
   :demand t
