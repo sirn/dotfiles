@@ -70,6 +70,16 @@
   (setq winum-scope 'frame-local)
 
   :config
+  (use-feature neotree
+    :config
+    (defun gemacs--winum-assign-func ()
+      "Assign NeoTree window as window number 0."
+      (when (and (boundp 'neo-buffer-name)
+              (string= (buffer-name) neo-buffer-name)
+              (eq (selected-window) (frame-first-window)))
+        0))
+    (add-to-list 'winum-assign-functions 'gemacs--winum-assign-func))
+
   (winum-mode +1)
 
   :leader
