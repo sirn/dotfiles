@@ -46,8 +46,11 @@
   :config
   (setq undo-tree-enable-undo-in-region nil)
   (setq undo-tree-auto-save-history t)
-  (global-undo-tree-mode +1))
 
+  (dolist (func '(undo-tree-load-history undo-tree-save-history))
+    (advice-add func :around #'gemacs--advice-inhibit-message))
+
+  (global-undo-tree-mode +1))
 
 (use-feature subword
   :demand t

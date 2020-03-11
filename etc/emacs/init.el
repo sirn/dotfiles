@@ -231,8 +231,15 @@ also be a single string."
 
 (defun gemacs--advice-silence-messages (func &rest args)
   "Invoke FUNC with ARGS, silencing all messages.
-This is an `:override' advice for many different functions."
+This is an `:around' advice for many different functions."
   (cl-letf (((symbol-function #'message) #'ignore))
+    (apply func args)))
+
+(defun gemacs--advice-inhibit-message (func &rest args)
+  "Invoke FUNC with ARGS, silencing all messages. Unlike
+`gemacs--advice-silence-messages', this function utilizes
+`inhibit-message' for silencing message."
+  (let ((inhibit-message t))
     (apply func args)))
 
 
