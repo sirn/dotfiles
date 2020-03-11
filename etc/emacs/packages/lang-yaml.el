@@ -8,10 +8,10 @@
 
   :preface
   (eval-when-compile
-    (declare-function gemacs--ansible-enable-maybe nil))
+    (declare-function gemacs--ansible-maybe-enable nil))
 
   :init
-  (defun gr/ansible-enable-maybe ()
+  (defun gemacs--ansible-maybe-enable ()
     (when (and
             (stringp buffer-file-name)
             (string-match
@@ -24,7 +24,7 @@
               buffer-file-name))
       (ansible t)))
 
-  (add-hook 'yaml-mode-hook 'gemacs--ansible-enable-maybe))
+  (add-hook 'yaml-mode-hook 'gemacs--ansible-maybe-enable))
 
 
 (use-package ansible-doc

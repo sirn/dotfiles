@@ -23,7 +23,6 @@ _run_dev() {
     npm install -g \
         bash-language-server \
         eslint \
-        javascript-typescript-langserver \
         npm \
         npm-upgrade \
         npx \
@@ -36,8 +35,9 @@ _run_dev() {
         stylelint-scss \
         tern \
         typescript \
-        yaml-language-server \
-        wscat
+        typescript-language-server \
+        wscat \
+        yaml-language-server
 }
 
 run_with_flavors "$@"
