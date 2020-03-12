@@ -18,6 +18,7 @@ _run() {
         aspell-en \
         cronie \
         curl \
+        fzf \
         git \
         loksh \
         mercurial \
@@ -86,6 +87,7 @@ _run_dev() {
     sh "$BASE_DIR/libexec/packages/cloudflared.sh" "$@"
     sh "$BASE_DIR/libexec/packages/gcloud.sh" "$@"
     sh "$BASE_DIR/libexec/packages/kustomize.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/kubectx.sh" "$@"
     sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"
     sh "$BASE_DIR/libexec/packages/node.sh" "$@"
     sh "$BASE_DIR/libexec/packages/python.sh" "$@"

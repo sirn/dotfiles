@@ -21,6 +21,7 @@ _run() {
     macports_install curl +darwinssl +http2
     macports_install dnscrypt-proxy
     macports_install emacs
+    macports_install fzf
     macports_install git
     macports_install ipfs
     macports_install mercurial

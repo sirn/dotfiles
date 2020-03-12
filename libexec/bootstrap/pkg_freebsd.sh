@@ -21,6 +21,7 @@ _run() {
     pkgng_install compat8x-amd64
     pkgng_install curl
     pkgng_install en-aspell
+    pkgng_install fzf
     pkgng_install git
     pkgng_install mercurial
     pkgng_install mosh
