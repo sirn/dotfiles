@@ -74,6 +74,7 @@
    "/"   #'counsel-ag)
 
   :config
+  (setq counsel-switch-buffer-preview-virtual-buffers nil)
   (setq ivy-initial-inputs-alist nil))
 
 

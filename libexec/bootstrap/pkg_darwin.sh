@@ -81,16 +81,13 @@ _run_dev() {
     macports_install python37
     macports_install rebar3
     macports_install ruby26
+    macports_install shellcheck
     macports_install socat
     macports_install tcl
     macports_install terraform
     macports_install tree
     macports_install xz
     macports_install zlib
-
-    # Outdated
-    # https://github.com/macports/macports-ports/pull/4577
-    #macports_install shellcheck
 
     macports_select pip3 pip37
     macports_select python3 python37
@@ -99,11 +96,15 @@ _run_dev() {
     sh "$BASE_DIR/libexec/packages/cloudflared.sh" "$@"
     sh "$BASE_DIR/libexec/packages/gcloud.sh" "$@"
     sh "$BASE_DIR/libexec/packages/kustomize.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/kubectx.sh" "$@"
+
+    sh "$BASE_DIR/libexec/packages/erlang.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/elixir.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/golang.sh" "$@"
     sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"
     sh "$BASE_DIR/libexec/packages/node.sh" "$@"
     sh "$BASE_DIR/libexec/packages/python.sh" "$@"
     sh "$BASE_DIR/libexec/packages/rust.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/golang.sh" "$@"
 }
 
 run_with_flavors "$@"

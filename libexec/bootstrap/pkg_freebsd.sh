@@ -81,11 +81,15 @@ _run_dev() {
     sh "$BASE_DIR/libexec/packages/cloudflared.sh" "$@"
     sh "$BASE_DIR/libexec/packages/gcloud.sh" "$@"
     sh "$BASE_DIR/libexec/packages/kustomize.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/kubectx.sh" "$@"
+
+    sh "$BASE_DIR/libexec/packages/erlang.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/elixir.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/golang.sh" "$@"
     sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"
     sh "$BASE_DIR/libexec/packages/node.sh" "$@"
     sh "$BASE_DIR/libexec/packages/python.sh" "$@"
     sh "$BASE_DIR/libexec/packages/rust.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/golang.sh" "$@"
 }
 
 _run_all() {

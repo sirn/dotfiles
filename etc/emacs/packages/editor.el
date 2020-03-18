@@ -46,6 +46,7 @@
 
   :init
   (setq undo-tree-enable-undo-in-region nil)
+  (setq undo-tree-auto-save-history t)
 
   :config
   (dolist (func '(undo-tree-load-history undo-tree-save-history))
@@ -508,9 +509,7 @@ get a chance to run first, for example to set LSP configuration."
       (unless (or (null buffer-file-name)
                 (derived-mode-p
                   #'clojure-mode
-                  #'elixir-mode
                   #'emacs-lisp-mode
-                  #'erlang-mode
                   #'purescript-mode
                   #'ruby-mode
                   #'rust-mode
