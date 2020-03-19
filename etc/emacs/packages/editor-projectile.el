@@ -16,4 +16,5 @@
   ("pk" #'projectile-kill-buffers
    "pr" #'projectile-run-project
    "p'" #'projectile-run-eshell
-   "p!" #'projectile-run-async-shell-command-in-root))
+   "p!" #'projectile-run-async-shell-command-in-root
+   "pc" #'projectile-compile-project))
