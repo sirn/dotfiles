@@ -6,6 +6,9 @@ tasks:
   - prepare: |
       sudo pkg update
       sudo pkg upgrade -y
-  - setup: |
+  - bootstrap: |
       cd dotfiles
       ./bootstrap.sh
+  - emacs: |
+      cd dotfiles
+      ./bin/emacs-recompile.sh
