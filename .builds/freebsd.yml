@@ -9,6 +9,3 @@ tasks:
   - bootstrap: |
       cd dotfiles
       ./bootstrap.sh -p pkg -p user
-  - emacs: |
-      cd dotfiles
-      ./bin/emacs-recompile.sh
