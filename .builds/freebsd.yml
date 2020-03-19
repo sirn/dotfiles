@@ -8,7 +8,7 @@ tasks:
       sudo pkg upgrade -y
   - bootstrap: |
       cd dotfiles
-      ./bootstrap.sh
+      ./bootstrap.sh -p pkg -p user
   - emacs: |
       cd dotfiles
       ./bin/emacs-recompile.sh
