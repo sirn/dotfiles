@@ -27,7 +27,6 @@ _run_dev() {
         npx \
         prettier \
         solc \
-        solium \
         stylelint \
         stylelint-config-recommended \
         stylelint-config-recommended-scss \
