@@ -76,6 +76,7 @@ _run_dev() {
         python3 \
         python3-devel \
         python3-pip \
+        python3-cryptography \
         ruby \
         shellcheck \
         socat \
@@ -96,7 +97,6 @@ _run_dev() {
     sh "$BASE_DIR/libexec/packages/node.sh" "$@"
     sh "$BASE_DIR/libexec/packages/python.sh" "$@"
     sh "$BASE_DIR/libexec/packages/rust.sh" "$@"
-
 }
 
 _run_all() {

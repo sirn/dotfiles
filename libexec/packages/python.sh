@@ -25,12 +25,17 @@ _run() {
 
     printe_h2 "Populating $PYTOOLS..."
 
-    if [ -f "$PIP" ]; then
+    if ! forced && [ -f "$PIP" ]; then
        printe_info "$PYTOOLS already exists, skipping..."
        return
     fi
 
-    python3 -m venv --without-pip "$PYTOOLS"
+    python3 -m venv \
+            --system-site-packages \
+            --clear \
+            --without-pip \
+            "$PYTOOLS"
+
     fetch_url /tmp/get-pip.py https://bootstrap.pypa.io/get-pip.py
     "$PYTOOLS/bin/python3" /tmp/get-pip.py
     rm /tmp/get-pip.py
