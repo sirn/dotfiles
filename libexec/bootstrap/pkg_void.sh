@@ -62,6 +62,7 @@ _run_dev() {
         elixir \
         entr \
         erlang \
+        erlang-wx \
         git-crypt \
         git-lfs \
         go \
