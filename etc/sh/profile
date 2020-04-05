@@ -44,15 +44,6 @@ if command -v gpgconf >/dev/null; then
 fi
 
 
-## Emacs
-##
-
-if command -v emacs >/dev/null; then
-    EDITOR="emacs"
-    export EDITOR
-fi
-
-
 ## Finalizing
 ##
 
