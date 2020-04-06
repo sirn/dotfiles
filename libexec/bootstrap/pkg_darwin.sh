@@ -44,16 +44,6 @@ _run_desktop() {
 
     macports_install emacs-mac-app
     macports_install mpv
-
-    mas_install 407963104 Pixelmator
-    mas_install 411643860 DaisyDisk
-    mas_install 413965349 Soulver
-    mas_install 497799835 Xcode
-    mas_install 603637384 Name Mangler 3
-    mas_install 775737590 iA Writer
-    mas_install 975937182 Fantastical 2
-    mas_install 1333542190 1Password 7
-    mas_install 1435957248 Drafts
 }
 
 _run_dev() {

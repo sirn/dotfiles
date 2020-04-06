@@ -3,14 +3,9 @@
 # Shared functions for Darwin
 #
 
-PLATFORM_VERS=$(sw_vers -productVersion)
-
-MAS=/opt/local/bin/mas
-MAS_PLATFORM=10.14
-
 MACPORTS=/opt/local/bin/port
-MACPORTS_VER=2.5.4
-MACPORTS_SHA256=592e4a021588f37348fe7b806c202e4d77f75bcff1a0b20502d5f1177c2c21ff
+MACPORTS_VER=2.6.2
+MACPORTS_SHA256=f4eaf03c9211a9743e1f8134ecd5c307a2979a6f27e2f0700223d390d0157116
 
 macports_bootstrap() {
     if ! forced && [ -f $MACPORTS ]; then
@@ -57,41 +52,4 @@ macports_select() {
 
     printe_info "Selecting $pkg as default version for $sel (macports)..."
     run_root $MACPORTS select "$sel" "$pkg"
-}
-
-mas_bootstrap() {
-    if [ ! -x $MACPORTS ]; then
-        printe_err "MacPorts is required to bootstrap MAS"
-        exit 1
-    fi
-
-    if version_gte "$MAS_PLATFORM" "$PLATFORM_VERS"; then
-        if [ ! -x $MAS ]; then
-            printe_h2 "Bootstrapping mas..."
-            run_root $MACPORTS -Nf install mas
-        fi
-    else
-        printe_info "mas command line utility requires macOS <= $MAS_PLATFORM"
-    fi
-}
-
-mas_install() {
-    pkg_id=$1; shift
-    app_name=$*
-
-    if [ -d "/Applications/$app_name.app" ]; then
-        printe "$app_name (mas) already installed"
-        return
-    fi
-
-    if ! version_gte "$MAS_PLATFORM" "$PLATFORM_VERS"; then
-        printe "mas is not available, please manually install $app_name"
-        return
-    fi
-
-    printe_h2 "Installing $app_name (mas)..."
-
-    if ! "$MAS" install "$pkg_id"; then
-        printe_info "$app_name (mas) failed to install, skipping..."
-    fi
 }

@@ -9,33 +9,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../share/bootstrap/utils.sh"
 . "../../share/bootstrap/utils_darwin.sh"
 
-_setup_ipfs() {
-    printe_h2 "Setting up ipfs..."
-
-    if ! command -v ipfs >/dev/null; then
-        printe_info "ipfs is not installed, skipping..."
-        return
-    fi
-
-    ipfs_plist=$HOME/Library/LaunchAgents/io.ipfs.ipfs.plist
-
-    if ! forced && [ -f "$ipfs_plist" ]; then
-        printe_info "$ipfs_plist already exists, skipping..."
-        return
-    fi
-
-    cp \
-        "$BASE_DIR/share/examples/launchd/io.ipfs.ipfs.plist" \
-        "$ipfs_plist"
-
-    chmod 0644 "$ipfs_plist"
-    launchctl load -w "$ipfs_plist"
-    printe_info "$ipfs_plist has been installed, you may need to relogin"
-}
-
 _run() {
-    _setup_ipfs
-
     printe_h2 "Installing links..."
 
     make_link "$BASE_DIR/etc/aria2/aria2.conf" "$HOME/.aria2/aria2.conf"
