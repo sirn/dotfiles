@@ -9,6 +9,24 @@ cd "$(dirname "$0")" || exit 1
 . "../../share/bootstrap/utils.sh"
 . "../../share/bootstrap/buildenv.sh"
 
+_preflight() {
+    if ! command -v go >/dev/null; then
+       printe_h2 "go is not installed, skipping golang packages..."
+       return 1
+    fi
+
+    return 0
+}
+
+_run_dev() {
+    printe_h2 "Installing golang dev packages..."
+
+    _go_get gocode github.com/nsf/gocode
+    _go_get goimports golang.org/x/tools/cmd/goimports
+    _go_get golint golang.org/x/lint/golint
+    _go_get gopls golang.org/x/tools/gopls
+}
+
 _go_get() {
     GOPATH=$HOME/Dev/go/gopath
     bin=$1; shift
@@ -19,22 +37,6 @@ _go_get() {
     fi
 
     go get -v -u "$@"
-}
-
-_run() {
-    if ! command -v go >/dev/null; then
-       printe_h2 "go is not installed, skipping golang packages..."
-       return 1
-    fi
-}
-
-_run_dev() {
-    printe_h2 "Installing golang dev packages..."
-
-    _go_get gocode github.com/nsf/gocode
-    _go_get goimports golang.org/x/tools/cmd/goimports
-    _go_get golint golang.org/x/lint/golint
-    _go_get gopls golang.org/x/tools/gopls
 }
 
 run_with_flavors "$@"

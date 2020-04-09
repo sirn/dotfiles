@@ -12,16 +12,22 @@ cd "$(dirname "$0")" || exit 1
 CFD_VER=2020.2.1
 CFD_SHA256=288a9c1fd352fb32c2d74194ab90b0502748c6d51c68421803b834cccf731501
 
-_run() {
+_preflight() {
+    if ! command -v go >/dev/null; then
+        printe_info "go is not installed, skipping..."
+        return 1
+    fi
+}
+
+_run_dev() {
+    _install_cloudflared
+}
+
+_install_cloudflared() {
     printe_h2 "Installing cloudflared..."
 
     if ! forced && [ -f "$HOME/.local/bin/cloudflared" ]; then
         printe_info "$HOME/.local/bin/cloudflared already exists, skipping..."
-        return
-    fi
-
-    if ! command -v go >/dev/null; then
-        printe_info "go is not installed, skipping..."
         return
     fi
 
@@ -41,8 +47,10 @@ _run() {
     cd "$worksrc/cloudflared/cmd/cloudflared" || exit 1
     mkdir -p "$HOME/.local/bin"
     go install .
-    cp "$BUILD_DIR/go/bin/cloudflared" "$HOME/.local/bin/cloudflared"
+
+    cd "$BUILD_DIR/go/bin" || exit 1
+    install -m0755 "cloudflared" "$HOME/.local/bin/cloudflared"
     printe_info "cloudflared successfully installed"
 }
 
-_run
+run_with_flavors "$@"

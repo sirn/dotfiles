@@ -18,7 +18,7 @@ _install_font() {
 
     find "$srcdir" \
          \( -iname "*.ttf" -or -iname "*.ttc" \) \
-         -exec mv \{\} "$dest" \;
+         -exec install -m0644 \{\} "$dest" \;
 
     touch "$dest/.installed"
 }
@@ -170,4 +170,4 @@ _run() {
         8d27167379ea9718530d35c5872e65f5a09adc99fe505c4d506e9bbaaefe84d7
 }
 
-_run
+run_with_flavors "$@"

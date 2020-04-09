@@ -10,6 +10,24 @@ cd "$(dirname "$0")" || exit 1
 
 CABAL_PREFIX=
 
+_preflight() {
+    if ! command -v cabal >/dev/null; then
+        printe_info "cabal is not installed, skipping haskell packages..."
+        return 1
+    fi
+
+    # Cabal >= 2.4.0.0 replaces update/install with v1-update/v1-install
+    if version_gte "$(cabal --numeric-version)" 2.4.0.0; then
+        CABAL_PREFIX=v1-
+    fi
+
+    return 0
+}
+
+_run_dev() {
+    _update_haskell_packages
+}
+
 _cabal_install() {
     bin=$1; shift
 
@@ -21,23 +39,10 @@ _cabal_install() {
     cabal "${CABAL_PREFIX}install" "$@"
 }
 
-_run() {
-    printe_h2 "Installing haskell packages..."
-
-    if ! command -v cabal >/dev/null; then
-        printe_info "cabal is not installed, skipping haskell packages..."
-        return 1
-    fi
-
-    # Cabal >= 2.4.0.0 replaces update/install with v1-update/v1-install
-    if version_gte "$(cabal --numeric-version)" 2.4.0.0; then
-        CABAL_PREFIX=v1-
-    fi
-
+_update_haskell_packages() {
     hackage_repo=$HOME/.cabal/packages/hackage.haskell.org
 
     if ! forced && [ -d "$hackage_repo" ]; then
-        printe_info "$hackage_repo already exists, skipping..."
         return
     fi
 

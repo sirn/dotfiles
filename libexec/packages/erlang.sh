@@ -17,7 +17,14 @@ REBAR3_PATH=$REBAR3_HOME/bin/rebar3
 ERLANG_LS_VER=0.2.0
 ERLANG_LS_SHA256=06e01d2d6d6afd1cb783ef9619d473b82ea9bec89c992a7e464a233ff7f1624e
 
-_run() {
+_preflight() {
+    if ! command -v escript >/dev/null; then
+        printe_info "escript is not installed, skipping..."
+        return 1
+    fi
+}
+
+_run_dev() {
     _install_rebar3
     _install_erlang_ls
 }
@@ -27,11 +34,6 @@ _install_rebar3() {
 
     if ! forced && [ -f "$REBAR3_PATH" ]; then
         printe_info "$REBAR3_PATH already exists, skipping..."
-        return
-    fi
-
-    if ! command -v escript >/dev/null; then
-        printe_info "escript is not installed, skipping..."
         return
     fi
 
@@ -52,11 +54,6 @@ _install_erlang_ls() {
         return
     fi
 
-    if ! command -v escript >/dev/null; then
-        printe_info "erlang is not installed, skipping..."
-        return
-    fi
-
     cd "$BUILD_DIR" || exit 1
 
     fetch_gh_archive erlang_ls.tar.gz erlang-ls/erlang_ls $ERLANG_LS_VER
@@ -71,4 +68,4 @@ _install_erlang_ls() {
     printe_info "erlang_ls successfully installed"
 }
 
-_run
+run_with_flavors "$@"

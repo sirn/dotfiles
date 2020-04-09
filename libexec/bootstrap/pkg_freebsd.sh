@@ -28,7 +28,8 @@ _run() {
     pkgng_install oksh
     pkgng_install openjdk8-jre
     pkgng_install pstree
-    pkgng_install py36-tmuxp
+    pkgng_install py37-ansible
+    pkgng_install py37-tmuxp
     pkgng_install socat
     pkgng_install the_silver_searcher
     pkgng_install tmux
@@ -69,9 +70,8 @@ _run_dev() {
     pkgng_install node10
     pkgng_install npm-node10
     pkgng_install pkgconf
-    pkgng_install py36-pip
-    pkgng_install python3
-    pkgng_install python36
+    pkgng_install py37-pip
+    pkgng_install python37
     pkgng_install rebar3
     pkgng_install ruby
     pkgng_install socat
@@ -79,10 +79,7 @@ _run_dev() {
     pkgng_install tree
 
     sh "$BASE_DIR/libexec/packages/cloudflared.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/gcloud.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/kustomize.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/kubectx.sh" "$@"
-
+    sh "$BASE_DIR/libexec/packages/cncf.sh" "$@"
     sh "$BASE_DIR/libexec/packages/erlang.sh" "$@"
     sh "$BASE_DIR/libexec/packages/elixir.sh" "$@"
     sh "$BASE_DIR/libexec/packages/golang.sh" "$@"

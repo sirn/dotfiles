@@ -13,6 +13,7 @@ _run() {
     printe_h2 "Installing packages..."
 
     xbps_install \
+        ansible \
         aria2 \
         aspell \
         aspell-en \
@@ -44,9 +45,9 @@ _run_desktop() {
         run_root xbps-remove -Ry emacs
     fi
 
+    # Firefox is installed with Flatpak
     xbps_install \
         emacs-gtk3 \
-        firefox \
         qemu
 
     sh "$BASE_DIR/libexec/packages/fontinst.sh" "$@"
@@ -87,10 +88,7 @@ _run_dev() {
         xz
 
     sh "$BASE_DIR/libexec/packages/cloudflared.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/gcloud.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/kustomize.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/kubectx.sh" "$@"
-
+    sh "$BASE_DIR/libexec/packages/cncf.sh" "$@"
     sh "$BASE_DIR/libexec/packages/erlang.sh" "$@"
     sh "$BASE_DIR/libexec/packages/elixir.sh" "$@"
     sh "$BASE_DIR/libexec/packages/golang.sh" "$@"

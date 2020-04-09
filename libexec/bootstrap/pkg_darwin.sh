@@ -29,6 +29,7 @@ _run() {
     macports_install oksh
     macports_install openssh
     macports_install pstree
+    macports_install py37-ansible
     macports_install py37-tmuxp
     macports_install qemu +target_arm +target_riscv64
     macports_install rsync
@@ -84,10 +85,7 @@ _run_dev() {
     macports_select ruby ruby26
 
     sh "$BASE_DIR/libexec/packages/cloudflared.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/gcloud.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/kustomize.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/kubectx.sh" "$@"
-
+    sh "$BASE_DIR/libexec/packages/cncf.sh" "$@"
     sh "$BASE_DIR/libexec/packages/erlang.sh" "$@"
     sh "$BASE_DIR/libexec/packages/elixir.sh" "$@"
     sh "$BASE_DIR/libexec/packages/golang.sh" "$@"

@@ -8,17 +8,22 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 cd "$(dirname "$0")" || exit 1
 . "../../share/bootstrap/utils.sh"
 
-_run() {
+_preflight() {
     if ! command -v npm >/dev/null; then
        printe_h2 "npm is not installed, skipping node packages..."
        return 1
     fi
+}
 
+_run() {
     npm set prefix="$HOME/.local"
 }
 
 _run_dev() {
     printe_h2 "Installing npm dev packages..."
+
+    rm -f "$HOME/.local/bin/npm"
+    rm -f "$HOME/.local/bin/npx"
 
     npm install -g \
         eslint \
@@ -26,7 +31,6 @@ _run_dev() {
         npm-upgrade \
         npx \
         prettier \
-        solc \
         stylelint \
         stylelint-config-recommended \
         stylelint-config-recommended-scss \
@@ -34,7 +38,6 @@ _run_dev() {
         tern \
         typescript \
         typescript-language-server \
-        wscat \
         yaml-language-server
 }
 

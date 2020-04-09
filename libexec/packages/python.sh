@@ -12,7 +12,7 @@ cd "$(dirname "$0")" || exit 1
 PYTOOLS=$HOME/.local/lib/pytools
 PIP=$PYTOOLS/bin/pip3
 
-_run() {
+_preflight() {
     if ! command -v python3 >/dev/null; then
        printe_h2 "python3 is not installed, skipping python packages..."
        return 1
@@ -22,7 +22,9 @@ _run() {
        printe_h2 "python3 venv is not available, skipping python packages..."
        return 1
     fi
+}
 
+_run() {
     printe_h2 "Populating $PYTOOLS..."
 
     if ! forced && [ -f "$PIP" ]; then
@@ -31,7 +33,6 @@ _run() {
     fi
 
     python3 -m venv \
-            --system-site-packages \
             --clear \
             --without-pip \
             "$PYTOOLS"
@@ -45,10 +46,8 @@ _run_dev() {
     printe_h2 "Installing python dev packages..."
 
     $PIP install --upgrade \
-         ansible \
          black \
          flake8 \
-         ipwhois \
          kapitan \
          pip \
          poetry \

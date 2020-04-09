@@ -418,6 +418,12 @@ change_shell() {
 run_with_flavors() {
     flavors=$*
 
+    if [ "$(command -v _preflight)x" != "x" ]; then
+        if ! _preflight "$flavors"; then
+            return
+        fi
+    fi
+
     if [ "$(command -v _run)x" != "x" ]; then
         if ! _run "$flavors"; then
             return

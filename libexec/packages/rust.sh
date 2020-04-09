@@ -8,6 +8,29 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 cd "$(dirname "$0")" || exit 1
 . "../../share/bootstrap/utils.sh"
 
+_preflight() {
+    if ! command -v rustc >/dev/null; then
+        # Technically we shouldn't install things in preflight but this case
+        # is a bit special since we're not installing Rust via pkgs...
+        printe_h2 "Installing rust..."
+        _setup_rust
+    fi
+
+    if ! command -v cargo >/dev/null; then
+        printe_info "cargo is not installed, skipping rust packages..."
+        return 1
+    fi
+}
+
+_run_dev() {
+    printe_h2 "Installing rust dev packages..."
+
+    _rustup_install rls
+    _rustup_install rust-analysis
+    _rustup_install rust-src
+    _cargo_install rustfmt rustfmt
+}
+
 _setup_rust() {
     PATH=$HOME/.cargo/bin:$PATH
     rustup_path=$HOME/.cargo/bin/rustup
@@ -36,26 +59,6 @@ _cargo_install() {
     fi
 
     cargo install "$@"
-}
-
-_run() {
-    printe_h2 "Installing rust..."
-
-    _setup_rust
-
-    if ! command -v cargo >/dev/null; then
-        printe_info "cargo is not installed, skipping rust packages..."
-        return 1
-    fi
-}
-
-_run_dev() {
-    printe_h2 "Installing rust dev packages..."
-
-    _rustup_install rls
-    _rustup_install rust-analysis
-    _rustup_install rust-src
-    _cargo_install rustfmt rustfmt
 }
 
 run_with_flavors "$@"
