@@ -9,7 +9,13 @@ if [ -z "$BUILD_DIR" ]; then
     BUILD_DIR=$(mktemp -d)
 
     _cleanup_build_dir() {
-        run_root rm -rf "$BUILD_DIR"
+        rm -rf "$BUILD_DIR"
+
+        # Sometimes a permission changed during installation
+        # so we need to force removal with root.
+        if [ -d "$BUILD_DIR" ]; then
+            run_root rm -rf "$BUILD_DIR"
+        fi
     }
 
     trap _cleanup_build_dir 0 1 2 3 6 14 15
