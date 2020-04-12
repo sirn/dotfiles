@@ -25,3 +25,25 @@ xbps_install() {
         run_root xbps-install -Sy "$@"
     fi
 }
+
+xbps_current() {
+    group=$1; shift
+    xbps-alternatives -l -g "$group" | awk '/(current)/ { print $2 }'
+}
+
+xbps_alternative() {
+    group=$1; shift
+    pkg=$1; shift
+
+    if ! xbps_installed "$pkg"; then
+        printe "$pkg is not installed, skipping..."
+        return
+    fi
+
+    if [ "$(xbps_current "$group")" = "$pkg" ]; then
+        printe "$pkg already the default $group"
+        return
+    fi
+
+    run_root xbps-alternatives -s "$pkg" -g "$group"
+}

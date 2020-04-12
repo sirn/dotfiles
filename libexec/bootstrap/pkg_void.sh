@@ -21,9 +21,12 @@ _run() {
         curl \
         fzf \
         git \
+        iptables-nft \
+        lok \
         loksh \
         mercurial \
         mosh \
+        neovim \
         python3-tmuxp \
         rsync \
         socat \
@@ -35,6 +38,11 @@ _run() {
         weechat \
         xtools \
         zip
+
+    xbps_alternative awk lok
+    xbps_alternative iptables iptables-nft
+    xbps_alternative vim neovim
+    xbps_alternative vi neovim
 }
 
 _run_desktop() {

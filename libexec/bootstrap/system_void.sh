@@ -9,6 +9,10 @@ cd "$(dirname "$0")" || exit 1
 . "../../share/bootstrap/utils.sh"
 
 _run() {
+    _setup_cronie
+}
+
+_setup_cronie() {
     printe_h2 "Setting up cronie..."
 
     if ! [ -d /etc/sv/cronie ]; then
