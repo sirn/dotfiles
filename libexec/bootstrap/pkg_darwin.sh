@@ -37,7 +37,6 @@ _run() {
     macports_install the_silver_searcher
     macports_install tmux
     macports_install w3m
-    macports_install weechat +python36 +aspell
 }
 
 _run_desktop() {

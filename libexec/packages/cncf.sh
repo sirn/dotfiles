@@ -63,7 +63,7 @@ _install_cloudsdk() {
 
     fetch_url gcloud-sdk.tar.gz "$CLOUDSDK_URL"
     verify_shasum gcloud-sdk.tar.gz "$CLOUDSDK_SHA256"
-    tar -C "$BUILD_DIR" -xzf gcloud-sdk.tar.gz
+    run_tar -C "$BUILD_DIR" -xzf gcloud-sdk.tar.gz
     rm gcloud-sdk.tar.gz
 
     mkdir -p "$HOME/.local/lib"
@@ -95,7 +95,7 @@ _install_kubectx() {
 
     fetch_gh_archive kubectx.tar.gz ahmetb/kubectx v$KUBECTX_VER
     verify_shasum kubectx.tar.gz $KUBECTX_SHA256
-    tar -C "$BUILD_DIR" -xzf kubectx.tar.gz
+    run_tar -C "$BUILD_DIR" -xzf kubectx.tar.gz
     rm kubectx.tar.gz
 
     cd "$BUILD_DIR/kubectx-$KUBECTX_VER" || exit 1
@@ -119,7 +119,7 @@ _install_kustomize() {
         kubernetes-sigs/kustomize \
         kustomize/v$KUSTOMIZE_VER
     verify_shasum kustomize.tar.gz $KUSTOMIZE_SHA256
-    tar -C "$BUILD_DIR" -xzf kustomize.tar.gz
+    run_tar -C "$BUILD_DIR" -xzf kustomize.tar.gz
     rm kustomize.tar.gz
 
     unset GO111MODULES

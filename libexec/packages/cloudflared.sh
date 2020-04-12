@@ -35,7 +35,7 @@ _install_cloudflared() {
 
     fetch_gh_archive cloudflared.tar.gz cloudflare/cloudflared $CFD_VER
     verify_shasum cloudflared.tar.gz $CFD_SHA256
-    tar -C "$BUILD_DIR" -xzf cloudflared.tar.gz
+    run_tar -C "$BUILD_DIR" -xzf cloudflared.tar.gz
     rm cloudflared.tar.gz
 
     worksrc="$BUILD_DIR/go/src/github.com/cloudflare"

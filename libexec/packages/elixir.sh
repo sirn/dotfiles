@@ -58,7 +58,7 @@ _install_elixir_ls() {
 
     fetch_gh_archive elixir-ls.tar.gz elixir-lsp/elixir-ls v$ELIXIR_LS_VER
     verify_shasum elixir-ls.tar.gz $ELIXIR_LS_SHA256
-    tar -C "$BUILD_DIR" -xzf elixir-ls.tar.gz
+    run_tar -C "$BUILD_DIR" -xzf elixir-ls.tar.gz
     rm elixir-ls.tar.gz
 
     cd "$BUILD_DIR/elixir-ls-$ELIXIR_LS_VER" || exit 1

@@ -44,7 +44,7 @@ _install_font_gh() {
         "$ver"
 
     verify_shasum "$name.tar.gz" "$shasum"
-    tar -C "$BUILD_DIR" -xzf "$name.tar.gz"
+    run_tar -C "$BUILD_DIR" -xzf "$name.tar.gz"
     _install_font "$BUILD_DIR/$name-$(echo "$ver" | tr "/" "-")" "$fontdir"
 }
 
@@ -55,6 +55,7 @@ _install_font_url() {
 
     fontdir=${XDG_DATA_HOME:-$HOME/.local/share}/fonts/$name
     basename=$(basename "$url")
+    unzip=
 
     if ! forced && [ -f "$fontdir/.installed" ]; then
         printe_info "$fontdir already exists, skipping..."
@@ -63,7 +64,15 @@ _install_font_url() {
 
     case "$basename" in
         *.zip )
-            if ! command -v unzip >/dev/null; then
+            if [ -z "$unzip" ] && command -v unzip >/dev/null; then
+                unzip=unzip
+            fi
+
+            if [ -z "$unzip" ] && command -v bsdtar >/dev/null; then
+                unzip=bsdtar
+            fi
+
+            if [ -z "$unzip" ]; then
                 printe_info "unzip binary does not exists, skipping..."
                 return 1
             fi
@@ -77,17 +86,25 @@ _install_font_url() {
 
     case "$basename" in
         *.tar.gz )
-            tar -C "$BUILD_DIR" -xzf "$basename"
+            run_tar -C "$BUILD_DIR" -xzf "$basename"
             ;;
 
         *.zip )
             mkdir -p "$BUILD_DIR/$name"
-            unzip -d "$BUILD_DIR/$name" "$basename"
+            case "$unzip" in
+                bsdtar )
+                    bsdtar -C "$BUILD_DIR/$name" -xvf "$basename"
+                    ;;
+
+                unzip )
+                    unzip -d "$BUILD_DIR/$name" "$basename"
+                    ;;
+            esac
             ;;
 
         *.ttf | *.ttc )
             mkdir -p "$BUILD_DIR/$name"
-            mv "$basename" "$BUILD_DIR/$name/"
+            install -m0644 "$basename" "$BUILD_DIR/$name/"
     esac
 
     _install_font "$BUILD_DIR/$name" "$fontdir"

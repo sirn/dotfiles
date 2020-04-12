@@ -47,6 +47,19 @@ run_root() {
     fi
 }
 
+run_tar() {
+    if command -v bsdtar >/dev/null; then
+        bsdtar "$@"
+    elif command -v gtar >/dev/null; then
+        gtar "$@"
+    elif command -v tar >/dev/null; then
+        tar "$@"
+    else
+        printe_err "No tar program found"
+        printe_err "Try install \`bsdtar\` or \`gtar\`"
+    fi
+}
+
 
 ## Normalizing
 ##

@@ -58,7 +58,7 @@ _install_erlang_ls() {
 
     fetch_gh_archive erlang_ls.tar.gz erlang-ls/erlang_ls $ERLANG_LS_VER
     verify_shasum erlang_ls.tar.gz $ERLANG_LS_SHA256
-    tar -C "$BUILD_DIR" -xzf erlang_ls.tar.gz
+    run_tar -C "$BUILD_DIR" -xzf erlang_ls.tar.gz
     rm erlang_ls.tar.gz
 
     cd "$BUILD_DIR/erlang_ls-$ERLANG_LS_VER" || exit 1

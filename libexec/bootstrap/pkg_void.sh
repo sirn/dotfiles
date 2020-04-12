@@ -33,11 +33,8 @@ _run() {
         sqlite \
         the_silver_searcher \
         tmux \
-        unzip \
         w3m \
-        weechat \
-        xtools \
-        zip
+        xtools
 
     xbps_alternative awk lok
     xbps_alternative iptables iptables-nft

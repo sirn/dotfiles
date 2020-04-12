@@ -19,7 +19,7 @@ macports_bootstrap() {
 
     fetch_gh_archive macports.tar.gz macports/macports-base v$MACPORTS_VER
     verify_shasum macports.tar.gz $MACPORTS_SHA256
-    tar -C "$BUILD_DIR" -xzf macports.tar.gz
+    run_tar -C "$BUILD_DIR" -xzf macports.tar.gz
     rm macports.tar.gz
 
     cd "$BUILD_DIR/macports-base-$MACPORTS_VER" || exit 1

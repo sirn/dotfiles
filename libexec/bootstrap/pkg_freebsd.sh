@@ -34,7 +34,6 @@ _run() {
     pkgng_install the_silver_searcher
     pkgng_install tmux
     pkgng_install w3m
-    pkgng_install weechat
 }
 
 _run_desktop() {
