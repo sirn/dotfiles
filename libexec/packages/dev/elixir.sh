@@ -6,8 +6,8 @@
 BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
-. "../../share/bootstrap/utils.sh"
-. "../../share/bootstrap/buildenv.sh"
+. "../../../share/bootstrap/utils.sh"
+. "../../../share/bootstrap/buildenv.sh"
 
 ELIXIR_LS_VER=0.3.1
 ELIXIR_LS_SHA256=56a72d5bd41c6676cd34a7595dfab46328098f8c7979114a3d75cc7237458d1a

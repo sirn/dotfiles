@@ -14,33 +14,35 @@ _run() {
 
     pkgng_bootstrap
 
-    pkgng_install aria2
-    pkgng_install aspell
-    pkgng_install base64
-    pkgng_install ca_root_nss
-    pkgng_install compat8x-amd64
-    pkgng_install curl
-    pkgng_install en-aspell
-    pkgng_install fzf
-    pkgng_install git
-    pkgng_install mercurial
-    pkgng_install mosh
-    pkgng_install oksh
-    pkgng_install openjdk8-jre
-    pkgng_install pstree
-    pkgng_install py37-ansible
-    pkgng_install py37-tmuxp
-    pkgng_install socat
-    pkgng_install the_silver_searcher
-    pkgng_install tmux
-    pkgng_install w3m
+    pkgng_install \
+        aria2 \
+        aspell \
+        base64 \
+        ca_root_nss \
+        compat8x-amd64 \
+        curl \
+        en-aspell \
+        fzf \
+        git \
+        mercurial \
+        mosh \
+        oksh \
+        openjdk8-jre \
+        pstree \
+        py37-ansible \
+        py37-tmuxp \
+        socat \
+        the_silver_searcher \
+        tmux \
+        w3m
 }
 
 _run_desktop() {
     printe_h2 "Installing desktop packages..."
 
-    pkgng_install emacs
-    pkgng_install firefox
+    pkgng_install \
+        emacs \
+        firefox
 
     sh "$BASE_DIR/libexec/packages/fontinst.sh" "$@"
 }
@@ -48,44 +50,45 @@ _run_desktop() {
 _run_dev() {
     printe_h2 "Installing dev packages..."
 
-    pkgng_install GraphicsMagick
-    pkgng_install autoconf
-    pkgng_install duplicity
-    pkgng_install elixir
-    pkgng_install entr
-    pkgng_install erlang
-    pkgng_install execline
-    pkgng_install expect
-    pkgng_install git-crypt
-    pkgng_install git-lfs
-    pkgng_install go
-    pkgng_install graphviz
-    pkgng_install hs-ShellCheck
-    pkgng_install hs-cabal-install
-    pkgng_install hs-pandoc
-    pkgng_install ipcalc
-    pkgng_install jq
-    pkgng_install leiningen
-    pkgng_install node10
-    pkgng_install npm-node10
-    pkgng_install pkgconf
-    pkgng_install py37-pip
-    pkgng_install python37
-    pkgng_install rebar3
-    pkgng_install ruby
-    pkgng_install socat
-    pkgng_install terraform
-    pkgng_install tree
+    pkgng_install \
+        GraphicsMagick \
+        autoconf \
+        duplicity \
+        elixir \
+        entr \
+        erlang \
+        execline \
+        expect \
+        git-crypt \
+        git-lfs \
+        go \
+        graphviz \
+        hs-ShellCheck \
+        hs-cabal-install \
+        hs-pandoc \
+        ipcalc \
+        jq \
+        leiningen \
+        node10 \
+        npm-node10 \
+        pkgconf \
+        py37-pip \
+        python37 \
+        rebar3 \
+        ruby \
+        socat \
+        terraform \
+        tree
 
-    sh "$BASE_DIR/libexec/packages/cloudflared.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/cncf.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/erlang.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/elixir.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/golang.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/node.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/python.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/rust.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/rust.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/dev/erlang.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/dev/elixir.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/dev/golang.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/dev/haskell.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/dev/node.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/dev/python.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/cloudflared.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/kubernetes.sh" "$@"
 }
 
 _run_all() {

@@ -19,13 +19,18 @@ pkgng_bootstrap() {
 }
 
 pkgng_install() {
-    pkg=$1; shift
+    pkgs=
 
-    if pkgng_installed "$pkg"; then
-        printe "$pkg (pkgng) already installed"
-        return
+    for pkg in "$@"; do
+        if pkgng_installed "$pkg"; then
+            printe "$pkg (pkgng) already installed"
+        fi
+
+        pkgs="${pkgs:+$pkgs }$pkg"
+    done
+
+    if [ -n "$pkgs" ]; then
+        eval set -- "$pkgs"
+        run_root pkg install -Uy "$@"
     fi
-
-    printe_h2 "Installing $pkg (pkg)..."
-    run_root pkg install -Uy "$pkg"
 }

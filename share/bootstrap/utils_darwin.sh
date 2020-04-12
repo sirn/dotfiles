@@ -28,22 +28,44 @@ macports_bootstrap() {
     run_root $MACPORTS sync
 }
 
-macports_install() {
+macports_installed() {
     pkg=$1; shift
 
     case "$($MACPORTS installed "$pkg" 2>&1)" in
-        "None of the"* ) ;;
+        "None of the"* )
+            return 0
+            ;;
+
         * )
-            printe "$pkg (macports) already installed"
-            return
+            return 1
             ;;
     esac
+}
 
-    printe_h2 "Installing $pkg (macports)..."
+macports_install() {
+    OLDIFS=$IFS
+    IFS=,
 
-    if ! run_root $MACPORTS -n install "$pkg" "$@"; then
-        printe_info "$pkg (macports) failed to install, skipping..."
-    fi
+    # shellcheck disable=SC2116
+    for pkg in $(echo "$@"); do
+        pkgname=$(trim "$pkg")
+        pkgflag=${pkgname#* }
+        if [ "$pkgflag" = "$pkgname" ]; then
+            pkgflag=
+        fi
+
+        pkgname=${pkgname%%$pkgflag}
+        if macports_installed "$pkgname"; then
+            printe "$pkgname (macports) already installed"
+            continue
+        fi
+
+        if ! run_root $MACPORTS -n install "$pkgname" $pkgflag; then
+            printe_info "$pkg (macports) failed to install, skipping..."
+        fi
+    done
+
+    IFS=$OLDIFS
 }
 
 macports_select() {

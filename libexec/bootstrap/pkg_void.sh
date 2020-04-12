@@ -92,15 +92,15 @@ _run_dev() {
         tree \
         xz
 
-    sh "$BASE_DIR/libexec/packages/cloudflared.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/cncf.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/erlang.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/elixir.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/golang.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/haskell.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/node.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/python.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/rust.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/rust.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/dev/erlang.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/dev/elixir.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/dev/golang.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/dev/haskell.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/dev/node.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/dev/python.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/cloudflared.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/kubernetes.sh" "$@"
 }
 
 _run_all() {
