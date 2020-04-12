@@ -3,16 +3,13 @@
 # Install rust packages.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../../share/bootstrap/utils.sh"
 
 _preflight() {
-    if ! command -v rustc >/dev/null; then
-        printe_h2 "Installing rust..."
-        _setup_rust
-    fi
+    _setup_rust
 
     if ! command -v cargo >/dev/null; then
         printe_info "cargo is not installed, skipping rust packages..."
@@ -31,28 +28,29 @@ _run_dev() {
 
 _setup_rust() {
     PATH=$HOME/.cargo/bin:$PATH
-    rustup_path=$HOME/.cargo/bin/rustup
 
-    if ! forced && [ -f "$rustup_path" ]; then
-        printe_info "$rustup_path already exists, skipping..."
+    if ! forced && command -v rustup >/dev/null; then
+        printe_info "rustup already installed, skipping..."
         return
     fi
 
+    printe_h2 "Installing rust..."
     fetch_url - https://sh.rustup.rs | sh -s - -y --no-modify-path
 }
 
 _rustup_install() {
     PATH=$HOME/.cargo/bin:$PATH
-    rustup_path=$HOME/.cargo/bin/rustup
-
-    $rustup_path component add "$@"
+    rustup component add "$@"
 }
 
 _cargo_install() {
     bin=$1; shift
 
-    if ! forced && [ -f "$HOME/.cargo/bin/$bin" ]; then
-        printe_info "$HOME/.cargo/bin/$bin already exists, skipping..."
+    PATH=$HOME/.cargo/bin:$PATH
+    pkgbin_path=$HOME/.cargo/bin/$bin
+
+    if ! forced && [ -f "$pkgbin_path" ]; then
+        printe_info "$pkgbin_path already exists, skipping..."
         return
     fi
 

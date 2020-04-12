@@ -3,8 +3,6 @@
 # Sets up build environment
 #
 
-. "../../share/bootstrap/utils.sh"
-
 if [ -z "$BUILD_DIR" ]; then
     BUILD_DIR=$(mktemp -d)
 

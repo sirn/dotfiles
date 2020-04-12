@@ -3,7 +3,7 @@
 # Install nim packages.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../../share/bootstrap/utils.sh"
@@ -21,7 +21,7 @@ _preflight() {
 }
 
 _setup_choosenim() {
-    # Skip without force flag if we already have system-wide choosenim.
+    # Skip without force flag if we already have system-wide choosenim
     # e.g. for musl system where there's no prebuilt choosenim-musl binary
     # and we must install choosenim from distro package.
     if command -v choosenim >/dev/null; then
@@ -29,10 +29,9 @@ _setup_choosenim() {
     fi
 
     PATH=$HOME/.nimble/bin:$PATH
-    choosenim_path=$HOME/.nimble/bin/choosenim
 
-    if ! forced && [ -f "$choosenim_path" ]; then
-        printe_info "$choosenim_path already exists, skipping..."
+    if ! forced && command -v choosenim >/dev/null; then
+        printe_info "choosenim already installed, skipping..."
         return
     fi
 
@@ -42,10 +41,9 @@ _setup_choosenim() {
 
 _setup_nim() {
     PATH=$HOME/.nimble/bin:$PATH
-    nim_path=$HOME/.nimble/bin/nim
 
-    if ! forced && [ -f "$nim_path" ]; then
-        printe_info "$nim_path already exists, skipping..."
+    if ! forced && command -v nim >/dev/null; then
+        printe_info "nim already installed, skipping..."
         return
     fi
 
@@ -58,7 +56,6 @@ _nimble_install() {
     pkg=$1; shift
 
     PATH=$HOME/.nimble/bin:$PATH
-    nimble_path=$HOME/.nimble/bin/nimble
     pkgbin_path=$HOME/.nimble/bin/$bin
 
     if ! forced && [ -f "$pkgbin_path" ]; then
@@ -66,7 +63,7 @@ _nimble_install() {
         return
     fi
 
-    $nimble_path install "$pkg"
+    nimble install "$pkg"
 }
 
 run_with_flavors "$@"
