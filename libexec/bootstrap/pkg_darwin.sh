@@ -87,6 +87,7 @@ _run_dev() {
     macports_select ruby ruby26
 
     sh "$BASE_DIR/libexec/packages/lang/rust.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/nim.sh" "$@"
     sh "$BASE_DIR/libexec/packages/dev/erlang.sh" "$@"
     sh "$BASE_DIR/libexec/packages/dev/elixir.sh" "$@"
     sh "$BASE_DIR/libexec/packages/dev/golang.sh" "$@"

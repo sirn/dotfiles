@@ -64,6 +64,7 @@ _run_dev() {
     xbps_install \
         GraphicsMagick \
         cabal-install \
+        choosenim \
         duplicity \
         elixir \
         entr \
@@ -83,7 +84,6 @@ _run_dev() {
         python3 \
         python3-devel \
         python3-pip \
-        python3-cryptography \
         ruby \
         shellcheck \
         socat \
@@ -93,6 +93,7 @@ _run_dev() {
         xz
 
     sh "$BASE_DIR/libexec/packages/lang/rust.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/nim.sh" "$@"
     sh "$BASE_DIR/libexec/packages/dev/erlang.sh" "$@"
     sh "$BASE_DIR/libexec/packages/dev/elixir.sh" "$@"
     sh "$BASE_DIR/libexec/packages/dev/golang.sh" "$@"

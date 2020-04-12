@@ -89,6 +89,9 @@ _run_dev() {
     sh "$BASE_DIR/libexec/packages/dev/python.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/cloudflared.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/kubernetes.sh" "$@"
+
+    # TODO: no choosenim for freebsd
+    #sh "$BASE_DIR/libexec/packages/lang/nim.sh" "$@"
 }
 
 _run_all() {
