@@ -34,36 +34,8 @@ unset OSID
 PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
 
 if [ -f /etc/os-release ]; then
-    OSID=$(awk '/^ID=/ {
-        match($0, "^.*=\"?([^\"]+)\"?$", a);
-        print a[1]
-    }' < /etc/os-release)
+    OSID=$(grep ^ID /etc/os-release | sed -E "s|.*=\"?([^\"]+)\"?|\1|")
 fi
-
-
-## Aliases
-##
-
-if command -v colorls >/dev/null; then
-    alias ls="colorls -G"
-elif ls --version 2>&1 |grep -qe "BusyBox" -e "GNU"; then
-    alias ls="ls --color"
-elif ls -G >/dev/null 2>&1 ; then
-    alias ls="ls -G"
-fi
-
-alias ll='ls -lh'
-alias la='ls -alh'
-alias sshi='ssh -F /dev/null -o UserKnownHostsFile=/dev/null'
-
-case "$OSID" in
-    void )
-        alias xlocal="xbps-query -p repository -s $HOME"
-        ;;
-
-    * )
-        ;;
-esac
 
 
 ## GPG
@@ -155,7 +127,6 @@ for rbpath in "$HOME"/.gem/ruby/?.?/bin; do
 done
 
 
-
 ## Prompt
 ##
 
@@ -166,6 +137,98 @@ case "$TERM" in
 esac
 
 export PS1
+
+
+## Utilities
+##
+
+if command -v colorls >/dev/null; then
+    alias ls="command colorls -G"
+elif command ls --version 2>&1 |grep -qe "BusyBox" -e "GNU"; then
+    alias ls="command ls --color"
+elif command ls -G >/dev/null 2>&1; then
+    alias ls="command ls -G"
+fi
+
+alias ll='ls -lh'
+alias la='ls -alh'
+
+
+# gg - jump to directory
+
+gg() {
+    typeset lscmd
+    typeset dir
+
+    if command -v colorls >/dev/null; then
+        lscmd="command colorls -G -p"
+    elif command ls --version 2>&1 |grep -qe "BusyBox" -e "GNU"; then
+        lscmd="command ls --color -p"
+    elif command ls -G >/dev/null 2>&1; then
+        lscmd="command ls -Gp"
+    fi
+
+    dir=$(
+        find "$HOME/Dev/src" -type d \( -name .git -o -name .hg \) -prune |
+            sort -u |
+            awk '
+                BEGIN { prev="" }
+                {
+                    # prevent subrepo from appearing in the list
+                    r=match($1, "/\.[a-zA-Z0-9]+$")
+                    l=length($1)
+                    cur=substr($1, 1, l-(l-r+1))
+                    if (prev == "" || index(cur, prev) == 0) {
+                        print cur
+                        prev=cur
+                    }
+                }' |
+            fzf --preview "$lscmd {}" -q "$*")
+
+    if [ -z "$dir" ]; then
+        return
+    fi
+
+    builtin cd "$dir"
+}
+
+# cd - with interactive menu
+
+cd() {
+    if [[ "$#" != 0 ]]; then
+        builtin cd "$@";
+        return
+    fi
+
+    typeset lscmd
+    typeset dir
+
+    if command -v colorls >/dev/null; then
+        lscmd="command colorls -G -p"
+    elif command ls --version 2>&1 |grep -qe "BusyBox" -e "GNU"; then
+        lscmd="command ls --color -p"
+    elif command ls -G >/dev/null 2>&1; then
+        lscmd="command ls -Gp"
+    fi
+
+    while true; do
+        dir=$(command ls -a -p |
+                  grep '/$' |
+                  sed 's;/$;;' |
+                  fzf --tac --preview "$lscmd {}")
+
+        if [ -z "$dir" ]; then
+            return
+        fi
+
+        builtin cd "$dir"
+    done
+}
+
+
+## Cleanups
+##
+
 unset PLATFORM
 unset OSID
 unset prependpath
