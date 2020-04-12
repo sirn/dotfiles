@@ -175,7 +175,7 @@ gg() {
                 BEGIN { prev="" }
                 {
                     # prevent subrepo from appearing in the list
-                    r=match($1, "/\.[a-zA-Z0-9]+$")
+                    r=match($1, "/\\.[a-zA-Z0-9]+$")
                     l=length($1)
                     cur=substr($1, 1, l-(l-r+1))
                     if (prev == "" || index(cur, prev) == 0) {
