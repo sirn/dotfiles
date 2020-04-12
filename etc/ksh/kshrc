@@ -5,14 +5,9 @@
 
 # Exit early for non-interactive shell
 #
-case "$-" in
-    *i* )
-        ;;
-
-    * )
-        return 0
-        ;;
-esac
+if [[ "$-" != *"i"* ]]; then
+    return 0
+fi
 
 
 ## History
@@ -33,7 +28,7 @@ unset OSID
 
 PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
 
-if [ -f /etc/os-release ]; then
+if [[ -f /etc/os-release ]]; then
     OSID=$(grep ^ID /etc/os-release | sed -E "s|.*=\"?([^\"]+)\"?|\1|")
 fi
 
@@ -80,7 +75,7 @@ prependpath "$HOME/.local/lib/pytools/bin"
 _gopaths=$GOPATH
 
 while true; do
-    if [ -z "$_gopaths" ]; then
+    if [[ -z "$_gopaths" ]]; then
         break
     fi
 
@@ -117,7 +112,7 @@ esac
 ## Local
 ##
 
-if [ -d "$HOME/.cache/rebar3/bin" ]; then
+if [[ -d "$HOME/.cache/rebar3/bin" ]]; then
     prependpath "$HOME/.cache/rebar3/bin"
 fi
 
@@ -131,11 +126,15 @@ done
 ## Prompt
 ##
 
-case "$TERM" in
-    xterm* | rxvt* ) PS1="\h \w \$ ";;
-    screen* ) PS1="\w \$ ";;
-    * ) PS1="\$ ";;
-esac
+PS1="$(if [[ "$(id -u)" == "0" ]]; then print \#; else print \$; fi) "
+
+if [[ "$TERM" == "screen"* ]]; then
+    PS1="\$(pwd | sed 's|^$HOME|~|') $PS1"
+fi
+
+if [[ "$TERM" == "xterm"* || "$TERM" = "rxvt"* ]]; then
+    PS1="${HOSTNAME:=$(hostname)} $PS1"
+fi
 
 export PS1
 
