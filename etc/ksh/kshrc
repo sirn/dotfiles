@@ -126,15 +126,71 @@ done
 ## Prompt
 ##
 
-PS1="$(if [[ "$(id -u)" == "0" ]]; then print \#; else print \$; fi) "
+__prompt() {
+    if [[ "$(id -u)" == "0" ]]; then
+        print \#
+    else
+        print \$
+    fi
+}
 
-if [[ "$TERM" == "screen"* ]]; then
-    PS1="\$(pwd | sed 's|^$HOME|~|') $PS1"
-fi
+__prompt_git() {
+    typeset _branch
+    _branch=$(command git rev-parse --abbrev-ref HEAD 2>/dev/null)
 
-if [[ "$TERM" == "xterm"* || "$TERM" = "rxvt"* ]]; then
-    PS1="${HOSTNAME:=$(hostname)} $PS1"
-fi
+    if [[ -n "$_branch" ]]; then
+        command git status --porcelain=v2 2>/dev/null |
+            awk \
+                -v branch=$_branch \
+                -v bold="$(tput bold 2>/dev/null || true)" \
+                -v reset="$(tput sgr0 2>/dev/null || true)" \
+                -v green="$(tput setaf 2 2>/dev/null || true)" \
+                -v yellow="$(tput setaf 3 2>/dev/null || true)" \
+                '
+                BEGIN {
+                    changed=0
+                    staged=0
+                }
+                /^1 M./ { staged=1 }
+                /^1 .M/ { changed=1 }
+                /^[^1]/ { changed=1 }
+                END {
+                    printf "%s%s%s", bold, branch, reset
+                    if (staged) { printf "%s%s", green, "*" }
+                    if (changed) { printf "%s%s", yellow, "*" }
+                    printf "%s ", reset
+                }'
+    fi
+}
+
+__prompt_pwd() {
+    pwd | sed "s|^$HOME|~|; s|\([^[:punct:]]\)[^/]*/|\1/|g"
+}
+
+__prompt_hostname() {
+    hostname
+}
+
+case "$TERM" in
+    xterm* | rxvt* )
+        export PS1='\
+$(__prompt_hostname) \
+$(__prompt_pwd) \
+$(__prompt_git)\
+$(__prompt) '
+        ;;
+
+    screen* )
+        export PS1='\
+$(__prompt_pwd) \
+$(__prompt_git)\
+$(__prompt) '
+        ;;
+
+    * )
+        export PS1='$(__prompt) '
+        ;;
+esac
 
 export PS1
 
