@@ -41,9 +41,10 @@ _setup_choosenim() {
 
 _setup_nim() {
     PATH=$HOME/.nimble/bin:$PATH
+    nim_path=$HOME/.nimble/bin/nim
 
-    if ! forced && command -v nim >/dev/null; then
-        printe_info "nim already installed, skipping..."
+    if ! forced && [ -f "$nim_path" ]; then
+        printe_info "$nim_path already exists, skipping..."
         return
     fi
 

@@ -28,9 +28,10 @@ _run_dev() {
 
 _setup_rust() {
     PATH=$HOME/.cargo/bin:$PATH
+    rust_bin=$HOME/.cargo/bin/rustc
 
-    if ! forced && command -v rustup >/dev/null; then
-        printe_info "rustup already installed, skipping..."
+    if ! forced && [ -f "$rust_bin" ]; then
+        printe_info "$rust_bin already exists, skipping..."
         return
     fi
 
