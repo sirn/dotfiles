@@ -18,7 +18,7 @@ _install_font() {
 
     find "$srcdir" \
          \( -iname "*.ttf" -or -iname "*.ttc" \) \
-         -exec install -m0644 \{\} "$dest" \;
+         -exec install -m0644 \{\} "$dest" \; || exit 1
 
     touch "$dest/.installed"
 }
@@ -86,7 +86,8 @@ _install_font_url() {
 
     case "$basename" in
         *.tar.gz )
-            run_tar -C "$BUILD_DIR" -xzf "$basename"
+            mkdir -p "$BUILD_DIR/$name"
+            run_tar -C "$BUILD_DIR/$name" -xzf "$basename"
             ;;
 
         *.zip )
@@ -170,6 +171,15 @@ _run() {
         roboto \
         $roboto_gh/releases/download/v2.138/roboto-android.zip \
         c825453253f590cfe62557733e7173f9a421fff103b00f57d33c4ad28ae53baf
+
+    ## Twemoji
+    ##
+
+    twemoji_gh=https://github.com/eosrei/twemoji-color-font
+    _install_font_url \
+        twemoji \
+        $twemoji_gh/releases/download/v12.0.1/TwitterColorEmoji-SVGinOT-Linux-12.0.1.tar.gz \
+        7886d78ecc992f87e17c9cf111d1e41100b0c5a5203c44c595faccb0ce14becd
 
     ## Droid Sans
     ## Using local mirror, since Droid Sans has been removed from Google Fonts
