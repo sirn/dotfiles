@@ -10,16 +10,23 @@ cd "$(dirname "$0")" || exit 1
 . "../../../share/bootstrap/buildenv.sh"
 
 CLOUDSDK_VER=280.0.0
+HELM_VER=2.16.6
 
 case $(get_platform) in
     ubuntu | debian | void )
         CLOUDSDK_DIST=google-cloud-sdk-${CLOUDSDK_VER}-linux-x86_64.tar.gz
         CLOUDSDK_SHA256=11950f1db216ec7dc3abaf80722fb80518c38e279bd76b6924326fe660c209cf
+
+        HELM_DIST=helm-v${HELM_VER}-linux-amd64.tar.gz
+        HELM_SHA256=e38fea59bc382feb0f80322d582266465d76ab72acdc0079c2350cc3fd8a3f4c
         ;;
 
     darwin )
         CLOUDSDK_DIST=google-cloud-sdk-${CLOUDSDK_VER}-darwin-x86_64.tar.gz
         CLOUDSDK_SHA256=c9554507bc217a503b42bef7dfa72179bae57ad7e4e696af4205c50b373d3576
+
+        HELM_DIST=helm-v${HELM_VER}-darwin-amd64.tar.gz
+        HELM_SHA256=7cccf13b3e821dda1e0ffa56ca6bec2648f2dae6fb8c12f22a9be2396698771f
         ;;
 
     * )
@@ -27,6 +34,7 @@ case $(get_platform) in
 esac
 
 CLOUDSDK_URL=https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/$CLOUDSDK_DIST
+HELM_URL=https://get.helm.sh/$HELM_DIST
 
 KUBECTX_VER=0.8.0
 KUBECTX_SHA256=7acbb574f2b9cb82c03b2ceaf1d5cf312eddf1cefa12ecf6bc6bf0478511f809
@@ -35,11 +43,6 @@ KUSTOMIZE_VER=3.5.4
 KUSTOMIZE_SHA256=71c49d7a72c5e996c0388e8f7d2699a9b00a035960aa81b4b25c1c24c03593e2
 
 _preflight() {
-    if [ -z "$CLOUDSDK_DIST" ]; then
-        printe_info "Unsupported platform, skipping..."
-        return 1
-    fi
-
     if ! command -v go >/dev/null; then
         printe_info "go is not installed, skipping..."
         return 1
@@ -47,8 +50,17 @@ _preflight() {
 }
 
 _run_dev() {
-    _install_cloudsdk
-    _install_kubectl
+    if [ -n "$CLOUDSDK_DIST" ]; then
+        _install_cloudsdk
+        _install_kubectl
+    fi
+
+    if [ -n "$HELM_DIST" ]; then
+        _install_helm
+    fi
+
+    _install_kustomize
+    _install_kubectx
 }
 
 _install_cloudsdk() {
@@ -81,6 +93,30 @@ _install_kubectl() {
 
     gcloud components install kubectl
     printe_info "kubectl successfully installed"
+}
+
+_install_helm() {
+    printe_h2 "Installing helm..."
+
+    if ! forced && [ -f "$HOME/.local/bin/helm" ]; then
+        printe_info "$HOME/.local/bin/helm already exists, skipping..."
+        return
+    fi
+
+    cd "$BUILD_DIR" || exit 1
+
+    fetch_url helm.tar.gz "$HELM_URL"
+    verify_shasum helm.tar.gz "$HELM_SHA256"
+    run_tar -C "$BUILD_DIR" -xzf helm.tar.gz
+    rm helm.tar.gz
+
+    mkdir -p "$HOME/.local/bin"
+    find "$BUILD_DIR" \
+         \( -iname helm -or -iname tiller \) -executable \
+         -prune \
+         -exec install -m0755 '{}' "$HOME/.local/bin" \;
+
+    printe_info "helm successfully installed"
 }
 
 _install_kubectx() {
