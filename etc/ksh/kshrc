@@ -13,9 +13,11 @@ fi
 ## History
 ##
 
+HISTCONTROL="ignoredups:ignorespace"
 HISTFILE="$HOME/.ksh_history"
 HISTSIZE=10000
 
+export HISTCONTROL
 export HISTFILE
 export HISTSIZE
 
@@ -192,6 +194,8 @@ $(__prompt) '
         ;;
 esac
 
+PS1="\r$(tput dl1 2>/dev/null || true)$PS1"
+
 export PS1
 
 
@@ -285,6 +289,46 @@ cd() {
         builtin cd "$dir"
     done
 }
+
+
+# shp - search history into prompt
+
+shp() {
+    typeset python
+    typeset cmd
+
+    for python in python3 python3.7 python3.8; do
+        if command -v $python >/dev/null; then
+            break
+        fi
+    done
+
+    cmd=$(command fc -l 1 |
+              sed 's|^\s*[0-9]*\s*||' |
+              fzf --tac -q "$*")
+
+    if [ -z "$cmd" ]; then
+        if [ -z "$*" ]; then
+            return
+        fi
+
+        cmd="$*"
+    fi
+
+    $python -c "
+import fcntl, sys, termios
+for c in ' '.join(sys.argv[1:]):
+    fcntl.ioctl(sys.stdin, termios.TIOCSTI, c)
+" "$cmd"
+}
+
+__shp_silent() {
+    printf "%s" "$(tput cuu 1 2>/dev/null || true)"
+    printf "%s" "$(tput el 2>/dev/null || true)"
+    shp "$@"
+}
+
+bind -m '^R'='^A __shp_silent ^J'
 
 
 ## Cleanups
