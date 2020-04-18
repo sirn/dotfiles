@@ -13,7 +13,7 @@ fi
 ## History
 ##
 
-HISTCONTROL="ignoredups:ignorespace"
+HISTCONTROL="ignorespace"
 HISTFILE="$HOME/.ksh_history"
 HISTSIZE=10000
 
