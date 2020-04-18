@@ -27,6 +27,8 @@ _run() {
         mercurial \
         mosh \
         neovim \
+        podman \
+        podman-compose \
         python3-tmuxp \
         rsync \
         socat \

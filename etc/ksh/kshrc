@@ -209,6 +209,10 @@ fi
 alias ll='ls -lh'
 alias la='ls -alh'
 
+if command -v podman >/dev/null && ! command -v docker >/dev/null; then
+    alias docker="podman"
+fi
+
 
 # gg - jump to directory
 
@@ -247,6 +251,7 @@ gg() {
 
     builtin cd "$dir"
 }
+
 
 # cd - with interactive menu
 
