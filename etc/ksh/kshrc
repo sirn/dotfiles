@@ -305,7 +305,7 @@ shp() {
 
     cmd=$(command fc -l 1 |
               sed 's|^\s*[0-9]*\s*||' |
-              fzf --tac -q "$*")
+              fzf +s --tac -q "$*")
 
     if [ -z "$cmd" ]; then
         if [ -z "$*" ]; then
