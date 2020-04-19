@@ -335,13 +335,15 @@ _cleanup_ksh_history() {
 
     awk '!a[$0] { a[$0]++; print $0 }' < "$HISTFILE" |
         grep -v \
+             -e '^ ' \
+             -e '^\$' \
              -e '^cccccc' \
              -e '^cd [^\~/]' \
              -e '^cd\s*$' \
              -e '^echo ' \
              -e '^gg\s*$' \
              -e '^rm' \
-             -e '|\s*less\s*$' \
+             -e '|\s*less\s*' \
              > "$tmphist"
     mv "$tmphist" "$HISTFILE"
 }
