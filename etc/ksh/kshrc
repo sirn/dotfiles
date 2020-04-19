@@ -26,13 +26,8 @@ export HISTSIZE
 ##
 
 unset PLATFORM
-unset OSID
 
 PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
-
-if [[ -f /etc/os-release ]]; then
-    OSID=$(grep ^ID /etc/os-release | sed -E "s|.*=\"?([^\"]+)\"?|\1|")
-fi
 
 
 ## GPG
@@ -91,7 +86,7 @@ done
 unset _gopath
 unset _gopaths
 
-case "$(uname | tr '[:upper:]' '[:lower:]')" in
+case "$PLATFORM" in
     darwin )
         prependpath /opt/local/bin
 
@@ -143,7 +138,7 @@ __prompt_git() {
     if [[ -n "$_branch" ]]; then
         command git status --porcelain=v2 2>/dev/null |
             awk \
-                -v branch=$_branch \
+                -v branch="$_branch" \
                 -v bold="$(tput bold 2>/dev/null || true)" \
                 -v reset="$(tput sgr0 2>/dev/null || true)" \
                 -v green="$(tput setaf 2 2>/dev/null || true)" \
@@ -175,22 +170,22 @@ __prompt_hostname() {
 
 case "$TERM" in
     xterm* | rxvt* )
-        export PS1='\
+        PS1="\
 $(__prompt_hostname) \
 $(__prompt_pwd) \
 $(__prompt_git)\
-$(__prompt) '
+$(__prompt) "
         ;;
 
     screen* )
-        export PS1='\
+        PS1="\
 $(__prompt_pwd) \
 $(__prompt_git)\
-$(__prompt) '
+$(__prompt) "
         ;;
 
     * )
-        export PS1='$(__prompt) '
+        PS1="$(__prompt) "
         ;;
 esac
 
@@ -253,7 +248,7 @@ gg() {
         return
     fi
 
-    builtin cd "$dir"
+    builtin cd "$dir" || exit 1
 }
 
 
@@ -261,7 +256,7 @@ gg() {
 
 cd() {
     if [[ "$#" != 0 ]]; then
-        builtin cd "$@";
+        builtin cd "$@" || exit 1
         return
     fi
 
@@ -286,36 +281,31 @@ cd() {
             return
         fi
 
-        builtin cd "$dir"
+        builtin cd "$dir" || exit 1
     done
 }
 
 
 # shp - search history into prompt
 
-shp() {
-    typeset python
+__shp() {
     typeset cmd
 
-    for python in python3 python3.7 python3.8; do
-        if command -v $python >/dev/null; then
-            break
-        fi
-    done
+    if [[ ! -f "$HISTFILE" ]]; then
+        return
+    fi
 
     cmd=$(command fc -l 1 |
               sed 's|^\s*[0-9]*\s*||' |
               fzf +s --tac -q "$*")
 
-    if [ -z "$cmd" ]; then
-        if [ -z "$*" ]; then
-            return
-        fi
-
-        cmd="$*"
+    if [[ -z "$cmd" ]] && [[ -z "$*" ]]; then
+        return
     fi
 
-    $python -c "
+    cmd=${cmd:-$*}
+
+    python3 -c "
 import fcntl, sys, termios
 for c in ' '.join(sys.argv[1:]):
     fcntl.ioctl(sys.stdin, termios.TIOCSTI, c)
@@ -325,15 +315,46 @@ for c in ' '.join(sys.argv[1:]):
 __shp_silent() {
     printf "%s" "$(tput cuu 1 2>/dev/null || true)"
     printf "%s" "$(tput el 2>/dev/null || true)"
-    shp "$@"
+    __shp "$@"
 }
 
-bind -m '^R'='^A __shp_silent ^J'
+if [[ "$PLATFORM" != "openbsd" ]] && command -v python3 >/dev/null; then
+    bind -m '^R'='^A __shp_silent ^J'
+fi
+
+
+## Hooks
+##
+
+_cleanup_ksh_history() {
+    tmphist=$(mktemp)
+
+    if [[ ! -f "$HISTFILE" ]]; then
+        return
+    fi
+
+    awk '!a[$0] { a[$0]++; print $0 }' < "$HISTFILE" |
+        grep -v \
+             -e '^cccccc' \
+             -e '^cd [^\~/]' \
+             -e '^cd\s*$' \
+             -e '^echo ' \
+             -e '^gg\s*$' \
+             -e '^rm' \
+             -e '|\s*less\s*$' \
+             > "$tmphist"
+    mv "$tmphist" "$HISTFILE"
+}
+
+__hook_exit() {
+    _cleanup_ksh_history
+}
+
+trap '__hook_exit' EXIT
 
 
 ## Cleanups
 ##
 
 unset PLATFORM
-unset OSID
 unset prependpath
