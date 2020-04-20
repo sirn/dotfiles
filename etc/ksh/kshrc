@@ -172,15 +172,15 @@ case "$TERM" in
     xterm* | rxvt* )
         PS1="\
 $(__prompt_hostname) \
-$(__prompt_pwd) \
-$(__prompt_git)\
+\$(__prompt_pwd) \
+\$(__prompt_git)\
 $(__prompt) "
         ;;
 
     screen* )
         PS1="\
-$(__prompt_pwd) \
-$(__prompt_git)\
+\$(__prompt_pwd) \
+\$(__prompt_git)\
 $(__prompt) "
         ;;
 
@@ -340,9 +340,11 @@ _cleanup_ksh_history() {
              -e '^cccccc' \
              -e '^cd [^\~/]' \
              -e '^cd\s*$' \
-             -e '^echo ' \
+             -e '^echo\s*' \
              -e '^gg\s*$' \
-             -e '^rm' \
+             -e '^ll\s*' \
+             -e '^ls\s*' \
+             -e '^rm\s*' \
              -e '|\s*less\s*' \
              > "$tmphist"
     mv "$tmphist" "$HISTFILE"
