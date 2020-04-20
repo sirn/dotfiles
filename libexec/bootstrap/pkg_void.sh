@@ -22,7 +22,6 @@ _run() {
         fzf \
         git \
         iptables-nft \
-        lok \
         loksh \
         mercurial \
         mosh \
@@ -38,7 +37,6 @@ _run() {
         w3m \
         xtools
 
-    xbps_alternative awk lok
     xbps_alternative iptables iptables-nft
     xbps_alternative vim neovim
     xbps_alternative vi neovim
