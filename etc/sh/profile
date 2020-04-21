@@ -24,11 +24,10 @@ export XDG_DATA_HOME
 export XDG_STATE_HOME
 
 
-## Binary wrappers
-## alias doesn't work as login .profile
+## Local bins
 ##
 
-PATH=$HOME/.dotfiles/libexec/fakebin:$PATH
+PATH=$HOME/.dotfiles/bin:$PATH
 
 
 ## GPG agent

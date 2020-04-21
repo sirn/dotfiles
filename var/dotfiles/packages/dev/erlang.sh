@@ -3,11 +3,11 @@
 # Install Erlang-ls.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
-. "../../../share/bootstrap/utils.sh"
-. "../../../share/bootstrap/buildenv.sh"
+. "../../lib/utils.sh"
+. "../../lib/buildenv.sh"
 
 REBAR3_VER=3.10.0
 REBAR3_SHA256=5887a6228fec0a81d45416f53623563166d46b73b52638e6aaef6fa30d7ea5e7

@@ -1,3 +1,0 @@
-Cmnd_Alias PORT_DNSCRYPT_LOAD = /opt/local/bin/port load dnscrypt-proxy
-Cmnd_Alias PORT_DNSCRYPT_UNLOAD = /opt/local/bin/port unload dnscrypt-proxy
-%admin ALL=(root) NOPASSWD: PORT_DNSCRYPT_LOAD, PORT_DNSCRYPT_UNLOAD

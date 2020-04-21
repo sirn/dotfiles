@@ -3,11 +3,11 @@
 # Install Cloudflared.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
-. "../../../share/bootstrap/utils.sh"
-. "../../../share/bootstrap/buildenv.sh"
+. "../../lib/utils.sh"
+. "../../lib/buildenv.sh"
 
 CFD_VER=2020.2.1
 CFD_SHA256=288a9c1fd352fb32c2d74194ab90b0502748c6d51c68421803b834cccf731501

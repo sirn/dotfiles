@@ -6,9 +6,13 @@
 BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
-. "../../share/bootstrap/utils.sh"
-. "../../share/bootstrap/utils_freebsd.sh"
-. "../../share/bootstrap/buildenv.sh"
+. "lib/utils.sh"
+. "lib/utils_freebsd.sh"
+. "lib/buildenv.sh"
+
+_run() {
+    _setup_pf
+}
 
 _setup_pf() {
     printe_h2 "Setting up pf..."
@@ -64,10 +68,6 @@ _setup_pf() {
     printe_info "\
 /etc/pf.conf updated, internet connection might be interrupted\
 "
-}
-
-_run() {
-    _setup_pf
 }
 
 run_with_flavors "$@"

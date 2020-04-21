@@ -1,59 +1,48 @@
 #!/bin/sh -e
 #
-# Install Void Linux packages with XBPS.
+# Install FreeBSD packages with Pkgng.
 #
 
 BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
-. "../../share/bootstrap/utils.sh"
-. "../../share/bootstrap/utils_void.sh"
+. "lib/utils.sh"
+. "lib/utils_freebsd.sh"
 
 _run() {
     printe_h2 "Installing packages..."
 
-    xbps_install \
-        ansible \
+    pkgng_bootstrap
+
+    pkgng_install \
         aria2 \
         aspell \
-        aspell-en \
-        cronie \
+        base64 \
+        ca_root_nss \
+        compat8x-amd64 \
         curl \
+        en-aspell \
         fzf \
         git \
-        iptables-nft \
-        loksh \
         mercurial \
         mosh \
-        neovim \
-        podman \
-        podman-compose \
-        python3-tmuxp \
-        rsync \
+        oksh \
+        openjdk8-jre \
+        pstree \
+        py37-ansible \
+        py37-tmuxp \
         socat \
-        sqlite \
         the_silver_searcher \
         tmux \
-        w3m \
-        xtools
-
-    xbps_alternative iptables iptables-nft
-    xbps_alternative vim neovim
-    xbps_alternative vi neovim
+        w3m
 }
 
 _run_desktop() {
     printe_h2 "Installing desktop packages..."
 
-    # Conflict with emacs
-    if xbps_installed emacs; then
-        run_root xbps-remove -Ry emacs
-    fi
-
-    # Firefox is installed with Flatpak
-    xbps_install \
-        emacs-gtk3 \
-        qemu
+    pkgng_install \
+        emacs \
+        firefox
 
     sh "$BASE_DIR/libexec/packages/fontinst.sh" "$@"
 }
@@ -61,39 +50,37 @@ _run_desktop() {
 _run_dev() {
     printe_h2 "Installing dev packages..."
 
-    xbps_install \
+    pkgng_install \
         GraphicsMagick \
-        cabal-install \
-        choosenim \
+        autoconf \
         duplicity \
         elixir \
         entr \
         erlang \
-        erlang-wx \
+        execline \
+        expect \
         git-crypt \
         git-lfs \
         go \
         graphviz \
+        hs-ShellCheck \
+        hs-cabal-install \
+        hs-pandoc \
         ipcalc \
         jq \
-        jsonnet \
-        libressl-devel \
-        nodejs-lts \
-        pandoc \
-        patch \
-        python3 \
-        python3-devel \
-        python3-pip \
+        leiningen \
+        node10 \
+        npm-node10 \
+        pkgconf \
+        py37-pip \
+        python37 \
+        rebar3 \
         ruby \
-        shellcheck \
         socat \
-        tcl \
         terraform \
-        tree \
-        xz
+        tree
 
     sh "$BASE_DIR/libexec/packages/lang/rust.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/lang/nim.sh" "$@"
     sh "$BASE_DIR/libexec/packages/dev/erlang.sh" "$@"
     sh "$BASE_DIR/libexec/packages/dev/elixir.sh" "$@"
     sh "$BASE_DIR/libexec/packages/dev/golang.sh" "$@"
@@ -102,6 +89,9 @@ _run_dev() {
     sh "$BASE_DIR/libexec/packages/dev/python.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/cloudflared.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/kubernetes.sh" "$@"
+
+    # TODO: no choosenim for freebsd
+    #sh "$BASE_DIR/libexec/packages/lang/nim.sh" "$@"
 }
 
 _run_all() {
@@ -110,9 +100,9 @@ _run_all() {
     printe_h2 "Installing extra packages..."
 
     # Only install emacs-nox when other variant of Emacs hasn't been
-    # installed (e.g. desktop flavor installs GTK emacs)
-    if ! xbps_installed emacs-gtk3; then
-        xbps_install emacs
+    # installed (e.g. desktop flavor installs emacs-x11)
+    if ! pkgng_installed emacs; then
+        pkgng_install emacs-nox
     fi
 }
 

@@ -6,8 +6,8 @@
 BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
-. "../../share/bootstrap/utils.sh"
-. "../../share/bootstrap/utils_freebsd.sh"
+. "lib/utils.sh"
+. "lib/utils_freebsd.sh"
 
 _run() {
     printe_h2 "Installing links..."

@@ -6,7 +6,7 @@
 BASE_DIR=$(cd "$(dirname "$0")/" || exit; pwd -P)
 cd "$BASE_DIR" || exit 1
 
-. share/bootstrap/utils.sh
+. var/dotfiles/lib/utils.sh
 
 
 ## Environment variables
@@ -117,7 +117,7 @@ for p in pkg system user; do
         run=0
 
         for b in $LOOKUP_PATH; do
-            runscript="$b/libexec/bootstrap/${p}_${PLATFORM}.sh"
+            runscript="$b/var/dotfiles/${p}_${PLATFORM}.sh"
 
             if [ ! -f "$runscript" ]; then
                 continue
