@@ -6,10 +6,11 @@
 install_svc() {
     OPTIND=1
 
-    while getopts "Sup:" opt; do
+    while getopts "Sup:s" opt; do
         case "$opt" in
             S ) mkargs="-S";;
             u ) svcdir="$HOME/.local/var/service";;
+            s ) svclink="/run/runit.$USER";;
             p ) program="$OPTARG";;
             * )
                 printe_err "Invalid flags given to make_link"
@@ -26,6 +27,11 @@ install_svc() {
 
     svcsrc=$1; shift
     svcname=$(basename "$svcsrc")
+
+    if [ -n "$mkargs" ] && [ -n "$svclink" ]; then
+        printe_err "install_svc: -S and -s cannot be used together, skipping..."
+        return
+    fi
 
     if [ -z "$svcdir" ]; then
         svcdir="/var/service"
@@ -47,6 +53,13 @@ install_svc() {
     if [ ! -f "$svcsrc/run" ]; then
         printe_info "$svcsrc does not seems to be runit service, skipping..."
         return
+    fi
+
+    if [ -n "$svclink" ]; then
+        run_root mkdir -p "$svclink"
+        run_root chown "$USER:$USER" "$svclink"
+        mkdir -p "$svclink/supervise.$svcname"
+        make_link "$svclink/supervise.$svcname" "$svcsrc/supervise"
     fi
 
     make_link $mkargs "$svcsrc" "$svcdir"

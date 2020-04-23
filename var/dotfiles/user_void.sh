@@ -42,7 +42,7 @@ _setup_user_service() {
         cat <<EOF > "$BUILD_DIR/${svcname}_run"
 #!/bin/sh
 
-if [ -d /run/runit.$USER ]; then
+if [ ! -d /run/runit.$USER ]; then
     mkdir -p /run/runit.$USER
     chown $USER:$USER /run/runit.$USER
 fi
