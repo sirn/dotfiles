@@ -8,6 +8,7 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 cd "$(dirname "$0")" || exit 1
 . "lib/utils.sh"
 . "lib/utils_void.sh"
+. "lib/utils_runit.sh"
 . "lib/buildenv.sh"
 
 _run() {
@@ -32,26 +33,45 @@ _setup_user_service() {
         return
     fi
 
-    svc_name=runsvdir-$USER
-    svc_dir=/var/service/$svc_name
-    svc_file=$svc_dir/run
+    svcname=runsvdir-$USER
+    svcsrc=/etc/sv/$svcname
 
-    if ! forced && [ -f "$svc_file" ]; then
-        printe_info "$svc_name already enabled, skipping..."
-        return
-    fi
+    if [ ! -f "$svcsrc/run" ]; then
+        cd "$BUILD_DIR" || exit 1
 
-    cd "$BUILD_DIR" || exit 1
-
-    cat <<EOF > "$BUILD_DIR/$svc_name"
+        cat <<EOF > "$BUILD_DIR/${svcname}_run"
 #!/bin/sh
-exec chpst -u "$USER:\$(id -Gn $USER | tr ' ' ':')" runsvdir /home/$USER/.local/var/service
+
+if [ -d /run/runit.$USER ]; then
+    mkdir -p /run/runit.$USER
+    chown $USER:$USER /run/runit.$USER
+fi
+
+exec 2>&1
+exec chpst -u "$USER:\$(id -Gn $USER | tr ' ' ':')" runsvdir $HOME/.local/var/service 'log: ...........................................................................................................................................................................................................................................................................................................................................................................................................'
 EOF
 
-    run_root mkdir -p "/etc/sv/$svc_name"
-    run_root chown root:root "/etc/sv/$svc_name"
-    run_root install -m0755 "$BUILD_DIR/$svc_name" "/etc/sv/$svc_name/run"
-    make_link -S "/etc/sv/$svc_name" "$svc_dir"
+        run_root mkdir -p "$svcsrc"
+        run_root chown root:root "$svcsrc"
+        run_root install -m0755 "$BUILD_DIR/${svcname}_run" "$svcsrc/run"
+    fi
+
+    if [ ! -f "$svcsrc/finish" ]; then
+        cd "$BUILD_DIR" || exit 1
+
+        cat <<EOF > "$BUILD_DIR/${svcname}_finish"
+#!/bin/sh
+
+sv -w600 force-stop $HOME/.local/var/service/*
+sv exit $HOME/.local/var/service/*
+EOF
+
+        run_root mkdir -p "$svcsrc"
+        run_root chown root:root "$svcsrc"
+        run_root install -m0755 "$BUILD_DIR/${svcname}_finish" "$svcsrc/finish"
+    fi
+
+    install_svc -S "$svcsrc"
 }
 
 _setup_user_links() {
