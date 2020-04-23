@@ -8,8 +8,10 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 cd "$(dirname "$0")" || exit 1
 . "lib/utils.sh"
 . "lib/utils_void.sh"
+. "lib/buildenv.sh"
 
 _run() {
+    _setup_user_service
     _setup_user_links
     _setup_user_shell
 }
@@ -20,6 +22,34 @@ _run_desktop() {
 
 _run_dev() {
     _setup_dev_links
+}
+
+_setup_user_service() {
+    printe_h2 "Setting up user service..."
+
+    if [ -z "$USER" ]; then
+        printe_info "cannot determine current user, skipping..."
+        return
+    fi
+
+    svc_name=runsvdir-$USER
+
+    if ! forced && [ -f "/var/service/$svc_name/run" ]; then
+        printe_info "$svc_name already enabled, skipping..."
+        return
+    fi
+
+    cd "$BUILD_DIR" || exit 1
+
+    cat <<EOF > "$BUILD_DIR/$svc_name"
+#!/bin/sh
+exec chpst -u "$USER:\$(id -Gn $USER | tr ' ' ':')" runsvdir /home/$USER/.local/var/service
+EOF
+
+    run_root mkdir -p "/etc/sv/$svc_name"
+    run_root chown root:root "/etc/sv/$svc_name"
+    run_root install -m0755 "$BUILD_DIR/$svc_name" "/etc/sv/$svc_name/run"
+    make_link -S "/etc/sv/$svc_name" "/var/service/$svc_name"
 }
 
 _setup_user_links() {
