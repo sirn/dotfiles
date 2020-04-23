@@ -20,3 +20,6 @@ ssh/config.d/*
 
 # Runtime
 .config
+
+# Service
+sv/*/supervise

@@ -6,6 +6,11 @@
 install_svc() {
     OPTIND=1
 
+    mkargs=
+    svcdir=
+    svclink=
+    program=
+
     while getopts "Sup:s" opt; do
         case "$opt" in
             S ) mkargs="-S";;

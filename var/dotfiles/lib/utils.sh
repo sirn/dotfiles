@@ -317,6 +317,8 @@ verify_shasum() {
 make_link() {
     OPTIND=1
 
+    command=
+
     while getopts "S" opt; do
         case "$opt" in
             S ) command="run_root sh";;
@@ -373,6 +375,12 @@ EOF
 
 lineinfile() {
     OPTIND=1
+
+    file=
+    regexp=
+    line=
+    state=
+    command=
 
     while getopts "f:r:l:s:S" opt; do
         case "$opt" in
