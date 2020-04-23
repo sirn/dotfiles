@@ -18,6 +18,7 @@ _run() {
         aspell \
         aspell-en \
         curl \
+        execline \
         fzf \
         git \
         loksh \
@@ -28,6 +29,8 @@ _run() {
         podman-compose \
         python3-tmuxp \
         rsync \
+        s6 \
+        snooze \
         socat \
         sqlite \
         the_silver_searcher \
