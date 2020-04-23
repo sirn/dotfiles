@@ -24,7 +24,8 @@ export PATH
 ## Arguments handling
 ##
 
-USAGE_MSG="\
+print_usage() {
+    printe "\
 Usage: $0 [OPTS...]
 
 OPTS:
@@ -37,7 +38,6 @@ OPTS:
 PROFILE:
 
     pkg             Install common packages.
-    system          Configure the system.
     user            Configure the current user.
 
 FLAVOR:
@@ -51,9 +51,6 @@ Bootstrap script will default to \`pkg\` without any FLAVORS
 if no PROFILES and FLAVORS is given. Lookup path is default to
 the current directory and ~/.dotpriv.
 " # EOF
-
-print_usage() {
-    printe "$USAGE_MSG"
 }
 
 OPTIND=1
@@ -92,7 +89,7 @@ export FORCE
 
 for p in $PROFILES; do
     case "$p" in
-        pkg | system | user ) ;;
+        pkg | user ) ;;
         * ) printe_err "Unknown profile: $p"; exit 1;;
     esac
 done
@@ -108,11 +105,16 @@ if [ -z "$PROFILES" ]; then
     PROFILES="pkg"
 fi
 
+if [ "$(id -u)" = "0" ]; then
+    printe_err "Cannot run as root"
+    exit 2
+fi
+
 
 ## Running
 ##
 
-for p in pkg system user; do
+for p in pkg user; do
     if has_args "$p" "$PROFILES"; then
         run=0
 
