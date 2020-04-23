@@ -29,7 +29,7 @@
 
   (defun gemacs--gpg-update-tty (&rest _args)
     (shell-command
-     "gpg-connect-agent updatestartuptty /bye"
+     "gpg-connect-agent --no-autostart updatestartuptty /bye"
      " *gpg-update-tty*"))
 
   (pinentry-start))
