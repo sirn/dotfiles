@@ -349,7 +349,7 @@ make_link() {
 
     if forced && [ -e "$dest" ]; then
         $command <<EOF
-mv "$dest" "$dest.bak.$ts"
+mv "$dest" "$dest.dotfiles.$ts"
 EOF
     fi
 

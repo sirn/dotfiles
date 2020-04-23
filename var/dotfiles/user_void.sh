@@ -33,8 +33,10 @@ _setup_user_service() {
     fi
 
     svc_name=runsvdir-$USER
+    svc_dir=/var/service/$svc_name
+    svc_file=$svc_dir/run
 
-    if ! forced && [ -f "/var/service/$svc_name/run" ]; then
+    if ! forced && [ -f "$svc_file" ]; then
         printe_info "$svc_name already enabled, skipping..."
         return
     fi
@@ -49,7 +51,7 @@ EOF
     run_root mkdir -p "/etc/sv/$svc_name"
     run_root chown root:root "/etc/sv/$svc_name"
     run_root install -m0755 "$BUILD_DIR/$svc_name" "/etc/sv/$svc_name/run"
-    make_link -S "/etc/sv/$svc_name" "/var/service/$svc_name"
+    make_link -S "/etc/sv/$svc_name" "$svc_dir"
 }
 
 _setup_user_links() {
