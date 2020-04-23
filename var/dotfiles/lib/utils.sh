@@ -315,29 +315,59 @@ verify_shasum() {
 }
 
 make_link() {
+    OPTIND=1
+
+    while getopts "S" opt; do
+        case "$opt" in
+            S ) command="run_root sh";;
+            * )
+                printe_err "Invalid flags given to make_link"
+                exit 1
+                ;;
+        esac
+    done
+
+    shift $((OPTIND-1))
+
+    if [ "${1:-}" = "--" ]; then
+        shift
+    fi
+
     src=$1; shift
     dest=$1; shift
+
+    ts=$(date +%s)
+
+    if [ -z "$command" ]; then
+        command="sh"
+    fi
 
     if [ ! -e "$src" ]; then
         printe_info "$src does not exists, skipping..."
         return
     fi
 
-    if ! forced; then
-        if [ -f "$dest" ] && [ ! -L "$dest" ]; then
-            printe_info "$dest already exists and is not a link, skipping..."
-            return
-        fi
-
-        if [ "$(readlink "$dest")" = "$src" ]; then
-            printe_info "$dest already linked"
-            return
-        fi
+    if forced && [ -e "$dest" ]; then
+        $command <<EOF
+mv "$dest" "$dest.bak.$ts"
+EOF
     fi
 
-    mkdir -p "$(dirname "$dest")"
-    rm -f "$dest"
-    ln -s "$src" "$dest"
+    if [ -f "$dest" ] && [ ! -L "$dest" ]; then
+        printe_info "$dest already exists and is not a link, skipping..."
+        return
+    fi
+
+    if [ "$(readlink "$dest")" = "$src" ]; then
+        printe_info "$dest already linked"
+        return
+    fi
+
+    $command <<EOF
+mkdir -p "$(dirname "$dest")"
+ln -s "$src" "$dest"
+EOF
+
     printe_info "$dest linked to $src"
 }
 
@@ -358,6 +388,12 @@ lineinfile() {
         esac
     done
 
+    shift $((OPTIND-1))
+
+    if [ "${1:-}" = "--" ]; then
+        shift
+    fi
+
     if [ -z "$line" ] && [ "$state" != "absent" ]; then
         printe_err "line must be specified unless state is absent"
         exit 1
@@ -369,7 +405,7 @@ lineinfile() {
     fi
 
     if [ -z "$command" ]; then command="sh"; fi
-    if [ -z "$state" ];   then state=present; fi
+    if [ -z "$state" ]; then state=present; fi
     if [ -z "$regexp" ]; then
         regexp=$(printf "%s" "$line" | sed 's|/|\\\\/|g')
     fi

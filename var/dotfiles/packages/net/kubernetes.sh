@@ -163,7 +163,7 @@ _install_kustomize() {
 
     cd "$worksrc" || exit 1
     go build .
-    cp "$worksrc/kustomize" "$HOME/.local/bin/kustomize"
+    install -m0755 "$worksrc/kustomize" "$HOME/.local/bin/kustomize"
     printe_info "kustomize successfully installed"
 }
 

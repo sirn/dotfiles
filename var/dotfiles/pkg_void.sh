@@ -17,11 +17,9 @@ _run() {
         aria2 \
         aspell \
         aspell-en \
-        cronie \
         curl \
         fzf \
         git \
-        iptables-nft \
         loksh \
         mercurial \
         mosh \
@@ -36,10 +34,16 @@ _run() {
         tmux \
         w3m \
         xtools
+}
+
+_run_system() {
+    printe_h2 "Installing system packages..."
+
+    xbps_install \
+        cronie \
+        iptables-nft \
 
     xbps_alternative iptables iptables-nft
-    xbps_alternative vim neovim
-    xbps_alternative vi neovim
 }
 
 _run_desktop() {

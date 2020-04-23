@@ -10,6 +10,15 @@ cd "$(dirname "$0")" || exit 1
 . "lib/utils_darwin.sh"
 
 _run() {
+    _setup_user_links
+    _setup_user_shell
+}
+
+_run_dev() {
+    _setup_dev_links
+}
+
+_setup_user_links() {
     printe_h2 "Installing links..."
 
     make_link "$BASE_DIR/etc/aria2/aria2.conf" "$HOME/.aria2/aria2.conf"
@@ -24,13 +33,15 @@ _run() {
     make_link "$BASE_DIR/etc/sh/profile" "$HOME/.profile"
     make_link "$BASE_DIR/etc/ssh/config" "$HOME/.ssh/config"
     make_link "$BASE_DIR/etc/tmux/tmux.conf" "$HOME/.tmux.conf"
+}
 
+_setup_user_shell() {
     printe_h2 "Changing user shell..."
 
     change_shell oksh
 }
 
-_run_dev() {
+_setup_dev_links() {
     printe_h2 "Installing dev links..."
 
     make_link "$BASE_DIR/etc/proselint/proselintrc" "$HOME/.proselintrc"

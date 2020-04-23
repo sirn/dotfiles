@@ -8,7 +8,6 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 cd "$(dirname "$0")" || exit 1
 . "lib/utils.sh"
 . "lib/utils_darwin.sh"
-. "lib/buildenv.sh"
 
 _run() {
     printe_h2 "Installing packages..."
@@ -20,7 +19,6 @@ _run() {
         aspell, \
         aspell-dict-en, \
         curl +darwinssl +http2, \
-        dnscrypt-proxy, \
         emacs, \
         fzf, \
         git, \
