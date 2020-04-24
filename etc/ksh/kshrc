@@ -338,16 +338,27 @@ _cleanup_ksh_history() {
              -e '\\\s*$' \
              -e '^ ' \
              -e '^\$' \
+             -e '^apropos\s*' \
+             -e '^cat\s*' \
              -e '^cccccc' \
              -e '^cd [^\~/]' \
              -e '^cd\s*$' \
+             -e '^chmod\s*' \
              -e '^doas\s*' \
              -e '^echo\s*' \
              -e '^gg\s*$' \
              -e '^ll\s*' \
              -e '^ls\s*' \
+             -e '^man\s*' \
+             -e '^mv\s*' \
+             -e '^ps\s*' \
              -e '^rm\s*' \
+             -e '^ssh-keyscan\s*' \
+             -e '^ssh\s*' \
              -e '^sudo\s*' \
+             -e '^}\s*' \
+             -e '{\s*$' \
+             -e '|\s*grep\s*' \
              -e '|\s*less\s*' \
              > "$tmphist"
     mv "$tmphist" "$HISTFILE"
