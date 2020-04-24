@@ -26,15 +26,15 @@ importas shell shell
 export SHELL $shell
 
 # We're using gpg-agent in ssh-agent mode; since Emacs is not launched
-# via login process, we need to provide SSH_AUTH_SOCK manually:
+# via login process, we need to provide SSH_AUTH_SOCK manually.
+#
+# SSH_AUTH_SOCK is hard-coded here since gpgconf may not return the
+# correct path right after system is booted.
 #
 
-backtick -n ssh-auth-sock {
-    gpgconf --list-dirs agent-ssh-socket
-}
-
-importas ssh-auth-sock ssh-auth-sock
-export SSH_AUTH_SOCK $ssh-auth-sock
+backtick -n uid { id -u }
+importas uid uid
+export SSH_AUTH_SOCK /run/user/${uid}/gnupg/S.gpg-agent.ssh
 
 # Running
 #
