@@ -34,6 +34,7 @@ export SHELL $shell
 
 backtick -n uid { id -u }
 importas uid uid
+export XDG_RUNTIME_DIR /run/user/${uid}
 export SSH_AUTH_SOCK /run/user/${uid}/gnupg/S.gpg-agent.ssh
 
 # Running

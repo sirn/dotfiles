@@ -61,6 +61,7 @@ install_svc() {
     fi
 
     if [ -n "$svclink" ] && [ ! -d "$svclink" ]; then
+        USER=${USER:-$(id -un)}
         run_root install -d -o"$USER" -g"$USER" "$svclink"
     fi
 

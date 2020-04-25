@@ -16,6 +16,7 @@ _run() {
     _setup_user_links
     _setup_user_shell
     _setup_user_emacs
+    _setup_user_xlocate
 }
 
 _run_desktop() {
@@ -78,6 +79,12 @@ _setup_user_emacs() {
     printe_h2 "Installing emacs service..."
 
     install_svc -u -s -p emacs "$BASE_DIR/sv/emacs"
+}
+
+_setup_user_xlocate() {
+    printe_h2 "Installing xlocate service..."
+
+    install_svc -u -s -p xlocate "$BASE_DIR/sv/xlocate"
 }
 
 _setup_user_links() {
