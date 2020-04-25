@@ -218,6 +218,7 @@ fi
 gg() {
     typeset lscmd
     typeset dir
+    typeset codedirs
 
     if command -v colorls >/dev/null; then
         lscmd="command colorls -G -p"
@@ -227,21 +228,28 @@ gg() {
         lscmd="command ls -Gp"
     fi
 
+    if command -v git >/dev/null; then
+        for s in $(git config --get-all ghq.root); do
+            s=$(eval -- builtin cd "$s" 2>/dev/null || exit 1; pwd -P)
+            if [[ -n "$s" ]]; then
+                codedirs[${#codedirs[*]}]="${s}"
+            fi
+        done
+    fi
+
+    if [[ "${#codedirs[*]}" -lt 1 ]]; then
+        codedirs[0]=$HOME/src
+    fi
+
     dir=$(
-        find "$HOME/Dev/src" -type d \( -name .git -o -name .hg \) -prune |
+        find "${codedirs[@]}" \
+                \( \
+                    -exec test -d '{}'/.git \; \
+                    -or -exec test -d '{}'/.hg \; \
+                \) \
+                -print \
+                -prune |
             sort -u |
-            awk '
-                BEGIN { prev="" }
-                {
-                    # prevent subrepo from appearing in the list
-                    r=match($1, "/\\.[a-zA-Z0-9]+$")
-                    l=length($1)
-                    cur=substr($1, 1, l-(l-r+1))
-                    if (prev == "" || index(cur, prev) == 0) {
-                        print cur
-                        prev=cur
-                    }
-                }' |
             fzf --preview "$lscmd {}" -q "$*")
 
     if [ -z "$dir" ]; then
