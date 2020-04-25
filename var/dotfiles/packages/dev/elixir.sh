@@ -62,7 +62,7 @@ _install_elixir_ls() {
     rm elixir-ls.tar.gz
 
     cd "$BUILD_DIR/elixir-ls-$ELIXIR_LS_VER" || exit 1
-    mkdir -p "$HOME/.local/lib/elixir-ls"
+    install -d "$HOME/.local/lib/elixir-ls"
 
     MIX_ENV=prod mix "do" \
            deps.get, \

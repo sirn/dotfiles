@@ -45,10 +45,10 @@ _install_cloudflared() {
         "$worksrc/cloudflared"
 
     cd "$worksrc/cloudflared/cmd/cloudflared" || exit 1
-    mkdir -p "$HOME/.local/bin"
     go install .
 
     cd "$BUILD_DIR/go/bin" || exit 1
+    install -d "$HOME/.local/bin"
     install -m0755 "cloudflared" "$HOME/.local/bin/cloudflared"
     printe_info "cloudflared successfully installed"
 }

@@ -61,12 +61,11 @@ install_svc() {
     fi
 
     if [ -n "$svclink" ] && [ ! -d "$svclink" ]; then
-        run_root mkdir -p "$svclink"
-        run_root chown "$USER:$USER" "$svclink"
+        run_root install -d -o"$USER" -g"$USER" "$svclink"
     fi
 
     if [ -n "$svclink" ]; then
-        mkdir -p "$svclink/supervise.$svcname"
+        install -d "$svclink/supervise.$svcname"
         make_link "$svclink/supervise.$svcname" "$svcsrc/supervise"
     fi
 

@@ -14,7 +14,7 @@ _install_font() {
     dest=$1; shift
 
     rm -rf "$dest" || exit 1
-    mkdir -p "$dest" || exit 1
+    install -d "$dest" || exit 1
 
     find "$srcdir" \
          \( -iname "*.ttf" -or -iname "*.ttc" \) \
@@ -152,6 +152,21 @@ _run() {
         $adobe_gh/source-han-serif/releases/download/1.001R/SourceHanSerif.ttc \
         85cc634fa228286ca307803bbb4ca61f61fa821b3ed573f4f07c6f0c064426b5
 
+    ## Noto Fonts
+    ##
+
+    google_url=https://noto-website-2.storage.googleapis.com/pkgs
+
+    _install_font_url \
+        noto-sans \
+        $google_url/NotoSans-hinted.zip \
+        02e5f834c526f815f3b9f90f98e2b5b09f17cec107cc751c3b58fc3a2c0b2942
+
+    _install_font_url \
+        noto-serif \
+        $google_url/NotoSerif-hinted.zip \
+        64e4c71c5b0d09f41c4093c1f673d92350eb8789f041d1f5e948ccfbdbe0bafa
+
     ## Hack Fonts
     ##
 
@@ -161,16 +176,6 @@ _run() {
         hack \
         $hack_gh/releases/download/v3.003/Hack-v3.003-ttf.tar.gz \
         7f592d091cbd2472f39af96e6c280cde3c27cab50a9c88746feb42918aa1888f
-
-    ## Roboto
-    ##
-
-    roboto_gh=https://github.com/google/roboto
-
-    _install_font_url \
-        roboto \
-        $roboto_gh/releases/download/v2.138/roboto-android.zip \
-        c825453253f590cfe62557733e7173f9a421fff103b00f57d33c4ad28ae53baf
 
     ## Twemoji
     ##

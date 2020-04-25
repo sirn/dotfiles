@@ -37,12 +37,12 @@ _install_rebar3() {
         return
     fi
 
-    mkdir -p "$(dirname "$REBAR3_PATH")"
+    cd "$BUILD_DIR" || exit 1
+    fetch_gh_release rebar3 erlang/rebar3 $REBAR3_VER rebar3
+    verify_shasum rebar3 $REBAR3_SHA256
 
-    fetch_gh_release "$REBAR3_PATH" erlang/rebar3 $REBAR3_VER rebar3
-    verify_shasum "$REBAR3_PATH" $REBAR3_SHA256
-    chmod 755 "$REBAR3_PATH"
-
+    install -d "$(dirname "$REBAR3_PATH")"
+    install -m0755 rebar3 "$REBAR3_PATH"
     escript "$REBAR3_PATH" local install
 }
 
@@ -63,7 +63,7 @@ _install_erlang_ls() {
 
     cd "$BUILD_DIR/erlang_ls-$ERLANG_LS_VER" || exit 1
     make PATH="$(dirname "$REBAR3_PATH"):$PATH"
-    mkdir -p "$HOME/.local/bin"
+    install -d "$HOME/.local/bin"
     install -m0755 _build/default/bin/erlang_ls "$HOME/.local/bin/erlang_ls"
     printe_info "erlang_ls successfully installed"
 }

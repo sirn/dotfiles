@@ -78,8 +78,8 @@ _install_cloudsdk() {
     run_tar -C "$BUILD_DIR" -xzf gcloud-sdk.tar.gz
     rm gcloud-sdk.tar.gz
 
-    mkdir -p "$HOME/.local/lib"
-    mv "$BUILD_DIR/google-cloud-sdk" "$HOME/.local/lib"
+    install -d "$HOME/.local/lib"
+    install -m0644 "$BUILD_DIR/google-cloud-sdk" "$HOME/.local/lib"
     printe_info "google-cloud-sdk successfully installed"
 }
 
@@ -110,7 +110,7 @@ _install_helm() {
     run_tar -C "$BUILD_DIR" -xzf helm.tar.gz
     rm helm.tar.gz
 
-    mkdir -p "$HOME/.local/bin"
+    install -d "$HOME/.local/bin"
     find "$BUILD_DIR" \
          \( -iname helm -or -iname tiller \) -executable \
          -prune \

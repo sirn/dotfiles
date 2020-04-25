@@ -44,8 +44,7 @@ _setup_user_service() {
 #!/bin/sh
 
 if [ ! -d /run/runit.$USER ]; then
-    mkdir -p /run/runit.$USER
-    chown $USER:$USER /run/runit.$USER
+    install -d -o$USER -g$USER /run/runit.$USER
 fi
 
 HOME=$HOME; export HOME
@@ -54,8 +53,7 @@ exec 2>&1
 exec chpst -u "$USER:\$(id -Gn $USER | tr ' ' ':')" runsvdir $HOME/.local/var/service 'log: ...........................................................................................................................................................................................................................................................................................................................................................................................................'
 EOF
 
-        run_root mkdir -p "$svcsrc"
-        run_root chown root:root "$svcsrc"
+        run_root install -d "$svcsrc"
         run_root install -m0755 "$BUILD_DIR/${svcname}_run" "$svcsrc/run"
     fi
 
@@ -69,8 +67,7 @@ sv -w600 force-stop $HOME/.local/var/service/*
 sv exit $HOME/.local/var/service/*
 EOF
 
-        run_root mkdir -p "$svcsrc"
-        run_root chown root:root "$svcsrc"
+        run_root install -d "$svcsrc"
         run_root install -m0755 "$BUILD_DIR/${svcname}_finish" "$svcsrc/finish"
     fi
 
