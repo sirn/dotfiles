@@ -62,7 +62,7 @@ _run_desktop() {
         emacs-gtk3 \
         qemu
 
-    sh "$BASE_DIR/libexec/packages/fontinst.sh" "$@"
+    sh "$BASE_DIR/var/dotfiles/packages/sys/fonts.sh" "$@"
 }
 
 _run_dev() {
@@ -99,16 +99,16 @@ _run_dev() {
         tree \
         xz
 
-    sh "$BASE_DIR/libexec/packages/lang/rust.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/lang/nim.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/dev/erlang.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/dev/elixir.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/dev/golang.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/dev/haskell.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/dev/node.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/dev/python.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/net/cloudflared.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/net/kubernetes.sh" "$@"
+    sh "$BASE_DIR/var/dotfiles/packages/lang/rust.sh" "$@"
+    sh "$BASE_DIR/var/dotfiles/packages/lang/nim.sh" "$@"
+    sh "$BASE_DIR/var/dotfiles/packages/dev/erlang.sh" "$@"
+    sh "$BASE_DIR/var/dotfiles/packages/dev/elixir.sh" "$@"
+    sh "$BASE_DIR/var/dotfiles/packages/dev/golang.sh" "$@"
+    sh "$BASE_DIR/var/dotfiles/packages/dev/haskell.sh" "$@"
+    sh "$BASE_DIR/var/dotfiles/packages/dev/node.sh" "$@"
+    sh "$BASE_DIR/var/dotfiles/packages/dev/python.sh" "$@"
+    sh "$BASE_DIR/var/dotfiles/packages/net/cloudflared.sh" "$@"
+    sh "$BASE_DIR/var/dotfiles/packages/net/kubernetes.sh" "$@"
 }
 
 _run_all() {
