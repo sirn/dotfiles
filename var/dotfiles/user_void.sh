@@ -56,6 +56,7 @@ EOF
 
         run_root install -d "$svcsrc"
         run_root install -m0755 "$BUILD_DIR/${svcname}_run" "$svcsrc/run"
+        make_link -Sf "/run/runit/supervise.$svcname" "$svcsrc/supervise"
     fi
 
     if [ ! -f "$svcsrc/finish" ]; then

@@ -318,10 +318,12 @@ make_link() {
     OPTIND=1
 
     command=
+    no_check_src=
 
-    while getopts "S" opt; do
+    while getopts "Sf" opt; do
         case "$opt" in
             S ) command="run_root sh";;
+            f ) no_check_src=1;;
             * )
                 printe_err "Invalid flags given to make_link"
                 exit 1
@@ -344,7 +346,7 @@ make_link() {
         command="sh"
     fi
 
-    if [ ! -e "$src" ]; then
+    if [ "$no_check_src" != 1 ] && [ ! -e "$src" ]; then
         printe_info "$src does not exists, skipping..."
         return
     fi
@@ -367,7 +369,7 @@ EOF
 
     $command <<EOF
 mkdir -p "$(dirname "$dest")"
-ln -s "$src" "$dest"
+ln -sf "$src" "$dest"
 EOF
 
     printe_info "$dest linked to $src"
