@@ -230,7 +230,7 @@ gg() {
 
     if command -v git >/dev/null; then
         for s in $(git config --get-all ghq.root); do
-            s=$(eval -- builtin cd "$s" 2>/dev/null || exit 1; pwd -P)
+            s=$(eval -- builtin cd "$s" 2>/dev/null || return 1; pwd -P)
             if [[ -n "$s" ]]; then
                 codedirs[${#codedirs[*]}]="${s}"
             fi
@@ -256,7 +256,7 @@ gg() {
         return
     fi
 
-    builtin cd "$dir" || exit 1
+    builtin cd "$dir" || return 1
 }
 
 
@@ -278,7 +278,7 @@ gq() {
 
     if command -v git >/dev/null; then
         for s in $(git config --get-all ghq.root); do
-            s=$(eval -- builtin cd "$s" 2>/dev/null || exit 1; pwd -P)
+            s=$(eval -- builtin cd "$s" 2>/dev/null || return 1; pwd -P)
             if [[ -n "$s" ]]; then
                 codedirs[${#codedirs[*]}]="${s}"
             fi
@@ -328,7 +328,7 @@ gq() {
         basedir=$(dirname "$repodir")
 
         mkdir -p "$basedir"
-        cd "$basedir" || exit 1
+        cd "$basedir" || return 1
 
         case "$repotype" in
             git ) git clone "$repo" || st=1;;
@@ -357,7 +357,7 @@ gq() {
 
 cd() {
     if [[ "$#" != 0 ]]; then
-        builtin cd "$@" || exit 1
+        builtin cd "$@" || return 1
         return
     fi
 
@@ -382,7 +382,7 @@ cd() {
             return
         fi
 
-        builtin cd "$dir" || exit 1
+        builtin cd "$dir" || return 1
     done
 }
 
