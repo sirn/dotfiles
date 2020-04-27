@@ -39,14 +39,14 @@
 # Repo
 #
 
-[url "git@github.com:"]
-    insteadOf = "https://github.com/"
+[url "git@github.com:sirn/"]
+    insteadOf = "https://github.com/sirn/"
 
-[url "git@gitlab.com:"]
-    insteadOf = "https://gitlab.com/"
+[url "git@gitlab.com:sirn/"]
+    insteadOf = "https://gitlab.com/sirn/"
 
-[url "git@git.sr.ht:"]
-    insteadOf = "https://git.sr.ht/"
+[url "git@git.sr.ht:~sirn/"]
+    insteadOf = "https://git.sr.ht/~sirn/"
 
 #
 # Third-party
