@@ -139,10 +139,10 @@ __prompt_git() {
         command git status --porcelain=v2 2>/dev/null |
             awk \
                 -v branch="$_branch" \
-                -v bold="$(tput bold 2>/dev/null || true)" \
-                -v reset="$(tput sgr0 2>/dev/null || true)" \
-                -v green="$(tput setaf 2 2>/dev/null || true)" \
-                -v yellow="$(tput setaf 3 2>/dev/null || true)" \
+                -v bold="\\\[$(tput bold 2>/dev/null || true)\\\]" \
+                -v reset="\\\[$(tput sgr0 2>/dev/null || true)\\\]" \
+                -v green="\\\[$(tput setaf 2 2>/dev/null || true)\\\]" \
+                -v yellow="\\\[$(tput setaf 3 2>/dev/null || true)\\\]" \
                 '
                 BEGIN {
                     changed=0
@@ -189,7 +189,7 @@ $(__prompt) "
         ;;
 esac
 
-PS1="\r$(tput dl1 2>/dev/null || true)$PS1"
+PS1="\[\r$(tput dl1 2>/dev/null || true)\]$PS1"
 
 export PS1
 
