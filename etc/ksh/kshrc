@@ -161,7 +161,11 @@ __prompt_git() {
 }
 
 __prompt_pwd() {
-    pwd | sed "s|^$HOME|~|; s|\([^[:punct:]]\)[^/]*/|\1/|g"
+    pwd | sed "
+s|^$HOME|~|;                                  # $HOME -> ~
+s|\([^[:punct:]]\)[^/]*/|\1/|g;               # foo/bar/baz -> f/b/baz
+s|^\(././\)././././.*/\(./[^/]*\)$|\1…/\2|g;  # 1/2/3/4/5/6/7/8/9/10 -> 1/…/9/10
+"
 }
 
 __prompt_hostname() {
