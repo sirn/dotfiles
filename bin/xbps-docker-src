@@ -4,64 +4,100 @@
 #
 
 CURDIR=$(pwd -P)
+PROG=$(basename "$0")
 
 print_help() {
-    printf >&2 "Usage: %s [xbps-src commands]
+    echo >&2 "Usage: $PROG [xbps-src commands]
 
 Proxy command to run xbps-src under Docker in ethereal mode.
 This command must be run inside xbps-src directory.
-
-" "$(basename "$0")"
+"
 }
 
-if [ ! -f "$CURDIR/xbps-src" ]; then
+if [ ! -f "$CURDIR/xbps-src" ] || [ $# -lt 1 ]; then
     print_help
     exit 1
 fi
 
-ARCH=${ARCH:-$(xbps-uhelper -C /dev/null arch)}
-DOCKER_BASE=$(grep DOCKER_BASE < .travis.yml | cut -d= -f2)
-TAG=$(grep TAG < .travis.yml | cut -d= -f2)
+# XBPS_CHROOT_CMD=ethereal requires running in a container since
+# it is destructive; so let's fail right away if docker or podman
+# is not installed
+#
 
-if [ -z "$DOCKER_BASE" ] && [ -z "$TAG" ]; then
-    printf >&2 "%s: could not determine DOCKER_BASE and TAG from .travis.yml
-" "$(basename "$0")"
-    exit 1
+if command -v docker >/dev/null; then
+    DOCKER_CMD=docker
 fi
-
-if [ -f "$CURDIR/masterdir" ]; then
-    mv "$CURDIR/masterdir" "$CURDIR/masterdir.host"
-fi
-
-restore_masterdir() {
-    if [ -L "$CURDIR/masterdir" ]; then
-        rm "$CURDIR/masterdir"
-    fi
-
-    if [ -f "$CURDIR/masterdir.host" ]; then
-        mv "$CURDIR/masterdir.host" "$CURDIR/masterdir"
-    fi
-}
-
-trap 'restore_masterdir' 0 1 2 3 6 14 15
-
-DOCKER_CMD=docker
 
 if command -v podman >/dev/null; then
     DOCKER_CMD=podman
 fi
 
-if ! command -v "$DOCKER_CMD" >/dev/null; then
-    printf >&2 "%s: docker or podman not installed?
-" "$(basename "$0")"
+if [ -z "$DOCKER_CMD" ]; then
+    echo >&2 "$PROG: docker or podman not installed?"
     exit 1
 fi
 
+# Emulates what xbps-src is doing in its travis script, but since this
+# is a working machine we default BOOTSTRAP and ARCH to currently running
+# arch.
+#
+
+BOOTSTRAP=${BOOTSTRAP:-$(xbps-uhelper -C /dev/null arch)}
+ARCH=${ARCH:-$BOOTSTRAP}
+DOCKER_BASE=$(grep DOCKER_BASE < .travis.yml | cut -d= -f2)
+TAG=$(grep TAG < .travis.yml | cut -d= -f2)
+
+if [ -z "$DOCKER_BASE" ] && [ -z "$TAG" ]; then
+    echo >&2 "$PROG: could not determine Docker image"
+    exit 1
+fi
+
+# If we ever run ./xbps-src locally and masterdir is already created
+# on disk, let's move it away so we could create a link in a mount.
+#
+
+if [ -d "$CURDIR/masterdir.host" ]; then
+    echo >&2 "$PROG: another $PROG is running?"
+    exit 1
+fi
+
+if [ -d "$CURDIR/masterdir" ]; then
+    mv "$CURDIR/masterdir" "$CURDIR/masterdir.host"
+fi
+
+cleanup_masterdir() {
+    if [ -L "$CURDIR/masterdir" ]; then
+        rm "$CURDIR/masterdir"
+    fi
+
+    if [ -d "$CURDIR/masterdir.host" ]; then
+        mv "$CURDIR/masterdir.host" "$CURDIR/masterdir"
+    fi
+}
+
+trap 'cleanup_masterdir' 0 1 2 3 6 14 15
+
+# Building XBPS_ARGS to be pass to Docker. We default setting -a to
+# $ARCH (which defaults to $BOOTSTRAP) to mimic Travis build script.
+#
+
+case "$*" in
+    *-a* ) ;;
+    * )
+        if [ "$ARCH" != "$BOOTSTRAP" ]; then
+            XBPS_ARGS="-a $ARCH"
+        fi
+        ;;
+esac
+
 $DOCKER_CMD run \
-     --rm -it \
+     --rm -i \
      -e XBPS_CHROOT_CMD=ethereal \
      -e XBPS_ALLOW_CHROOT_BREAKOUT=yes \
      -v "$CURDIR":/hostrepo \
      -v /tmp:/tmp \
-     docker.io/"$DOCKER_BASE"-"$ARCH":"$TAG" \
-     bash -c "ln -sf / /hostrepo/masterdir && /hostrepo/xbps-src $*"
+     docker.io/"$DOCKER_BASE"-"$BOOTSTRAP":"$TAG" \
+     bash <<-EOF
+ln -sf / /hostrepo/masterdir
+/hostrepo/xbps-src $XBPS_ARGS $*
+EOF
