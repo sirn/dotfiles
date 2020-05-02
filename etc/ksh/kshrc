@@ -172,12 +172,32 @@ __prompt_hostname() {
     hostname
 }
 
+__prompt_last_exit() {
+    typeset last_exit=$?
+    typeset format_code=
+
+    if [[ "$last_exit" == 1 ]]; then
+        format_code=$(tput setab 1 2>/dev/null || true)
+    elif [[ "$last_exit" != 0 ]]; then
+        format_code=$(tput setab 3 2>/dev/null || true)
+    fi
+
+    if [[ -n "$format_code" ]]; then
+        printf \
+            "%s%s%s " \
+            "\\[$format_code\\]" \
+            "$last_exit" \
+            "\\[$(tput sgr0 2>/dev/null || true)\\]"
+    fi
+}
+
 case "$TERM" in
     xterm* | rxvt* )
         PS1="\
 $(__prompt_hostname) \
 \$(__prompt_pwd) \
 \$(__prompt_git)\
+\$(__prompt_last_exit)\
 $(__prompt) "
         ;;
 
@@ -185,11 +205,12 @@ $(__prompt) "
         PS1="\
 \$(__prompt_pwd) \
 \$(__prompt_git)\
+\$(__prompt_last_exit)\
 $(__prompt) "
         ;;
 
     * )
-        PS1="$(__prompt) "
+        PS1="\$(__prompt_last_exit)$(__prompt) "
         ;;
 esac
 
@@ -418,8 +439,10 @@ for c in ' '.join(sys.argv[1:]):
 }
 
 __shp_silent() {
-    printf "%s" "$(tput cuu 1 2>/dev/null || true)"
-    printf "%s" "$(tput el 2>/dev/null || true)"
+    printf \
+        "%s%s" \
+        "$(tput cuu 1 2>/dev/null || true)" \
+        "$(tput el 2>/dev/null || true)"
     __shp "$@"
 }
 
