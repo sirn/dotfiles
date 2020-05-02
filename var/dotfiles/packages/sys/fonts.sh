@@ -186,6 +186,14 @@ _run() {
         $twemoji_gh/releases/download/v12.0.1/TwitterColorEmoji-SVGinOT-Linux-12.0.1.tar.gz \
         7886d78ecc992f87e17c9cf111d1e41100b0c5a5203c44c595faccb0ce14becd
 
+    ## Ubuntu
+    ##
+
+    _install_font_url \
+        ubuntu \
+        https://assets.ubuntu.com/v1/0cef8205-ubuntu-font-family-0.83.zip \
+        61a2b342526fd552f19fef438bb9211a8212de19ad96e32a1209c039f1d68ecf
+
     ## Droid Sans
     ## Using local mirror, since Droid Sans has been removed from Google Fonts
     ## in favor for Noto, but Noto Thai wasn't really designed for reading
