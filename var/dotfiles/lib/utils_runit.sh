@@ -8,13 +8,15 @@ install_svc() {
 
     mkargs=
     svcdir=
+    svcvariant=
     svclink=
     program=
 
-    while getopts "Sup:s" opt; do
+    while getopts "Suxp:v:s" opt; do
         case "$opt" in
             S ) mkargs="-S";;
             u ) svcdir="$HOME/.local/var/service";;
+            v ) svcvariant="$OPTARG";;
             s ) svclink="/run/runit.$USER";;
             p ) program="$OPTARG";;
             * )
@@ -40,6 +42,10 @@ install_svc() {
 
     if [ -z "$svcdir" ]; then
         svcdir="/var/service"
+    fi
+
+    if [ -n "$svcvariant" ]; then
+        svcdir="$svcdir.$svcvariant"
     fi
 
     svcdir="$svcdir/$svcname"

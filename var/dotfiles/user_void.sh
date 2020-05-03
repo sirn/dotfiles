@@ -79,13 +79,13 @@ EOF
 _setup_user_emacs() {
     printe_h2 "Installing emacs service..."
 
-    install_svc -u -s -p emacs "$BASE_DIR/sv/emacs"
+    install_svc -us -p emacs "$BASE_DIR/sv/emacs"
 }
 
 _setup_user_xlocate() {
     printe_h2 "Installing xlocate service..."
 
-    install_svc -u -s -p xlocate "$BASE_DIR/sv/xlocate"
+    install_svc -us -p xlocate "$BASE_DIR/sv/xlocate"
 }
 
 _setup_user_links() {
