@@ -7,37 +7,42 @@ export PATH /usr/local/bin:/usr/bin:/bin
 #
 
 backtick -n user { id -un }
-importas user user
+backtick -n uid { id -u }
+
+multisubstitute {
+    importas user user
+    importas uid uid
+}
+
 backtick -n homedir { homeof $user }
-importas homedir homedir
-export HOME $homedir
-
-# SHELL must be also be set otherwise some script that requires $SHELL
-# in Emacs won't going to work and we're stuck with emacs daemon unable
-# to boot.
-#
-
 backtick -n shell {
     redirfd -r 0 /etc/passwd
     awk "BEGIN { FS=\":\" } /^${user}:/ { print $7 }"
 }
 
-importas shell shell
+multisubstitute {
+    importas homedir homedir
+    importas shell shell
+    define xdg-runtime-dir /run/user/${uid}
+}
+
+# - SHELL must be set otherwise some script that requires $SHELL
+#   in Emacs won't going to work and we're stuck with emacs daemon unable
+#   to boot.
+#
+# - SSH_AUTH_SOCK is hard-coded, as we're running gpg-agent in ssh-agent mode
+#   and the right way of determining this path using gpgconf may not return
+#   the correct path right after system is booted.
+#
+# - XDG_RUNTIME_DIR is hard-coded, because elogind is fantastic.
+#
+
+export HOME $homedir
 export SHELL $shell
-
-# We're using gpg-agent in ssh-agent mode; since Emacs is not launched
-# via login process, we need to provide SSH_AUTH_SOCK manually.
-#
-# SSH_AUTH_SOCK is hard-coded here since gpgconf may not return the
-# correct path right after system is booted.
-#
-
-backtick -n uid { id -u }
-importas uid uid
-export XDG_RUNTIME_DIR /run/user/${uid}
-export SSH_AUTH_SOCK /run/user/${uid}/gnupg/S.gpg-agent.ssh
+export XDG_RUNTIME_DIR ${xdg-runtime-dir}
+export SSH_AUTH_SOCK ${xdg-runtime-dir}/gnupg/S.gpg-agent.ssh
 
 # Running
 #
 
-emacs --fg-daemon --chdir=$homedir
+emacs --fg-daemon --chdir=${homedir}
