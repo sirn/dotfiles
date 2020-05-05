@@ -16,7 +16,7 @@ export HOME $homedir
 #
 
 foreground { mkdir -p ${homedir}/.local/var/run }
-snooze -R 10m -s 6h -t ${homedir}/.local/var/run/xlocate_timefile
+snooze -R 10m -s 6h -H/6 -t ${homedir}/.local/var/run/xlocate_timefile
 if {
     nice -n 20 xlocate -S
 }
