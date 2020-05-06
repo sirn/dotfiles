@@ -4,12 +4,6 @@
 # https://github.com/abiosoft/dotfiles/blob/master/flatpak/fixflatpaktheme.sh
 #
 
-CONFS="
-gtk-3.0/settings.ini
-fontconfig/fonts.conf
-fontconfig/conf.d
-" # END-QUOTE
-
 OVERRIDES="
 ~/.config/gtk-3.0
 ~/.config/fontconfig
@@ -17,14 +11,26 @@ OVERRIDES="
 ~/.dotfiles/etc/fontconfig
 " # END-QUOTE
 
+## Whitelisting paths
+##
+
 for fp in $OVERRIDES; do
     printf >&2 "==> Enabling access to %s\\n" "$fp"
-    flatpak override --user --filesystem="$fp"
+    flatpak override --user --filesystem="$fp:ro"
 done
 
 if [ ! -d "$HOME"/.var/app ]; then
     exit 0
 fi
+
+## Aliasing config
+##
+
+CONFS="
+gtk-3.0/settings.ini
+fontconfig/fonts.conf
+fontconfig/conf.d
+" # END-QUOTE
 
 for appdir in "$HOME"/.var/app/*; do
     if [ ! -d "$appdir" ]; then
