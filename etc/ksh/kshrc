@@ -66,8 +66,9 @@ prependpath "$HOME/.local/bin"
 prependpath "$HOME/.cabal/bin"
 prependpath "$HOME/.cargo/bin"
 prependpath "$HOME/.nimble/bin"
+prependpath "$HOME/.local/lib/pytools2/bin"
+prependpath "$HOME/.local/lib/pytools3/bin"
 prependpath "$HOME/.local/lib/google-cloud-sdk/bin"
-prependpath "$HOME/.local/lib/pytools/bin"
 
 _gopaths=$GOPATH
 

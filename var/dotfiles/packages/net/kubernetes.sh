@@ -79,7 +79,7 @@ _install_cloudsdk() {
     rm gcloud-sdk.tar.gz
 
     install -d "$HOME/.local/lib"
-    install -m0644 "$BUILD_DIR/google-cloud-sdk" "$HOME/.local/lib"
+    cp -rf "$BUILD_DIR/google-cloud-sdk" "$HOME/.local/lib"
     printe_info "google-cloud-sdk successfully installed"
 }
 
