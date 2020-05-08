@@ -317,8 +317,8 @@ gq() {
 
     case "$repo" in
         *.git ) repotype=git;;
-        *.hg ) repotype=git;;
-        *hg.sr.ht* ) repotype=hg;;
+        *.hg ) repotype=hg;;
+        *//hg.* | hg.* ) repotype=hg;;
         *bitbucket.com* ) repotype=hg;;
         *bitbucket.org* ) repotype=hg;;
         * ) repotype=git;;
