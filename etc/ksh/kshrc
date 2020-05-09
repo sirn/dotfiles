@@ -3,6 +3,20 @@
 # ~/.kshrc
 #
 
+# Exit early for non-ksh; non-ksh may also read this file and they becomes
+# confused when encountered ksh syntaxes like [[ ]] or typeset.
+#
+
+case "$0" in
+    *ksh ) ;;
+
+    * )
+        PS1='\$ '
+        return 0
+        ;;
+esac
+
+
 # Exit early for non-interactive shell
 #
 if [[ "$-" != *"i"* ]]; then
