@@ -22,6 +22,7 @@ _run() {
         fzf \
         git \
         loksh \
+        lzip \
         mercurial \
         mosh \
         neovim \
@@ -80,6 +81,7 @@ _run_dev() {
         git-crypt \
         git-lfs \
         go \
+        gobject-introspection \
         graphviz \
         ipcalc \
         jq \
@@ -88,6 +90,7 @@ _run_dev() {
         nodejs-lts \
         pandoc \
         patch \
+        pkg-config \
         python3 \
         python3-devel \
         python3-pip \

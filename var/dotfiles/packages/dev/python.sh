@@ -36,12 +36,15 @@ _run_dev() {
 
     $PIP3 install --upgrade \
          black \
+         buildstream \
+         buildstream-external \
          flake8 \
          kapitan \
          pip \
          poetry \
          pre-commit \
          proselint \
+         pygobject \
          pyls-black \
          pyls-isort \
          pyls-mypy \
