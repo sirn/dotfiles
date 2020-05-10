@@ -23,6 +23,7 @@ dump.rdb
 .idea/
 .mypy_cache/
 .vagrant/
+Vagrantfile
 cache/
 out/
 

@@ -14,17 +14,17 @@ Thumbs.db
 dump.rdb
 
 # Per-project files
-Vagrantfile
-.ruby-version
+*.iml
+.gems
+.generators
+.idea
 .python-version
+.ruby-version
 .vagrant
 .vimrc
-.idea
-.generators
-.gems
-*.iml
-out/
+Vagrantfile
 cache/
+out/
 
 # Language specific
 node_modules/
