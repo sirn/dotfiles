@@ -22,7 +22,6 @@ _run() {
         fzf \
         git \
         loksh \
-        lzip \
         mercurial \
         mosh \
         neovim \
@@ -81,7 +80,6 @@ _run_dev() {
         git-crypt \
         git-lfs \
         go \
-        gobject-introspection \
         graphviz \
         ipcalc \
         jq \
