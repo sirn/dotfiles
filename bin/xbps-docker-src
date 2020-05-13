@@ -55,6 +55,10 @@ fi
 # If we ever run ./xbps-src locally and masterdir is already created
 # on disk, let's move it away so we could create a link in a mount.
 #
+# While we're at it, let's also create temp dir for futher usage.
+#
+
+TEMPDIR=$(mktemp -d)
 
 if [ -d "$CURDIR/masterdir.host" ]; then
     echo >&2 "$PROG: another $PROG is running?"
@@ -65,7 +69,7 @@ if [ -d "$CURDIR/masterdir" ]; then
     mv "$CURDIR/masterdir" "$CURDIR/masterdir.host"
 fi
 
-cleanup_masterdir() {
+cleanup_dirs() {
     if [ -L "$CURDIR/masterdir" ]; then
         rm "$CURDIR/masterdir"
     fi
@@ -73,9 +77,38 @@ cleanup_masterdir() {
     if [ -d "$CURDIR/masterdir.host" ]; then
         mv "$CURDIR/masterdir.host" "$CURDIR/masterdir"
     fi
+
+    if [ -n "$TEMPDIR" ] && [ -d "$TEMPDIR" ]; then
+        rm -rf -- "$TEMPDIR"
+    fi
 }
 
-trap 'cleanup_masterdir' 0 1 2 3 6 14 15
+trap 'cleanup_dirs' 0 1 2 3 6 14 15
+
+# Bind links into actual directory, if any.
+#
+
+MOUNTS=
+
+find "$CURDIR" -type l \
+     ! \( -path "*/srcpkgs*" \
+      -or -path "*/masterdir*" \
+     \) > "$TEMPDIR"/links
+
+if command -v readlink >/dev/null; then
+    while read -r link; do
+        actual=$(readlink -f "$link")
+        case "$actual" in
+            $CURDIR/* ) ;;
+
+            * )
+                dest=/hostrepo/${link##$CURDIR/}
+                mount_flag="-v $actual:$dest"
+                MOUNTS=${mount_flag:+$mount_flag }$MOUNTS
+                ;;
+        esac
+    done < "$TEMPDIR"/links
+fi
 
 # Building XBPS_ARGS to be pass to Docker. We default setting -a to
 # $ARCH (which defaults to $BOOTSTRAP) to mimic Travis build script.
@@ -90,12 +123,14 @@ case "$*" in
         ;;
 esac
 
+# shellcheck disable=SC2086
 $DOCKER_CMD run \
      --rm -i \
      -e XBPS_CHROOT_CMD=ethereal \
      -e XBPS_ALLOW_CHROOT_BREAKOUT=yes \
      -v "$CURDIR":/hostrepo \
      -v /tmp:/tmp \
+     $MOUNTS \
      docker.io/"$DOCKER_BASE"-"$BOOTSTRAP":"$TAG" \
      bash <<-EOF
 ln -sf / /hostrepo/masterdir
