@@ -35,6 +35,9 @@
     name = Kridsada Thanabulpong
     email = sirn@ogsite.net
 
+[submodule]
+    fetchJobs = 8
+
 #
 # Repo
 #
