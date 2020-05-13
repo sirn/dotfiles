@@ -346,6 +346,7 @@ gq() {
                        s|~||;
                        s|^.*://||;
                        s|^\w*@||;
+                       s|:|/|;
                        s|.hg$||;
                        s|.git$||')
 
@@ -370,7 +371,7 @@ gq() {
         cd "$basedir" || return 1
 
         case "$repotype" in
-            git ) git clone "$repo" || st=1;;
+            git ) git clone --recurse-submodules "$repo" || st=1;;
             hg ) hg clone "$repo" || st=1;;
         esac
 
