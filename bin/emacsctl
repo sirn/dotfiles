@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+# Recompile Emacs source in dotfiles directory.
+#
+
+BASE_DIR=$(cd "$(dirname "$0")/.." || exit; pwd -P)
+PATH=/usr/bin:/usr/local/bin
+
+_emacs() {
+    command emacs \
+        -nw \
+        --batch \
+        --load "$BASE_DIR/etc/emacs/init.el" \
+        "$@"
+}
+
+_do_recompile() {
+    find "$BASE_DIR/etc/emacs" -iname '*.elc' -delete
+    _emacs --eval '(byte-recompile-directory "'"$BASE_DIR"'/etc/emacs/packages" 0)'
+}
+
+_do_straight_freeze() {
+    _emacs --eval '(straight-freeze-versions)'
+}
+
+_do_straight_pull() {
+    _emacs --eval '(straight-pull-all)'
+}
+
+_do_straight_thaw() {
+    _emacs --eval '(straight-thaw-versions)'
+    _emacs --eval '(straight-rebuild-all)'
+}
+
+cmd=$(printf "%s" "$*" | tr -C '[:alnum:]' '_')
+
+if [ "$(command -v "_do_${cmd}")x" = "x" ]; then
+    printf >&2 "%s: unknown command %s\\n" "$(basename "$0")" "$cmd"
+    exit 1
+fi
+
+eval "_do_${cmd}"
+exit $?
