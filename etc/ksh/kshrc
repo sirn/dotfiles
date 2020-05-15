@@ -4,7 +4,7 @@
 #
 
 # Exit early for non-ksh; non-ksh may also read this file and they becomes
-# confused when encountered ksh syntaxes like [[ ]] or typeset.
+# confused when encountered ksh syntaxes like typeset.
 #
 
 case "$0" in
@@ -19,9 +19,14 @@ esac
 
 # Exit early for non-interactive shell
 #
-if [[ "$-" != *"i"* ]]; then
-    return 0
-fi
+
+case "$-" in
+    *"i"* ) ;;
+
+    * )
+        return 0
+        ;;
+esac
 
 
 ## History
@@ -85,11 +90,7 @@ prependpath "$HOME/.local/lib/google-cloud-sdk/bin"
 
 _gopaths=$GOPATH
 
-while true; do
-    if [[ -z "$_gopaths" ]]; then
-        break
-    fi
-
+while [ -z "$_gopaths" ]; do
     _gopath=${_gopaths%%:*}
     prependpath "$_gopath/bin"
 
@@ -123,7 +124,7 @@ esac
 ## Local
 ##
 
-if [[ -d "$HOME/.cache/rebar3/bin" ]]; then
+if [ -d "$HOME/.cache/rebar3/bin" ]; then
     prependpath "$HOME/.cache/rebar3/bin"
 fi
 
@@ -138,7 +139,7 @@ done
 ##
 
 __prompt() {
-    if [[ "$(id -u)" == "0" ]]; then
+    if [ "$(id -u)" = "0" ]; then
         print \#
     else
         print \$
@@ -149,7 +150,7 @@ __prompt_git() {
     typeset _branch
     _branch=$(command git rev-parse --abbrev-ref HEAD 2>/dev/null)
 
-    if [[ -n "$_branch" ]]; then
+    if [ -n "$_branch" ]; then
         command git status --porcelain=v2 2>/dev/null |
             awk \
                 -v branch="$_branch" \
@@ -190,13 +191,13 @@ __prompt_last_exit() {
     typeset last_exit=$?
     typeset format_code=
 
-    if [[ "$last_exit" == 1 ]]; then
+    if [ "$last_exit" == 1 ]; then
         format_code=$(tput setab 1 2>/dev/null || true)
-    elif [[ "$last_exit" != 0 ]]; then
+    elif [ "$last_exit" != 0 ]; then
         format_code=$(tput setab 3 2>/dev/null || true)
     fi
 
-    if [[ -n "$format_code" ]]; then
+    if [ -n "$format_code" ]; then
         printf \
             "%s%s%s " \
             "\\[$format_code\\]" \
@@ -270,13 +271,13 @@ gg() {
     if command -v git >/dev/null; then
         for s in $(git config --get-all ghq.root); do
             s=$(eval -- builtin cd "$s" 2>/dev/null || return 1; pwd -P)
-            if [[ -n "$s" ]]; then
+            if [ -n "$s" ]; then
                 codedirs[${#codedirs[*]}]="${s}"
             fi
         done
     fi
 
-    if [[ "${#codedirs[*]}" -lt 1 ]]; then
+    if [ "${#codedirs[*]}" -lt 1 ]; then
         codedirs[0]=$HOME/src
     fi
 
@@ -318,13 +319,13 @@ gq() {
     if command -v git >/dev/null; then
         for s in $(git config --get-all ghq.root); do
             s=$(eval -- builtin cd "$s" 2>/dev/null || return 1; pwd -P)
-            if [[ -n "$s" ]]; then
+            if [ -n "$s" ]; then
                 codedirs[${#codedirs[*]}]="${s}"
             fi
         done
     fi
 
-    if [[ "${#codedirs[*]}" -lt 1 ]]; then
+    if [ "${#codedirs[*]}" -lt 1 ]; then
         codedirs[0]=$HOME/src
     fi
 
@@ -337,9 +338,13 @@ gq() {
         * ) repotype=git;;
     esac
 
-    if [[ "$repo" != *"://"* && "$repo" != *"@"* ]]; then
-        repo=https://$repo
-    fi
+    case "$repo" in
+        *"://"* ) ;;
+        *"@"* ) ;;
+        * )
+            repo=https://$repo
+            ;;
+    esac
 
     repo_c=$(echo "$repo" |
                    sed '
@@ -377,9 +382,9 @@ gq() {
 
         # Cleanup in case cloning failed; we cannot use trap here
         # since git/hg may return non-standard exit codes.
-        if [[ "$st" == "1" ]]; then
+        if [ "$st" = "1" ]; then
             basedir=$repodir
-            while [[ "$basedir" != "${codedirs[0]}" ]]; do
+            while [ "$basedir" != "${codedirs[0]}" ]; do
                 rmdir "$basedir" 2>/dev/null || true
                 basedir_p=${basedir##*/}
                 basedir=${basedir%%/$basedir_p}
@@ -396,7 +401,7 @@ gq() {
 # cd - with interactive menu
 
 cd() {
-    if [[ "$#" != 0 ]]; then
+    if [ "$#" != 0 ]; then
         builtin cd "$@" || return 1
         return
     fi
@@ -432,7 +437,7 @@ cd() {
 __shp() {
     typeset cmd
 
-    if [[ ! -f "$HISTFILE" ]]; then
+    if [ ! -f "$HISTFILE" ]; then
         return
     fi
 
@@ -440,7 +445,7 @@ __shp() {
               sed 's|^\s*[0-9]*\s*||' |
               fzf +s --tac -q "$*")
 
-    if [[ -z "$cmd" ]] && [[ -z "$*" ]]; then
+    if [ -z "$cmd" ] && [ -z "$*" ]; then
         return
     fi
 
@@ -461,7 +466,7 @@ __shp_silent() {
     __shp "$@"
 }
 
-if [[ "$PLATFORM" != "openbsd" ]] && command -v python3 >/dev/null; then
+if [ "$PLATFORM" != "openbsd" ] && command -v python3 >/dev/null; then
     bind -m '^R'='^A __shp_silent ^J'
 fi
 
@@ -472,7 +477,7 @@ fi
 _cleanup_ksh_history() {
     tmphist=$(mktemp)
 
-    if [[ ! -f "$HISTFILE" ]]; then
+    if [ ! -f "$HISTFILE" ]; then
         return
     fi
 
