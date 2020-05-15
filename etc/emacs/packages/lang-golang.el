@@ -103,4 +103,9 @@ thing as far as I can tell)."
   lsp still doesn't provides linting."
         (flycheck-add-next-checker 'lsp 'go-golint))
 
-      (gemacs--golint-enable))))
+      (gemacs--golint-enable)))
+
+  (use-feature apheleia
+    :config
+    (add-to-list 'apheleia-formatters '(goimports . ("goimports")))
+    (add-to-list 'apheleia-mode-alist '(go-mode . goimports))))

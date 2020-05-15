@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t -*-
 
 (use-package nim-mode
-  :init
+  :config
   (use-feature lsp
-    :init
+    :config
     (add-hook 'nim-mode-hook #'lsp)))

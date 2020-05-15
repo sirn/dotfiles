@@ -1,11 +1,16 @@
 #!/bin/sh
 #
-# Recompile Emacs source in dotfiles directory.
+# Collection of commands to perform Emacs maintenance tasks.
 #
 
+# shellcheck disable=SC2034
 BASE_DIR=$(cd "$(dirname "$0")/.." || exit; pwd -P)
 BASE_NAME=$(basename "$0")
 PATH=/usr/bin:/usr/local/bin
+
+
+## Utils
+##
 
 USE_EMACSCLIENT=
 
@@ -26,23 +31,46 @@ _emacs() {
         "$@"
 }
 
+
+## Recompile
+##
+
 _do_recompile() {
     find "$BASE_DIR/etc/emacs" -iname '*.elc' -delete
     _emacs --eval '(byte-recompile-directory "'"$BASE_DIR"'/etc/emacs/packages" 0)'
 }
 
+
+## Command: straight-freeze
+## Freeze straight versions
+##
+
 _do_straight_freeze() {
     _emacs --eval '(straight-freeze-versions)'
 }
+
+
+## Command: straight-pull-all
+## Pull straight versions
+##
 
 _do_straight_pull() {
     _emacs --eval '(straight-pull-all)'
 }
 
+
+## Command: straight-thaw
+## Restore straight version
+##
+
 _do_straight_thaw() {
     _emacs --eval '(straight-thaw-versions)'
     _emacs --eval '(straight-rebuild-all)'
 }
+
+
+## Command: kill
+## Kill Emacs daemon
 
 _do_kill() {
     if [ "$USE_EMACSCLIENT" = "1" ]; then
@@ -53,7 +81,11 @@ _do_kill() {
     printf >&2 "%s: kill is only available in daemon mode\\n" "$BASE_NAME"
 }
 
-cmd=$(printf "%s" "$*" | tr -C '[:alnum:]' '_')
+
+## Running
+##
+
+cmd=$(printf "%s" "$1" | tr -C '[:alnum:]' '_')
 
 if [ -z "$cmd" ]; then
     printf >&2 "Usage: %s COMMAND
@@ -79,5 +111,6 @@ if [ "$(command -v "_do_${cmd}")x" = "x" ]; then
     exit 1
 fi
 
-eval "_do_${cmd}"
+shift
+"_do_${cmd}" "$@"
 exit $?

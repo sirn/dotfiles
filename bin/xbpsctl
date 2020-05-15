@@ -1,0 +1,271 @@
+#!/bin/sh
+#
+# Collection of commands to perform xbps maintenance tasks.
+#
+
+# shellcheck disable=SC2034
+BASE_DIR=$(cd "$(dirname "$0")/.." || exit; pwd -P)
+BASE_NAME=$(basename "$0")
+PATH=/usr/bin:/usr/local/bin
+
+TMP_DIR=$(mktemp -d)
+trap 'rm -rf $TMP_DIR' 0 1 2 3 6 14 15
+
+T_BOLD="$(tput bold 2>/dev/null || true)"
+T_RESET="$(tput sgr0 2>/dev/null || true)"
+
+
+## Utils
+##
+
+version_gte() {
+    left=$1; shift
+    right=$1; shift
+
+    # https://havoc.io/post/shellsemver/
+    min_ver=$(printf "%s\\n%s" "$left" "$right" |
+        sort -t "." -n -k1,1 -k2,2 -k3,3 -k4,4 |
+        head -n 1)
+
+    if [ "$right" = "$min_ver" ]; then
+        return 0
+    fi
+
+    return 1
+}
+
+mkpkglist() {
+    xbps-query -s '^/' --property repository --regex
+}
+
+
+## Sanity check
+##
+
+if ! command -v xbps-query >/dev/null; then
+    printf >&2 "xbps-query not found, not a Void Linux system?\\n"
+    exit 1
+fi
+
+
+## Command: built
+## Display a list of packages built and installed locally
+##
+
+_do_built() {
+    mkpkglist | while read -r n; do
+        pkg=${n%: *}
+        printf "%s\\n" "${pkg%-*}"
+    done
+}
+
+
+## Command: updated
+## Display a list of packages built and installed locally that
+## require updates.
+##
+
+_do_updated() {
+    cur_dir=$(pwd -P)
+
+    if [ ! -f "$cur_dir/xbps-src" ]; then
+        printf >&2 "%s: must be run in xbps-src directory.\\n" "$BASE_NAME"
+        return 1
+    fi
+
+    mkpkglist | while read -r n; do
+        n=${n%: *}
+        pkg=${n%-*}
+
+        cur_pkgver=$n
+        cur_version=${cur_pkgver#$pkg-}
+        cur_version=${cur_version%_*}
+        cur_revision=${cur_pkgver#*_}
+
+        "$cur_dir"/xbps-src show "$pkg" > "$TMP_DIR/${pkg}_new"
+
+        new_version=$(awk '/version:/ { print $2 }' < "$TMP_DIR/${pkg}_new")
+        new_revision=$(awk '/revision:/ { print $2 }' < "$TMP_DIR/${pkg}_new")
+        new_pkgver="${pkg}-${new_version}_${new_revision}"
+
+        if [ -z "$new_version" ]; then
+            printf >&2 "could not determine version of %s" "$n"
+            continue
+        fi
+
+        if [ -z "$new_revision" ]; then
+            printf >&2 "could not determine revision of %s" "$n"
+            continue
+        fi
+
+        [ "$cur_pkgver" = "$new_pkgver" ] && continue
+        ! version_gte "$new_version" "$cur_version" && continue
+        ! version_gte "$new_revision" "$cur_revision" && continue
+
+        printf >&2 "%s%s%s: %s -> %s\\n" \
+                   "$T_BOLD" \
+                   "$pkg" \
+                   "$T_RESET" \
+                   "$cur_pkgver" \
+                   "$new_pkgver"
+    done
+}
+
+
+## Command: src
+## Invoke xbps-src in a docker or podman
+##
+
+_do_src() {
+    cur_dir=$(pwd -P)
+
+    if [ ! -f "$cur_dir/xbps-src" ]; then
+        printf >&2 "%s: must be run in xbps-src directory.\\n" "$BASE_NAME"
+        return 1
+    fi
+
+    # XBPS_CHROOT_CMD=ethereal requires running in a container since
+    # it is destructive; so let's fail right away if docker or podman
+    # is not installed
+    #
+
+    if command -v docker >/dev/null; then
+        docker_cmd=docker
+    fi
+
+    if command -v podman >/dev/null; then
+        docker_cmd=podman
+    fi
+
+    if [ -z "$docker_cmd" ]; then
+        printf >&2 "%s: docker or podman not installed?\\n" "$BASE_NAME"
+        return 1
+    fi
+
+    # Emulates what xbps-src is doing in its travis script, but since this
+    # is a working machine we default BOOTSTRAP and ARCH to currently running
+    # arch.
+    #
+
+    BOOTSTRAP=${BOOTSTRAP:-$(xbps-uhelper -C /dev/null arch)}
+    ARCH=${ARCH:-$BOOTSTRAP}
+    docker_base=$(grep DOCKER_BASE < .travis.yml | cut -d= -f2)
+    docker_tag=$(grep TAG < .travis.yml | cut -d= -f2)
+
+    if [ -z "$docker_base" ] && [ -z "$docker_tag" ]; then
+        printf >&2 "%s: could not determine Docker image\\n" "$BASE_NAME"
+        return 1
+    fi
+
+    # If we ever run ./xbps-src locally and masterdir is already created
+    # on disk, let's move it away so we could create a link in a mount.
+    #
+    # While we're at it, let's also create temp dir for futher usage.
+    #
+
+    if [ -d "$cur_dir/masterdir.host" ]; then
+        printf >&2 "%s: another instance is running?" "$BASE_NAME"
+        return 1
+    fi
+
+    if [ -d "$cur_dir/masterdir" ]; then
+        mv "$cur_dir/masterdir" "$cur_dir/masterdir.host"
+    fi
+
+    # Bind links into actual directory, if any.
+    #
+
+    mounts=
+
+    find "$cur_dir" -type l \
+         ! \( -path "*/srcpkgs*" \
+         -or -path "*/masterdir*" \
+         \) > "$TMP_DIR"/links
+
+    if command -v readlink >/dev/null; then
+        while read -r link; do
+            actual=$(readlink -f "$link")
+            case "$actual" in
+                $cur_dir/* ) ;;
+
+                * )
+                    dest=/hostrepo/${link##$cur_dir/}
+                    mount_flag="-v $actual:$dest"
+                    mounts=${mount_flag:+$mount_flag }$mounts
+                    ;;
+            esac
+        done < "$TMP_DIR"/links
+    fi
+
+    # Building xbps_args to be pass to Docker. We default setting -a to
+    # $ARCH (which defaults to $BOOTSTRAP) to mimic Travis build script.
+    #
+
+    case "$*" in
+        *-a* ) ;;
+        * )
+            if [ "$ARCH" != "$BOOTSTRAP" ]; then
+                xbps_args="-a $ARCH"
+            fi
+            ;;
+    esac
+
+    # shellcheck disable=SC2086
+    $docker_cmd run \
+                --rm -i \
+                -e XBPS_CHROOT_CMD=ethereal \
+                -e XBPS_ALLOW_CHROOT_BREAKOUT=yes \
+                -v "$cur_dir":/hostrepo \
+                -v /tmp:/tmp \
+                $mounts \
+                docker.io/"$docker_base"-"$BOOTSTRAP":"$docker_tag" \
+                bash <<-EOF
+ln -sf / /hostrepo/masterdir
+/hostrepo/xbps-src $xbps_args $*
+EOF
+
+    ret=$?
+
+    # Cleanups
+    #
+
+    if [ -L "$cur_dir/masterdir" ]; then
+        rm "$cur_dir/masterdir"
+    fi
+
+    if [ -d "$cur_dir/masterdir.host" ]; then
+        mv "$cur_dir/masterdir.host" "$cur_dir/masterdir"
+    fi
+
+    return $ret
+}
+
+
+## Running
+##
+
+cmd=$(printf "%s" "$1" | tr -C '[:alnum:]' '_')
+
+if [ -z "$cmd" ]; then
+    printf >&2 "Usage: %s COMMAND [ARGS...]
+
+A wrapper script to perform XBPS maintenance tasks.
+
+COMMAND:
+
+    built               display a locally built packages
+    updated             display a locally built packages required updating
+    src                 invoke xbps-src in a docker or podman
+
+" "$BASE_NAME"
+    exit 2
+fi
+
+if [ "$(command -v "_do_${cmd}")x" = "x" ]; then
+    printf >&2 "%s: unknown command %s\\n" "$(basename "$0")" "$cmd"
+    exit 1
+fi
+
+shift
+"_do_${cmd}" "$@"
+exit $?

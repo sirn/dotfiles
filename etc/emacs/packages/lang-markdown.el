@@ -15,4 +15,10 @@
    ("\\.markdown\\'" . markdown-mode))
 
   :init
-  (setq markdown-command "pandoc"))
+  (setq markdown-command "pandoc")
+
+  :config
+  (use-feature apheleia
+    :config
+    (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier))
+    (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))))

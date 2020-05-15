@@ -1,0 +1,89 @@
+#!/bin/sh
+#
+# Collection of commands to perform Flatpak maintenance tasks.
+#
+
+# shellcheck disable=SC2034
+BASE_DIR=$(cd "$(dirname "$0")/.." || exit; pwd -P)
+BASE_NAME=$(basename "$0")
+PATH=/usr/bin:/usr/local/bin
+
+
+## Command: override
+## Overriding filesystem access.
+##
+
+OVERRIDES="
+~/.config/gtk-3.0
+~/.config/fontconfig
+~/.local/share/fonts
+~/.dotfiles/etc/fontconfig
+" # END-QUOTE
+
+_do_override() {
+    for fp in $OVERRIDES; do
+        printf >&2 "Enabling access to %s\\n" "$fp"
+        flatpak override --user --filesystem="$fp:ro"
+    done
+}
+
+
+## Command: fix
+## Aliasing configuration files.
+##
+
+CONFS="
+gtk-3.0/settings.ini
+fontconfig/fonts.conf
+fontconfig/conf.d
+" # END-QUOTE
+
+_do_fix() {
+    for appdir in "$HOME"/.var/app/*; do
+        if [ ! -d "$appdir" ]; then
+            continue
+        fi
+
+        printf >&2 "Fixing %s...\\n" "$(basename "$appdir")"
+
+        for file in $CONFS; do
+            if [ -L "$appdir/config/$file" ]; then
+                continue
+            fi
+
+            if [ -f "$HOME/.config/$file" ] || [ -d "$HOME/.config/$file" ]; then
+                mkdir -p "$appdir/config/$(dirname "$file")"
+                ln -fs "$HOME/.config/$file" "$appdir/config/$file"
+            fi
+        done
+    done
+}
+
+
+## Running
+##
+
+cmd=$(printf "%s" "$1" | tr -C '[:alnum:]' '_')
+
+if [ -z "$cmd" ]; then
+    printf >&2 "Usage: %s COMMAND
+
+A wrapper script to perform Flatpak maintenance tasks.
+
+COMMAND:
+
+    override            apply themes and permissions overrides
+    fix                 unify application settings to system
+
+" "$BASE_NAME"
+    exit 2
+fi
+
+if [ "$(command -v "_do_${cmd}")x" = "x" ]; then
+    printf >&2 "%s: unknown command %s\\n" "$BASE_NAME" "$cmd"
+    exit 1
+fi
+
+shift
+"_do_${cmd}" "$@"
+exit $?
