@@ -510,7 +510,6 @@ get a chance to run first, for example to set LSP configuration."
                 (derived-mode-p
                   #'clojure-mode
                   #'emacs-lisp-mode
-                  #'nim-mode
                   #'purescript-mode
                   #'ruby-mode
                   #'rust-mode

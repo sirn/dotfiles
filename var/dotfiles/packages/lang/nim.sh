@@ -21,6 +21,15 @@ _preflight() {
     fi
 }
 
+_run() {
+    _nimble_install nimr
+    _nimble_install nimcr
+}
+
+_run_dev() {
+    _nimble_install nimlsp
+}
+
 _setup_choosenim() {
     # Skip without force flag if we already have system-wide choosenim
     # e.g. for musl system where there's no prebuilt choosenim-musl binary
