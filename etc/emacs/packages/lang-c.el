@@ -1,4 +1,4 @@
-(use-feature c-mode)
+(use-feature cc-mode)
 
 
 (use-package flycheck-pkg-config
