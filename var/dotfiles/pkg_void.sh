@@ -119,7 +119,7 @@ _run_all() {
 
     # Only install emacs-nox when other variant of Emacs hasn't been
     # installed (e.g. desktop flavor installs GTK emacs)
-    if ! xbps_installed emacs-gtk3; then
+    if ! xbps_installed emacs-x11; then
         xbps_install emacs
     fi
 }
