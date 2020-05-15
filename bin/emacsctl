@@ -4,9 +4,21 @@
 #
 
 BASE_DIR=$(cd "$(dirname "$0")/.." || exit; pwd -P)
+BASE_NAME=$(basename "$0")
 PATH=/usr/bin:/usr/local/bin
 
+USE_EMACSCLIENT=
+
+if [ -S "/tmp/emacs$(id -u)/server" ]; then
+    USE_EMACSCLIENT=1
+fi
+
 _emacs() {
+    if [ "$USE_EMACSCLIENT" = "1" ]; then
+        command emacsclient "$@"
+        exit $?
+    fi
+
     command emacs \
         -nw \
         --batch \
@@ -32,7 +44,35 @@ _do_straight_thaw() {
     _emacs --eval '(straight-rebuild-all)'
 }
 
+_do_kill() {
+    if [ "$USE_EMACSCLIENT" = "1" ]; then
+        _emacs --eval '(kill-emacs)'
+        exit $?
+    fi
+
+    printf >&2 "%s: kill is only available in daemon mode\\n" "$BASE_NAME"
+}
+
 cmd=$(printf "%s" "$*" | tr -C '[:alnum:]' '_')
+
+if [ -z "$cmd" ]; then
+    printf >&2 "Usage: %s COMMAND
+
+A wrapper script to perform emacs maintenance tasks. If an emacs daemon
+exists, this command will run commands via emacsclient instead of
+standalone emacs.
+
+COMMAND:
+
+    kill                kill emacs daemon
+    recompile           recompile elisp in ~/.dotfiles/etc/emacs
+    straight-freeze     freeze version to straight version locks
+    straight-pull       update all straight packages
+    straight-thaw       restore package to locked versions
+
+" "$BASE_NAME"
+    exit 2
+fi
 
 if [ "$(command -v "_do_${cmd}")x" = "x" ]; then
     printf >&2 "%s: unknown command %s\\n" "$(basename "$0")" "$cmd"
