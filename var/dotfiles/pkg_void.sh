@@ -59,7 +59,7 @@ _run_desktop() {
 
     # Firefox is installed with Flatpak
     xbps_install \
-        emacs-gtk3 \
+        emacs-x11 \
         qemu
 
     sh "$BASE_DIR/var/dotfiles/packages/sys/fonts.sh" "$@"
