@@ -14,16 +14,23 @@ PATH=/usr/bin:/usr/local/bin
 ##
 
 OVERRIDES="
-~/.config/gtk-3.0
-~/.config/fontconfig
-~/.local/share/fonts
-~/.dotfiles/etc/fontconfig
+xdg-desktop:ro
+xdg-documents:ro
+xdg-download
+xdg-music:ro
+xdg-pictures:ro
+xdg-public-share:ro
+xdg-videos:ro
+~/.config/fontconfig:ro
+~/.config/gtk-3.0:ro
+~/.dotfiles/etc/fontconfig:ro
+~/.local/share/fonts:ro
 " # END-QUOTE
 
 _do_override() {
     for fp in $OVERRIDES; do
         printf >&2 "Enabling access to %s\\n" "$fp"
-        flatpak override --user --filesystem="$fp:ro"
+        flatpak override --user --filesystem="$fp"
     done
 }
 
