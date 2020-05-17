@@ -90,7 +90,7 @@ prependpath "$HOME/.local/lib/google-cloud-sdk/bin"
 
 _gopaths=$GOPATH
 
-while [ -z "$_gopaths" ]; do
+while [ -n "$_gopaths" ]; do
     _gopath=${_gopaths%%:*}
     prependpath "$_gopath/bin"
 
