@@ -4,18 +4,19 @@
   :commands neotree-toggle
 
   :leader
-  ("pt" #'gridth--neotree-project-dir)
+  ("pt" #'gemacs--neotree-project-dir)
 
   :preface
   (eval-when-compile
-    (declare-function neo-global--window-exists-p nil))
+    (declare-function neo-global--window-exists-p nil)
+    (declare-function gemacs--neotree-project-dir nil))
 
   :init
   (setq neo-autorefresh nil)
 
   (use-feature projectile
     :config
-    (defun gridth--neotree-project-dir ()
+    (defun gemacs--neotree-project-dir ()
       (interactive)
       (let ((project-dir (projectile-project-root))
             (file-name (buffer-file-name)))

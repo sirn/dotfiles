@@ -25,11 +25,6 @@
 (require 'map)
 (require 'subr-x)
 
-(defgroup gr '()
-  "Deprecated Gridth's customization group."
-  :group 'convenience
-  :prefix 'gr)
-
 (defgroup gemacs-hooks nil
   "Gemacs's hooks"
   :group 'gemacs
