@@ -509,6 +509,7 @@ get a chance to run first, for example to set LSP configuration."
 
   :config
   (setq lsp-enable-snippet nil)
+  (setq lsp-file-watch-threshold nil)
 
   (defun gemacs--advice-lsp-mode-silence (format &rest args)
     "Silence needless diagnostic messages from `lsp-mode'.
