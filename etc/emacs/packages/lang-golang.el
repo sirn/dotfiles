@@ -94,16 +94,7 @@ thing as far as I can tell)."
         (setq lsp-ui-sideline--code-actions actions-to-keep)))
 
     (advice-add 'lsp-ui-sideline--code-actions :around
-      #'gemacs--advice-lsp-ui-organize-imports-more-cleanly)
-
-    (use-feature flycheck
-      :config
-      (defun gemacs--golint-enable ()
-        "Enable golint in additional to lsp checker since golang
-  lsp still doesn't provides linting."
-        (flycheck-add-next-checker 'lsp 'go-golint))
-
-      (gemacs--golint-enable)))
+      #'gemacs--advice-lsp-ui-organize-imports-more-cleanly))
 
   (use-feature apheleia
     :config
