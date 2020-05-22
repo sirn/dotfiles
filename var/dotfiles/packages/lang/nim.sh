@@ -22,8 +22,8 @@ _preflight() {
 }
 
 _run() {
-    _nimble_install nimr
-    _nimble_install nimcr
+    _nimble_install nimr nimr
+    _nimble_install nimcr nimcr
 }
 
 _run_dev() {

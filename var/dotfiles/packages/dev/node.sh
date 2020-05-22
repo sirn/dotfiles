@@ -23,10 +23,7 @@ _run() {
 _run_dev() {
     printe_h2 "Installing npm dev packages..."
 
-    rm -f "$HOME/.local/bin/npm"
-    rm -f "$HOME/.local/bin/npx"
-
-    npm install -g \
+    npm install -g --force \
         eslint \
         npm \
         npm-upgrade \
