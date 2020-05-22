@@ -75,7 +75,6 @@
 
 
 (use-package visual-regexp-steroids
-  :after visual-regexp
   :init
   (let ((repy (straight--repos-file "visual-regexp-steroids.el/regexp.py")))
     (setq vr/command-python (format "%s %s" "python3" repy))))
@@ -117,7 +116,6 @@
 
 
 (use-feature smartparens-config
-  :after smartparens
   :demand t
 
   :config
@@ -162,7 +160,6 @@
 
 (use-package editorconfig
   :init
-
   (defun gemacs--editorconfig-load ()
     "Load `editorconfig' when initially finding a file."
     (require 'editorconfig)
@@ -174,7 +171,6 @@
 
 
 (use-feature editorconfig-core
-  :after editorconfig
   :demand t
 
   :init
@@ -334,7 +330,8 @@ completions automatically when backspacing into a symbol."
 
 (use-package company-prescient
   :demand t
-  :after (company prescient)
+  :after prescient
+
   :preface
   (eval-when-compile
     (declare-function company-prescient-mode nil))

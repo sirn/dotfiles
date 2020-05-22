@@ -3,5 +3,4 @@
 (use-package sql)
 
 
-(use-package sql-indent
-  :after sql)
+(use-package sql-indent)

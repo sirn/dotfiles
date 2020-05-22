@@ -15,7 +15,6 @@
 
 (use-package ivy-prescient
   :demand t
-  :after (ivy prescient)
 
   :preface
   (eval-when-compile
@@ -79,8 +78,6 @@
 
 
 (use-package counsel-projectile
-  :after (counsel projectile)
-
   :commands
   (counsel-projectile-ag
    counsel-projectile-find-file
@@ -99,7 +96,6 @@
 
 (use-package ivy-rich
   :demand t
-  :after ivy
 
   :init
   (setq ivy-rich-path-style 'abbrev)

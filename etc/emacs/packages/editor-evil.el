@@ -14,7 +14,6 @@
 
 
 (use-package evil-collection
-  :after evil
   :demand t
 
   :preface
@@ -26,7 +25,6 @@
 
 
 (use-package evil-commentary
-  :after evil
   :demand t
 
   :config
@@ -34,7 +32,6 @@
 
 
 (use-package evil-leader
-  :after evil
   :demand t
 
   :leader
@@ -53,7 +50,6 @@
 
 
 (use-package evil-matchit
-  :after evil
   :demand t
 
   :config
@@ -61,12 +57,11 @@
 
 
 (use-package evil-magit
-  :after (evil magit)
-  :demand t)
+  :demand t
+  :after magit)
 
 
 (use-package evil-surround
-  :after evil
   :demand t
 
   :config

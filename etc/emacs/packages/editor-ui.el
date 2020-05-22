@@ -117,7 +117,6 @@
        :demand t)
 
      (use-feature telephone-line-config
-       :after telephone-line
        :demand t
 
        :config

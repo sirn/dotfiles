@@ -19,7 +19,6 @@
 
 
 (use-package counsel-notmuch
-  :after counsel
   :commands counsel-notmuch
 
   :leader

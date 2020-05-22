@@ -62,7 +62,6 @@ poke it. Otherwise the modified text remains unfontified."
 
 
 (use-package emmet-mode
-  :after web-mode
   :commands emmet-mode
 
   :init

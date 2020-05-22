@@ -8,7 +8,6 @@
 
 
 (use-package psc-ide
-  :after purescript-mode
   :commands psc-ide-mode
 
   :init

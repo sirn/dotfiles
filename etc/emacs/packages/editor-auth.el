@@ -4,15 +4,12 @@
 
 
 (use-feature epa
-  :after epg
-
   :init
   (setq epa-pinentry-mode 'loopback))
 
 
 (use-package pinentry
   :demand t
-  :after epg
 
   :config
   ;; Allow gpg-connect-agent in ssh-agent mode to forward pinentry to Emacs
@@ -50,7 +47,6 @@
 
 (use-package auth-source-pass
   :demand t
-  :after (auth-source password-store)
 
   :config
   (let ((dir (password-store-dir)))
