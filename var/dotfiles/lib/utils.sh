@@ -239,6 +239,10 @@ get_platform() {
         fi
     fi
 
+    if [ -f /proc/version ] && grep -q microsoft /proc/version; then
+        platform="$platform"_wsl
+    fi
+
     echo "$platform"
 }
 
@@ -493,7 +497,15 @@ run_with_flavors() {
         run_command="_run_$flavor"
 
         if [ "$(command -v "$run_command")x" != "x" ]; then
-            "$run_command" "$flavors"
+            if ! "$run_command" "$flavors"; then
+                return
+            fi
         fi
     done
+
+    if [ "$(command -v _run_all)x" != "x" ]; then
+        if ! _run_all "$flavors"; then
+            return
+        fi
+    fi
 }

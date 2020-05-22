@@ -128,7 +128,11 @@ for p in pkg user; do
 
             run=1
             printe_h1 "Running ${runscript}..."
-            sh "$runscript" "$FLAVORS"
+            (
+                cd "$(dirname "$runscript")" || exit 1
+                . "$runscript"
+                run_with_flavors "$FLAVORS"
+            )
         done
 
         if [ $run != 1 ]; then

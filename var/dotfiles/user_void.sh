@@ -124,5 +124,3 @@ _setup_dev_links() {
 
     make_link "$BASE_DIR/etc/proselint/proselintrc" "$HOME/.proselintrc"
 }
-
-run_with_flavors "$@"

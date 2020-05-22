@@ -95,8 +95,6 @@ _run_dev() {
 }
 
 _run_all() {
-    run_with_flavors "$@"
-
     printe_h2 "Installing extra packages..."
 
     # Only install emacs-nox when other variant of Emacs hasn't been
@@ -105,5 +103,3 @@ _run_all() {
         pkgng_install emacs-nox
     fi
 }
-
-_run_all "$@"

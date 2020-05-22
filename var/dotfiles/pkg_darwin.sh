@@ -95,5 +95,3 @@ _run_dev() {
     sh "$BASE_DIR/var/dotfiles/packages/net/cloudflared.sh" "$@"
     sh "$BASE_DIR/var/dotfiles/packages/net/kubernetes.sh" "$@"
 }
-
-run_with_flavors "$@"
