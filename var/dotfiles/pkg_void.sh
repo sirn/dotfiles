@@ -89,6 +89,7 @@ _run_dev() {
         pandoc \
         patch \
         pkg-config \
+        postgresql-client \
         python3 \
         python3-devel \
         python3-pip \
