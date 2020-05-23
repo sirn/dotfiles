@@ -239,7 +239,7 @@ get_platform() {
         fi
     fi
 
-    if [ -f /proc/version ] && grep -q microsoft /proc/version; then
+    if [ -f /proc/version ] && grep -qi microsoft /proc/version; then
         platform="$platform"_wsl
     fi
 

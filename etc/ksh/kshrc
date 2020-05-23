@@ -56,7 +56,16 @@ if command -v gpg-connect-agent >/dev/null; then
     GPG_TTY=$(tty)
     export GPG_TTY
 
-    gpg-connect-agent --no-autostart updatestartuptty /bye >/dev/null
+    # Don't start GPG agent if we're not in WSL; in a non-WSL environment
+    # gpg-agent should be managed externally, e.g. via runit or launchd, etc.
+    GPG_ARGS=
+    if [ ! -f /proc/version ] || grep -qvi microsoft /proc/version; then
+        GPG_ARGS="--no-autostart"
+    fi
+
+    echo "ok test $GPG_ARGS"
+    gpg-connect-agent $GPG_ARGS updatestartuptty /bye >/dev/null
+    unset GPG_ARGS
 fi
 
 
