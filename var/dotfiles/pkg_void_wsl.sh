@@ -6,7 +6,7 @@
 BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
-. "pkg_void.sh"
+. "./pkg_void.sh"
 
 _run_system() {
     : # Don't run system for WSL
@@ -17,5 +17,5 @@ _run_desktop() {
 }
 
 _run_all() {
-    : # Don't run all for WSL
+    xbps_install emacs-x11
 }
