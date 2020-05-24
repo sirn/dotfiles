@@ -63,7 +63,6 @@ if command -v gpg-connect-agent >/dev/null; then
         GPG_ARGS="--no-autostart"
     fi
 
-    echo "ok test $GPG_ARGS"
     gpg-connect-agent $GPG_ARGS updatestartuptty /bye >/dev/null
     unset GPG_ARGS
 fi
