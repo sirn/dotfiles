@@ -43,6 +43,15 @@ if command -v gpgconf >/dev/null; then
 fi
 
 
+## Local Desktop
+##
+
+# shellcheck disable=SC1090
+if [ -f "$HOME/.profile_local" ]; then
+    . "$HOME/.profile_local"
+fi
+
+
 ## Finalizing
 ##
 
