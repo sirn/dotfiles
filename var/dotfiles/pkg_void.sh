@@ -35,8 +35,10 @@ _run() {
         sqlite \
         the_silver_searcher \
         tmux \
+        unzip \
         w3m \
-        xtools
+        xtools \
+        zip
 }
 
 _run_system() {

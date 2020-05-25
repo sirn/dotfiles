@@ -13,7 +13,7 @@ _run_system() {
 }
 
 _run_desktop() {
-    : # Don't run desktop for WSL
+    sh "$BASE_DIR/var/dotfiles/packages/sys/fonts.sh" "$@"
 }
 
 _run_all() {

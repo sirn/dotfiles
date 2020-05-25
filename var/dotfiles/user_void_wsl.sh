@@ -12,7 +12,3 @@ _run() {
     _setup_user_links
     _setup_user_shell
 }
-
-_run_desktop() {
-    : # Don't run desktop for WSL
-}
