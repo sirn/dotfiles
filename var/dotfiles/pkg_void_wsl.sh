@@ -13,6 +13,12 @@ _run_system() {
 }
 
 _run_desktop() {
+    xbps_install \
+        breeze \
+        breeze-gtk \
+        konsole \
+        xrdb
+
     sh "$BASE_DIR/var/dotfiles/packages/sys/fonts.sh" "$@"
 }
 

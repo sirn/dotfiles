@@ -43,13 +43,15 @@ if command -v gpgconf >/dev/null; then
 fi
 
 
-## Local Desktop
+## Local Customization files
 ##
 
 # shellcheck disable=SC1090
-if [ -f "$HOME/.profile_local" ]; then
-    . "$HOME/.profile_local"
-fi
+for n in .profile2 .profile_local; do
+    if [ -f "$HOME/$n" ]; then
+        . "$HOME/$n"
+    fi
+done
 
 
 ## Finalizing

@@ -10,5 +10,13 @@ cd "$(dirname "$0")" || exit 1
 
 _run() {
     _setup_user_links
+    _setup_user_links_wsl
     _setup_user_shell
+}
+
+_setup_user_links_wsl() {
+    printe_h2 "Installing WSL links..."
+
+    make_link "$BASE_DIR/etc/wsl/profile2" "$HOME/.profile2"
+    make_link "$BASE_DIR/etc/wsl/Xresources" "$HOME/.Xresources"
 }
