@@ -64,7 +64,15 @@ _setup_nim() {
 
 _nimble_install() {
     bin=$1; shift
-    pkg=$1; shift
+    pkg=$1
+
+    if [ $# -lt 0 ]; then
+        shift
+    fi
+
+    if [ -z "$pkg" ]; then
+        pkg=$bin
+    fi
 
     PATH=$HOME/.nimble/bin:$PATH
     pkgbin_path=$HOME/.nimble/bin/$bin
