@@ -241,6 +241,37 @@ EOF
 }
 
 
+## Glibc root manipulation
+##
+
+_do_glibc() {
+    export XBPS_ARCH=x86_64
+
+    command=$1; shift
+
+    case "$command" in
+        xbps-install )
+            xbps-install \
+                --repository=https://alpha.de.repo.voidlinux.org/current \
+                --rootdir="$HOME"/.local/share/glibc \
+                "$@"
+            ;;
+
+        xbps-* ) \
+            "$command" \
+                --rootdir="$HOME"/.local/share/glibc \
+                "$@"
+            ;;
+
+        * )
+            printf >&2 "%s: not xbps command?" "$BASE_NAME"
+            return 1
+            ;;
+    esac
+
+}
+
+
 ## Running
 ##
 
@@ -256,6 +287,7 @@ COMMAND:
     built               display a locally built packages
     updated             display a locally built packages required updating
     src                 invoke xbps-src in a docker or podman
+    glibc               invoke xbps commands in glibc root
 
 " "$BASE_NAME"
     exit 2
