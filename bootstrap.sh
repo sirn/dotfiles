@@ -130,6 +130,7 @@ for p in pkg user; do
             printe_h1 "Running ${runscript}..."
             (
                 cd "$(dirname "$runscript")" || exit 1
+                # shellcheck disable=SC1090
                 . "$runscript"
                 run_with_flavors "$FLAVORS"
             )
