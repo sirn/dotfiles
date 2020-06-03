@@ -17,7 +17,7 @@ _install_font() {
     install -d "$dest" || exit 1
 
     find "$srcdir" \
-         \( -iname "*.ttf" -or -iname "*.ttc" \) \
+         \( -iname "*.ttf" -or -iname "*.ttc" -or -name "*.otf" \) \
          -exec install -m0644 \{\} "$dest" \; || exit 1
 
     touch "$dest/.installed"
@@ -200,6 +200,14 @@ _run() {
         droid-serif-thai \
         https://files.grid.in.th/pub/fonts/droid-serif-thai.tar.gz \
         8d27167379ea9718530d35c5872e65f5a09adc99fe505c4d506e9bbaaefe84d7
+
+    ## IBM Plex
+    ##
+
+    _install_font_url \
+        ibm-plex \
+        https://github.com/IBM/plex/releases/download/v4.0.2/OpenType.zip \
+        e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
 }
 
 run_with_flavors "$@"
