@@ -22,6 +22,8 @@ _preflight() {
 }
 
 _run() {
+    nimble update
+
     _nimble_install nimr nimr
     _nimble_install nimcr nimcr
 }
