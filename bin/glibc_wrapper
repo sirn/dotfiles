@@ -92,7 +92,9 @@ IFS=$OLDIFS; unset OLDIFS
 
 set -- \
     --proc /proc \
-    --dev /dev \
+    --dev-bind /dev /dev \
+    --tmpfs /tmp \
+    --die-with-parent \
     --unshare-user \
     "$@"
 
