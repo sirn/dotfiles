@@ -22,10 +22,12 @@ dump.rdb
 .generators/
 .idea/
 .mypy_cache/
+.tmp/
 .vagrant/
 Vagrantfile
 cache/
 out/
 
 # User files
+.lspconfig
 stdout

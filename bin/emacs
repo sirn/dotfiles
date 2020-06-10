@@ -1,4 +1,7 @@
 #!/bin/sh
+#
+# Run emacsclient as emacs
+#
 
 for n in /opt/local/bin /usr/local/bin /usr/bin; do
     if [ -f "$n/emacs" ]; then
