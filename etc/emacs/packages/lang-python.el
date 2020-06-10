@@ -11,7 +11,7 @@
   (setq lsp-pyls-server-command
     (gemacs--path-join
       (file-name-as-directory (getenv "HOME"))
-      ".dotfiles/bin/pyls"))
+      ".dotfiles/libexec/lsp/pyls"))
 
   :config
   (defun gemacs--python-fix-outline-mode-config ()

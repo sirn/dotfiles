@@ -27,7 +27,7 @@ export XDG_STATE_HOME
 ## Local bins
 ##
 
-PATH=$HOME/.dotfiles/bin:$PATH
+PATH=$HOME/.dotfiles/bin:$HOME/.dotfiles/libexec/wrapper:$PATH
 
 
 ## GPG agent
