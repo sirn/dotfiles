@@ -142,6 +142,8 @@ for rbpath in "$HOME"/.gem/ruby/?.?/bin; do
     fi
 done
 
+prependpath "$HOME/.dotfiles/libexec/lsp"
+
 
 ## Prompt
 ##
@@ -532,3 +534,4 @@ trap '__hook_exit' EXIT
 
 unset PLATFORM
 unset prependpath
+unset appendpath
