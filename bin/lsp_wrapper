@@ -5,10 +5,9 @@
 
 CONFIG_FILE=.lspconfig
 PROG_NAME=$(basename "$0")
-PWD=$(pwd -P || exit 1)
 
 export CONF_USE
-export CONF_USE_PWD
+export CONF_PROJECT_ROOT
 export CONF_CMD
 
 
@@ -22,7 +21,7 @@ print_err() {
 
 run_vagrant() {
     exec vagrant ssh -c "[ -f ~/.profile ] && . ~/.profile; \
-cd $CONF_USE_PWD || exit 1; \
+cd $CONF_PROJECT_ROOT || exit 1; \
 exec $CONF_CMD $*\
 " # END-COMMAND
 }
@@ -49,8 +48,8 @@ getvar() {
     name=$1; shift
     default=$1
 
-    if [ -f "$PWD"/"$CONFIG_FILE" ]; then
-        val=$(grep "^$name=" "$PWD"/"$CONFIG_FILE")
+    if [ -f "$PROJECT_ROOT"/"$CONFIG_FILE" ]; then
+        val=$(grep "^$name=" "$PROJECT_ROOT"/"$CONFIG_FILE")
         val=${val#*=}
     fi
 
@@ -61,6 +60,21 @@ getvar() {
     echo "$val"
 }
 
+detect_project_root() {
+    pwd_dir=$(pwd -P)
+    cur_dir=$pwd_dir
+
+    while true; do
+        if [ -f "$cur_dir"/.lspconfig ]; then
+            echo "$cur_dir"
+            return
+        fi
+
+        cd "$cur_dir"/.. || continue
+    done
+
+    echo "$pwd_dir"
+}
 
 main() {
     if [ "$PROG_NAME" = "lsp_wrapper" ]; then
@@ -73,8 +87,10 @@ main() {
         fi
     fi
 
+    PROJECT_ROOT=$(detect_project_root)
+
     CONF_USE=$(getvar "USE" "exec")
-    CONF_USE_PWD=$(getvar "USE_PWD" "$PWD")
+    CONF_PROJECT_ROOT=$(getvar "PROJECT_ROOT" "$PROJECT_ROOT")
     CONF_CMD=$(getvar "CMD_${PROG_NAME}" "${PROG_NAME}")
 
     case "$CONF_USE" in
