@@ -1,0 +1,92 @@
+#!/bin/sh
+#
+# A script to run $0 in Vagrant or Docker.
+#
+
+CONFIG_FILE=.lspconfig
+PROG_NAME=$(basename "$0")
+PWD=$(pwd -P || exit 1)
+
+export CONF_USE
+export CONF_USE_PWD
+export CONF_CMD
+
+
+print_err() {
+    printf >&2 "%s\\n" "$*"
+}
+
+
+## Vagrant
+##
+
+run_vagrant() {
+    exec vagrant ssh -c "[ -f ~/.profile ] && . ~/.profile; \
+cd $CONF_USE_PWD || exit 1; \
+exec $CONF_CMD $*\
+" # END-COMMAND
+}
+
+
+## Exec
+##
+
+run_exec() {
+    set -- "$CONF_CMD" "$@"
+    exec "$@"
+}
+
+
+## Main
+##
+
+getvar() {
+    if [ $# -lt 1 ]; then
+        print_err "getvar() must have at least 1 argument"
+        return 2
+    fi
+
+    name=$1; shift
+    default=$1
+
+    if [ -f "$PWD"/"$CONFIG_FILE" ]; then
+        val=$(grep "^$name=" "$PWD"/"$CONFIG_FILE")
+        val=${val#*=}
+    fi
+
+    if [ -z "$val" ]; then
+        echo "$default"
+    fi
+
+    echo "$val"
+}
+
+
+main() {
+    if [ "$PROG_NAME" = "lsp_wrapper" ]; then
+        if [ $# -gt 0 ]; then
+            PROG_NAME=$1
+            shift
+        else
+            print_err "Usage: $PROG_NAME [program] [args...]"
+            exit 2
+        fi
+    fi
+
+    CONF_USE=$(getvar "USE" "exec")
+    CONF_USE_PWD=$(getvar "USE_PWD" "$PWD")
+    CONF_CMD=$(getvar "CMD_${PROG_NAME}" "${PROG_NAME}")
+
+    case "$CONF_USE" in
+        vagrant )
+            run_vagrant "$@"
+            ;;
+
+        * )
+            run_exec "$@"
+            ;;
+    esac
+}
+
+
+main "$@"
