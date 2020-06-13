@@ -534,4 +534,3 @@ trap '__hook_exit' EXIT
 
 unset PLATFORM
 unset prependpath
-unset appendpath
