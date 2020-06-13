@@ -65,15 +65,45 @@ detect_project_root() {
     cur_dir=$pwd_dir
 
     while true; do
+        [ "$cur_dir" = "$HOME" ] && break
+        [ "$cur_dir" = "/" ] && break
+
         if [ -f "$cur_dir"/.lspconfig ]; then
             echo "$cur_dir"
             return
         fi
 
-        cd "$cur_dir"/.. || continue
+        cur_dir=$(cd "$cur_dir"/.. || exit 1; pwd -P)
     done
 
     echo "$pwd_dir"
+}
+
+clean_path() {
+    old_path=$1
+
+    wrapper_path=$(dirname "$0")
+    new_path=
+
+    OLDIFS=$IFS
+    IFS=:
+
+    for n in $old_path; do
+        if [ -z "$n" ]; then
+            continue
+        fi
+
+        if [ "$n" = "$wrapper_path" ]; then
+            continue
+        fi
+
+        new_path="${new_path:+$new_path:}$n"
+    done
+
+    IFS=$OLDIFS
+    unset OLDIFS
+
+    echo "$new_path"
 }
 
 main() {
@@ -87,6 +117,7 @@ main() {
         fi
     fi
 
+    PATH=$(clean_path "$PATH")
     PROJECT_ROOT=$(detect_project_root)
 
     CONF_USE=$(getvar "USE" "exec")
@@ -103,6 +134,5 @@ main() {
             ;;
     esac
 }
-
 
 main "$@"
