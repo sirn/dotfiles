@@ -186,6 +186,15 @@ _run() {
         $twemoji_gh/releases/download/v12.0.1/TwitterColorEmoji-SVGinOT-Linux-12.0.1.tar.gz \
         7886d78ecc992f87e17c9cf111d1e41100b0c5a5203c44c595faccb0ce14becd
 
+    ## iA Writer
+    ##
+
+    iawriter_gh=https://github.com/iaolo/iA-Fonts
+    _install_font_url \
+        ia-writer-fonts \
+        $iawriter_gh/archive/ba31f88a1e71f413f97bbd23a99e21b29d4c3a28.zip \
+        e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
     ## Droid Sans
     ## Using local mirror, since Droid Sans has been removed from Google Fonts
     ## in favor for Noto, but Noto Thai wasn't really designed for reading
