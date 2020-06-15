@@ -239,7 +239,7 @@ $(__prompt) "
         ;;
 esac
 
-PS1="\[\r$(tput dl1 2>/dev/null || true)\]$PS1"
+PS1="\["'$(printf "%$((COLUMNS-1))s\r")'"\]$PS1"
 
 export PS1
 
@@ -440,93 +440,6 @@ cd() {
         builtin cd "$dir" || return 1
     done
 }
-
-
-# shp - search history into prompt
-
-__shp() {
-    typeset cmd
-
-    if [ ! -f "$HISTFILE" ]; then
-        return
-    fi
-
-    cmd=$(command fc -l 1 |
-              sed 's|^\s*[0-9]*\s*||' |
-              fzf +s --tac -q "$*")
-
-    if [ -z "$cmd" ] && [ -z "$*" ]; then
-        return
-    fi
-
-    cmd=${cmd:-$*}
-
-    python3 -c "
-import fcntl, sys, termios
-for c in ' '.join(sys.argv[1:]):
-    fcntl.ioctl(sys.stdin, termios.TIOCSTI, c)
-" "$cmd"
-}
-
-__shp_silent() {
-    printf \
-        "%s%s" \
-        "$(tput cuu 1 2>/dev/null || true)" \
-        "$(tput el 2>/dev/null || true)"
-    __shp "$@"
-}
-
-if [ "$PLATFORM" != "openbsd" ] && command -v python3 >/dev/null; then
-    bind -m '^R'='^A __shp_silent ^J'
-fi
-
-
-## Hooks
-##
-
-_cleanup_ksh_history() {
-    tmphist=$(mktemp)
-
-    if [ ! -f "$HISTFILE" ]; then
-        return
-    fi
-
-    awk '!a[$0] { a[$0]++; print $0 }' < "$HISTFILE" |
-        grep -v \
-             -e '\\\s*$' \
-             -e '^ ' \
-             -e '^\$' \
-             -e '^apropos\s*' \
-             -e '^cat\s*' \
-             -e '^cccccc' \
-             -e '^cd [^\~/]' \
-             -e '^cd\s*$' \
-             -e '^chmod\s*' \
-             -e '^doas\s*' \
-             -e '^echo\s*' \
-             -e '^gg\s*$' \
-             -e '^ll\s*' \
-             -e '^ls\s*' \
-             -e '^man\s*' \
-             -e '^mv\s*' \
-             -e '^ps\s*' \
-             -e '^rm\s*' \
-             -e '^ssh-keyscan\s*' \
-             -e '^ssh\s*' \
-             -e '^sudo\s*' \
-             -e '^}\s*' \
-             -e '{\s*$' \
-             -e '|\s*grep\s*' \
-             -e '|\s*less\s*' \
-             > "$tmphist"
-    mv "$tmphist" "$HISTFILE"
-}
-
-__hook_exit() {
-    _cleanup_ksh_history
-}
-
-trap '__hook_exit' EXIT
 
 
 ## Cleanups
