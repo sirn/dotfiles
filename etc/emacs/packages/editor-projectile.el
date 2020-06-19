@@ -17,4 +17,6 @@
    "pr" #'projectile-run-project
    "p'" #'projectile-run-eshell
    "p!" #'projectile-run-async-shell-command-in-root
-   "pc" #'projectile-compile-project))
+   "pc" #'projectile-compile-project
+   "pr" #'projectile-replace
+   "pR" #'projectile-replace-regexp))
