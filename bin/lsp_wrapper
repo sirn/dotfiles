@@ -27,6 +27,46 @@ exec $CONF_CMD $*\
 }
 
 
+## Docker
+##
+
+run_docker() {
+    docker_image=$(getvar "DOCKER_${PROG_NAME}_IMAGE")
+    docker_shell=$(getvar "DOCKER_${PROG_NAME}_SHELL" "/bin/sh")
+
+    if [ -z "$docker_image" ]; then
+        print_err "${PROG_NAME} requires DOCKER_${PROG_NAME}_IMAGE to be set"
+        exit 1
+    fi
+
+    set -- \
+        --rm \
+        --init \
+        "$docker_image" \
+        "$docker_shell" -c "\
+exec $CONF_CMD $*\
+" # END-COMMAND
+
+    set -- -v "$PROJECT_ROOT:$PROJECT_ROOT" "$@"
+    docker_mounts=$(getvar "DOCKER_${PROG_NAME}_MOUNTS")
+    for mount_name in $docker_mounts; do
+        mount=$(getvar "DOCKER_${PROG_NAME}_MOUNTS_${mount_name}")
+        if [ -z "$mount" ]; then
+            continue
+        fi
+
+        set -- -v "$mount" "$@"
+    done
+
+    docker_name=$(getvar "DOCKER_${PROG_NAME}_NAME")
+    if [ -n "$docker_name" ]; then
+        set -- --name "$docker_name" "$@"
+    fi
+
+    exec docker run "$@"
+}
+
+
 ## Exec
 ##
 
@@ -127,6 +167,10 @@ main() {
     case "$CONF_USE" in
         vagrant )
             run_vagrant "$@"
+            ;;
+
+        docker )
+            run_docker "$@"
             ;;
 
         * )
