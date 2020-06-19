@@ -130,14 +130,14 @@ _do_src() {
     #
 
     if command -v docker >/dev/null; then
-        docker_cmd=docker
+        container_cmd=docker
     fi
 
     if command -v podman >/dev/null; then
-        docker_cmd=podman
+        container_cmd=podman
     fi
 
-    if [ -z "$docker_cmd" ]; then
+    if [ -z "$container_cmd" ]; then
         printf >&2 "%s: docker or podman not installed?\\n" "$BASE_NAME"
         return 1
     fi
@@ -211,7 +211,7 @@ _do_src() {
     esac
 
     # shellcheck disable=SC2086
-    $docker_cmd run \
+    $container_cmd run \
                 --rm -i \
                 -e XBPS_CHROOT_CMD=ethereal \
                 -e XBPS_ALLOW_CHROOT_BREAKOUT=yes \
