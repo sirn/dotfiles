@@ -18,8 +18,6 @@ _run() {
         aspell \
         aspell-en \
         curl \
-        docker \
-        docker-compose \
         execline \
         fzf \
         git \
@@ -27,6 +25,8 @@ _run() {
         mercurial \
         mosh \
         neovim \
+        podman \
+        podman-compose \
         python3-tmuxp \
         rsync \
         s6 \
