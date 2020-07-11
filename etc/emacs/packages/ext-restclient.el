@@ -1,6 +1,7 @@
 ;; -*- lexical-binding: t -*-
 
 (use-package restclient
+  :after jq-mode
   :demand t)
 
 

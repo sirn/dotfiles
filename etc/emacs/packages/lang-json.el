@@ -56,3 +56,7 @@ This function calls `json-mode--update-auto-mode' to change the
         'error)
        (flycheck-checker-get 'json-python-json 'error-patterns)
        :test #'equal))))
+
+
+(use-package jq-mode
+  :demand t)
