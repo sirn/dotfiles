@@ -24,6 +24,18 @@ export XDG_DATA_HOME
 export XDG_STATE_HOME
 
 
+## LaTeX
+##
+
+for texpath in /opt/texlive/*/bin/*; do
+    if [ -d "$texpath" ]; then
+        PATH=$texpath:$PATH
+        unset texpath
+        break
+    fi
+done
+
+
 ## Local bins
 ##
 
