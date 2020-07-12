@@ -129,12 +129,15 @@ _do_src() {
     # is not installed
     #
 
+    container_args=
+
     if command -v docker >/dev/null; then
         container_cmd=docker
     fi
 
     if command -v podman >/dev/null; then
         container_cmd=podman
+        container_args="--ulimit nofile=127952:127952"
     fi
 
     if [ -z "$container_cmd" ]; then
@@ -217,6 +220,7 @@ _do_src() {
                 -e XBPS_ALLOW_CHROOT_BREAKOUT=yes \
                 -v "$cur_dir":/hostrepo \
                 -v /tmp:/tmp \
+                $container_args \
                 $mounts \
                 docker.io/"$docker_base"-"$BOOTSTRAP":"$docker_tag" \
                 bash <<-EOF
