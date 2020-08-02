@@ -9,6 +9,7 @@ if [ $# -lt 1 ]; then
 fi
 
 find "$HOME" \
+    -xdev \
     -iname '*'"$1"'*' \
     ! \( -path '*/.dotfiles*' \
      -or -path '*/.emacs.d*' \
