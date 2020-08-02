@@ -499,7 +499,9 @@ get a chance to run first, for example to set LSP configuration."
                   #'purescript-mode
                   #'ruby-mode
                   #'rust-mode
-                  #'sh-mode))
+                  #'sh-mode
+                  #'css-mode
+                  #'web-mode))
         (lsp))))
 
   (add-hook 'after-change-major-mode-hook #'gemacs--lsp-maybe-enable)
