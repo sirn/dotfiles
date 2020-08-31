@@ -45,4 +45,13 @@ export SSH_AUTH_SOCK ${xdg-runtime-dir}/gnupg/S.gpg-agent.ssh
 # Running
 #
 
+# Only run Emacs if XDG_RUNTIME_DIR already created by elogind. Without this
+# check emacsclient may be unable to connect to emacs server in a desktop
+# session.
+#
+
+if {
+    test -d ${xdg-runtime-dir}
+}
+
 emacs --fg-daemon --chdir=${homedir}
