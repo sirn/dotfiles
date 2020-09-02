@@ -108,7 +108,7 @@ _setup_user_links() {
 _setup_user_shell() {
     printe_h2 "Changing user shell..."
 
-    change_shell loksh
+    change_shell oksh
 }
 
 _setup_desktop_links() {
