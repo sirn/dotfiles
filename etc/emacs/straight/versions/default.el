@@ -91,7 +91,7 @@
  ("pinentry" . "cd942f755c38a7ac270ce858bb887ebdd59edd26")
  ("pkg-info" . "76ba7415480687d05a4353b27fea2ae02b8d9d61")
  ("pos-tip" . "179cc126b363f72ca12fab1e0dc462ce0ee79742")
- ("prescient.el" . "cc289ba3b0d89f251267ca2b669d01b3afecc530")
+ ("prescient.el" . "81bbe0712013a83bb866b74aad2f273bc074e388")
  ("projectile" . "a2b5a70e204e277a738615901dfebf274c8202c2")
  ("psc-ide-emacs" . "663f4e2cf9cbafdd4b9a60c34346596e2a40c87c")
  ("purescript-mode" . "154ad16b61fb9dec83a6c863ffaf92638278f00f")
