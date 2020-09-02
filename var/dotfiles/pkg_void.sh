@@ -21,7 +21,7 @@ _run() {
         execline \
         fzf \
         git \
-        loksh \
+        oksh \
         mercurial \
         mosh \
         neovim \
