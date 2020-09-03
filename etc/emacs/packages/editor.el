@@ -23,6 +23,10 @@
 
 
 (use-package ag
+  :preface
+  (eval-when-compile
+    (declare-function ag nil))
+
   :leader
   ("/" #'ag))
 
