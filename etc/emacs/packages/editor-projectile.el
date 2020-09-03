@@ -5,15 +5,20 @@
 
   :init
   (setq projectile-switch-project-action 'projectile-dired)
-  (setq projectile-completion-system 'ivy)
+  (setq projectile-completion-system 'default)
 
   :config
   (projectile-mode +1)
+
   (defun gemacs--projectile-invalidate-cache (&rest _args)
     (projectile-invalidate-cache nil))
 
   :leader
-  ("pk" #'projectile-kill-buffers
+  ("p/" #'projectile-ag
+   "pf" #'projectile-find-file
+   "pp" #'projectile-switch-project
+   "pb" #'projectile-switch-to-buffer
+   "pk" #'projectile-kill-buffers
    "pr" #'projectile-run-project
    "p'" #'projectile-run-eshell
    "p!" #'projectile-run-async-shell-command-in-root
