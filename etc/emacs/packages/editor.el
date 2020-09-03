@@ -22,6 +22,11 @@
    "jl" #'avy-goto-line))
 
 
+(use-package ag
+  :leader
+  ("/" #'ag))
+
+
 (use-package ace-link
   :commands ace-link
 
@@ -302,7 +307,7 @@ buffer is modified.")
   (setq company-frontends '(company-pseudo-tooltip-frontend))
   (setq company-show-numbers t)
   (setq company-require-match #'company-explicit-action-p)
-  (setq company-auto-complete-chars nil)
+  (setq company-auto-commit-chars nil)
   (setq company-dabbrev-other-buffers nil)
   (setq company-dabbrev-ignore-case nil)
   (setq company-dabbrev-downcase nil)
