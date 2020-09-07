@@ -39,7 +39,8 @@ Similar to ivy's `ivy-partial-or-done'."
     (interactive)
     (progn
       (let ((prev-input (selectrum-get-current-input)))
-        (selectrum-insert-current-candidate)
+        (when (> (length (selectrum-get-current-candidates)) 0)
+          (selectrum-insert-current-candidate))
         (when (string= prev-input (selectrum-get-current-input))
           (selectrum-select-current-candidate)))))
 
