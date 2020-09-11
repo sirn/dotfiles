@@ -39,7 +39,21 @@ done
 ## Local bins
 ##
 
-PATH=$HOME/.dotfiles/bin:$HOME/.dotfiles/libexec/wrapper:$PATH
+prependpath() {
+    case ":$PATH:" in
+        *:"$1":*)
+            ;;
+
+        * )
+            PATH="${1:+$1:}$PATH"
+            ;;
+    esac
+}
+
+prependpath "/opt/local/bin"
+prependpath "/usr/local/bin"
+prependpath "$HOME/.dotfiles/bin"
+prependpath "$HOME/.dotfiles/libexec/wrapper"
 
 
 ## GPG agent
@@ -64,6 +78,12 @@ for n in .profile2 .profile_local; do
         . "$HOME/$n"
     fi
 done
+
+
+## Cleanups
+##
+
+unset prependpath
 
 
 ## Finalizing
