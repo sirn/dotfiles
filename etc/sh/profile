@@ -39,6 +39,9 @@ done
 ## Local bins
 ##
 
+# shellcheck disable=SC2123
+PATH=
+
 prependpath() {
     case ":$PATH:" in
         *:"$1":*)
@@ -48,10 +51,17 @@ prependpath() {
             PATH="${1:+$1:}$PATH"
             ;;
     esac
+
+    PATH=${PATH%%:}
 }
 
-prependpath "/opt/local/bin"
+prependpath "/sbin"
+prependpath "/usr/sbin"
+prependpath "/usr/local/sbin"
+prependpath "/bin"
+prependpath "/usr/bin"
 prependpath "/usr/local/bin"
+prependpath "/opt/local/bin"
 prependpath "$HOME/.dotfiles/bin"
 prependpath "$HOME/.dotfiles/libexec/wrapper"
 
