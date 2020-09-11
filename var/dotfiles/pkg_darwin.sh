@@ -8,6 +8,7 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 cd "$(dirname "$0")" || exit 1
 . "lib/utils.sh"
 . "lib/utils_darwin.sh"
+. "lib/buildenv.sh"
 
 _run() {
     printe_h2 "Installing packages..."
@@ -42,8 +43,7 @@ _run_desktop() {
     printe_h2 "Installing desktop packages..."
 
     macports_install \
-        emacs-mac-app, \
-        mpv
+        emacs-mac-app
 }
 
 _run_dev() {

@@ -41,14 +41,6 @@ export HISTFILE
 export HISTSIZE
 
 
-## Platform
-##
-
-unset PLATFORM
-
-PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
-
-
 ## GPG
 ##
 
@@ -108,25 +100,6 @@ done
 
 unset _gopath
 unset _gopaths
-
-case "$PLATFORM" in
-    darwin )
-        prependpath /opt/local/bin
-
-        if [ -f /usr/libexec/java_home ]; then
-            JAVA_HOME=$(/usr/libexec/java_home)
-            export JAVA_HOME
-        fi
-
-        for _pypath in "$HOME"/Library/Python/?.?/bin; do
-            if [ -d "$_pypath" ]; then
-                prependpath "$_pypath"
-            fi
-        done
-
-        unset _pypath
-        ;;
-esac
 
 
 ## Local
@@ -239,8 +212,10 @@ $(__prompt) "
         ;;
 esac
 
+# shellcheck disable=SC2089
 PS1="\["'$(printf "%$((COLUMNS-1))s\r")'"\]$PS1"
 
+# shellcheck disable=SC2090
 export PS1
 
 
@@ -445,5 +420,4 @@ cd() {
 ## Cleanups
 ##
 
-unset PLATFORM
 unset prependpath

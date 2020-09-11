@@ -32,12 +32,12 @@ macports_installed() {
     pkg=$1; shift
 
     case "$($MACPORTS installed "$pkg" 2>&1)" in
-        "None of the"* )
-            return 0
+        "None"* )
+            return 1
             ;;
 
         * )
-            return 1
+            return 0
             ;;
     esac
 }
@@ -55,12 +55,13 @@ macports_install() {
         fi
 
         pkgname=${pkgname%%$pkgflag}
+        pkgname=$(trim "$pkgname")
         if macports_installed "$pkgname"; then
             printe "$pkgname (macports) already installed"
             continue
         fi
 
-        if ! run_root $MACPORTS -n install "$pkgname" $pkgflag; then
+        if ! run_root $MACPORTS -N install "$pkgname" $pkgflag; then
             printe_info "$pkg (macports) failed to install, skipping..."
         fi
     done
