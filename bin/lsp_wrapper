@@ -71,7 +71,7 @@ exec $CONF_CMD $*\
 ##
 
 run_exec() {
-    set -- "$CONF_CMD" "$@"
+    set -- $CONF_CMD "$@"
     exec "$@"
 }
 
