@@ -504,12 +504,13 @@ get a chance to run first, for example to set LSP configuration."
       (unless (or (null buffer-file-name)
                 (derived-mode-p
                   #'clojure-mode
+                  #'css-mode
                   #'emacs-lisp-mode
+                  #'markdown-mode
                   #'purescript-mode
                   #'ruby-mode
                   #'rust-mode
                   #'sh-mode
-                  #'css-mode
                   #'web-mode))
         (lsp))))
 
