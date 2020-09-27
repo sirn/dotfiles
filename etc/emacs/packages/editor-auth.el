@@ -1,11 +1,8 @@
 ;; -*- lexical-binding: t -*-
 
-(use-feature epg)
-
-
-(use-feature epa
+(use-feature epg
   :init
-  (setq epa-pinentry-mode 'loopback))
+  (setq epg-pinentry-mode 'loopback))
 
 
 (use-package pinentry

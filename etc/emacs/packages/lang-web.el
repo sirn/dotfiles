@@ -43,6 +43,10 @@
   (add-hook 'web-mode-hook #'gemacs--web-js-fix-comments)
 
   (use-feature apheleia
+    :preface
+    (eval-when-compile
+      (defvar web-mode-fontification-off))
+
     :config
     (defun gemacs--web-highlight-after-formatting ()
       "Make sure syntax highlighting works with Apheleia.
