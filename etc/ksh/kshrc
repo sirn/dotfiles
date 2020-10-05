@@ -234,6 +234,7 @@ fi
 
 alias ll='ls -lh'
 alias la='ls -alh'
+alias sshi='ssh -o StrictHostKeyChecking=ask -o UserKnownHostsFile=/dev/null'
 
 if command -v podman >/dev/null && ! command -v docker >/dev/null; then
     alias docker="podman"
