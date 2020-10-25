@@ -74,6 +74,21 @@ prependpath() {
     esac
 }
 
+
+## Nix
+##
+
+prependpath "$HOME/.nix-profile/bin"
+
+if command -v nix-env >/dev/null; then
+    LOCALE_ARCHIVE=$HOME/.nix-profile/lib/locale/locale-archive
+    export LOCALE_ARCHIVE
+fi
+
+
+## Dev
+##
+
 GOPATH=$HOME/Dev/go/gopath:$HOME/Dev
 RUST_SRC_PATH="$HOME/.local/lib/rustlib/src/rust/src"
 
@@ -86,7 +101,6 @@ prependpath "$HOME/.cabal/bin"
 prependpath "$HOME/.cargo/bin"
 prependpath "$HOME/.nimble/bin"
 prependpath "$HOME/.local/lib/pytools3/bin"
-prependpath "$HOME/.local/lib/google-cloud-sdk/bin"
 
 _gopaths=$GOPATH
 

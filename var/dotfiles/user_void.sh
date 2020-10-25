@@ -123,4 +123,5 @@ _setup_dev_links() {
     printe_h2 "Installing dev links..."
 
     make_link "$BASE_DIR/etc/proselint/proselintrc" "$HOME/.proselintrc"
+    make_link "$BASE_DIR/etc/nix/default.nix" "$HOME/.config/nixpkgs/config.nix"
 }

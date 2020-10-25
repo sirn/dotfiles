@@ -15,12 +15,14 @@ _run() {
     pkgng_bootstrap
 
     pkgng_install \
+        GraphicsMagick \
         aria2 \
         aspell \
         base64 \
         ca_root_nss \
         compat8x-amd64 \
         curl \
+        duplicity \
         en-aspell \
         fzf \
         git \
@@ -34,6 +36,7 @@ _run() {
         socat \
         the_silver_searcher \
         tmux \
+        tree \
         w3m
 }
 
@@ -51,9 +54,7 @@ _run_dev() {
     printe_h2 "Installing dev packages..."
 
     pkgng_install \
-        GraphicsMagick \
         autoconf \
-        duplicity \
         elixir \
         entr \
         erlang \
@@ -76,9 +77,7 @@ _run_dev() {
         python37 \
         rebar3 \
         ruby \
-        socat \
-        terraform \
-        tree
+        terraform
 
     sh "$BASE_DIR/var/dotfiles/packages/lang/rust.sh" "$@"
     sh "$BASE_DIR/var/dotfiles/packages/dev/erlang.sh" "$@"
@@ -91,7 +90,7 @@ _run_dev() {
     sh "$BASE_DIR/var/dotfiles/packages/net/kubernetes.sh" "$@"
 
     # TODO: no choosenim for freebsd
-    #sh "$BASE_DIR/var/dotfiles/packages/lang/nim.sh" "$@"
+    # sh "$BASE_DIR/var/dotfiles/packages/lang/nim.sh" "$@"
 }
 
 _run_all() {
