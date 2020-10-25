@@ -13,18 +13,19 @@ _run() {
     printe_h2 "Installing packages..."
 
     xbps_install \
-        ansible \
+        GraphicsMagick \
         aria2 \
         aspell \
         aspell-en \
         curl \
+        duplicity \
         execline \
         fzf \
         git \
-        oksh \
         mercurial \
         mosh \
         neovim \
+        oksh \
         podman \
         podman-compose \
         python3-tmuxp \
@@ -35,9 +36,11 @@ _run() {
         sqlite \
         the_silver_searcher \
         tmux \
+        tree \
         unzip \
         w3m \
         xtools \
+        xz \
         zip
 }
 
@@ -70,49 +73,29 @@ _run_desktop() {
 _run_dev() {
     printe_h2 "Installing dev packages..."
 
+    # Rust/Nim has its own versioning ecosystem and Nix support
+    # is still very limited
     xbps_install \
-        GraphicsMagick \
-        cabal-install \
-        choosenim \
-        duplicity \
-        elixir \
-        entr \
-        erlang \
-        erlang-wx \
-        git-crypt \
-        git-lfs \
-        go \
-        graphviz \
-        ipcalc \
-        jq \
-        jsonnet \
-        libressl-devel \
-        nodejs-lts \
-        pandoc \
-        patch \
-        pkg-config \
-        postgresql-client \
-        python3 \
-        python3-devel \
-        python3-pip \
-        ruby \
-        shellcheck \
-        socat \
-        tcl \
-        terraform \
-        tree \
-        xz
+        cargo \
+        choosenim
 
     sh "$BASE_DIR/var/dotfiles/packages/lang/rust.sh" "$@"
     sh "$BASE_DIR/var/dotfiles/packages/lang/nim.sh" "$@"
-    sh "$BASE_DIR/var/dotfiles/packages/dev/erlang.sh" "$@"
-    sh "$BASE_DIR/var/dotfiles/packages/dev/elixir.sh" "$@"
-    sh "$BASE_DIR/var/dotfiles/packages/dev/golang.sh" "$@"
-    sh "$BASE_DIR/var/dotfiles/packages/dev/haskell.sh" "$@"
-    sh "$BASE_DIR/var/dotfiles/packages/dev/node.sh" "$@"
-    sh "$BASE_DIR/var/dotfiles/packages/dev/python.sh" "$@"
-    sh "$BASE_DIR/var/dotfiles/packages/net/cloudflared.sh" "$@"
-    sh "$BASE_DIR/var/dotfiles/packages/net/kubernetes.sh" "$@"
+
+    # Nix
+    printe_info "\
+Development packages on Void is managed by Nix.
+Please ensure nix is installed by running:
+
+    xbps-install -Syu nix
+    ln -s /etc/sv/nix-daemon /var/service/
+
+Then run the following:
+
+    nix-channel --add http://nixos.org/channels/nixpkgs-unstable
+    nix-channel --update
+    nix-env -i all
+"
 }
 
 _run_all() {
