@@ -2,7 +2,7 @@
 
 This repository hosts my personal dotfiles as well as machine provisioning and workflow scripts. This repository come with no warranty. It may wipe your boot disk, eat your pet, etc. I like to experiment with my setup and this repository reflect that. This thing is also way too complicated than it should be, so use it at your own risk.
 
--   FreeBSD: [![builds.sr.ht status](https://builds.sr.ht/~sirn/dotfiles/freebsd.yml.svg)](https://builds.sr.ht/~sirn/dotfiles/freebsd.yml?)
+-   FreeBSD: [![builds.sr.ht status](https://builds.sr.ht/~sirn/dotfiles/commits/freebsd.yml.svg)](https://builds.sr.ht/~sirn/dotfiles/commits/freebsd.yml?)
 
 ## Usage
 
