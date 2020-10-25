@@ -1,8 +1,6 @@
 ;; -*- lexical-binding: t -*-
 
 (use-package json-mode
-  :init
-  (setq lsp-clients-elixir-server-executable "elixir-ls")
   :init/el-patch
   (defconst json-mode-standard-file-ext '(".json" ".jsonld")
     "List of JSON file extensions.")
