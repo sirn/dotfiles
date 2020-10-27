@@ -37,6 +37,7 @@ _run() {
         the_silver_searcher \
         tmux \
         tree \
+        unison \
         unzip \
         w3m \
         xtools \
