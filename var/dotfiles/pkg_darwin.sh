@@ -36,6 +36,7 @@ _run() {
         socat, \
         the_silver_searcher, \
         tmux, \
+        unison, \
         w3m
 }
 
