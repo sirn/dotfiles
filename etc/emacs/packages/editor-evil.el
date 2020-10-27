@@ -3,6 +3,13 @@
 (use-package evil
   :demand t
 
+  :preface
+  (eval-when-compile
+    (defvar evil-want-integration)
+    (defvar evil-want-keybinding)
+    (defvar evil-mode-line-format)
+    (defvar evil-undo-system))
+
   :init
   (setq evil-want-integration +1)
   (setq evil-want-keybinding nil)
