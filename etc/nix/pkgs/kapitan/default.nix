@@ -1,6 +1,5 @@
 { lib, stdenv, python3, fetchFromGitHub }:
 
-
 let
   # Kapitan requires very specific version of a package.
   python3_kapitan = python3.override {
@@ -51,7 +50,7 @@ let
         pname = "hvac";
         version = "0.10.4";
 
-        pythonPath = [ self.requests super.six ];
+        pythonPath = with self; [ requests six ];
         propagatedBuildInputs = pythonPath;
 
         doCheck = false;

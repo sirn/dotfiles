@@ -36,7 +36,7 @@
         kubernetesDev
         nodeDev
         opsDev
-        python38Dev
+        python3Dev
         rubyDev
         tclDev
       ];
@@ -140,18 +140,20 @@
       ];
     };
 
-    python38Dev = buildEnv {
-      name = "python38Dev";
+    python3Pyls = callPackage ./pkgs/python-pyls { };
+
+    python3Dev = buildEnv {
+      name = "python3Dev";
       paths = [
         python38Full
-        python38Packages.black
-        python38Packages.flake8
         python38Packages.pip
         python38Packages.poetry
-        python38Packages.pyls-black
-        python38Packages.pyls-isort
-        python38Packages.pyls-mypy
-        python38Packages.python-language-server
+        python38Packages.black
+        python38Packages.flake8
+        python3Pyls.pyls-black
+        python3Pyls.pyls-isort
+        python3Pyls.pyls-mypy
+        python3Pyls.python-language-server
       ];
     };
 
