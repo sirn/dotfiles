@@ -8,6 +8,7 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 cd "$(dirname "$0")" || exit 1
 . "lib/utils.sh"
 . "lib/utils_darwin.sh"
+. "lib/utils_nix.sh"
 . "lib/buildenv.sh"
 
 _run() {
@@ -16,10 +17,12 @@ _run() {
     macports_bootstrap
 
     macports_install \
+        GraphicsMagick, \
         aria2 +sqlite3, \
         aspell, \
         aspell-dict-en, \
         curl +darwinssl +http2, \
+        duplicity, \
         emacs, \
         fzf, \
         git, \
@@ -36,6 +39,7 @@ _run() {
         socat, \
         the_silver_searcher, \
         tmux, \
+        tree, \
         unison, \
         w3m
 }
@@ -48,51 +52,25 @@ _run_desktop() {
 }
 
 _run_dev() {
+    _setup_macports_dev "$@"
+    _setup_nix_dev "$@"
+}
+
+_setup_macports_dev() {
     printe_h2 "Installing dev packages..."
 
     macports_install \
-        GraphicsMagick, \
-        autoconf, \
-        carthage, \
-        duplicity, \
-        elixir, \
-        entr, \
-        erlang, \
-        git-crypt, \
-        git-lfs, \
-        go, \
-        graphviz, \
-        hs-cabal-install, \
-        ipcalc, \
-        jq, \
-        leiningen, \
-        nodejs10, \
-        npm6, \
-        pandoc, \
-        py37-pip, \
-        python37, \
-        rebar3, \
-        ruby26, \
-        shellcheck, \
-        socat, \
-        tcl, \
-        terraform, \
-        tree, \
-        xz, \
-        zlib
-
-    macports_select pip3 pip37
-    macports_select python3 python37
-    macports_select ruby ruby26
+        carthage
 
     sh "$BASE_DIR/var/dotfiles/packages/lang/rust.sh" "$@"
     sh "$BASE_DIR/var/dotfiles/packages/lang/nim.sh" "$@"
-    sh "$BASE_DIR/var/dotfiles/packages/dev/erlang.sh" "$@"
-    sh "$BASE_DIR/var/dotfiles/packages/dev/elixir.sh" "$@"
-    sh "$BASE_DIR/var/dotfiles/packages/dev/golang.sh" "$@"
-    sh "$BASE_DIR/var/dotfiles/packages/dev/haskell.sh" "$@"
-    sh "$BASE_DIR/var/dotfiles/packages/dev/node.sh" "$@"
-    sh "$BASE_DIR/var/dotfiles/packages/dev/python.sh" "$@"
-    sh "$BASE_DIR/var/dotfiles/packages/net/cloudflared.sh" "$@"
-    sh "$BASE_DIR/var/dotfiles/packages/net/kubernetes.sh" "$@"
+}
+
+_setup_nix_dev() {
+    printe_h2 "Installing nix packages..."
+
+    nix_bootstrap
+
+    nix_ensure_channel "https://nixos.org/channels/nixpkgs-20.09-darwin"
+    nix_install "$BASE_DIR/etc/nix/default.nix"
 }
