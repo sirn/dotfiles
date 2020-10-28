@@ -23,7 +23,7 @@
         jq
         jsonnet
         pandoc
-        postgresql_13
+        postgresql_12
         proselint
         rnix-lsp
         shellcheck
