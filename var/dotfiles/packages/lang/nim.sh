@@ -22,13 +22,16 @@ _preflight() {
 }
 
 _run() {
-    nimble update
+    printe_h2 "Installing nim packages..."
 
+    _nimble_update
     _nimble_install nimr nimr
     _nimble_install nimcr nimcr
 }
 
 _run_dev() {
+    printe_h2 "Installing nim dev packages..."
+
     _nimble_install nimlsp
 }
 
@@ -85,6 +88,15 @@ _nimble_install() {
     fi
 
     nimble install "$pkg"
+}
+
+_nimble_update() {
+    PATH=$HOME/.nimble/bin:$PATH
+
+    if find $HOME/.nimble/packages_official.json -mtime +3d -print >/dev/null; then
+        printe_info "nimble package database is outdated; updating..."
+        nimble update
+    fi
 }
 
 run_with_flavors "$@"
