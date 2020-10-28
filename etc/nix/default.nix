@@ -79,6 +79,7 @@
     gotools = pkgs.gotools.overrideAttrs (oldAttrs: rec {
       postInstall = oldAttrs.postInstall + ''
         rm $out/bin/bundle
+        rm $out/bin/doc
       '';
     });
 
