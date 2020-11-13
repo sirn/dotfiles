@@ -136,6 +136,7 @@
         cloudflared
         google-cloud-sdk
         ipcalc
+        nomad
         terraform_0_13
       ];
     };
