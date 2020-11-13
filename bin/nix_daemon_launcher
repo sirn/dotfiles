@@ -1,0 +1,14 @@
+#!/usr/bin/env execlineb
+#
+# Start nix-daemon
+#
+
+backtick -n user { id -u }
+importas user user
+
+ifelse { test ${user} != "0" } {
+  foreground { echo "Must be run as root." }
+  exit 1
+}
+
+background { nix-daemon }
