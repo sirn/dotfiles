@@ -220,9 +220,12 @@ fetch_gh_raw() {
 ## Sysinfo
 ##
 
-get_platform() {
+get_sys() {
     platform=$(uname | tr '[:upper:]' '[:lower:]')
+    arch=$(uname -m)
+    tag=
 
+    # Normalize platform name
     if [ "$platform" = "linux" ]; then
         if [ -f /etc/os-release ] && grep -q ubuntu /etc/os-release; then
             platform=ubuntu
@@ -236,21 +239,32 @@ get_platform() {
             platform=arch
         elif [ -f /etc/artix-release ]; then
             platform=arch
+        else
+            platform=linux
         fi
     fi
 
+    # Normalize arch
+    case $(uname -m) in
+        amd64 | x86_64 )  arch=amd64;;
+        arm64 | aarch64 ) arch=aarch64;;
+        armv* )           arch=arm;;
+    esac
+
+    # Differentiate in case of WSL/CYGWIN/etc.
     if [ -f /proc/version ] && grep -qi microsoft /proc/version; then
-        platform="$platform"_wsl
+        tag="$tag"_wsl
     fi
 
-    echo "$platform"
+    # Returns darwin-amd64 / void-amd64 / void-amd64-wsl / etc.
+    echo "${platform}-${arch}${tag}"
 }
 
 get_netif() {
     netif=
 
-    case $(get_platform) in
-        freebsd )
+    case $(get_sys) in
+        freebsd-* )
             for i in $(ifconfig -l -u); do
                 if ifconfig "$i" |grep -q ether; then
                     netif=$i
