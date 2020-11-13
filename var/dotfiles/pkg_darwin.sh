@@ -40,7 +40,7 @@ _run() {
         the_silver_searcher, \
         tmux, \
         tree, \
-        unison, \
+        unison -gtk, \
         w3m
 }
 
