@@ -6,7 +6,7 @@
 BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
-. "./pkg_void.sh"
+. "./pkg_void-amd64.sh"
 
 _run_system() {
     : # Don't run system for WSL

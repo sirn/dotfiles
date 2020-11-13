@@ -12,21 +12,21 @@ cd "$(dirname "$0")" || exit 1
 CLOUDSDK_VER=280.0.0
 HELM_VER=2.16.6
 
-case $(get_platform) in
-    ubuntu | debian | void )
-        CLOUDSDK_DIST=google-cloud-sdk-${CLOUDSDK_VER}-linux-x86_64.tar.gz
-        CLOUDSDK_SHA256=11950f1db216ec7dc3abaf80722fb80518c38e279bd76b6924326fe660c209cf
-
-        HELM_DIST=helm-v${HELM_VER}-linux-amd64.tar.gz
-        HELM_SHA256=e38fea59bc382feb0f80322d582266465d76ab72acdc0079c2350cc3fd8a3f4c
-        ;;
-
-    darwin )
+case $(get_sys) in
+    darwin-amd64 )
         CLOUDSDK_DIST=google-cloud-sdk-${CLOUDSDK_VER}-darwin-x86_64.tar.gz
         CLOUDSDK_SHA256=c9554507bc217a503b42bef7dfa72179bae57ad7e4e696af4205c50b373d3576
 
         HELM_DIST=helm-v${HELM_VER}-darwin-amd64.tar.gz
         HELM_SHA256=7cccf13b3e821dda1e0ffa56ca6bec2648f2dae6fb8c12f22a9be2396698771f
+        ;;
+
+    *-amd64 )
+        CLOUDSDK_DIST=google-cloud-sdk-${CLOUDSDK_VER}-linux-x86_64.tar.gz
+        CLOUDSDK_SHA256=11950f1db216ec7dc3abaf80722fb80518c38e279bd76b6924326fe660c209cf
+
+        HELM_DIST=helm-v${HELM_VER}-linux-amd64.tar.gz
+        HELM_SHA256=e38fea59bc382feb0f80322d582266465d76ab72acdc0079c2350cc3fd8a3f4c
         ;;
 
     * )

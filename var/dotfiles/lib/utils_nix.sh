@@ -15,9 +15,9 @@ nix_bootstrap() {
 
     printe_h2 "Bootstrapping nix..."
 
-    case "$(get_platform)" in
-        darwin ) set -- --daemon --darwin-use-unencrypted-nix-store-volume;;
-        * )      set -- --daemon;;
+    case "$(get_sys)" in
+        darwin-* ) set -- --daemon --darwin-use-unencrypted-nix-store-volume;;
+        * )        set -- --daemon;;
     esac
 
     fetch_url - https://releases.nixos.org/nix/nix-${NIX_VERSION}/install | sh -s - "$@"

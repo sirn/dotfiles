@@ -15,7 +15,7 @@ cd "$BASE_DIR" || exit 1
 LC_ALL=en_US.UTF-8
 PATH=/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/bin:/usr/local/sbin
 PATH=$HOME/.local/bin:/opt/local/bin:$PATH
-PLATFORM=$(get_platform)
+SYS=$(get_sys)
 
 export LC_ALL
 export PATH
@@ -120,7 +120,7 @@ for p in pkg user; do
         run=0
 
         for b in $LOOKUP_PATH; do
-            runscript="$b/var/dotfiles/${p}_${PLATFORM}.sh"
+            runscript="$b/var/dotfiles/${p}_${SYS}.sh"
 
             if [ ! -f "$runscript" ]; then
                 continue
@@ -137,7 +137,7 @@ for p in pkg user; do
         done
 
         if [ $run != 1 ]; then
-            printe_err "Profile ${p} was not found for PLATFORM ${PLATFORM}"
+            printe_err "Profile ${p} was not found for ${SYS}"
             exit 1
         fi
     fi
