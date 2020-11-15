@@ -8,10 +8,15 @@
   :init
   (setq python-fill-docstring-style 'django)
   (setq python-indent-guess-indent-offset-verbose nil)
-  (setq lsp-pyls-server-command
-    (gemacs--path-join
-      (file-name-as-directory (getenv "HOME"))
-      ".dotfiles/libexec/lsp/pyls"))
+
+  (use-feature lsp-mode
+    :init
+    (setq lsp-pyls-server-command
+      (gemacs--path-join
+        (file-name-as-directory (getenv "HOME"))
+        ".dotfiles/libexec/lsp/pyls"))
+
+    (add-hook 'python-mode-hook #'lsp))
 
   :config
   (defun gemacs--python-fix-outline-mode-config ()

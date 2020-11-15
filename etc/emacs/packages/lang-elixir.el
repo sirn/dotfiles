@@ -6,4 +6,7 @@
     (defvar lsp-clients-elixir-server-executable))
 
   :init
-  (setq lsp-clients-elixir-server-executable "elixir-ls"))
+  (use-feature lsp-mode
+    :init
+    (setq lsp-clients-elixir-server-executable "elixir-ls")
+    (add-hook 'elixir-mode-hook #'lsp)))

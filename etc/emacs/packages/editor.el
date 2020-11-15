@@ -494,25 +494,6 @@ area."
 ;;; Language Server Protocol
 
 (use-package lsp-mode
-  :init
-  (defun gemacs--lsp-maybe-enable ()
-    "Enable `lsp-mode' for most programming modes. Do this on
-`after-change-major-mode-hook' instead of `prog-mode-hook' and
-`text-mode-hook' because we want to make sure regular mode hooks
-get a chance to run first, for example to set LSP configuration."
-    (when (derived-mode-p #'prog-mode #'text-mode)
-      (unless (or (null buffer-file-name)
-                (derived-mode-p
-                  #'clojure-mode
-                  #'emacs-lisp-mode
-                  #'purescript-mode
-                  #'ruby-mode
-                  #'rust-mode
-                  #'sh-mode))
-        (lsp))))
-
-  (add-hook 'after-change-major-mode-hook #'gemacs--lsp-maybe-enable)
-
   :config
   (setq lsp-enable-snippet nil)
   (setq lsp-file-watch-threshold nil)
