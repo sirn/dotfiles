@@ -124,7 +124,6 @@
         nodePackages.tern
         nodePackages.typescript
         nodePackages.typescript-language-server
-        nodePackages.yaml-language-server
         nodejs
       ];
     };
@@ -138,7 +137,6 @@
         ipcalc
         linode-cli
         nomad
-        terraform-lsp
         terraform_0_13
       ];
     };
