@@ -136,7 +136,9 @@
         cloudflared
         google-cloud-sdk
         ipcalc
+        linode-cli
         nomad
+        terraform-lsp
         terraform_0_13
       ];
     };
