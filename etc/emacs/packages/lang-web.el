@@ -22,6 +22,10 @@
   (setq web-mode-enable-current-element-highlight t)
   (setq web-mode-enable-current-column-highlight t)
 
+  (use-feature lsp-mode
+    :init
+    (add-hook 'web-mode-hook #'lsp))
+
   :config
   (add-to-list 'web-mode-content-types-alist '("jsx" . "\\.js[x]?\\'"))
 
