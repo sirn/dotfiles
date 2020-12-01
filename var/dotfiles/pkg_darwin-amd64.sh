@@ -26,7 +26,6 @@ _run() {
         emacs, \
         fzf, \
         git, \
-        ipfs, \
         mercurial, \
         mosh, \
         oksh, \
