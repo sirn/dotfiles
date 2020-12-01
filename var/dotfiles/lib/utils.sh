@@ -247,7 +247,7 @@ get_sys() {
     # Normalize arch
     case $(uname -m) in
         amd64 | x86_64 )  arch=amd64;;
-        arm64 | aarch64 ) arch=aarch64;;
+        arm64 | aarch64 ) arch=arm64;;
         armv* )           arch=arm;;
     esac
 

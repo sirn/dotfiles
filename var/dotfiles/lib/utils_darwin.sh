@@ -4,13 +4,8 @@
 #
 
 MACPORTS=/opt/local/bin/port
-MACPORTS_VER=2.6.3
-MACPORTS_SHA256=99e9eea869bf8d72b8a9c85ae91a3ca3159ac77de685768ffbba8a2335de5dde
-
-MACPORTS_PATCHES="
-# Big Sur SQLite fix
-4664a4a6c680ec55387f7c3ecd94102588a8f299
-" # END-MACPORTS_PATCHES
+MACPORTS_VER=2.6.4
+MACPORTS_SHA256=535fa1a06fc128280f662a340ee80c7d80a13d823dc6096378b5e8089f469786
 
 macports_bootstrap() {
     if ! forced && [ -f $MACPORTS ]; then
@@ -28,16 +23,6 @@ macports_bootstrap() {
     rm macports.tar.gz
 
     cd "$BUILD_DIR/macports-base-$MACPORTS_VER" || exit 1
-
-    printf "%s\\n" "$MACPORTS_PATCHES" | while read -r p; do
-        case "$p" in
-            "#"*|"") continue;;
-            *) p="${p%%#*}";;
-        esac
-
-        _url="https://github.com/macports/macports-base/commit/$p.patch"
-        fetch_url - "$_url" | patch -p1
-    done
 
     ./configure && make
     run_root make install
