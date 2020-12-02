@@ -24,6 +24,7 @@ _run() {
         curl +darwinssl +http2, \
         duplicity, \
         emacs, \
+        ffmpeg, \
         fzf, \
         git, \
         mercurial, \
@@ -31,8 +32,8 @@ _run() {
         oksh, \
         openssh, \
         pstree, \
-        py37-ansible, \
-        py37-tmuxp, \
+        py38-ansible, \
+        py38-tmuxp, \
         qemu +target_arm +target_riscv64, \
         rsync, \
         socat, \
@@ -40,7 +41,8 @@ _run() {
         tmux, \
         tree, \
         unison -gtk, \
-        w3m
+        w3m, \
+        youtube-dl
 }
 
 _run_desktop() {

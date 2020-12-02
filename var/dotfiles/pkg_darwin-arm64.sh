@@ -23,6 +23,7 @@ _run() {
         aspell-dict-en, \
         curl +darwinssl +http2, \
         emacs, \
+        ffmpeg, \
         fzf, \
         git, \
         mercurial, \
@@ -37,7 +38,8 @@ _run() {
         the_silver_searcher, \
         tmux, \
         tree, \
-        w3m
+        w3m, \
+        youtube-dl
 
     ## Broken
     #   duplicity, \
