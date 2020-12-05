@@ -46,3 +46,22 @@ _run() {
     #   qemu +target_arm +target_riscv64, \
     #   unison -gtk, \
 }
+
+_run_desktop() {
+    printe_h2 "Installing desktop packages..."
+
+    macports_install \
+        emacs-mac-app
+}
+
+_run_dev() {
+    _setup_macports_dev "$@"
+    _setup_nix_dev "$@"
+}
+
+_setup_macports_dev() {
+    printe_h2 "Installing dev packages..."
+
+    macports_install \
+        carthage
+}
