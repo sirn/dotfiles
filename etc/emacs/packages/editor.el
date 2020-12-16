@@ -9,6 +9,7 @@
 
 (setq-default indent-tabs-mode nil)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
+(put 'downcase-region 'disabled nil)
 
 (use-package avy
   :commands
