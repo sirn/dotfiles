@@ -43,28 +43,52 @@ prependpath() {
     PATH=${PATH%%:}
 }
 
-prependpath "/sbin"
-prependpath "/usr/sbin"
-prependpath "/usr/local/sbin"
-prependpath "/bin"
-prependpath "/usr/bin"
-prependpath "/usr/local/bin"
+# Opt has lowest priority; it's usually used by binary packages.
+# We don't want these stuff to interfere with normal command line stuff.
+#
+
+prependpath "/opt/bin"
 prependpath "/opt/local/bin"
-prependpath "$HOME/.dotfiles/bin"
-prependpath "$HOME/.dotfiles/libexec/wrapper"
 
+# CUDA comes last because it has few binaries overriding /usr/bin
+#
 
-## LaTeX
-##
+if [ -d /opt/cuda/bin ]; then
+    prependpath "/opt/cuda/bin"
+    prependpath "/opt/cuda/integration/nsight-compute"
+    prependpath "/opt/cuda/integration/nsight-systems"
+fi
+
+# LaTeX
+#
 
 for texpath in /opt/texlive/*/bin/*; do
     if [ -d "$texpath" ]; then
         prependpath "$texpath"
+        unset texpath
         break
     fi
 done
 
-unset texpath
+# System bins
+#
+
+prependpath "/sbin"
+prependpath "/usr/sbin"
+prependpath "/bin"
+prependpath "/usr/bin"
+
+# Local bins
+#
+
+prependpath "/usr/local/sbin"
+prependpath "/usr/local/bin"
+
+# Wrappers
+#
+
+prependpath "$HOME/.dotfiles/bin"
+prependpath "$HOME/.dotfiles/libexec/wrapper"
 
 
 ## GPG agent
