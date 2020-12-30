@@ -100,6 +100,7 @@ _setup_user_links() {
     make_link "$BASE_DIR/etc/git/gitconfig" "$HOME/.gitconfig"
     make_link "$BASE_DIR/etc/hg/hgrc" "$HOME/.hgrc"
     make_link "$BASE_DIR/etc/ksh/kshrc" "$HOME/.kshrc"
+    make_link "$BASE_DIR/etc/podman/storage.conf" "$HOME/.config/containers/storage.conf"
     make_link "$BASE_DIR/etc/sh/profile" "$HOME/.profile"
     make_link "$BASE_DIR/etc/ssh/config" "$HOME/.ssh/config"
     make_link "$BASE_DIR/etc/tmux/tmux.conf" "$HOME/.tmux.conf"
