@@ -20,6 +20,7 @@ _run() {
         curl \
         duplicity \
         execline \
+        fuse-overlayfs \
         fzf \
         git \
         mercurial \
