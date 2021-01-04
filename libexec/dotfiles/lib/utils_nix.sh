@@ -6,7 +6,7 @@
 NIX=/nix/var/nix/profiles/default/bin/nix
 NIX_CHANNEL=/nix/var/nix/profiles/default/bin/nix-channel
 NIX_ENV=/nix/var/nix/profiles/default/bin/nix-env
-NIX_VERSION=2.3.8
+NIX_VERSION=2.3.10
 
 nix_bootstrap() {
     if ! forced && [ -f $NIX ]; then
@@ -21,6 +21,7 @@ nix_bootstrap() {
     esac
 
     fetch_url - https://releases.nixos.org/nix/nix-${NIX_VERSION}/install | sh -s - "$@"
+    . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 }
 
 nix_ensure_channel() {
