@@ -34,7 +34,7 @@ _run() {
         pstree, \
         py38-ansible, \
         py38-tmuxp, \
-        qemu +target_arm +target_riscv64, \
+        qemu +target_arm +target_riscv32 +target_riscv64 +target_x86_64, \
         rsync, \
         socat, \
         the_silver_searcher, \
