@@ -65,3 +65,12 @@ _setup_macports_dev() {
     macports_install \
         carthage
 }
+
+_setup_nix_dev() {
+    printe_h2 "Installing nix packages..."
+
+    nix_bootstrap
+
+    nix_ensure_channel "https://nixos.org/channels/nixpkgs-20.09-darwin"
+    nix_install "$BASE_DIR/etc/nix/default.nix"
+}
