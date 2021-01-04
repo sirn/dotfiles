@@ -22,6 +22,7 @@
         graphviz
         jq
         jsonnet
+        mdbook
         pandoc
         postgresql_12
         proselint
