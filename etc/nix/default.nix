@@ -95,12 +95,9 @@
       ];
     };
 
-    kapitan = callPackage ./pkgs/kapitan { };
-
     kubernetesDev = buildEnv {
       name = "kubernetesDev";
       paths = [
-        kapitan
         kubectl
         kubectx
         kubernetes-helm
