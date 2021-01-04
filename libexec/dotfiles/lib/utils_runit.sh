@@ -20,7 +20,7 @@ install_svc() {
             s ) svclink="/run/runit.$USER";;
             p ) program="$OPTARG";;
             * )
-                printe_err "Invalid flags given to make_link"
+                printe_err "Invalid flags given to install_svc"
                 exit 1
                 ;;
         esac
