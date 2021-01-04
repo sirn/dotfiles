@@ -19,7 +19,7 @@ _run_desktop() {
         konsole \
         xrdb
 
-    sh "$BASE_DIR/var/dotfiles/packages/sys/fonts.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/sys/fonts.sh" "$@"
 }
 
 _run_all() {

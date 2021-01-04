@@ -6,7 +6,7 @@
 BASE_DIR=$(cd "$(dirname "$0")/" || exit; pwd -P)
 cd "$BASE_DIR" || exit 1
 
-. var/dotfiles/lib/utils.sh
+. libexec/dotfiles/lib/utils.sh
 
 
 ## Environment variables
@@ -120,7 +120,7 @@ for p in pkg user; do
         run=0
 
         for b in $LOOKUP_PATH; do
-            runscript="$b/var/dotfiles/${p}_${SYS}.sh"
+            runscript="$b/libexec/dotfiles/${p}_${SYS}.sh"
 
             if [ ! -f "$runscript" ]; then
                 continue
