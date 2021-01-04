@@ -69,7 +69,7 @@ _run_desktop() {
         emacs-x11 \
         qemu
 
-    sh "$BASE_DIR/var/dotfiles/packages/sys/fonts.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/sys/fonts.sh" "$@"
 }
 
 _run_dev() {
@@ -81,8 +81,8 @@ _run_dev() {
         cargo \
         choosenim
 
-    sh "$BASE_DIR/var/dotfiles/packages/lang/rust.sh" "$@"
-    sh "$BASE_DIR/var/dotfiles/packages/lang/nim.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/rust.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/nim.sh" "$@"
 
     # Nix
     printe_info "\

@@ -63,8 +63,8 @@ _setup_macports_dev() {
     macports_install \
         carthage
 
-    sh "$BASE_DIR/var/dotfiles/packages/lang/rust.sh" "$@"
-    sh "$BASE_DIR/var/dotfiles/packages/lang/nim.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/rust.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/nim.sh" "$@"
 }
 
 _setup_nix_dev() {
