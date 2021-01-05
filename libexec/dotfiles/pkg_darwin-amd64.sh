@@ -72,6 +72,6 @@ _setup_nix_dev() {
 
     nix_bootstrap
 
-    nix_ensure_channel "https://nixos.org/channels/nixpkgs-20.09-darwin"
+    nix_ensure_channel "https://nixos.org/channels/nixpkgs-unstable"
     nix_install "$BASE_DIR/etc/nix/default.nix"
 }
