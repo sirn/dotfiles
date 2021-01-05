@@ -6,8 +6,8 @@
 BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
-. "../../lib/utils.sh"
-. "../../lib/buildenv.sh"
+. "../../dotfiles/lib/utils.sh"
+. "../../dotfiles/lib/buildenv.sh"
 
 _preflight() {
     PATH=$HOME/.nimble/bin:$PATH
