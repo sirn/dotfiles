@@ -33,15 +33,9 @@ nix_ensure_channel() {
 
         "$NIX_CHANNEL" --add "$url" "$name"
         "$NIX_CHANNEL" --update -v
-    else
-        printe_info "Updating nix channel..."
-
-        "$NIX_CHANNEL" --update -v
     fi
 }
 
 nix_install() {
-    printe_info "Installing nix packages..."
-
     env NIXPKGS_CONFIG="$BASE_DIR/etc/nix/default.nix" $NIX_ENV -i all
 }
