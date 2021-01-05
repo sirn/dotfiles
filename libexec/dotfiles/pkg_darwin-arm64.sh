@@ -57,6 +57,8 @@ _run_desktop() {
 _run_dev() {
     _setup_macports_dev "$@"
     _setup_nix_dev "$@"
+
+    sh "$BASE_DIR/libexec/packages/lang/rust.sh" "$@"
 }
 
 _setup_macports_dev() {
