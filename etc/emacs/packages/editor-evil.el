@@ -64,11 +64,6 @@
   (global-evil-matchit-mode +1))
 
 
-(use-package evil-magit
-  :demand t
-  :after magit)
-
-
 (use-package evil-surround
   :demand t
 
