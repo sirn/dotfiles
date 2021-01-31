@@ -5,7 +5,7 @@ with beamPackages;
 # TODO: prevent fetch during build.
 rebar3Relx rec {
   name = "erlang-ls-${version}";
-  version = "0.4.1";
+  version = "0.9.0";
   releaseType = "escript";
 
   buildInputs = [ git cacert ];
@@ -14,7 +14,7 @@ rebar3Relx rec {
     owner = "erlang-ls";
     repo = "erlang_ls";
     rev = "${version}";
-    sha256 = "1jp4nrb4ns21jga7ysbqpwpkkmmsz90shcgk8qr4ibi4k0ly98ax";
+    sha256 = "1caxnmrx2i4mp96hv9xa7lc5ildriz5if6b4g2by7g2pmykmy417";
   };
 
   buildPhase=''
