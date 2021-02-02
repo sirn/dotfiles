@@ -134,7 +134,8 @@ git_clone() {
         git -C "$path" pull -q origin "$ref"
         printe_info "$path successfully updated"
     elif [ "$(git -C "$path" describe 2>&1)" != "$ref" ] &&
-         [ "$(git -C "$path" rev-parse --short HEAD)" != "$ref" ]; then
+         [ "$(git -C "$path" rev-parse --short HEAD)" != "$ref" ] &&
+         [ "$(git -C "$path" describe --all 2>&1)" != "tags/$ref" ]; then
         git -C "$path" fetch origin
         git -C "$path" checkout "$ref"
     else
