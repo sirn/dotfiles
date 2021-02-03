@@ -462,6 +462,20 @@ EOF
     esac
 }
 
+update_shells() {
+    target_shell=$1; shift
+
+    if ! target_shell_bin=$(command -v "$target_shell"); then
+        printe_err "$target_shell is not a valid shell, skipping..."
+        return
+    fi
+
+    if ! grep -q "$target_shell_bin" /etc/shells; then
+        printe_info "Adding $target_shell_bin to /etc/shells..."
+        printf "%s\\n" "$target_shell_bin" | run_root tee -a /etc/shells
+    fi
+}
+
 change_shell() {
     target_shell=$1; shift
 
@@ -478,11 +492,6 @@ change_shell() {
     if ! command -v chsh >/dev/null; then
         printe_err "chsh is not available, skipping..."
         return
-    fi
-
-    if ! grep -q "$target_shell_bin" /etc/shells; then
-        printe_info "Adding $target_shell_bin to /etc/shells..."
-        printf "%s\\n" "$target_shell_bin" | run_root tee -a /etc/shells
     fi
 
     run_root chsh -s "$target_shell_bin" "$USER"
