@@ -109,6 +109,7 @@ _setup_user_links() {
 _setup_user_shell() {
     printe_h2 "Changing user shell..."
 
+    update_shells oksh
     change_shell oksh
 }
 
