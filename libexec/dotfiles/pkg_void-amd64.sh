@@ -12,46 +12,51 @@ cd "$(dirname "$0")" || exit 1
 _run() {
     printe_h2 "Installing packages..."
 
-    xbps_install \
-        GraphicsMagick \
-        aria2 \
-        aspell \
-        aspell-en \
-        curl \
-        duplicity \
-        execline \
-        fuse-overlayfs \
-        fzf \
-        git \
-        mercurial \
-        mosh \
-        neovim \
-        oksh \
-        podman \
-        podman-compose \
-        python3-tmuxp \
-        rsync \
-        s6 \
-        snooze \
-        socat \
-        sqlite \
-        the_silver_searcher \
-        tmux \
-        tree \
-        unison \
-        unzip \
-        w3m \
-        xtools \
-        xz \
-        zip
+    xbps_install GraphicsMagick
+    xbps_install aria2
+    xbps_install aspell
+    xbps_install aspell-en
+    xbps_install curl
+    xbps_install duplicity
+    xbps_install entr
+    xbps_install execline
+    xbps_install fuse-overlayfs
+    xbps_install fzf
+    xbps_install git
+    xbps_install git-crypt
+    xbps_install git-lfs
+    xbps_install graphviz
+    xbps_install mdBook
+    xbps_install mercurial
+    xbps_install mosh
+    xbps_install ipcalc
+    xbps_install neovim
+    xbps_install oksh
+    xbps_install podman
+    xbps_install podman-compose
+    xbps_install python3-proselint
+    xbps_install python3-tmuxp
+    xbps_install rsync
+    xbps_install s6
+    xbps_install snooze
+    xbps_install socat
+    xbps_install sqlite
+    xbps_install the_silver_searcher
+    xbps_install tmux
+    xbps_install tree
+    xbps_install unison
+    xbps_install unzip
+    xbps_install w3m
+    xbps_install xtools
+    xbps_install xz
+    xbps_install zip
 }
 
 _run_system() {
     printe_h2 "Installing system packages..."
 
-    xbps_install \
-        cronie \
-        iptables-nft \
+    xbps_install cronie
+    xbps_install iptables-nft
 
     xbps_alternative iptables iptables-nft
 }
@@ -65,9 +70,8 @@ _run_desktop() {
     fi
 
     # Firefox is installed with Flatpak
-    xbps_install \
-        emacs-x11 \
-        qemu
+    xbps_install emacs-x11
+    xbps_install qemu
 
     sh "$BASE_DIR/libexec/packages/sys/fonts.sh" "$@"
 }
@@ -75,29 +79,41 @@ _run_desktop() {
 _run_dev() {
     printe_h2 "Installing dev packages..."
 
-    # Rust/Nim has its own versioning ecosystem and Nix support
-    # is still very limited
-    xbps_install \
-        cargo \
-        choosenim
+    xbps_install ansible
+    xbps_install jq
+    xbps_install jsonnet
+    xbps_install nomad
+    xbps_install pandoc
+    xbps_install shellcheck
+    xbps_install tcl
+    xbps_install terraform
 
-    sh "$BASE_DIR/libexec/packages/lang/rust.sh" "$@"
+    xbps_install base-devel
+    xbps_install bzip2-devel
+    xbps_install libffi-devel
+    xbps_install readline-devel
+    xbps_install sqlite-devel
+    xbps_install zlib-devel
+
+    # official binary is glibc only and compiling golang from source requires
+    # go-1.4 to bootstrap. Use distro package to avoid some headaches.
+    xbps_install go
+
+    # asdf is required for asdf-managed packages/; install it first
+    sh "$BASE_DIR/libexec/packages/sys/asdf.sh" "$@"
     sh "$BASE_DIR/libexec/packages/lang/nim.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/nodejs.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/python.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/rust.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/erlang.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/elixir.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/postgres.sh" "$@"
 
-    # Nix
-    printe_info "\
-Development packages on Void is managed by Nix.
-Please ensure nix is installed by running:
-
-    xbps-install -Syu nix
-    ln -s /etc/sv/nix-daemon /var/service/
-
-Then run the following:
-
-    nix-channel --add http://nixos.org/channels/nixpkgs-unstable
-    nix-channel --update
-    nix-env -i all
-"
+    # Usually requires language interpreter to be installed
+    sh "$BASE_DIR/libexec/packages/dev/golang.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/gcloud.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/kubectx.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/helm.sh" "$@"
 }
 
 _run_all() {

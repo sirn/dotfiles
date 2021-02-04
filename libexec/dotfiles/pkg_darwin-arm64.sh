@@ -8,7 +8,6 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
 cd "$(dirname "$0")" || exit 1
 . "lib/utils.sh"
 . "lib/utils_darwin.sh"
-. "lib/utils_nix.sh"
 . "lib/buildenv.sh"
 
 _run() {
@@ -56,7 +55,6 @@ _run_desktop() {
 
 _run_dev() {
     _setup_macports_dev "$@"
-    _setup_nix_dev "$@"
 
     sh "$BASE_DIR/libexec/packages/lang/rust.sh" "$@"
 }
@@ -66,13 +64,4 @@ _setup_macports_dev() {
 
     macports_install \
         carthage
-}
-
-_setup_nix_dev() {
-    printe_h2 "Installing nix packages..."
-
-    nix_bootstrap
-
-    nix_ensure_channel "https://nixos.org/channels/nixpkgs-unstable"
-    nix_install "$BASE_DIR/etc/nix/default.nix"
 }
