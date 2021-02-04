@@ -37,7 +37,6 @@ _run() {
     macports_install pandoc
     macports_install proselint
     macports_install pstree
-    macports_install py38-ansible
     macports_install py38-tmuxp
     macports_install qemu +target_arm +target_riscv32 +target_riscv64 +target_x86_64
     macports_install rsync
@@ -103,4 +102,7 @@ _run_dev() {
 
     ## Not available:
     #macports_install jsonnet
+
+    macports_select ansible py38-ansible
+    macports_select terraform terraform0.14
 }
