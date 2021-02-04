@@ -499,6 +499,7 @@ area."
   (setq lsp-enable-snippet nil)
   (setq lsp-file-watch-threshold nil)
   (setq lsp-restart 'auto-restart)
+  (setq lsp-headerline-breadcrumb-enable nil)
 
   (defun gemacs--advice-lsp-mode-silence (format &rest args)
     "Silence needless diagnostic messages from `lsp-mode'.
