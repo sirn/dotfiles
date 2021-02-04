@@ -3,7 +3,7 @@
 # Install nim packages.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
@@ -36,8 +36,8 @@ _run() {
 }
 
 _install_nim() {
-    _asdf_plugin nim https://github.com/asdf-community/asdf-nim main
-    _asdf_install nim "$NIM_VERSION" global
+    asdf_plugin nim https://github.com/asdf-community/asdf-nim main
+    asdf_install nim "$NIM_VERSION" global
 }
 
 _install_nim_src() {
@@ -69,7 +69,7 @@ _install_nimlsp() {
     cd "$BUILD_DIR/nimlsp-$NIMLSP_VERSION" || exit 1
     nimble build -d:explicitSourcePath="$NIM_VERSION_SRC"
     mv nimlsp "$pkgbin_path"
-    asdf reshim nim
+    asdf_reshim nim
 }
 
 _nimble_install() {
@@ -91,15 +91,16 @@ _nimble_install() {
         return
     fi
 
-    nimble install "$pkg" "$@"
+    asdf_exec nimble install "$pkg" "$@"
 }
 
 _nimble_update() {
     index_path=$NIM_VERSION_PATH/nimble/packages_official.json
     _chk=$(find "$index_path" -mtime +259200 -print 2>/dev/null)
-    if [ -n "$_chk" ]; then
+
+    if [ -n "$_chk" ] || [ ! -f "$index_path" ]; then
         printe_info "nimble package database is outdated; updating..."
-        nimble update
+        asdf_exec nimble update
     fi
 }
 

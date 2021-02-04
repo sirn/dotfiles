@@ -3,7 +3,7 @@
 # Install postgres packages.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
@@ -26,8 +26,8 @@ _run() {
 }
 
 _install_postgres() {
-    _asdf_plugin postgres https://github.com/smashedtoatoms/asdf-postgres
-    _asdf_install postgres "$POSTGRES_VERSION" global
+    asdf_plugin postgres https://github.com/smashedtoatoms/asdf-postgres
+    asdf_install postgres "$POSTGRES_VERSION" global
 }
 
 run_with_flavors "$@"

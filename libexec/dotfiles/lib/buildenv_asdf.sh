@@ -4,7 +4,7 @@
 #
 
 PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
-ASDF_DIR=$HOME/.asdf
+ASDF_DIR=$HOME/.asdf; export ASDF_DIR
 
 PATH=$ASDF_DIR/bin:$ASDF_DIR/shims:$PATH; export PATH
 
@@ -17,7 +17,7 @@ fi
 ## Asdf management
 ##
 
-_asdf_plugin() {
+asdf_plugin() {
     plugin=$1; shift
     repo=$1; shift
     ref=$1
@@ -25,7 +25,7 @@ _asdf_plugin() {
     git_clone "$repo" "$ASDF_DIR/plugins/$plugin" "$ref"
 }
 
-_asdf_install() {
+asdf_install() {
     plugin=$1; shift
     version=$1; shift
 
@@ -35,18 +35,18 @@ _asdf_install() {
         elif [ "$(command -v "_asdf_install_$plugin")x" != "x" ]; then
             "_asdf_install_$plugin" "$plugin" "$version"
         else
-            asdf install "$plugin" "$version"
+            "$ASDF_DIR"/bin/asdf install "$plugin" "$version"
         fi
     fi
 
     if has_args "global" "$*"; then
-         asdf global "$plugin" "$version"
+         "$ASDF_DIR"/bin/asdf global "$plugin" "$version"
     fi
 
-    asdf reshim "$plugin"
+    asdf_reshim "$plugin"
 }
 
-_asdf_pkg() {
+asdf_pkg() {
     plugin=$1; shift
 
     if [ "$(command -v "_pkginst_${plugin}_$PLATFORM")x" != "x" ]; then
@@ -58,7 +58,19 @@ _asdf_pkg() {
     fi
 }
 
-_asdf_reshim() {
+asdf_exec() {
+    bin=$1; shift
+
+    binpath="$ASDF_DIR"/shims/"$bin"
+    if [ ! -f "$binpath" ]; then
+        printe_info "$binpath not exists, skipping..."
+        return
+    fi
+
+    "$binpath" "$@"
+}
+
+asdf_reshim() {
     plugin=$1; shift
-    asdf reshim "$plugin"
+    "$ASDF_DIR"/bin/asdf reshim "$plugin"
 }
