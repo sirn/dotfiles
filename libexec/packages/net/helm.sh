@@ -3,7 +3,7 @@
 # Install helm packages.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
@@ -26,8 +26,8 @@ _run() {
 }
 
 _install_helm() {
-    _asdf_plugin helm https://github.com/Antiarchitect/asdf-helm
-    _asdf_install helm "$HELM_VERSION" global
+    asdf_plugin helm https://github.com/Antiarchitect/asdf-helm
+    asdf_install helm "$HELM_VERSION" global
 }
 
 run_with_flavors "$@"

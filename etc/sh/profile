@@ -43,13 +43,6 @@ prependpath() {
     PATH=${PATH%%:}
 }
 
-# Opt has lowest priority; it's usually used by binary packages.
-# We don't want these stuff to interfere with normal command line stuff.
-#
-
-prependpath "/opt/bin"
-prependpath "/opt/local/bin"
-
 # CUDA comes last because it has few binaries overriding /usr/bin
 #
 
@@ -83,6 +76,12 @@ prependpath "/usr/bin"
 
 prependpath "/usr/local/sbin"
 prependpath "/usr/local/bin"
+
+# Opts
+#
+
+prependpath "/opt/bin"
+prependpath "/opt/local/bin"
 
 # Wrappers
 #

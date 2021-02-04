@@ -3,7 +3,7 @@
 # Install Golang packages
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
@@ -41,18 +41,26 @@ _install_golangci_lint() {
     cd "$BUILD_DIR" || exit 1
 
     _os=$(uname | tr '[:upper:]' '[:lower:]')
+    _arch=$(uname -m)
+
+    case "$_arch" in
+        arm64 | aarch64 ) _arch=amd64;;
+        i386 | x86 )      _arch=386;;
+        x86_64 )          _arch=amd64;;
+    esac
 
     fetch_gh_release \
         golangci-lint.tar.gz \
         golangci/golangci-lint \
         v$GOLANGCI_LINT_VER \
-        golangci-lint-$GOLANGCI_LINT_VER-"$_os"-amd64.tar.gz
+        golangci-lint-$GOLANGCI_LINT_VER-"$_os"-"$_arch".tar.gz
 
     run_tar -C "$BUILD_DIR" -xzf golangci-lint.tar.gz
     rm golangci-lint.tar.gz
 
-    _wrksrc=$BUILD_DIR/golangci-lint-$GOLANGCI_LINT_VER-linux-amd64
-    install -Dm0755 "$_wrksrc/golangci-lint" "$_bindir/golangci-lint"
+    mkdir -p "$_bindir"
+    _wrksrc=$BUILD_DIR/golangci-lint-$GOLANGCI_LINT_VER-"$_os"-"$_arch"
+    install -m0755 "$_wrksrc/golangci-lint" "$_bindir/golangci-lint"
     printe_info "golangci-lint successfully installed"
 }
 
@@ -70,7 +78,8 @@ _go_get() {
         GOPATH="$BUILD_DIR/go" go get -v -u "$@"
     )
 
-    install -Dm0755 "$BUILD_DIR/go/bin/$_bin" "$_bindir/$_bin"
+    mkdir -p "$_bindir"
+    install -m0755 "$BUILD_DIR/go/bin/$_bin" "$_bindir/$_bin"
 }
 
 run_with_flavors "$@"

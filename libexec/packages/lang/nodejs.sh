@@ -3,15 +3,15 @@
 # Install nodejs packages.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
 . "../../dotfiles/lib/buildenv.sh"
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
-NODEJS_VERSION=ref:v10.23.2
-NODEJS_VERSION_PATH=$ASDF_DIR/installs/nodejs/ref-v10.23.2
+NODEJS_VERSION=ref:v15.8.0
+NODEJS_VERSION_PATH=$ASDF_DIR/installs/nodejs/ref-v15.8.0
 
 _preflight() {
     if ! command -v asdf >/dev/null; then
@@ -26,14 +26,15 @@ _run() {
 }
 
 _install_nodejs() {
-    _asdf_plugin nodejs https://github.com/asdf-vm/asdf-nodejs
+    asdf_plugin nodejs https://github.com/asdf-vm/asdf-nodejs
 
     if [ ! -f "$HOME/.gnupg/asdf-nodejs.gpg" ]; then
         sh -c "${ASDF_DATA_DIR:=$HOME/.asdf}"/plugins/nodejs/bin/import-release-team-keyring
     fi
 
     NODEJS_CHECK_SIGNATURES=no; export NODEJS_CHECK_SIGNATURES
-    _asdf_install nodejs "$NODEJS_VERSION" global
+    asdf_install nodejs "$NODEJS_VERSION" global
+    asdf_reshim nodejs
 }
 
 _run_dev() {
@@ -46,7 +47,7 @@ _run_dev() {
     _npm_install tern
     _npm_install typescript
     _npm_install typescript-language-server
-    _asdf_reshim nodejs
+    asdf_reshim nodejs
 }
 
 _npm_install() {
@@ -68,7 +69,7 @@ _npm_install() {
         return
     fi
 
-    npm install -g "$pkg" "$@"
+    asdf_exec npm install -g "$pkg" "$@"
 }
 
 run_with_flavors "$@"

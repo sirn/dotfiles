@@ -3,7 +3,7 @@
 # Install elixir packages.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
@@ -13,17 +13,15 @@ cd "$(dirname "$0")" || exit 1
 # Ugly version parsing; we cannot directly sourcing erlang.sh since
 # it would define _run_dev in here (which is never something we want)
 
-_here=$(cd "$(dirname "$0")" || exit; pwd -P)
-
-if [ ! -f "$_here/erlang.sh" ]; then
-    printe_err "$_here/erlang.sh not found"
+if [ ! -f erlang.sh ]; then
+    printe_err "erlang.sh not found"
     exit 1
 fi
 
 ERLANG_VERSION=$(awk '/ERLANG_VERSION=/ {
     sp=index($0, "=");
     print substr($0, sp + 1)
-}') < "$_here/erlang.sh"
+}' < "$(pwd -P)/erlang.sh")
 
 ELIXIR_VERSION=1.11.3-otp-${ERLANG_VERSION%%.*}
 ELIXIR_VERSION_PATH=$ASDF_DIR/installs/elixir/$ELIXIR_VERSION
@@ -44,8 +42,8 @@ _run() {
 }
 
 _install_elixir() {
-    _asdf_plugin elixir https://github.com/asdf-vm/asdf-elixir
-    _asdf_install elixir "$ELIXIR_VERSION" global
+    asdf_plugin elixir https://github.com/asdf-vm/asdf-elixir
+    asdf_install elixir "$ELIXIR_VERSION" global
 }
 
 _run_dev() {
@@ -60,7 +58,7 @@ _install_mix_hex() {
     fi
 
     printe_info "mix hex is not installed, installing..."
-    mix local.hex --force || exit 1
+    asdf_exec mix local.hex --force || exit 1
 }
 
 _install_mix_rebar() {
@@ -69,7 +67,7 @@ _install_mix_rebar() {
     fi
 
     printe_info "mix rebar3 is not installed, installing..."
-    mix local.rebar --force || exit 1
+    asdf_exec mix local.rebar --force || exit 1
 }
 
 _install_elixir_ls() {
@@ -109,7 +107,7 @@ _install_elixir_ls() {
        "$_bindir/elixir-language-server"
 
     printe_info "elixir_ls successfully installed"
-    _asdf_reshim elixir
+    asdf_reshim elixir
 }
 
 run_with_flavors "$@"

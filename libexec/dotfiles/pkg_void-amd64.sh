@@ -26,12 +26,12 @@ _run() {
     xbps_install git-crypt
     xbps_install git-lfs
     xbps_install graphviz
+    xbps_install ipcalc
     xbps_install mdBook
     xbps_install mercurial
     xbps_install mosh
-    xbps_install ipcalc
-    xbps_install neovim
     xbps_install oksh
+    xbps_install pandoc
     xbps_install podman
     xbps_install podman-compose
     xbps_install python3-proselint
@@ -46,6 +46,7 @@ _run() {
     xbps_install tree
     xbps_install unison
     xbps_install unzip
+    xbps_install vim
     xbps_install w3m
     xbps_install xtools
     xbps_install xz
@@ -83,7 +84,6 @@ _run_dev() {
     xbps_install jq
     xbps_install jsonnet
     xbps_install nomad
-    xbps_install pandoc
     xbps_install shellcheck
     xbps_install tcl
     xbps_install terraform

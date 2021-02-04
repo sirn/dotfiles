@@ -3,7 +3,7 @@
 # Install rust packages.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
@@ -26,8 +26,8 @@ _run() {
 }
 
 _install_rust() {
-    _asdf_plugin rust https://github.com/code-lever/asdf-rust
-    _asdf_install rust "$RUST_VERSION" global
+    asdf_plugin rust https://github.com/code-lever/asdf-rust
+    asdf_install rust "$RUST_VERSION" global
 }
 
 _run_dev() {
@@ -40,7 +40,7 @@ _run_dev() {
 }
 
 _rustup_install() {
-    rustup component add "$@"
+    asdf_exec rustup component add "$@"
 }
 
 _cargo_install() {
@@ -53,7 +53,7 @@ _cargo_install() {
         return
     fi
 
-    cargo install "$@"
+    asdf_exec cargo install "$@"
 }
 
 run_with_flavors "$@"

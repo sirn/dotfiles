@@ -44,31 +44,16 @@ macports_installed() {
 }
 
 macports_install() {
-    OLDIFS=$IFS
-    IFS=,
+    pkg=$1; shift
 
-    # shellcheck disable=SC2116
-    for pkg in $(echo "$@"); do
-        pkgname=$(trim "$pkg")
-        pkgflag=${pkgname#* }
-        if [ "$pkgflag" = "$pkgname" ]; then
-            pkgflag=
-        fi
+    if macports_installed "$pkg"; then
+        printe "$pkg (macports) already installed"
+        return
+    fi
 
-        pkgname=${pkgname%%$pkgflag}
-        pkgname=$(trim "$pkgname")
-        if macports_installed "$pkgname"; then
-            printe "$pkgname (macports) already installed"
-            continue
-        fi
-
-        # shellcheck disable=SC2086
-        if ! run_root $MACPORTS -N install "$pkgname" $pkgflag; then
-            printe_info "$pkg (macports) failed to install, skipping..."
-        fi
-    done
-
-    IFS=$OLDIFS
+    if ! run_root $MACPORTS -N install "$pkg" "$@"; then
+        printe_info "$pkg (macports) failed to install, skipping..."
+    fi
 }
 
 macports_select() {

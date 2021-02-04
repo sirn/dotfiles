@@ -3,7 +3,7 @@
 # Install ruby packages.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
@@ -26,8 +26,8 @@ _run() {
 }
 
 _install_ruby() {
-    _asdf_plugin ruby https://github.com/asdf-vm/asdf-ruby
-    _asdf_install ruby "$RUBY_VERSION" global
+    asdf_plugin ruby https://github.com/asdf-vm/asdf-ruby
+    asdf_install ruby "$RUBY_VERSION" global
 }
 
 run_with_flavors "$@"

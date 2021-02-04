@@ -3,7 +3,7 @@
 # Install erlang packages.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
@@ -34,8 +34,8 @@ _run() {
 }
 
 _install_erlang() {
-    _asdf_plugin erlang https://github.com/asdf-vm/asdf-erlang
-    _asdf_install erlang "$ERLANG_VERSION" global
+    asdf_plugin erlang https://github.com/asdf-vm/asdf-erlang
+    asdf_install erlang "$ERLANG_VERSION" global
 }
 
 _run_dev() {
@@ -59,7 +59,7 @@ _install_rebar3() {
 
     install -d "$(dirname "$REBAR3_PATH")"
     install -m0755 rebar3 "$REBAR3_PATH"
-    escript "$REBAR3_PATH" local install
+    asdf_exec escript "$REBAR3_PATH" local install
 }
 
 _install_erlang_ls() {
@@ -85,7 +85,7 @@ _install_erlang_ls() {
     install -m0755 _build/default/bin/erlang_ls "$_bindir/erlang_ls"
     printe_info "erlang_ls successfully installed"
 
-    _asdf_reshim erlang
+    asdf_reshim erlang
 }
 
 run_with_flavors "$@"

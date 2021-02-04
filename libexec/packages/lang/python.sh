@@ -3,7 +3,7 @@
 # Install python packages.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
@@ -26,8 +26,14 @@ _run() {
 }
 
 _install_python() {
-    _asdf_plugin python https://github.com/danhper/asdf-python
-    _asdf_install python "$PYTHON_VERSION" global
+    asdf_plugin python https://github.com/danhper/asdf-python
+
+    if command -v port >/dev/null && ! command -v brew >/dev/null; then
+        PATH="$BASE_DIR/libexec/mpshims:$PATH"
+        export PATH
+    fi
+
+    asdf_install python "$PYTHON_VERSION" global
 }
 
 _run_dev() {
@@ -38,7 +44,7 @@ _run_dev() {
     _pip3_install pyls_black pyls-black
     _pip3_install pyls_isort pyls-isort
     _pip3_install pyls_mypy pyls-mypy
-    _asdf_reshim python
+    asdf_reshim python
 }
 
 _pip3_install() {
@@ -61,7 +67,7 @@ _pip3_install() {
         return
     fi
 
-    pip3 install "$pkg" "$@"
+    asdf_exec pip3 install "$pkg" "$@"
 }
 
 run_with_flavors "$@"
