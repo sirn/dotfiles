@@ -1,0 +1,33 @@
+#!/bin/sh -e
+#
+# Install ruby packages.
+#
+
+BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../../.." || exit; pwd -P)}
+
+cd "$(dirname "$0")" || exit 1
+. "../../dotfiles/lib/utils.sh"
+. "../../dotfiles/lib/buildenv.sh"
+. "../../dotfiles/lib/buildenv_asdf.sh"
+
+RUBY_VERSION=2.7.2
+RUBY_VERSION_PATH=$ASDF_DIR/installs/ruby/$RUBY_VERSION
+
+_preflight() {
+    if ! command -v asdf >/dev/null; then
+        printe_info "asdf is not installed, skipping ruby..."
+        return 1
+    fi
+}
+
+_run() {
+    printe_h2 "Installing ruby..."
+    _install_ruby
+}
+
+_install_ruby() {
+    _asdf_plugin ruby https://github.com/asdf-vm/asdf-ruby
+    _asdf_install ruby "$RUBY_VERSION" global
+}
+
+run_with_flavors "$@"

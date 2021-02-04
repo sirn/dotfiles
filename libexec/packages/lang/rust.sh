@@ -8,14 +8,26 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../../.." || exit; pwd -P)}
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
 . "../../dotfiles/lib/buildenv.sh"
+. "../../dotfiles/lib/buildenv_asdf.sh"
+
+RUST_VERSION=1.49.0
+RUST_VERSION_PATH=$ASDF_DIR/installs/rust/$RUST_VERSION
 
 _preflight() {
-    _setup_rust
-
-    if ! command -v cargo >/dev/null; then
-        printe_info "cargo is not installed, skipping rust packages..."
+    if ! command -v asdf >/dev/null; then
+        printe_info "asdf is not installed, skipping rust..."
         return 1
     fi
+}
+
+_run() {
+    printe_h2 "Installing rust..."
+    _install_rust
+}
+
+_install_rust() {
+    _asdf_plugin rust https://github.com/code-lever/asdf-rust
+    _asdf_install rust "$RUST_VERSION" global
 }
 
 _run_dev() {
@@ -27,29 +39,14 @@ _run_dev() {
     _cargo_install rustfmt rustfmt
 }
 
-_setup_rust() {
-    PATH=$HOME/.cargo/bin:$PATH
-    rust_bin=$HOME/.cargo/bin/rustc
-
-    if ! forced && [ -f "$rust_bin" ]; then
-        printe_info "$rust_bin already exists, skipping..."
-        return
-    fi
-
-    printe_h2 "Installing rust..."
-    fetch_url - https://sh.rustup.rs | sh -s - -y --no-modify-path
-}
-
 _rustup_install() {
-    PATH=$HOME/.cargo/bin:$PATH
     rustup component add "$@"
 }
 
 _cargo_install() {
     bin=$1; shift
 
-    PATH=$HOME/.cargo/bin:$PATH
-    pkgbin_path=$HOME/.cargo/bin/$bin
+    pkgbin_path=$RUST_VERSION_PATH/bin/$bin
 
     if ! forced && [ -f "$pkgbin_path" ]; then
         printe_info "$pkgbin_path already exists, skipping..."

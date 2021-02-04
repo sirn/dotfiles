@@ -60,6 +60,15 @@ if command -v gpg-connect-agent >/dev/null; then
 fi
 
 
+## ASDF
+##
+
+# shellcheck disable=SC1090
+if [ -d "$HOME/.asdf" ]; then
+    . "$HOME/.asdf/asdf.sh"
+fi
+
+
 ## PATHs
 ##
 
@@ -74,40 +83,14 @@ prependpath() {
     esac
 }
 
-
-## Nix
-##
-
-prependpath "$HOME/.nix-profile/bin"
-
-if command -v nix-env >/dev/null; then
-    LOCALE_ARCHIVE=$HOME/.nix-profile/lib/locale/locale-archive
-    export LOCALE_ARCHIVE
-fi
-
-
-## Dev
-##
-
 GOPATH=$HOME/Dev/go/gopath:$HOME/Dev
-RUST_SRC_PATH="$HOME/.local/lib/rustlib/src/rust/src"
-
 export GOPATH
-export MANPATH
-export RUST_SRC_PATH
-
-prependpath "$HOME/.local/bin"
-prependpath "$HOME/.cabal/bin"
-prependpath "$HOME/.cargo/bin"
-prependpath "$HOME/.nimble/bin"
-prependpath "$HOME/.local/lib/pytools3/bin"
 
 _gopaths=$GOPATH
 
 while [ -n "$_gopaths" ]; do
     _gopath=${_gopaths%%:*}
     prependpath "$_gopath/bin"
-
     _gopaths=${_gopaths##$_gopath}
     _gopaths=${_gopaths#:}
 done
@@ -115,20 +98,12 @@ done
 unset _gopath
 unset _gopaths
 
-
-## Local
-##
-
-if [ -d "$HOME/.cache/rebar3/bin" ]; then
-    prependpath "$HOME/.cache/rebar3/bin"
-fi
-
-for rbpath in "$HOME"/.gem/ruby/?.?.?/bin; do
-    if [ -d "$rbpath" ]; then
-        prependpath "$rbpath"
-    fi
-done
-
+prependpath "$HOME/.local/bin"
+prependpath "$HOME/.cabal/bin"
+prependpath "$HOME/.cargo/bin"
+prependpath "$HOME/.nimble/bin"
+prependpath "$HOME/.cache/rebar3/bin"
+prependpath "$HOME/.local/lib/google-cloud-sdk/bin"
 prependpath "$HOME/.dotfiles/libexec/lsp"
 
 

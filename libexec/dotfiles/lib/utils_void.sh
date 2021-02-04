@@ -9,20 +9,16 @@ xbps_installed() {
 }
 
 xbps_install() {
-    pkgs=
+    pkg=$1; shift
 
-    for pkg in "$@"; do
-        if xbps_installed "$pkg"; then
-            printe "$pkg (xbps) already installed"
-            continue
-        fi
+    if xbps_installed "$pkg"; then
+        printe "$pkg (xbps) already installed"
+        return
+    fi
 
-        pkgs="${pkgs:+$pkgs }$pkg"
-    done
-
-    if [ -n "$pkgs" ]; then
-        eval set -- "$pkgs"
-        run_root xbps-install -Sy "$@"
+    if [ -n "$pkg" ]; then
+        eval set -- "$pkg"
+        run_root xbps-install -Sy "$pkg"
     fi
 }
 

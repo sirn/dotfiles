@@ -8,70 +8,75 @@ BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../../.." || exit; pwd -P)}
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
 . "../../dotfiles/lib/buildenv.sh"
+. "../../dotfiles/lib/buildenv_asdf.sh"
+
+NIM_VERSION=1.4.2
+NIM_VERSION_PATH=$ASDF_DIR/installs/nim/$NIM_VERSION
+NIM_VERSION_SRC=$HOME/.local/src/nim/$NIM_VERSION
+
+NIMLSP_VERSION=0.2.6
+NIMLSP_SHA256=664c9005a34e8e015bd7f4b1ff9d67e3a8a8f4f5a1998b355ba134e3700934fc
 
 _preflight() {
-    PATH=$HOME/.nimble/bin:$PATH
-
-    _setup_choosenim
-    _setup_nim
-
-    if ! command -v nimble >/dev/null; then
-        printe_info "nimble is not installed, skipping nim packages..."
+    if ! command -v asdf >/dev/null; then
+        printe_info "asdf is not installed, skipping nim..."
         return 1
     fi
 }
 
 _run() {
-    printe_h2 "Installing nim packages..."
+    printe_h2 "Installing nim..."
+    _install_nim
+    _install_nim_src
 
+    printe_h2 "Installing nim packages..."
     _nimble_update
     _nimble_install nimr nimr
     _nimble_install nimcr nimcr
 }
 
+_install_nim() {
+    _asdf_plugin nim https://github.com/asdf-community/asdf-nim main
+    _asdf_install nim "$NIM_VERSION" global
+}
+
+_install_nim_src() {
+    mkdir -p "$(dirname "$NIM_VERSION_SRC")"
+    git_clone https://github.com/nim-lang/Nim "$NIM_VERSION_SRC" "v$NIM_VERSION"
+}
+
 _run_dev() {
     printe_h2 "Installing nim dev packages..."
 
-    _nimble_install nimlsp
+    _install_nimlsp
 }
 
-_setup_choosenim() {
-    # Skip without force flag if we already have system-wide choosenim
-    # e.g. for musl system where there's no prebuilt choosenim-musl binary
-    # and we must install choosenim from distro package.
-    if command -v choosenim >/dev/null; then
+_install_nimlsp() {
+    pkgbin_path=$NIM_VERSION_PATH/nimble/bin/nimlsp
+    if ! forced && [ -f "$pkgbin_path" ]; then
+        printe_info "$pkgbin_path already exists, skipping..."
         return
     fi
 
-    PATH=$HOME/.nimble/bin:$PATH
+    printe_h2 "Installing nimlsp..."
 
-    if ! forced && command -v choosenim >/dev/null; then
-        printe_info "choosenim already installed, skipping..."
-        return
-    fi
+    cd "$BUILD_DIR" || exit 1
+    fetch_gh_archive nimlsp.tar.gz PMunch/nimlsp v$NIMLSP_VERSION
+    verify_shasum nimlsp.tar.gz $NIMLSP_SHA256
+    run_tar -C "$BUILD_DIR" -xzf nimlsp.tar.gz
+    rm nimlsp.tar.gz
 
-    printe_h2 "Installing choosenim..."
-    fetch_url - https://nim-lang.org/choosenim/init.sh | sh -s - -y
-}
-
-_setup_nim() {
-    PATH=$HOME/.nimble/bin:$PATH
-    nim_path=$HOME/.nimble/bin/nim
-
-    if ! forced && [ -f "$nim_path" ]; then
-        printe_info "$nim_path already exists, skipping..."
-        return
-    fi
-
-    printe_h2 "Installing nim..."
-    choosenim -y stable
+    cd "$BUILD_DIR/nimlsp-$NIMLSP_VERSION" || exit 1
+    nimble build -d:explicitSourcePath="$NIM_VERSION_SRC"
+    mv nimlsp "$pkgbin_path"
+    asdf reshim nim
 }
 
 _nimble_install() {
     bin=$1; shift
     pkg=$1
 
-    if [ $# -lt 0 ]; then
+    if [ $# -gt 0 ]; then
         shift
     fi
 
@@ -79,21 +84,20 @@ _nimble_install() {
         pkg=$bin
     fi
 
-    PATH=$HOME/.nimble/bin:$PATH
-    pkgbin_path=$HOME/.nimble/bin/$bin
+    pkgbin_path=$NIM_VERSION_PATH/nimble/bin/$bin
 
     if ! forced && [ -f "$pkgbin_path" ]; then
         printe_info "$pkgbin_path already exists, skipping..."
         return
     fi
 
-    nimble install "$pkg"
+    nimble install "$pkg" "$@"
 }
 
 _nimble_update() {
-    PATH=$HOME/.nimble/bin:$PATH
-
-    if find $HOME/.nimble/packages_official.json -mtime +3d -print >/dev/null; then
+    index_path=$NIM_VERSION_PATH/nimble/packages_official.json
+    _chk=$(find "$index_path" -mtime +259200 -print 2>/dev/null)
+    if [ -n "$_chk" ]; then
         printe_info "nimble package database is outdated; updating..."
         nimble update
     fi
