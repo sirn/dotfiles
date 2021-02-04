@@ -70,6 +70,7 @@ _run_dev() {
 
     macports_install carthage
     macports_install jq
+    macports_install nomad
     macports_install py38-ansible
     macports_install shellcheck
     macports_install tcl
@@ -102,9 +103,6 @@ _run_dev() {
     arch -arch x86_64 sh "$BASE_DIR/libexec/packages/net/gcloud.sh" "$@"
     arch -arch x86_64 sh "$BASE_DIR/libexec/packages/net/kubectx.sh" "$@"
     arch -arch x86_64 sh "$BASE_DIR/libexec/packages/net/helm.sh" "$@"
-
-    ## Broken
-    #macports_install nomad
 
     ## Not available
     #macports_install jsonnet
