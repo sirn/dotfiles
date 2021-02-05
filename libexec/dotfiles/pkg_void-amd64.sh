@@ -91,6 +91,7 @@ _run_dev() {
     xbps_install base-devel
     xbps_install bzip2-devel
     xbps_install libffi-devel
+    xbps_install libressl-devel
     xbps_install readline-devel
     xbps_install sqlite-devel
     xbps_install zlib-devel
