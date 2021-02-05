@@ -55,7 +55,7 @@ fi
 # LaTeX
 #
 
-for texpath in /opt/texlive/*/bin/*; do
+for texpath in /opt/texlive/*/bin/* /usr/local/texlive/*/bin/*; do
     if [ -d "$texpath" ]; then
         prependpath "$texpath"
         unset texpath
