@@ -34,8 +34,6 @@ _run() {
     xbps_install pandoc
     xbps_install podman
     xbps_install podman-compose
-    xbps_install python3-proselint
-    xbps_install python3-tmuxp
     xbps_install rsync
     xbps_install s6
     xbps_install snooze
@@ -80,7 +78,6 @@ _run_desktop() {
 _run_dev() {
     printe_h2 "Installing dev packages..."
 
-    xbps_install ansible
     xbps_install jq
     xbps_install jsonnet
     xbps_install nomad

@@ -35,7 +35,6 @@ _run() {
     macports_install openssh
     macports_install pandoc
     macports_install pstree
-    macports_install py38-tmuxp
     macports_install rsync
     macports_install socat
     macports_install the_silver_searcher
@@ -71,7 +70,6 @@ _run_dev() {
     macports_install carthage
     macports_install jq
     macports_install nomad
-    macports_install py38-ansible
     macports_install shellcheck
     macports_install tcl
     macports_install terraform-0.14
@@ -89,12 +87,12 @@ _run_dev() {
 
     # asdf is required for asdf-managed packages/; install it first
     sh "$BASE_DIR/libexec/packages/sys/asdf.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/rust.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/elixir.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/erlang.sh" "$@"
     sh "$BASE_DIR/libexec/packages/lang/nim.sh" "$@"
     sh "$BASE_DIR/libexec/packages/lang/nodejs.sh" "$@"
     sh "$BASE_DIR/libexec/packages/lang/python.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/lang/rust.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/lang/erlang.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/lang/elixir.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/postgres.sh" "$@"
 
     # Usually requires language interpreter to be installed
@@ -107,6 +105,5 @@ _run_dev() {
     ## Not available
     #macports_install jsonnet
 
-    macports_select ansible py38-ansible
     macports_select terraform terraform0.14
 }

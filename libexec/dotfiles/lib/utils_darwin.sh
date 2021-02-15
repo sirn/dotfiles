@@ -60,6 +60,13 @@ macports_select() {
     sel=$1; shift
     pkg=$1; shift
 
+    case $($MACPORTS select --show "$sel") in
+        *"'$sel' is '$pkg'"* )
+            printe_info "$pkg is already default version for $sel, skipping..."
+            return
+            ;;
+    esac
+
     printe_info "Selecting $pkg as default version for $sel (macports)..."
     run_root $MACPORTS select "$sel" "$pkg"
 }
