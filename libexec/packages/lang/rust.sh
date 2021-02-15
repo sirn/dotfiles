@@ -37,6 +37,7 @@ _run_dev() {
     _rustup_install rust-analysis
     _rustup_install rust-src
     _cargo_install rustfmt rustfmt
+    _cargo_install mdbook mdbook
 }
 
 _rustup_install() {
