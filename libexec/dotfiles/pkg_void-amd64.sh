@@ -69,7 +69,7 @@ _run_desktop() {
     fi
 
     # Firefox is installed with Flatpak
-    xbps_install emacs-x11
+    xbps_install emacs-gtk3
     xbps_install qemu
 
     sh "$BASE_DIR/libexec/packages/sys/fonts.sh" "$@"
@@ -119,7 +119,7 @@ _run_all() {
 
     # Only install emacs-nox when other variant of Emacs hasn't been
     # installed (e.g. desktop flavor installs GTK emacs)
-    if ! xbps_installed emacs-x11; then
+    if ! xbps_installed emacs-gtk3; then
         xbps_install emacs
     fi
 }

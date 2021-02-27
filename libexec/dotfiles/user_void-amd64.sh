@@ -15,7 +15,6 @@ _run() {
     _setup_user_service
     _setup_user_links
     _setup_user_shell
-    _setup_user_emacs
     _setup_user_xlocate
 }
 
@@ -74,12 +73,6 @@ EOF
     fi
 
     install_svc -S "$svcsrc"
-}
-
-_setup_user_emacs() {
-    printe_h2 "Installing emacs service..."
-
-    install_svc -us -p emacs "$BASE_DIR/sv/emacs"
 }
 
 _setup_user_xlocate() {
