@@ -120,20 +120,20 @@ _run() {
     _install_font_gh \
         source-code-pro \
         adobe/source-code-pro \
-        a4e4dd59b8e0a436b934f0f612c2e91b5932910c6d1c3b7d1a5a9f389c86302b \
-        2.030R-ro/1.050R-it
+        d8f879fefd66ecb7291ea2d73984b9c0a97fb499424e58290ba6b81787d0c725 \
+        2.038R-ro/1.058R-it/1.018R-VAR
 
     _install_font_gh \
-        source-sans-pro \
+        source-sans \
         adobe/source-sans-pro \
-        01e78d7ff451545ff1eec6cf14b28f62135e430a7ba80d74a90efd5334fef7eb \
-        2.045R-ro/1.095R-it
+        23df371ce8ce0c5c57e750f1b01af6a31e437fe1737df0501b8181162642686a \
+        3.028R
 
     _install_font_gh \
-        source-serif-pro \
+        source-serif \
         adobe/source-serif-pro \
-        bbb504463342f01666db34790574477b2bbd61a338897466461c66c4cd4464fd \
-        3.000R
+        dfb364735699cb830caad534cf7741234804d28e4b6fc5e4736b2401f6131aba \
+        4.004R
 
     ## Adobe Source Han
     ## Full archive for Source Han family are around 1.5GB, so instead we're
