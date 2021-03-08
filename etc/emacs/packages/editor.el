@@ -135,22 +135,31 @@
   (setq sp-cancel-autoskip-on-backward-movement nil))
 
 
-(use-package parinfer
-  :diminish parinfer-mode
+(use-package parinfer-rust-mode
+  :commands parinfer-rust-mode
+  :diminish parinfer-rust-mode
   :straight t
 
-  :commands
-  (parinfer-mode
-   parinfer-toggle-mode)
-
   :init
-  (setq parinfer-extensions '(defaults pretty-parens evil smart-tab smart-yank))
-  (add-hook 'clojure-mode-hook 'parinfer-mode)
-  (add-hook 'emacs-lisp-mode-hook 'parinfer-mode)
-  (add-hook 'common-lisp-mode-hook 'parinfer-mode)
-  (add-hook 'scheme-mode-hook 'parinfer-mode)
-  (add-hook 'lisp-mode-hook 'parinfer-mode))
+  (setq parinfer-rust-library
+        (no-littering-expand-var-file-name
+         (concat
+          (file-name-as-directory "parinfer-rust")
+          (cond
+           ((eq system-type 'darwin) "parinfer-rust-darwin.so")
+           ((eq system-type 'gnu/linux) "parinfer-rust-linux.so")
+           ((eq system-type 'windows-nt) "parinfer-rust-windows.dll")))))
 
+  (add-hook 'clojure-mode-hook 'parinfer-rust-mode)
+  (add-hook 'emacs-lisp-mode-hook 'parinfer-rust-mode)
+  (add-hook 'common-lisp-mode-hook 'parinfer-rust-mode)
+  (add-hook 'scheme-mode-hook 'parinfer-rust-mode)
+  (add-hook 'lisp-mode-hook 'parinfer-rust-mode)
+
+  :config
+  ;; Workaround for https://github.com/justinbarclay/parinfer-rust-mode/issues/40
+  (defun parinfer-rust--check-version (_a _b _c _d)
+    nil))
 
 (use-package rainbow-delimiters
   :commands rainbow-delimiters-mode
