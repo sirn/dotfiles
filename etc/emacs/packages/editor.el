@@ -140,6 +140,10 @@
   :diminish parinfer-rust-mode
   :straight t
 
+  :preface
+  (eval-when-compile
+    (defvar parinfer-rust-library))
+
   :init
   (setq parinfer-rust-library
         (no-littering-expand-var-file-name
