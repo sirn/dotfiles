@@ -38,6 +38,9 @@
 [submodule]
     fetchJobs = 8
 
+[init]
+    defaultBranch = main
+
 #
 # Repo
 #
