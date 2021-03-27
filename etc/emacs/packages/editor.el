@@ -8,6 +8,7 @@
 ;;; Editing behaviors
 
 (setq-default indent-tabs-mode nil)
+(setq-default x-alt-keysym 'meta)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (put 'downcase-region 'disabled nil)
 
