@@ -155,8 +155,8 @@ _do_src() {
 
     _ci_script=.github/workflows/build.yaml
     _image_base=$(grep image < "$_ci_script" | cut -d: -f2- | tr -d \'\ )
-    docker_base=$(echo "$_image_base" | cut -d- -f1)
-    docker_tag=$(echo "$_image_base" | cut -d: -f2)
+    docker_base=$(echo "$_image_base" | cut -d: -f1)
+    docker_tag=$(echo "$_image_base" | cut -d: -f2 | cut -d- -f1)
 
     if [ -z "$docker_base" ] && [ -z "$docker_tag" ]; then
         printf >&2 "%s: could not determine Docker image\\n" "$BASE_NAME"
@@ -225,7 +225,7 @@ _do_src() {
                 -v /tmp:/tmp \
                 $container_args \
                 $mounts \
-                docker.io/"$docker_base"-"$BOOTSTRAP":"$docker_tag" \
+                "$docker_base":"$docker_tag"-"$BOOTSTRAP" \
                 bash <<-EOF
 ln -sf / /hostrepo/masterdir
 /hostrepo/xbps-src $xbps_args $*
