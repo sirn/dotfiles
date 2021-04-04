@@ -551,28 +551,6 @@ functions."
     #'gemacs--lsp-run-from-node-modules))
 
 
-(use-package company-lsp
-  :init
-  (use-feature lsp
-    :config
-    (defun gemacs--company-lsp-setup (&rest _)
-      "Disable `company-prescient' sorting by length in some contexts.
-Specifically, disable sorting by length if the LSP Company
-backend returns fuzzy-matched candidates, which implies that the
-backend has already sorted the candidates into a reasonable
-order."
-      (setq-local company-prescient-sort-length-enable
-                  (cl-dolist (w lsp--buffer-workspaces)
-                    (when (thread-first w
-                            (lsp--workspace-client)
-                            (lsp--client-server-id)
-                            (memq '(jsts-ls mspyls bash-ls texlab ts-ls))
-                            (not))
-                      (cl-return t)))))
-
-    (advice-add 'lsp :after #'gemacs--company-lsp-setup)))
-
-
 (use-package lsp-ui
   :bind (("C-c f" . #'lsp-ui-sideline-apply-code-actions))
 

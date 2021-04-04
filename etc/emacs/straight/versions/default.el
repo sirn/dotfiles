@@ -10,7 +10,6 @@
  ("closql" . "1d5e9cbb69bc2992eaafa1bc084343efbd3e0c4c")
  ("commenter" . "6d1885419434ba779270c6fda0e30d390bb074bd")
  ("company-ansible" . "79dd421b161efa49fbdffad57fa40edb41f484a3")
- ("company-lsp" . "f921ffa0cdc542c21dc3dd85f2c93df4288e83bd")
  ("company-mode" . "484c99be29a5f71afba202fe0f8cbceea4509965")
  ("company-restclient" . "e5a3ec54edb44776738c13e13e34c85b3085277b")
  ("counsel-notmuch" . "a4a1562935e4180c42524c51609d1283e9be0688")
