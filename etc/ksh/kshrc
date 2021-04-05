@@ -324,10 +324,10 @@ gq() {
     esac
 
     repo_c=$(echo "$repo" |
-                   sed '
+                 sed '
                        s|~||;
                        s|^.*://||;
-                       s|^\w*@||;
+                       s|^.*@||;
                        s|:|/|;
                        s|.hg$||;
                        s|.git$||')
