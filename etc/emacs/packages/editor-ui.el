@@ -98,7 +98,7 @@
 (use-package telephone-line)
 
 
-(use-package kaolin-themes)
+(use-package tao-theme)
 
 
 (defun gemacs--disable-theme ()
@@ -131,7 +131,11 @@
 
        (telephone-line-mode +1))
 
-     (use-feature kaolin-themes
+     (use-feature tao-theme
        :demand t
+
+       :init
+       (setq tao-theme-use-sepia nil)
+
        :config
-       (load-theme 'kaolin-valley-dark t))))
+       (load-theme 'tao-yin t))))
