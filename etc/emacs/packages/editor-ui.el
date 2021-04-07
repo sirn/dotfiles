@@ -135,6 +135,7 @@
        :demand t
 
        :init
+       (setq tao-theme-use-boxes nil)
        (setq tao-theme-use-sepia nil)
 
        :config
