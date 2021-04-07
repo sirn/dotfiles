@@ -1,5 +1,9 @@
 ;; -*- lexical-binding: t -*-
 
+(use-package osx-trash)
+
+(use-package pbcopy)
+
 (gemacs-when-compiletime (eq system-type 'darwin)
   (setq dired-use-ls-dired nil)
 
@@ -29,7 +33,7 @@
     (global-set-key (kbd "s-n") 'make-frame))
 
 
-  (use-package osx-trash
+  (use-feature osx-trash
     :demand t
 
     :preface
@@ -40,7 +44,7 @@
     (osx-trash-setup))
 
 
-  (use-package pbcopy
+  (use-feature pbcopy
     :demand t
 
     :preface
