@@ -13,6 +13,13 @@
 (use-package treemacs
   :demand t
 
+  :init
+  (eval-when-compile
+    (declare-function treemacs-current-visibility nil)
+    (declare-function treemacs-get-local-window nil)
+    (declare-function treemacs-select-window nil)
+    (declare-function treemacs-add-and-display-current-project nil))
+
   :leader
   ("pt" #'gemacs--treemacs-add-project-or-toggle))
 
