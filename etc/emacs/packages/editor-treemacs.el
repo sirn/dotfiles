@@ -6,7 +6,7 @@
   (interactive)
   (pcase (treemacs-current-visibility)
     ('visible (delete-window (treemacs-get-local-window)))
-    ('exists  (treemacs-select-window))
+    ('exists  (treemacs-add-and-display-current-project))
     ('none    (treemacs-add-and-display-current-project))))
 
 
