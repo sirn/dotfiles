@@ -39,8 +39,12 @@ _install_nodejs() {
 
 _run_dev() {
     _npm_install eslint
+    _npm_install eslint-config-prettier
+    _npm_install eslint-plugin-svelte3
     _npm_install npm-upgrade
+    _npm_install pnpm
     _npm_install prettier
+    _npm_install prettier-plugin-svelte
     _npm_install stylelint
     _npm_install stylelint-config-recommended
     _npm_install stylelint-scss
