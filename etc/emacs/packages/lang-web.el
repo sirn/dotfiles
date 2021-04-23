@@ -2,17 +2,19 @@
 
 (use-package web-mode
   :mode
-  ("\\.phtml\\'"
-    "\\.tpl\\.php\\'"
-    "\\.[agj]sp\\'"
+  ("\\.[agj]sp\\'"
     "\\.as[cp]x\\'"
-    "\\.erb\\'"
-    "\\.mako\\'"
-    "\\.jinja2?\\'"
-    "\\.mustache\\'"
+    "\\.cjs\\'"
     "\\.djhtml\\'"
     "\\.dtl\\'"
+    "\\.erb\\'"
     "\\.html?\\'"
+    "\\.jinja2?\\'"
+    "\\.mako\\'"
+    "\\.mustache\\'"
+    "\\.phtml\\'"
+    "\\.svelte\\'"
+    "\\.tpl\\.php\\'"
     "\\.tsx\\'"
     "\\.jsx?\\'")
 
@@ -25,6 +27,7 @@
 
   :config
   (add-to-list 'web-mode-content-types-alist '("jsx" . "\\.js[x]?\\'"))
+  (add-to-list 'web-mode-content-types-alist '("jsx" . "\\.cjs\\'"))
 
   (let ((types '("javascript" "jsx")))
     (setq web-mode-comment-formats
