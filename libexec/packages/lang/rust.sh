@@ -10,7 +10,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv.sh"
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
-RUST_VERSION=1.49.0
+RUST_VERSION=1.51.0
 RUST_VERSION_PATH=$ASDF_DIR/installs/rust/$RUST_VERSION
 
 _preflight() {
@@ -26,6 +26,7 @@ _run() {
 }
 
 _install_rust() {
+    RUSTUP_INIT_SKIP_PATH_CHECK=yes; export RUSTUP_INIT_SKIP_PATH_CHECK
     asdf_plugin rust https://github.com/code-lever/asdf-rust
     asdf_install rust "$RUST_VERSION" global
 }
