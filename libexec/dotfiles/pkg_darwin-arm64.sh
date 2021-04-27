@@ -82,12 +82,12 @@ _run_dev() {
 
     # official binary is glibc only and compiling golang from source requires
     # go-1.4 to bootstrap. Use distro package to avoid some headaches.
-    ## Requires Rosetta (<=1.5)
     macports_install go
 
     # asdf is required for asdf-managed packages/; install it first
     sh "$BASE_DIR/libexec/packages/sys/asdf.sh" "$@"
     sh "$BASE_DIR/libexec/packages/lang/rust.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/ruby.sh" "$@"
     sh "$BASE_DIR/libexec/packages/lang/elixir.sh" "$@"
     sh "$BASE_DIR/libexec/packages/lang/erlang.sh" "$@"
     sh "$BASE_DIR/libexec/packages/lang/nim.sh" "$@"
@@ -95,11 +95,12 @@ _run_dev() {
     sh "$BASE_DIR/libexec/packages/lang/python.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/postgres.sh" "$@"
 
-    # Usually requires language interpreter to be installed
-    ## Requires Rosetta (depends on Go <=1.5)
-    arch -arch x86_64 sh "$BASE_DIR/libexec/packages/dev/golang.sh" "$@"
-    arch -arch x86_64 sh "$BASE_DIR/libexec/packages/net/gcloud.sh" "$@"
-    arch -arch x86_64 sh "$BASE_DIR/libexec/packages/net/kubectx.sh" "$@"
+    # Depends on go
+    sh "$BASE_DIR/libexec/packages/dev/golang.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/gcloud.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/kubectx.sh" "$@"
+
+    ## Requires Rosetta (no official release)
     arch -arch x86_64 sh "$BASE_DIR/libexec/packages/net/helm.sh" "$@"
 
     ## Not available
