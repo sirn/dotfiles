@@ -10,8 +10,8 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv.sh"
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
-NODEJS_VERSION=ref:v15.8.0
-NODEJS_VERSION_PATH=$ASDF_DIR/installs/nodejs/ref-v15.8.0
+NODEJS_VERSION=16.0.0
+NODEJS_VERSION_PATH="$ASDF_DIR/installs/nodejs/${NODEJS_VERSION}"
 
 _preflight() {
     if ! command -v asdf >/dev/null; then
