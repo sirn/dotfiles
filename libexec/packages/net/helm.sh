@@ -10,7 +10,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv.sh"
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
-HELM_VERSION=3.5.1
+HELM_VERSION=3.5.4
 HELM_VERSION_PATH=$ASDF_DIR/installs/helm/$HELM_VERSION
 
 _preflight() {
