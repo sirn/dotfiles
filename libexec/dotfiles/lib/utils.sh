@@ -262,6 +262,24 @@ get_sys() {
     echo "${platform}-${arch}${tag}"
 }
 
+get_libc() {
+    case $(get_sys) in
+        freebsd-* )
+            echo bsd
+            ;;
+        darwin-* )
+            echo apple
+            ;;
+        * )
+            if ldd /bin/sh |grep -q musl; then
+                echo musl
+            else
+                echo gnu
+            fi
+            ;;
+    esac
+}
+
 get_netif() {
     netif=
 

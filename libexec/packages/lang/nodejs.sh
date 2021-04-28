@@ -11,7 +11,16 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
 NODEJS_VERSION=16.0.0
-NODEJS_VERSION_PATH="$ASDF_DIR/installs/nodejs/${NODEJS_VERSION}"
+
+# Node does not provide binary for musl, we must compile from source.
+case $(get_libc) in
+    musl )
+        NODEJS_VERSION=ref:v$NODEJS_VERSION
+        ;;
+esac
+
+_vsn=$(echo "$NODEJS_VERSION" | tr ':' '-')
+NODEJS_VERSION_PATH="$ASDF_DIR/installs/nodejs/${_vsn}"
 
 _preflight() {
     if ! command -v asdf >/dev/null; then
