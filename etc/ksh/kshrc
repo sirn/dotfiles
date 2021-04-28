@@ -260,6 +260,7 @@ gg() {
 
     dir=$(
         find "${codedirs[@]}" \
+                -not -path '*/node_modules/*' \
                 \( \
                     -exec test -d '{}'/.git \; \
                     -or -exec test -d '{}'/.hg \; \
