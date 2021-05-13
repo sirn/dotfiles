@@ -1,0 +1,57 @@
+#!/usr/bin/env -S execlineb -P
+
+emptyenv
+export PATH /usr/local/bin:/usr/bin:/bin
+
+# Setting up
+#
+
+backtick -n user { id -un }
+backtick -n uid { id -u }
+
+multisubstitute {
+    importas user user
+    importas uid uid
+}
+
+backtick -n homedir { homeof $user }
+backtick -n shell {
+    redirfd -r 0 /etc/passwd
+    awk "BEGIN { FS=\":\" } /^${user}:/ { print $7 }"
+}
+
+multisubstitute {
+    importas homedir homedir
+    importas shell shell
+    define xdg-runtime-dir /run/user/${uid}
+}
+
+# - SHELL must be set otherwise some script that requires $SHELL
+#   in Emacs won't going to work and we're stuck with emacs daemon unable
+#   to boot.
+#
+# - SSH_AUTH_SOCK is hard-coded, as we're running gpg-agent in ssh-agent mode
+#   and the right way of determining this path using gpgconf may not return
+#   the correct path right after system is booted.
+#
+# - XDG_RUNTIME_DIR is hard-coded, because elogind is fantastic.
+#
+
+export HOME $homedir
+export SHELL $shell
+export XDG_RUNTIME_DIR ${xdg-runtime-dir}
+export SSH_AUTH_SOCK ${xdg-runtime-dir}/gnupg/S.gpg-agent.ssh
+
+# Running
+#
+
+# Only run Emacs if XDG_RUNTIME_DIR already created by elogind. Without this
+# check emacsclient may be unable to connect to emacs server in a desktop
+# session.
+#
+
+if {
+    test -d ${xdg-runtime-dir}
+}
+
+emacs --fg-daemon --chdir=${homedir}
