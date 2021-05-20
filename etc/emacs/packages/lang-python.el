@@ -3,7 +3,7 @@
 (use-feature python
   :preface
   (eval-when-compile
-    (defvar lsp-pyls-server-command))
+    (defvar lsp-pylsp-server-command))
 
   :init
   (setq python-fill-docstring-style 'django)
@@ -11,10 +11,10 @@
 
   (use-feature lsp-mode
     :init
-    (setq lsp-pyls-server-command
+    (setq lsp-pylsp-server-command
       (gemacs--path-join
         (file-name-as-directory (getenv "HOME"))
-        ".dotfiles/libexec/lsp/pyls"))
+        ".dotfiles/libexec/lsp/pylsp"))
 
     (add-hook 'python-mode-hook #'lsp))
 
@@ -37,9 +37,9 @@ See https://emacs.stackexchange.com/a/3338/12534."
     ((executable-find "python2") (setq python-shell-interpreter "python2"))
     (t (setq python-shell-interpreter "python")))
 
-  (use-feature lsp-pyls
+  (use-feature lsp-pylsp
     :config
-    (setq lsp-pyls-plugins-pycodestyle-enabled nil)
-    (setq lsp-pyls-plugins-mccabe-enabled nil)
-    (setq lsp-pyls-plugins-pyflakes-enabled nil)
-    (setq lsp-pyls-plugins-flake8-enabled t)))
+    (setq lsp-pylsp-plugins-pycodestyle-enabled nil)
+    (setq lsp-pylsp-plugins-mccabe-enabled nil)
+    (setq lsp-pylsp-plugins-pyflakes-enabled nil)
+    (setq lsp-pylsp-plugins-flake8-enabled t)))
