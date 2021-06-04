@@ -88,6 +88,7 @@ prependpath "/opt/local/bin"
 
 prependpath "$HOME/.dotfiles/bin"
 prependpath "$HOME/.dotfiles/libexec/wrapper"
+prependpath "$HOME/.dotpriv/bin"
 
 
 ## GPG agent
