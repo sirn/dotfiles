@@ -3,6 +3,7 @@
 (use-feature python
   :preface
   (eval-when-compile
+    (declare-function lsp-register-custom-settings nil)
     (defvar lsp-pylsp-server-command))
 
   :init
@@ -42,4 +43,8 @@ See https://emacs.stackexchange.com/a/3338/12534."
     (setq lsp-pylsp-plugins-pycodestyle-enabled nil)
     (setq lsp-pylsp-plugins-mccabe-enabled nil)
     (setq lsp-pylsp-plugins-pyflakes-enabled nil)
-    (setq lsp-pylsp-plugins-flake8-enabled t)))
+    (setq lsp-pylsp-plugins-flake8-enabled t)
+    (lsp-register-custom-settings
+      '(("pylsp.plugins.mypy-ls.enabled" t t)
+        ("pylsp.plugins.mypy-ls.live_mode" nil t)
+        ("pylsp.plugins.pyls_isort.enabled" t t)))))
