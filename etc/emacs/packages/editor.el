@@ -603,3 +603,13 @@ functions."
 
   (advice-add 'lsp-ui-doc--render-buffer :around
     #'gemacs--advice-lsp-ui-doc-allow-multiline))
+
+
+(use-package lsp-treemacs
+  :after (lsp-mode treemacs)
+  :preface
+  (eval-when-compile
+    (declare-function lsp-treemacs-sync-mode nil))
+
+  :config
+  (lsp-treemacs-sync-mode t))
