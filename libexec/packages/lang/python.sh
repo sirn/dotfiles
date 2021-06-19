@@ -49,9 +49,10 @@ _run_dev() {
     _pip3_install black
     _pip3_install flake8
     _pip3_install pylsp python-lsp-server
-    _pip3_install pyls_black pyls-black
+    _pip3_install mypy_ls mypy-ls
+    _pip3_install pyls_flake8 pyls-flake8
     _pip3_install pyls_isort pyls-isort
-    _pip3_install pyls_mypy pyls-mypy
+    _pip3_install pylsp_black python-lsp-black
 
     _pip3_install ansible
     _pip3_install ansible-lint
