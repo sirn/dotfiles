@@ -64,7 +64,7 @@ fi
 ##
 
 # shellcheck disable=SC1090
-if [ -d "$HOME/.asdf" ]; then
+if [ -d "$HOME/.asdf" ] && [ -z "$ASDF_DIR" ]; then
     . "$HOME/.asdf/asdf.sh"
 fi
 
@@ -205,9 +205,6 @@ esac
 
 # shellcheck disable=SC2089
 PS1="\["'$(printf "%$((COLUMNS-1))s\r")'"\]$PS1"
-
-# shellcheck disable=SC2090
-export PS1
 
 
 ## Utilities
