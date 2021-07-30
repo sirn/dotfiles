@@ -23,11 +23,7 @@
    ("C"   . #'helpful-command)
 
    :map global-map
-   ("C-c C-d" . #'helpful-at-point))
-
-  :init
-  (setq counsel-describe-function-function #'helpful-callable)
-  (setq counsel-describe-variable-function #'helpful-variable))
+   ("C-c C-d" . #'helpful-at-point)))
 
 
 (use-feature elisp-mode

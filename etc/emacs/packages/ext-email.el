@@ -16,10 +16,3 @@
 
   :leader
   ("mm" #'notmuch))
-
-
-(use-package counsel-notmuch
-  :commands counsel-notmuch
-
-  :leader
-  ("m/" #'counsel-notmuch))
