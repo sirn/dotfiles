@@ -47,6 +47,7 @@ FLAVOR:
     dev             Install development packages.
     mail            Install mail packages.
     system          Install system packages.
+    media           Install media packages.
 
 Bootstrap script will default to \`pkg\` without any FLAVORS
 if no PROFILES and FLAVORS is given. Lookup path is default to
@@ -97,7 +98,7 @@ done
 
 for f in $FLAVORS; do
     case "$f" in
-        dev | desktop | mail | backups | system ) ;;
+        dev | desktop | mail | backups | system | media ) ;;
         * ) printe_err "Unknown flavor: $f"; exit 1;;
     esac
 done
