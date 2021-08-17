@@ -4,10 +4,11 @@
 (defun gemacs--treemacs-add-project-or-toggle ()
   "Initialize or toggle `treemacs-add-and-display-current-project'."
   (interactive)
-  (pcase (treemacs-current-visibility)
-    ('visible (delete-window (treemacs-get-local-window)))
-    ('exists  (treemacs-add-and-display-current-project))
-    ('none    (treemacs-add-and-display-current-project))))
+  (when (projectile-project-p)
+    (pcase (treemacs-current-visibility)
+      ('visible (delete-window (treemacs-get-local-window)))
+      ('exists  (treemacs-add-and-display-current-project))
+      ('none    (treemacs-add-and-display-current-project)))))
 
 
 (use-package treemacs
@@ -21,7 +22,12 @@
     (declare-function treemacs-add-and-display-current-project nil))
 
   :leader
-  ("pt" #'gemacs--treemacs-add-project-or-toggle))
+  ("tt" #'treemacs
+   "tw" #'treemacs-switch-workspace
+   "tC" #'treemacs-create-workspace
+   "tE" #'treemacs-edit-workspaces
+   "tR" #'treemacs-rename-workspace
+   "tp" #'treemacs-add-project-to-workspace))
 
 
 (use-package treemacs-evil
@@ -29,4 +35,8 @@
 
 
 (use-package treemacs-projectile
-  :demand t)
+  :after projectile)
+
+
+(use-package treemacs-magit
+  :after magit)
