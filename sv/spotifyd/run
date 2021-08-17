@@ -7,15 +7,25 @@ export PATH /usr/local/bin:/usr/bin:/bin
 #
 
 backtick -n user { id -un }
-importas user user
-backtick -n homedir { homeof $user }
+backtick -n uid { id -u }
+multisubstitute {
+    importas user user
+    importas uid uid
+}
 
+backtick -n homedir { homeof $user }
 multisubstitute {
     importas homedir homedir
     importas path PATH
+    define xdg-runtime-dir /run/user/${uid}
 }
 
 export HOME $homedir
+export XDG_RUNTIME_DIR ${xdg-runtime-dir}
+
+# Should probably not be hard-coded but there's no way to determine this
+# during login session without runsvdir being spawn under desktop process
+export DISPLAY :0
 
 # Running
 #
@@ -25,4 +35,5 @@ if {
     redirfd -w 2 /dev/null gpg2 -o /dev/null -as -
 }
 
+fdmove -c 2 1
 spotifyd --no-daemon
