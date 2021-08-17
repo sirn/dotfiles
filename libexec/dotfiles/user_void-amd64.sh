@@ -23,6 +23,10 @@ _run_desktop() {
     _setup_desktop_links
 }
 
+_run_media() {
+    _setup_media_spotifyd
+}
+
 _run_dev() {
     _setup_dev_links
 }
@@ -119,6 +123,12 @@ _setup_desktop_links() {
     make_link \
         "$BASE_DIR/etc/fontconfig/conf.d" \
         "$HOME/.config/fontconfig/conf.d"
+}
+
+_setup_media_spotifyd() {
+    printe_h2 "Installing spotifyd service..."
+
+    install_svc -us -p xlocate "$BASE_DIR/sv/spotifyd"
 }
 
 _setup_dev_links() {

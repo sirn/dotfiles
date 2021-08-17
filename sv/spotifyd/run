@@ -1,0 +1,28 @@
+#!/usr/bin/env -S execlineb -P
+
+emptyenv
+export PATH /usr/local/bin:/usr/bin:/bin
+
+# Setting up
+#
+
+backtick -n user { id -un }
+importas user user
+backtick -n homedir { homeof $user }
+
+multisubstitute {
+    importas homedir homedir
+    importas path PATH
+}
+
+export HOME $homedir
+
+# Running
+#
+
+if {
+    pipeline { printf t }
+    redirfd -w 2 /dev/null gpg2 -o /dev/null -as -
+}
+
+spotifyd --no-daemon
