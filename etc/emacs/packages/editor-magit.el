@@ -49,6 +49,10 @@
 
 
 (use-package git-gutter
+  ;; Since our magit is defer-loaded, git-gutter need to wait for magit
+  ;; to prevent `ad-handle-definition' warning due to `vc-revert' being
+  ;; redefined.
+  :after magit
   :init
 
   ;; BUG: https://github.com/syohex/emacs-git-gutter/issues/24
