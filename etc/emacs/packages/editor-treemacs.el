@@ -19,7 +19,11 @@
     (declare-function treemacs-current-visibility nil)
     (declare-function treemacs-get-local-window nil)
     (declare-function treemacs-select-window nil)
-    (declare-function treemacs-add-and-display-current-project nil))
+    (declare-function treemacs-add-and-display-current-project nil)
+    (defvar treemacs-read-string-input))
+
+  :config
+  (setq treemacs-read-string-input 'from-minibuffer)
 
   :leader
   ("tt" #'treemacs
