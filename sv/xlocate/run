@@ -7,9 +7,9 @@ export PATH /usr/local/bin:/usr/bin:/bin
 #
 
 backtick -n user { id -un }
-importas user user
+importas -u user user
 backtick -n homedir { homeof $user }
-importas homedir homedir
+importas -u homedir homedir
 export HOME $homedir
 
 # Running

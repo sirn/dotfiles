@@ -10,8 +10,8 @@ backtick -n user { id -un }
 backtick -n uid { id -u }
 
 multisubstitute {
-    importas user user
-    importas uid uid
+    importas -u user user
+    importas -u uid uid
 }
 
 backtick -n homedir { homeof $user }
@@ -21,8 +21,8 @@ backtick -n shell {
 }
 
 multisubstitute {
-    importas homedir homedir
-    importas shell shell
+    importas -u homedir homedir
+    importas -u shell shell
     define xdg-runtime-dir /run/user/${uid}
 }
 

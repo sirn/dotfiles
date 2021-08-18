@@ -9,18 +9,18 @@ export PATH /usr/local/bin:/usr/bin:/bin
 backtick -n user { id -un }
 backtick -n uid { id -u }
 multisubstitute {
-    importas user user
-    importas uid uid
+    importas -u user user
+    importas -u uid uid
 }
 
 backtick -n homedir { homeof $user }
 multisubstitute {
-    importas homedir homedir
-    importas path PATH
+    importas -u homedir homedir
+    importas -u path PATH
     define xdg-runtime-dir /run/user/${uid}
 }
 
-export HOME $homedir
+export HOME ${homedir}
 export XDG_RUNTIME_DIR ${xdg-runtime-dir}
 
 # Should probably not be hard-coded but there's no way to determine this
