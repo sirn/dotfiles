@@ -1,0 +1,9 @@
+#!/bin/sh
+
+_user=${PWD##*-}; export _user
+
+USER="$_user"; export USER
+HOME="/home/$_user"; export HOME
+
+sv -w600 force-stop "$HOME/.local/var/service/"*
+sv exit "$HOME/.local/var/service/"*

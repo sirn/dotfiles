@@ -43,38 +43,14 @@ _setup_user_service() {
     svcsrc=/etc/sv/$svcname
 
     if [ ! -f "$svcsrc/run" ]; then
-        cd "$BUILD_DIR" || exit 1
-
-        cat <<EOF > "$BUILD_DIR/${svcname}_run"
-#!/bin/sh
-
-if [ ! -d /run/runit.$USER ]; then
-    install -d -o$USER -g$USER /run/runit.$USER
-fi
-
-HOME=$HOME; export HOME
-
-exec 2>&1
-exec chpst -u "$USER:\$(id -Gn $USER | tr ' ' ':')" runsvdir $HOME/.local/var/service 'log: ...........................................................................................................................................................................................................................................................................................................................................................................................................'
-EOF
-
         run_root install -d "$svcsrc"
-        run_root install -m0755 "$BUILD_DIR/${svcname}_run" "$svcsrc/run"
+        run_root install -m0755 "$BASE_DIR/sv/runsvdir/run" "$svcsrc/run"
         make_link -Sf "/run/runit/supervise.$svcname" "$svcsrc/supervise"
     fi
 
     if [ ! -f "$svcsrc/finish" ]; then
-        cd "$BUILD_DIR" || exit 1
-
-        cat <<EOF > "$BUILD_DIR/${svcname}_finish"
-#!/bin/sh
-
-sv -w600 force-stop $HOME/.local/var/service/*
-sv exit $HOME/.local/var/service/*
-EOF
-
         run_root install -d "$svcsrc"
-        run_root install -m0755 "$BUILD_DIR/${svcname}_finish" "$svcsrc/finish"
+        run_root install -m0755 "$BASE_DIR/sv/runsvdir/finish" "$svcsrc/finish"
     fi
 
     install_svc -S "$svcsrc"
