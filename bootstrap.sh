@@ -98,7 +98,7 @@ done
 
 for f in $FLAVORS; do
     case "$f" in
-        dev | desktop | mail | backups | system | media ) ;;
+        dev | desktop | mail | backups | system ) ;;
         * ) printe_err "Unknown flavor: $f"; exit 1;;
     esac
 done

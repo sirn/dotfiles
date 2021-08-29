@@ -75,13 +75,6 @@ _run_desktop() {
     sh "$BASE_DIR/libexec/packages/sys/fonts.sh" "$@"
 }
 
-_run_media() {
-    printe_h2 "Installing media packages..."
-
-    xbps_install spotifyd
-    xbps_install spotify-tui
-}
-
 _run_dev() {
     printe_h2 "Installing dev packages..."
 
