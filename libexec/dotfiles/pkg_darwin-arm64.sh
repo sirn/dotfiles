@@ -102,6 +102,8 @@ _run_dev() {
 
     ## Requires Rosetta (no official release)
     arch -arch x86_64 sh "$BASE_DIR/libexec/packages/net/helm.sh" "$@"
+    arch -arch x86_64 sh "$BASE_DIR/libexec/packages/net/helmfile.sh" "$@"
+    arch -arch x86_64 sh "$BASE_DIR/libexec/packages/net/kustomize.sh" "$@"
 
     ## Not available
     #macports_install jsonnet

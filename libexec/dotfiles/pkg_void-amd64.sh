@@ -78,6 +78,7 @@ _run_desktop() {
 _run_dev() {
     printe_h2 "Installing dev packages..."
 
+    xbps_install doctl
     xbps_install jq
     xbps_install jsonnet
     xbps_install nomad
@@ -112,6 +113,8 @@ _run_dev() {
     sh "$BASE_DIR/libexec/packages/net/gcloud.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/kubectx.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/helm.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/helmfile.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/kustomize.sh" "$@"
 }
 
 _run_all() {
