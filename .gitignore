@@ -22,4 +22,4 @@ ssh/config.d/*
 .config
 
 # Service
-sv/*/supervise
+sv/*/**/supervise

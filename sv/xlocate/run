@@ -15,6 +15,7 @@ export HOME $homedir
 # Running
 #
 
+fdmove -c 2 1
 foreground { mkdir -p ${homedir}/.local/var/run }
 snooze -R 10m -s 6h -H/6 -t ${homedir}/.local/var/run/xlocate_timefile
 if {

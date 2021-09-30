@@ -76,5 +76,10 @@ install_svc() {
         make_link "$svclink/supervise.$svcname" "$svcsrc/supervise"
     fi
 
+    if [ -f "$svcsrc/log/run" ] && [ -n "$svclink" ]; then
+        install -d "$svclink/supervise.$svcname-log"
+        make_link "$svclink/supervise.$svcname-log" "$svcsrc/log/supervise"
+    fi
+
     make_link $mkargs "$svcsrc" "$svcdir"
 }

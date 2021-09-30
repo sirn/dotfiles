@@ -54,4 +54,5 @@ if {
     test -d ${xdg-runtime-dir}
 }
 
+fdmove -c 2 1
 emacs --fg-daemon --chdir=${homedir}
