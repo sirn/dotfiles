@@ -1,0 +1,48 @@
+#!/usr/bin/env -S execlineb -P
+
+emptyenv
+export PATH /usr/local/bin:/usr/bin:/bin
+
+# Setting up
+#
+
+backtick -n user { id -un }
+backtick -n uid { id -u }
+
+multisubstitute {
+    importas -u user user
+    importas -u uid uid
+}
+
+backtick -n homedir { homeof $user }
+
+multisubstitute {
+    importas -u homedir homedir
+    define xdg-runtime-dir /run/user/${uid}
+}
+
+define socket-dir ${xdg-runtime-dir}/podman
+
+# Only proceed if XDG_RUNTIME_DIR already created by elogind. Without this
+# check podman will restart when we first login which is not what we want.
+#
+
+if { test -d ${xdg-runtime-dir} }
+if { mkdir -p ${socket-dir} }
+
+# Mimicing the behavior of systemd socket activation which binds socket
+# for the number of LISTEN_FDS starting from fd 3. Podman service doesn't
+# specify LISTEN_FDNAMES so we just default to some value.
+#
+
+s6-ipcserver-socketbinder -a 0600 ${socket-dir}/podman.sock
+fdmove 3 0
+
+export HOME ${homedir}
+export XDG_RUNTIME_DIR ${xdg-runtime-dir}
+export LISTEN_FDS 1
+export LISTEN_FDNAMES podman
+getpid LISTEN_PID
+
+fdmove -c 2 1
+/usr/bin/podman system service -t 0 --log-level=info

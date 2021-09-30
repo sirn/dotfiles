@@ -1,0 +1,18 @@
+#!/usr/bin/env -S execlineb -P
+
+emptyenv
+export PATH /usr/local/bin:/usr/bin:/bin
+
+# Setting up
+#
+
+backtick -n user { id -un }
+importas -u user user
+backtick -n homedir { homeof $user }
+importas -u homedir homedir
+
+# Logging
+#
+
+if { mkdir -p ${homedir}/.local/var/log/podman }
+svlogd -ttt ${homedir}/.local/var/log/podman

@@ -25,6 +25,7 @@ _run_desktop() {
 
 _run_dev() {
     _setup_dev_links
+    _setup_dev_podman
 }
 
 _setup_user_service() {
@@ -101,4 +102,10 @@ _setup_dev_links() {
     printe_h2 "Installing dev links..."
 
     make_link "$BASE_DIR/etc/proselint/proselintrc" "$HOME/.proselintrc"
+}
+
+_setup_dev_podman() {
+    printe_h2 "Installing podman service..."
+
+    install_svc -us -p podman "$BASE_DIR/sv/podman"
 }

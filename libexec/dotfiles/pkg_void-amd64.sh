@@ -17,6 +17,7 @@ _run() {
     xbps_install aspell
     xbps_install aspell-en
     xbps_install curl
+    xbps_install docker-compose
     xbps_install duplicity
     xbps_install entr
     xbps_install execline
