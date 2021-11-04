@@ -7,7 +7,22 @@
 (use-package go-mode
   :preface
   (eval-when-compile
-    (declare-function go--backward-irrelevant nil))
+    (defvar lsp-diagnostics-provider)
+    (declare-function go--backward-irrelevant nil)
+    (declare-function gemacs--go-beginning-of-defun nil)
+    (declare-function gemacs--go-end-of-defun nil)
+    (declare-function gemacs--go-defun-setup nil)
+    (declare-function gemacs--go-lsp nil)
+    (declare-function gemacs--go-flycheck nil))
+
+  :init
+  (use-feature lsp-mode
+    :init
+    (add-hook 'go-mode-hook #'lsp))
+
+  (use-feature flycheck-golangci-lint
+    :init
+    (add-hook 'go-mode-hook #'flycheck-golangci-lint-setup))
 
   :config
   (defvar gemacs--go-defun-regexp
@@ -61,7 +76,23 @@ See <https://github.com/dominikh/go-mode.el/issues/232>."
     (setq-local beginning-of-defun-function #'gemacs--go-beginning-of-defun)
     (setq-local end-of-defun-function #'gemacs--go-end-of-defun))
 
+  (defun gemacs--go-lsp ()
+    "Setup LSP for Golang"
+    (setq-local lsp-diagnostics-provider :none))
+
+  (defun gemacs--go-flycheck ()
+    "Disable some Flycheck checkers for Emacs Lisp."
+    (gemacs--flycheck-disable-checkers
+      'go-gofmt
+      'go-golint
+      'go-vet
+      'go-errcheck
+      'go-staticcheck
+      'go-unconvert))
+
   (add-hook 'go-mode-hook #'gemacs--go-defun-setup)
+  (add-hook 'go-mode-hook #'gemacs--go-flycheck)
+  (add-hook 'go-mode-hook #'gemacs--go-lsp)
 
   (use-feature lsp-ui
     :preface
@@ -100,3 +131,5 @@ thing as far as I can tell)."
     :config
     (add-to-list 'apheleia-formatters '(goimports . ("goimports")))
     (add-to-list 'apheleia-mode-alist '(go-mode . goimports))))
+
+(use-package flycheck-golangci-lint)
