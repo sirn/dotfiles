@@ -23,6 +23,7 @@ _run() {
     macports_install duplicity
     macports_install emacs
     macports_install entr
+    macports_install execline
     macports_install ffmpeg
     macports_install fzf
     macports_install git
@@ -39,6 +40,8 @@ _run() {
     macports_install pstree
     macports_install qemu +target_arm +target_riscv32 +target_riscv64 +target_x86_64
     macports_install rsync
+    macports_install s6
+    macports_install snooze
     macports_install socat
     macports_install the_silver_searcher
     macports_install tmux
@@ -48,12 +51,6 @@ _run() {
     macports_install w3m
     macports_install xz
     macports_install youtube-dl
-
-    ## Not available
-    #macports_install execline
-    #macports_install mdbook
-    #macports_install s6
-    #macports_install snooze
 }
 
 _run_desktop() {

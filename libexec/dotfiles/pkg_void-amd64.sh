@@ -28,7 +28,6 @@ _run() {
     xbps_install git-lfs
     xbps_install graphviz
     xbps_install ipcalc
-    xbps_install mdBook
     xbps_install mercurial
     xbps_install mosh
     xbps_install oksh

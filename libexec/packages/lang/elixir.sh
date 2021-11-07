@@ -23,11 +23,11 @@ ERLANG_VERSION=$(awk '/ERLANG_VERSION=/ {
     print substr($0, sp + 1)
 }' < "$(pwd -P)/erlang.sh")
 
-ELIXIR_VERSION=1.11.4-otp-${ERLANG_VERSION%%.*}
+ELIXIR_VERSION=1.12.3-otp-${ERLANG_VERSION%%.*}
 ELIXIR_VERSION_PATH=$ASDF_DIR/installs/elixir/$ELIXIR_VERSION
 
-ELIXIR_LS_VER=0.7.0
-ELIXIR_LS_SHA256=d16cd5522907cfd36b4ed27e24913dd9c48e600db7719e92e3b41dd645f0322f
+ELIXIR_LS_VER=0.8.1
+ELIXIR_LS_SHA256=d7f596b77dd9f4d669aaf71f2adc6f67420aef05da7dfb04aa5c403a5a0bbcf3
 
 _preflight() {
     if ! command -v asdf >/dev/null; then

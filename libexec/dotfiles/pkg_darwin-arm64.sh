@@ -22,6 +22,7 @@ _run() {
     macports_install curl +ssl +http2
     macports_install emacs
     macports_install entr
+    macports_install execline
     macports_install ffmpeg
     macports_install fzf
     macports_install git
@@ -36,6 +37,8 @@ _run() {
     macports_install pandoc
     macports_install pstree
     macports_install rsync
+    macports_install s6
+    macports_install snooze
     macports_install socat
     macports_install the_silver_searcher
     macports_install tmux
@@ -43,19 +46,13 @@ _run() {
     macports_install vim
     macports_install xz
     macports_install youtube-dl
+    macports_install duplicity
+    macports_install proselint
+    macports_install w3m
 
     ## Broken
-    #macports_install duplicity
-    #macports_install proselint
     #macports_install qemu +target_arm +target_riscv64
     #macports_install unison -gtk
-    #macports_install w3m
-
-    ## Not available
-    #macports_install execline
-    #macports_install mdbook
-    #macports_install s6
-    #macports_install snooze
 }
 
 _run_desktop() {
@@ -73,6 +70,7 @@ _run_dev() {
     macports_install shellcheck
     macports_install tcl
     macports_install terraform-0.14
+    macports_install jsonnet
 
     macports_install bzip2
     macports_install libffi
@@ -98,15 +96,12 @@ _run_dev() {
     # Depends on go
     sh "$BASE_DIR/libexec/packages/dev/golang.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/gcloud.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/helm.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/kubectx.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/kustomize.sh" "$@"
 
     ## Requires Rosetta (no official release)
-    arch -arch x86_64 sh "$BASE_DIR/libexec/packages/net/helm.sh" "$@"
     arch -arch x86_64 sh "$BASE_DIR/libexec/packages/net/helmfile.sh" "$@"
-    arch -arch x86_64 sh "$BASE_DIR/libexec/packages/net/kustomize.sh" "$@"
-
-    ## Not available
-    #macports_install jsonnet
 
     macports_select terraform terraform0.14
 }
