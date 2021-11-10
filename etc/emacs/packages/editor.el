@@ -210,6 +210,17 @@
   (add-hook 'prog-mode-hook #'gemacs--dtrt-maybe-enable))
 
 
+(use-package unkillable-scratch
+  :demand t
+
+  :preface
+  (eval-when-compile
+    (declare-function unkillable-scratch 1))
+
+  :config
+  (unkillable-scratch +1))
+
+
 ;; --------------------------------------------------------------------------
 ;;; Snippets
 
