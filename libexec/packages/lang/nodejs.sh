@@ -15,7 +15,7 @@ NODEJS_VERSION=17.0.1
 # Node does not provide binary for musl, we must compile from source.
 case $(get_libc) in
     musl )
-        NODEJS_VERSION=ref:v$NODEJS_VERSION
+        NODEJS_VERSION=ref:$NODEJS_VERSION
         ;;
 esac
 
