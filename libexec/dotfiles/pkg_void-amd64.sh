@@ -115,6 +115,7 @@ _run_dev() {
     sh "$BASE_DIR/libexec/packages/net/helm.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/helmfile.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/kustomize.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/dev/buf.sh" "$@"
 }
 
 _run_all() {
