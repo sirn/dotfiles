@@ -21,6 +21,10 @@
     (add-hook 'go-mode-hook #'lsp))
 
   (use-feature flycheck-golangci-lint
+    :preface
+    (eval-when-compile
+      (declare-function flycheck-golangci-lint-setup nil))
+
     :init
     (add-hook 'go-mode-hook #'flycheck-golangci-lint-setup))
 
