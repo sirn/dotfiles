@@ -63,7 +63,7 @@ fi
 ## ASDF
 ##
 
-# shellcheck disable=SC1090
+# shellcheck disable=SC1090,SC1091
 if [ -d "$HOME/.asdf" ] && [ -z "$ASDF_DIR" ]; then
     . "$HOME/.asdf/asdf.sh"
 fi
@@ -221,6 +221,7 @@ fi
 alias ll='ls -lh'
 alias la='ls -alh'
 alias sshi='ssh -o StrictHostKeyChecking=ask -o UserKnownHostsFile=/dev/null'
+alias rsynci='rsync -e "ssh -o StrictHostKeyChecking=ask -o UserKnownHostsFile=/dev/null"'
 
 if command -v podman >/dev/null && ! command -v docker >/dev/null; then
     alias docker="podman"
