@@ -72,7 +72,7 @@
  ("nim-mode" . "744e076f0bea1c5ddc49f92397d9aa98ffa7eff8")
  ("nix-mode" . "e7bf2e4cc49e7a12265714dfaf5e286bfbc1e87f")
  ("no-littering" . "3a30eb7aa7db56072652c43b1b27595ff8c52a32")
- ("notmuch" . "fc3c79dd37d4bae938a5d0a1d7773bea48dd09b4")
+ ("notmuch" . "b649b0c871e7fbfcd15a24d51b071bad2680e5d2")
  ("ob-restclient.el" . "bfbc4d8e8a348c140f9328542daf5d979f0993e2")
  ("org" . "dbd192bbc6fb54105a78de3fcb65c77b8e769e23")
  ("origami.el" . "e558710a975e8511b9386edc81cd6bdd0a5bda74")

@@ -5,4 +5,4 @@
 
 (use-package racer
   :init
-  (add-hook 'rust-mode #'racer-mode))
+  (add-hook 'rust-mode-hook #'racer-mode))

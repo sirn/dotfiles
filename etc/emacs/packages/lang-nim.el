@@ -18,5 +18,10 @@
           tok))))
 
   (use-feature lsp
+    :init
+    (add-hook 'nim-mode-hook #'lsp))
+
+  (use-feature apheleia
     :config
-    (add-hook 'nim-mode-hook #'lsp)))
+    (add-to-list 'apheleia-formatters '(nimpretty . ("nimpretty" "--out:/dev/stdout" filepath)))
+    (add-to-list 'apheleia-mode-alist '(nim-mode . nimpretty))))
