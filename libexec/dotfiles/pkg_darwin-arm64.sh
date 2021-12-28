@@ -19,6 +19,7 @@ _run() {
     macports_install aspell
     macports_install aspell-dict-en
     macports_install curl +ssl +http2
+    macports_install duplicity
     macports_install emacs
     macports_install entr
     macports_install execline
@@ -35,6 +36,7 @@ _run() {
     macports_install oksh
     macports_install openssh
     macports_install pandoc
+    macports_install proselint
     macports_install pstree
     macports_install rsync
     macports_install s6
@@ -44,11 +46,9 @@ _run() {
     macports_install tmux
     macports_install tree
     macports_install vim
+    macports_install w3m
     macports_install xz
     macports_install youtube-dl
-    macports_install duplicity
-    macports_install proselint
-    macports_install w3m
 
     ## Broken
     #macports_install qemu +target_arm +target_riscv64
