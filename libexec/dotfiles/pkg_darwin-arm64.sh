@@ -47,6 +47,7 @@ _run() {
     macports_install tree
     macports_install vim
     macports_install w3m
+    macports_install xcodes
     macports_install xz
     macports_install youtube-dl
 
