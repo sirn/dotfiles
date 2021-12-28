@@ -15,7 +15,6 @@ _run() {
 
     macports_bootstrap
 
-    macports_install GraphicsMagick
     macports_install aria2 +sqlite3
     macports_install aspell
     macports_install aspell-dict-en
@@ -29,6 +28,7 @@ _run() {
     macports_install git-crypt
     macports_install git-lfs
     macports_install graphviz
+    macports_install imagemagick
     macports_install ipcalc
     macports_install mercurial
     macports_install mosh
