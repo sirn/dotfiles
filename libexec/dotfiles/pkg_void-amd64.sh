@@ -12,6 +12,7 @@ cd "$(dirname "$0")" || exit 1
 _run() {
     printe_h2 "Installing packages..."
 
+    xbps_install ImageMagick
     xbps_install aria2
     xbps_install aspell
     xbps_install aspell-en
@@ -26,7 +27,6 @@ _run() {
     xbps_install git-crypt
     xbps_install git-lfs
     xbps_install graphviz
-    xbps_install imagemagick
     xbps_install ipcalc
     xbps_install mercurial
     xbps_install mosh
