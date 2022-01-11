@@ -38,6 +38,7 @@ _run() {
     macports_install pandoc
     macports_install proselint
     macports_install pstree
+    macports_install qemu +target_arm +target_riscv32 +target_riscv64 +target_x86_64
     macports_install rsync
     macports_install s6
     macports_install snooze
