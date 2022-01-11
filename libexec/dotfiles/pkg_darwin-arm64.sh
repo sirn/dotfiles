@@ -31,11 +31,13 @@ _run() {
     macports_install graphviz
     macports_install imagemagick
     macports_install ipcalc
+    macports_install lima
     macports_install mercurial
     macports_install mosh
     macports_install oksh
     macports_install openssh
     macports_install pandoc
+    macports_install podman
     macports_install proselint
     macports_install pstree
     macports_install qemu +target_arm +target_riscv32 +target_riscv64 +target_x86_64
@@ -53,7 +55,6 @@ _run() {
     macports_install youtube-dl
 
     ## Broken
-    #macports_install qemu +target_arm +target_riscv64
     #macports_install unison -gtk
 }
 
