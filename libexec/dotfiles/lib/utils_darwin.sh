@@ -31,22 +31,30 @@ macports_bootstrap() {
 
 macports_installed() {
     pkg=$1; shift
+    variants=$@
+    active=$($MACPORTS -q installed "$pkg" 2>&1 | grep "(active)")
 
-    case "$($MACPORTS installed "$pkg" 2>&1)" in
+    # Not installed
+    case "$active" in
         "None"* )
             return 1
             ;;
-
-        * )
-            return 0
-            ;;
     esac
+
+    # Installed, but not the requested variant
+    for v in $variants; do
+        if echo "$active" | grep -qv "$v"; then
+            return 1
+        fi
+    done
+
+    return 0
 }
 
 macports_install() {
     pkg=$1; shift
 
-    if macports_installed "$pkg"; then
+    if macports_installed "$pkg" "$@"; then
         printe "$pkg (macports) already installed"
         return
     fi
