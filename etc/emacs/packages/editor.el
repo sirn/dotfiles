@@ -143,9 +143,11 @@
 
   :preface
   (eval-when-compile
-    (defvar parinfer-rust-library))
+    (defvar parinfer-rust-library)
+    (defvar parinfer-rust-auto-download))
 
   :init
+  (setq parinfer-rust-auto-download nil)
   (setq parinfer-rust-library
         (no-littering-expand-var-file-name
          (concat
