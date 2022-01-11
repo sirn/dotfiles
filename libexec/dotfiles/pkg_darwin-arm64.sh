@@ -101,6 +101,7 @@ _run_dev() {
     sh "$BASE_DIR/libexec/packages/net/kubectx.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/kustomize.sh" "$@"
     sh "$BASE_DIR/libexec/packages/dev/buf.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/dev/parinfer-rust.sh" "$@"
 
     ## Requires Rosetta (no official release)
     arch -arch x86_64 sh "$BASE_DIR/libexec/packages/net/helmfile.sh" "$@"
