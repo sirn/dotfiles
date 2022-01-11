@@ -12,7 +12,7 @@ cd "$(dirname "$0")" || exit 1
 
 _run() {
     printe_h2 "Installing asdf..."
-    git_clone https://github.com/asdf-vm/asdf.git "$ASDF_DIR" v0.8.0
+    git_clone https://github.com/asdf-vm/asdf.git "$ASDF_DIR" v0.9.0
 }
 
 run_with_flavors "$@"
