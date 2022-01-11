@@ -23,7 +23,7 @@ ERLANG_VERSION=$(awk '/ERLANG_VERSION=/ {
     print substr($0, sp + 1)
 }' < "$(pwd -P)/erlang.sh")
 
-ELIXIR_VERSION=1.12.3-otp-${ERLANG_VERSION%%.*}
+ELIXIR_VERSION=1.13.1-otp-${ERLANG_VERSION%%.*}
 ELIXIR_VERSION_PATH=$ASDF_DIR/installs/elixir/$ELIXIR_VERSION
 
 ELIXIR_LS_VER=0.8.1

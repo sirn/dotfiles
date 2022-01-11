@@ -10,7 +10,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv.sh"
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
-PYTHON_VERSION=3.10.0
+PYTHON_VERSION=3.10.1
 PYTHON_VERSION_PATH=$ASDF_DIR/installs/python/$PYTHON_VERSION
 
 _preflight() {

@@ -10,8 +10,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv.sh"
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
-POSTGRES_VERSION=12.5
-POSTGRES_VERSION_PATH=$ASDF_DIR/installs/postgres/$POSTGRES_VERSION
+POSTGRES_VERSION=14.1
 
 _preflight() {
     if ! command -v asdf >/dev/null; then
