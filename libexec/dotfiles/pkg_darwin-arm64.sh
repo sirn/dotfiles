@@ -87,13 +87,13 @@ _run_dev() {
 
     # asdf is required for asdf-managed packages/; install it first
     sh "$BASE_DIR/libexec/packages/sys/asdf.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/lang/rust.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/lang/ruby.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/lang/elixir.sh" "$@"
     sh "$BASE_DIR/libexec/packages/lang/erlang.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/elixir.sh" "$@"
     sh "$BASE_DIR/libexec/packages/lang/nim.sh" "$@"
     sh "$BASE_DIR/libexec/packages/lang/nodejs.sh" "$@"
     sh "$BASE_DIR/libexec/packages/lang/python.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/ruby.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/rust.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/postgres.sh" "$@"
 
     # Depends on go
