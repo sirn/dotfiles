@@ -10,7 +10,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv.sh"
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
-ERLANG_VERSION=24.1.4
+ERLANG_VERSION=24.2
 ERLANG_VERSION_PATH=$ASDF_DIR/installs/erlang/$ERLANG_VERSION
 
 REBAR3_VER=3.17.0
@@ -18,8 +18,8 @@ REBAR3_SHA256=4c7f33a342bcab498f9bf53cc0ee5b698d9598b8fa9ef6a14bcdf44d21945c27
 REBAR3_HOME=$HOME/.cache/rebar3
 REBAR3_PATH=$REBAR3_HOME/bin/rebar3
 
-ERLANG_LS_VER=0.20.0
-ERLANG_LS_SHA256=dcac22e13e52796b13a86b492ff152d2923bb8d66f89dc5b0945f1faa7e1b97b
+ERLANG_LS_VER=0.21.2
+ERLANG_LS_SHA256=8a0466f525091a483401a958c6c1f85cd3203c6103b0fbabf784be449031b42c
 
 _preflight() {
     if ! command -v asdf >/dev/null; then
@@ -80,7 +80,8 @@ _install_erlang_ls() {
     rm erlang_ls.tar.gz
 
     cd "$BUILD_DIR/erlang_ls-$ERLANG_LS_VER" || exit 1
-    make PATH="$(dirname "$REBAR3_PATH"):$PATH"
+    PATH="$ASDF_DIR/shims:$(dirname "$REBAR3_PATH"):$PATH"; export PATH
+    make
     install -d "$_bindir"
     install -m0755 _build/default/bin/erlang_ls "$_bindir/erlang_ls"
     printe_info "erlang_ls successfully installed"
