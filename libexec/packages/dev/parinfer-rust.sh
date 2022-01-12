@@ -28,7 +28,6 @@ _preflight() {
 }
 
 _run() {
-    printe_h2 "Installing parinfer-rust..."
     _install_parinfer_rust
 }
 

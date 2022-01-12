@@ -11,8 +11,6 @@ cd "$(dirname "$0")" || exit 1
 . "lib/utils_void.sh"
 
 _run() {
-    printe_h2 "Installing packages..."
-
     xbps_install oksh
     xbps_install rsync
     xbps_install sqlite
@@ -29,8 +27,6 @@ _run_desktop() {
 }
 
 _run_dev() {
-    printe_h2 "Installing dev packages..."
-
     xbps_install base-devel
     xbps_install bzip2-devel
     xbps_install libffi-devel

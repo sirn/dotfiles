@@ -21,7 +21,6 @@ _preflight() {
 }
 
 _run() {
-    printe_h2 "Installing python..."
     _install_python
 }
 

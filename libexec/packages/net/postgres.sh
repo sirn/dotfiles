@@ -20,7 +20,6 @@ _preflight() {
 }
 
 _run() {
-    printe_h2 "Installing postgres..."
     _install_postgres
 }
 

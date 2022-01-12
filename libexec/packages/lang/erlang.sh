@@ -29,7 +29,6 @@ _preflight() {
 }
 
 _run() {
-    printe_h2 "Installing erlang..."
     _install_erlang
 }
 
@@ -51,8 +50,6 @@ _install_rebar3() {
         return
     fi
 
-    printe_h2 "Installing rebar3..."
-
     cd "$BUILD_DIR" || exit 1
     fetch_gh_release rebar3 erlang/rebar3 $REBAR3_VER rebar3
     verify_shasum rebar3 $REBAR3_SHA256
@@ -69,8 +66,6 @@ _install_erlang_ls() {
         printe_info "$_bindir/erlang_ls already exists, skipping..."
         return
     fi
-
-    printe_h2 "Installing erlang-ls..."
 
     cd "$BUILD_DIR" || exit 1
 

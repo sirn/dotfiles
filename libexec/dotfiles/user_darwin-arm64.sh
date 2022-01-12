@@ -19,8 +19,6 @@ _run_dev() {
 }
 
 _setup_user_links() {
-    printe_h2 "Installing links..."
-
     make_link "$BASE_DIR/etc/aria2/aria2.conf" "$HOME/.aria2/aria2.conf"
     make_link \
         "$BASE_DIR/etc/emacs/straight/versions/default.el" \
@@ -36,13 +34,9 @@ _setup_user_links() {
 }
 
 _setup_user_shell() {
-    printe_h2 "Changing user shell..."
-
     change_shell oksh
 }
 
 _setup_dev_links() {
-    printe_h2 "Installing dev links..."
-
     make_link "$BASE_DIR/etc/proselint/proselintrc" "$HOME/.proselintrc"
 }

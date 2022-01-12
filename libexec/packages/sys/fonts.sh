@@ -112,8 +112,6 @@ _install_font_url() {
 }
 
 _run() {
-    printe_h2 "Installing fonts..."
-
     ## Adobe Source
     ##
 

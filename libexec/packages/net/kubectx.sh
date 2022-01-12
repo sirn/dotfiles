@@ -24,8 +24,6 @@ _run() {
 }
 
 _install_kubectx() {
-    printe_h2 "Installing kubectx..."
-
     _verdir=$HOME/.cache/local-pkg/kubectx/$KUBECTX_VER
 
     if ! forced && [ -f "$_verdir/bin/kubectx" ]; then

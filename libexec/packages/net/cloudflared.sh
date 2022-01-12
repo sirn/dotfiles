@@ -24,8 +24,6 @@ _run() {
 }
 
 _install_cloudflared() {
-    printe_h2 "Installing cloudflared..."
-
     _verdir=$HOME/.cache/local-pkg/cloudflared/$CFD_VER
     _binpath=$HOME/.local/bin/cloudflared
 

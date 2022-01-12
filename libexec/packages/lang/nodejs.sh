@@ -30,7 +30,6 @@ _preflight() {
 }
 
 _run() {
-    printe_h2 "Installing nodejs..."
     _install_nodejs
 }
 

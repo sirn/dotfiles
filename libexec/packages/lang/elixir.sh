@@ -37,7 +37,6 @@ _preflight() {
 }
 
 _run() {
-    printe_h2 "Installing elixir..."
     _install_elixir
 }
 
@@ -57,7 +56,6 @@ _install_mix_hex() {
         return
     fi
 
-    printe_info "mix hex is not installed, installing..."
     asdf_exec mix local.hex --force || exit 1
 }
 
@@ -66,7 +64,6 @@ _install_mix_rebar() {
         return
     fi
 
-    printe_info "mix rebar3 is not installed, installing..."
     asdf_exec mix local.rebar --force || exit 1
 }
 
@@ -78,8 +75,6 @@ _install_elixir_ls() {
         printe_info "$_bindir/elixir-language-server already exists, skipping..."
         return
     fi
-
-    printe_h2 "Installing elixir-ls..."
 
     cd "$BUILD_DIR" || exit 1
 

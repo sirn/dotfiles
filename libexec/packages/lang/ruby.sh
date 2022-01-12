@@ -20,7 +20,6 @@ _preflight() {
 }
 
 _run() {
-    printe_h2 "Installing ruby..."
     _install_ruby
 }
 

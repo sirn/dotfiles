@@ -17,8 +17,6 @@ _preflight() {
 }
 
 _run() {
-    printe_h2 "Installing gcloud..."
-
     _install_gcloud
     _install_gcloud_kubectl
 }

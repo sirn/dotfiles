@@ -25,11 +25,9 @@ _preflight() {
 }
 
 _run() {
-    printe_h2 "Installing nim..."
     _install_nim
     _install_nim_src
 
-    printe_h2 "Installing nim packages..."
     _nimble_update
     _nimble_install nimr nimr
     _nimble_install nimcr nimcr
@@ -46,8 +44,6 @@ _install_nim_src() {
 }
 
 _run_dev() {
-    printe_h2 "Installing nim dev packages..."
-
     _install_nimlsp
 }
 
@@ -57,8 +53,6 @@ _install_nimlsp() {
         printe_info "$pkgbin_path already exists, skipping..."
         return
     fi
-
-    printe_h2 "Installing nimlsp..."
 
     cd "$BUILD_DIR" || exit 1
     fetch_gh_archive nimlsp.tar.gz PMunch/nimlsp v$NIMLSP_VERSION

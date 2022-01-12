@@ -54,20 +54,14 @@ _setup_user_service() {
 }
 
 _setup_user_emacs() {
-    printe_h2 "Installing emacs service..."
-
     install_svc -us -p emacs "$BASE_DIR/sv/emacs"
 }
 
 _setup_user_xlocate() {
-    printe_h2 "Installing xlocate service..."
-
     install_svc -us -p xlocate "$BASE_DIR/sv/xlocate"
 }
 
 _setup_user_links() {
-    printe_h2 "Installing links..."
-
     make_link "$BASE_DIR/etc/aria2/aria2.conf" "$HOME/.aria2/aria2.conf"
     make_link \
         "$BASE_DIR/etc/emacs/straight/versions/default.el" \
@@ -91,21 +85,15 @@ _setup_user_shell() {
 }
 
 _setup_desktop_links() {
-    printe_h2 "Installing desktop links..."
-
     make_link \
         "$BASE_DIR/etc/fontconfig/conf.d" \
         "$HOME/.config/fontconfig/conf.d"
 }
 
 _setup_dev_links() {
-    printe_h2 "Installing dev links..."
-
     make_link "$BASE_DIR/etc/proselint/proselintrc" "$HOME/.proselintrc"
 }
 
 _setup_dev_podman() {
-    printe_h2 "Installing podman service..."
-
     install_svc -us -p podman "$BASE_DIR/sv/podman"
 }

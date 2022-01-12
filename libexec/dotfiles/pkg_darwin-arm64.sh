@@ -11,8 +11,6 @@ cd "$(dirname "$0")" || exit 1
 . "lib/buildenv.sh"
 
 _run() {
-    printe_h2 "Installing packages..."
-
     macports_bootstrap
 
     macports_install aria2 +sqlite3
@@ -59,14 +57,10 @@ _run() {
 }
 
 _run_desktop() {
-    printe_h2 "Installing desktop packages..."
-
     macports_install emacs-mac-app
 }
 
 _run_dev() {
-    printe_h2 "Installing dev packages..."
-
     macports_install carthage
     macports_install jq
     macports_install nomad

@@ -10,8 +10,6 @@ cd "$(dirname "$0")" || exit 1
 . "lib/utils_void.sh"
 
 _run() {
-    printe_h2 "Installing packages..."
-
     xbps_install ImageMagick
     xbps_install aria2
     xbps_install aspell
@@ -52,8 +50,6 @@ _run() {
 }
 
 _run_system() {
-    printe_h2 "Installing system packages..."
-
     xbps_install cronie
     xbps_install iptables-nft
 
@@ -61,8 +57,6 @@ _run_system() {
 }
 
 _run_desktop() {
-    printe_h2 "Installing desktop packages..."
-
     # Conflict with emacs
     if xbps_installed emacs; then
         run_root xbps-remove -Ry emacs
@@ -76,8 +70,6 @@ _run_desktop() {
 }
 
 _run_dev() {
-    printe_h2 "Installing dev packages..."
-
     xbps_install doctl
     xbps_install jq
     xbps_install jsonnet
@@ -120,8 +112,6 @@ _run_dev() {
 }
 
 _run_all() {
-    printe_h2 "Installing extra packages..."
-
     # Only install emacs-nox when other variant of Emacs hasn't been
     # installed (e.g. desktop flavor installs GTK emacs)
     if ! xbps_installed emacs-gtk3; then

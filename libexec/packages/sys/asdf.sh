@@ -11,7 +11,6 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
 _run() {
-    printe_h2 "Installing asdf..."
     git_clone https://github.com/asdf-vm/asdf.git "$ASDF_DIR" v0.9.0
 }
 

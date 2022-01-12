@@ -11,24 +11,38 @@ NEWLINE='
 ## Printing
 ##
 
+c_bold=$(tput bold 2>/dev/null || true)
+c_red=$(tput setaf 1 2>/dev/null || true)
+c_orange=$(tput setaf 3 2>/dev/null || true)
+c_blue=$(tput setaf 4 2>/dev/null || true)
+c_reset=$(tput sgr0 2>/dev/null || true)
+
 printe() {
     printf >&2 "%s\\n" "$@"
 }
 
 printe_h1() {
-    printf >&2 "\\033[0;94m==>\\033[0;0m \\033[1;33m%s\\033[0;0m\\n" "$@"
+    printf >&2 "%s[%s]%s %s%s%s\\n" \
+               "$c_blue" "${0##*/}" "$c_reset" \
+               "$c_orange$c_bold" "$@" "$c_reset"
 }
 
 printe_h2() {
-    printf >&2 "\\033[0;94m==>\\033[0;0m \\033[1;97m%s\\033[0;0m\\n" "$@"
+    printf >&2 "%s[%s]%s %s%s%s\\n" \
+               "$c_blue" "${0##*/}" "$c_reset" \
+               "$c_bold" "$@" "$c_reset"
 }
 
 printe_info() {
-    printf >&2 "\\033[0;94m==>\\033[0;0m %s\\n" "$@"
+    printf >&2 "%s[%s]%s %s%s%s\\n" \
+               "$c_blue" "${0##*/}" "$c_reset" \
+               "$@"
 }
 
 printe_err() {
-    printf >&2 "%s: %s\\n" "$(basename "$0")" "$@"
+    printf >&2 "%s[%s]%s %s%s%s\\n" \
+               "$c_blue" "${0##*/}" "$c_reset" \
+               "$c_red" "$@" "$c_reset"
 }
 
 

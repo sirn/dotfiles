@@ -21,7 +21,6 @@ _preflight() {
 }
 
 _run() {
-    printe_h2 "Installing rust..."
     _install_rust
 }
 
@@ -32,8 +31,6 @@ _install_rust() {
 }
 
 _run_dev() {
-    printe_h2 "Installing rust dev packages..."
-
     _rustup_install rls
     _rustup_install rust-analysis
     _rustup_install rust-src
