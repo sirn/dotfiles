@@ -16,6 +16,7 @@ _run() {
     macports_install aria2 +sqlite3
     macports_install aspell
     macports_install aspell-dict-en
+    macports_install autossh
     macports_install curl +ssl +http2
     macports_install duplicity
     macports_install emacs
