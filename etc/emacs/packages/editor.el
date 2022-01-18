@@ -523,10 +523,10 @@ area."
 
 (use-package lsp-mode
   :config
-  (setq lsp-enable-snippet nil)
+  (setq lsp-enable-snippet t)
   (setq lsp-file-watch-threshold nil)
   (setq lsp-restart 'auto-restart)
-  (setq lsp-headerline-breadcrumb-enable nil)
+  (setq lsp-headerline-breadcrumb-enable t)
 
   (defun gemacs--advice-lsp-mode-silence (format &rest args)
     "Silence needless diagnostic messages from `lsp-mode'.
@@ -601,7 +601,7 @@ functions."
 
   :init
   (setq lsp-ui-doc-winum-ignore nil)
-  (setq lsp-ui-doc-use-childframe nil)
+  (setq lsp-ui-doc-use-childframe t)
 
   :config
   (defun gemacs--advice-lsp-ui-doc-allow-multiline (func &rest args)
