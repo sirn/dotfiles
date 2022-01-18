@@ -377,6 +377,21 @@ completions automatically when backspacing into a symbol."
   (company-prescient-mode +1))
 
 
+(use-package company-posframe
+  :demand t
+
+  :preface
+  (eval-when-compile
+    (defvar company-tooltip-minimum-width)
+    (declare-function company-posframe-mode nil))
+
+  :init
+  (setq company-tooltip-minimum-width 40)
+
+  :config
+  (company-posframe-mode +1))
+
+
 ;; --------------------------------------------------------------------------
 ;;; Autoformatting
 
@@ -625,4 +640,4 @@ functions."
     (declare-function lsp-treemacs-sync-mode nil))
 
   :config
-  (lsp-treemacs-sync-mode t))
+  (lsp-treemacs-sync-mode +1))
