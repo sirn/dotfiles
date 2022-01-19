@@ -91,7 +91,7 @@ _gopaths=$GOPATH
 while [ -n "$_gopaths" ]; do
     _gopath=${_gopaths%%:*}
     prependpath "$_gopath/bin"
-    _gopaths=${_gopaths##$_gopath}
+    _gopaths=${_gopaths##"$_gopath"}
     _gopaths=${_gopaths#:}
 done
 
