@@ -5,9 +5,13 @@
   ;; between the emacs client and notmuch to match (due to changes in
   ;; exchange format)
   (use-feature notmuch
+    ;; Not exposed via autoload by Notmuch
+    :commands notmuch
+
     :preface
     (eval-when-compile
-      (defvar sendmail-program))
+      (defvar sendmail-program)
+      (declare-function message-send-mail-with-sendmail nil))
 
     :leader
     ("mm" #'notmuch)
