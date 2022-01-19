@@ -1,6 +1,6 @@
 ;; -*- lexical-binding: t -*-
 
-(use-package notmuch
+(use-feature notmuch
   :defer 1
   :commands notmuch
 
