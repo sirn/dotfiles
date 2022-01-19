@@ -1,18 +1,15 @@
 ;; -*- lexical-binding: t -*-
 
 (use-feature notmuch
-  :defer 1
-  :commands notmuch
-
   :preface
   (eval-when-compile
     (defvar sendmail-program))
+
+  :leader
+  ("mm" #'notmuch)
 
   :init
   (setq message-send-mail-function #'message-send-mail-with-sendmail)
   (setq message-sendmail-f-is-evil 't)
   (setq message-sendmail-envelope-from 'header)
-  (setq sendmail-program "msmtp")
-
-  :leader
-  ("mm" #'notmuch))
+  (setq sendmail-program "msmtp"))

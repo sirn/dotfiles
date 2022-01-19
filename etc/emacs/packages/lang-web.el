@@ -70,8 +70,6 @@ poke it. Otherwise the modified text remains unfontified."
 
 
 (use-package emmet-mode
-  :commands emmet-mode
-
   :init
   (add-hook 'web-mode-hook 'emmet-mode)
   (add-hook 'css-mode-hook 'emmet-mode))

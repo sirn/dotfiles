@@ -136,4 +136,5 @@ thing as far as I can tell)."
     (add-to-list 'apheleia-formatters '(goimports . ("goimports")))
     (add-to-list 'apheleia-mode-alist '(go-mode . goimports))))
 
+
 (use-package flycheck-golangci-lint)

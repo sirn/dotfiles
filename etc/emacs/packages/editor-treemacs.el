@@ -12,7 +12,19 @@
 
 
 (use-package treemacs
-  :demand t
+  ;; Not exposed via autoload by Treemacs
+  :commands (treemacs-switch-workspace
+              treemacs-create-workspace
+              treemacs-rename-workspace
+              treemacs-add-project-to-workspace)
+
+  :leader
+  ("tt" #'treemacs
+   "tw" #'treemacs-switch-workspace
+   "tC" #'treemacs-create-workspace
+   "tE" #'treemacs-edit-workspaces
+   "tR" #'treemacs-rename-workspace
+   "tp" #'treemacs-add-project-to-workspace)
 
   :init
   (eval-when-compile
@@ -24,23 +36,20 @@
 
   :config
   (setq treemacs-read-string-input 'from-minibuffer)
+  (use-feature treemacs-evil
+    :demand t)
 
-  :leader
-  ("tt" #'treemacs
-   "tw" #'treemacs-switch-workspace
-   "tC" #'treemacs-create-workspace
-   "tE" #'treemacs-edit-workspaces
-   "tR" #'treemacs-rename-workspace
-   "tp" #'treemacs-add-project-to-workspace))
+  (use-feature treemacs-projectile
+    :demand t)
 
-
-(use-package treemacs-evil
-  :demand t)
+  (use-feature treemacs-magit
+    :demand t))
 
 
-(use-package treemacs-projectile
-  :after projectile)
+(use-package treemacs-evil)
 
 
-(use-package treemacs-magit
-  :after magit)
+(use-package treemacs-projectile)
+
+
+(use-package treemacs-magit)

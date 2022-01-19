@@ -65,13 +65,6 @@
 (use-package winum
   :demand t
 
-  :init
-  (setq winum-auto-setup-mode-line nil)
-  (setq winum-scope 'frame-local)
-
-  :config
-  (winum-mode +1)
-
   :leader
   ("0" #'winum-select-window-0
     "1" #'winum-select-window-1
@@ -82,7 +75,26 @@
     "6" #'winum-select-window-6
     "7" #'winum-select-window-7
     "8" #'winum-select-window-8
-    "9" #'winum-select-window-9))
+    "9" #'winum-select-window-9)
+
+  :init
+  (setq winum-auto-setup-mode-line nil)
+  (setq winum-scope 'frame-local)
+
+  :config
+  (winum-mode +1))
+
+
+(use-package which-key
+  :demand t
+
+  :preface
+  (eval-when-compile
+    (declare-function which-key-mode nil))
+
+  :config
+  (which-key-mode +1))
+
 
 
 (use-package telephone-line)

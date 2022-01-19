@@ -1,8 +1,6 @@
 ;; -*- lexical-binding: t -*-
 
 (use-feature eshell
-  :commands eshell
-
   :preface
   (eval-when-compile
     (declare-function gemacs--eshell-remove-pcomplete nil))
@@ -21,7 +19,5 @@
 
 
 (use-package multi-term
-  :commands multi-term
-
   :leader
   ("\"" #'multi-term))

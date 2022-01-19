@@ -1,6 +1,11 @@
 ;; -*- lexical-binding: t -*-
 
 (use-package nim-mode
+  :init
+  (use-feature lsp
+    :init
+    (add-hook 'nim-mode-hook #'lsp))
+
   :config
   (el-patch-defun nim-mode-forward-token ()
     "Handle cases where `nim-smie--line-info' is `nil'."
@@ -16,10 +21,6 @@
                  (line-number-at-pos))
               (setq tok ";"))
           tok))))
-
-  (use-feature lsp
-    :init
-    (add-hook 'nim-mode-hook #'lsp))
 
   (use-feature apheleia
     :config

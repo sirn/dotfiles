@@ -1,8 +1,6 @@
 ;; -*- lexical-binding: t -*-
 
 (use-package pandoc-mode
-  :commands pandoc-mode
-
   :init
   (add-hook 'rst-mode-hook #'pandoc-mode)
   (add-hook 'markdown-mode-hook #'pandoc-mode))

@@ -2,26 +2,14 @@
 
 (use-package selectrum
   :straight (:host github :repo "raxod502/selectrum")
+  :demand t
 
   :preface
   (eval-when-compile
-    (declare-function selectrum-mode nil)
-    (declare-function gemacs--selectrum-insert-or-submit-current-candidate nil))
+    (declare-function selectrum-mode nil))
 
   :bind
-  (("C-x C-b" . #'switch-to-buffer)
-
-   :map selectrum-minibuffer-map
-   ("<left>"  . #'backward-kill-word)
-   ("<right>" . #'gemacs--selectrum-insert-or-submit-current-candidate)
-   ("TAB"     . #'gemacs--selectrum-insert-or-submit-current-candidate)
-   ("C-f"     . #'gemacs--selectrum-insert-or-submit-current-candidate)
-   ("C-l"     . #'gemacs--selectrum-insert-or-submit-current-candidate)
-   ("C-h"     . #'backward-kill-word)
-   ("C-j"     . #'selectrum-next-candidate)
-   ("C-k"     . #'selectrum-previous-candidate)
-   ("C-r"     . #'selectrum-previous-candidate)
-   ("C-M-j"   . #'selectrum-submit-exact-input))
+  (("C-x C-b" . #'switch-to-buffer))
 
   :leader
   ("bb"  #'switch-to-buffer
@@ -29,28 +17,23 @@
    "dv"  #'describe-variable
    "df"  #'describe-function)
 
-  :init
-  (defun gemacs--selectrum-insert-or-submit-current-candidate ()
-    "Insert current candidate depending, or forward to
-`selectrum-select-current-candidate' if input text hasn't changed since
-last completion
-
-Similar to ivy's `ivy-partial-or-done'."
-    (interactive)
-    (progn
-      (let ((prev-input (selectrum-get-current-input)))
-        (when (> (length (selectrum-get-current-candidates)) 0)
-          (selectrum-insert-current-candidate))
-        (when (string= prev-input (selectrum-get-current-input))
-          (selectrum-select-current-candidate)))))
-
+  :config
   (selectrum-mode +1))
 
 
 (use-package prescient
+  :demand t
+
+  :preface
+  (eval-when-compile
+    (defvar prescient-history-length)
+    (declare-function prescient-persist-mode nil))
+
+  :init
+  (setq prescient-history-length 1000)
+
   :config
-  (prescient-persist-mode +1)
-  (setq prescient-history-length 1000))
+  (prescient-persist-mode +1))
 
 
 (use-package selectrum-prescient
@@ -58,12 +41,12 @@ Similar to ivy's `ivy-partial-or-done'."
               :repo "raxod502/prescient.el"
               :files ("selectrum-prescient.el"))
 
+  :after (selectrum prescient)
   :demand t
 
   :preface
   (eval-when-compile
     (declare-function selectrum-prescient-mode nil))
 
-  :after selectrum
   :config
   (selectrum-prescient-mode +1))

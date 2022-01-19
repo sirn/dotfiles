@@ -1,6 +1,6 @@
 ;; -*- lexical-binding: t -*-
 
-(use-feature makefile
+(use-feature make-mode
   :preface
   (eval-when-compile
     (declare-function gemacs--makefile-force-tabs nil)
@@ -8,11 +8,12 @@
     (declare-function gemacs--makefile-disable-dtrt-indent nil))
 
   :config
-  (use-feature editorconfig-mode
+  (use-feature editorconfig
     :config
     (defun gemacs--makefile-disable-editorconfig ()
       "Disable editorconfig-mode for Makefile."
       (editorconfig-mode -1))
+
     (add-hook 'makefile-mode-hook #'gemacs--makefile-disable-editorconfig))
 
   (use-feature dtrt-indent

@@ -1,7 +1,8 @@
 ;; -*- lexical-binding: t -*-
 
 (use-package magit
-  :commands magit-status
+  :leader
+  ("gs" #'magit-status)
 
   :init
   (setq magit-no-message '("Turning on magit-auto-revert-mode..."))
@@ -18,8 +19,8 @@
     (dolist (func '(magit-checkout magit-branch-and-checkout))
       (advice-add func :after #'gemacs--projectile-invalidate-cache)))
 
-  :leader
-  ("gs" #'magit-status))
+  (use-feature forge
+    :demand t))
 
 
 (use-feature git-commit
@@ -29,14 +30,18 @@
   (setq git-commit-summary-max-length 50))
 
 
-(use-package forge)
+(use-package forge
+  :init
+
+  ;; BUG: https://github.com/emacs-evil/evil-collection/issues/543
+  (setq forge-add-default-bindings nil))
 
 
 (use-feature ghub
   :init
 
   ;; BUG: https://github.com/magit/ghub/issues/81
-  (setq ghub-use-workaround-for-emacs-bug nil))
+  (setq ghub-use-workaround-for-emacs-bug 'force))
 
 
 (use-feature emacsql-sqlite
@@ -52,7 +57,6 @@
   ;; Since our magit is defer-loaded, git-gutter need to wait for magit
   ;; to prevent `ad-handle-definition' warning due to `vc-revert' being
   ;; redefined.
-  :after magit
   :init
 
   ;; BUG: https://github.com/syohex/emacs-git-gutter/issues/24

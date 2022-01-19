@@ -4,8 +4,6 @@
 
 
 (use-package ansible
-  :commands ansible
-
   :preface
   (eval-when-compile
     (declare-function gemacs--ansible-maybe-enable nil))
@@ -27,15 +25,10 @@
   (add-hook 'yaml-mode-hook 'gemacs--ansible-maybe-enable))
 
 
-(use-package ansible-doc
-  :commands
-  (ansible-doc
-   ansible-doc-mode))
+(use-package ansible-doc)
 
 
 (use-package company-ansible
-  :commands company-ansible
-
   :init
   (use-feature company
     :config

@@ -13,11 +13,6 @@
 (put 'downcase-region 'disabled nil)
 
 (use-package avy
-  :commands
-  (avy-goto-char
-   avy-goto-char-2
-   avy-goto-line)
-
   :leader
   ("jj" #'avy-goto-char
    "jJ" #'avy-goto-char-2
@@ -34,8 +29,6 @@
 
 
 (use-package ace-link
-  :commands ace-link
-
   :leader
   ("jL" #'ace-link))
 
@@ -73,16 +66,15 @@
 
 
 (use-package visual-regexp
-  :commands
-  (vr/replace
-   vr/query-replace
-   vr/isearch-forward)
-
   :bind
   (("M-%"   . #'vr/query-replace)
    ("C-c s" . #'vr/isearch-forward)
    ("C-c r" . #'vr/replace)
-   ("C-c q" . #'vr/query-replace)))
+   ("C-c q" . #'vr/query-replace))
+
+  :config
+  (use-feature visual-regexp-steroids
+    :demand t))
 
 
 (use-package visual-regexp-steroids
@@ -105,11 +97,6 @@
 (use-package smartparens
   :demand t
 
-  :config
-  (smartparens-global-mode +1)
-  (show-smartparens-global-mode +1)
-  (sp-use-paredit-bindings)
-
   :leader
   ("s>" #'sp-forward-slurp-sexp
    "s<" #'sp-backward-slurp-sexp
@@ -119,6 +106,10 @@
    "sd" #'sp-splice-sexp)
 
   :config
+  (smartparens-global-mode +1)
+  (show-smartparens-global-mode +1)
+  (sp-use-paredit-bindings)
+
   (add-hook 'clojure-mode-hook 'turn-off-smartparens-mode)
   (add-hook 'emacs-lisp-mode-hook 'turn-off-smartparens-mode)
   (add-hook 'common-lisp-mode-hook 'turn-off-smartparens-mode)
@@ -137,7 +128,6 @@
 
 
 (use-package parinfer-rust-mode
-  :commands parinfer-rust-mode
   :diminish parinfer-rust-mode
   :straight t
 
@@ -169,19 +159,16 @@
     nil))
 
 (use-package rainbow-delimiters
-  :commands rainbow-delimiters-mode
   :init
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
 
 (use-package rainbow-mode
-  :commands rainbow-mode
   :init
   (add-hook 'prog-mode-hook #'rainbow-mode))
 
 
-(use-package dtrt-indent
-  :commands dtrt-indent-mode)
+(use-package dtrt-indent)
 
 
 (use-package editorconfig
@@ -230,6 +217,8 @@
 
 
 (use-package yasnippet
+  :defer 0.5
+
   :preface
   (eval-when-compile
     (declare-function yas--make-control-overlay nil))
@@ -339,7 +328,7 @@ buffer is modified.")
   (setq company-frontends '(company-pseudo-tooltip-frontend))
   (setq company-show-quick-access t)
   (setq company-require-match #'company-explicit-action-p)
-  (setq company-auto-commit-chars nil)
+  (setq company-insertion-triggers nil)
   (setq company-dabbrev-other-buffers nil)
   (setq company-dabbrev-ignore-case nil)
   (setq company-dabbrev-downcase nil)
@@ -362,42 +351,41 @@ completions automatically when backspacing into a symbol."
   (advice-add 'company--should-begin :override
     #'gemacs--advice-company-complete-on-change)
 
-  (global-company-mode +1))
+  (global-company-mode +1)
+
+  (use-feature company-prescient
+    :demand t
+    :config
+    (company-prescient-mode +1))
+
+  (use-feature company-posframe
+    :demand t
+    :config
+    (company-posframe-mode +1)))
 
 
 (use-package company-prescient
-  :demand t
-  :after prescient
-
   :preface
   (eval-when-compile
-    (declare-function company-prescient-mode nil))
-
-  :config
-  (company-prescient-mode +1))
+    (declare-function company-prescient-mode nil)))
 
 
 (use-package company-posframe
-  :demand t
-
   :preface
   (eval-when-compile
     (defvar company-tooltip-minimum-width)
     (declare-function company-posframe-mode nil))
 
   :init
-  (setq company-tooltip-minimum-width 40)
-
-  :config
-  (company-posframe-mode +1))
+  (setq company-tooltip-minimum-width 40))
 
 
 ;; --------------------------------------------------------------------------
 ;;; Autoformatting
 
 (use-package apheleia
+  :demand t
   :straight (:host github :repo "raxod502/apheleia")
-  :commands apheleia-global-mode
 
   :init
   (defun gemacs--save-buffer-reformat-maybe (func &optional arg)
@@ -406,6 +394,8 @@ completions automatically when backspacing into a symbol."
       (funcall func)))
 
   (advice-add 'save-buffer :around #'gemacs--save-buffer-reformat-maybe)
+
+  :config
   (apheleia-global-mode +1))
 
 
@@ -414,9 +404,13 @@ completions automatically when backspacing into a symbol."
 
 (use-package flycheck
   :defer 4
-  :commands (flycheck-list-errors)
 
-  :bind-keymap (("C-c !" . #'flycheck-command-map))
+  ;; Not exposed via autoload by Flycheck
+  :commands (flycheck-list-errors
+              flycheck-previous-error
+              flycheck-next-error)
+
+  :bind-keymap (("C-c !" . flycheck-command-map))
 
   :leader
   ("fp" #'flycheck-previous-error
@@ -634,7 +628,6 @@ functions."
 
 
 (use-package lsp-treemacs
-  :after (lsp-mode treemacs)
   :preface
   (eval-when-compile
     (declare-function lsp-treemacs-sync-mode nil))
