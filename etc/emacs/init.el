@@ -287,6 +287,14 @@ This is an `:around' advice for many different functions."
   ;; #!/usr/bin/env broke because python/ruby is now the rbenv/pyenv's which
   ;; may not the contain necessary modules required by the distro package.
   (setq exec-path-from-shell-check-startup-files nil)
+  ;; Our kshrc checks for ASDF_DIR before sourcing ~/.asdf/asdf.sh. If Emacs
+  ;; is launched from a shell which has ASDF_DIR set, it will have this
+  ;; environment variable assigned and passed to shell called by
+  ;; exec-path-from-shell, resulting in ~/.asdf/shims not getting added to PATH.
+  ;; We're removing ASDF_DIR here and have exec-path-from-shell set it later.
+  (setenv "ASDF_DIR" "")
+  (add-to-list 'exec-path-from-shell-variables "ASDF_DIR")
+  ;; Enough explaination:
   (exec-path-from-shell-initialize))
 
 
