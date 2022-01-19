@@ -6,7 +6,7 @@
 # shellcheck disable=SC2034
 BASE_DIR=$(cd "$(dirname "$0")/.." || exit; pwd -P)
 BASE_NAME=$(basename "$0")
-PATH=/usr/bin:/bin:/usr/local/bin
+PATH=/usr/bin:/bin:/usr/local/bin:/opt/local/bin
 
 
 ## Utils
