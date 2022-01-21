@@ -276,7 +276,9 @@ into what `lookup-key' and `define-key' want."
         (apply yas--make-control-overlay args)))
 
     (advice-add 'yas--make-control-overlay :around
-      #'gemacs--advice-company-overrides-yasnippet)))
+      #'gemacs--advice-company-overrides-yasnippet))
+
+  (yas-global-mode +1))
 
 
 ;; --------------------------------------------------------------------------
