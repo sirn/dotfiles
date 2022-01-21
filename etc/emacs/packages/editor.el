@@ -127,6 +127,13 @@
   (setq sp-cancel-autoskip-on-backward-movement nil))
 
 
+(use-feature paren
+  :demand t
+
+  :config
+  (show-paren-mode +1))
+
+
 (use-package parinfer-rust-mode
   :diminish parinfer-rust-mode
   :straight t
@@ -157,6 +164,7 @@
   ;; Workaround for https://github.com/justinbarclay/parinfer-rust-mode/issues/40
   (defun parinfer-rust--check-version (_a _b _c _d)
     nil))
+
 
 (use-package rainbow-delimiters
   :init
