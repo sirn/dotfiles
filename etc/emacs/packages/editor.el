@@ -33,6 +33,21 @@
   ("jL" #'ace-link))
 
 
+(use-package ctrlf
+  :demand t
+
+  :preface
+  (eval-when-compile
+    (declare-function ctrlf-mode nil)
+    (defvar ctrlf-default-search-style))
+
+  :init
+  (setq ctrlf-default-search-style 'fuzzy)
+
+  :config
+  (ctrlf-mode +1))
+
+
 (use-feature delsel
   :demand t
   :config
@@ -69,7 +84,8 @@
   :bind
   (("M-%"   . #'vr/query-replace)
    ("C-c s" . #'vr/isearch-forward)
-   ("C-c r" . #'vr/replace)
+   ("C-c r" . #'vr/isearch-backward)
+   ("C-c R" . #'vr/replace)
    ("C-c q" . #'vr/query-replace))
 
   :config
