@@ -11,6 +11,7 @@ cd "$(dirname "$0")" || exit 1
 
 _run() {
     xbps_install ImageMagick
+    xbps_install amfora
     xbps_install aria2
     xbps_install aspell
     xbps_install aspell-en
@@ -62,8 +63,9 @@ _run_desktop() {
         run_root xbps-remove -Ry emacs
     fi
 
-    # Firefox is installed with Flatpak
     xbps_install emacs-gtk3
+    xbps_install firefox
+    xbps_install lagrange
     xbps_install qemu
 
     sh "$BASE_DIR/libexec/packages/sys/fonts.sh" "$@"

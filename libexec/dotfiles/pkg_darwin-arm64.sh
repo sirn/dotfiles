@@ -13,6 +13,7 @@ cd "$(dirname "$0")" || exit 1
 _run() {
     macports_bootstrap
 
+    macports_install amfora
     macports_install aria2 +sqlite3
     macports_install aspell
     macports_install aspell-dict-en
@@ -59,6 +60,7 @@ _run() {
 
 _run_desktop() {
     macports_install emacs-mac-app
+    macports_install lagrange
 }
 
 _run_dev() {
