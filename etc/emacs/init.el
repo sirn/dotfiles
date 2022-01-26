@@ -294,6 +294,7 @@ This is an `:around' advice for many different functions."
   ;; We're removing ASDF_DIR here and have exec-path-from-shell set it later.
   (setenv "ASDF_DIR" "")
   (add-to-list 'exec-path-from-shell-variables "ASDF_DIR")
+  (add-to-list 'exec-path-from-shell-variables "GOPATH")
   ;; Enough explaination:
   (exec-path-from-shell-initialize))
 
