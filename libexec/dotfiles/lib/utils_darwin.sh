@@ -31,15 +31,13 @@ macports_bootstrap() {
 
 macports_installed() {
     pkg=$1; shift
-    variants=$@
+    variants=$*
     active=$($MACPORTS -q installed "$pkg" 2>&1 | grep "(active)")
 
     # Not installed
-    case "$active" in
-        "None"* )
-            return 1
-            ;;
-    esac
+    if [ -z "$active" ]; then
+        return 1
+    fi
 
     # Installed, but not the requested variant
     for v in $variants; do
