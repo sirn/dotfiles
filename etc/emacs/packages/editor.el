@@ -319,7 +319,8 @@ buffer is modified.")
     (declare-function company-previous-page nil)
     (declare-function company-select-previous nil)
     (declare-function company-select-next nil)
-    (declare-function company--should-begin nil))
+    (declare-function company--should-begin nil)
+    (defvar company-insertion-triggers))
 
   :bind
   (([remap completion-at-point] . #'company-manual-begin)
@@ -412,6 +413,10 @@ completions automatically when backspacing into a symbol."
 (use-package apheleia
   :demand t
   :straight (:host github :repo "raxod502/apheleia")
+
+  :preface
+  (eval-when-compile
+    (declare-function apheleia-global-mode nil))
 
   :init
   (defun gemacs--save-buffer-reformat-maybe (func &optional arg)

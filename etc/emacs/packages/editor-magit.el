@@ -31,6 +31,10 @@
 
 
 (use-package forge
+  :preface
+  (eval-when-compile
+    (defvar forge-add-default-bindings))
+
   :init
 
   ;; BUG: https://github.com/emacs-evil/evil-collection/issues/543
