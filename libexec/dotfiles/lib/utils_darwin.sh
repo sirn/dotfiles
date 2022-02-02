@@ -76,3 +76,60 @@ macports_select() {
     printe_info "Selecting $pkg as default version for $sel (macports)..."
     run_root $MACPORTS select "$sel" "$pkg"
 }
+
+install_launchd() {
+    OPTIND=1
+
+    plist_src=
+    plist_dest=
+    plist_load=
+
+    while getopts "Sd:l" opt; do
+        case "$opt" in
+            d ) plist_dir="$OPTARG";;
+            l ) plist_load=1;;
+            * )
+                printe_err "Invalid flags given to install_svc"
+                exit 1
+                ;;
+        esac
+    done
+
+    shift $((OPTIND-1))
+
+    if [ "${1:-}" = "--" ]; then
+        shift
+    fi
+
+    if [ -z "$plist_dir" ]; then
+        plist_dir="$HOME/Library/LaunchAgents"
+    fi
+
+    plist_src=$1; shift
+    plist_filename=$(basename "$plist_src")
+    plist_dest="$plist_dir/$plist_filename"
+
+    if [ -f "$plist_dest" ]; then
+        if diff "$plist_src" "$plist_dest" >/dev/null; then
+            printe_info "$plist_dest"
+            return
+        fi
+
+        if [ "$plist_load" = "1" ]; then
+            launchctl unload -w "$plist_dest" 2>/dev/null
+        fi
+    fi
+
+    if [ ! -d "$plist_dir" ]; then
+        mkdir -p "$plist_dir"
+    fi
+
+    cp "$plist_src" "$plist_dest"
+    chmod 0644 "$plist_dest"
+
+    if [ "$plist_load" = "1" ]; then
+        launchctl load -w "$plist_dest"
+    fi
+
+    printe_info "$plist_dest has been installed"
+}
