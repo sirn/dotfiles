@@ -49,6 +49,9 @@ FLAVOR:
     system          Install system packages.
     media           Install media packages.
 
+    work            Install work packages.
+    projects        Install projects packages.
+
 Bootstrap script will default to \`pkg\` without any FLAVORS
 if no PROFILES and FLAVORS is given. Lookup path is default to
 the current directory and ~/.dotpriv.
@@ -98,7 +101,7 @@ done
 
 for f in $FLAVORS; do
     case "$f" in
-        dev | desktop | mail | backups | system ) ;;
+        dev | desktop | mail | backups | system | work | projects ) ;;
         * ) printe_err "Unknown flavor: $f"; exit 1;;
     esac
 done
