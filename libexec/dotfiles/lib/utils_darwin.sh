@@ -116,7 +116,7 @@ install_launchd() {
         fi
 
         if [ "$plist_load" = "1" ]; then
-            launchctl unload -w "$plist_dest" 2>/dev/null
+            launchctl unload "$plist_dest" 2>/dev/null
         fi
     fi
 
@@ -128,7 +128,7 @@ install_launchd() {
     chmod 0644 "$plist_dest"
 
     if [ "$plist_load" = "1" ]; then
-        launchctl load -w "$plist_dest"
+        launchctl load "$plist_dest"
     fi
 
     printe_info "$plist_dest has been installed"
