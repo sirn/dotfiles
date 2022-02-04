@@ -60,6 +60,7 @@
 
 [ghq]
     root = ~/Dev/src
+    root = ~/Dev/workspace
     root = ~/Dev/go/gopath/src
 
 [magit]
