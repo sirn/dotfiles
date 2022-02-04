@@ -31,4 +31,5 @@ export HOME ${homedir}
 export XDG_RUNTIME_DIR ${xdg-runtime-dir}
 
 fdmove -c 2 1
+if { mkdir -p ${xdg-runtime-dir}/podman }
 /usr/bin/podman system service -t 0 --log-level=debug unix://${xdg-runtime-dir}/podman/podman.sock
