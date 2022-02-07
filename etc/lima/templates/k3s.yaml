@@ -15,13 +15,6 @@ provision:
   - mode: system
     script: |
       #!/bin/sh
-      export DEBIAN_FRONTEND=noninteractive
-      apt-get update
-      apt-get upgrade
-      apt-get install -y qemu-user-static binfmt-support
-  - mode: system
-    script: |
-      #!/bin/sh
       curl -sfL https://get.k3s.io | sh -
 
 probes:

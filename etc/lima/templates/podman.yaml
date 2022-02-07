@@ -25,13 +25,6 @@ containerd:
 provision:
   - mode: system
     script: |
-      #!/bin/sh
-      export DEBIAN_FRONTEND=noninteractive
-      apt-get update
-      apt-get upgrade
-      apt-get install -y qemu-user-static binfmt-support
-  - mode: system
-    script: |
       #!/bin/bash
       set -eux -o pipefail
       command -v podman >/dev/null 2>&1 && exit 0
