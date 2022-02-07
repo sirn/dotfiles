@@ -31,16 +31,13 @@ _run() {
     macports_install graphviz
     macports_install imagemagick
     macports_install ipcalc
-    macports_install lima
     macports_install mercurial
     macports_install mosh
     macports_install oksh
     macports_install openssh
     macports_install pandoc
-    macports_install podman
     macports_install proselint
     macports_install pstree
-    macports_install qemu +target_arm +target_riscv32 +target_riscv64 +target_x86_64
     macports_install rsync
     macports_install s6
     macports_install snooze
@@ -65,13 +62,20 @@ _run_desktop() {
 
 _run_dev() {
     macports_install carthage
+    macports_install doctl
+    macports_install doctl
     macports_install jq
+    macports_install jsonnet
+    macports_install lima
     macports_install nomad
+    macports_install podman
+    macports_install qemu +target_arm +target_riscv32 +target_riscv64 +target_x86_64 +vde
     macports_install shellcheck
     macports_install tcl
     macports_install terraform-0.14
-    macports_install jsonnet
 
+    macports_install autoconf
+    macports_install automake
     macports_install bzip2
     macports_install libffi
     macports_install readline

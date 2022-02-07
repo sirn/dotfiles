@@ -31,8 +31,6 @@ _run() {
     xbps_install mosh
     xbps_install oksh
     xbps_install pandoc
-    xbps_install podman
-    xbps_install podman-compose
     xbps_install rsync
     xbps_install s6
     xbps_install snooze
@@ -66,7 +64,6 @@ _run_desktop() {
     xbps_install emacs-gtk3
     xbps_install firefox
     xbps_install lagrange
-    xbps_install qemu
 
     sh "$BASE_DIR/libexec/packages/sys/fonts.sh" "$@"
 }
@@ -76,10 +73,15 @@ _run_dev() {
     xbps_install jq
     xbps_install jsonnet
     xbps_install nomad
+    xbps_install podman
+    xbps_install podman-compose
+    xbps_install qemu
     xbps_install shellcheck
     xbps_install tcl
     xbps_install terraform
 
+    xbps_install autoconf
+    xbps_install automake
     xbps_install base-devel
     xbps_install bzip2-devel
     xbps_install libffi-devel
