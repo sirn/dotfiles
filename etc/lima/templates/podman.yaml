@@ -2,9 +2,9 @@
 arch: null
 
 images:
-  - location: "https://cloud-images.ubuntu.com/impish/current/impish-server-cloudimg-amd64.img"
+  - location: "https://download.fedoraproject.org/pub/fedora/linux/releases/35/Cloud/x86_64/images/Fedora-Cloud-Base-35-1.2.x86_64.qcow2"
     arch: "x86_64"
-  - location: "https://cloud-images.ubuntu.com/impish/current/impish-server-cloudimg-arm64.img"
+  - location: "https://download.fedoraproject.org/pub/fedora/linux/releases/35/Cloud/aarch64/images/Fedora-Cloud-Base-35-1.2.aarch64.qcow2"
     arch: "aarch64"
 
 mounts:
@@ -28,9 +28,8 @@ provision:
       #!/bin/bash
       set -eux -o pipefail
       command -v podman >/dev/null 2>&1 && exit 0
-      export DEBIAN_FRONTEND=noninteractive
-      apt-get update
-      apt-get install -y podman crun
+      yum install -y podman
+      systemctl --system enable --now podman.socket
   - mode: user
     script: |
       #!/bin/bash
