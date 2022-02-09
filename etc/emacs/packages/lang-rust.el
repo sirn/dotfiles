@@ -1,8 +1,7 @@
 ;; -*- lexical-binding: t -*-
 
-(use-package rust-mode)
-
-
-(use-package racer
+(use-package rust-mode
   :init
-  (add-hook 'rust-mode-hook #'racer-mode))
+  (use-feature lsp-mode
+    :init
+    (add-hook 'rust-mode-hook #'lsp)))
