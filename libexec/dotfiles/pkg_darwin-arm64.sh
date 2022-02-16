@@ -62,8 +62,6 @@ _run_desktop() {
 
 _run_dev() {
     macports_install carthage
-    macports_install doctl
-    macports_install doctl
     macports_install jq
     macports_install jsonnet
     macports_install lima
@@ -98,6 +96,7 @@ _run_dev() {
     # Depends on go
     sh "$BASE_DIR/libexec/packages/dev/buf.sh" "$@"
     sh "$BASE_DIR/libexec/packages/dev/golang.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/doctl.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/gcloud.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/helm.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/helmfile.sh" "$@"

@@ -69,7 +69,6 @@ _run_desktop() {
 }
 
 _run_dev() {
-    xbps_install doctl
     xbps_install jq
     xbps_install jsonnet
     xbps_install podman
@@ -106,6 +105,7 @@ _run_dev() {
     # Depends on go
     sh "$BASE_DIR/libexec/packages/dev/buf.sh" "$@"
     sh "$BASE_DIR/libexec/packages/dev/golang.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/doctl.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/gcloud.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/helm.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/helmfile.sh" "$@"

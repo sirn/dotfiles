@@ -44,6 +44,8 @@ _run_dev() {
         LDFLAGS="-L/opt/local/lib"; export LDFLAGS
     fi
 
+    asdf_exec pip3 install -U pip
+
     _pip3_install poetry
     _pip3_install black
     _pip3_install flake8
@@ -55,6 +57,7 @@ _run_dev() {
 
     _pip3_install ansible
     _pip3_install ansible-lint
+    _pip3_install linode-cli
     _pip3_install proselint
     _pip3_install tmuxp
     _pip3_install yamllint
