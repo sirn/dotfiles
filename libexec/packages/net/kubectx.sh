@@ -9,8 +9,8 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
 . "../../dotfiles/lib/buildenv.sh"
 
-KUBECTX_VER=0.9.3
-KUBECTX_SHA256=c9f1323f759605405ef8240d6fa64e741b788d978dff25d624a90af2760e778d
+KUBECTX_VER=0.9.4
+KUBECTX_SHA256=91e6b2e0501bc581f006322d621adad928ea3bd3d8df6612334804b93efd258c
 
 _preflight() {
     if ! command -v go >/dev/null; then
@@ -52,15 +52,12 @@ _install_kubectx() {
         install -d "$_verdir/bin"
         install -m0755 "$n" "$_verdir/bin/$n"
 
-        # https://github.com/ahmetb/kubectx/issues/254
-        cat <<EOF > "$HOME/.local/bin/$n"
-#!/bin/sh
-# https://github.com/ahmetb/kubectx/issues/254
-XDG_CACHE_HOME=; export XDG_CACHE_HOME
-exec "$_verdir/bin/$n" "\$@"
-EOF
+        # Migration
+        if grep -q "kubectx/issues/254" "$HOME/.local/bin/$n"; then
+            rm "$HOME/.local/bin/$n"
+        fi
 
-        chmod +x "$HOME/.local/bin/$n"
+        make_link "$_verdir/bin/$n" "$HOME/.local/bin/$n"
     done
 }
 
