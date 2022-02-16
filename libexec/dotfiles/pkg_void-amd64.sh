@@ -72,13 +72,11 @@ _run_dev() {
     xbps_install doctl
     xbps_install jq
     xbps_install jsonnet
-    xbps_install nomad
     xbps_install podman
     xbps_install podman-compose
     xbps_install qemu
     xbps_install shellcheck
     xbps_install tcl
-    xbps_install terraform
 
     xbps_install autoconf
     xbps_install automake
@@ -105,14 +103,19 @@ _run_dev() {
     sh "$BASE_DIR/libexec/packages/lang/elixir.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/postgres.sh" "$@"
 
-    # Usually requires language interpreter to be installed
+    # Depends on go
+    sh "$BASE_DIR/libexec/packages/dev/buf.sh" "$@"
     sh "$BASE_DIR/libexec/packages/dev/golang.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/gcloud.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/net/kubectx.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/helm.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/helmfile.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/kubectx.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/kustomize.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/dev/buf.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/nomad.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/terraform.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/terragrunt.sh" "$@"
+
+    # Depends on rust
     sh "$BASE_DIR/libexec/packages/dev/parinfer-rust.sh" "$@"
 }
 

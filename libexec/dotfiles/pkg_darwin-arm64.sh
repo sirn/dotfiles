@@ -67,12 +67,10 @@ _run_dev() {
     macports_install jq
     macports_install jsonnet
     macports_install lima
-    macports_install nomad
     macports_install podman
     macports_install qemu +target_arm +target_riscv32 +target_riscv64 +target_x86_64 +vde
     macports_install shellcheck
     macports_install tcl
-    macports_install terraform-0.14
 
     macports_install autoconf
     macports_install automake
@@ -98,16 +96,17 @@ _run_dev() {
     sh "$BASE_DIR/libexec/packages/net/postgres.sh" "$@"
 
     # Depends on go
+    sh "$BASE_DIR/libexec/packages/dev/buf.sh" "$@"
     sh "$BASE_DIR/libexec/packages/dev/golang.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/gcloud.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/helm.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/helmfile.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/kubectx.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/kustomize.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/dev/buf.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/terraform.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/terragrunt.sh" "$@"
+    arch -x86_64 sh "$BASE_DIR/libexec/packages/net/nomad.sh" "$@"
+
+    # Depends on rust
     sh "$BASE_DIR/libexec/packages/dev/parinfer-rust.sh" "$@"
-
-    ## Requires Rosetta (no official release)
-    arch -arch x86_64 sh "$BASE_DIR/libexec/packages/net/helmfile.sh" "$@"
-
-    macports_select terraform terraform0.14
 }
