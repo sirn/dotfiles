@@ -40,7 +40,6 @@
  ("evil-leader" . "39f7014bcf8b36463e0c7512c638bda4bac6c2cf")
  ("evil-matchit" . "14c7c7ed0a1ca8d3407688e0150f794db9389997")
  ("evil-surround" . "282a975bda83310d20a2c536ac3cf95d2bf188a5")
- ("exec-path-from-shell" . "3a8d97c096c2c5714b667130fd8a80d5622ee067")
  ("f.el" . "50af874cd19042f17c8686813d52569b1025c76a")
  ("flycheck" . "784f184cdd9f9cb4e3dbb997c09d93e954142842")
  ("flycheck-golangci-lint" . "8e446c68311048f0b87febf8ef0379e29d358851")

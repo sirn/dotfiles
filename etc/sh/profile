@@ -117,6 +117,40 @@ if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
 fi
 
 
+## ASDF
+##
+
+# shellcheck disable=SC1090,SC1091
+if [ -d "$HOME/.asdf" ] && [ -z "$ASDF_DIR" ]; then
+    . "$HOME/.asdf/asdf.sh"
+fi
+
+
+## PATHs
+##
+
+GOPATH=$HOME/Dev/go/gopath:$HOME/Dev
+_gopaths=$GOPATH
+
+while [ -n "$_gopaths" ]; do
+    _gopath=${_gopaths%%:*}
+    prependpath "$_gopath/bin"
+    _gopaths=${_gopaths##"$_gopath"}
+    _gopaths=${_gopaths#:}
+done
+
+unset _gopath
+unset _gopaths
+
+prependpath "$HOME/.local/bin"
+prependpath "$HOME/.cabal/bin"
+prependpath "$HOME/.cargo/bin"
+prependpath "$HOME/.nimble/bin"
+prependpath "$HOME/.cache/rebar3/bin"
+prependpath "$HOME/.local/lib/google-cloud-sdk/bin"
+prependpath "$HOME/.dotfiles/libexec/lsp"
+
+
 ## Local Customization files
 ##
 
@@ -141,3 +175,4 @@ ENV="$HOME/.kshrc"
 
 export ENV
 export PATH
+export GOPATH
