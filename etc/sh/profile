@@ -122,6 +122,7 @@ fi
 
 # shellcheck disable=SC1090,SC1091
 if [ -d "$HOME/.asdf" ] && [ -z "$ASDF_DIR" ]; then
+    ASDF_DIR=$HOME/.asdf
     . "$HOME/.asdf/asdf.sh"
 fi
 
