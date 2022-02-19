@@ -136,6 +136,10 @@ git_clone() {
     path=$1; shift
     ref=$1
 
+    if [ -z "$ref" ] && [ -d "$path/.git" ]; then
+        ref=$(git -C "$path" rev-parse --abbrev-ref HEAD)
+    fi
+
     if [ -z "$ref" ]; then
         ref=master
     fi
