@@ -78,6 +78,9 @@ _run_dev() {
     macports_install sqlite3
     macports_install zlib
 
+    # tl;dr https://github.com/hashicorp/nomad/issues/5643
+    macports_install nomad
+
     # official binary is glibc only and compiling golang from source requires
     # go-1.4 to bootstrap. Use distro package to avoid some headaches.
     macports_install go
@@ -104,7 +107,6 @@ _run_dev() {
     sh "$BASE_DIR/libexec/packages/net/kustomize.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/terraform.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/terragrunt.sh" "$@"
-    arch -x86_64 sh "$BASE_DIR/libexec/packages/net/nomad.sh" "$@"
 
     # Depends on rust
     sh "$BASE_DIR/libexec/packages/dev/parinfer-rust.sh" "$@"

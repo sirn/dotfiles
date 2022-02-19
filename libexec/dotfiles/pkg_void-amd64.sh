@@ -88,6 +88,9 @@ _run_dev() {
     xbps_install sqlite-devel
     xbps_install zlib-devel
 
+    # tl;dr https://github.com/hashicorp/nomad/issues/5643
+    xbps_install nomad
+
     # official binary is glibc only and compiling golang from source requires
     # go-1.4 to bootstrap. Use distro package to avoid some headaches.
     xbps_install go
@@ -111,7 +114,6 @@ _run_dev() {
     sh "$BASE_DIR/libexec/packages/net/helmfile.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/kubectx.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/kustomize.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/net/nomad.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/terraform.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/terragrunt.sh" "$@"
 
