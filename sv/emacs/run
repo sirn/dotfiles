@@ -26,6 +26,9 @@ multisubstitute {
     define xdg-runtime-dir /run/user/${uid}
 }
 
+backtick -n emacs { ${shell} -l -c "command -v emacs" }
+importas -u emacs emacs
+
 # - SHELL must be set otherwise some script that requires $SHELL
 #   in Emacs won't going to work and we're stuck with emacs daemon unable
 #   to boot.
@@ -55,4 +58,4 @@ if {
 }
 
 fdmove -c 2 1
-emacs --fg-daemon --chdir=${homedir}
+${shell} -l -c "${emacs} --fg-daemon --chdir=${homedir}"
