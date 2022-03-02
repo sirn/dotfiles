@@ -5,7 +5,7 @@
 
 LC_ALL=${LC_ALL:-en_US.UTF-8}
 LANG=${LANG:-en_US.UTF-8}
-EDITOR="vi"
+EDITOR="emacsc"
 VISUAL="emacs"
 
 export LC_ALL
