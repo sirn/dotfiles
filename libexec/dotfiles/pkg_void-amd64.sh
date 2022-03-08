@@ -75,6 +75,7 @@ _run_dev() {
     xbps_install podman-compose
     xbps_install qemu
     xbps_install shellcheck
+    xbps_install sops
     xbps_install tcl
 
     xbps_install autoconf
