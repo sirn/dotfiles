@@ -120,8 +120,8 @@ fi
 ## ASDF
 ##
 
-# shellcheck disable=SC1090,SC1091
-if [ -d "$HOME/.asdf" ] && [ -z "$ASDF_DIR" ]; then
+# shellcheck disable=SC1091
+if [ -d "$HOME/.asdf" ]; then
     ASDF_DIR=$HOME/.asdf
     . "$HOME/.asdf/asdf.sh"
 fi
@@ -177,3 +177,4 @@ ENV="$HOME/.kshrc"
 export ENV
 export PATH
 export GOPATH
+export ASDF_DIR
