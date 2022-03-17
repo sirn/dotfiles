@@ -78,11 +78,21 @@ _do_updated() {
         pkg=${n%-*}
 
         cur_pkgver=$n
-        cur_version=${cur_pkgver#$pkg-}
+        cur_version=${cur_pkgver#"$pkg"-}
         cur_version=${cur_version%_*}
         cur_revision=${cur_pkgver#*_}
 
-        "$cur_dir"/xbps-src show "$pkg" > "$TMP_DIR/${pkg}_new"
+        if ! "$cur_dir"/xbps-src show "$pkg" \
+             > "$TMP_DIR/${pkg}_new" \
+             2>/dev/null; then
+            printf >&2 "%s%s%s: %s -> %s\\n" \
+                    "$T_BOLD" \
+                    "$pkg" \
+                    "$T_RESET" \
+                    "$cur_pkgver" \
+                    "not found"
+            continue
+        fi
 
         new_version=$(awk '/version:/ { print $2 }' < "$TMP_DIR/${pkg}_new")
         new_revision=$(awk '/revision:/ { print $2 }' < "$TMP_DIR/${pkg}_new")
