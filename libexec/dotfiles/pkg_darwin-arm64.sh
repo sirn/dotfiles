@@ -67,6 +67,7 @@ _run_dev() {
     macports_install lima
     macports_install podman
     macports_install qemu +target_arm +target_riscv32 +target_riscv64 +target_x86_64 +vde
+    macports_install redis
     macports_install shellcheck
     macports_install sops
     macports_install tcl

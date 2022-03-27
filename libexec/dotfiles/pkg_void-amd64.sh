@@ -74,6 +74,7 @@ _run_dev() {
     xbps_install podman
     xbps_install podman-compose
     xbps_install qemu
+    xbps_install redis
     xbps_install shellcheck
     xbps_install sops
     xbps_install tcl
