@@ -54,6 +54,7 @@ _run_dev() {
     _pip3_install pyls_flake8 pyls-flake8
     _pip3_install pyls_isort pyls-isort
     _pip3_install pylsp_black python-lsp-black
+    _pip3_install honcho
 
     _pip3_install ansible
     _pip3_install ansible-lint
