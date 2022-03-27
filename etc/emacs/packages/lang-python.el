@@ -12,6 +12,11 @@
 
   (use-feature lsp-mode
     :init
+    (setq lsp-pylsp-server-command
+      (gemacs--path-join
+        (file-name-as-directory (getenv "HOME"))
+        ".dotfiles/libexec/lsp/pylsp"))
+
     (add-hook 'python-mode-hook #'lsp))
 
   :config

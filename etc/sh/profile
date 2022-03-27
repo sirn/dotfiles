@@ -149,6 +149,7 @@ prependpath "$HOME/.cargo/bin"
 prependpath "$HOME/.nimble/bin"
 prependpath "$HOME/.cache/rebar3/bin"
 prependpath "$HOME/.local/lib/google-cloud-sdk/bin"
+prependpath "$HOME/.dotfiles/libexec/lsp"
 
 
 ## Local Customization files
