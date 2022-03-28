@@ -4,6 +4,9 @@
   :preface
   (eval-when-compile
     (declare-function lsp-register-custom-settings nil)
+    (declare-function lsp-format-buffer nil)
+    (declare-function lsp-organize-imports nil)
+    (declare-function gemacs--python-auto-format nil)
     (defvar lsp-pylsp-server-command))
 
   :init
@@ -17,7 +20,15 @@
         (file-name-as-directory (getenv "HOME"))
         ".dotfiles/libexec/lsp/pylsp"))
 
-    (add-hook 'python-mode-hook #'lsp))
+    (defun gemacs--python-auto-format ()
+      (add-hook 'before-save-hook #'lsp-format-buffer)
+      (add-hook 'before-save-hook #'lsp-organize-imports)
+      (use-feature apheleia
+        :config
+        (apheleia-mode -1)))
+
+    (add-hook 'python-mode-hook #'lsp)
+    (add-hook 'python-mode-hook #'gemacs--python-auto-format))
 
   :config
   (defun gemacs--python-fix-outline-mode-config ()

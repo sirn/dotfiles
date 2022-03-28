@@ -9,6 +9,9 @@
   (eval-when-compile
     (defvar lsp-diagnostics-provider)
     (declare-function go--backward-irrelevant nil)
+    (declare-function lsp-format-buffer nil)
+    (declare-function lsp-organize-imports nil)
+    (declare-function gemacs--go-auto-format nil)
     (declare-function gemacs--go-beginning-of-defun nil)
     (declare-function gemacs--go-end-of-defun nil)
     (declare-function gemacs--go-defun-setup nil)
@@ -18,7 +21,15 @@
   :init
   (use-feature lsp-mode
     :init
-    (add-hook 'go-mode-hook #'lsp))
+    (defun gemacs--go-auto-format ()
+      (add-hook 'before-save-hook #'lsp-format-buffer)
+      (add-hook 'before-save-hook #'lsp-organize-imports)
+      (use-feature apheleia
+        :config
+        (apheleia-mode -1)))
+
+    (add-hook 'go-mode-hook #'lsp)
+    (add-hook 'go-mode-hook #'gemacs--go-auto-format))
 
   (use-feature flycheck-golangci-lint
     :preface
