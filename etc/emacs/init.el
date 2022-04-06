@@ -312,4 +312,7 @@ This is an `:around' advice for many different functions."
 
 
 (provide 'init)
+;; Local Variables:
+;; no-native-compile: t
+;; End:
 ;;; init.el ends here
