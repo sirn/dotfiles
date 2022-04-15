@@ -1,4 +1,4 @@
-;; -*- lexical-binding: t -*-
+;; -*- lexical-binding: t; no-native-compile: t -*-
 
 ;; Note:
 ;; Many parts of this file are taken from Radian with some modifications.

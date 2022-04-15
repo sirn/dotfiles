@@ -1,4 +1,4 @@
-;; -*- lexical-binding: t -*-
+;; -*- lexical-binding: t; no-native-compile: t -*-
 
 ;; Setup a minimalist frame without toolbar and menu bar, but also taking
 ;; OS behavior quirks into consideration. This is done via `make-frame-func'

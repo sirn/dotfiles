@@ -1,4 +1,4 @@
-;; -*- lexical-binding: t -*-
+;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package json-mode
   :init/el-patch

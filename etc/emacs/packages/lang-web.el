@@ -1,4 +1,4 @@
-;; -*- lexical-binding: t -*-
+;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package web-mode
   :mode
@@ -67,6 +67,23 @@ poke it. Otherwise the modified text remains unfontified."
 
     (add-hook 'apheleia-post-format-hook
       #'gemacs--web-highlight-after-formatting)))
+
+
+(use-feature css-mode
+  :config
+  (use-feature flycheck
+    :config
+    ;; Stylelint v14 removed --syntax, but Flycheck still uses one.
+    ;; See also: https://github.com/flycheck/flycheck/issues/1912
+    (flycheck-define-checker scss-stylelint
+      "A SCSS syntax and style checker using stylelint."
+      :command ("stylelint"
+                 (eval flycheck-stylelint-args)
+                 (option-flag "--quiet" flycheck-stylelint-quiet)
+                 (config-file "--config" flycheck-stylelintrc))
+      :standard-input t
+      :error-parser flycheck-parse-stylelint
+      :modes (scss-mode))))
 
 
 (use-package emmet-mode

@@ -1,4 +1,4 @@
-;; -*- lexical-binding: t -*-
+;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (when (executable-find "notmuch")
   ;; Using distro notmuch here since notmuch-emacs requires the version

@@ -1,4 +1,4 @@
-;; -*- lexical-binding: t -*-
+;; -*- lexical-binding: t; no-native-compile: t -*-
 
 ;; This file wraps over an actual configuration for automatic loading
 ;; and byte-compilation.
@@ -9,6 +9,11 @@
 ;; Prevent package.el from modifying this file.
 
 (setq package-enable-at-startup nil)
+
+;; Disable byte-compilation warnings from native-compiled packages
+;; from being reported asynchronously into the UI.
+
+(setq native-comp-async-report-warnings-errors nil)
 
 ;; Prevent Custom from modifying this file. This will be overriden
 ;; in the actual configuration file.
@@ -312,7 +317,4 @@ This is an `:around' advice for many different functions."
 
 
 (provide 'init)
-;; Local Variables:
-;; no-native-compile: t
-;; End:
 ;;; init.el ends here
