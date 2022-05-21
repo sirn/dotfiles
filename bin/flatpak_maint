@@ -14,8 +14,8 @@ PATH=/usr/bin:/bin:/usr/local/bin
 ##
 
 OVERRIDES="
-~/.config/fontconfig:ro
-~/.config/gtk-3.0:ro
+xdg-config/fontconfig:ro
+xdg-config/gtk-3.0:ro
 ~/.dotfiles/etc/fontconfig:ro
 ~/.local/share/fonts:ro
 " # END-QUOTE
