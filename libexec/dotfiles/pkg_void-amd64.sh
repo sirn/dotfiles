@@ -110,6 +110,7 @@ _run_dev() {
     # Depends on go
     sh "$BASE_DIR/libexec/packages/dev/buf.sh" "$@"
     sh "$BASE_DIR/libexec/packages/dev/golang.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/net/argocd.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/doctl.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/gcloud.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/helm.sh" "$@"
