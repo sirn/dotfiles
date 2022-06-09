@@ -45,6 +45,7 @@ _run() {
     xbps_install w3m
     xbps_install xtools
     xbps_install xz
+    xbps_install yq-go
     xbps_install zip
 }
 

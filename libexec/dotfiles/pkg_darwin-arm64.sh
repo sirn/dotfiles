@@ -51,6 +51,7 @@ _run() {
     macports_install xcodes
     macports_install xz
     macports_install youtube-dl
+    macports_install yq
 
     ## Broken
     #macports_install unison -gtk
