@@ -2,10 +2,12 @@
 arch: null
 
 images:
-  - location: "https://download.fedoraproject.org/pub/fedora/linux/releases/35/Cloud/x86_64/images/Fedora-Cloud-Base-35-1.2.x86_64.qcow2"
+  - location: "https://download.fedoraproject.org/pub/fedora/linux/releases/36/Cloud/x86_64/images/Fedora-Cloud-Base-36-1.5.x86_64.qcow2"
     arch: "x86_64"
-  - location: "https://download.fedoraproject.org/pub/fedora/linux/releases/35/Cloud/aarch64/images/Fedora-Cloud-Base-35-1.2.aarch64.qcow2"
+    digest: "sha256:ca9e514cc2f4a7a0188e7c68af60eb4e573d2e6850cc65b464697223f46b4605"
+  - location: "https://download.fedoraproject.org/pub/fedora/linux/releases/36/Cloud/aarch64/images/Fedora-Cloud-Base-36-1.5.aarch64.qcow2"
     arch: "aarch64"
+    digest: "sha256:5c0e7e99b0c542cb2155cd3b52bbf51a42a65917e52d37df457d1e9759b37512"
 
 mounts:
   - location: "~"
@@ -28,7 +30,7 @@ provision:
       #!/bin/bash
       set -eux -o pipefail
       command -v podman >/dev/null 2>&1 && exit 0
-      yum install -y podman
+      dnf -y install podman qemu-user-static
       systemctl --system enable --now podman.socket
   - mode: user
     script: |
