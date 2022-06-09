@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package selectrum
-  :straight (:host github :repo "raxod502/selectrum")
+  :straight (:host github :repo "radian-software/selectrum")
   :demand t
 
   :preface
@@ -38,7 +38,7 @@
 
 (use-package selectrum-prescient
   :straight (:host github
-              :repo "raxod502/prescient.el"
+              :repo "radian-software/prescient.el"
               :files ("selectrum-prescient.el"))
 
   :after (selectrum prescient)

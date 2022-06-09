@@ -2,7 +2,7 @@
 
 ;; Note:
 ;; Many parts of this file are taken from Radian with some modifications.
-;; https://github.com/raxod502/radian/blob/242c55c/emacs/radian.el
+;; https://github.com/radian-software/radian/blob/242c55c/emacs/radian.el
 
 (use-package go-mode
   :preface

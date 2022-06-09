@@ -2,7 +2,7 @@
 
 ;; Note:
 ;; Many parts of this file are taken from Radian with some modifications.
-;; https://github.com/raxod502/radian/blob/242c55c/emacs/radian.el
+;; https://github.com/radian-software/radian/blob/242c55c/emacs/radian.el
 
 ;; --------------------------------------------------------------------------
 ;;; Editing behaviors
@@ -412,7 +412,7 @@ completions automatically when backspacing into a symbol."
 
 (use-package apheleia
   :demand t
-  :straight (:host github :repo "raxod502/apheleia")
+  :straight (:host github :repo "radian-software/apheleia")
 
   :preface
   (eval-when-compile
