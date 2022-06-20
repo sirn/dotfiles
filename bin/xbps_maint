@@ -147,7 +147,7 @@ _do_src() {
 
     if command -v podman >/dev/null; then
         container_cmd=podman
-        container_args="--ulimit nofile=127952:127952"
+        container_args="--ulimit host"
     fi
 
     if [ -z "$container_cmd" ]; then
