@@ -200,12 +200,12 @@ _run() {
 
     _install_font_url \
         droid-sans-thai \
-        https://files.grid.in.th/pub/fonts/droid-sans-thai.tar.gz \
+        https://files.null.sh/pub/fonts/droid-sans-thai.tar.gz \
         c0f2ab8b3471c3b5ecca4c94400ad489a7e09b811739bdea537c7f4ef9be6a80
 
     _install_font_url \
         droid-serif-thai \
-        https://files.grid.in.th/pub/fonts/droid-serif-thai.tar.gz \
+        https://files.null.sh/pub/fonts/droid-serif-thai.tar.gz \
         8d27167379ea9718530d35c5872e65f5a09adc99fe505c4d506e9bbaaefe84d7
 
     ## IBM Plex
