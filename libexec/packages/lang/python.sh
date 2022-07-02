@@ -49,6 +49,7 @@ _run_dev() {
     _pip3_install poetry
     _pip3_install black
     _pip3_install flake8
+    _pip3_install pyright
     _pip3_install pylsp python-lsp-server
     _pip3_install mypy_ls mypy-ls
     _pip3_install pyls_flake8 pyls-flake8
