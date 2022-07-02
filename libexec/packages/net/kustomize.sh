@@ -10,7 +10,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv.sh"
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
-KUSTOMIZE_VERSION=4.5.2
+KUSTOMIZE_VERSION=4.5.5
 
 _preflight() {
     if ! command -v asdf >/dev/null; then

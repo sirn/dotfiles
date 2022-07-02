@@ -10,7 +10,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv.sh"
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
-RUST_VERSION=1.57.0
+RUST_VERSION=1.62.0
 RUST_VERSION_PATH=$ASDF_DIR/installs/rust/$RUST_VERSION
 
 _preflight() {

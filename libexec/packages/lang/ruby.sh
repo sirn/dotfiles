@@ -10,7 +10,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv.sh"
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
-RUBY_VERSION=3.1.0
+RUBY_VERSION=3.1.2
 
 _preflight() {
     if ! command -v asdf >/dev/null; then

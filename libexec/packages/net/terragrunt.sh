@@ -10,7 +10,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv.sh"
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
-TERRAGRUNT_VERSION=0.36.1
+TERRAGRUNT_VERSION=0.38.3
 
 _preflight() {
     if ! command -v asdf >/dev/null; then

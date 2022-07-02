@@ -9,7 +9,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
 . "../../dotfiles/lib/buildenv.sh"
 
-GOLANGCI_LINT_VER=1.36.0
+GOLANGCI_LINT_VER=1.46.2
 
 _preflight() {
     if ! command -v go >/dev/null; then

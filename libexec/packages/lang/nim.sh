@@ -10,12 +10,12 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv.sh"
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
-NIM_VERSION=1.6.2
+NIM_VERSION=1.6.6
 NIM_VERSION_PATH=$ASDF_DIR/installs/nim/$NIM_VERSION
 NIM_VERSION_SRC=$HOME/.local/src/nim/$NIM_VERSION
 
-NIMLSP_VERSION=0.3.2
-NIMLSP_SHA256=c17ea17e954125be06080e4bdc4371613a468d64b73aeb13897d8f9c7e6b9952
+NIMLSP_VERSION=0.4.1
+NIMLSP_SHA256=736ede91ef9aa5ede86ed8d031cdc26b869919007e392babd3a25cf7319a78bd
 
 _preflight() {
     if ! command -v asdf >/dev/null; then

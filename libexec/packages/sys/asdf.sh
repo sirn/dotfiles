@@ -11,7 +11,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
 _run() {
-    git_clone https://github.com/asdf-vm/asdf.git "$ASDF_DIR" v0.9.0
+    git_clone https://github.com/asdf-vm/asdf.git "$ASDF_DIR" v0.10.2
 }
 
 run_with_flavors "$@"

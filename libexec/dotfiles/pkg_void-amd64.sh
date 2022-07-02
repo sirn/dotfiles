@@ -98,14 +98,15 @@ _run_dev() {
     # go-1.4 to bootstrap. Use distro package to avoid some headaches.
     xbps_install go
 
-    # asdf is required for asdf-managed packages/; install it first
+    # asdf is required for asdf-managed packages; install it first
     sh "$BASE_DIR/libexec/packages/sys/asdf.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/erlang.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/elixir.sh" "$@"
     sh "$BASE_DIR/libexec/packages/lang/nim.sh" "$@"
     sh "$BASE_DIR/libexec/packages/lang/nodejs.sh" "$@"
     sh "$BASE_DIR/libexec/packages/lang/python.sh" "$@"
+    sh "$BASE_DIR/libexec/packages/lang/ruby.sh" "$@"
     sh "$BASE_DIR/libexec/packages/lang/rust.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/lang/erlang.sh" "$@"
-    sh "$BASE_DIR/libexec/packages/lang/elixir.sh" "$@"
     sh "$BASE_DIR/libexec/packages/net/postgres.sh" "$@"
 
     # Depends on go

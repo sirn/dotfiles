@@ -10,7 +10,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv.sh"
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
-POSTGRES_VERSION=14.2
+POSTGRES_VERSION=14.4
 
 _preflight() {
     if ! command -v asdf >/dev/null; then
