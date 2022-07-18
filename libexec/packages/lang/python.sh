@@ -46,16 +46,17 @@ _run_dev() {
 
     asdf_exec pip3 install -U pip
 
-    _pip3_install poetry
     _pip3_install black
     _pip3_install flake8
-    _pip3_install pyright
-    _pip3_install pylsp python-lsp-server
+    _pip3_install honcho
     _pip3_install mypy_ls mypy-ls
+    _pip3_install pip-tools
+    _pip3_install poetry
     _pip3_install pyls_flake8 pyls-flake8
     _pip3_install pyls_isort pyls-isort
+    _pip3_install pylsp python-lsp-server
     _pip3_install pylsp_black python-lsp-black
-    _pip3_install honcho
+    _pip3_install pyright
 
     _pip3_install ansible
     _pip3_install ansible-lint
