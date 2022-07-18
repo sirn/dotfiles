@@ -10,7 +10,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv.sh"
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
-ERLANG_VERSION=25.0.2
+ERLANG_VERSION=25.0.3
 ERLANG_VERSION_PATH=$ASDF_DIR/installs/erlang/$ERLANG_VERSION
 
 REBAR3_VER=3.19.0

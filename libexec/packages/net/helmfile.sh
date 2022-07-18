@@ -10,7 +10,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv.sh"
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
-HELMFILE_VERSION=0.144.0
+HELMFILE_VERSION=0.145.2
 
 _preflight() {
     if ! command -v asdf >/dev/null; then

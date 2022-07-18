@@ -24,6 +24,8 @@ _run() {
 }
 
 _install_ruby() {
+    # https://github.com/openssl/openssl/issues/18720
+    export CFLAGS=-Wno-error=implicit-function-declaration
     asdf_plugin ruby https://github.com/asdf-vm/asdf-ruby
     asdf_install ruby "$RUBY_VERSION" global
 }

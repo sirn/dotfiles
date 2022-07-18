@@ -10,7 +10,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv.sh"
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
-NODEJS_VERSION=16.15.1
+NODEJS_VERSION=16.16.0
 
 # Node does not provide binary for musl, we must compile from source.
 case $(get_libc) in
@@ -81,7 +81,7 @@ _npm_install() {
         return
     fi
 
-    asdf_exec npm install -g "$pkg" "$@"
+    asdf_exec npm install --location=global "$pkg" "$@"
 }
 
 run_with_flavors "$@"

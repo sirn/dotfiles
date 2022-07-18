@@ -9,8 +9,8 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
 . "../../dotfiles/lib/buildenv.sh"
 
-CFD_VER=2022.6.3
-CFD_SHA256=74fb20e78f69db086f6044eae9d7a09bb3b59001a14d17c18edd9cb4ee8db4f6
+CFD_VER=2022.7.1
+CFD_SHA256=3a822faaed7ae90be5ba4920f9226cd85367402d2c5a2bf2f0732c37cad6599d
 
 _preflight() {
     if ! command -v go >/dev/null; then
