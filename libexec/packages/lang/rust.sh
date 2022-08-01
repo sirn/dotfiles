@@ -34,12 +34,17 @@ _run_dev() {
     _rustup_install rls
     _rustup_install rust-analysis
     _rustup_install rust-src
-    _cargo_install rustfmt rustfmt
+    _rustup_install rustfmt
+    _rustup_nightly_install rust-analyzer-preview
     _cargo_install mdbook mdbook
 }
 
 _rustup_install() {
     asdf_exec rustup component add "$@"
+}
+
+_rustup_nightly_install() {
+    asdf_exec rustup +nightly component add "$@"
 }
 
 _cargo_install() {
