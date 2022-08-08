@@ -79,6 +79,8 @@ _run_dev() {
     xbps_install shellcheck
     xbps_install sops
     xbps_install tcl
+    xbps_install tcllib
+    xbps_install tcltls
 
     xbps_install autoconf
     xbps_install automake

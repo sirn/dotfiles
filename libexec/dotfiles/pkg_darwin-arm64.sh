@@ -73,6 +73,8 @@ _run_dev() {
     macports_install shellcheck
     macports_install sops
     macports_install tcl
+    macports_install tcl-tls
+    macports_install tcllib
 
     macports_install autoconf
     macports_install automake
