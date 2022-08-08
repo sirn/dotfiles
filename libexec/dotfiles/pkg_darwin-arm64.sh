@@ -3,7 +3,10 @@
 # Install Darwin packages with MacPorts and MAS.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(
+    cd "$(dirname "$0")/../.." || exit
+    pwd -P
+)}
 
 cd "$(dirname "$0")" || exit 1
 . "lib/utils.sh"
