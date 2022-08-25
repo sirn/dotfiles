@@ -490,59 +490,6 @@ nor requires Flycheck to be loaded."
   :demand t
 
   :config
-  (gemacs-when-compiletime (version<= "27" emacs-version)
-    (el-patch-defun eldoc-print-current-symbol-info ()
-      (el-patch-concat
-        "Print the text produced by `eldoc-documentation-function'."
-        (el-patch-add "\nDon't trample on existing messages."))
-      ;; This is run from post-command-hook or some idle timer thing,
-      ;; so we need to be careful that errors aren't ignored.
-      (with-demoted-errors "eldoc error: %s"
-        (if (not (eldoc-display-message-p))
-          ;; Erase the last message if we won't display a new one.
-          (when eldoc-last-message
-            (el-patch-swap
-              (eldoc-message nil)
-              (setq eldoc-last-message nil)))
-          (let ((non-essential t))
-            ;; Only keep looking for the info as long as the user
-            ;; hasn't requested our attention.  This also locally
-            ;; disables inhibit-quit.
-            (while-no-input
-              (eldoc-message (funcall eldoc-documentation-function))))))))
-
-  (gemacs-when-compiletime (and (version< emacs-version "27")
-                             (version<= "26" emacs-version))
-    (el-patch-defun eldoc-print-current-symbol-info ()
-      (el-patch-concat
-        "Print the text produced by `eldoc-documentation-function'."
-        (el-patch-add "\nDon't trample on existing messages."))
-      ;; This is run from post-command-hook or some idle timer thing,
-      ;; so we need to be careful that errors aren't ignored.
-      (with-demoted-errors "eldoc error: %s"
-        (and (or (eldoc-display-message-p)
-               ;; Erase the last message if we won't display a new one.
-               (when eldoc-last-message
-                 (el-patch-swap
-                   (eldoc-message nil)
-                   (setq eldoc-last-message nil))
-                 nil))
-          (eldoc-message (funcall eldoc-documentation-function))))))
-
-  (gemacs-when-compiletime (version< emacs-version "26")
-    (el-patch-defun eldoc-print-current-symbol-info ()
-      ;; This is run from post-command-hook or some idle timer thing,
-      ;; so we need to be careful that errors aren't ignored.
-      (with-demoted-errors "eldoc error: %s"
-        (and (or (eldoc-display-message-p)
-               ;; Erase the last message if we won't display a new one.
-               (when eldoc-last-message
-                 (el-patch-swap
-                   (eldoc-message nil)
-                   (setq eldoc-last-message nil))
-                 nil))
-          (eldoc-message (funcall eldoc-documentation-function))))))
-
   (setq eldoc-echo-area-use-multiline-p nil)
 
   (use-feature flycheck
