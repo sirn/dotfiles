@@ -84,7 +84,9 @@ prependpath "/usr/local/bin"
 # Opts
 #
 
+prependpath "/opt/sbin"
 prependpath "/opt/bin"
+prependpath "/opt/local/sbin"
 prependpath "/opt/local/bin"
 
 # Wrappers
