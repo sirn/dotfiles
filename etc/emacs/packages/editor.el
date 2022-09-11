@@ -99,17 +99,6 @@
     (setq vr/command-python (format "%s %s" "python3" repy))))
 
 
-(use-package origami
-  :demand t
-
-  :config
-  (global-origami-mode +1)
-  (with-eval-after-load 'evil
-    (evil-define-key 'normal prog-mode-map
-      (kbd "TAB")   #'origami-toggle-node
-      (kbd "M-TAB") #'origami-toggle-all-nodes)))
-
-
 (use-package smartparens
   :demand t
 
