@@ -215,6 +215,27 @@ _run() {
         ibm-plex \
         https://github.com/IBM/plex/releases/download/v4.0.2/OpenType.zip \
         e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+    ## IPA Fonts
+    ##
+
+    _install_font_url \
+        ipa-mincho \
+        https://moji.or.jp/wp-content/ipafont/IPAfont/IPAMTTC00303.zip \
+        aecd05d564342881ca01928c94ca812a73af833e04c4307af2cdd95f5b9593c1
+
+    _install_font_url \
+        ipa-gothic \
+        https://moji.or.jp/wp-content/ipafont/IPAfont/IPAGTTC00303.zip \
+        d7e2b6e981e3f93d5197a2ff4c603ed268b679bb823c74584cef88082dbb9b86
+
+    ## Takao Fonts
+    ##
+
+    _install_font_url \
+        takao \
+        https://launchpad.net/takao-fonts/trunk/15.03/+download/TakaoFonts_00303.01.zip \
+        9b356dc7bbdd4c1c5d880724176651b8e3bffe885274262f6ffd0cc712e479c9
 }
 
 run_with_flavors "$@"
