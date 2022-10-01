@@ -28,38 +28,6 @@ _do_override() {
 }
 
 
-## Command: fix
-## Aliasing configuration files.
-##
-
-CONFS="
-gtk-3.0/settings.ini
-fontconfig/fonts.conf
-fontconfig/conf.d
-" # END-QUOTE
-
-_do_fix() {
-    for appdir in "$HOME"/.var/app/*; do
-        if [ ! -d "$appdir" ]; then
-            continue
-        fi
-
-        printf >&2 "Fixing %s...\\n" "$(basename "$appdir")"
-
-        for file in $CONFS; do
-            if [ -L "$appdir/config/$file" ]; then
-                continue
-            fi
-
-            if [ -f "$HOME/.config/$file" ] || [ -d "$HOME/.config/$file" ]; then
-                mkdir -p "$appdir/config/$(dirname "$file")"
-                ln -fs "$HOME/.config/$file" "$appdir/config/$file"
-            fi
-        done
-    done
-}
-
-
 ## Running
 ##
 
@@ -73,7 +41,6 @@ A wrapper script to perform Flatpak maintenance tasks.
 COMMAND:
 
     override            apply themes and permissions overrides
-    fix                 unify application settings to system
 
 " "$BASE_NAME"
     exit 2
