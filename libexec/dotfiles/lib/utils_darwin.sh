@@ -30,7 +30,8 @@ macports_bootstrap() {
 }
 
 macports_installed() {
-    pkg=$1; shift
+    pkg=$1
+    shift
     variants=$*
     active=$($MACPORTS -q installed "$pkg" 2>&1 | grep "(active)")
 
@@ -41,16 +42,26 @@ macports_installed() {
 
     # Installed, but not the requested variant
     for v in $variants; do
-        if echo "$active" | grep -qv "$v"; then
-            return 1
-        fi
+        case "$v" in
+        +*)
+            if echo "$active" | grep -qv -- "$v"; then
+                return 1
+            fi
+            ;;
+        -*)
+            if echo "$active" | grep -q -- "$v"; then
+                return 1
+            fi
+            ;;
+        esac
     done
 
     return 0
 }
 
 macports_install() {
-    pkg=$1; shift
+    pkg=$1
+    shift
 
     if macports_installed "$pkg" "$@"; then
         printe "$pkg (macports) already installed"
@@ -63,14 +74,16 @@ macports_install() {
 }
 
 macports_select() {
-    sel=$1; shift
-    pkg=$1; shift
+    sel=$1
+    shift
+    pkg=$1
+    shift
 
     case $($MACPORTS select --show "$sel") in
-        *"'$sel' is '$pkg'"* )
-            printe_info "$pkg is already default version for $sel, skipping..."
-            return
-            ;;
+    *"'$sel' is '$pkg'"*)
+        printe_info "$pkg is already default version for $sel, skipping..."
+        return
+        ;;
     esac
 
     printe_info "Selecting $pkg as default version for $sel (macports)..."
@@ -92,17 +105,17 @@ install_launchd() {
 
     while getopts "Sd:l" opt; do
         case "$opt" in
-            S ) plist_root=1;;
-            d ) plist_dir="$OPTARG";;
-            l ) plist_load=1;;
-            * )
-                printe_err "Invalid flags given to install_launchd"
-                exit 1
-                ;;
+        S) plist_root=1 ;;
+        d) plist_dir="$OPTARG" ;;
+        l) plist_load=1 ;;
+        *)
+            printe_err "Invalid flags given to install_launchd"
+            exit 1
+            ;;
         esac
     done
 
-    shift $((OPTIND-1))
+    shift $((OPTIND - 1))
 
     if [ "${1:-}" = "--" ]; then
         shift
@@ -122,7 +135,8 @@ install_launchd() {
         fi
     fi
 
-    plist_src=$1; shift
+    plist_src=$1
+    shift
     plist_filename=$(basename "$plist_src")
     plist_dest="$plist_dir/$plist_filename"
 
@@ -173,16 +187,16 @@ uninstall_launchd() {
 
     while getopts "Sd:" opt; do
         case "$opt" in
-            S ) plist_root=1;;
-            d ) plist_dir="$OPTARG";;
-            * )
-                printe_err "Invalid flags given to install_svc"
-                exit 1
-                ;;
+        S) plist_root=1 ;;
+        d) plist_dir="$OPTARG" ;;
+        *)
+            printe_err "Invalid flags given to install_svc"
+            exit 1
+            ;;
         esac
     done
 
-    shift $((OPTIND-1))
+    shift $((OPTIND - 1))
 
     if [ "${1:-}" = "--" ]; then
         shift
@@ -202,7 +216,8 @@ uninstall_launchd() {
         fi
     fi
 
-    plist_src=$1; shift
+    plist_src=$1
+    shift
     plist_filename=$(basename "$plist_src")
     plist_dest="$plist_dir/$plist_filename"
 
