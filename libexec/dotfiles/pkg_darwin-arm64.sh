@@ -49,15 +49,13 @@ _run() {
     macports_install the_silver_searcher
     macports_install tmux
     macports_install tree
+    macports_install unison -gtk
     macports_install vim
     macports_install w3m
     macports_install xcodes
     macports_install xz
     macports_install youtube-dl
     macports_install yq
-
-    ## Broken
-    #macports_install unison -gtk
 }
 
 _run_desktop() {
