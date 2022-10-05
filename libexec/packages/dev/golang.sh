@@ -12,7 +12,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
 . "../../dotfiles/lib/buildenv.sh"
 
-GOLANGCI_LINT_VER=1.46.2
+GOLANGCI_LINT_VER=1.50.0
 
 _preflight() {
     if ! command -v go >/dev/null; then
@@ -24,10 +24,10 @@ _preflight() {
 _run_dev() {
     printe_h2 "Installing golang dev packages..."
 
-    _go_get gocode github.com/nsf/gocode
-    _go_get goimports golang.org/x/tools/cmd/goimports
-    _go_get golint golang.org/x/lint/golint
-    _go_get gopls golang.org/x/tools/gopls
+    _go_get gocode github.com/nsf/gocode@latest
+    _go_get goimports golang.org/x/tools/cmd/goimports@latest
+    _go_get golint golang.org/x/lint/golint@latest
+    _go_get gopls golang.org/x/tools/gopls@latest
 
     _install_golangci_lint
 }
@@ -79,7 +79,7 @@ _go_get() {
 
     (
         cd "$BUILD_DIR" || exit 1
-        GOPATH="$BUILD_DIR/go" go get -v -u "$@"
+        GOPATH="$BUILD_DIR/go" go install -v "$@"
     )
 
     mkdir -p "$_bindir"
