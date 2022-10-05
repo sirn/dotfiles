@@ -20,7 +20,6 @@
   :preface
   (eval-when-compile
     (declare-function gemacs--elisp-flycheck-setup nil)
-    (declare-function gemacs--elisp-auto-format nil)
     (declare-function gemacs--advice-elisp-fill-docstrings nil)
     (declare-function gemacs--advice-elisp-company-use-helpful nil))
 
@@ -28,11 +27,6 @@
   (defun gemacs--elisp-flycheck-setup ()
     "Disable some Flycheck checkers for Emacs Lisp."
     (gemacs--flycheck-disable-checkers 'emacs-lisp 'emacs-lisp-checkdoc))
-
-  (defun gemacs--elisp-auto-format ()
-      (use-feature apheleia
-        :config
-        (apheleia-mode -1)))
 
   (defun gemacs--advice-elisp-fill-docstrings (&rest _)
     "Prevent `auto-fill-mode' from adding indentation to Elisp docstrings."
@@ -55,7 +49,6 @@
             (apply func args)))
 
     (add-hook 'emacs-lisp-mode-hook #'gemacs--elisp-flycheck-setup)
-    (add-hook 'emacs-lisp-mode-hook #'gemacs--elisp-auto-format)
 
     (advice-add 'elisp--company-doc-buffer :around
         #'gemacs--advice-elisp-company-use-helpful)))

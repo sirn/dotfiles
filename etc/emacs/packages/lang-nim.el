@@ -1,10 +1,12 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package nim-mode
-  :init
-  (use-feature lsp
-    :init
-    (add-hook 'nim-mode-hook #'lsp))
+  :preface
+  (eval-when-compile
+    (declare-function apheleia-mode nil)
+    (declare-function eglot-ensure nil)
+    (defvar apheleia-mode-alist)
+    (defvar eglot-server-programs))
 
   :config
   (el-patch-defun nim-mode-forward-token ()
@@ -22,7 +24,15 @@
               (setq tok ";"))
           tok))))
 
+  (use-feature eglot
+    :demand t
+    :config
+    (add-to-list 'eglot-server-programs '(nim-mode . ("nimlsp")))
+    (add-hook 'nim-mode-hook #'eglot-ensure))
+
   (use-feature apheleia
+    :demand t
     :config
     (add-to-list 'apheleia-formatters '(nimpretty . ("nimpretty" "--out:/dev/stdout" filepath)))
-    (add-to-list 'apheleia-mode-alist '(nim-mode . nimpretty))))
+    (add-to-list 'apheleia-mode-alist '(nim-mode . nimpretty))
+    (add-hook 'nim-mode-hook #'apheleia-mode)))

@@ -25,10 +25,7 @@
 
     (defun gemacs--python-auto-format ()
       (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
-      (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t)
-      (use-feature apheleia
-        :config
-        (apheleia-mode -1)))
+      (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
 
     (add-to-list 'eglot-server-programs `(python-mode . (,(gemacs--python-lsp-bin))))
     (add-hook 'python-mode-hook #'eglot-ensure)

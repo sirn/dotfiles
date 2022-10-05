@@ -39,10 +39,7 @@
 
     (defun gemacs--go-auto-format ()
       (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
-      (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t)
-      (use-feature apheleia
-        :config
-        (apheleia-mode -1)))
+      (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
 
     (add-to-list 'eglot-server-programs `(go-mode . (,(gemacs--go-lsp-bin))))
     (add-hook 'go-mode-hook #'eglot-ensure)
@@ -110,12 +107,7 @@ See <https://github.com/dominikh/go-mode.el/issues/232>."
      'go-unconvert))
 
   (add-hook 'go-mode-hook #'gemacs--go-defun-setup)
-  (add-hook 'go-mode-hook #'gemacs--go-flycheck)
-
-  (use-feature apheleia
-    :config
-    (add-to-list 'apheleia-formatters '(goimports . ("goimports")))
-    (add-to-list 'apheleia-mode-alist '(go-mode . goimports))))
+  (add-hook 'go-mode-hook #'gemacs--go-flycheck))
 
 
 (use-package flycheck-golangci-lint)

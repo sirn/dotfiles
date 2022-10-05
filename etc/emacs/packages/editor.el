@@ -400,12 +400,7 @@ completions automatically when backspacing into a symbol."
 ;;; Autoformatting
 
 (use-package apheleia
-  :demand t
   :straight (:host github :repo "radian-software/apheleia")
-
-  :preface
-  (eval-when-compile
-    (declare-function apheleia-global-mode nil))
 
   :init
   (defun gemacs--save-buffer-reformat-maybe (func &optional arg)
@@ -413,10 +408,7 @@ completions automatically when backspacing into a symbol."
     (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
       (funcall func)))
 
-  (advice-add 'save-buffer :around #'gemacs--save-buffer-reformat-maybe)
-
-  :config
-  (apheleia-global-mode +1))
+  (advice-add 'save-buffer :around #'gemacs--save-buffer-reformat-maybe))
 
 
 ;; --------------------------------------------------------------------------

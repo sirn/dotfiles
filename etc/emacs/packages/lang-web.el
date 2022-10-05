@@ -18,6 +18,11 @@
     "\\.tsx\\'"
     "\\.jsx?\\'")
 
+  :preface
+  (eval-when-compile
+    (require 'cl-lib)
+    (declare-function apheleia-mode nil))
+
   :init
   (setq web-mode-enable-auto-closing t)
   (setq web-mode-auto-close-style 2)
@@ -47,6 +52,7 @@
   (add-hook 'web-mode-hook #'gemacs--web-js-fix-comments)
 
   (use-feature apheleia
+    :demand t
     :preface
     (eval-when-compile
       (defvar web-mode-fontification-off))
@@ -66,7 +72,9 @@ poke it. Otherwise the modified text remains unfontified."
           (font-lock-fontify-region web-mode-scan-beg web-mode-scan-end))))
 
     (add-hook 'apheleia-post-format-hook
-      #'gemacs--web-highlight-after-formatting)))
+      #'gemacs--web-highlight-after-formatting)
+
+    (add-hook 'web-mode-hook #'apheleia-mode)))
 
 
 (use-feature css-mode

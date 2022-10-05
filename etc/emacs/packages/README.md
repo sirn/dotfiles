@@ -30,15 +30,22 @@ Use the following order for `use-package`:
 
 ## apheleia
 
-`apheleia` configuration is deferred until major mode is loaded:
+`apheleia` is explicitly enabled per major-mode:
 
 ```elisp
 (use-package markdown-mode
+  :preface
+  (eval-when-compile
+    (declare-function apheleia-mode nil)
+    (defvar apheleia-mode-alist))
+
   :config
   (use-feature apheleia
+    :demand t
     :config
     (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier))
     (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))))
+    (add-hook 'markdown-mode-hook #'apheleia-mode)
 ```
 
 ## company
@@ -62,12 +69,18 @@ Use the following order for `use-package`:
   :preface
   (eval-when-compile
     (declare-function eglot-ensure nil)
+    (declare-function gemacs--typescript-auto-format nil)
     (defvar eglot-server-programs))
 
   :config
   (use-feature eglot
     :demand t
     :config
+    (defun gemacs--typescript-auto-format ()
+      (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
+      (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
+
     (add-to-list 'eglot-server-programs '(typescript-mode . ("typescript-language-server")))
-    (add-hook 'typescript-mode-hook #'eglot-ensure)))
+    (add-hook 'typescript-mode-hook #'eglot-ensure)
+    (add-hook 'typescript-mode-hook #'gemacs--typescript-auto-format)))
 ```

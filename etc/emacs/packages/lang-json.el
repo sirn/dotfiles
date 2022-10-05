@@ -39,7 +39,17 @@ This function calls `json-mode--update-auto-mode' to change the
 
   (defvar json-mode--auto-mode-entry
     (json-mode--update-auto-mode json-mode-auto-mode-list)
-    "Regexp generated from the `json-mode-auto-mode-list'."))
+    "Regexp generated from the `json-mode-auto-mode-list'.")
+
+  :preface
+  (eval-when-compile
+    (declare-function apheleia-mode nil))
+
+  :config
+  (use-feature apheleia
+    :demand t
+    :config
+    (add-hook 'json-mode-hook #'apheleia-mode)))
 
 
 (use-package jq-mode)
