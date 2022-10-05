@@ -3,7 +3,10 @@
 # Install doctl.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(
+    cd "$(dirname "$0")/../../.." || exit
+    pwd -P
+)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
@@ -51,13 +54,13 @@ _install_doctl() {
     minor=${minor%%.*}
     patch=${DOCTL_VER##"$major"."$minor".}
     go install \
-       -v \
-       -ldflags=" \
+        -v \
+        -ldflags=" \
           -X \"github.com/digitalocean/doctl.Major=$major\" \
           -X \"github.com/digitalocean/doctl.Minor=$minor\" \
           -X \"github.com/digitalocean/doctl.Patch=$patch\" \
        " \
-       .
+        .
 
     cd "$BUILD_DIR/go/bin" || exit 1
     install -d "$_verdir/bin"

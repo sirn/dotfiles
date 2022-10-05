@@ -3,7 +3,10 @@
 # Install elixir packages.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(
+    cd "$(dirname "$0")/../../.." || exit
+    pwd -P
+)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
@@ -21,7 +24,7 @@ fi
 ERLANG_VERSION=$(awk '/ERLANG_VERSION=/ {
     sp=index($0, "=");
     print substr($0, sp + 1)
-}' < "$(pwd -P)/erlang.sh")
+}' <"$(pwd -P)/erlang.sh")
 
 ELIXIR_VERSION=1.13.4-otp-${ERLANG_VERSION%%.*}
 ELIXIR_VERSION_PATH=$ASDF_DIR/installs/elixir/$ELIXIR_VERSION
@@ -87,19 +90,19 @@ _install_elixir_ls() {
     install -d "$_prefix"
 
     MIX_ENV=prod mix "do" \
-           deps.get, \
-           compile, \
-           elixir_ls.release -o "$_prefix"
+        deps.get, \
+        compile, \
+        elixir_ls.release -o "$_prefix"
 
     # Fix path so it could run in ELIXIR_VERSION_PREFIX
     sed "s|dir=.*|dir=$_prefix|" \
-        "$_prefix/language_server.sh" > "$_prefix/language_server.sh.new"
+        "$_prefix/language_server.sh" >"$_prefix/language_server.sh.new"
 
     mv "$_prefix/language_server.sh.new" "$_prefix/language_server.sh"
     chmod 0755 "$_prefix/language_server.sh"
     make_link \
-       "$_prefix/language_server.sh" \
-       "$_bindir/elixir-language-server"
+        "$_prefix/language_server.sh" \
+        "$_bindir/elixir-language-server"
 
     printe_info "elixir_ls successfully installed"
     asdf_reshim elixir

@@ -3,7 +3,10 @@
 # Install Golang packages
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(
+    cd "$(dirname "$0")/../../.." || exit
+    pwd -P
+)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
@@ -13,8 +16,8 @@ GOLANGCI_LINT_VER=1.46.2
 
 _preflight() {
     if ! command -v go >/dev/null; then
-       printe_h2 "go is not installed, skipping golang packages..."
-       return 1
+        printe_h2 "go is not installed, skipping golang packages..."
+        return 1
     fi
 }
 
@@ -44,9 +47,9 @@ _install_golangci_lint() {
     _arch=$(uname -m)
 
     case "$_arch" in
-        arm64 | aarch64 ) _arch=amd64;;
-        i386 | x86 )      _arch=386;;
-        x86_64 )          _arch=amd64;;
+    arm64 | aarch64) _arch=amd64 ;;
+    i386 | x86) _arch=386 ;;
+    x86_64) _arch=amd64 ;;
     esac
 
     fetch_gh_release \
@@ -66,7 +69,8 @@ _install_golangci_lint() {
 
 _go_get() {
     _bindir=$HOME/Dev/go/gopath/bin
-    _bin=$1; shift
+    _bin=$1
+    shift
 
     if ! forced && [ -f "$_bindir/$_bin" ]; then
         printe_info "$_bindir/$_bin already exists, skipping..."

@@ -2,7 +2,7 @@
 export GDK_SCALE=2
 export GDK_DPI_SCALE=0.5
 export PLASMA_USE_QT_SCALING=1
-export DISPLAY="$(awk '/nameserver/ {print $2; exit }' < /etc/resolv.conf):0.0"
+export DISPLAY="$(awk '/nameserver/ {print $2; exit }' </etc/resolv.conf):0.0"
 
 if command -v xrdb >/dev/null && [ -f "$HOME/.Xresources" ]; then
     xrdb -merge "$HOME/.Xresources"

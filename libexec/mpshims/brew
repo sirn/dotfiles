@@ -18,9 +18,9 @@ _list() {
 
 main() {
     case "$1" in
-        --prefix ) _prefix;;
-        list )     _list;;
-        install )  _install;;
+    --prefix) _prefix ;;
+    list) _list ;;
+    install) _install ;;
     esac
 }
 

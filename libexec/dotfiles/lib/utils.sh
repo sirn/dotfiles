@@ -7,7 +7,6 @@
 NEWLINE='
 '
 
-
 ## Printing
 ##
 
@@ -23,28 +22,27 @@ printe() {
 
 printe_h1() {
     printf >&2 "%s[%s]%s %s%s%s\\n" \
-               "$c_blue" "${0##*/}" "$c_reset" \
-               "$c_orange$c_bold" "$@" "$c_reset"
+        "$c_blue" "${0##*/}" "$c_reset" \
+        "$c_orange$c_bold" "$@" "$c_reset"
 }
 
 printe_h2() {
     printf >&2 "%s[%s]%s %s%s%s\\n" \
-               "$c_blue" "${0##*/}" "$c_reset" \
-               "$c_bold" "$@" "$c_reset"
+        "$c_blue" "${0##*/}" "$c_reset" \
+        "$c_bold" "$@" "$c_reset"
 }
 
 printe_info() {
     printf >&2 "%s[%s]%s %s%s%s\\n" \
-               "$c_blue" "${0##*/}" "$c_reset" \
-               "$@"
+        "$c_blue" "${0##*/}" "$c_reset" \
+        "$@"
 }
 
 printe_err() {
     printf >&2 "%s[%s]%s %s%s%s\\n" \
-               "$c_blue" "${0##*/}" "$c_reset" \
-               "$c_red" "$@" "$c_reset"
+        "$c_blue" "${0##*/}" "$c_reset" \
+        "$c_red" "$@" "$c_reset"
 }
-
 
 ## Compat
 ##
@@ -74,7 +72,6 @@ run_tar() {
     fi
 }
 
-
 ## Normalizing
 ##
 
@@ -86,34 +83,38 @@ trim() {
 }
 
 normalize_bool() {
-    value=$1; shift
+    value=$1
+    shift
     case $value in
-        t* | T* | y* | Y* | 1 ) return 0;;
-        * ) return 1;;
+    t* | T* | y* | Y* | 1) return 0 ;;
+    *) return 1 ;;
     esac
 }
-
 
 ## Comparison
 ##
 
 has_args() {
-    needle=$1; shift
-    haystack=$1; shift
+    needle=$1
+    shift
+    haystack=$1
+    shift
 
     case $haystack in
-        *" $needle" | "$needle "* | "$needle" | *" $needle "* )
-            return 0
-            ;;
-        * )
-            return 1
-            ;;
+    *" $needle" | "$needle "* | "$needle" | *" $needle "*)
+        return 0
+        ;;
+    *)
+        return 1
+        ;;
     esac
 }
 
 version_gte() {
-    left=$1; shift
-    right=$1; shift
+    left=$1
+    shift
+    right=$1
+    shift
 
     # https://havoc.io/post/shellsemver/
     min_ver=$(printf "%s\\n%s" "$left" "$right" |
@@ -127,13 +128,14 @@ version_gte() {
     return 1
 }
 
-
 ## Fetching
 ##
 
 git_clone() {
-    repo=$1; shift
-    path=$1; shift
+    repo=$1
+    shift
+    path=$1
+    shift
     ref=$1
 
     if [ -z "$ref" ] && [ -d "$path/.git" ]; then
@@ -148,13 +150,13 @@ git_clone() {
         git clone "$repo" "$path"
         git -C "$path" checkout "$ref"
     elif [ "$(git -C "$path" describe --all 2>&1)" = "heads/$ref" ] ||
-         [ "$(git -C "$path" rev-parse --abbrev-ref HEAD 2>&1)" = "$ref" ]; then
+        [ "$(git -C "$path" rev-parse --abbrev-ref HEAD 2>&1)" = "$ref" ]; then
         git -C "$path" checkout -q "$ref"
         git -C "$path" pull -q origin "$ref"
         printe_info "$path successfully updated"
     elif [ "$(git -C "$path" describe 2>&1)" != "$ref" ] &&
-         [ "$(git -C "$path" describe --all 2>&1)" != "tags/$ref" ] &&
-         [ "$(git -C "$path" rev-parse --short HEAD)" != "$ref" ]; then
+        [ "$(git -C "$path" describe --all 2>&1)" != "tags/$ref" ] &&
+        [ "$(git -C "$path" rev-parse --short HEAD)" != "$ref" ]; then
         git -C "$path" fetch origin
         git -C "$path" checkout "$ref"
     else
@@ -163,8 +165,10 @@ git_clone() {
 }
 
 fetch_url() {
-    output=$1; shift
-    url=$1; shift
+    output=$1
+    shift
+    url=$1
+    shift
     tmpfile=$(mktemp)
 
     if command -v aria2c >/dev/null; then
@@ -172,10 +176,10 @@ fetch_url() {
         tmpfilename=$(basename "$tmpfile")
         tmpdir=$(dirname "$tmpfile")
         if ! aria2c -q \
-                --allow-overwrite=true \
-                --dir "$tmpdir" \
-                --out "$tmpfilename" \
-                "$url"; then
+            --allow-overwrite=true \
+            --dir "$tmpdir" \
+            --out "$tmpfilename" \
+            "$url"; then
             rm "$tmpfile"
             exit 1
         fi
@@ -219,18 +223,25 @@ fetch_url() {
 }
 
 fetch_gh_archive() {
-    output=$1; shift
-    gh_repo=$1; shift
-    gh_ref=$1; shift
+    output=$1
+    shift
+    gh_repo=$1
+    shift
+    gh_ref=$1
+    shift
 
     fetch_url "$output" "https://github.com/$gh_repo/archive/$gh_ref.tar.gz"
 }
 
 fetch_gh_release() {
-    output=$1; shift
-    gh_repo=$1; shift
-    gh_release=$1; shift
-    gh_filename=$1; shift
+    output=$1
+    shift
+    gh_repo=$1
+    shift
+    gh_release=$1
+    shift
+    gh_filename=$1
+    shift
 
     fetch_url \
         "$output" \
@@ -238,16 +249,19 @@ fetch_gh_release() {
 }
 
 fetch_gh_raw() {
-    output=$1; shift
-    gh_repo=$1; shift
-    gh_ref=$1; shift
-    gh_path=$1; shift
+    output=$1
+    shift
+    gh_repo=$1
+    shift
+    gh_ref=$1
+    shift
+    gh_path=$1
+    shift
 
     fetch_url \
         "$output" \
         "https://raw.githubusercontent.com/$gh_repo/$gh_ref/$gh_path"
 }
-
 
 ## Sysinfo
 ##
@@ -279,9 +293,9 @@ get_sys() {
     # Normalize arch
     arch=$(uname -m)
     case "$arch" in
-        amd64 | x86_64 )  arch=amd64;;
-        arm64 | aarch64 ) arch=arm64;;
-        armv* )           arch=arm;;
+    amd64 | x86_64) arch=amd64 ;;
+    arm64 | aarch64) arch=arm64 ;;
+    armv*) arch=arm ;;
     esac
 
     # Differentiate in case of WSL/CYGWIN/etc.
@@ -295,19 +309,19 @@ get_sys() {
 
 get_libc() {
     case $(get_sys) in
-        freebsd-* )
-            echo bsd
-            ;;
-        darwin-* )
-            echo apple
-            ;;
-        * )
-            if ldd /bin/sh |grep -q musl; then
-                echo musl
-            else
-                echo gnu
-            fi
-            ;;
+    freebsd-*)
+        echo bsd
+        ;;
+    darwin-*)
+        echo apple
+        ;;
+    *)
+        if ldd /bin/sh | grep -q musl; then
+            echo musl
+        else
+            echo gnu
+        fi
+        ;;
     esac
 }
 
@@ -315,17 +329,17 @@ get_netif() {
     netif=
 
     case $(get_sys) in
-        freebsd-* )
-            for i in $(ifconfig -l -u); do
-                if ifconfig "$i" |grep -q ether; then
-                    netif=$i
-                    break
-                fi
-            done
-            ;;
+    freebsd-*)
+        for i in $(ifconfig -l -u); do
+            if ifconfig "$i" | grep -q ether; then
+                netif=$i
+                break
+            fi
+        done
+        ;;
 
-        * )
-            ;;
+    *) ;;
+
     esac
 
     if [ -z "$netif" ]; then
@@ -344,7 +358,7 @@ get_sshd_port() {
         exit 1
     fi
 
-    sshd_port=$(awk '/^#? ?Port/ { print $NF }' < $sshd_config)
+    sshd_port=$(awk '/^#? ?Port/ { print $NF }' <$sshd_config)
 
     if [ -z "$sshd_port" ]; then
         printe_err "Could not determine sshd port"
@@ -354,7 +368,6 @@ get_sshd_port() {
     echo "$sshd_port"
 }
 
-
 ## Utilities
 ##
 
@@ -363,8 +376,10 @@ forced() {
 }
 
 verify_shasum() {
-    filepath=$1; shift
-    shasum=$1; shift
+    filepath=$1
+    shift
+    shasum=$1
+    shift
     cmd=
 
     if command -v sha256 >/dev/null; then
@@ -391,23 +406,25 @@ make_link() {
 
     while getopts "Sf" opt; do
         case "$opt" in
-            S ) command="run_root sh";;
-            f ) no_check_src=1;;
-            * )
-                printe_err "Invalid flags given to make_link"
-                exit 1
-                ;;
+        S) command="run_root sh" ;;
+        f) no_check_src=1 ;;
+        *)
+            printe_err "Invalid flags given to make_link"
+            exit 1
+            ;;
         esac
     done
 
-    shift $((OPTIND-1))
+    shift $((OPTIND - 1))
 
     if [ "${1:-}" = "--" ]; then
         shift
     fi
 
-    src=$1; shift
-    dest=$1; shift
+    src=$1
+    shift
+    dest=$1
+    shift
 
     ts=$(date +%s)
 
@@ -455,19 +472,19 @@ lineinfile() {
 
     while getopts "f:r:l:s:S" opt; do
         case "$opt" in
-            f ) file="$OPTARG";;
-            r ) regexp="$OPTARG";;
-            l ) line="$OPTARG";;
-            s ) state="$OPTARG";;
-            S ) command="run_root sh";;
-            * )
-                printe_err "Invalid flags given to lineinfile"
-                exit 1
-                ;;
+        f) file="$OPTARG" ;;
+        r) regexp="$OPTARG" ;;
+        l) line="$OPTARG" ;;
+        s) state="$OPTARG" ;;
+        S) command="run_root sh" ;;
+        *)
+            printe_err "Invalid flags given to lineinfile"
+            exit 1
+            ;;
         esac
     done
 
-    shift $((OPTIND-1))
+    shift $((OPTIND - 1))
 
     if [ "${1:-}" = "--" ]; then
         shift
@@ -490,8 +507,8 @@ lineinfile() {
     fi
 
     case "$state" in
-        present )
-            $command <<EOF
+    present)
+        $command <<EOF
 awk "
     s = /$regexp/ { print \"$line\"; run=1 }
     ! s { print }
@@ -499,22 +516,23 @@ awk "
 " < "$file" > "$file.new"
 mv "$file.new" "$file"
 EOF
-            ;;
-        absent )
-            $command <<EOF
+        ;;
+    absent)
+        $command <<EOF
 awk "! /$regexp/ { print }" < "$file" > "$file.new"
 mv "$file.new" "$file"
 EOF
-            ;;
-        * )
-            printe_err "Unknown lineinfile state $state"
-            exit 1
-            ;;
+        ;;
+    *)
+        printe_err "Unknown lineinfile state $state"
+        exit 1
+        ;;
     esac
 }
 
 update_shells() {
-    target_shell=$1; shift
+    target_shell=$1
+    shift
 
     if ! target_shell_bin=$(command -v "$target_shell"); then
         printe_err "$target_shell is not a valid shell, skipping..."
@@ -528,7 +546,8 @@ update_shells() {
 }
 
 change_shell() {
-    target_shell=$1; shift
+    target_shell=$1
+    shift
 
     if ! target_shell_bin=$(command -v "$target_shell"); then
         printe_err "$target_shell is not a valid shell, skipping..."
@@ -547,7 +566,6 @@ change_shell() {
 
     run_root chsh -s "$target_shell_bin" "$USER"
 }
-
 
 ## Runner
 ##

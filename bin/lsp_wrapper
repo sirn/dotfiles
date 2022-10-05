@@ -10,11 +10,9 @@ export CONF_USE
 export CONF_PROJECT_ROOT
 export CONF_CMD
 
-
 print_err() {
     printf >&2 "%s\\n" "$*"
 }
-
 
 ## Vagrant
 ##
@@ -25,7 +23,6 @@ cd $CONF_PROJECT_ROOT || exit 1; \
 exec $CONF_CMD $*\
 " # END-COMMAND
 }
-
 
 ## Docker
 ##
@@ -66,7 +63,6 @@ exec $CONF_CMD $*\
     exec docker run "$@"
 }
 
-
 ## Exec
 ##
 
@@ -74,7 +70,6 @@ run_exec() {
     set -- $CONF_CMD "$@"
     exec "$@"
 }
-
 
 ## Main
 ##
@@ -85,7 +80,8 @@ getvar() {
         return 2
     fi
 
-    name=$1; shift
+    name=$1
+    shift
     default=$1
 
     if [ -f "$PROJECT_ROOT"/"$CONFIG_FILE" ]; then
@@ -113,7 +109,10 @@ detect_project_root() {
             return
         fi
 
-        cur_dir=$(cd "$cur_dir"/.. || exit 1; pwd -P)
+        cur_dir=$(
+            cd "$cur_dir"/.. || exit 1
+            pwd -P
+        )
     done
 
     echo "$pwd_dir"
@@ -165,17 +164,17 @@ main() {
     CONF_CMD=$(getvar "CMD_${PROG_NAME}" "${PROG_NAME}")
 
     case "$CONF_USE" in
-        vagrant )
-            run_vagrant "$@"
-            ;;
+    vagrant)
+        run_vagrant "$@"
+        ;;
 
-        docker )
-            run_docker "$@"
-            ;;
+    docker)
+        run_docker "$@"
+        ;;
 
-        * )
-            run_exec "$@"
-            ;;
+    *)
+        run_exec "$@"
+        ;;
     esac
 }
 

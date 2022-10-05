@@ -4,12 +4,14 @@
 #
 
 xbps_installed() {
-    pkg=$1; shift
+    pkg=$1
+    shift
     xbps-query "$pkg" >/dev/null
 }
 
 xbps_install() {
-    pkg=$1; shift
+    pkg=$1
+    shift
 
     if xbps_installed "$pkg"; then
         printe "$pkg (xbps) already installed"
@@ -23,13 +25,16 @@ xbps_install() {
 }
 
 xbps_current() {
-    group=$1; shift
+    group=$1
+    shift
     xbps-alternatives -l -g "$group" | awk '/(current)/ { print $2 }'
 }
 
 xbps_alternative() {
-    group=$1; shift
-    pkg=$1; shift
+    group=$1
+    shift
+    pkg=$1
+    shift
 
     if ! xbps_installed "$pkg"; then
         printe "$pkg is not installed, skipping..."

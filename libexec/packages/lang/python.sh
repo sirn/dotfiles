@@ -3,7 +3,10 @@
 # Install python packages.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(
+    cd "$(dirname "$0")/../../.." || exit
+    pwd -P
+)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
@@ -36,12 +39,16 @@ _install_python() {
 }
 
 _run_dev() {
-    PATH=$ASDF_DIR/shims:$PATH; export PATH
+    PATH=$ASDF_DIR/shims:$PATH
+    export PATH
 
     if [ -d /opt/local ]; then
-        CFLAGS="-I/opt/local/include"; export CFLAGS
-        CPPFLAGS="-I/opt/local/include"; export CPPFLAGS
-        LDFLAGS="-L/opt/local/lib"; export LDFLAGS
+        CFLAGS="-I/opt/local/include"
+        export CFLAGS
+        CPPFLAGS="-I/opt/local/include"
+        export CPPFLAGS
+        LDFLAGS="-L/opt/local/lib"
+        export LDFLAGS
     fi
 
     asdf_exec pip3 install -U pip
@@ -69,7 +76,8 @@ _run_dev() {
 }
 
 _pip3_install() {
-    dir=$1; shift
+    dir=$1
+    shift
     pkg=$1
 
     if [ $# -gt 0 ]; then

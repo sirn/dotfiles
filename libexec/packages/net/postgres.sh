@@ -3,7 +3,10 @@
 # Install postgres packages.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(
+    cd "$(dirname "$0")/../../.." || exit
+    pwd -P
+)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
@@ -25,13 +28,13 @@ _run() {
 
 _install_postgres() {
     case "$(uname)" in
-        Darwin )
-            POSTGRES_EXTRA_CONFIGURE_OPTIONS="\
+    Darwin)
+        POSTGRES_EXTRA_CONFIGURE_OPTIONS="\
 --with-includes=/opt/local/include/openssl-1.1 \
 --with-libraries=/opt/local/lib/openssl-1.1\
 "
-            export POSTGRES_EXTRA_CONFIGURE_OPTIONS
-            ;;
+        export POSTGRES_EXTRA_CONFIGURE_OPTIONS
+        ;;
     esac
 
     asdf_plugin postgres https://github.com/smashedtoatoms/asdf-postgres

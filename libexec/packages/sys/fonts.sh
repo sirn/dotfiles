@@ -3,31 +3,40 @@
 # Install fonts.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(
+    cd "$(dirname "$0")/../../.." || exit
+    pwd -P
+)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
 . "../../dotfiles/lib/buildenv.sh"
 
 _install_font() {
-    srcdir=$1; shift
-    dest=$1; shift
+    srcdir=$1
+    shift
+    dest=$1
+    shift
 
     rm -rf "$dest" || exit 1
     install -d "$dest" || exit 1
 
     find "$srcdir" \
-         \( -iname "*.ttf" -or -iname "*.ttc" -or -name "*.otf" \) \
-         -exec install -m0644 \{\} "$dest" \; || exit 1
+        \( -iname "*.ttf" -or -iname "*.ttc" -or -name "*.otf" \) \
+        -exec install -m0644 \{\} "$dest" \; || exit 1
 
     touch "$dest/.installed"
 }
 
 _install_font_gh() {
-    name=$1; shift
-    repo=$1; shift
-    shasum=$1; shift
-    ver=$1; shift
+    name=$1
+    shift
+    repo=$1
+    shift
+    shasum=$1
+    shift
+    ver=$1
+    shift
 
     fontdir=${XDG_DATA_HOME:-$HOME/.local/share}/fonts/$name
 
@@ -49,9 +58,12 @@ _install_font_gh() {
 }
 
 _install_font_url() {
-    name=$1; shift
-    url=$1; shift
-    shasum=$1; shift
+    name=$1
+    shift
+    url=$1
+    shift
+    shasum=$1
+    shift
 
     fontdir=${XDG_DATA_HOME:-$HOME/.local/share}/fonts/$name
     basename=$(basename "$url")
@@ -63,20 +75,20 @@ _install_font_url() {
     fi
 
     case "$basename" in
-        *.zip )
-            if [ -z "$unzip" ] && command -v unzip >/dev/null; then
-                unzip=unzip
-            fi
+    *.zip)
+        if [ -z "$unzip" ] && command -v unzip >/dev/null; then
+            unzip=unzip
+        fi
 
-            if [ -z "$unzip" ] && command -v bsdtar >/dev/null; then
-                unzip=bsdtar
-            fi
+        if [ -z "$unzip" ] && command -v bsdtar >/dev/null; then
+            unzip=bsdtar
+        fi
 
-            if [ -z "$unzip" ]; then
-                printe_info "unzip binary does not exists, skipping..."
-                return 1
-            fi
-            ;;
+        if [ -z "$unzip" ]; then
+            printe_info "unzip binary does not exists, skipping..."
+            return 1
+        fi
+        ;;
     esac
 
     cd "$BUILD_DIR" || exit 1
@@ -85,27 +97,28 @@ _install_font_url() {
     verify_shasum "$basename" "$shasum"
 
     case "$basename" in
-        *.tar.gz )
-            mkdir -p "$BUILD_DIR/$name"
-            run_tar -C "$BUILD_DIR/$name" -xzf "$basename"
+    *.tar.gz)
+        mkdir -p "$BUILD_DIR/$name"
+        run_tar -C "$BUILD_DIR/$name" -xzf "$basename"
+        ;;
+
+    *.zip)
+        mkdir -p "$BUILD_DIR/$name"
+        case "$unzip" in
+        bsdtar)
+            bsdtar -C "$BUILD_DIR/$name" -xvf "$basename"
             ;;
 
-        *.zip )
-            mkdir -p "$BUILD_DIR/$name"
-            case "$unzip" in
-                bsdtar )
-                    bsdtar -C "$BUILD_DIR/$name" -xvf "$basename"
-                    ;;
-
-                unzip )
-                    unzip -d "$BUILD_DIR/$name" "$basename"
-                    ;;
-            esac
+        unzip)
+            unzip -d "$BUILD_DIR/$name" "$basename"
             ;;
+        esac
+        ;;
 
-        *.ttf | *.ttc )
-            mkdir -p "$BUILD_DIR/$name"
-            install -m0644 "$basename" "$BUILD_DIR/$name/"
+    *.ttf | *.ttc)
+        mkdir -p "$BUILD_DIR/$name"
+        install -m0644 "$basename" "$BUILD_DIR/$name/"
+        ;;
     esac
 
     _install_font "$BUILD_DIR/$name" "$fontdir"

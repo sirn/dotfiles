@@ -3,7 +3,10 @@
 # Install Cloudflared.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(
+    cd "$(dirname "$0")/../../.." || exit
+    pwd -P
+)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
@@ -48,9 +51,9 @@ _install_cloudflared() {
     cd "$worksrc/cloudflared/cmd/cloudflared" || exit 1
     date=$(date -u '+%Y-%m-%d-%H%M UTC')
     go install \
-       -v \
-       -ldflags="-X \"main.Version=$CFD_VER\" -X \"main.BuildTime=$date\"" \
-       .
+        -v \
+        -ldflags="-X \"main.Version=$CFD_VER\" -X \"main.BuildTime=$date\"" \
+        .
 
     cd "$BUILD_DIR/go/bin" || exit 1
     install -d "$_verdir/bin"

@@ -12,13 +12,13 @@ find "$HOME" \
     -xdev \
     -iname '*'"$1"'*' \
     ! \( -path '*/.dotfiles*' \
-     -or -path '*/.emacs.d*' \
-     -or -path '*/.local/share/flatpak/*' \
-     -or -path '*/.local/share/containers/*' \
-     -or -path '*/.var/app*' \
-     -or -path '*/Dev/*' \
-     -or -path '*/Games/*' \
-     -or -path '*/Nextcloud/*' \
-     -or -path '*/Workspace/*' \
+    -or -path '*/.emacs.d*' \
+    -or -path '*/.local/share/flatpak/*' \
+    -or -path '*/.local/share/containers/*' \
+    -or -path '*/.var/app*' \
+    -or -path '*/Dev/*' \
+    -or -path '*/Games/*' \
+    -or -path '*/Nextcloud/*' \
+    -or -path '*/Workspace/*' \
     \) \
     -prune

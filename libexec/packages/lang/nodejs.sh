@@ -3,7 +3,10 @@
 # Install nodejs packages.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(
+    cd "$(dirname "$0")/../../.." || exit
+    pwd -P
+)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
@@ -14,9 +17,9 @@ NODEJS_VERSION=16.16.0
 
 # Node does not provide binary for musl, we must compile from source.
 case $(get_libc) in
-    musl )
-        NODEJS_VERSION=ref:$NODEJS_VERSION
-        ;;
+musl)
+    NODEJS_VERSION=ref:$NODEJS_VERSION
+    ;;
 esac
 
 _vsn=$(echo "$NODEJS_VERSION" | tr ':' '-')
@@ -40,7 +43,8 @@ _install_nodejs() {
         sh -c "${ASDF_DATA_DIR:=$HOME/.asdf}"/plugins/nodejs/bin/import-release-team-keyring
     fi
 
-    NODEJS_CHECK_SIGNATURES=no; export NODEJS_CHECK_SIGNATURES
+    NODEJS_CHECK_SIGNATURES=no
+    export NODEJS_CHECK_SIGNATURES
     asdf_install nodejs "$NODEJS_VERSION" global
     asdf_reshim nodejs
 }
@@ -63,7 +67,8 @@ _run_dev() {
 }
 
 _npm_install() {
-    dir=$1; shift
+    dir=$1
+    shift
     pkg=$1
 
     if [ $# -gt 0 ]; then

@@ -3,5 +3,6 @@
 # Wrapper over `sv` runit utility that controls user svdir instead.
 #
 
-SVDIR=$HOME/.local/var/service; export SVDIR
+SVDIR=$HOME/.local/var/service
+export SVDIR
 exec sv "$@"

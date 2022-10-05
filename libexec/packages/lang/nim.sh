@@ -3,7 +3,10 @@
 # Install nim packages.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(
+    cd "$(dirname "$0")/../../.." || exit
+    pwd -P
+)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
@@ -67,7 +70,8 @@ _install_nimlsp() {
 }
 
 _nimble_install() {
-    bin=$1; shift
+    bin=$1
+    shift
     pkg=$1
 
     if [ $# -gt 0 ]; then

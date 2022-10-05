@@ -22,9 +22,10 @@ if [ $# -lt 2 ]; then
     exit 2
 fi
 
-NAME=$1; shift
-APPIMAGE=$1; shift
-
+NAME=$1
+shift
+APPIMAGE=$1
+shift
 
 ## Sanity check
 ##
@@ -43,7 +44,6 @@ if [ ! -f "$APPIMAGE" ]; then
     printf >&2 "%s: %s not found\\n" "$BASENAME" "$APPIMAGE"
     exit 1
 fi
-
 
 ## Install
 ##

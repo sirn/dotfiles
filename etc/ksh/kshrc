@@ -8,26 +8,24 @@
 #
 
 case "$0" in
-    *ksh ) ;;
+*ksh) ;;
 
-    * )
-        PS1='\$ '
-        return 0
-        ;;
+*)
+    PS1='\$ '
+    return 0
+    ;;
 esac
-
 
 # Exit early for non-interactive shell
 #
 
 case "$-" in
-    *"i"* ) ;;
+*"i"*) ;;
 
-    * )
-        return 0
-        ;;
+*)
+    return 0
+    ;;
 esac
-
 
 ## History
 ##
@@ -39,7 +37,6 @@ HISTSIZE=10000
 export HISTCONTROL
 export HISTFILE
 export HISTSIZE
-
 
 ## GPG
 ##
@@ -58,7 +55,6 @@ if command -v gpg-connect-agent >/dev/null; then
     gpg-connect-agent $GPG_ARGS updatestartuptty /bye >/dev/null
     unset GPG_ARGS
 fi
-
 
 ## Prompt
 ##
@@ -135,38 +131,37 @@ __prompt_last_exit() {
 }
 
 case "$TERM" in
-    xterm* | rxvt* )
-        PS1="\
+xterm* | rxvt*)
+    PS1="\
 $(__prompt_hostname) \
 \$(__prompt_pwd) \
 \$(__prompt_git)\
 \$(__prompt_last_exit)\
 $(__prompt) "
-        ;;
+    ;;
 
-    screen* )
-        PS1="\
+screen*)
+    PS1="\
 \$(__prompt_pwd) \
 \$(__prompt_git)\
 \$(__prompt_last_exit)\
 $(__prompt) "
-        ;;
+    ;;
 
-    * )
-        PS1="\$(__prompt_last_exit)$(__prompt) "
-        ;;
+*)
+    PS1="\$(__prompt_last_exit)$(__prompt) "
+    ;;
 esac
 
 # shellcheck disable=SC2089
 PS1="\["'$(printf "%$((COLUMNS-1))s\r")'"\]$PS1"
-
 
 ## Utilities
 ##
 
 if command -v colorls >/dev/null; then
     alias ls="command colorls -G"
-elif command ls --version 2>&1 |grep -qe "BusyBox" -e "GNU"; then
+elif command ls --version 2>&1 | grep -qe "BusyBox" -e "GNU"; then
     alias ls="command ls --color"
 elif command ls -G >/dev/null 2>&1; then
     alias ls="command ls -G"
@@ -181,7 +176,6 @@ if command -v podman >/dev/null && ! command -v docker >/dev/null; then
     alias docker="podman"
 fi
 
-
 # gg - jump to directory
 
 gg() {
@@ -191,7 +185,7 @@ gg() {
 
     if command -v colorls >/dev/null; then
         lscmd="command colorls -G -p"
-    elif command ls --version 2>&1 |grep -qe "BusyBox" -e "GNU"; then
+    elif command ls --version 2>&1 | grep -qe "BusyBox" -e "GNU"; then
         lscmd="command ls --color -p"
     elif command ls -G >/dev/null 2>&1; then
         lscmd="command ls -Gp"
@@ -199,7 +193,10 @@ gg() {
 
     if command -v git >/dev/null; then
         for s in $(git config --get-all ghq.root); do
-            s=$(eval -- builtin cd "$s" 2>/dev/null || return 1; pwd -P)
+            s=$(
+                eval -- builtin cd "$s" 2>/dev/null || return 1
+                pwd -P
+            )
             if [ -n "$s" ]; then
                 codedirs[${#codedirs[*]}]="${s}"
             fi
@@ -212,16 +209,17 @@ gg() {
 
     dir=$(
         find "${codedirs[@]}" \
-                -not -path '*/node_modules/*' \
-                -not -path '*/vendor/*' \
-                \( \
-                    -exec test -d '{}'/.git \; \
-                    -or -exec test -d '{}'/.hg \; \
-                \) \
-                -print \
-                -prune |
+            -not -path '*/node_modules/*' \
+            -not -path '*/vendor/*' \
+            \( \
+            -exec test -d '{}'/.git \; \
+            -or -exec test -d '{}'/.hg \; \
+            \) \
+            -print \
+            -prune |
             sort -u |
-            fzf --preview "$lscmd {}" -q "$*")
+            fzf --preview "$lscmd {}" -q "$*"
+    )
 
     if [ -z "$dir" ]; then
         return
@@ -229,7 +227,6 @@ gg() {
 
     builtin cd "$dir" || return 1
 }
-
 
 # gq - quickly clone or jump to repo
 
@@ -249,7 +246,10 @@ gq() {
 
     if command -v git >/dev/null; then
         for s in $(git config --get-all ghq.root); do
-            s=$(eval -- builtin cd "$s" 2>/dev/null || return 1; pwd -P)
+            s=$(
+                eval -- builtin cd "$s" 2>/dev/null || return 1
+                pwd -P
+            )
             if [ -n "$s" ]; then
                 codedirs[${#codedirs[*]}]="${s}"
             fi
@@ -261,24 +261,24 @@ gq() {
     fi
 
     case "$repo" in
-        *.git ) repotype=git;;
-        *.hg ) repotype=hg;;
-        *//hg.* | hg.* ) repotype=hg;;
-        *bitbucket.com* ) repotype=hg;;
-        *bitbucket.org* ) repotype=hg;;
-        * ) repotype=git;;
+    *.git) repotype=git ;;
+    *.hg) repotype=hg ;;
+    *//hg.* | hg.*) repotype=hg ;;
+    *bitbucket.com*) repotype=hg ;;
+    *bitbucket.org*) repotype=hg ;;
+    *) repotype=git ;;
     esac
 
     case "$repo" in
-        *"://"* ) ;;
-        *"@"* ) ;;
-        * )
-            repo=https://$repo
-            ;;
+    *"://"*) ;;
+    *"@"*) ;;
+    *)
+        repo=https://$repo
+        ;;
     esac
 
     repo_c=$(echo "$repo" |
-                 sed '
+        sed '
                        s|~||;
                        s|^.*://||;
                        s|^.*@||;
@@ -307,8 +307,8 @@ gq() {
         cd "$basedir" || return 1
 
         case "$repotype" in
-            git ) git clone --recurse-submodules "$repo" || st=1;;
-            hg ) hg clone "$repo" || st=1;;
+        git) git clone --recurse-submodules "$repo" || st=1 ;;
+        hg) hg clone "$repo" || st=1 ;;
         esac
 
         # Cleanup in case cloning failed; we cannot use trap here
@@ -328,7 +328,6 @@ gq() {
     builtin cd "$repodir" || return 1
 }
 
-
 # cd - with interactive menu
 
 cd() {
@@ -342,7 +341,7 @@ cd() {
 
     if command -v colorls >/dev/null; then
         lscmd="command colorls -G -p"
-    elif command ls --version 2>&1 |grep -qe "BusyBox" -e "GNU"; then
+    elif command ls --version 2>&1 | grep -qe "BusyBox" -e "GNU"; then
         lscmd="command ls --color -p"
     elif command ls -G >/dev/null 2>&1; then
         lscmd="command ls -Gp"
@@ -350,9 +349,9 @@ cd() {
 
     while true; do
         dir=$(command ls -a -p |
-                  grep '/$' |
-                  sed 's;/$;;' |
-                  fzf --tac --preview "$lscmd {}")
+            grep '/$' |
+            sed 's;/$;;' |
+            fzf --tac --preview "$lscmd {}")
 
         if [ -z "$dir" ]; then
             return

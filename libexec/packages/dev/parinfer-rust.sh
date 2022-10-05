@@ -3,7 +3,10 @@
 # Install parinfer-rust.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(
+    cd "$(dirname "$0")/../../.." || exit
+    pwd -P
+)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
@@ -12,9 +15,10 @@ cd "$(dirname "$0")" || exit 1
 
 # Workaround for "Dynamic loading not supported" on Musl
 case $(get_libc) in
-    musl )
-        RUSTFLAGS=-Ctarget-feature=-crt-static; export RUSTFLAGS
-        ;;
+musl)
+    RUSTFLAGS=-Ctarget-feature=-crt-static
+    export RUSTFLAGS
+    ;;
 esac
 
 PARINFER_RUST_VERSION=0.4.3
@@ -22,8 +26,8 @@ PARINFER_RUST_SHA256=752fd8eaa8c0c314c69b6be3415fbc4103f5ef9d1ad01a8b792545bfaff
 
 _preflight() {
     if ! command -v cargo >/dev/null; then
-       printe_h2 "cargo is not installed, skipping parinfer-rust..."
-       return 1
+        printe_h2 "cargo is not installed, skipping parinfer-rust..."
+        return 1
     fi
 }
 
@@ -36,16 +40,16 @@ _install_parinfer_rust() {
     _installdir=$HOME/.emacs.d/var/parinfer-rust
 
     case $(uname) in
-        Darwin )
-            _libname=parinfer-rust-darwin.so
-            _buildname=libparinfer_rust.dylib
-            ;;
-        Linux  )
-            _libname=parinfer-rust-linux.so
-            _buildname=libparinfer_rust.so
-            ;;
-        * )
-            ;;
+    Darwin)
+        _libname=parinfer-rust-darwin.so
+        _buildname=libparinfer_rust.dylib
+        ;;
+    Linux)
+        _libname=parinfer-rust-linux.so
+        _buildname=libparinfer_rust.so
+        ;;
+    *) ;;
+
     esac
 
     if [ -z "$_libname" ]; then

@@ -27,7 +27,6 @@ export XDG_STATE_HOME
 export XDG_DOWNLOAD_DIR
 export XDG_DESKTOP_DIR
 
-
 ## Local bins
 ##
 
@@ -36,12 +35,10 @@ PATH=
 
 prependpath() {
     case ":$PATH:" in
-        *:"$1":*)
-            ;;
-
-        * )
-            PATH="${1:+$1:}$PATH"
-            ;;
+    *:"$1":*) ;;
+    *)
+        PATH="${1:+$1:}$PATH"
+        ;;
     esac
 
     PATH=${PATH%%:}
@@ -96,7 +93,6 @@ prependpath "$HOME/.dotfiles/bin"
 prependpath "$HOME/.dotfiles/libexec/wrapper"
 prependpath "$HOME/.dotpriv/bin"
 
-
 ## GPG agent
 ##
 
@@ -109,15 +105,13 @@ if command -v gpgconf >/dev/null; then
     fi
 fi
 
-
 ## Nix
 ##
 
 # shellcheck disable=SC1091
 if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
-  . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+    . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 fi
-
 
 ## ASDF
 ##
@@ -127,7 +121,6 @@ if [ -d "$HOME/.asdf" ]; then
     ASDF_DIR=$HOME/.asdf
     . "$HOME/.asdf/asdf.sh"
 fi
-
 
 ## PATHs
 ##
@@ -153,7 +146,6 @@ prependpath "$HOME/.cache/rebar3/bin"
 prependpath "$HOME/.local/lib/google-cloud-sdk/bin"
 prependpath "$HOME/.dotfiles/libexec/lsp"
 
-
 ## Local Customization files
 ##
 
@@ -164,12 +156,10 @@ for n in .profile2 .profile_local; do
     fi
 done
 
-
 ## Cleanups
 ##
 
 unset prependpath
-
 
 ## Finalizing
 ##

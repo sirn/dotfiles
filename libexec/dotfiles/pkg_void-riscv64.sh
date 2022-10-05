@@ -4,7 +4,10 @@
 # See also https://github.com/sirn/void-packages/tree/riscv64 :-)
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(
+    cd "$(dirname "$0")/../.." || exit
+    pwd -P
+)}
 
 cd "$(dirname "$0")" || exit 1
 . "lib/utils.sh"

@@ -3,11 +3,13 @@
 # Script to setup personal workspace.
 #
 
-BASE_DIR=$(cd "$(dirname "$0")/" || exit; pwd -P)
+BASE_DIR=$(
+    cd "$(dirname "$0")/" || exit
+    pwd -P
+)
 cd "$BASE_DIR" || exit 1
 
 . libexec/dotfiles/lib/utils.sh
-
 
 ## Environment variables
 ##
@@ -19,7 +21,6 @@ SYS=$(get_sys)
 
 export LC_ALL
 export PATH
-
 
 ## Arguments handling
 ##
@@ -67,16 +68,22 @@ LOOKUP_PATH=""
 
 while getopts "hp:s:l:f" opt; do
     case "$opt" in
-        p ) PROFILES="$PROFILES $OPTARG";;
-        s ) FLAVORS="$FLAVORS $OPTARG";;
-        l ) LOOKUP_PATH="$LOOKUP_PATH $OPTARG";;
-        f ) FORCE=1;;
-        h ) print_usage; exit 2;;
-        * ) print_usage; exit 1;;
+    p) PROFILES="$PROFILES $OPTARG" ;;
+    s) FLAVORS="$FLAVORS $OPTARG" ;;
+    l) LOOKUP_PATH="$LOOKUP_PATH $OPTARG" ;;
+    f) FORCE=1 ;;
+    h)
+        print_usage
+        exit 2
+        ;;
+    *)
+        print_usage
+        exit 1
+        ;;
     esac
 done
 
-shift $((OPTIND-1))
+shift $((OPTIND - 1))
 
 if [ -z "$LOOKUP_PATH" ]; then
     LOOKUP_PATH="$BASE_DIR $HOME/.dotpriv"
@@ -88,21 +95,26 @@ fi
 
 export FORCE
 
-
 ## Sanity check
 ##
 
 for p in $PROFILES; do
     case "$p" in
-        pkg | user ) ;;
-        * ) printe_err "Unknown profile: $p"; exit 1;;
+    pkg | user) ;;
+    *)
+        printe_err "Unknown profile: $p"
+        exit 1
+        ;;
     esac
 done
 
 for f in $FLAVORS; do
     case "$f" in
-        dev | desktop | mail | backups | system | work | projects ) ;;
-        * ) printe_err "Unknown flavor: $f"; exit 1;;
+    dev | desktop | mail | backups | system | work | projects) ;;
+    *)
+        printe_err "Unknown flavor: $f"
+        exit 1
+        ;;
     esac
 done
 
@@ -114,7 +126,6 @@ if [ "$(id -u)" = "0" ]; then
     printe_err "Cannot run as root"
     exit 2
 fi
-
 
 ## Running
 ##

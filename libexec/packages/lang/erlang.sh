@@ -3,7 +3,10 @@
 # Install erlang packages.
 #
 
-BASE_DIR=${BASE_DIR:-$(cd "$(dirname "$0")/../../.." || exit; pwd -P)}
+BASE_DIR=${BASE_DIR:-$(
+    cd "$(dirname "$0")/../../.." || exit
+    pwd -P
+)}
 
 cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/utils.sh"
@@ -76,7 +79,8 @@ _install_erlang_ls() {
     rm erlang_ls.tar.gz
 
     cd "$BUILD_DIR/erlang_ls-$ERLANG_LS_VER" || exit 1
-    PATH="$ASDF_DIR/shims:$(dirname "$REBAR3_PATH"):$PATH"; export PATH
+    PATH="$ASDF_DIR/shims:$(dirname "$REBAR3_PATH"):$PATH"
+    export PATH
     make
     install -d "$_bindir"
     install -m0755 _build/default/bin/erlang_ls "$_bindir/erlang_ls"

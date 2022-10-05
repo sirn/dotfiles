@@ -14,25 +14,26 @@ install_svc() {
 
     while getopts "Suxp:v:s" opt; do
         case "$opt" in
-            S ) mkargs="-S";;
-            u ) svcdir="$HOME/.local/var/service";;
-            v ) svcvariant="$OPTARG";;
-            s ) svclink="/run/runit.$USER";;
-            p ) program="$OPTARG";;
-            * )
-                printe_err "Invalid flags given to install_svc"
-                exit 1
-                ;;
+        S) mkargs="-S" ;;
+        u) svcdir="$HOME/.local/var/service" ;;
+        v) svcvariant="$OPTARG" ;;
+        s) svclink="/run/runit.$USER" ;;
+        p) program="$OPTARG" ;;
+        *)
+            printe_err "Invalid flags given to install_svc"
+            exit 1
+            ;;
         esac
     done
 
-    shift $((OPTIND-1))
+    shift $((OPTIND - 1))
 
     if [ "${1:-}" = "--" ]; then
         shift
     fi
 
-    svcsrc=$1; shift
+    svcsrc=$1
+    shift
     svcname=$(basename "$svcsrc")
 
     if [ -n "$mkargs" ] && [ -n "$svclink" ]; then
