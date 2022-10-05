@@ -494,6 +494,7 @@ area."
   (eval-when-compile
     (declare-function eglot-code-action-organize-imports nil)
     (declare-function eglot-format-buffer nil)
+    (declare-function gemacs--eglot-disable-flycheck nil)
     (declare-function gemacs--eglot-format-buffer nil)
     (declare-function gemacs--eglot-organize-imports nil))
 
@@ -502,4 +503,10 @@ area."
     (eglot-format-buffer))
 
   (defun gemacs--eglot-organize-imports ()
-    (call-interactively 'eglot-code-action-organize-imports)))
+    (call-interactively 'eglot-code-action-organize-imports))
+
+  :config
+  (defun gemacs--eglot-disable-flycheck ()
+    (flycheck-mode -1))
+
+  (add-hook 'eglot-managed-mode-hook #'gemacs--eglot-disable-flycheck))
