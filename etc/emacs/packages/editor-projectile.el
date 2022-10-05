@@ -24,4 +24,13 @@
   (projectile-mode +1)
 
   (defun gemacs--projectile-invalidate-cache (&rest _args)
-    (projectile-invalidate-cache nil)))
+    (projectile-invalidate-cache nil))
+
+  ;; Integrating projectile with project.el
+  (defun gemacs--projectile-project-find (dir)
+    (when (projectile-project-p dir)
+      (let ((root (projectile-project-root dir)))
+        (and root (cons 'transient root)))))
+
+  (with-eval-after-load 'project
+    (add-to-list 'project-find-functions 'gemacs--projectile-project-find)))
