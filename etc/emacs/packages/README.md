@@ -53,14 +53,21 @@ Use the following order for `use-package`:
     (add-to-list 'company-backends 'company-restclient)))
 ```
 
-## lsp-mode
+## eglot
 
-`lsp-mode` is explicitly enabled per major-mode:
+`eglot` is explicitly enabled per major-mode:
 
 ```elisp
 (use-package typescript-mode
-  :init
-  (use-feature lsp-mode
-    :init
-    (add-hook 'typescript-mode-hook #'lsp)))
+  :preface
+  (eval-when-compile
+    (declare-function eglot-ensure nil)
+    (defvar eglot-server-programs))
+
+  :config
+  (use-feature eglot
+    :demand t
+    :config
+    (add-to-list 'eglot-server-programs '(typescript-mode . ("typescript-language-server")))
+    (add-hook 'typescript-mode-hook #'eglot-ensure)))
 ```

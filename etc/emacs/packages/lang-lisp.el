@@ -17,24 +17,36 @@
 
 
 (use-feature elisp-mode
+  :preface
+  (eval-when-compile
+    (declare-function gemacs--elisp-flycheck-setup nil)
+    (declare-function gemacs--elisp-auto-format nil)
+    (declare-function gemacs--advice-elisp-fill-docstrings nil)
+    (declare-function gemacs--advice-elisp-company-use-helpful nil))
+
   :config
-  (defun gemacs--flycheck-elisp-setup ()
+  (defun gemacs--elisp-flycheck-setup ()
     "Disable some Flycheck checkers for Emacs Lisp."
     (gemacs--flycheck-disable-checkers 'emacs-lisp 'emacs-lisp-checkdoc))
 
-  (defun gemacs--advice-fill-elisp-docstrings-correctly (&rest _)
+  (defun gemacs--elisp-auto-format ()
+      (use-feature apheleia
+        :config
+        (apheleia-mode -1)))
+
+  (defun gemacs--advice-elisp-fill-docstrings (&rest _)
     "Prevent `auto-fill-mode' from adding indentation to Elisp docstrings."
     (when (and (derived-mode-p #'emacs-lisp-mode)
             (eq (get-text-property (point) 'face) 'font-lock-doc-face))
       ""))
 
   (advice-add 'fill-context-prefix :before-until
-    #'gemacs--advice-fill-elisp-docstrings-correctly)
+    #'gemacs--advice-elisp-fill-docstrings)
 
   (use-feature helpful
     :demand t
     :config
-    (defun gemacs--advice-company-elisp-use-helpful
+    (defun gemacs--advice-elisp-company-use-helpful
         (func &rest args)
         "Cause `company' to use Helpful to show Elisp documentation."
         (cl-letf (((symbol-function #'describe-function) #'helpful-function
@@ -42,8 +54,8 @@
                      ((symbol-function #'help-buffer) #'current-buffer)))
             (apply func args)))
 
-
-    (add-hook 'emacs-lisp-mode-hook #'gemacs--flycheck-elisp-setup)
+    (add-hook 'emacs-lisp-mode-hook #'gemacs--elisp-flycheck-setup)
+    (add-hook 'emacs-lisp-mode-hook #'gemacs--elisp-auto-format)
 
     (advice-add 'elisp--company-doc-buffer :around
-        #'gemacs--advice-company-elisp-use-helpful)))
+        #'gemacs--advice-elisp-company-use-helpful)))

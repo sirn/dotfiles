@@ -3,10 +3,12 @@
 (use-package elixir-mode
   :preface
   (eval-when-compile
-    (defvar lsp-clients-elixir-server-executable))
+    (declare-function eglot-ensure nil)
+    (defvar eglot-server-programs))
 
-  :init
-  (use-feature lsp-mode
-    :init
-    (setq lsp-elixir-server-command '("elixir-ls"))
-    (add-hook 'elixir-mode-hook #'lsp)))
+  :config
+  (use-feature eglot
+    :demand t
+    :config
+    (add-to-list 'eglot-server-programs '(elixir-mode . ("elixir-ls")))
+    (add-hook 'elixir-mode-hook #'eglot-ensure)))

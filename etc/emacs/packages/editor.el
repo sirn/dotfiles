@@ -497,107 +497,17 @@ area."
 ;; --------------------------------------------------------------------------
 ;;; Language Server Protocol
 
-(use-package lsp-mode
-  :config
-  (setq lsp-enable-snippet t)
-  (setq lsp-file-watch-threshold nil)
-  (setq lsp-restart 'auto-restart)
-  (setq lsp-headerline-breadcrumb-enable t)
-
-  (defun gemacs--advice-lsp-mode-silence (format &rest args)
-    "Silence needless diagnostic messages from `lsp-mode'.
-This is a `:before-until' advice for several `lsp-mode' logging
-functions."
-    (or
-      (member format `("No LSP server for %s(check *lsp-log*)."
-                        "Connected to %s."
-                        ,(concat
-                           "Unable to calculate the languageId for current "
-                           "buffer. Take a look at "
-                           "lsp-language-id-configuration.")
-                        ,(concat
-                           "There are no language servers supporting current "
-                           "mode %s registered with `lsp-mode'.")))
-      (and (stringp (car args))
-        (or (string-match-p "^no object for ident .+$" (car args))
-          (string-match-p "^no identifier found$" (car args))))))
-
-  (defun gemacs--lsp-run-from-node-modules (command)
-    "Find LSP executables inside node_modules/.bin if present."
-    (cl-block nil
-      (prog1 command
-        (when-let ((project-dir (locate-dominating-file default-directory "node_modules"))
-                   (binary
-                     (gemacs--path-join
-                       project-dir "node_modules" ".bin" (car command))))
-          (when (file-executable-p binary)
-            (cl-return (cons binary (cdr command))))))))
-
-  (dolist (fun '(lsp-warn lsp--warn lsp--info lsp--error))
-    (advice-add fun :before-until #'gemacs--advice-lsp-mode-silence))
-
-  (advice-add 'lsp-resolve-final-function :filter-return
-    #'gemacs--lsp-run-from-node-modules))
-
-
-(use-package lsp-ui
-  :bind (("C-c f" . #'lsp-ui-sideline-apply-code-actions))
-
+(use-package eglot
   :preface
   (eval-when-compile
-    (declare-function lsp-ui-sideline-apply-code-actions nil)
-    (declare-function gemacs--advice-lsp-ui-apply-single-fix nil)
-    (defvar lsp-ui-sideline-show-hover))
+    (declare-function eglot-code-action-organize-imports nil)
+    (declare-function eglot-format-buffer nil)
+    (declare-function gemacs--eglot-format-buffer nil)
+    (declare-function gemacs--eglot-organize-imports nil))
 
   :init
-  (setq lsp-ui-sideline-show-hover nil)
+  (defun gemacs--eglot-format-buffer ()
+    (eglot-format-buffer))
 
-  :config
-  (defun gemacs--advice-lsp-ui-apply-single-fix
-    (orig-fun &rest args)
-    "Apply code fix immediately if only one is possible."
-    (gemacs-flet ((defun completing-read (prompt collection &rest args)
-                    (if (= (safe-length collection) 1)
-                      (car collection)
-                      (apply completing-read prompt collection args))))
-      (apply orig-fun args)))
-
-  (advice-add 'lsp-ui-sideline-apply-code-actions :around
-    #'gemacs--advice-lsp-ui-apply-single-fix)
-
-  (use-feature lsp-mode
-    :init
-    (setq lsp-eldoc-enable-hover nil)))
-
-
-(use-feature lsp-ui-doc
-  :preface
-  (eval-when-compile
-    (declare-function gemacs--advice-lsp-ui-doc-allow-multiline nil))
-
-  :init
-  (setq lsp-ui-doc-winum-ignore nil)
-  (setq lsp-ui-doc-use-childframe t)
-
-  :config
-  (defun gemacs--advice-lsp-ui-doc-allow-multiline (func &rest args)
-    "Prevent `lsp-ui-doc' from removing newlines from documentation."
-    (gemacs-flet ((defun replace-regexp-in-string
-                    (regexp rep string &rest args)
-                    (if (equal regexp "`\\([\n]+\\)")
-                      string
-                      (apply replace-regexp-in-string
-                        regexp rep string args))))
-      (apply func args)))
-
-  (advice-add 'lsp-ui-doc--render-buffer :around
-    #'gemacs--advice-lsp-ui-doc-allow-multiline))
-
-
-(use-package lsp-treemacs
-  :preface
-  (eval-when-compile
-    (declare-function lsp-treemacs-sync-mode nil))
-
-  :config
-  (lsp-treemacs-sync-mode +1))
+  (defun gemacs--eglot-organize-imports ()
+    (call-interactively 'eglot-code-action-organize-imports)))
