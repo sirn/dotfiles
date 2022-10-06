@@ -43,13 +43,28 @@ This function calls `json-mode--update-auto-mode' to change the
 
   :preface
   (eval-when-compile
-    (declare-function apheleia-mode nil))
+    (declare-function apheleia-mode nil)
+    (declare-function flymake-json-load nil)
+    (declare-function flymake-mode nil))
 
   :config
   (use-feature apheleia
     :demand t
     :config
-    (add-hook 'json-mode-hook #'apheleia-mode)))
+    (add-hook 'json-mode-hook #'apheleia-mode))
+
+  (use-feature flymake
+    :demand t
+    :config
+    (add-hook 'json-mode-hook #'flymake-mode))
+
+  (use-feature flymake-json
+    :demand t
+    :config
+    (add-hook 'json-mode-hook #'flymake-json-load)))
 
 
 (use-package jq-mode)
+
+
+(use-package flymake-json)

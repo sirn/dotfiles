@@ -72,3 +72,20 @@ Use the following order for `use-package`:
     (add-hook 'typescript-mode-hook #'eglot-ensure)
     (add-hook 'typescript-mode-hook #'gemacs--typescript-auto-format)))
 ```
+
+## flymake
+
+`flymake` is explicity enabled per major-mode:
+
+```elisp
+(use-feature sh-mode
+  :config
+  (use-feature flymake-mode
+    :demand t
+    :preface
+    (eval-when-compile
+      (declare-function flymake-mode nil)))
+
+    :config
+    (add-hook 'sh-mode-hook #'flymake-mode)))
+```

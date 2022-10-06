@@ -299,76 +299,37 @@
 ;; --------------------------------------------------------------------------
 ;;; Errors and documentation
 
-(use-package flycheck
-  :defer 4
-
-  ;; Not exposed via autoload by Flycheck
-  :commands (flycheck-list-errors
-              flycheck-previous-error
-              flycheck-next-error)
-
-  :bind-keymap (("C-c !" . flycheck-command-map))
+(use-feature flymake
+  :demand t
 
   :leader
-  ("fp" #'flycheck-previous-error
-   "fn" #'flycheck-next-error
-   "fl" #'flycheck-list-errors)
+  ("fn" #'flymake-goto-next-error
+   "fp" #'flymake-goto-prev-error
+   "fl" #'flymake-show-buffer-diagnostics
+   "fP" #'flymake-show-project-diagnostics)
+
+  :config
+  (remove-hook 'flymake-diagnostic-functions #'flymake-proc-legacy-flymake))
+
+
+(use-package flymake-popon
+  :straight (:type git :repo "https://codeberg.org/akib/emacs-flymake-popon")
+  :demand t
+  :after flymake
 
   :preface
   (eval-when-compile
-    (declare-function flycheck-previous-error nil)
-    (declare-function flycheck-next-error nil)
-    (declare-function flycheck-list-errors nil)
-    (declare-function flycheck-overlay-errors-at nil)
-    (declare-function flycheck-error-line-region nil))
-
-  :init
-  (defun gemacs--flycheck-disable-checkers (&rest checkers)
-    "Disable the given Flycheck syntax CHECKERS, symbols.
-This function affects only the current buffer, and neither causes
-nor requires Flycheck to be loaded."
-    (unless (boundp 'flycheck-disabled-checkers)
-      (setq flycheck-disabled-checkers nil))
-    (make-local-variable 'flycheck-disabled-checkers)
-    (dolist (checker checkers)
-      (cl-pushnew checker flycheck-disabled-checkers)))
+    (declare-function flymake-popon-mode nil))
 
   :config
-  (global-flycheck-mode +1)
-  (dolist (name '("python" "python2" "python3"))
-    (add-to-list 'safe-local-variable-values
-                 `(flycheck-python-pycompile-executable . ,name)))
-
-  ;; Run a syntax check when changing buffers, just in case you
-  ;; modified some other files that impact the current one. See
-  ;; https://github.com/flycheck/flycheck/pull/1308.
-  (add-to-list 'flycheck-check-syntax-automatically 'idle-buffer-switch)
-
-  ;; For the above functionality, check syntax in a buffer that you
-  ;; switched to only briefly. This allows "refreshing" the syntax
-  ;; check state for several buffers quickly after e.g. changing a
-  ;; config file.
-  (setq flycheck-buffer-switch-check-intermediate-buffers t)
-  (setq flycheck-display-errors-delay 0.2))
+  (add-hook 'flymake-mode-hook #'flymake-popon-mode))
 
 
 (use-feature eldoc
   :demand t
 
   :config
-  (setq eldoc-echo-area-use-multiline-p nil)
-
-  (use-feature flycheck
-    :config
-    (defun gemacs--advice-disable-eldoc-on-flycheck
-      (&rest _)
-      "Disable ElDoc when point is on a Flycheck overlay.
-This prevents ElDoc and Flycheck from fighting over the echo
-area."
-      (not (flycheck-overlay-errors-at (point))))
-
-    (advice-add 'eldoc-display-message-no-interference-p :after-while
-      #'gemacs--advice-disable-eldoc-on-flycheck)))
+  (setq eldoc-echo-area-use-multiline-p nil))
 
 
 ;; --------------------------------------------------------------------------
@@ -379,7 +340,6 @@ area."
   (eval-when-compile
     (declare-function eglot-code-action-organize-imports nil)
     (declare-function eglot-format-buffer nil)
-    (declare-function gemacs--eglot-disable-flycheck nil)
     (declare-function gemacs--eglot-format-buffer nil)
     (declare-function gemacs--eglot-organize-imports nil))
 
@@ -388,10 +348,4 @@ area."
     (eglot-format-buffer))
 
   (defun gemacs--eglot-organize-imports ()
-    (call-interactively 'eglot-code-action-organize-imports))
-
-  :config
-  (defun gemacs--eglot-disable-flycheck ()
-    (flycheck-mode -1))
-
-  (add-hook 'eglot-managed-mode-hook #'gemacs--eglot-disable-flycheck))
+    (call-interactively 'eglot-code-action-organize-imports)))

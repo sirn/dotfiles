@@ -4,6 +4,8 @@
   :preface
   (eval-when-compile
     (declare-function apheleia-mode nil)
+    (declare-function flymake-mode nil)
+    (declare-function flymake-shellcheck-load nil)
     (declare-function gemacs--sh-prettify-mode-line nil))
 
   :config
@@ -23,4 +25,17 @@
   (use-feature apheleia
     :demand t
     :config
-    (add-hook 'sh-mode-hook #'apheleia-mode)))
+    (add-hook 'sh-mode-hook #'apheleia-mode))
+
+  (use-feature flymake
+    :demand t
+    :config
+    (add-hook 'sh-mode-hook #'flymake-mode))
+
+  (use-feature flymake-shellcheck
+    :demand t
+    :config
+    (add-hook 'sh-mode-hook #'flymake-shellcheck-load)))
+
+
+(use-package flymake-shellcheck)

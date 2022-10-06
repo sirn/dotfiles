@@ -4,6 +4,8 @@
   :preface
   (eval-when-compile
     (declare-function apheleia-mode nil)
+    (declare-function flymake-mode nil)
+    (declare-function flymake-yamllint-setup nil)
     (declare-function gemacs--yaml-maybe-k8s nil)
     (declare-function gemacs--yaml-maybe-ansible nil))
 
@@ -12,6 +14,16 @@
     :demand t
     :config
     (add-hook 'yaml-mode-hook #'apheleia-mode))
+
+  (use-feature flymake
+    :demand t
+    :config
+    (add-hook 'yaml-mode-hook #'flymake-mode))
+
+  (use-feature flymake-yamllint
+    :demand t
+    :config
+    (add-hook 'yaml-mode-hook #'flymake-yamllint-setup))
 
   (defun gemacs--yaml-maybe-ansible ()
     (when (and
@@ -35,8 +47,8 @@
             (save-excursion
               (goto-char (point-min))
               (looking-at "\\(---\n\\)?apiVersion:")))
-       (flycheck-mode -1)
-       (apheleia-mode -1)))
+       (apheleia-mode -1)
+       (flymake-mode -1)))
 
   (add-hook 'yaml-mode-hook 'gemacs--yaml-maybe-ansible)
   (add-hook 'yaml-mode-hook 'gemacs--yaml-maybe-k8s))
@@ -46,3 +58,7 @@
 
 
 (use-package ansible-doc)
+
+
+(use-package flymake-yamllint
+  :straight (:host github :repo "shaohme/flymake-yamllint"))

@@ -77,21 +77,7 @@ poke it. Otherwise the modified text remains unfontified."
     (add-hook 'web-mode-hook #'apheleia-mode)))
 
 
-(use-feature css-mode
-  :config
-  (use-feature flycheck
-    :config
-    ;; Stylelint v14 removed --syntax, but Flycheck still uses one.
-    ;; See also: https://github.com/flycheck/flycheck/issues/1912
-    (flycheck-define-checker scss-stylelint
-      "A SCSS syntax and style checker using stylelint."
-      :command ("stylelint"
-                 (eval flycheck-stylelint-args)
-                 (option-flag "--quiet" flycheck-stylelint-quiet)
-                 (config-file "--config" flycheck-stylelintrc))
-      :standard-input t
-      :error-parser flycheck-parse-stylelint
-      :modes (scss-mode))))
+(use-feature css-mode)
 
 
 (use-package emmet-mode

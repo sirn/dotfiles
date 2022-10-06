@@ -14,19 +14,9 @@
     (declare-function gemacs--go-beginning-of-defun nil)
     (declare-function gemacs--go-defun-setup nil)
     (declare-function gemacs--go-end-of-defun nil)
-    (declare-function gemacs--go-flycheck nil)
     (declare-function gemacs--go-lsp-bin nil)
     (declare-function go--backward-irrelevant nil)
     (defvar eglot-server-programs))
-
-  :init
-  (use-feature flycheck-golangci-lint
-    :preface
-    (eval-when-compile
-      (declare-function flycheck-golangci-lint-setup nil))
-
-    :init
-    (add-hook 'go-mode-hook #'flycheck-golangci-lint-setup))
 
   :config
   (use-feature eglot
@@ -96,18 +86,4 @@ See <https://github.com/dominikh/go-mode.el/issues/232>."
     (setq-local beginning-of-defun-function #'gemacs--go-beginning-of-defun)
     (setq-local end-of-defun-function #'gemacs--go-end-of-defun))
 
-  (defun gemacs--go-flycheck ()
-    "Disable some Flycheck checkers for Emacs Lisp."
-    (gemacs--flycheck-disable-checkers
-     'go-gofmt
-     'go-golint
-     'go-vet
-     'go-errcheck
-     'go-staticcheck
-     'go-unconvert))
-
-  (add-hook 'go-mode-hook #'gemacs--go-defun-setup)
-  (add-hook 'go-mode-hook #'gemacs--go-flycheck))
-
-
-(use-package flycheck-golangci-lint)
+  (add-hook 'go-mode-hook #'gemacs--go-defun-setup))

@@ -122,14 +122,28 @@
        :demand t
 
        :config
+       (telephone-line-defsegment* gemacs--telephone-line-flymake-segment ()
+         (when (bound-and-true-p flymake-mode)
+           (telephone-line-raw
+             (if (boundp 'flymake--mode-line-format)
+               flymake--mode-line-format
+               flymake-mode-line-format)
+             t)))
+
        (setq telephone-line-lhs
-         '((nil . (telephone-line-window-number-segment))
-           (evil . (telephone-line-evil-tag-segment))
+         '((nil    . (telephone-line-window-number-segment))
+           (evil   . (telephone-line-evil-tag-segment))
            (accent . (telephone-line-vc-segment
                       telephone-line-erc-modified-channels-segment
                       telephone-line-process-segment))
-           (nil . (telephone-line-projectile-segment
-                   telephone-line-buffer-segment))))
+           (nil    . (telephone-line-projectile-segment
+                      telephone-line-buffer-segment))))
+
+       (setq telephone-line-rhs
+         '((nil    . (gemacs--telephone-line-flymake-segment
+                      telephone-line-misc-info-segment))
+           (accent . (telephone-line-major-mode-segment))
+           (evil   . (telephone-line-airline-position-segment))))
 
        (telephone-line-mode +1))
 
