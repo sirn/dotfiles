@@ -53,6 +53,7 @@ _run_dev() {
     _npm_install eslint
     _npm_install eslint-config-prettier
     _npm_install eslint-plugin-svelte3
+    _npm_install jsonlint
     _npm_install npm-upgrade
     _npm_install pnpm
     _npm_install prettier
