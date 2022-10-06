@@ -1,67 +1,5 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
-;; Setup a minimalist frame without toolbar and menu bar, but also taking
-;; OS behavior quirks into consideration. This is done via `make-frame-func'
-;; to allow GUI `emacsclient' connecting to `emacs-server' to have different
-;; frame settings independent of CLI ones.
-
-(defvar gemacs-font "PragmataPro Mono")
-(defvar gemacs-font-size 11)
-
-(eval-when-compile
-  (declare-function scroll-bar-mode nil)
-  (declare-function mac-auto-operator-composition-mode nil))
-
-(setq-default frame-title-format '("%f"))
-(tool-bar-mode -1)
-(menu-bar-mode -1)
-
-(defun gemacs--after-make-frame-func (frame)
-  "Setup frame attributes after a FRAME is created."
-  (if (display-graphic-p frame)
-    (let ((w (window-system frame)))
-      (cond
-        ((eq w 'x)
-         (scroll-bar-mode -1)
-         (set-frame-font (format "%s %s" gemacs-font gemacs-font-size)
-           nil
-           t))
-        ((eq w 'mac)
-         ;; macOS will "float" Emacs window if menu-bar-mode is disabled.
-         ;; (e.g. not sticky to Spaces and no fullscreen support)
-         (menu-bar-mode 1)
-         (scroll-bar-mode -1)
-         ;; macOS display font size about x1.2 smaller than other Unices.
-         (set-frame-font (format "%s %s"
-                           gemacs-font
-                           (round (* gemacs-font-size 1.2)))
-           nil
-           t)
-         (when (boundp 'mac-auto-operator-composition-mode)
-           (mac-auto-operator-composition-mode)))))
-
-    (progn
-      (eval-and-compile
-        (defun gemacs-scroll-down ()
-          "Scroll down three lines."
-          (interactive)
-          (scroll-down 3))
-
-        (defun gemacs-scroll-up ()
-          "Scroll up three lines."
-          (interactive)
-          (scroll-up 3)))
-
-      (xterm-mouse-mode t)
-      (bind-key "<mouse-4>" #'gemacs-scroll-down)
-      (bind-key "<mouse-5>" #'gemacs-scroll-up))))
-
-(add-hook 'after-make-frame-functions #'gemacs--after-make-frame-func)
-(add-hook 'after-init-hook
-  `(lambda ()
-     (gemacs--after-make-frame-func (selected-frame))))
-
-
 (use-package winum
   :demand t
 
@@ -100,59 +38,187 @@
 (use-package telephone-line)
 
 
-(use-package tao-theme)
+(use-feature telephone-line-config
+  :preface
+  (eval-when-compile
+    (declare-function telephone-line-mode nil)
+    (defvar telephone-line-height)
+    (defvar telephone-line-lhs)
+    (defvar telephone-line-rhs))
+
+  :config
+  (setq telephone-line-height 18)
+
+  (telephone-line-defsegment* gemacs--telephone-line-flymake-segment ()
+    (when (bound-and-true-p flymake-mode)
+      (ignore face)  ;; silent "unused lexical argument"
+      (telephone-line-raw
+        (if (boundp 'flymake--mode-line-format)
+          flymake--mode-line-format
+          flymake-mode-line-format)
+        t)))
+
+  (setq telephone-line-lhs
+    '((nil    . (telephone-line-window-number-segment))
+      (evil   . (telephone-line-evil-tag-segment))
+      (accent . (telephone-line-vc-segment
+                 telephone-line-erc-modified-channels-segment
+                 telephone-line-process-segment))
+      (nil    . (telephone-line-projectile-segment
+                 telephone-line-buffer-segment))))
+
+  (setq telephone-line-rhs
+    '((nil    . (gemacs--telephone-line-flymake-segment
+                 telephone-line-misc-info-segment))
+      (accent . (telephone-line-major-mode-segment))
+      (evil   . (telephone-line-airline-position-segment))))
+
+  (telephone-line-mode +1))
 
 
-(defun gemacs--disable-theme ()
-  "Disable theme propogation."
-  (mapc #'disable-theme custom-enabled-themes))
+(use-package modus-themes
+  :preface
+  (eval-when-compile
+    (defvar modus-themes-mode-line))
 
-(advice-add 'theme-dont-propagate :before #'gemacs--disable-theme)
+  :init
+  (setq modus-themes-mode-line '(borderless))
+
+  :config
+  (load-theme 'modus-vivendi t))
 
 
-;; Enable theme as late as is humanly possible. This reduces
-;; frame flashing and other artifacts during startup.
+(use-package osx-trash
+  :preface
+  (eval-when-compile
+    (declare-function osx-trash-setup nil))
 
-(add-hook 'gemacs-after-init-hook
-  `(lambda ()
-     (use-feature telephone-line
-       :demand t)
+  :config
+  (osx-trash-setup))
 
-     (use-feature telephone-line-config
-       :demand t
 
-       :config
-       (telephone-line-defsegment* gemacs--telephone-line-flymake-segment ()
-         (when (bound-and-true-p flymake-mode)
-           (telephone-line-raw
-             (if (boundp 'flymake--mode-line-format)
-               flymake--mode-line-format
-               flymake-mode-line-format)
-             t)))
+(use-package pbcopy
+  :preface
+  (eval-when-compile
+    (declare-function turn-on-pbcopy nil))
 
-       (setq telephone-line-lhs
-         '((nil    . (telephone-line-window-number-segment))
-           (evil   . (telephone-line-evil-tag-segment))
-           (accent . (telephone-line-vc-segment
-                      telephone-line-erc-modified-channels-segment
-                      telephone-line-process-segment))
-           (nil    . (telephone-line-projectile-segment
-                      telephone-line-buffer-segment))))
+  :config
+  (turn-on-pbcopy))
 
-       (setq telephone-line-rhs
-         '((nil    . (gemacs--telephone-line-flymake-segment
-                      telephone-line-misc-info-segment))
-           (accent . (telephone-line-major-mode-segment))
-           (evil   . (telephone-line-airline-position-segment))))
 
-       (telephone-line-mode +1))
+(use-feature emacs
+  :demand t
 
-     (use-feature tao-theme
-       :demand t
+  :preface
+  (eval-when-compile
+    (declare-function scroll-bar-mode nil)
+    (declare-function mac-auto-operator-composition-mode nil)
+    (defvar mac-command-modifier)
+    (defvar mac-command-key-is-meta)
+    (defvar mac-option-modifier)
+    (defvar mac-option-key-is-meta))
 
-       :init
-       (setq tao-theme-use-boxes nil)
-       (setq tao-theme-use-sepia nil)
+  :config
 
-       :config
-       (load-theme 'tao-yin t))))
+  (defvar gemacs-font "PragmataPro Mono")
+  (defvar gemacs-font-size 11)
+
+  (setq-default frame-title-format '("%f"))
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+
+  ;; Setup a minimalist frame without toolbar and menu bar, but also taking
+  ;; OS behavior quirks into consideration. This is done via `make-frame-func'
+  ;; to allow GUI `emacsclient' connecting to `emacs-server' to have different
+  ;; frame settings independent of CLI ones.
+
+  (defun gemacs--after-make-frame-func (frame)
+    "Setup frame attributes after a FRAME is created."
+    (if (display-graphic-p frame)
+      (let ((w (window-system frame)))
+        (cond
+          ((eq w 'x)
+           (scroll-bar-mode -1)
+           (set-frame-font (format "%s %s" gemacs-font gemacs-font-size)
+             nil
+             t))
+          ((eq w 'mac)
+           ;; macOS will "float" Emacs window if menu-bar-mode is disabled.
+           ;; (e.g. not sticky to Spaces and no fullscreen support)
+           (menu-bar-mode 1)
+           (scroll-bar-mode -1)
+           ;; macOS display font size about x1.2 smaller than other Unices.
+           (set-frame-font (format "%s %s"
+                             gemacs-font
+                             (round (* gemacs-font-size 1.2)))
+             nil
+             t)
+           (when (boundp 'mac-auto-operator-composition-mode)
+             (mac-auto-operator-composition-mode)))))
+
+      ;; Mouse goodies
+
+      (progn
+        (eval-and-compile
+          (defun gemacs-scroll-down ()
+            "Scroll down three lines."
+            (interactive)
+            (scroll-down 3))
+
+          (defun gemacs-scroll-up ()
+            "Scroll up three lines."
+            (interactive)
+            (scroll-up 3)))
+
+        (xterm-mouse-mode t)
+        (bind-key "<mouse-4>" #'gemacs-scroll-down)
+        (bind-key "<mouse-5>" #'gemacs-scroll-up))))
+
+  (add-hook 'after-make-frame-functions #'gemacs--after-make-frame-func)
+  (add-hook 'after-init-hook
+    `(lambda ()
+       (gemacs--after-make-frame-func (selected-frame))))
+
+  ;; Reset themes before enabling a new one
+
+  (defun gemacs--disable-theme ()
+      "Disable theme propogation."
+      (mapc #'disable-theme custom-enabled-themes))
+
+  (advice-add 'theme-dont-propagate :before #'gemacs--disable-theme)
+
+  ;; Enable macOS-specific setups
+
+  (gemacs-when-compiletime (eq system-type 'darwin)
+    (setq dired-use-ls-dired nil)
+
+    (when (display-graphic-p)
+      (defun mac-toggle-fullscreen ()
+        (interactive)
+        (when (eq window-system 'mac)
+          (set-frame-parameter
+           nil 'fullscreen
+           (when (not (frame-parameter nil 'fullscreen)) 'fullscreen))))
+
+      (setq mac-command-key-is-meta nil)
+      (setq mac-command-modifier 'super)
+      (setq mac-option-key-is-meta t)
+      (setq mac-option-modifier 'meta)
+
+      (global-set-key (kbd "s-v") 'yank)
+      (global-set-key (kbd "s-c") 'evil-yank)
+      (global-set-key (kbd "s-w") 'delete-window)
+      (global-set-key (kbd "s-W") 'delete-frame)
+      (global-set-key (kbd "s-n") 'make-frame))
+
+    (use-feature osx-trash :demand t)
+    (use-feature pbcopy :demand t))
+
+  ;; Enable theme as late as is humanly possible. This reduces
+  ;; frame flashing and other artifacts during startup.
+
+  (add-hook 'gemacs-after-init-hook
+    `(lambda ()
+       (use-feature telephone-line :demand t)
+       (use-feature telephone-line-config :demand t)
+       (use-feature modus-themes :demand t))))
