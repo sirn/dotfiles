@@ -24,10 +24,9 @@ _preflight() {
 _run_dev() {
     printe_h2 "Installing golang dev packages..."
 
-    _go_get gocode github.com/nsf/gocode@latest
     _go_get goimports golang.org/x/tools/cmd/goimports@latest
-    _go_get golint golang.org/x/lint/golint@latest
     _go_get gopls golang.org/x/tools/gopls@latest
+    _go_get govulncheck golang.org/x/vuln/cmd/govulncheck@latest
 
     _install_golangci_lint
 }
