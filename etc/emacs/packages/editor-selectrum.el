@@ -33,7 +33,10 @@
   (setq prescient-history-length 1000)
 
   :config
-  (prescient-persist-mode +1))
+  (prescient-persist-mode +1)
+  (use-feature emacs
+    :init
+    (setq completion-styles '(prescient basic))))
 
 
 (use-package selectrum-prescient
