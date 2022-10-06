@@ -67,6 +67,7 @@ exec $CONF_CMD $*\
 ##
 
 run_exec() {
+    cd "$CONF_PROJECT_ROOT" || exit 1
     set -- $CONF_CMD "$@"
     exec "$@"
 }
