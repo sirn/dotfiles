@@ -39,6 +39,7 @@
   :preface
   (eval-when-compile
     (declare-function telephone-line-mode nil)
+    (defvar flymake-mode-line-format nil)
     (defvar telephone-line-height)
     (defvar telephone-line-lhs)
     (defvar telephone-line-primary-left-separator)
@@ -86,7 +87,7 @@
     (defvar modus-themes-mode-line))
 
   :init
-  (setq modus-themes-mode-line '(borderless accented))
+  (setq modus-themes-mode-line '(borderless))
 
   :config
   (load-theme 'modus-vivendi t))

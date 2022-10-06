@@ -308,6 +308,13 @@
    "fl" #'flymake-show-buffer-diagnostics
    "fP" #'flymake-show-project-diagnostics)
 
+  :preface
+  (eval-when-compile
+    (declare-function flymake-goto-next-error nil)
+    (declare-function flymake-goto-prev-error nil)
+    (declare-function flymake-show-buffer-diagnostics nil)
+    (declare-function flymake-show-project-diagnostics nil))
+
   :config
   (remove-hook 'flymake-diagnostic-functions #'flymake-proc-legacy-flymake))
 
