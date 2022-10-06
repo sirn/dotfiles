@@ -86,7 +86,7 @@
     (defvar modus-themes-mode-line))
 
   :init
-  (setq modus-themes-mode-line '(borderless))
+  (setq modus-themes-mode-line '(borderless accented))
 
   :config
   (load-theme 'modus-vivendi t))
