@@ -48,18 +48,6 @@ Use the following order for `use-package`:
     (add-hook 'markdown-mode-hook #'apheleia-mode)
 ```
 
-## company
-
-`company-backends` is configured when package is initialized, but defer until company is loaded:
-
-```elisp
-(use-package company-restclient
-  :init
-  (use-feature company
-    :config
-    (add-to-list 'company-backends 'company-restclient)))
-```
-
 ## eglot
 
 `eglot` is explicitly enabled per major-mode:

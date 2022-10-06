@@ -46,17 +46,3 @@
 
 
 (use-package ansible-doc)
-
-
-(use-package company-ansible
-  :preface
-  (eval-when-compile
-    (declare-function gemacs--company-ansible-setup nil))
-
-  :init
-  (use-feature company
-    :config
-    (defun gemacs--company-ansible-setup ()
-      (set (make-local-variable 'company-backends) '(company-ansible)))
-
-    (add-hook 'ansible-hook #'gemacs--company-ansible-setup)))

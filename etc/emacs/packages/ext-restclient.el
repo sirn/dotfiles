@@ -6,13 +6,6 @@
     :demand t))
 
 
-(use-package company-restclient
-  :init
-  (use-feature company
-    :config
-    (add-to-list 'company-backends 'company-restclient)))
-
-
 (use-package ob-restclient
   :init
   (use-feature org

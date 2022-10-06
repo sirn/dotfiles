@@ -20,8 +20,7 @@
   :preface
   (eval-when-compile
     (declare-function gemacs--elisp-flycheck-setup nil)
-    (declare-function gemacs--advice-elisp-fill-docstrings nil)
-    (declare-function gemacs--advice-elisp-company-use-helpful nil))
+    (declare-function gemacs--advice-elisp-fill-docstrings nil))
 
   :config
   (defun gemacs--elisp-flycheck-setup ()
@@ -40,15 +39,4 @@
   (use-feature helpful
     :demand t
     :config
-    (defun gemacs--advice-elisp-company-use-helpful
-        (func &rest args)
-        "Cause `company' to use Helpful to show Elisp documentation."
-        (cl-letf (((symbol-function #'describe-function) #'helpful-function
-                     ((symbol-function #'describe-variable) #'helpful-variable)
-                     ((symbol-function #'help-buffer) #'current-buffer)))
-            (apply func args)))
-
-    (add-hook 'emacs-lisp-mode-hook #'gemacs--elisp-flycheck-setup)
-
-    (advice-add 'elisp--company-doc-buffer :around
-        #'gemacs--advice-elisp-company-use-helpful)))
+    (add-hook 'emacs-lisp-mode-hook #'gemacs--elisp-flycheck-setup)))

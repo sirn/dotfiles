@@ -243,157 +243,42 @@
 
   :config
   (setq yas-verbosity 2)
-
-  ;; Make it so that Company's keymap overrides Yasnippet's keymap
-  ;; when a snippet is active.
-  (use-feature company
-    :config
-
-    (defun gemacs--yasnippet-normalize-event (event)
-      "This function is a complete hack, do not use.
-But in principle, it translates what we get from `map-keymap'
-into what `lookup-key' and `define-key' want."
-      (if (vectorp event)
-        event
-        (vector event)))
-
-    (defvar gemacs--yasnippet-then-company-keymap
-      (let ((keymap (copy-keymap yas-keymap)))
-        (map-keymap
-          (lambda (event company-cmd)
-            (let* ((event (gemacs--yasnippet-normalize-event event))
-                   (yas-cmd (lookup-key yas-keymap event)))
-              (define-key keymap event
-                `(menu-item
-                   nil ,company-cmd :filter
-                   (lambda (cmd)
-                     (if company-my-keymap
-                       ',company-cmd
-                       ',yas-cmd))))))
-          company-active-map)
-        keymap)
-      "Keymap which delegates to both `company-active-map' and `yas-keymap'.")
-
-    (defun gemacs--advice-company-overrides-yasnippet
-      (yas--make-control-overlay &rest args)
-      "Allow `company' keybindings to override those of `yasnippet'."
-      (let ((yas-keymap gemacs--yasnippet-then-company-keymap))
-        (apply yas--make-control-overlay args)))
-
-    (advice-add 'yas--make-control-overlay :around
-      #'gemacs--advice-company-overrides-yasnippet))
-
   (yas-global-mode +1))
 
 
 ;; --------------------------------------------------------------------------
 ;;; Autocompletion
 
-(defvar-local gemacs--company-buffer-modified-counter nil
-  "Last return value of `buffer-chars-modified-tick'.
-Used to ensure that Company only initiates a completion when the
-buffer is modified.")
-
-(use-package company
+(use-package corfu
   :defer 0.5
 
   :preface
   (eval-when-compile
-    (declare-function company-explicit-action-p nil)
-    (declare-function company-complete-common-or-cycle nil)
-    (declare-function company-select-previous-or-abort nil)
-    (declare-function company-select-next-or-abort nil)
-    (declare-function company-complete-selection nil)
-    (declare-function company-next-page nil)
-    (declare-function company-previous-page nil)
-    (declare-function company-select-previous nil)
-    (declare-function company-select-next nil)
-    (declare-function company--should-begin nil)
-    (defvar company-insertion-triggers))
-
-  :bind
-  (([remap completion-at-point] . #'company-manual-begin)
-   ([remap complete-symbol]     . #'company-manual-begin)
-
-   :map company-active-map
-   ([tab]     . #'company-complete-common-or-cycle)
-   ("TAB"     . #'company-complete-common-or-cycle)
-   ("S-TAB"   . #'company-select-previous-or-abort)
-   ([backtab] . #'company-select-previous-or-abort)
-   ([S-tab]   . #'company-select-previous-or-abort)
-   ("C-p"     . #'company-select-previous-or-abort)
-   ("C-n"     . #'company-select-next-or-abort)
-   ("C-l"     . #'company-complete-selection)
-   ("C-v"     . #'company-next-page)
-   ("M-v"     . #'company-previous-page)
-   ("C-s"     . nil)
-
-   :filter (company-explicit-action-p)
-   ("<return>" . #'company-complete-selection)
-   ("RET"      . #'company-complete-selection)
-   ("<up>"     . #'company-select-previous)
-   ("<down>"   . #'company-select-next))
-
-  :bind*
-  (("M-TAB"    . #'company-manual-begin))
-
-  :config
-  (setq company-idle-delay 0.15)
-  (setq company-minimum-prefix-length 1)
-  (setq company-tooltip-minimum company-tooltip-limit)
-  (setq company-frontends '(company-pseudo-tooltip-frontend))
-  (setq company-show-quick-access t)
-  (setq company-require-match #'company-explicit-action-p)
-  (setq company-insertion-triggers nil)
-  (setq company-dabbrev-other-buffers nil)
-  (setq company-dabbrev-ignore-case nil)
-  (setq company-dabbrev-downcase nil)
-  (setq company-tooltip-align-annotations t)
-
-  (defun gemacs--advice-company-complete-on-change ()
-    "Make Company trigger a completion when the buffer is modified.
-This is in contrast to the default behavior, which is to trigger
-a completion when one of a whitelisted set of commands is used.
-One specific improvement this brings about is that you get
-completions automatically when backspacing into a symbol."
-    (let ((tick (buffer-chars-modified-tick)))
-      (unless (equal tick gemacs--company-buffer-modified-counter)
-        ;; Only trigger completion if previous counter value was
-        ;; non-nil (i.e., don't trigger completion just as we're
-        ;; jumping to a buffer for the first time).
-        (prog1 gemacs--company-buffer-modified-counter
-          (setq gemacs--company-buffer-modified-counter tick)))))
-
-  (advice-add 'company--should-begin :override
-    #'gemacs--advice-company-complete-on-change)
-
-  (global-company-mode +1)
-
-  (use-feature company-prescient
-    :demand t
-    :config
-    (company-prescient-mode +1))
-
-  (use-feature company-posframe
-    :demand t
-    :config
-    (company-posframe-mode +1)))
-
-
-(use-package company-prescient
-  :preface
-  (eval-when-compile
-    (declare-function company-prescient-mode nil)))
-
-
-(use-package company-posframe
-  :preface
-  (eval-when-compile
-    (defvar company-tooltip-minimum-width)
-    (declare-function company-posframe-mode nil))
+    (declare-function global-corfu-mode nil)
+    (defvar corfu-auto))
 
   :init
-  (setq company-tooltip-minimum-width 40))
+  (setq corfu-auto t)
+  (global-corfu-mode +1)
+
+  (use-feature emacs
+    :init
+    (setq completion-cycle-threshold 3)
+    (setq tab-always-indent 'complete)))
+
+
+(use-package corfu-terminal
+  :straight (:type git :repo "https://codeberg.org/akib/emacs-corfu-terminal.git")
+  :demand t
+  :after corfu
+
+  :preface
+  (eval-when-compile
+    (declare-function corfu-terminal-mode nil))
+
+  :config
+  (unless (display-graphic-p)
+    (corfu-terminal-mode +1)))
 
 
 ;; --------------------------------------------------------------------------
