@@ -35,19 +35,24 @@
 
 
 
-(use-package telephone-line)
-
-
-(use-feature telephone-line-config
+(use-package telephone-line
   :preface
   (eval-when-compile
     (declare-function telephone-line-mode nil)
     (defvar telephone-line-height)
     (defvar telephone-line-lhs)
-    (defvar telephone-line-rhs))
+    (defvar telephone-line-primary-left-separator)
+    (defvar telephone-line-primary-right-separator)
+    (defvar telephone-line-rhs)
+    (defvar telephone-line-secondary-left-separator)
+    (defvar telephone-line-secondary-right-separator))
 
   :config
   (setq telephone-line-height 18)
+  (setq telephone-line-primary-right-separator 'telephone-line-nil)
+  (setq telephone-line-secondary-right-separator 'telephone-line-nil)
+  (setq telephone-line-primary-left-separator 'telephone-line-nil)
+  (setq telephone-line-secondary-left-separator 'telephone-line-nil)
 
   (telephone-line-defsegment* gemacs--telephone-line-flymake-segment ()
     (when (bound-and-true-p flymake-mode)
@@ -59,18 +64,17 @@
         t)))
 
   (setq telephone-line-lhs
-    '((nil    . (telephone-line-window-number-segment))
+    '((accent . (telephone-line-window-number-segment))
       (evil   . (telephone-line-evil-tag-segment))
-      (accent . (telephone-line-vc-segment
-                 telephone-line-erc-modified-channels-segment
-                 telephone-line-process-segment))
-      (nil    . (telephone-line-projectile-segment
+      (nil    . (telephone-line-vc-segment))
+      (nil    . (telephone-line-projectile-segment))
+      (nil    . (telephone-line-process-segment
                  telephone-line-buffer-segment))))
 
   (setq telephone-line-rhs
-    '((nil    . (gemacs--telephone-line-flymake-segment
-                 telephone-line-misc-info-segment))
-      (accent . (telephone-line-major-mode-segment))
+    '((nil    . (gemacs--telephone-line-flymake-segment))
+      (nil    . (telephone-line-misc-info-segment))
+      (nil    . (telephone-line-major-mode-segment))
       (evil   . (telephone-line-airline-position-segment))))
 
   (telephone-line-mode +1))
@@ -220,5 +224,4 @@
   (add-hook 'gemacs-after-init-hook
     `(lambda ()
        (use-feature telephone-line :demand t)
-       (use-feature telephone-line-config :demand t)
        (use-feature modus-themes :demand t))))
