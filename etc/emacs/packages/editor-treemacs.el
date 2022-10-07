@@ -1,16 +1,6 @@
  ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 
-(defun gemacs--treemacs-add-project-or-toggle ()
-  "Initialize or toggle `treemacs-add-and-display-current-project'."
-  (interactive)
-  (when (projectile-project-p)
-    (pcase (treemacs-current-visibility)
-      ('visible (delete-window (treemacs-get-local-window)))
-      ('exists  (treemacs-add-and-display-current-project))
-      ('none    (treemacs-add-and-display-current-project)))))
-
-
 (use-package treemacs
   ;; Not exposed via autoload by Treemacs
   :commands (treemacs-switch-workspace
@@ -39,17 +29,11 @@
   (use-feature treemacs-evil
     :demand t)
 
-  (use-feature treemacs-projectile
-    :demand t)
-
   (use-feature treemacs-magit
     :demand t))
 
 
 (use-package treemacs-evil)
-
-
-(use-package treemacs-projectile)
 
 
 (use-package treemacs-magit)

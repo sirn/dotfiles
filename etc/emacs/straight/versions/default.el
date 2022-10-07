@@ -97,7 +97,6 @@
  ("posframe" . "0d23bc5f7cfac00277d83ae7ba52c48685bcbc68")
  ("prescient.el" . "a86b71431002f7c7be6ea86f6f2694d206564b13")
  ("project" . "3cdd9afe894d4a7bcf036c377d8bdaa3cab927a8")
- ("projectile" . "683862872462c1c3c68fa41e370817399c15f836")
  ("psc-ide-emacs" . "ce97d719458ea099b40c02f05b6609601c727e66")
  ("purescript-mode" . "cf113871f98da672bd2e9ae58da9c852236f3934")
  ("queue" . "130c2d656cd5d7376552272fab9e50a7c37d0c4a")

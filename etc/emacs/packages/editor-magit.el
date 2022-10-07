@@ -14,11 +14,6 @@
     (dolist (func '(magit-start-git magit-call-git))
       (advice-add func :after #'gemacs--gpg-update-tty)))
 
-  (use-feature projectile
-    :config
-    (dolist (func '(magit-checkout magit-branch-and-checkout))
-      (advice-add func :after #'gemacs--projectile-invalidate-cache)))
-
   (use-feature forge
     :demand t))
 

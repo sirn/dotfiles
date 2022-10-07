@@ -20,6 +20,8 @@
 
 
 (use-package ag
+  :commands (ag-project)
+
   :preface
   (eval-when-compile
     (declare-function ag nil))
@@ -230,7 +232,7 @@
 
 
 (use-package yasnippet
-  :defer 0.5
+  :demand t
 
   :preface
   (eval-when-compile
@@ -250,7 +252,7 @@
 ;;; Autocompletion
 
 (use-package corfu
-  :defer 0.5
+  :demand t
 
   :preface
   (eval-when-compile

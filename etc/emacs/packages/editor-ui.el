@@ -68,7 +68,7 @@
     '((accent . (telephone-line-window-number-segment))
       (evil   . (telephone-line-evil-tag-segment))
       (nil    . (telephone-line-vc-segment))
-      (nil    . (telephone-line-projectile-segment))
+      (nil    . (telephone-line-project-segment))
       (nil    . (telephone-line-process-segment
                  telephone-line-buffer-segment))))
 
