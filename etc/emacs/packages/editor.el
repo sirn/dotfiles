@@ -348,13 +348,34 @@
   :preface
   (eval-when-compile
     (declare-function eglot-code-action-organize-imports nil)
+    (declare-function eglot-current-server nil)
     (declare-function eglot-format-buffer nil)
+    (declare-function eglot-shutdown nil)
+    (declare-function gemacs--advice-eglot-shutdown-project nil)
     (declare-function gemacs--eglot-format-buffer nil)
-    (declare-function gemacs--eglot-organize-imports nil))
+    (declare-function gemacs--eglot-organize-imports nil)
+    (declare-function project-current nil)
+    (declare-function project-kill-buffers nil)
+    (declare-function project-root nil)
+    (defvar eglot-autoshutdown))
 
   :init
+  (setq eglot-autoshutdown t)
+
   (defun gemacs--eglot-format-buffer ()
     (eglot-format-buffer))
 
   (defun gemacs--eglot-organize-imports ()
-    (call-interactively 'eglot-code-action-organize-imports)))
+    (call-interactively 'eglot-code-action-organize-imports))
+
+  :config
+  (use-feature project
+    :config
+    (defun gemacs--advice-eglot-shutdown-project (orig-fun &rest args)
+      (let* ((pr (project-current t))
+             (default-directory (project-root pr)))
+        (when-let ((server (eglot-current-server)))
+          (ignore-errors (eglot-shutdown server)))
+        (apply orig-fun args)))
+
+    (advice-add 'project-kill-buffers :around #'gemacs--advice-eglot-shutdown-project)))
