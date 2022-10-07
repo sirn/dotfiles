@@ -20,7 +20,6 @@
 
   :preface
   (eval-when-compile
-    (require 'cl-lib)
     (declare-function apheleia-mode nil))
 
   :init
@@ -81,6 +80,10 @@ poke it. Otherwise the modified text remains unfontified."
 
 
 (use-package emmet-mode
+  :preface
+  (eval-when-compile
+    (require 'cl-lib))
+
   :init
   (add-hook 'web-mode-hook 'emmet-mode)
   (add-hook 'css-mode-hook 'emmet-mode))
