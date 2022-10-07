@@ -50,10 +50,10 @@
 
   :config
   (setq telephone-line-height 18)
-  (setq telephone-line-primary-right-separator 'telephone-line-nil)
-  (setq telephone-line-secondary-right-separator 'telephone-line-nil)
-  (setq telephone-line-primary-left-separator 'telephone-line-nil)
-  (setq telephone-line-secondary-left-separator 'telephone-line-nil)
+  (setq telephone-line-primary-right-separator 'telephone-line-utf-abs-right)
+  (setq telephone-line-secondary-right-separator 'telephone-line-utf-abs-hollow-right)
+  (setq telephone-line-primary-left-separator 'telephone-line-utf-abs-left)
+  (setq telephone-line-secondary-left-separator 'telephone-line-utf-abs-hollow-left)
 
   (telephone-line-defsegment* gemacs--telephone-line-flymake-segment ()
     (when (bound-and-true-p flymake-mode)
