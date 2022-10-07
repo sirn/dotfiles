@@ -2,7 +2,7 @@
 
 (use-package magit
   :leader
-  ("gs" #'magit-status)
+  ("gs" #'magit-project-status)
 
   :init
   (setq magit-no-message '("Turning on magit-auto-revert-mode..."))
