@@ -343,7 +343,8 @@
   (add-hook 'flymake-mode-hook #'flymake-popon-mode))
 
 
-(use-feature eldoc
+(use-package eldoc
+  :straight (:host github :repo "emacs-straight/eldoc")
   :demand t
 
   :custom
@@ -354,6 +355,7 @@
 ;;; Language Server Protocol
 
 (use-package eglot
+  :straight (:host github :repo "joaotavora/eglot")
   :preface
   (eval-when-compile
     (declare-function eglot-code-action-organize-imports nil)

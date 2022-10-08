@@ -26,7 +26,6 @@
 ;; --------------------------------------------------------------------------
 ;;; Pre-initialization
 
-(require 'cl-lib)
 (require 'map)
 (require 'subr-x)
 
@@ -110,11 +109,6 @@
 
 (straight-use-package
  '(org :host github :repo "emacs-straight/org-mode" :local-repo "org"))
-
-;; Useful libraries
-
-(use-package s)
-(use-package closql)
 
 ;; Key bindings are handled by general.el, which replaces both bind-key
 ;; and evil-leader; this is loaded early to allow use-package macro

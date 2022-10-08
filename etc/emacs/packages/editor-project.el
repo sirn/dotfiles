@@ -1,7 +1,8 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
-(use-feature project
+(use-package project
   :demand t
+  :straight (:host github :repo "emacs-straight/project")
 
   :general
   (leader
