@@ -207,6 +207,8 @@ gg() {
         codedirs[0]=$HOME/src
     fi
 
+    # Note: command should match with `gemacs--project-sync' in
+    # `etc/elisp/packages/editor-project.el'.
     dir=$(
         find "${codedirs[@]}" \
             -not -path '*/node_modules/*' \
