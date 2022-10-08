@@ -254,25 +254,6 @@
 (use-feature abbrev)
 
 
-(use-package yasnippet
-  :demand t
-
-  :preface
-  (eval-when-compile
-    (declare-function yas--make-control-overlay nil))
-
-  :general
-  (:keymaps 'yas-minor-mode-map
-    "TAB"   nil
-    "<tab>" nil)
-
-  :custom
-  (yas-verbosity 2)
-
-  :config
-  (yas-global-mode +1))
-
-
 ;; --------------------------------------------------------------------------
 ;;; Autocompletion
 

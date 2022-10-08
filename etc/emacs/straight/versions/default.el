@@ -125,6 +125,5 @@
  ("with-editor" . "1d5860cfd05d6805018bd071b8f9b56493ba11c6")
  ("xref" . "ae7a2a2e4b02e06bb4d6053085a83a646824e2bf")
  ("yaml-mode" . "9969207f60b69e42c573a63764faeb9caaccb2bf")
- ("yaml.el" . "73fde9d8fbbaf2596449285df9eb412ae9dd74d9")
- ("yasnippet" . "5cbdbf0d2015540c59ed8ee0fcf4788effdf75b6"))
+ ("yaml.el" . "73fde9d8fbbaf2596449285df9eb412ae9dd74d9"))
 :gamma
