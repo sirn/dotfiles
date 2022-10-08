@@ -1,8 +1,8 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-feature epg
-  :init
-  (setq epg-pinentry-mode 'loopback))
+  :custom
+  (epg-pinentry-mode 'loopback))
 
 
 (use-package pinentry

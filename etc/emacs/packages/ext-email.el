@@ -17,8 +17,8 @@
     (leader
       "mm" #'notmuch)
 
-    :init
-    (setq message-send-mail-function #'message-send-mail-with-sendmail)
-    (setq message-sendmail-f-is-evil 't)
-    (setq message-sendmail-envelope-from 'header)
-    (setq sendmail-program "msmtp")))
+    :custom
+    (message-send-mail-function #'message-send-mail-with-sendmail)
+    (message-sendmail-f-is-evil 't)
+    (message-sendmail-envelope-from 'header)
+    (sendmail-program "msmtp")))

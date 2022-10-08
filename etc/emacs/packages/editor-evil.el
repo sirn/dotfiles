@@ -10,11 +10,11 @@
     (defvar evil-mode-line-format)
     (defvar evil-undo-system))
 
-  :init
-  (setq evil-want-integration +1)
-  (setq evil-want-keybinding nil)
-  (setq evil-mode-line-format nil)
-  (setq evil-undo-system 'undo-tree)
+  :custom
+  (evil-want-integration +1)
+  (evil-want-keybinding nil)
+  (evil-mode-line-format nil)
+  (evil-undo-system 'undo-tree)
 
   :config
   (fset 'evil-visual-update-x-selection 'ignore)

@@ -28,8 +28,8 @@
     (defvar prescient-history-length)
     (declare-function prescient-persist-mode nil))
 
-  :init
-  (setq prescient-history-length 1000)
+  :custom
+  (prescient-history-length 1000)
 
   :config
   (prescient-persist-mode +1)

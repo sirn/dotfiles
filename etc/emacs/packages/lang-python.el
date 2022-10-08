@@ -10,9 +10,9 @@
     (declare-function gemacs--python-lsp-bin nil)
     (defvar eglot-server-programs))
 
-  :init
-  (setq python-fill-docstring-style 'django)
-  (setq python-indent-guess-indent-offset-verbose nil)
+  :custom
+  (python-fill-docstring-style 'django)
+  (python-indent-guess-indent-offset-verbose nil)
 
   :config
   (use-feature eglot

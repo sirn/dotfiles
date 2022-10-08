@@ -22,12 +22,12 @@
   (eval-when-compile
     (declare-function apheleia-mode nil))
 
-  :init
-  (setq web-mode-enable-auto-closing t)
-  (setq web-mode-auto-close-style 2)
-  (setq web-mode-enable-auto-quoting nil)
-  (setq web-mode-enable-current-element-highlight t)
-  (setq web-mode-enable-current-column-highlight t)
+  :custom
+  (web-mode-enable-auto-closing t)
+  (web-mode-auto-close-style 2)
+  (web-mode-enable-auto-quoting nil)
+  (web-mode-enable-current-element-highlight t)
+  (web-mode-enable-current-column-highlight t)
 
   :config
   (add-to-list 'web-mode-content-types-alist '("jsx" . "\\.js[x]?\\'"))

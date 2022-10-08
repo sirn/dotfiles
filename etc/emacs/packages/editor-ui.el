@@ -16,9 +16,9 @@
     "8" #'winum-select-window-8
     "9" #'winum-select-window-9)
 
-  :init
-  (setq winum-auto-setup-mode-line nil)
-  (setq winum-scope 'frame-local)
+  :custom
+  (winum-auto-setup-mode-line nil)
+  (winum-scope 'frame-local)
 
   :config
   (winum-mode +1))
@@ -49,13 +49,26 @@
     (defvar telephone-line-secondary-left-separator)
     (defvar telephone-line-secondary-right-separator))
 
-  :config
-  (setq telephone-line-height 18)
-  (setq telephone-line-primary-right-separator 'telephone-line-utf-abs-right)
-  (setq telephone-line-secondary-right-separator 'telephone-line-utf-abs-hollow-right)
-  (setq telephone-line-primary-left-separator 'telephone-line-utf-abs-left)
-  (setq telephone-line-secondary-left-separator 'telephone-line-utf-abs-hollow-left)
+  :custom
+  (telephone-line-height 18)
+  (telephone-line-primary-right-separator 'telephone-line-utf-abs-right)
+  (telephone-line-secondary-right-separator 'telephone-line-utf-abs-hollow-right)
+  (telephone-line-primary-left-separator 'telephone-line-utf-abs-left)
+  (telephone-line-secondary-left-separator 'telephone-line-utf-abs-hollow-left)
+  (telephone-line-lhs
+    '((accent . (telephone-line-window-number-segment))
+      (evil   . (telephone-line-evil-tag-segment))
+      (nil    . (telephone-line-vc-segment))
+      (nil    . (telephone-line-project-segment))
+      (nil    . (telephone-line-process-segment
+                 telephone-line-buffer-segment))))
+  (telephone-line-rhs
+    '((nil    . (gemacs--telephone-line-flymake-segment))
+      (nil    . (telephone-line-misc-info-segment))
+      (nil    . (telephone-line-major-mode-segment))
+      (evil   . (telephone-line-airline-position-segment))))
 
+  :config
   (telephone-line-defsegment* gemacs--telephone-line-flymake-segment ()
     (when (bound-and-true-p flymake-mode)
       (ignore face)  ;; silent "unused lexical argument"
@@ -65,20 +78,6 @@
           flymake-mode-line-format)
         t)))
 
-  (setq telephone-line-lhs
-    '((accent . (telephone-line-window-number-segment))
-      (evil   . (telephone-line-evil-tag-segment))
-      (nil    . (telephone-line-vc-segment))
-      (nil    . (telephone-line-project-segment))
-      (nil    . (telephone-line-process-segment
-                 telephone-line-buffer-segment))))
-
-  (setq telephone-line-rhs
-    '((nil    . (gemacs--telephone-line-flymake-segment))
-      (nil    . (telephone-line-misc-info-segment))
-      (nil    . (telephone-line-major-mode-segment))
-      (evil   . (telephone-line-airline-position-segment))))
-
   (telephone-line-mode +1))
 
 
@@ -87,8 +86,8 @@
   (eval-when-compile
     (defvar modus-themes-mode-line))
 
-  :init
-  (setq modus-themes-mode-line '(borderless))
+  :custom
+  (modus-themes-mode-line '(borderless))
 
   :config
   (load-theme 'modus-vivendi t))
@@ -125,7 +124,6 @@
     (defvar mac-option-key-is-meta))
 
   :config
-
   (defvar gemacs-font "PragmataPro Mono")
   (defvar gemacs-font-size 11)
 

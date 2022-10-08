@@ -17,6 +17,9 @@
     "tR" #'treemacs-rename-workspace
     "tp" #'treemacs-add-project-to-workspace)
 
+  :custom
+  (treemacs-read-string-input 'from-minibuffer)
+
   :init
   (eval-when-compile
     (declare-function treemacs-current-visibility nil)
@@ -26,12 +29,8 @@
     (defvar treemacs-read-string-input))
 
   :config
-  (setq treemacs-read-string-input 'from-minibuffer)
-  (use-feature treemacs-evil
-    :demand t)
-
-  (use-feature treemacs-magit
-    :demand t))
+  (use-feature treemacs-evil :demand t)
+  (use-feature treemacs-magit :demand t))
 
 
 (use-package treemacs-evil)

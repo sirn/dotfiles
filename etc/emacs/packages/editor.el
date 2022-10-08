@@ -62,8 +62,8 @@
     (declare-function ctrlf-mode nil)
     (defvar ctrlf-default-search-style))
 
-  :init
-  (setq ctrlf-default-search-style 'fuzzy)
+  :custom
+  (ctrlf-default-search-style 'fuzzy)
 
   :config
   (ctrlf-mode +1))
@@ -85,9 +85,9 @@
   (eval-when-compile
     (declare-function global-undo-tree-mode nil))
 
-  :init
-  (setq undo-tree-enable-undo-in-region nil)
-  (setq undo-tree-auto-save-history t)
+  :custom
+  (undo-tree-enable-undo-in-region nil)
+  (undo-tree-auto-save-history t)
 
   :config
   (dolist (func '(undo-tree-load-history undo-tree-save-history))
@@ -148,11 +148,11 @@
 (use-feature smartparens-config
   :demand t
 
-  :config
-  (setq sp-highlight-pair-overlay nil)
-  (setq sp-highlight-wrap-overlay nil)
-  (setq sp-highlight-wrap-tag-overlay nil)
-  (setq sp-cancel-autoskip-on-backward-movement nil))
+  :custom
+  (sp-highlight-pair-overlay nil)
+  (sp-highlight-wrap-overlay nil)
+  (sp-highlight-wrap-tag-overlay nil)
+  (sp-cancel-autoskip-on-backward-movement nil))
 
 
 (use-feature paren
@@ -171,8 +171,10 @@
     (defvar parinfer-rust-library)
     (defvar parinfer-rust-auto-download))
 
+  :custom
+  (parinfer-rust-auto-download nil)
+
   :init
-  (setq parinfer-rust-auto-download nil)
   (setq parinfer-rust-library
         (no-littering-expand-var-file-name
          (concat
@@ -264,8 +266,10 @@
     "TAB"   nil
     "<tab>" nil)
 
+  :custom
+  (yas-verbosity 2)
+
   :config
-  (setq yas-verbosity 2)
   (yas-global-mode +1))
 
 
@@ -280,14 +284,16 @@
     (declare-function global-corfu-mode nil)
     (defvar corfu-auto))
 
+  :custom
+  (corfu-auto t)
+
   :init
-  (setq corfu-auto t)
   (global-corfu-mode +1)
 
   (use-feature emacs
-    :init
-    (setq completion-cycle-threshold 3)
-    (setq tab-always-indent 'complete)))
+    :custom
+    (completion-cycle-threshold 3)
+    (tab-always-indent 'complete)))
 
 
 (use-package corfu-terminal
@@ -359,8 +365,8 @@
 (use-feature eldoc
   :demand t
 
-  :config
-  (setq eldoc-echo-area-use-multiline-p nil))
+  :custom
+  (eldoc-echo-area-use-multiline-p nil))
 
 
 ;; --------------------------------------------------------------------------
@@ -381,9 +387,10 @@
     (declare-function project-root nil)
     (defvar eglot-autoshutdown))
 
-  :init
-  (setq eglot-autoshutdown t)
+  :custom
+  (eglot-autoshutdown t)
 
+  :init
   (defun gemacs--eglot-format-buffer ()
     (eglot-format-buffer))
 

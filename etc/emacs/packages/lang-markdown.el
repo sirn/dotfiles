@@ -17,8 +17,8 @@
     (declare-function apheleia-mode nil)
     (defvar apheleia-mode-alist))
 
-  :init
-  (setq markdown-command "pandoc")
+  :custom
+  (markdown-command "pandoc")
 
   :config
   (use-feature apheleia
