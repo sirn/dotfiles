@@ -6,7 +6,7 @@
 
   :general
   (leader
-    "pSR" #'gemacs--project-sync
+    "pSS" #'gemacs--project-sync
     "pf" #'project-find-file
     "pp" #'project-switch-project
     "pb" #'project-switch-to-buffer
@@ -41,39 +41,52 @@
     (general-with-eval-after-load 'general
       (leader "p/" #'gemacs--project-ag)))
 
+  ;; Custom command for syncing projects
+  ;;
+  ;; Even though project-remember-projects-under exists, it also walks
+  ;; down matched project root, which makes detected VC root under
+  ;; project root also get added to the list of known projects.
+  ;;
+  ;; This custom command properly handle such case, and could scan
+  ;; ~14,000 directories in less than a second (thanks to `find').
+
+  (defun gemacs--project-sync--codedirs ()
+    (seq-map
+     #'expand-file-name
+     (seq-remove
+      #'string-empty-p
+      (split-string
+       (shell-command-to-string "git config --get-all ghq.root")
+       "\n"))))
+
+  (defun gemacs--project-sync--projdirs (codedir)
+    (seq-remove
+     #'string-empty-p
+     (when (file-directory-p codedir)
+       (split-string
+        (shell-command-to-string
+         (mapconcat
+          #'shell-quote-argument
+          ;; Note: command should match with `gg' in `etc/ksh/kshrc'.
+          `("find" ,codedir
+            "-not" "-path" "*/node_modules/*"
+            "-not" "-path" "*/vendor/*"
+            "("
+            "-exec" "test" "-d" "{}/.git" ";"
+            "-or" "-exec" "test" "-d" "{}/.hg" ";"
+            ")"
+            "-print" "-prune")
+          " "))
+        "\n"))))
+
   (defun gemacs--project-sync ()
     (interactive)
     (project-forget-zombie-projects)
-    (let* ((codedirs
-            (seq-remove #'string-empty-p
-                          (split-string
-                           (shell-command-to-string "git config --get-all ghq.root")
-                           "\n")))
-           (projdirs
-            (seq-remove
-             #'string-empty-p
-             (flatten-tree
-              (seq-map
-               (lambda (codedir)
-                 (let ((realcodedir (expand-file-name codedir)))
-                   (when (file-directory-p realcodedir)
-                     (split-string
-                      (shell-command-to-string
-                       (mapconcat
-                        #'shell-quote-argument
-                        ;; Note: command should match with `gg' in `etc/ksh/kshrc'.
-                        `("find" ,realcodedir
-                          "-not" "-path" "*/node_modules/*"
-                          "-not" "-path" "*/vendor/*"
-                          "("
-                          "-exec" "test" "-d" "{}/.git" ";"
-                          "-or" "-exec" "test" "-d" "{}/.hg" ";"
-                          ")"
-                          "-print" "-prune")
-                        " "))
-                      "\n"))))
-               codedirs)))))
-      (seq-doseq (projdir projdirs)
+    (project-remember-project (project-current nil "~/.dotfiles"))
+    (project-remember-project (project-current nil "~/.dotpriv"))
+    (seq-doseq (codedir (gemacs--project-sync--codedirs))
+      (seq-doseq (projdir (gemacs--project-sync--projdirs codedir))
         (let* ((dir (abbreviate-file-name projdir))
                (pr (project-current nil dir)))
-          (project-remember-project pr t))))))
+          (project-remember-project pr))))
+    (message "Projects successfully synced")))
