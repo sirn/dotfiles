@@ -13,8 +13,9 @@
       (defvar sendmail-program)
       (declare-function message-send-mail-with-sendmail nil))
 
-    :leader
-    ("mm" #'notmuch)
+    :general
+    (leader
+      "mm" #'notmuch)
 
     :init
     (setq message-send-mail-function #'message-send-mail-with-sendmail)

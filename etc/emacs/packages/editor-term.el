@@ -5,10 +5,12 @@
   (eval-when-compile
     (declare-function gemacs--eshell-remove-pcomplete nil))
 
-  :leader
-  ("'" #'eshell))
+  :general
+  (leader
+    "'" #'eshell))
 
 
 (use-package multi-term
-  :leader
-  ("\"" #'multi-term))
+  :general
+  (leader
+    "\"" #'multi-term))

@@ -39,24 +39,6 @@
   (evil-commentary-mode +1))
 
 
-(use-package evil-leader
-  :demand t
-
-  :leader
-  ("wo" #'other-window
-   "wd" #'delete-window
-   "wD" #'delete-other-windows
-   "w-" #'split-window-below
-   "w/" #'split-window-right
-   "w=" #'balance-windows
-   "bd" #'kill-buffer
-   "bD" #'kill-buffer-and-window)
-
-  :config
-  (evil-leader/set-leader "<SPC>")
-  (global-evil-leader-mode +1))
-
-
 (use-package evil-matchit
   :demand t
 

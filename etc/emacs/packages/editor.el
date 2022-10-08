@@ -5,6 +5,22 @@
 ;; https://github.com/radian-software/radian/blob/242c55c/emacs/radian.el
 
 ;; --------------------------------------------------------------------------
+;;; Key bindings
+
+(use-feature emacs
+  :general
+  (leader
+    "wo" #'other-window
+    "wd" #'delete-window
+    "wD" #'delete-other-windows
+    "w-" #'split-window-below
+    "w/" #'split-window-right
+    "w=" #'balance-windows
+    "bd" #'kill-buffer
+    "bD" #'kill-buffer-and-window))
+
+
+;; --------------------------------------------------------------------------
 ;;; Editing behaviors
 
 (setq-default indent-tabs-mode nil)
@@ -13,8 +29,9 @@
 (put 'downcase-region 'disabled nil)
 
 (use-package avy
-  :leader
-  ("jj" #'avy-goto-char
+  :general
+  (leader
+   "jj" #'avy-goto-char
    "jJ" #'avy-goto-char-2
    "jl" #'avy-goto-line))
 
@@ -26,13 +43,15 @@
   (eval-when-compile
     (declare-function ag nil))
 
-  :leader
-  ("/" #'ag))
+  :general
+  (leader
+   "/" #'ag))
 
 
 (use-package ace-link
-  :leader
-  ("jL" #'ace-link))
+  :general
+  (leader
+   "jL" #'ace-link))
 
 
 (use-package ctrlf
@@ -58,8 +77,9 @@
 
 (use-package undo-tree
   :demand t
-  :leader
-  ("uv" #'undo-tree-visualize)
+  :general
+  (leader
+   "uv" #'undo-tree-visualize)
 
   :preface
   (eval-when-compile
@@ -83,12 +103,12 @@
 
 
 (use-package visual-regexp
-  :bind
-  (("M-%"   . #'vr/query-replace)
-   ("C-c s" . #'vr/isearch-forward)
-   ("C-c r" . #'vr/isearch-backward)
-   ("C-c R" . #'vr/replace)
-   ("C-c q" . #'vr/query-replace))
+  :general
+  ("M-%"   #'vr/query-replace
+   "C-c s" #'vr/isearch-forward
+   "C-c r" #'vr/isearch-backward
+   "C-c R" #'vr/replace
+   "C-c q" #'vr/query-replace)
 
   :config
   (use-feature visual-regexp-steroids
@@ -104,8 +124,9 @@
 (use-package smartparens
   :demand t
 
-  :leader
-  ("s>" #'sp-forward-slurp-sexp
+  :general
+  (leader
+   "s>" #'sp-forward-slurp-sexp
    "s<" #'sp-backward-slurp-sexp
    "sk" #'sp-kill-whole-line
    "s(" #'sp-wrap-round
@@ -238,10 +259,10 @@
   (eval-when-compile
     (declare-function yas--make-control-overlay nil))
 
-  :bind
-  (:map yas-minor-mode-map
-    ("TAB"   . nil)
-    ("<tab>" . nil))
+  :general
+  (:keymaps 'yas-minor-mode-map
+    "TAB"   nil
+    "<tab>" nil)
 
   :config
   (setq yas-verbosity 2)
@@ -304,8 +325,9 @@
 (use-feature flymake
   :demand t
 
-  :leader
-  ("fn" #'flymake-goto-next-error
+  :general
+  (leader
+   "fn" #'flymake-goto-next-error
    "fp" #'flymake-goto-prev-error
    "fl" #'flymake-show-buffer-diagnostics
    "fP" #'flymake-show-project-diagnostics)

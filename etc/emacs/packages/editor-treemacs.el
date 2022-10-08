@@ -8,13 +8,14 @@
               treemacs-rename-workspace
               treemacs-add-project-to-workspace)
 
-  :leader
-  ("tt" #'treemacs
-   "tw" #'treemacs-switch-workspace
-   "tC" #'treemacs-create-workspace
-   "tE" #'treemacs-edit-workspaces
-   "tR" #'treemacs-rename-workspace
-   "tp" #'treemacs-add-project-to-workspace)
+  :general
+  (leader
+    "tt" #'treemacs
+    "tw" #'treemacs-switch-workspace
+    "tC" #'treemacs-create-workspace
+    "tE" #'treemacs-edit-workspaces
+    "tR" #'treemacs-rename-workspace
+    "tp" #'treemacs-add-project-to-workspace)
 
   :init
   (eval-when-compile

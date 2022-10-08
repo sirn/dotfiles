@@ -6,10 +6,11 @@
     (defvar w3m-search-engine-alist)
     (defvar w3m-search-default-engine))
 
-  :leader
-  (";W" #'w3m
-   ";w" #'w3m-goto-url
-   ";s" #'w3m-search)
+  :general
+  (leader
+    ";W" #'w3m
+    ";w" #'w3m-goto-url
+    ";s" #'w3m-search)
 
   :init
   (setq browse-url-browser-function #'w3m-browse-url)

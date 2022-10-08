@@ -1,8 +1,9 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package magit
-  :leader
-  ("gs" #'magit-project-status)
+  :general
+  (leader
+    "gs" #'magit-project-status)
 
   :init
   (setq magit-no-message '("Turning on magit-auto-revert-mode..."))

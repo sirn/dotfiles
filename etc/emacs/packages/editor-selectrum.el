@@ -8,14 +8,13 @@
   (eval-when-compile
     (declare-function selectrum-mode nil))
 
-  :bind
-  (("C-x C-b" . #'switch-to-buffer))
-
-  :leader
-  ("bb"  #'switch-to-buffer
-   "wbb" #'switch-to-buffer-other-window
-   "dv"  #'describe-variable
-   "df"  #'describe-function)
+  :general
+  ("C-x C-b" #'switch-to-buffer)
+  (leader
+    "bb"  #'switch-to-buffer
+    "wbb" #'switch-to-buffer-other-window
+    "dv"  #'describe-variable
+    "df"  #'describe-function)
 
   :config
   (selectrum-mode +1))

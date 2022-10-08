@@ -1,19 +1,19 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package helpful
-  :bind
-  (([remap describe-function] . #'helpful-callable)
-   ([remap describe-variable] . #'helpful-variable)
-   ([remap describe-symbol]   . #'helpful-symbol)
-   ([remap describe-key]      . #'helpful-key)
+  :general
+  ([remap describe-function] #'helpful-callable
+   [remap describe-variable] #'helpful-variable
+   [remap describe-symbol]   #'helpful-symbol
+   [remap describe-key]      #'helpful-key)
 
-   :map help-map
-   ("F"   . #'helpful-function)
-   ("M-f" . #'helpful-macro)
-   ("C"   . #'helpful-command)
+  (:keymaps 'help-map
+   "F"   #'helpful-function
+   "M-f" #'helpful-macro
+   "C"   #'helpful-command)
 
-   :map global-map
-   ("C-c C-d" . #'helpful-at-point)))
+  (:keymaps 'global-map
+   "C-c C-d" #'helpful-at-point))
 
 
 (use-feature elisp-mode

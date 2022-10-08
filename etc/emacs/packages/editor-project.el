@@ -3,19 +3,21 @@
 (use-feature project
   :demand t
 
-  :leader
-  ("pf" #'project-find-file
-   "pp" #'project-switch-project
-   "pb" #'project-switch-to-buffer
-   "pk" #'project-kill-buffers
-   "p'" #'project-eshell
-   "p!" #'project-async-shell-command
-   "pc" #'project-compile)
+  :general
+  (leader
+    "pf" #'project-find-file
+    "pp" #'project-switch-project
+    "pb" #'project-switch-to-buffer
+    "pk" #'project-kill-buffers
+    "p'" #'project-eshell
+    "p!" #'project-async-shell-command
+    "pc" #'project-compile)
 
   :preface
   (eval-when-compile
     (declare-function ag-project-regexp nil)
     (declare-function gemacs--project-ag nil)
+    (declare-function leader nil)
     (declare-function project-async-shell-command nil)
     (declare-function project-compile nil)
     (declare-function project-eshell nil)
@@ -33,5 +35,5 @@
              (default-directory (project-root pr)))
         (call-interactively 'ag-project-regexp)))
 
-    (with-eval-after-load 'evil-leader
-      (evil-leader/set-key "p/" #'gemacs--project-ag))))
+    (general-with-eval-after-load 'general
+      (leader "p/" #'gemacs--project-ag))))

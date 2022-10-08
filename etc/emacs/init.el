@@ -111,9 +111,23 @@
 (straight-use-package
  '(org :host github :repo "emacs-straight/org-mode" :local-repo "org"))
 
-(use-package bind-key)
-(use-package closql)
+;; Useful libraries
+
 (use-package s)
+(use-package closql)
+
+;; Key bindings are handled by general.el, which replaces both bind-key
+;; and evil-leader; this is loaded early to allow use-package macro
+;; to work correctly.
+
+(use-package general)
+
+(general-create-definer leader
+    :keymaps 'override
+    :states '(normal visual motion insert)
+    :prefix "SPC"
+    :non-normal-prefix "M-SPC")
+
 
 ;; --------------------------------------------------------------------------
 ;;; Convenient helpers
@@ -241,31 +255,6 @@ This is an `:around' advice for many different functions."
 `inhibit-message' for silencing message."
   (let ((inhibit-message t))
     (apply func args)))
-
-
-;; An extension to use-package to provides `:leader' keyword for defining
-;; `evil-leader' key bindings. Only run during compilation.
-
-(eval-when-compile
-  (defun use-package-normalize/:leader (_name-symbol keyword args)
-    "Normalize `:leader' keyword in `use-package'."
-    (use-package-only-one (symbol-name keyword) args
-      (lambda (_label arg)
-        (cond
-         ((listp arg) arg)
-         (t
-          (use-package-error
-           ":leader wants a list"))))))
-
-  (defun use-package-handler/:leader (name-symbol _keyword arg rest state)
-    "Handler for `:leader' keyword in `use-package'."
-    (use-package-concat
-     (use-package-process-keywords name-symbol rest state)
-     `(,(macroexpand
-         `(with-eval-after-load 'evil-leader
-            (evil-leader/set-key ,@arg))))))
-
-  (add-to-list 'use-package-keywords :leader))
 
 
 ;; --------------------------------------------------------------------------

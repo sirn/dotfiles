@@ -3,8 +3,9 @@
 (use-package winum
   :demand t
 
-  :leader
-  ("0" #'winum-select-window-0
+  :general
+  (leader
+    "0" #'winum-select-window-0
     "1" #'winum-select-window-1
     "2" #'winum-select-window-2
     "3" #'winum-select-window-3
