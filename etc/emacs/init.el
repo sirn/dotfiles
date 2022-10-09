@@ -95,10 +95,12 @@
 
 (eval-when-compile
   (defvar straight-use-package-by-default)
-  (defvar use-package-always-defer))
+  (defvar use-package-always-defer)
+  (defvar use-package-compute-statistics))
 
 (setq straight-use-package-by-default t)
 (setq use-package-always-defer t)
+(setq use-package-compute-statistics nil)
 
 (eval-when-compile
   (require 'use-package)
@@ -158,46 +160,6 @@ specific Emacs version."
   (when (eval cond)
     `(progn ,@body)))
 
-(defmacro gemacs-flet (bindings &rest body)
-  "Temporarily override function definitions using `cl-letf*'.
-BINDINGS are composed of `defun'-ish forms. NAME is the function
-to override. It has access to the original function as a
-lexically bound variable by the same name, for use with
-`funcall'. ARGLIST and BODY are as in `defun'.
-\(fn ((defun NAME ARGLIST &rest BODY) ...) BODY...)"
-  (declare (indent defun))
-  `(cl-letf* (,@(cl-mapcan
-                 (lambda (binding)
-                   (when (memq (car binding) '(defun lambda))
-                     (setq binding (cdr binding)))
-                   (cl-destructuring-bind (name arglist &rest body) binding
-                     (list
-                      `(,name (symbol-function #',name))
-                      `((symbol-function #',name)
-                        (lambda ,arglist
-                          ,@body)))))
-                 bindings))
-     ,@body))
-
-(defmacro gemacs-protect-macros (&rest body)
-  "Eval BODY, protecting macros from incorrect expansion.
-This macro should be used in the following situation:
-Some form is being evaluated, and this form contains as a
-sub-form some code that will not be evaluated immediately, but
-will be evaluated later. The code uses a macro that is not
-defined at the time the top-level form is evaluated, but will be
-defined by time the sub-form's code is evaluated. This macro
-handles its arguments in some way other than evaluating them
-directly. And finally, one of the arguments of this macro could
-be interpreted itself as a macro invocation, and expanding the
-invocation would break the evaluation of the outer macro.
-You might think this situation is such an edge case that it would
-never happen, but you'd be wrong, unfortunately. In such a
-situation, you must wrap at least the outer macro in this form,
-but can wrap at any higher level up to the top-level form."
-  (declare (indent 0))
-  `(eval '(progn ,@body)))
-
 (defun gemacs--path-join (path &rest segments)
   "Join PATH with SEGMENTS using `expand-file-name'.
 First `expand-file-name' is called on the first member of
@@ -208,34 +170,6 @@ return value is just PATH."
   (while segments
     (setq path (expand-file-name (pop segments) path)))
   path)
-
-(defmacro gemacs--with-silent-message (regexps &rest body)
-  "Silencing any messages that match REGEXPS, execute BODY.
-REGEXPS is a list of strings; if `message' would display a
-message string (not including the trailing newline) matching any
-element of REGEXPS, nothing happens. The REGEXPS need not match
-the entire message; include ^ and $ if necessary. REGEXPS may
-also be a single string."
-  (declare (indent 1))
-  (let ((regexps-sym (cl-gensym "regexps")))
-    `(let ((,regexps-sym ,regexps))
-       (when (stringp ,regexps-sym)
-         (setq ,regexps-sym (list ,regexps-sym)))
-       (gemacs-flet ((defun message (format &rest args)
-                       (let ((str (apply #'format format args)))
-                         ;; Can't use an unnamed block because during
-                         ;; byte-compilation, some idiot loads `cl', which
-                         ;; sticks an advice onto `dolist' that makes it
-                         ;; behave like `cl-dolist' (i.e., wrap it in
-                         ;; another unnamed block) and therefore breaks
-                         ;; this code.
-                         (cl-block done
-                           (dolist (regexp ,regexps-sym)
-                             (when (or (null regexp)
-                                       (string-match-p regexp str))
-                               (cl-return-from done)))
-                           (funcall message "%s" str)))))
-         ,@body))))
 
 (defun gemacs--advice-silence-messages (func &rest args)
   "Invoke FUNC with ARGS, silencing all messages.

@@ -10,10 +10,9 @@ Use the following order for `use-package`:
 -   `after`
 -   `require`
 -   `commands`
--   `bind`
--   `bind-keymap`
--   `leader`
+-   `general`
 -   `preface`
+-   `custom`
 -   `init`
 -   `config`
 
