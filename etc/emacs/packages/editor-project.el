@@ -18,16 +18,8 @@
 
   :preface
   (eval-when-compile
-    (declare-function ag-project-regexp nil)
     (declare-function gemacs--project-ag nil)
-    (declare-function gemacs--project-sync nil)
-    (declare-function leader nil)
-    (declare-function project-async-shell-command nil)
-    (declare-function project-compile nil)
-    (declare-function project-eshell nil)
-    (declare-function project-find-file nil)
-    (declare-function project-kill-buffers nil)
-    (declare-function project-switch-project nil))
+    (declare-function gemacs--project-sync nil))
 
   :config
   (use-feature ag

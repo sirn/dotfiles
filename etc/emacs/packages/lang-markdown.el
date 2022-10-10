@@ -15,11 +15,6 @@
   :custom
   (markdown-command "pandoc")
 
-  :preface
-  (eval-when-compile
-    (declare-function apheleia-mode nil)
-    (defvar apheleia-mode-alist))
-
   :config
   (use-feature apheleia
     :demand t

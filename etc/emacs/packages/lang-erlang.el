@@ -3,11 +3,9 @@
 (use-package erlang
   :preface
   (eval-when-compile
-    (declare-function eglot-ensure nil)
     (declare-function gemacs--eglot-format-buffer nil)
     (declare-function gemacs--eglot-organize-imports nil)
-    (declare-function gemacs--erlang-auto-format nil)
-    (defvar eglot-server-programs))
+    (declare-function gemacs--erlang-auto-format nil))
 
   :config
   (use-feature eglot

@@ -13,10 +13,6 @@
     "dv"  #'describe-variable
     "df"  #'describe-function)
 
-  :preface
-  (eval-when-compile
-    (declare-function selectrum-mode nil))
-
   :config
   (selectrum-mode +1))
 
@@ -26,11 +22,6 @@
 
   :custom
   (prescient-history-length 1000)
-
-  :preface
-  (eval-when-compile
-    (defvar prescient-history-length)
-    (declare-function prescient-persist-mode nil))
 
   :config
   (prescient-persist-mode +1)
@@ -47,10 +38,6 @@
   :after (selectrum prescient)
 
   :demand t
-
-  :preface
-  (eval-when-compile
-    (declare-function selectrum-prescient-mode nil))
 
   :config
   (selectrum-prescient-mode +1))

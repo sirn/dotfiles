@@ -1,12 +1,6 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package haskell-mode
-  :preface
-  (eval-when-compile
-    (declare-function apheleia-mode nil)
-    (declare-function flymake-haskell-multi-load nil)
-    (declare-function flymake-mode nil))
-
   :config
   (use-feature apheleia
     :demand t

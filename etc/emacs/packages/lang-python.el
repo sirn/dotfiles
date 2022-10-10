@@ -7,12 +7,10 @@
 
   :preface
   (eval-when-compile
-    (declare-function eglot-ensure nil)
     (declare-function gemacs--eglot-format-buffer nil)
     (declare-function gemacs--eglot-organize-imports nil)
     (declare-function gemacs--python-auto-format nil)
-    (declare-function gemacs--python-lsp-bin nil)
-    (defvar eglot-server-programs))
+    (declare-function gemacs--python-lsp-bin nil))
 
   :config
   (use-feature eglot

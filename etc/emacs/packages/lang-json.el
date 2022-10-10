@@ -41,12 +41,6 @@ This function calls `json-mode--update-auto-mode' to change the
     (json-mode--update-auto-mode json-mode-auto-mode-list)
     "Regexp generated from the `json-mode-auto-mode-list'.")
 
-  :preface
-  (eval-when-compile
-    (declare-function apheleia-mode nil)
-    (declare-function flymake-json-load nil)
-    (declare-function flymake-mode nil))
-
   :config
   (use-feature apheleia
     :demand t

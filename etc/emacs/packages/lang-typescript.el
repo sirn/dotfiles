@@ -3,9 +3,7 @@
 (use-package typescript-mode
   :preface
   (eval-when-compile
-    (declare-function eglot-ensure nil)
-    (declare-function gemacs--typescript-auto-format nil)
-    (defvar eglot-server-programs))
+    (declare-function gemacs--typescript-auto-format nil))
 
   :config
   (use-feature eglot

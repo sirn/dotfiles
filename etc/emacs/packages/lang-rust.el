@@ -3,9 +3,7 @@
 (use-package rust-mode
   :preface
   (eval-when-compile
-    (declare-function eglot-ensure nil)
-    (declare-function gemacs--rust-auto-format nil)
-    (defvar eglot-server-programs))
+    (declare-function gemacs--rust-auto-format nil))
 
   :config
   (use-feature eglot

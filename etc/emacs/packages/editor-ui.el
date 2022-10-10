@@ -27,10 +27,6 @@
 (use-package which-key
   :demand t
 
-  :preface
-  (eval-when-compile
-    (declare-function which-key-mode nil))
-
   :config
   (which-key-mode +1))
 
@@ -58,15 +54,7 @@
 
   :preface
   (eval-when-compile
-    (declare-function telephone-line-mode nil)
-    (defvar flymake-mode-line-format nil)
-    (defvar telephone-line-height)
-    (defvar telephone-line-lhs)
-    (defvar telephone-line-primary-left-separator)
-    (defvar telephone-line-primary-right-separator)
-    (defvar telephone-line-rhs)
-    (defvar telephone-line-secondary-left-separator)
-    (defvar telephone-line-secondary-right-separator))
+    (defvar flymake-mode-line-format nil))
 
   :config
   (telephone-line-defsegment* gemacs--telephone-line-flymake-segment ()
@@ -85,28 +73,16 @@
   :custom
   (modus-themes-mode-line '(borderless))
 
-  :preface
-  (eval-when-compile
-    (defvar modus-themes-mode-line))
-
   :config
   (load-theme 'modus-vivendi t))
 
 
 (use-package osx-trash
-  :preface
-  (eval-when-compile
-    (declare-function osx-trash-setup nil))
-
   :config
   (osx-trash-setup))
 
 
 (use-package pbcopy
-  :preface
-  (eval-when-compile
-    (declare-function turn-on-pbcopy nil))
-
   :config
   (turn-on-pbcopy))
 
@@ -122,7 +98,6 @@
     (defvar mac-command-key-is-meta)
     (defvar mac-option-modifier)
     (defvar mac-option-key-is-meta))
-
   :config
   (defvar gemacs-font "PragmataPro Mono")
   (defvar gemacs-font-size 11)

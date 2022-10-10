@@ -3,9 +3,6 @@
 (use-feature sh-script
   :preface
   (eval-when-compile
-    (declare-function apheleia-mode nil)
-    (declare-function flymake-mode nil)
-    (declare-function flymake-shellcheck-load nil)
     (declare-function gemacs--sh-prettify-mode-line nil))
 
   :config

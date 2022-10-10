@@ -25,10 +25,6 @@
   (web-mode-enable-current-element-highlight t)
   (web-mode-enable-current-column-highlight t)
 
-  :preface
-  (eval-when-compile
-    (declare-function apheleia-mode nil))
-
   :config
   (add-to-list 'web-mode-content-types-alist '("jsx" . "\\.js[x]?\\'"))
   (add-to-list 'web-mode-content-types-alist '("jsx" . "\\.cjs\\'"))

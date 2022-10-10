@@ -3,9 +3,7 @@
 (use-package nix-mode
   :preface
   (eval-when-compile
-    (declare-function eglot-ensure nil)
-    (declare-function gemacs--nix-auto-format nil)
-    (defvar eglot-server-programs))
+    (declare-function gemacs--nix-auto-format nil))
 
   :config
   (use-feature eglot

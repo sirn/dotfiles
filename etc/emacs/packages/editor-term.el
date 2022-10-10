@@ -3,11 +3,7 @@
 (use-feature eshell
   :general
   (leader
-    "'" #'eshell)
-
-  :preface
-  (eval-when-compile
-    (declare-function gemacs--eshell-remove-pcomplete nil)))
+    "'" #'eshell))
 
 
 (use-package multi-term

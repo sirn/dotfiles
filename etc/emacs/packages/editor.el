@@ -39,12 +39,7 @@
 (use-package ag
   :general
   (leader
-   "/" #'ag)
-
-  :preface
-  (eval-when-compile
-    (declare-function ag nil)))
-
+   "/" #'ag))
 
 
 (use-package ace-link
@@ -58,11 +53,6 @@
 
   :custom
   (ctrlf-default-search-style 'fuzzy)
-
-  :preface
-  (eval-when-compile
-    (declare-function ctrlf-mode nil)
-    (defvar ctrlf-default-search-style))
 
   :config
   (ctrlf-mode +1))
@@ -84,10 +74,6 @@
   :custom
   (undo-tree-enable-undo-in-region nil)
   (undo-tree-auto-save-history t)
-
-  :preface
-  (eval-when-compile
-    (declare-function global-undo-tree-mode nil))
 
   :config
   (dolist (func '(undo-tree-load-history undo-tree-save-history))
@@ -171,11 +157,6 @@
   :custom
   (parinfer-rust-auto-download nil)
 
-  :preface
-  (eval-when-compile
-    (defvar parinfer-rust-library)
-    (defvar parinfer-rust-auto-download))
-
   :init
   (setq parinfer-rust-library
         (no-littering-expand-var-file-name
@@ -242,10 +223,6 @@
 (use-package unkillable-scratch
   :demand t
 
-  :preface
-  (eval-when-compile
-    (declare-function unkillable-scratch 1))
-
   :config
   (unkillable-scratch +1))
 
@@ -265,11 +242,6 @@
   :custom
   (corfu-auto t)
 
-  :preface
-  (eval-when-compile
-    (declare-function global-corfu-mode nil)
-    (defvar corfu-auto))
-
   :init
   (global-corfu-mode +1)
 
@@ -285,10 +257,6 @@
   :demand t
 
   :after corfu
-
-  :preface
-  (eval-when-compile
-    (declare-function corfu-terminal-mode nil))
 
   :config
   (unless (display-graphic-p)
@@ -323,13 +291,6 @@
    "fl" #'flymake-show-buffer-diagnostics
    "fP" #'flymake-show-project-diagnostics)
 
-  :preface
-  (eval-when-compile
-    (declare-function flymake-goto-next-error nil)
-    (declare-function flymake-goto-prev-error nil)
-    (declare-function flymake-show-buffer-diagnostics nil)
-    (declare-function flymake-show-project-diagnostics nil))
-
   :config
   (remove-hook 'flymake-diagnostic-functions #'flymake-proc-legacy-flymake))
 
@@ -340,10 +301,6 @@
   :demand t
 
   :after flymake
-
-  :preface
-  (eval-when-compile
-    (declare-function flymake-popon-mode nil))
 
   :config
   (add-hook 'flymake-mode-hook #'flymake-popon-mode))
@@ -369,17 +326,12 @@
 
   :preface
   (eval-when-compile
-    (declare-function eglot-code-action-organize-imports nil)
     (declare-function eglot-current-server nil)
     (declare-function eglot-format-buffer nil)
     (declare-function eglot-shutdown nil)
     (declare-function gemacs--advice-eglot-shutdown-project nil)
     (declare-function gemacs--eglot-format-buffer nil)
-    (declare-function gemacs--eglot-organize-imports nil)
-    (declare-function project-current nil)
-    (declare-function project-kill-buffers nil)
-    (declare-function project-root nil)
-    (defvar eglot-autoshutdown))
+    (declare-function gemacs--eglot-organize-imports nil))
 
   :init
   (defun gemacs--eglot-format-buffer ()

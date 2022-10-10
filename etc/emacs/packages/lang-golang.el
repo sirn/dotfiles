@@ -7,7 +7,6 @@
 (use-package go-mode
   :preface
   (eval-when-compile
-    (declare-function eglot-ensure nil)
     (declare-function gemacs--eglot-format-buffer nil)
     (declare-function gemacs--eglot-organize-imports nil)
     (declare-function gemacs--go-auto-format nil)
@@ -15,8 +14,7 @@
     (declare-function gemacs--go-defun-setup nil)
     (declare-function gemacs--go-end-of-defun nil)
     (declare-function gemacs--go-lsp-bin nil)
-    (declare-function go--backward-irrelevant nil)
-    (defvar eglot-server-programs))
+    (declare-function go--backward-irrelevant nil))
 
   :config
   (use-feature eglot

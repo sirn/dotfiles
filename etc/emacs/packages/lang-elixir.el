@@ -3,11 +3,9 @@
 (use-package elixir-mode
   :preface
   (eval-when-compile
-    (declare-function eglot-ensure nil)
     (declare-function gemacs--eglot-format-buffer nil)
     (declare-function gemacs--eglot-organize-imports nil)
-    (declare-function gemacs--elixir-auto-format nil)
-    (defvar eglot-server-programs))
+    (declare-function gemacs--elixir-auto-format nil))
 
   :config
   (use-feature eglot

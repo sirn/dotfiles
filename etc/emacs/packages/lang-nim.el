@@ -1,13 +1,6 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package nim-mode
-  :preface
-  (eval-when-compile
-    (declare-function apheleia-mode nil)
-    (declare-function eglot-ensure nil)
-    (defvar apheleia-mode-alist)
-    (defvar eglot-server-programs))
-
   :config
   (el-patch-defun nim-mode-forward-token ()
     "Handle cases where `nim-smie--line-info' is `nil'."

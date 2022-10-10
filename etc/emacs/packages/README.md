@@ -35,11 +35,6 @@ Use the following order for `use-package` and always leave a single line between
 
 ```elisp
 (use-package markdown-mode
-  :preface
-  (eval-when-compile
-    (declare-function apheleia-mode nil)
-    (defvar apheleia-mode-alist))
-
   :config
   (use-feature apheleia
     :demand t
@@ -58,9 +53,7 @@ Use the following order for `use-package` and always leave a single line between
 (use-package typescript-mode
   :preface
   (eval-when-compile
-    (declare-function eglot-ensure nil)
-    (declare-function gemacs--typescript-auto-format nil)
-    (defvar eglot-server-programs))
+    (declare-function gemacs--typescript-auto-format nil))
 
   :config
   (use-feature eglot
@@ -85,10 +78,6 @@ Use the following order for `use-package` and always leave a single line between
   :config
   (use-feature flymake-mode
     :demand t
-
-    :preface
-    (eval-when-compile
-      (declare-function flymake-mode nil)))
 
     :config
     (add-hook 'sh-mode-hook #'flymake-mode)))

@@ -3,9 +3,6 @@
 (use-package yaml-mode
   :preface
   (eval-when-compile
-    (declare-function apheleia-mode nil)
-    (declare-function flymake-mode nil)
-    (declare-function flymake-yamllint-setup nil)
     (declare-function gemacs--yaml-maybe-k8s nil)
     (declare-function gemacs--yaml-maybe-ansible nil))
 

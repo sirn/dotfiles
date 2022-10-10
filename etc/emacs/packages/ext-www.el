@@ -12,9 +12,4 @@
   (mm-text-html-renderer #'w3m)
   (w3m-search-default-engine "duckduckgo")
   (w3m-search-engine-alist
-    '(("duckduckgo" "https://duckduckgo.com/lite?q=%s" utf-8)))
-
-  :preface
-  (eval-when-compile
-    (defvar w3m-search-engine-alist)
-    (defvar w3m-search-default-engine)))
+    '(("duckduckgo" "https://duckduckgo.com/lite?q=%s" utf-8))))
