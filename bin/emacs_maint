@@ -15,8 +15,13 @@ PATH=/usr/bin:/bin:/usr/local/bin:/opt/local/bin
 ##
 
 USE_EMACSCLIENT=
+EMACSCLIENT_SOCK=/tmp/emacs$(id -u)/server
 
-if [ -S "/tmp/emacs$(id -u)/server" ]; then
+if [ -n "$XDG_RUNTIME_DIR" ]; then
+    EMACSCLIENT_SOCK="$XDG_RUNTIME_DIR/emacs/server"
+fi
+
+if [ -S "$EMACSCLIENT_SOCK" ]; then
     USE_EMACSCLIENT=1
 fi
 
