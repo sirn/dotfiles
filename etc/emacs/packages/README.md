@@ -2,17 +2,17 @@
 
 ## use-package
 
-Use the following order for `use-package`:
+Use the following order for `use-package` and always leave a single line between keywords:
 
 -   `straight`
 -   `demand`
 -   `defer`
 -   `after`
 -   `require`
--   `commands`
 -   `general`
--   `preface`
+-   `commands`
 -   `custom`
+-   `preface`
 -   `init`
 -   `config`
 
@@ -26,6 +26,8 @@ Use the following order for `use-package`:
               treemacs-rename-workspace
               treemacs-add-project-to-workspace))
 ```
+
+`:defines` and `:functions` are not used as they are sometimes not evaluated early enough to silent compilation warnings.
 
 ## apheleia
 
@@ -41,6 +43,7 @@ Use the following order for `use-package`:
   :config
   (use-feature apheleia
     :demand t
+
     :config
     (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier))
     (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))))
@@ -62,6 +65,7 @@ Use the following order for `use-package`:
   :config
   (use-feature eglot
     :demand t
+
     :config
     (defun gemacs--typescript-auto-format ()
       (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
@@ -81,6 +85,7 @@ Use the following order for `use-package`:
   :config
   (use-feature flymake-mode
     :demand t
+
     :preface
     (eval-when-compile
       (declare-function flymake-mode nil)))

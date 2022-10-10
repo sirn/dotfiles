@@ -37,18 +37,6 @@
 
 
 (use-package telephone-line
-  :preface
-  (eval-when-compile
-    (declare-function telephone-line-mode nil)
-    (defvar flymake-mode-line-format nil)
-    (defvar telephone-line-height)
-    (defvar telephone-line-lhs)
-    (defvar telephone-line-primary-left-separator)
-    (defvar telephone-line-primary-right-separator)
-    (defvar telephone-line-rhs)
-    (defvar telephone-line-secondary-left-separator)
-    (defvar telephone-line-secondary-right-separator))
-
   :custom
   (telephone-line-height 18)
   (telephone-line-primary-right-separator 'telephone-line-utf-abs-right)
@@ -68,6 +56,18 @@
       (nil    . (telephone-line-major-mode-segment))
       (evil   . (telephone-line-airline-position-segment))))
 
+  :preface
+  (eval-when-compile
+    (declare-function telephone-line-mode nil)
+    (defvar flymake-mode-line-format nil)
+    (defvar telephone-line-height)
+    (defvar telephone-line-lhs)
+    (defvar telephone-line-primary-left-separator)
+    (defvar telephone-line-primary-right-separator)
+    (defvar telephone-line-rhs)
+    (defvar telephone-line-secondary-left-separator)
+    (defvar telephone-line-secondary-right-separator))
+
   :config
   (telephone-line-defsegment* gemacs--telephone-line-flymake-segment ()
     (when (bound-and-true-p flymake-mode)
@@ -82,12 +82,12 @@
 
 
 (use-package modus-themes
+  :custom
+  (modus-themes-mode-line '(borderless))
+
   :preface
   (eval-when-compile
     (defvar modus-themes-mode-line))
-
-  :custom
-  (modus-themes-mode-line '(borderless))
 
   :config
   (load-theme 'modus-vivendi t))

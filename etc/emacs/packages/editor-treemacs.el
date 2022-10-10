@@ -2,12 +2,6 @@
 
 
 (use-package treemacs
-  ;; Not exposed via autoload by Treemacs
-  :commands (treemacs-switch-workspace
-              treemacs-create-workspace
-              treemacs-rename-workspace
-              treemacs-add-project-to-workspace)
-
   :general
   (leader
     "tt" #'treemacs
@@ -16,6 +10,13 @@
     "tE" #'treemacs-edit-workspaces
     "tR" #'treemacs-rename-workspace
     "tp" #'treemacs-add-project-to-workspace)
+
+  ;; Not exposed via autoload by Treemacs
+  :commands
+  (treemacs-switch-workspace
+    treemacs-create-workspace
+    treemacs-rename-workspace
+    treemacs-add-project-to-workspace)
 
   :custom
   (treemacs-read-string-input 'from-minibuffer)

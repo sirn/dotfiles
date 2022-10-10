@@ -50,16 +50,19 @@ This function calls `json-mode--update-auto-mode' to change the
   :config
   (use-feature apheleia
     :demand t
+
     :config
     (add-hook 'json-mode-hook #'apheleia-mode))
 
   (use-feature flymake
     :demand t
+
     :config
     (add-hook 'json-mode-hook #'flymake-mode))
 
   (use-feature flymake-json
     :demand t
+
     :config
     (add-hook 'json-mode-hook #'flymake-json-load)))
 

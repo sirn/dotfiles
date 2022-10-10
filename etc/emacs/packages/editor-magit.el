@@ -1,7 +1,6 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package magit
-  :commands magit-project-status
   :general
   (leader
     "gs" #'magit-project-status)
@@ -34,6 +33,7 @@
 
 (use-package forge
   :demand t
+
   :after magit
 
   :defines forge-add-default-bindings

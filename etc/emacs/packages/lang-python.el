@@ -1,6 +1,10 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-feature python
+  :custom
+  (python-fill-docstring-style 'django)
+  (python-indent-guess-indent-offset-verbose nil)
+
   :preface
   (eval-when-compile
     (declare-function eglot-ensure nil)
@@ -10,13 +14,10 @@
     (declare-function gemacs--python-lsp-bin nil)
     (defvar eglot-server-programs))
 
-  :custom
-  (python-fill-docstring-style 'django)
-  (python-indent-guess-indent-offset-verbose nil)
-
   :config
   (use-feature eglot
     :demand t
+
     :config
     (defun gemacs--python-lsp-bin ()
       (gemacs--path-join

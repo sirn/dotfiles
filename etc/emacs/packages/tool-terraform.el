@@ -8,5 +8,6 @@
   :config
   (use-feature apheleia
     :demand t
+
     :config
     (add-hook 'terraform-mode-hook #'apheleia-mode)))

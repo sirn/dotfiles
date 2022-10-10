@@ -1,11 +1,6 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package w3m
-  :preface
-  (eval-when-compile
-    (defvar w3m-search-engine-alist)
-    (defvar w3m-search-default-engine))
-
   :general
   (leader
     ";W" #'w3m
@@ -17,4 +12,9 @@
   (mm-text-html-renderer #'w3m)
   (w3m-search-default-engine "duckduckgo")
   (w3m-search-engine-alist
-    '(("duckduckgo" "https://duckduckgo.com/lite?q=%s" utf-8))))
+    '(("duckduckgo" "https://duckduckgo.com/lite?q=%s" utf-8)))
+
+  :preface
+  (eval-when-compile
+    (defvar w3m-search-engine-alist)
+    (defvar w3m-search-default-engine)))

@@ -26,12 +26,14 @@
 
   (use-feature eglot
     :demand t
+
     :config
     (add-to-list 'eglot-server-programs '(nim-mode . ("nimlsp")))
     (add-hook 'nim-mode-hook #'eglot-ensure))
 
   (use-feature apheleia
     :demand t
+
     :config
     (add-to-list 'apheleia-formatters '(nimpretty . ("nimpretty" "--out:/dev/stdout" filepath)))
     (add-to-list 'apheleia-mode-alist '(nim-mode . nimpretty))

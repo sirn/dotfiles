@@ -2,6 +2,7 @@
 
 (use-package project
   :demand t
+
   :straight (:host github :repo "emacs-straight/project")
 
   :general
@@ -30,7 +31,6 @@
 
   :config
   (use-feature ag
-    :preface
     :init
     (defun gemacs--project-ag ()
       (interactive)

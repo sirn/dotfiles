@@ -2,11 +2,8 @@
 
 (use-package selectrum
   :straight (:host github :repo "radian-software/selectrum")
-  :demand t
 
-  :preface
-  (eval-when-compile
-    (declare-function selectrum-mode nil))
+  :demand t
 
   :general
   ("C-x C-b" #'switch-to-buffer)
@@ -16,6 +13,10 @@
     "dv"  #'describe-variable
     "df"  #'describe-function)
 
+  :preface
+  (eval-when-compile
+    (declare-function selectrum-mode nil))
+
   :config
   (selectrum-mode +1))
 
@@ -23,13 +24,13 @@
 (use-package prescient
   :demand t
 
+  :custom
+  (prescient-history-length 1000)
+
   :preface
   (eval-when-compile
     (defvar prescient-history-length)
     (declare-function prescient-persist-mode nil))
-
-  :custom
-  (prescient-history-length 1000)
 
   :config
   (prescient-persist-mode +1)
@@ -44,6 +45,7 @@
               :files ("selectrum-prescient.el"))
 
   :after (selectrum prescient)
+
   :demand t
 
   :preface

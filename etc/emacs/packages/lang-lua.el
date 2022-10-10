@@ -10,16 +10,19 @@
   :config
   (use-feature apheleia
     :demand t
+
     :config
     (add-hook 'lua-mode-hook #'apheleia-mode))
 
   (use-feature flymake
     :demand t
+
     :config
     (add-hook 'lua-mode-hook #'flymake-mode))
 
   (use-feature flymake-lua
     :demand t
+
     :config
     (add-hook 'lua-mode-hook #'flymake-lua-load)))
 

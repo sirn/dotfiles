@@ -12,17 +12,18 @@
    ("\\.md\\'" . markdown-mode)
    ("\\.markdown\\'" . markdown-mode))
 
+  :custom
+  (markdown-command "pandoc")
+
   :preface
   (eval-when-compile
     (declare-function apheleia-mode nil)
     (defvar apheleia-mode-alist))
 
-  :custom
-  (markdown-command "pandoc")
-
   :config
   (use-feature apheleia
     :demand t
+
     :config
     (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier))
     (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))

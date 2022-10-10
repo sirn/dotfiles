@@ -24,16 +24,19 @@
 
   (use-feature apheleia
     :demand t
+
     :config
     (add-hook 'sh-mode-hook #'apheleia-mode))
 
   (use-feature flymake
     :demand t
+
     :config
     (add-hook 'sh-mode-hook #'flymake-mode))
 
   (use-feature flymake-shellcheck
     :demand t
+
     :config
     (add-hook 'sh-mode-hook #'flymake-shellcheck-load)))
 

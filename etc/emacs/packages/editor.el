@@ -37,15 +37,14 @@
 
 
 (use-package ag
-  :commands (ag-project)
+  :general
+  (leader
+   "/" #'ag)
 
   :preface
   (eval-when-compile
-    (declare-function ag nil))
+    (declare-function ag nil)))
 
-  :general
-  (leader
-   "/" #'ag))
 
 
 (use-package ace-link
@@ -57,13 +56,13 @@
 (use-package ctrlf
   :demand t
 
+  :custom
+  (ctrlf-default-search-style 'fuzzy)
+
   :preface
   (eval-when-compile
     (declare-function ctrlf-mode nil)
     (defvar ctrlf-default-search-style))
-
-  :custom
-  (ctrlf-default-search-style 'fuzzy)
 
   :config
   (ctrlf-mode +1))
@@ -77,17 +76,18 @@
 
 (use-package undo-tree
   :demand t
+
   :general
   (leader
    "uv" #'undo-tree-visualize)
 
-  :preface
-  (eval-when-compile
-    (declare-function global-undo-tree-mode nil))
-
   :custom
   (undo-tree-enable-undo-in-region nil)
   (undo-tree-auto-save-history t)
+
+  :preface
+  (eval-when-compile
+    (declare-function global-undo-tree-mode nil))
 
   :config
   (dolist (func '(undo-tree-load-history undo-tree-save-history))
@@ -98,6 +98,7 @@
 
 (use-feature subword
   :demand t
+
   :config
   (global-subword-mode +1))
 
@@ -164,15 +165,16 @@
 
 (use-package parinfer-rust-mode
   :diminish parinfer-rust-mode
+
   :straight t
+
+  :custom
+  (parinfer-rust-auto-download nil)
 
   :preface
   (eval-when-compile
     (defvar parinfer-rust-library)
     (defvar parinfer-rust-auto-download))
-
-  :custom
-  (parinfer-rust-auto-download nil)
 
   :init
   (setq parinfer-rust-library
@@ -260,13 +262,13 @@
 (use-package corfu
   :demand t
 
+  :custom
+  (corfu-auto t)
+
   :preface
   (eval-when-compile
     (declare-function global-corfu-mode nil)
     (defvar corfu-auto))
-
-  :custom
-  (corfu-auto t)
 
   :init
   (global-corfu-mode +1)
@@ -279,7 +281,9 @@
 
 (use-package corfu-terminal
   :straight (:type git :repo "https://codeberg.org/akib/emacs-corfu-terminal.git")
+
   :demand t
+
   :after corfu
 
   :preface
@@ -332,7 +336,9 @@
 
 (use-package flymake-popon
   :straight (:type git :repo "https://codeberg.org/akib/emacs-flymake-popon")
+
   :demand t
+
   :after flymake
 
   :preface
@@ -345,6 +351,7 @@
 
 (use-package eldoc
   :straight (:host github :repo "emacs-straight/eldoc")
+
   :demand t
 
   :custom
@@ -356,6 +363,10 @@
 
 (use-package eglot
   :straight (:host github :repo "joaotavora/eglot")
+
+  :custom
+  (eglot-autoshutdown t)
+
   :preface
   (eval-when-compile
     (declare-function eglot-code-action-organize-imports nil)
@@ -369,9 +380,6 @@
     (declare-function project-kill-buffers nil)
     (declare-function project-root nil)
     (defvar eglot-autoshutdown))
-
-  :custom
-  (eglot-autoshutdown t)
 
   :init
   (defun gemacs--eglot-format-buffer ()

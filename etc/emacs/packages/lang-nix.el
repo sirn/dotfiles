@@ -10,6 +10,7 @@
   :config
   (use-feature eglot
     :demand t
+
     :config
     (defun gemacs--nix-auto-format ()
       (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)

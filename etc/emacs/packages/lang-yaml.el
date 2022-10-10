@@ -12,16 +12,19 @@
   :config
   (use-feature apheleia
     :demand t
+
     :config
     (add-hook 'yaml-mode-hook #'apheleia-mode))
 
   (use-feature flymake
     :demand t
+
     :config
     (add-hook 'yaml-mode-hook #'flymake-mode))
 
   (use-feature flymake-yamllint
     :demand t
+
     :config
     (add-hook 'yaml-mode-hook #'flymake-yamllint-setup))
 

@@ -3,18 +3,18 @@
 (use-package evil
   :demand t
 
+  :custom
+  (evil-want-integration +1)
+  (evil-want-keybinding nil)
+  (evil-mode-line-format nil)
+  (evil-undo-system 'undo-tree)
+
   :preface
   (eval-when-compile
     (defvar evil-want-integration)
     (defvar evil-want-keybinding)
     (defvar evil-mode-line-format)
     (defvar evil-undo-system))
-
-  :custom
-  (evil-want-integration +1)
-  (evil-want-keybinding nil)
-  (evil-mode-line-format nil)
-  (evil-undo-system 'undo-tree)
 
   :config
   (fset 'evil-visual-update-x-selection 'ignore)

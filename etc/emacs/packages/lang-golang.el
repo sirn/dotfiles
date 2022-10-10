@@ -21,6 +21,7 @@
   :config
   (use-feature eglot
     :demand t
+
     :config
     (defun gemacs--go-lsp-bin ()
       (gemacs--path-join

@@ -8,11 +8,6 @@
     ;; Not exposed via autoload by Notmuch
     :commands notmuch
 
-    :preface
-    (eval-when-compile
-      (defvar sendmail-program)
-      (declare-function message-send-mail-with-sendmail nil))
-
     :general
     (leader
       "mm" #'notmuch)
@@ -21,4 +16,9 @@
     (message-send-mail-function #'message-send-mail-with-sendmail)
     (message-sendmail-f-is-evil 't)
     (message-sendmail-envelope-from 'header)
-    (sendmail-program "msmtp")))
+    (sendmail-program "msmtp")
+
+    :preface
+    (eval-when-compile
+      (defvar sendmail-program)
+      (declare-function message-send-mail-with-sendmail nil))))

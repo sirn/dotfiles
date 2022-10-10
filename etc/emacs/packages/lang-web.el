@@ -18,16 +18,16 @@
     "\\.tsx\\'"
     "\\.jsx?\\'")
 
-  :preface
-  (eval-when-compile
-    (declare-function apheleia-mode nil))
-
   :custom
   (web-mode-enable-auto-closing t)
   (web-mode-auto-close-style 2)
   (web-mode-enable-auto-quoting nil)
   (web-mode-enable-current-element-highlight t)
   (web-mode-enable-current-column-highlight t)
+
+  :preface
+  (eval-when-compile
+    (declare-function apheleia-mode nil))
 
   :config
   (add-to-list 'web-mode-content-types-alist '("jsx" . "\\.js[x]?\\'"))
@@ -52,6 +52,7 @@
 
   (use-feature apheleia
     :demand t
+
     :preface
     (eval-when-compile
       (defvar web-mode-fontification-off))
