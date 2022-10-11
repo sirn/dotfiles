@@ -88,8 +88,6 @@
 
 
 (use-feature emacs
-  :demand t
-
   :preface
   (eval-when-compile
     (declare-function scroll-bar-mode nil)
@@ -98,6 +96,7 @@
     (defvar mac-command-key-is-meta)
     (defvar mac-option-modifier)
     (defvar mac-option-key-is-meta))
+
   :config
   (defvar gemacs-font "PragmataPro Mono")
   (defvar gemacs-font-size 11)

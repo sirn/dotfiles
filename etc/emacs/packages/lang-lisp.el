@@ -2,15 +2,25 @@
 
 (use-package helpful
   :general
+  (leader
+    "df" #'helpful-callable
+    "dv" #'helpful-variable
+    "dx" #'helpful-command
+    "do" #'helpful-symbol
+    "dk" #'helpful-key
+    "dF" #'helpful-function
+    "dM" #'helpful-macro
+    "dd" #'helpful-at-point)
+
   ([remap describe-function] #'helpful-callable
    [remap describe-variable] #'helpful-variable
    [remap describe-symbol]   #'helpful-symbol
-   [remap describe-key]      #'helpful-key)
+   [remap describe-key]      #'helpful-key
+   [remap describe-command]  #'helpful-command)
 
   (:keymaps 'help-map
    "F"   #'helpful-function
-   "M-f" #'helpful-macro
-   "C"   #'helpful-command)
+   "M-f" #'helpful-macro)
 
   (:keymaps 'global-map
    "C-c C-d" #'helpful-at-point))

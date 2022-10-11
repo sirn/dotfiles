@@ -45,6 +45,8 @@
 (use-package auth-source-pass
   :demand t
 
+  :after (auth-source password-store)
+
   :config
   (let ((dir (password-store-dir)))
     (when (file-directory-p dir)

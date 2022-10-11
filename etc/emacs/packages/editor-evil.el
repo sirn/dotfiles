@@ -15,6 +15,7 @@
 
 
 (use-package evil-collection
+  :after evil
   :demand t
 
   :config
@@ -22,6 +23,7 @@
 
 
 (use-package evil-commentary
+  :after evil
   :demand t
 
   :config
@@ -29,6 +31,7 @@
 
 
 (use-package evil-matchit
+  :after evil
   :demand t
 
   :config
@@ -36,6 +39,7 @@
 
 
 (use-package evil-surround
+  :after evil
   :demand t
 
   :config

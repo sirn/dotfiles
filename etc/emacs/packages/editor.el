@@ -9,24 +9,34 @@
 
 (use-feature emacs
   :general
+  ("C-x C-b" #'switch-to-buffer)
+
   (leader
-    "wo" #'other-window
-    "wd" #'delete-window
-    "wD" #'delete-other-windows
-    "w-" #'split-window-below
-    "w/" #'split-window-right
-    "w=" #'balance-windows
-    "bd" #'kill-buffer
-    "bD" #'kill-buffer-and-window))
+    "wo"  #'other-window
+    "wd"  #'delete-window
+    "wD"  #'delete-other-windows
+    "w-"  #'split-window-below
+    "w/"  #'split-window-right
+    "w="  #'balance-windows
+    "bd"  #'kill-buffer
+    "bD"  #'kill-buffer-and-window
+    "bb"  #'switch-to-buffer
+    "wbb" #'switch-to-buffer-other-window))
 
 
 ;; --------------------------------------------------------------------------
 ;;; Editing behaviors
 
-(setq-default indent-tabs-mode nil)
-(setq-default x-alt-keysym 'meta)
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-(put 'downcase-region 'disabled nil)
+
+(use-feature emacs
+  :custom
+  (indent-tabs-mode nil)
+  (x-alt-keysym 'meta)
+
+  :config
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+  (put 'downcase-region 'disabled nil))
+
 
 (use-package avy
   :general
@@ -60,6 +70,7 @@
 
 (use-feature delsel
   :demand t
+
   :config
   (delete-selection-mode +1))
 
@@ -109,8 +120,6 @@
 
 
 (use-package smartparens
-  :demand t
-
   :general
   (leader
    "s>" #'sp-forward-slurp-sexp
@@ -120,21 +129,20 @@
    "s{" #'sp-wrap-curly
    "sd" #'sp-splice-sexp)
 
-  :config
-  (smartparens-global-mode +1)
-  (show-smartparens-global-mode +1)
-  (sp-use-paredit-bindings)
+  :preface
+  (eval-when-compile
+    (declare-function gemacs--smartparens-load nil))
 
-  (add-hook 'clojure-mode-hook 'turn-off-smartparens-mode)
-  (add-hook 'emacs-lisp-mode-hook 'turn-off-smartparens-mode)
-  (add-hook 'common-lisp-mode-hook 'turn-off-smartparens-mode)
-  (add-hook 'scheme-mode-hook 'turn-off-smartparens-mode)
-  (add-hook 'lisp-mode-hook 'turn-off-smartparens-mode))
+  :init
+  (defun gemacs--smartparens-load ()
+    (use-feature smartparens-config :demand t)
+    (smartparens-global-mode +1)
+    (show-smartparens-global-mode +1)
+    (sp-use-paredit-bindings))
+  (add-hook 'prog-mode-hook #'gemacs--smartparens-load))
 
 
 (use-feature smartparens-config
-  :demand t
-
   :custom
   (sp-highlight-pair-overlay nil)
   (sp-highlight-wrap-overlay nil)
@@ -167,16 +175,20 @@
            ((eq system-type 'gnu/linux) "parinfer-rust-linux.so")
            ((eq system-type 'windows-nt) "parinfer-rust-windows.dll")))))
 
-  (add-hook 'clojure-mode-hook 'parinfer-rust-mode)
-  (add-hook 'emacs-lisp-mode-hook 'parinfer-rust-mode)
-  (add-hook 'common-lisp-mode-hook 'parinfer-rust-mode)
-  (add-hook 'scheme-mode-hook 'parinfer-rust-mode)
-  (add-hook 'lisp-mode-hook 'parinfer-rust-mode)
+  (add-hook 'clojure-mode-hook #'parinfer-rust-mode)
+  (add-hook 'emacs-lisp-mode-hook #'parinfer-rust-mode)
+  (add-hook 'common-lisp-mode-hook #'parinfer-rust-mode)
+  (add-hook 'scheme-mode-hook #'parinfer-rust-mode)
+  (add-hook 'lisp-mode-hook #'parinfer-rust-mode)
 
   :config
   ;; Workaround for https://github.com/justinbarclay/parinfer-rust-mode/issues/40
   (defun parinfer-rust--check-version (_a _b _c _d)
-    nil))
+    nil)
+
+  (use-feature smartparens
+    :config
+    (add-hook 'parinfer-rust-mode-hook #'turn-off-smartparens-mode)))
 
 
 (use-package rainbow-delimiters
@@ -254,11 +266,10 @@
 (use-package corfu-terminal
   :straight (:type git :repo "https://codeberg.org/akib/emacs-corfu-terminal.git")
 
-  :demand t
-
   :after corfu
 
-  :config
+  :init
+  ;; No :demand, only load when running in terminal.
   (unless (display-graphic-p)
     (corfu-terminal-mode +1)))
 

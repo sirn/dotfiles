@@ -5,14 +5,6 @@
 
   :demand t
 
-  :general
-  ("C-x C-b" #'switch-to-buffer)
-  (leader
-    "bb"  #'switch-to-buffer
-    "wbb" #'switch-to-buffer-other-window
-    "dv"  #'describe-variable
-    "df"  #'describe-function)
-
   :config
   (selectrum-mode +1))
 
@@ -25,9 +17,10 @@
 
   :config
   (prescient-persist-mode +1)
+
   (use-feature emacs
-    :init
-    (setq completion-styles '(prescient basic))))
+    :custom
+    (completion-styles '(prescient basic))))
 
 
 (use-package selectrum-prescient

@@ -24,19 +24,27 @@
     (dolist (func '(magit-start-git magit-call-git))
       (advice-add func :after #'gemacs--gpg-update-tty)))
 
-  (use-feature git-commit
-    :custom
-    ;; Max length for commit message summary is 50 characters as per
-    ;; https://chris.beams.io/posts/git-commit/.
-    (git-commit-summary-max-length 50)))
+  ;; Deferred loading
+  (use-feature forge :demand t))
+
+
+(use-feature git-commit
+  :custom
+  ;; Max length for commit message summary is 50 characters as per
+  ;; https://chris.beams.io/posts/git-commit/.
+  (git-commit-summary-max-length 50))
+
+
+(use-package ghub)
+
+
+(use-package emacsql-sqlite)
 
 
 (use-package forge
-  :demand t
-
-  :after magit
-
-  :defines forge-add-default-bindings
+  :preface
+  (eval-when-compile
+    (defvar forge-add-default-bindings))
 
   :custom
   ;; BUG: https://github.com/emacs-evil/evil-collection/issues/543
