@@ -75,6 +75,13 @@
   (delete-selection-mode +1))
 
 
+(use-feature display-line-numbers-mode
+  :general
+  (leader
+    "ll" #'display-line-numbers-mode
+    "lL" #'global-display-line-numbers-mode))
+
+
 (use-package undo-tree
   :demand t
 

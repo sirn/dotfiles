@@ -30,6 +30,20 @@
   (evil-commentary-mode +1))
 
 
+(use-package evil-mc
+  :after evil
+  :demand t
+
+  :general
+  (:states 'visual
+   :keymaps 'evil-mc-key-map
+   "A" #'evil-mc-make-cursor-in-visual-selection-end
+   "I" #'evil-mc-make-cursor-in-visual-selection-beg)
+
+  :config
+  (global-evil-mc-mode +1))
+
+
 (use-package evil-matchit
   :after evil
   :demand t
