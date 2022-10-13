@@ -20,7 +20,7 @@
 
   :custom
   (web-mode-enable-auto-closing t)
-  (web-mode-auto-close-style 2)
+  (web-mode-auto-close-style 1)
   (web-mode-enable-auto-quoting nil)
   (web-mode-enable-current-element-highlight t)
   (web-mode-enable-current-column-highlight t)
@@ -80,6 +80,13 @@ poke it. Otherwise the modified text remains unfontified."
   :preface
   (eval-when-compile
     (require 'cl-lib))
+
+  :general
+  (:states 'insert
+   :keymaps 'emmet-mode-keymap
+   "TAB" #'emmet-expand-line
+   "M-j" #'emmet-next-edit-point
+   "M-k" #'emmet-prev-edit-point)
 
   :init
   (add-hook 'web-mode-hook 'emmet-mode)
