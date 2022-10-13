@@ -10,10 +10,12 @@
 
     :general
     (leader
-      "mm" #'notmuch)
+      "mm" #'notmuch
+      "mc" #'notmuch-mua-new-mail)
 
     :custom
     (message-send-mail-function #'message-send-mail-with-sendmail)
     (message-sendmail-f-is-evil 't)
     (message-sendmail-envelope-from 'header)
+    (notmuch-search-oldest-first nil)
     (sendmail-program "msmtp")))
