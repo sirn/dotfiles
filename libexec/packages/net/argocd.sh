@@ -13,7 +13,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv.sh"
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
-ARGOCD_VERSION=2.4.6
+ARGOCD_VERSION=2.4.15
 
 _preflight() {
     if ! command -v asdf >/dev/null; then

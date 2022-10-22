@@ -13,7 +13,7 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv.sh"
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
-NIM_VERSION=1.6.6
+NIM_VERSION=1.6.8
 NIM_VERSION_PATH=$ASDF_DIR/installs/nim/$NIM_VERSION
 NIM_VERSION_SRC=$HOME/.local/src/nim/$NIM_VERSION
 

@@ -13,17 +13,17 @@ cd "$(dirname "$0")" || exit 1
 . "../../dotfiles/lib/buildenv.sh"
 . "../../dotfiles/lib/buildenv_asdf.sh"
 
-ERLANG_VERSION=25.0.3
+ERLANG_VERSION=25.1.1
 ERLANG_VERSION_PATH=$ASDF_DIR/installs/erlang/$ERLANG_VERSION
 
-REBAR3_VER=3.19.0
-REBAR3_SHA256=ff9ef42c737480477ebdf0dd9d95ece534a14c96f05edafbf32e9af973280bc3
+REBAR3_VER=3.20.0
+REBAR3_SHA256=53ed7f294a8b8fb4d7d75988c69194943831c104d39832a1fa30307b1a8593de
 
 REBAR3_HOME=$HOME/.cache/rebar3
 REBAR3_PATH=$REBAR3_HOME/bin/rebar3
 
-ERLANG_LS_VER=0.38.0
-ERLANG_LS_SHA256=daa06a45063e9777aadf5ab7a0a677b8ba527ac5bff0dc49065834e3eb757778
+ERLANG_LS_VER=0.44.1
+ERLANG_LS_SHA256=1351a4c3ec55a74881815f48395e9cf45e688b46480197bd44af1480e22adcf8
 
 _preflight() {
     if ! command -v asdf >/dev/null; then
