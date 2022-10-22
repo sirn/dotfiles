@@ -4,8 +4,8 @@
 #
 
 MACPORTS=/opt/local/bin/port
-MACPORTS_VER=2.7.1
-MACPORTS_SHA256=fad5a11874e65dfe3fb3688f98e8ae2c90a154b89ce04888a4f5a633509648b3
+MACPORTS_VER=2.8.0
+MACPORTS_SHA256=106791b784509db631180a20ff65ebceab0fcf603e3da25f63dad62b9719007a
 
 macports_bootstrap() {
     if ! forced && [ -f $MACPORTS ]; then
