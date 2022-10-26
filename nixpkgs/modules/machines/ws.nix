@@ -11,10 +11,10 @@
     ../programs/notmuch.nix
 
     # services
-    ../runit-user/duplicity.nix
-    ../runit-user/emacs.nix
-    ../runit-user/gpg-agent.nix
-    ../runit-user/notmuch.nix
-    ../runit-user/xlocate.nix
+    ../runit/duplicity.nix
+    ../runit/emacs.nix
+    ../runit/gpg-agent.nix
+    ../runit/notmuch.nix
+    ../runit/xlocate.nix
   ];
 }
