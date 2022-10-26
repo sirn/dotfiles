@@ -2,33 +2,25 @@
 #
 # Configure current user on Void Linux.
 #
+#shellcheck disable=SC1091
 
 BASE_DIR=${BASE_DIR:-$(
     cd "$(dirname "$0")/../.." || exit
     pwd -P
 )}
 
-cd "$(dirname "$0")" || exit 1
+cd "$BASE_DIR" || exit 1
 
-# shellcheck disable=SC1091
-. "lib/utils.sh"
-
-# shellcheck disable=SC1091
-. "lib/utils_void.sh"
-
-# shellcheck disable=SC1091
-. "lib/utils_runit.sh"
+. "$BASE_DIR/libexec/dotfiles/lib/utils.sh"
+. "$BASE_DIR/libexec/dotfiles/lib/utils_void.sh"
+. "$BASE_DIR/libexec/dotfiles/lib/utils_runit.sh"
 
 _run() {
-    _setup_user_service
-    _setup_user_shell
+    update_shells oksh
+    change_shell oksh
 }
 
-_run_desktop() {
-    _setup_desktop_links
-}
-
-_setup_user_service() {
+_run_system() {
     printe_h2 "Setting up user service..."
 
     if [ -z "$USER" ]; then
@@ -51,17 +43,4 @@ _setup_user_service() {
     fi
 
     install_svc -S "$svcsrc"
-}
-
-_setup_user_shell() {
-    printe_h2 "Changing user shell..."
-
-    update_shells oksh
-    change_shell oksh
-}
-
-_setup_desktop_links() {
-    make_link \
-        "$BASE_DIR/etc/fontconfig/conf.d" \
-        "$HOME/.config/fontconfig/conf.d"
 }

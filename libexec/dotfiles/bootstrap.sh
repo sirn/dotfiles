@@ -2,15 +2,16 @@
 #
 # Script to setup personal workspace.
 #
+#shellcheck disable=SC1091
 
 BASE_DIR=$(
-    cd "$(dirname "$0")/" || exit
+    cd "$(dirname "$0")/../.." || exit
     pwd -P
 )
+
 cd "$BASE_DIR" || exit 1
 
-# shellcheck disable=SC1091
-. lib/utils.sh
+. "$BASE_DIR/libexec/dotfiles/lib/utils.sh"
 
 ## Environment variables
 ##
@@ -34,7 +35,6 @@ OPTS:
 
     -p PROFILE      A name of profile to run.
     -s FLAVOR       A flavor of a profile.
-    -l PATH         Configure a lookup path.
     -f              Force executing scripts.
 
 PROFILE:
@@ -44,19 +44,11 @@ PROFILE:
 
 FLAVOR:
 
-    backups         Install backup packages.
     desktop         Install desktop packages.
-    dev             Install development packages.
-    mail            Install mail packages.
     system          Install system packages.
-    media           Install media packages.
-
-    work            Install work packages.
-    projects        Install projects packages.
 
 Bootstrap script will default to \`pkg\` without any FLAVORS
-if no PROFILES and FLAVORS is given. Lookup path is default to
-the current directory and ~/.dotpriv.
+if no PROFILES and FLAVORS is given.
 " # EOF
 }
 
@@ -65,13 +57,11 @@ FORCE=0
 
 PROFILES=""
 FLAVORS=""
-LOOKUP_PATH=""
 
 while getopts "hp:s:l:f" opt; do
     case "$opt" in
     p) PROFILES="$PROFILES $OPTARG" ;;
     s) FLAVORS="$FLAVORS $OPTARG" ;;
-    l) LOOKUP_PATH="$LOOKUP_PATH $OPTARG" ;;
     f) FORCE=1 ;;
     h)
         print_usage
@@ -85,10 +75,6 @@ while getopts "hp:s:l:f" opt; do
 done
 
 shift $((OPTIND - 1))
-
-if [ -z "$LOOKUP_PATH" ]; then
-    LOOKUP_PATH="$BASE_DIR $HOME/.dotpriv"
-fi
 
 if [ "${1:-}" = "--" ]; then
     shift
@@ -111,7 +97,7 @@ done
 
 for f in $FLAVORS; do
     case "$f" in
-    dev | desktop | mail | backups | system | work | projects) ;;
+    desktop | system) ;;
     *)
         printe_err "Unknown flavor: $f"
         exit 1
@@ -132,29 +118,18 @@ fi
 ##
 
 for p in pkg user; do
-    if has_args "$p" "$PROFILES"; then
-        run=0
+    runscript="$BASE_DIR/libexec/dotfiles/${p}_${SYS}.sh"
 
-        for b in $LOOKUP_PATH; do
-            runscript="$b/libexec/dotfiles/${p}_${SYS}.sh"
-
-            if [ ! -f "$runscript" ]; then
-                continue
-            fi
-
-            run=1
-            printe_h1 "Running ${runscript}..."
-            (
-                cd "$(dirname "$runscript")" || exit 1
-                # shellcheck disable=SC1090
-                . "$runscript"
-                run_with_flavors "$FLAVORS"
-            )
-        done
-
-        if [ $run != 1 ]; then
-            printe_err "Profile ${p} was not found for ${SYS}"
-            exit 1
-        fi
+    if [ ! -f "$runscript" ]; then
+        printe_err "Profile ${p} was not found for ${SYS}"
+        exit 1
     fi
+
+    printe_h1 "Running ${runscript}..."
+    (
+        cd "$(dirname "$runscript")" || exit 1
+        # shellcheck disable=SC1090
+        . "$runscript"
+        run_with_flavors "$FLAVORS"
+    )
 done
