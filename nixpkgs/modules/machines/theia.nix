@@ -9,5 +9,6 @@
 
     # services
     ../launchd/userenv.nix
+    ../launchd/emacs.nix
   ];
 }
