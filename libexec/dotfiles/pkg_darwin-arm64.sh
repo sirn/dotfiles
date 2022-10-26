@@ -55,7 +55,6 @@ _run() {
     macports_install xcodes
     macports_install xz
     macports_install youtube-dl
-    macports_install yq
 }
 
 _run_desktop() {
@@ -77,6 +76,7 @@ _run_dev() {
     macports_install tcl
     macports_install tcl-tls
     macports_install tcllib
+    macports_install yq
 
     macports_install autoconf
     macports_install automake

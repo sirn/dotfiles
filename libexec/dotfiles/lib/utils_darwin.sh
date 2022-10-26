@@ -64,9 +64,11 @@ macports_install() {
     shift
 
     if macports_installed "$pkg" "$@"; then
-        printe "$pkg (macports) already installed"
+        printe_info "$pkg (macports) already installed"
         return
     fi
+
+    printe_info "$pkg (macports), not installed, installing..."
 
     if ! run_root $MACPORTS -N install "$pkg" "$@"; then
         printe_info "$pkg (macports) failed to install, skipping..."

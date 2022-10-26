@@ -85,6 +85,7 @@ _run_dev() {
     xbps_install tcl
     xbps_install tcllib
     xbps_install tcltls
+    xbps_install yq-go
 
     xbps_install autoconf
     xbps_install automake

@@ -580,6 +580,7 @@ run_with_flavors() {
     fi
 
     if [ "$(command -v _run)x" != "x" ]; then
+        printe_h2 "Command: _run..."
         if ! _run "$flavors"; then
             return
         fi
@@ -589,6 +590,7 @@ run_with_flavors() {
         run_command="_run_$flavor"
 
         if [ "$(command -v "$run_command")x" != "x" ]; then
+            printe_h2 "Command: $run_command..."
             if ! "$run_command" "$flavors"; then
                 return
             fi
@@ -596,6 +598,7 @@ run_with_flavors() {
     done
 
     if [ "$(command -v _run_all)x" != "x" ]; then
+        printe_h2 "Command: _run_all..."
         if ! _run_all "$flavors"; then
             return
         fi

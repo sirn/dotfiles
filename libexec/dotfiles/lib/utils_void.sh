@@ -14,9 +14,11 @@ xbps_install() {
     shift
 
     if xbps_installed "$pkg"; then
-        printe "$pkg (xbps) already installed"
+        printe_info "$pkg (xbps) already installed"
         return
     fi
+
+    printe_info "$pkg not installed, installing..."
 
     if [ -n "$pkg" ]; then
         eval set -- "$pkg"
@@ -37,12 +39,12 @@ xbps_alternative() {
     shift
 
     if ! xbps_installed "$pkg"; then
-        printe "$pkg is not installed, skipping..."
+        printe_info "$pkg is not installed, skipping..."
         return
     fi
 
     if [ "$(xbps_current "$group")" = "$pkg" ]; then
-        printe "$pkg already the default $group"
+        printe_info "$pkg already the default $group"
         return
     fi
 
