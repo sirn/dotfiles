@@ -2,13 +2,8 @@
   imports = [
     ../profiles/common.nix
     ../profiles/devops.nix
-    ../profiles/kubeops.nix
+    ../profiles/mail.nix
     ../profiles/dev.nix
-
-    # email
-    ../programs/mbsync.nix
-    ../programs/msmtp.nix
-    ../programs/notmuch.nix
 
     # services
     ../runit/duplicity.nix

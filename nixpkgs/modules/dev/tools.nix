@@ -9,26 +9,14 @@ in
 {
   home.packages = with pkgs; [
     # dev
-    autoconf
-    automake
-    buf
     entr
-    execline
     jq
-    jsonnet
     mercurial
     yamllint
     yq-go
     unstable.bmake
 
-    # db
-    postgresql_14
-    redis
-    sqlite
-
     # net
-    amfora
-    autossh
     curlFull
     ipcalc
     mosh
@@ -36,7 +24,6 @@ in
     rsync
     socat
     unison
-    w3m-nox
 
     # sys
     bzip2
@@ -50,7 +37,6 @@ in
 
     # textproc
     aspell
-    mdbook
     proselint
     silver-searcher
   ] ++ (if isDarwin then [ ] else [

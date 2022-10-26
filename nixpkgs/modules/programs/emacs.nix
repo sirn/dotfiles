@@ -12,6 +12,7 @@ in
     package = pkgs.local.emacsNativeComp-nox;
     extraPackages = epkgs: [
       epkgs.notmuch
+      epkgs.w3m
     ];
   };
 

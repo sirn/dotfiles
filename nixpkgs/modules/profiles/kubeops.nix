@@ -1,5 +1,0 @@
-{
-  imports = [
-    ../dev/kubernetes.nix
-  ];
-}

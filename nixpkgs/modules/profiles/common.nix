@@ -8,7 +8,6 @@
     ../programs/fzf.nix
     ../programs/git.nix
     ../programs/gpg.nix
-    ../programs/pandoc.nix
     ../programs/password-store.nix
     ../programs/tmux.nix
     ../programs/vim.nix
