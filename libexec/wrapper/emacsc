@@ -3,15 +3,8 @@
 # Run emacsclient
 #
 
-for n in /opt/local/bin /usr/local/bin /usr/bin; do
-    if [ -f "$n/emacs" ]; then
-        EMACS_PREFIX="$n"
-        break
-    fi
-done
-
 if [ -n "$TERM" ]; then
-    exec $EMACS_PREFIX/emacsclient -t -c -a '' "$@"
+    exec emacsclient -t -c -a '' "$@"
 else
-    exec $EMACS_PREFIX/emacsclient -c -a '' "$@"
+    exec emacsclient -c -a '' "$@"
 fi

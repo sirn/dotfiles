@@ -93,6 +93,41 @@ prependpath "$HOME/.dotfiles/bin"
 prependpath "$HOME/.dotfiles/libexec/wrapper"
 prependpath "$HOME/.dotpriv/bin"
 
+## Nix
+##
+
+prependnixpath() {
+    case ":$NIX_PATH:" in
+    *:"$1":*) ;;
+    *)
+        NIX_PATH="${1:+$1:}$NIX_PATH"
+        ;;
+    esac
+
+    NIX_PATH=${NIX_PATH%%:}
+}
+
+# shellcheck disable=SC1091
+if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+    . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+
+    # We've reset PATH above; need to do this manually.
+    prependpath "/nix/var/nix/profiles/default/bin"
+    prependpath "$HOME/.nix-profile/bin"
+
+    prependnixpath "$HOME/.nix-defexpr/channels"
+    prependnixpath "/nix/var/nix/profiles/per-user/root/channels"
+
+    export NIX_PATH
+fi
+
+# shellcheck disable=SC1091
+if [ -e "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
+    . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+fi
+
+unset prependnixpath
+
 ## GPG agent
 ##
 
@@ -103,14 +138,6 @@ if command -v gpgconf >/dev/null; then
         SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
         export SSH_AUTH_SOCK
     fi
-fi
-
-## Nix
-##
-
-# shellcheck disable=SC1091
-if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
-    . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 fi
 
 ## ASDF

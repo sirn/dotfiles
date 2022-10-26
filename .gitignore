@@ -1,3 +1,6 @@
+# Dotfiles-specific
+config.override.nix
+
 # Nasty system caches
 .DS_Store
 Thumbs.db

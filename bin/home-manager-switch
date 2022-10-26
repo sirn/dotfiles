@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+# Wrapper for home-manager switch within flake.
+#
+
+# shellcheck disable=SC2034
+BASE_DIR=$(
+    cd "$(dirname "$0")/.." || exit
+    pwd -P
+)
+
+nix() {
+    command nix \
+        --extra-experimental-features nix-command \
+        --extra-experimental-features flakes \
+        "$@"
+}
+
+main() {
+    if ! command -v nix >/dev/null; then
+        echo "nix is not installed?"
+        exit 1
+    fi
+
+    FLAKE_URI="path:${BASE_DIR}"
+
+    if ! command -v home-manager >/dev/null; then
+        nix build --no-link "${FLAKE_URI}#homeConfigurations.${USER}.activationPackage"
+        "$(nix path-info "${FLAKE_URI}#homeConfigurations.${USER}.activationPackage")"/activate
+    fi
+
+    home-manager --flake "${FLAKE_URI}#${USER}" switch
+}
+
+main "$@"

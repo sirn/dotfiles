@@ -170,7 +170,7 @@
   :straight t
 
   :custom
-  (parinfer-rust-auto-download nil)
+  (parinfer-rust-auto-download -1)
 
   :init
   (setq parinfer-rust-library
@@ -178,9 +178,8 @@
          (concat
           (file-name-as-directory "parinfer-rust")
           (cond
-           ((eq system-type 'darwin) "parinfer-rust-darwin.so")
-           ((eq system-type 'gnu/linux) "parinfer-rust-linux.so")
-           ((eq system-type 'windows-nt) "parinfer-rust-windows.dll")))))
+           ((eq system-type 'darwin) "libparinfer_rust.dylib")
+           ((eq system-type 'gnu/linux) "libparinfer_rust.so")))))
 
   (add-hook 'clojure-mode-hook #'parinfer-rust-mode)
   (add-hook 'emacs-lisp-mode-hook #'parinfer-rust-mode)

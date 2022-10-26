@@ -1,0 +1,10 @@
+[
+    "eslint",
+    "eslint-config-prettier",
+    "eslint-plugin-svelte3",
+    "prettier",
+    "prettier-plugin-svelte",
+    "stylelint",
+    "stylelint-config-recommended",
+    "stylelint-scss"
+]

@@ -9,26 +9,23 @@ BASE_DIR=${BASE_DIR:-$(
 )}
 
 cd "$(dirname "$0")" || exit 1
+
+# shellcheck disable=SC1091
 . "lib/utils.sh"
+
+# shellcheck disable=SC1091
 . "lib/utils_void.sh"
+
+# shellcheck disable=SC1091
 . "lib/utils_runit.sh"
-. "lib/buildenv.sh"
 
 _run() {
     _setup_user_service
-    _setup_user_links
     _setup_user_shell
-    _setup_user_emacs
-    _setup_user_xlocate
 }
 
 _run_desktop() {
     _setup_desktop_links
-}
-
-_run_dev() {
-    _setup_dev_links
-    _setup_dev_podman
 }
 
 _setup_user_service() {
@@ -44,40 +41,16 @@ _setup_user_service() {
 
     if [ ! -f "$svcsrc/run" ]; then
         run_root install -d "$svcsrc"
-        run_root install -m0755 "$BASE_DIR/sv/runsvdir/run" "$svcsrc/run"
+        run_root install -m0755 "$BASE_DIR/etc/sv/runsvdir/run" "$svcsrc/run"
         make_link -Sf "/run/runit/supervise.$svcname" "$svcsrc/supervise"
     fi
 
     if [ ! -f "$svcsrc/finish" ]; then
         run_root install -d "$svcsrc"
-        run_root install -m0755 "$BASE_DIR/sv/runsvdir/finish" "$svcsrc/finish"
+        run_root install -m0755 "$BASE_DIR/etc/sv/runsvdir/finish" "$svcsrc/finish"
     fi
 
     install_svc -S "$svcsrc"
-}
-
-_setup_user_emacs() {
-    install_svc -us -p emacs "$BASE_DIR/sv/emacs"
-}
-
-_setup_user_xlocate() {
-    install_svc -us -p xlocate "$BASE_DIR/sv/xlocate"
-}
-
-_setup_user_links() {
-    make_link "$BASE_DIR/etc/aria2/aria2.conf" "$HOME/.aria2/aria2.conf"
-    make_link \
-        "$BASE_DIR/etc/emacs/straight/versions/default.el" \
-        "$HOME/.emacs.d/straight/versions/default.el"
-
-    make_link "$BASE_DIR/etc/emacs/init.el" "$HOME/.emacs.d/init.el"
-    make_link "$BASE_DIR/etc/git/gitconfig" "$HOME/.gitconfig"
-    make_link "$BASE_DIR/etc/hg/hgrc" "$HOME/.hgrc"
-    make_link "$BASE_DIR/etc/ksh/kshrc" "$HOME/.kshrc"
-    make_link "$BASE_DIR/etc/podman/storage.conf" "$HOME/.config/containers/storage.conf"
-    make_link "$BASE_DIR/etc/sh/profile" "$HOME/.profile"
-    make_link "$BASE_DIR/etc/ssh/config" "$HOME/.ssh/config"
-    make_link "$BASE_DIR/etc/tmux/tmux.conf" "$HOME/.tmux.conf"
 }
 
 _setup_user_shell() {
@@ -91,12 +64,4 @@ _setup_desktop_links() {
     make_link \
         "$BASE_DIR/etc/fontconfig/conf.d" \
         "$HOME/.config/fontconfig/conf.d"
-}
-
-_setup_dev_links() {
-    make_link "$BASE_DIR/etc/proselint/proselintrc" "$HOME/.proselintrc"
-}
-
-_setup_dev_podman() {
-    install_svc -us -p podman "$BASE_DIR/sv/podman"
 }
