@@ -3,8 +3,9 @@
 
   imports = [
     ../profiles/common.nix
-    ../profiles/devops.nix
     ../profiles/dev.nix
+    ../profiles/devops.nix
+    ../profiles/graphical.nix
 
     # services
     ../launchd/userenv.nix

@@ -11,6 +11,12 @@ in
   fonts.fontconfig.enable = isLinux;
 
   home.packages = with pkgs; [
+    # Fira family
+    fira
+    fira-mono
+    fira-code
+    fira-code-symbols
+
     # Source Pro family
     source-code-pro
     source-sans-pro
@@ -34,6 +40,9 @@ in
 
     # IBM Plex family
     ibm-plex
+
+    # Ubuntu family
+    ubuntu_font_family
 
     # IPA fonts
     ipafont
