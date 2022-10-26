@@ -2,7 +2,6 @@
 
 let
   inherit (lib) mkIf;
-  inherit (pkgs.stdenv) isLinux;
   inherit (config.home) username;
 
   gpgKey = config.programs.gpg.settings.default-key;
@@ -10,7 +9,7 @@ let
   dotprivDir = "${homeDir}/.dotpriv";
 in
 {
-  home = mkIf isLinux {
+  home = {
     file = {
       ".local/var/service/duplicity/run" = {
         executable = true;

@@ -9,7 +9,7 @@ in
 {
   programs.emacs = {
     enable = true;
-    package = pkgs.emacs-nox;
+    package = pkgs.local.emacsNativeComp-nox;
     extraPackages = epkgs: [
       epkgs.notmuch
     ];

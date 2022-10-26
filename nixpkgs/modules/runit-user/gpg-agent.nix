@@ -8,7 +8,7 @@ let
   homeDir = config.home.homeDirectory;
 in
 {
-  home = mkIf isLinux {
+  home = {
     file = {
       ".local/var/service/gpg-agent/run" = {
         executable = true;

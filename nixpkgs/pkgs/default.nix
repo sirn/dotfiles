@@ -10,4 +10,6 @@ in
   ia-writer-quattro-static = (callPackage ./data/fonts/ia-fonts { }).ia-writer-quattro-static;
   droid-sans-thai = (callPackage ./data/fonts/droid-thai-fonts { }).droid-sans-thai;
   droid-serif-thai = (callPackage ./data/fonts/droid-thai-fonts { }).droid-serif-thai;
+
+  emacsNativeComp-nox = (callPackage ./applications/editors/emacs { }).emacsNativeComp-nox;
 }

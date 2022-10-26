@@ -2,6 +2,7 @@
 
 let
   inherit (config.lib.file) mkOutOfStoreSymlink;
+  inherit (pkgs.stdenv) isDarwin;
 
   dotfilesDir = "${config.home.homeDirectory}/.dotfiles";
 in
@@ -10,7 +11,6 @@ in
     # dev
     autoconf
     automake
-    bmake
     buf
     entr
     execline
@@ -19,6 +19,7 @@ in
     mercurial
     yamllint
     yq-go
+    unstable.bmake
 
     # db
     postgresql_14
@@ -39,7 +40,6 @@ in
 
     # sys
     bzip2
-    duplicity
     execline
     honcho
     s6
@@ -53,7 +53,16 @@ in
     mdbook
     proselint
     silver-searcher
-  ];
+  ] ++ (if isDarwin then [ ] else [
+    # Note: duplicity has an actual dependency on pyOpenSSL which is
+    # broken on aarch64-darwin. Broken until the issue is resolved
+    # upstream.
+    #
+    # Last check: nixpkgs-unstable 20221027
+    #
+    # See also: https://github.com/pyca/pyopenssl/issues/873
+    duplicity
+  ]);
 
   home.file = {
     ".proselintrc" = {
