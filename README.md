@@ -14,6 +14,12 @@ Install Nix:
 $ sh <(curl -L https://nixos.org/nix/install) --daemon
 ```
 
+Configure nix, edit `~/.config/nix/nix.conf`:
+
+```ini
+experimental-features = nix-command flakes
+```
+
 Setup Home Manager:
 
 ```shell
