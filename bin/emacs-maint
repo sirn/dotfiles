@@ -9,7 +9,6 @@ BASE_DIR=$(
     pwd -P
 )
 BASE_NAME=$(basename "$0")
-PATH=/usr/bin:/bin:/usr/local/bin:/opt/local/bin
 
 ## Utils
 ##

@@ -20,6 +20,7 @@ xdg-config/fontconfig:ro
 xdg-config/gtk-3.0:ro
 ~/.dotfiles/etc/fontconfig:ro
 ~/.local/share/fonts:ro
+/nix/store:ro
 " # END-QUOTE
 
 _do_override() {
