@@ -9,6 +9,43 @@ BASE_DIR=$(
     pwd -P
 )
 
+## Colors
+##
+
+c_bold=$(tput bold 2>/dev/null || true)
+c_red=$(tput setaf 1 2>/dev/null || true)
+c_orange=$(tput setaf 3 2>/dev/null || true)
+c_blue=$(tput setaf 4 2>/dev/null || true)
+c_reset=$(tput sgr0 2>/dev/null || true)
+
+printe_h1() {
+    printf >&2 "%s[%s]%s %s%s%s\\n" \
+        "$c_blue" "${0##*/}" "$c_reset" \
+        "$c_orange$c_bold" "$@" "$c_reset"
+}
+
+printe_info() {
+    printf >&2 "%s[%s]%s %s%s%s\\n" \
+        "$c_blue" "${0##*/}" "$c_reset" \
+        "$@"
+}
+
+printe_err() {
+    printf >&2 "%s[%s]%s %s%s%s\\n" \
+        "$c_blue" "${0##*/}" "$c_reset" \
+        "$c_red" "$@" "$c_reset"
+}
+
+run_cmd() {
+    printf >&2 "%s[%s]%s %s%s%s %s\\n" \
+        "$c_blue" "${0##*/}" "$c_reset" \
+        "$c_bold" "Command:" "$c_reset" "$*"
+    "$@"
+}
+
+## Wrapping
+##
+
 nix() {
     command nix \
         --extra-experimental-features nix-command \
@@ -16,22 +53,35 @@ nix() {
         "$@"
 }
 
+## Subroutine
+##
+
 main() {
     if ! command -v nix >/dev/null; then
-        echo "nix is not installed?"
+        printe_err "nix is not installed?"
         exit 1
     fi
 
-    FLAKE_URI="path:${BASE_DIR}"
     HOSTNAME=$(hostname | tr '[:upper:]' '[:lower:]')
     HOSTNAME=${HOSTNAME%%.*}
+    FLAKE_URI="path:${BASE_DIR}"
+    FLAKE_PKG="${FLAKE_URI}#homeConfigurations.${HOSTNAME}.activationPackage"
+
+    printe_h1 "Running home-manager for $HOSTNAME"
 
     if ! command -v home-manager >/dev/null; then
-        nix build --no-link "${FLAKE_URI}#homeConfigurations.${HOSTNAME}.activationPackage"
-        "$(nix path-info "${FLAKE_URI}#homeConfigurations.${HOSTNAME}.activationPackage")"/activate
+        if ! run_cmd nix build --no-link "${FLAKE_PKG}"; then
+            printe_err "Building of home-manager flake failed"
+            exit 1
+        fi
+
+        if ! run_cmd "$(nix path-info "${FLAKE_PKG}")"/activate; then
+            printe_err "Activation of home configurationof flake failed"
+            exit 1
+        fi
     fi
 
-    home-manager --flake "${FLAKE_URI}#${HOSTNAME}" switch
+    run_cmd home-manager --flake "${FLAKE_URI}#${HOSTNAME}" switch
 }
 
 main "$@"
