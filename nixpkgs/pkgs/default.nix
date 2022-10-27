@@ -12,4 +12,7 @@ in
   droid-serif-thai = (callPackage ./data/fonts/droid-thai-fonts { }).droid-serif-thai;
 
   emacsNativeComp-nox = (callPackage ./applications/editors/emacs { }).emacsNativeComp-nox;
+  emacsNativeComp-lucid = (callPackage ./applications/editors/emacs { }).emacsNativeComp-lucid;
+
+  unison-nox = (callPackage ./applications/networking/sync/unison-nox { });
 }

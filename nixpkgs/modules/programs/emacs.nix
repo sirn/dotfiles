@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
+  inherit (pkgs.stdenv) isLinux;
   inherit (config.lib.file) mkOutOfStoreSymlink;
   inherit (config.home) homeDirectory;
 
@@ -9,7 +10,11 @@ in
 {
   programs.emacs = {
     enable = true;
-    package = pkgs.local.emacsNativeComp-nox;
+    package =
+      if config.machine.gui.enable && isLinux then
+        pkgs.local.emacsNativeComp-lucid
+      else
+        pkgs.local.emacsNativeComp-nox;
     extraPackages = epkgs: [
       epkgs.notmuch
       epkgs.w3m

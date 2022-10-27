@@ -17,12 +17,6 @@
         (final: prev: { unstable = nixpkgs-unstable.legacyPackages.${prev.system}; })
       ];
 
-      defaultConfig = {
-        nixpkgs.overlays = overlays;
-        nixpkgs.config.allowUnfree = true;
-        programs.home-manager.enable = true;
-      };
-
       mkConfig =
         { hostname
         , username ? "sirn"
@@ -30,6 +24,14 @@
         , homeDirectory ? "/home/${username}"
         , ...
         }:
+        let
+          defaultConfig = { pkgs, ... }: {
+            nixpkgs.overlays = overlays;
+            nixpkgs.config.allowUnfree = true;
+            programs.home-manager.enable = true;
+            targets.genericLinux.enable = pkgs.stdenv.isLinux;
+          };
+        in
         home-manager.lib.homeManagerConfiguration {
           inherit username system homeDirectory;
           pkgs = nixpkgs.legacyPackages.${system};
@@ -37,6 +39,7 @@
           configuration = {
             imports = [
               defaultConfig
+              ./nixpkgs/lib/options.nix
               ./nixpkgs/modules/machines/${hostname}.nix
             ];
           };

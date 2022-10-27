@@ -1,4 +1,8 @@
+{ config, ... }:
+
 {
+  config.machine.gui.enable = true;
+
   imports = [
     ../profiles/common.nix
     ../profiles/dev.nix

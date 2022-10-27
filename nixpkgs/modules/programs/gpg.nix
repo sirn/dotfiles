@@ -2,10 +2,19 @@
 
 let
   inherit (config.lib.file) mkOutOfStoreSymlink;
-  inherit (pkgs.stdenv) isDarwin;
+  inherit (pkgs.stdenv) isLinux isDarwin;
 
   dotfilesDir = "${config.home.homeDirectory}/.dotfiles";
   dotprivDir = "${config.home.homeDirectory}/.dotpriv";
+
+  pinentryProgram =
+    if config.machine.gui.enable && isLinux then
+      "${pkgs.pinentry-qt}/bin/pinentry-qt"
+    else
+      if config.machine.gui.enable && isDarwin then
+        "${pkgs.pinentry_mac}/Applications/pinentry-mac.app/Contents/MacOS/pinentry-mac"
+      else
+        "${pkgs.pinentry}/bin/pinentry";
 in
 {
   programs.gpg = {
@@ -35,7 +44,7 @@ in
         # Pinentry
         allow-emacs-pinentry
         allow-loopback-pinentry
-        pinentry-program ${pkgs.pinentry}/bin/pinentry
+        pinentry-program ${pinentryProgram}
 
         # TTL
         default-cache-ttl-ssh 86400
