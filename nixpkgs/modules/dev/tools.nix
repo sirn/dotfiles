@@ -27,9 +27,6 @@ in
 
     # sys
     bzip2
-    execline
-    honcho
-    s6
     tree
     unzip
     xz
