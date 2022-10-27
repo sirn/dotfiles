@@ -10,7 +10,7 @@
         "/bin/sh"
         "-l"
         "-c"
-        "emacs --fg-daemon --chdir=$HOME"
+        "${config.programs.emacs.package}/bin/emacs --fg-daemon --chdir=$HOME"
       ];
     };
   };
