@@ -13,32 +13,30 @@ in
       ".local/var/service/notmuch/run" = {
         executable = true;
         text = ''
-          #!/nix/var/nix/profiles/default/bin/nix-shell
-          #!nix-shell -i execlineb -p execline snooze notmuch isync
+          #!${pkgs.execline}/bin/execlineb
 
           emptyenv -p
-
+          export PATH ${pkgs.execline}/bin:${pkgs.busybox}/bin
           export HOME ${homeDir}
 
           fdmove -c 2 1
           foreground { mkdir -p ${homeDir}/.local/var/run }
-          snooze -v -R 30 -s 1m -H/1 -M/1 -t ${homeDir}/.local/var/run/notmuch_timefile
-          if { nice -n 20 notmuch new }
+          ${pkgs.snooze}/bin/snooze -v -R 30 -s 1m -H/1 -M/1 -t ${homeDir}/.local/var/run/notmuch_timefile
+          if { nice -n 20 ${pkgs.notmuch}/bin/notmuch new }
           touch ${homeDir}/.local/var/run/notmuch_timefile
         '';
       };
       ".local/var/service/notmuch/log/run" = {
         executable = true;
         text = ''
-          #!/nix/var/nix/profiles/default/bin/nix-shell
-          #!nix-shell -i execlineb -p execline s6 gzip
+          #!${pkgs.execline}/bin/execlineb
 
           emptyenv -p
-
+          export PATH ${pkgs.execline}/bin:${pkgs.busybox}/bin
           define logpath ${homeDir}/.local/var/log/notmuch
 
           if { mkdir -p ''${logpath} }
-          s6-log -b n10 s1000000 t !"gzip -nq9" ''${logpath}
+          ${pkgs.s6}/bin/s6-log -b n10 s1000000 t !"${pkgs.gzip}/bin/gzip -nq9" ''${logpath}
         '';
       };
     };

@@ -13,17 +13,18 @@ in
       ".local/var/service/gpg-agent/run" = {
         executable = true;
         text = ''
-          #!/nix/var/nix/profiles/default/bin/nix-shell
-          #!nix-shell -i execlineb -p execline s6 gnupg
+          #!${pkgs.execline}/bin/execlineb
 
           emptyenv -p
+          export PATH ${pkgs.execline}/bin:${pkgs.busybox}/bin
+          export HOME ${homeDir}
 
           backtick -n -E uid { id -u }
           define xdg-runtime-dir /run/user/''${uid}
 
-          s6-ipcserver-socketbinder -a 0600 ''${xdg-runtime-dir}/gnupg/S.gpg-agent
+          ${pkgs.s6}/bin/s6-ipcserver-socketbinder -a 0600 ''${xdg-runtime-dir}/gnupg/S.gpg-agent
           fdmove 3 0
-          s6-ipcserver-socketbinder -a 0600 ''${xdg-runtime-dir}/gnupg/S.gpg-agent.ssh
+          ${pkgs.s6}/bin/s6-ipcserver-socketbinder -a 0600 ''${xdg-runtime-dir}/gnupg/S.gpg-agent.ssh
           fdmove 4 0
 
           export HOME ${homeDir}
@@ -37,21 +38,20 @@ in
           }
 
           fdmove -c 2 1
-          gpg-agent --supervised
+          ${pkgs.gnupg}/bin/gpg-agent --supervised
         '';
       };
       ".local/var/service/gpg-agent/log/run" = {
         executable = true;
         text = ''
-          #!/nix/var/nix/profiles/default/bin/nix-shell
-          #!nix-shell -i execlineb -p execline s6 gzip
+          #!${pkgs.execline}/bin/execlineb
 
           emptyenv -p
-
+          export PATH ${pkgs.execline}/bin:${pkgs.busybox}/bin
           define logpath ${homeDir}/.local/var/log/gpg-agent
 
           if { mkdir -p ''${logpath} }
-          s6-log -b n10 s1000000 t !"gzip -nq9" ''${logpath}
+          ${pkgs.s6}/bin/s6-log -b n10 s1000000 t !"${pkgs.gzip}/bin/gzip -nq9" ''${logpath}
         '';
       };
     };

@@ -14,10 +14,10 @@ in
       ".local/var/service/duplicity/run" = {
         executable = true;
         text = ''
-          #!/nix/var/nix/profiles/default/bin/nix-shell
-          #!nix-shell -i execlineb -p execline snooze duplicity gnupg
+          #!${pkgs.execline}/bin/execlineb
 
           emptyenv -p
+          export PATH ${pkgs.openssh}/bin:${pkgs.execline}/bin:${pkgs.busybox}/bin
 
           backtick -n -E uid { id -u }
           define xdg-runtime-dir /run/user/''${uid}
@@ -26,13 +26,13 @@ in
           export XDG_RUNTIME_DIR ''${xdg-runtime-dir}
           export SSH_AUTH_SOCK ''${xdg-runtime-dir}/gnupg/S.gpg-agent.ssh
 
-          define -s duplicity "duplicity --gpg-binary=gpg2 --encrypt-key=${gpgKey} --use-agent"
+          define -s duplicity "${pkgs.duplicity}/bin/duplicity --gpg-binary=${pkgs.gnupg}/bin/gpg2 --encrypt-key=${gpgKey} --use-agent"
 
           fdmove -c 2 1
           backtick -n -E target { ${dotprivDir}/libexec/duplicity/target_cmd.sh }
           if { test -d ''${xdg-runtime-dir} }
           foreground { mkdir -p ${homeDir}/.local/var/run }
-          snooze -v -R 10m -s 1h -H/1 -t ${homeDir}/.local/var/run/duplicity_timefile
+          ${pkgs.snooze}/bin/snooze -v -R 10m -s 1h -H/1 -t ${homeDir}/.local/var/run/duplicity_timefile
           nice -n 20
 
           if {
@@ -52,15 +52,14 @@ in
       ".local/var/service/duplicity/log/run" = {
         executable = true;
         text = ''
-          #!/nix/var/nix/profiles/default/bin/nix-shell
-          #!nix-shell -i execlineb -p execline s6 gzip
+          #!${pkgs.execline}/bin/execlineb
 
           emptyenv -p
-
+          export PATH ${pkgs.execline}/bin:${pkgs.busybox}/bin
           define logpath ${homeDir}/.local/var/log/duplicity
 
           if { mkdir -p ''${logpath} }
-          s6-log -b n10 s1000000 t !"gzip -nq9" ''${logpath}
+          ${pkgs.s6}/bin/s6-log -b n10 s1000000 t !"${pkgs.gzip}/bin/gzip -nq9" ''${logpath}
         '';
       };
     };

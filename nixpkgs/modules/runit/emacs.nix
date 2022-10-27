@@ -13,10 +13,10 @@ in
       ".local/var/service/emacs/run" = {
         executable = true;
         text = ''
-          #!/nix/var/nix/profiles/default/bin/nix-shell
-          #!nix-shell -i execlineb -p execline emacs
+          #!${pkgs.execline}/bin/execlineb
 
           emptyenv -p
+          export PATH ${pkgs.execline}/bin:${pkgs.busybox}/bin
 
           backtick -n -E uid { id -u }
           define xdg-runtime-dir /run/user/''${uid}
@@ -32,21 +32,20 @@ in
 
           fdmove -c 2 1
           if { test -d ''${xdg-runtime-dir} }
-          ''${shell} -l -c "emacs --fg-daemon --chdir=${homeDir}"
+          ''${shell} -l -c "${config.programs.emacs.package}/bin/emacs --fg-daemon --chdir=${homeDir}"
         '';
       };
       ".local/var/service/emacs/log/run" = {
         executable = true;
         text = ''
-          #!/nix/var/nix/profiles/default/bin/nix-shell
-          #!nix-shell -i execlineb -p execline s6 gzip
+          #!${pkgs.execline}/bin/execlineb
 
           emptyenv -p
-
+          export PATH ${pkgs.execline}/bin:${pkgs.busybox}/bin
           define logpath ${homeDir}/.local/var/log/emacs
 
           if { mkdir -p ''${logpath} }
-          s6-log -b n10 s1000000 t !"gzip -nq9" ''${logpath}
+          ${pkgs.s6}/bin/s6-log -b n10 s1000000 t !"${pkgs.gzip}/bin/gzip -nq9" ''${logpath}
         '';
       };
     };

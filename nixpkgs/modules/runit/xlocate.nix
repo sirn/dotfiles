@@ -13,32 +13,30 @@ in
       ".local/var/service/xlocate/run" = {
         executable = true;
         text = ''
-          #!/nix/var/nix/profiles/default/bin/nix-shell
-          #!nix-shell -i execlineb -p execline snooze
+          #!${pkgs.execline}/bin/execlineb
 
           emptyenv -p
-
+          export PATH ${pkgs.gitMinimal}/bin:${pkgs.execline}/bin:${pkgs.busybox}/bin
           export HOME ${homeDir}
 
           fdmove -c 2 1
           foreground { mkdir -p ${homeDir}/.local/var/run }
-          snooze -v -R 10m -s 6h -H/6 -t ${homeDir}/.local/var/run/xlocate_timefile
-          if { nice -n 20 xlocate -S }
+          ${pkgs.snooze}/bin/snooze -v -R 10m -s 6h -H/6 -t ${homeDir}/.local/var/run/xlocate_timefile
+          if { nice -n 20 /usr/bin/xlocate -S }
           touch ${homeDir}/.local/var/run/xlocate_timefile
         '';
       };
       ".local/var/service/xlocate/log/run" = {
         executable = true;
         text = ''
-          #!/nix/var/nix/profiles/default/bin/nix-shell
-          #!nix-shell -i execlineb -p execline s6 gzip
+          #!${pkgs.execline}/bin/execlineb
 
           emptyenv -p
-
+          export PATH ${pkgs.execline}/bin:${pkgs.busybox}/bin
           define logpath ${homeDir}/.local/var/log/xlocate
 
           if { mkdir -p ''${logpath} }
-          s6-log -b n10 s1000000 t !"gzip -nq9" ''${logpath}
+          ${pkgs.s6}/bin/s6-log -b n10 s1000000 t !"${pkgs.gzip}/bin/gzip -nq9" ''${logpath}
         '';
       };
     };
