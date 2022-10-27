@@ -32,7 +32,7 @@ in
 
           fdmove -c 2 1
           if { test -d ''${xdg-runtime-dir} }
-          ''${shell} -l -c "${config.programs.emacs.package}/bin/emacs --fg-daemon --chdir=${homeDir}"
+          ''${shell} -l -c "${config.programs.emacs.finalPackage}/bin/emacs --fg-daemon --chdir=${homeDir}"
         '';
       };
       ".local/var/service/emacs/log/run" = {
