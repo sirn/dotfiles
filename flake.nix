@@ -44,13 +44,21 @@
     in
     {
       homeConfigurations = {
-        ws = mkConfig {
-          hostname = "ws";
+        gemini = mkConfig {
+          hostname = "gemini";
+        };
+        pyxis = mkConfig {
+          hostname = "pyxis";
+          system = "aarch64-darwin";
+          homeDirectory = "/Users/sirn";
         };
         theia = mkConfig {
           hostname = "theia";
           system = "aarch64-darwin";
           homeDirectory = "/Users/sirn";
+        };
+        ws = mkConfig {
+          hostname = "ws";
         };
       };
     };
