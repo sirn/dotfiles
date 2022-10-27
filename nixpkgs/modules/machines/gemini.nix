@@ -1,6 +1,7 @@
 {
   imports = [
     ../profiles/common.nix
+    ../profiles/dev.nix
     ../profiles/graphical.nix
 
     # services
