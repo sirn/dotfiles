@@ -1,7 +1,5 @@
-{ config, ... }:
-
 {
-  config.machine.gui.enable = true;
+  machine.gui.enable = true;
 
   imports = [
     ../profiles/common.nix
