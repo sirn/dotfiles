@@ -40,6 +40,7 @@
             imports = [
               defaultConfig
               ./nixpkgs/lib/options.nix
+              ./nixpkgs/lib/runit.nix
               ./nixpkgs/modules/machines/${hostname}.nix
             ];
           };
