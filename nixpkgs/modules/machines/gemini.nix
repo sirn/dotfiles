@@ -1,5 +1,6 @@
 {
   machine.gui.enable = true;
+  runit.enable = true;
 
   imports = [
     ../profiles/common.nix

@@ -1,4 +1,6 @@
 {
+  runit.enable = true;
+
   imports = [
     ../profiles/common.nix
     ../profiles/devops.nix

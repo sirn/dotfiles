@@ -95,6 +95,12 @@ in
 {
   options = {
     runit = {
+      enable = mkOption {
+        type = types.bool;
+        description = "Whether to enable runit.";
+        default = false;
+      };
+
       services = mkOption {
         type = types.attrsOf (types.submodule runitOpts);
         default = { };
@@ -112,23 +118,25 @@ in
 
     # NOTE: runit supervise directory can't be symlinked from the Nix store
     # since runit only readlink for one level to create run directory
-    home.activation.setupRunitServices = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      setupRunitServices() {
-        local svcs
-        declare -A svcs
-        svcs=(${
-          concatStringsSep " " (
-            (mapAttrsToList (n: v: "['${n}']=${dstDir}/${n}") runScripts) ++
-            (mapAttrsToList (n: v: "['${n}-log']=${dstDir}/${n}/log") logScripts)
-          )})
-        for svc in ''${!svcs[@]}; do
-          src="/run/runit.$USER/supervise.$svc"
-          dest="''${svcs[$svc]}/supervise"
-          $DRY_RUN_CMD ln -nsf $VERBOSE_ARG "$src" "$dest"
-        done
-      }
+    home.activation = mkIf config.runit.enable {
+      setupRunitServices = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        setupRunitServices() {
+          local svcs
+          declare -A svcs
+          svcs=(${
+            concatStringsSep " " (
+              (mapAttrsToList (n: v: "['${n}']=${dstDir}/${n}") runScripts) ++
+              (mapAttrsToList (n: v: "['${n}-log']=${dstDir}/${n}/log") logScripts)
+            )})
+          for svc in ''${!svcs[@]}; do
+            src="/run/runit.$USER/supervise.$svc"
+            dest="''${svcs[$svc]}/supervise"
+            $DRY_RUN_CMD ln -nsf $VERBOSE_ARG "$src" "$dest"
+          done
+        }
 
-      setupRunitServices
-    '';
+        setupRunitServices
+      '';
+    };
   };
 }
