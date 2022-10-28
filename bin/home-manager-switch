@@ -81,7 +81,7 @@ main() {
         fi
     fi
 
-    run_cmd home-manager --flake "${FLAKE_URI}#${HOSTNAME}" switch
+    run_cmd home-manager --flake "${FLAKE_URI}#${HOSTNAME}" switch "$@"
 }
 
 main "$@"
