@@ -1,5 +1,6 @@
 {
   machine.gui.enable = true;
+  launchd.enable = true;
 
   imports = [
     ../profiles/common.nix

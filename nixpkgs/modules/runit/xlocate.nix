@@ -22,8 +22,6 @@ in
         if { nice -n 20 /usr/bin/xlocate -S }
         touch ${homeDir}/.local/var/run/xlocate_timefile
       '';
-
-      log.enable = true;
     };
   };
 }
