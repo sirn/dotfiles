@@ -130,9 +130,24 @@ __prompt_last_exit() {
     fi
 }
 
+__prompt_nix() {
+    typeset t_bold t_reset t_highlight
+    t_bold=$(tput bold 2>/dev/null || true)
+    t_reset=$(tput sgr0 2>/dev/null || true)
+    t_highlight=$(tput setaf 2 2>/dev/null || true)
+    if [ -n "$IN_NIX_SHELL" ]; then
+        printf \
+            "%s[%s]%s " \
+            "\\[$t_highlight$t_bold\\]" \
+            "nix-shell" \
+            "\\[$t_reset\\]"
+    fi
+}
+
 case "$TERM" in
 xterm* | rxvt*)
     PS1="\
+$(__prompt_nix)\
 $(__prompt_hostname) \
 \$(__prompt_pwd) \
 \$(__prompt_git)\
@@ -142,6 +157,7 @@ $(__prompt) "
 
 screen*)
     PS1="\
+$(__prompt_nix)\
 \$(__prompt_pwd) \
 \$(__prompt_git)\
 \$(__prompt_last_exit)\
@@ -149,7 +165,7 @@ $(__prompt) "
     ;;
 
 *)
-    PS1="\$(__prompt_last_exit)$(__prompt) "
+    PS1="$(__prompt_nix)\$(__prompt_last_exit)$(__prompt) "
     ;;
 esac
 
