@@ -41,33 +41,37 @@ in
       vo = "gpu";
     };
   };
-} // mkIf (isLinux && config.machine.flatpak.enable) {
-  machine.flatpak.applications = [
-    "io.mpv.Mpv"
-  ];
 
-  xdg.dataFile = {
-    "flatpak/overrides/io.mpv.Mpv" = {
-      text = ''
-        [Context]
-        filesystems=xdg-config/mpv
-      '';
-    };
+  machine.flatpak = mkIf (isLinux && config.machine.flatpak.enable) {
+    applications = [
+      "io.mpv.Mpv"
+    ];
   };
 
-  xdg.configFile = {
-    "mpv/mpv.conf" = {
-      text = with lib;
-        let
-          cfg = config.programs.mpv;
-        in
-        ''
-          ${optionalString
-            (cfg.defaultProfiles != [ ])
-            (renderOptions { profile = concatStringsSep "," cfg.defaultProfiles; })}
-          ${optionalString (cfg.config != { }) (renderOptions cfg.config)}
-          ${optionalString (cfg.profiles != { }) (renderOptions cfg.profiles)}
+  xdg = mkIf (isLinux && config.machine.flatpak.enable) {
+    dataFile = {
+      "flatpak/overrides/io.mpv.Mpv" = {
+        text = ''
+          [Context]
+          filesystems=xdg-config/mpv
         '';
+      };
+    };
+
+    configFile = {
+      "mpv/mpv.conf" = {
+        text = with lib;
+          let
+            cfg = config.programs.mpv;
+          in
+          ''
+            ${optionalString
+              (cfg.defaultProfiles != [ ])
+              (renderOptions { profile = concatStringsSep "," cfg.defaultProfiles; })}
+            ${optionalString (cfg.config != { }) (renderOptions cfg.config)}
+            ${optionalString (cfg.profiles != { }) (renderOptions cfg.profiles)}
+          '';
+      };
     };
   };
 }
