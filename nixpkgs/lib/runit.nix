@@ -133,6 +133,17 @@ in
             dest="''${svcs[$svc]}/supervise"
             $DRY_RUN_CMD ln -nsf $VERBOSE_ARG "$src" "$dest"
           done
+
+          # Cleanup old services; logs are cleaned first
+          oldSvcPath=$oldGenPath/home-files/.local/var/service
+          newSvcPath=$newGenPath/home-files/.local/var/service
+          for svc in "$oldSvcPath"/*/log "$oldSvcPath"/*; do
+            svcName=''${svc##$oldSvcPath/}
+            if [[ ! -e "$newSvcPath/$svcName" ]]; then
+              $DRY_RUN_CMD rm $VERBOSE_ARG "${dstDir}/$svcName"/supervise
+              $DRY_RUN_CMD rmdir -p --ignore-fail-on-non-empty $VERBOSE_ARG "${dstDir}/$svcName"
+            fi
+          done
         }
 
         setupRunitServices
