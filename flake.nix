@@ -40,7 +40,7 @@
             imports = [
               defaultConfig
               ./nixpkgs/lib/darwin.nix
-              ./nixpkgs/lib/options.nix
+              ./nixpkgs/lib/machine.nix
               ./nixpkgs/lib/runit.nix
               ./nixpkgs/modules/machines/${hostname}.nix
             ];

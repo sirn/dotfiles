@@ -1,5 +1,8 @@
+{ pkgs, ... }:
+
 {
   machine.gui.enable = true;
+  machine.flatpak.enable = true;
   runit.enable = true;
 
   imports = [
