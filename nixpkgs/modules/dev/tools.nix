@@ -51,5 +51,13 @@ in
     ".proselintrc" = {
       source = mkOutOfStoreSymlink "${dotfilesDir}/etc/proselint/proselintrc";
     };
+
+    ".mosh_init" = {
+      executable = true;
+      text = ''
+        #!/bin/sh -l
+        exec ${pkgs.tmux}/bin/tmux new-session -A -s main
+      '';
+    };
   };
 }
