@@ -6,6 +6,7 @@
     ../profiles/common.nix
     ../profiles/dev.nix
     ../profiles/devops.nix
+    ../profiles/multimedia.nix
 
     # services
     ../launchd/userenv.nix

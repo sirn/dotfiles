@@ -26,14 +26,14 @@ let
     listsAsDuplicateKeys = true;
   };
 in
-{
+mkIf config.machine.gui.enable {
   programs.mpv = {
     # Only enable mpv for Darwin since I can't figure out how to make
     # GPU drivers work when Home Manager is only managing user home
     # and not the entire system (and vo=xv is kinda bad).
     #
     # Only Linux this is probably better managed via Flatpak.
-    enable = isDarwin;
+    enable = config.machine.gui.enable && isDarwin;
     defaultProfiles = [ "gpu-hq" ];
     config = {
       hwdec = "auto";
@@ -58,7 +58,7 @@ in
       };
     };
 
-    configFile = {
+    configFile = mkIf (config.machine.gui.enable) {
       "mpv/mpv.conf" = {
         text = with lib;
           let

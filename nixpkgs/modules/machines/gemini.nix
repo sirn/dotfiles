@@ -9,6 +9,7 @@
     ../profiles/common.nix
     ../profiles/dev.nix
     ../profiles/graphical.nix
+    ../profiles/multimedia.nix
 
     # services
     ../runit/emacs.nix

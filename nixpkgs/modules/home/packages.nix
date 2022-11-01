@@ -11,8 +11,6 @@
     weechatScripts.zncplayback
 
     # multimedia
-    ffmpeg
-    yt-dlp
 
     # graphics
     graphviz-nox
