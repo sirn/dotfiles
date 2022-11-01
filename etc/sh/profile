@@ -140,15 +140,6 @@ if command -v gpgconf >/dev/null; then
     fi
 fi
 
-## ASDF
-##
-
-# shellcheck disable=SC1091
-if [ -d "$HOME/.asdf" ]; then
-    ASDF_DIR=$HOME/.asdf
-    . "$HOME/.asdf/asdf.sh"
-fi
-
 ## PATHs
 ##
 
@@ -196,4 +187,3 @@ ENV="$HOME/.kshrc"
 export ENV
 export PATH
 export GOPATH
-export ASDF_DIR
