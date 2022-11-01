@@ -3,6 +3,7 @@
     ../home/email.nix
     ../home/links.nix
     ../home/packages.nix
+    ../home/xdg.nix
     ../programs/aria2.nix
     ../programs/emacs.nix
     ../programs/fzf.nix
