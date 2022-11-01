@@ -10,7 +10,7 @@ in
     enable = true;
   };
 
-  home.file = {
-    ".password-store" = { source = mkOutOfStoreSymlink "${dotprivDir}/etc/password-store"; };
+  xdg.dataFile = {
+    "password-store" = { source = mkOutOfStoreSymlink "${dotprivDir}/etc/password-store"; };
   };
 }
