@@ -23,7 +23,6 @@ in
     openssh
     rsync
     socat
-    local.unison-nox
 
     # sys
     bzip2
