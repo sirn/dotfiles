@@ -13,8 +13,13 @@
   outputs = { nixpkgs, nixpkgs-unstable, home-manager, ... }:
     let
       overlays = [
-        (final: prev: { local = import ./nixpkgs/pkgs { pkgs = prev; }; })
-        (final: prev: { unstable = nixpkgs-unstable.legacyPackages.${prev.system}; })
+        (final: prev: {
+          local = import ./nixpkgs/pkgs { pkgs = prev; };
+          unstable = import nixpkgs-unstable {
+            system = prev.system;
+            config.allowUnfree = true;
+          };
+        })
       ];
 
       mkConfig =
@@ -34,6 +39,14 @@
         in
         home-manager.lib.homeManagerConfiguration {
           inherit username system homeDirectory;
+
+          # home-manager will be responsible for evaluating the nixpkgs.overlays.
+          # We're passing legacyPackages here to avoid nixpkgs from being
+          # evaluated twice.
+          #
+          # Ref:
+          # home-manager/modules/modules.nix (`pkgPath = ...;')
+          # home-manager/modules/misc/nixpkgs.nix (`import pkgPath ...;')
           pkgs = nixpkgs.legacyPackages.${system};
 
           configuration = {
