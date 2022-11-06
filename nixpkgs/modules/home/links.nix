@@ -12,6 +12,5 @@ in
     ".kshrc" = { source = mkOutOfStoreSymlink "${dotfilesDir}/etc/ksh/kshrc"; };
     ".profile" = { source = mkOutOfStoreSymlink "${dotfilesDir}/etc/sh/profile"; };
     ".ssh/config" = { source = mkOutOfStoreSymlink "${dotfilesDir}/etc/ssh/config"; };
-    ".ssh/known_hosts" = { source = mkOutOfStoreSymlink "${dotprivDir}/etc/ssh/known_hosts"; };
   };
 }
