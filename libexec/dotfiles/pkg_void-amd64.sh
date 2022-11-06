@@ -22,6 +22,7 @@ _run() {
 }
 
 _run_system() {
+    xbps_install fuse3
     xbps_install iptables-nft
     xbps_alternative iptables iptables-nft
 }

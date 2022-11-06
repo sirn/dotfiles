@@ -33,3 +33,7 @@ _run() {
 _run_desktop() {
     macports_install emacs-mac-app
 }
+
+_run_system() {
+    macports_install macfuse
+}
