@@ -9,6 +9,7 @@
     ../programs/fzf.nix
     ../programs/git.nix
     ../programs/gpg.nix
+    ../programs/htop.nix
     ../programs/password-store.nix
     ../programs/tmux.nix
     ../programs/unison.nix
