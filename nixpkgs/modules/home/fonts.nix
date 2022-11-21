@@ -6,6 +6,16 @@ let
   inherit (lib) mkIf;
 
   dotfilesDir = "${config.home.homeDirectory}/.dotfiles";
+
+  # fontconfig included with twemoji uses strong binding which broke
+  # whitespace display in Firefox with monospace fonts.
+  #
+  # Also use the version from nixpkgs-unstable for newer emojis.
+  twemojiWithoutFontconfig = pkgs.unstable.twemoji-color-font.overrideAttrs (orig: rec {
+    installPhase = ''
+      install -Dm755 TwitterColorEmoji-SVGinOT.ttf $out/share/fonts/truetype/TwitterColorEmoji-SVGinOT.ttf
+    '';
+  });
 in
 {
   fonts.fontconfig.enable = isLinux;
@@ -36,7 +46,7 @@ in
     hack-font
 
     # Twemoji family
-    twemoji-color-font
+    twemojiWithoutFontconfig
 
     # IBM Plex family
     ibm-plex
