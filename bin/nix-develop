@@ -1,0 +1,87 @@
+#!/bin/sh
+#
+# Wrapper for running nix develop path:.
+#
+
+## Colors
+##
+
+c_bold=$(tput bold 2>/dev/null || true)
+c_red=$(tput setaf 1 2>/dev/null || true)
+c_orange=$(tput setaf 3 2>/dev/null || true)
+c_blue=$(tput setaf 4 2>/dev/null || true)
+c_reset=$(tput sgr0 2>/dev/null || true)
+
+printe_h1() {
+    printf >&2 "%s[%s]%s %s%s%s\\n" \
+        "$c_blue" "${0##*/}" "$c_reset" \
+        "$c_orange$c_bold" "$@" "$c_reset"
+}
+
+printe_info() {
+    printf >&2 "%s[%s]%s %s%s%s\\n" \
+        "$c_blue" "${0##*/}" "$c_reset" \
+        "$@"
+}
+
+printe_err() {
+    printf >&2 "%s[%s]%s %s%s%s\\n" \
+        "$c_blue" "${0##*/}" "$c_reset" \
+        "$c_red" "$@" "$c_reset"
+}
+
+run_cmd() {
+    printf >&2 "%s[%s]%s %s%s%s %s\\n" \
+        "$c_blue" "${0##*/}" "$c_reset" \
+        "$c_bold" "Command:" "$c_reset" "$*"
+    "$@"
+}
+
+## Wrapping
+##
+
+nix() {
+    command nix \
+        --extra-experimental-features nix-command \
+        --extra-experimental-features flakes \
+        "$@"
+}
+
+## Subroutine
+##
+
+find_flake() {
+    cd "$PWD" || return 1
+
+    while true; do
+        if [ "$PWD" = "/" ]; then
+            return 1
+        fi
+
+        if [ -f "$PWD"/flake.nix ]; then
+            echo "$PWD"
+            return 0
+        fi
+
+        cd .. || return 1
+    done
+}
+
+main() {
+    if ! command -v nix >/dev/null; then
+        printe_err "nix is not installed?"
+        exit 1
+    fi
+
+    if ! FLAKE_PATH="$(find_flake)"; then
+        printe_err "Could not find flake.nix in the current project directory"
+        exit 1
+    fi
+
+    FLAKE_URI="path:$FLAKE_PATH"
+
+    printe_h1 "Running nix-develop"
+    run_cmd nix develop "${FLAKE_URI}" "$@"
+}
+
+main "$@"
