@@ -337,7 +337,7 @@ gq() {
             while [ "$basedir" != "${codedirs[0]}" ]; do
                 rmdir "$basedir" 2>/dev/null || true
                 basedir_p=${basedir##*/}
-                basedir=${basedir%%/$basedir_p}
+                basedir=${basedir%%/"$basedir_p"}
             done
         fi
 
