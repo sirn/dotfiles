@@ -232,6 +232,8 @@ gg() {
             \( \
             -exec test -d '{}'/.git \; \
             -or -exec test -d '{}'/.hg \; \
+            -or -exec test -f '{}'/.project \; \
+            -or -exec test -f '{}'/.projectile \; \
             \) \
             -print \
             -prune |

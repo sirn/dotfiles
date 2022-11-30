@@ -18,6 +18,7 @@
 
   :preface
   (eval-when-compile
+    (declare-function gemacs--project-try-local nil)
     (declare-function gemacs--project-ag nil)
     (declare-function gemacs--project-sync nil))
 
@@ -32,6 +33,22 @@
 
     (general-with-eval-after-load 'general
       (leader "p/" #'gemacs--project-ag)))
+
+  ;; For custom projects without requiring .git
+  ;; https://christiantietze.de/posts/2022/03/mark-local-project.el-directories/
+
+  (defun gemacs--project-try-local (dir)
+    "Checks if DIR is a non-VC project."
+    (catch 'ret
+      (let ((markers '(".project" ".projectile" "go.mod" "Cargo.toml")))
+        (dolist (f markers)
+          (when-let ((root (locate-dominating-file dir f)))
+            (throw 'ret (cons 'local root)))))))
+
+  (cl-defmethod project-root ((project (head local)))
+    (cdr project))
+
+  (add-to-list 'project-find-functions #'gemacs--project-try-local)
 
   ;; Custom command for syncing projects
   ;;
@@ -66,6 +83,8 @@
             "("
             "-exec" "test" "-d" "{}/.git" ";"
             "-or" "-exec" "test" "-d" "{}/.hg" ";"
+            "-or" "-exec" "test" "-f" "{}/.project" ";"
+            "-or" "-exec" "test" "-f" "{}/.projectile" ";"
             ")"
             "-print" "-prune")
           " "))
