@@ -5,6 +5,7 @@
     ../home/packages.nix
     ../home/xdg.nix
     ../programs/aria2.nix
+    ../programs/direnv.nix
     ../programs/emacs.nix
     ../programs/fzf.nix
     ../programs/git.nix

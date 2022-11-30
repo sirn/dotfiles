@@ -10,8 +10,6 @@
     weechatScripts.weechat-go
     weechatScripts.zncplayback
 
-    # multimedia
-
     # graphics
     graphviz-nox
     imagemagick
