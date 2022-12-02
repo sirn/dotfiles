@@ -51,7 +51,6 @@
           pkgs = nixpkgs.legacyPackages.${system};
           modules = [
             defaultConfig
-            ./nixpkgs/lib/darwin.nix
             ./nixpkgs/lib/machine.nix
             ./nixpkgs/lib/runit.nix
             ./nixpkgs/modules/machines/${hostname}.nix
