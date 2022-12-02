@@ -11,9 +11,9 @@
 let
   inherit (pkgs.stdenv) isDarwin;
 
-  dnspython_2_0_0 = pkgs.unstable.python3Packages.dnspython.overridePythonAttrs (orig: rec {
+  dnspython_2_0_0 = pkgs.python3Packages.dnspython.overridePythonAttrs (orig: rec {
     version = "2.0.0";
-    src = pkgs.unstable.fetchFromGitHub {
+    src = pkgs.fetchFromGitHub {
       inherit version;
       owner = "rthalley";
       repo = "dnspython";
@@ -22,15 +22,15 @@ let
     };
 
     propagatedBuildInputs = [
-      pkgs.unstable.python3Packages.trio
-      pkgs.unstable.iana-etc
+      pkgs.python3Packages.trio
+      pkgs.iana-etc
     ];
   });
 
-  ipwhois = pkgs.unstable.python3Packages.buildPythonPackage rec {
+  ipwhois = pkgs.python3Packages.buildPythonPackage rec {
     pname = "ipwhois";
     version = "1.2.0";
-    src = pkgs.unstable.python3Packages.fetchPypi {
+    src = pkgs.python3Packages.fetchPypi {
       inherit pname version;
       sha256 = "sha256-gx4/7zuAQSAaBI6UVuO4D0XGyLcXTzTtIR9mtZbIS74=";
     };
@@ -39,7 +39,7 @@ let
     ];
   };
 
-  pythonEnv = pkgs.unstable.python310.withPackages (p: with p; [
+  pythonEnv = pkgs.python310.withPackages (p: with p; [
     black
     flake8
     ipwhois

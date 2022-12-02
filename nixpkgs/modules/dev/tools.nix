@@ -9,12 +9,12 @@ in
 {
   home.packages = with pkgs; [
     # dev
+    bmake
     entr
     jq
     mercurial
     yamllint
     yq-go
-    unstable.bmake
 
     # net
     curlFull
