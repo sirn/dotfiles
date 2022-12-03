@@ -1,8 +1,5 @@
-{ pkgs, ... }:
-
 {
   machine.gui.enable = true;
-  runit.enable = true;
 
   imports = [
     ../profiles/common.nix
@@ -11,6 +8,7 @@
     ../profiles/multimedia.nix
 
     # machine-specific
+    ../home/runit.nix
     ../home/flatpak.nix
 
     # services

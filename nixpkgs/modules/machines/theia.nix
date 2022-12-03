@@ -1,6 +1,5 @@
 {
   machine.gui.enable = true;
-  launchd.enable = true;
 
   imports = [
     ../profiles/common.nix
@@ -8,6 +7,9 @@
     ../profiles/devops.nix
     ../profiles/graphical.nix
     ../profiles/multimedia.nix
+
+    # machine-specific
+    ../home/launchd.nix
 
     # services
     ../launchd/userenv.nix

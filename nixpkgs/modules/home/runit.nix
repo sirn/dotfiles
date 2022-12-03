@@ -1,0 +1,3 @@
+{
+  runit.enable = true;
+}

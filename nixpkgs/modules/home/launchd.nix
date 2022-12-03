@@ -1,0 +1,3 @@
+{
+  launchd.enable = true;
+}
