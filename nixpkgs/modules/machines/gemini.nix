@@ -2,7 +2,6 @@
 
 {
   machine.gui.enable = true;
-  machine.flatpak.enable = true;
   runit.enable = true;
 
   imports = [
@@ -10,6 +9,9 @@
     ../profiles/dev.nix
     ../profiles/graphical.nix
     ../profiles/multimedia.nix
+
+    # machine-specific
+    ../home/flatpak.nix
 
     # services
     ../runit/emacs.nix

@@ -42,22 +42,17 @@ mkIf config.machine.gui.enable {
     };
   };
 
-  machine.flatpak = mkIf (isLinux && config.machine.flatpak.enable) {
-    applications = [
-      "io.mpv.Mpv"
-    ];
-  };
-
-  xdg = mkIf (isLinux && config.machine.flatpak.enable) {
-    dataFile = {
-      "flatpak/overrides/io.mpv.Mpv" = {
-        text = ''
-          [Context]
-          filesystems=xdg-config/mpv
-        '';
+  flatpak.applications = mkIf (isLinux && config.flatpak.enable) {
+    "io.mpv.Mpv" = {
+      overrides = {
+        filesystems = [
+          "xdg-config/mpv"
+        ];
       };
     };
+  };
 
+  xdg = mkIf (isLinux && config.flatpak.enable) {
     configFile = mkIf (config.machine.gui.enable) {
       "mpv/mpv.conf" = {
         text = with lib;
