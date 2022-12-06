@@ -338,6 +338,10 @@
 (use-package eglot
   :straight (:host github :repo "joaotavora/eglot")
 
+  :general
+  (leader
+    "ef" #'eglot-code-actions)
+
   :custom
   (eglot-autoshutdown t)
 
