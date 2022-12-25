@@ -5,7 +5,6 @@
   (eval-when-compile
     (declare-function lsp nil)
     (declare-function lsp-format-buffer nil)
-    (declare-function lsp-organize-imports nil)
     (declare-function gemacs--nix-auto-format nil))
 
   :config
@@ -14,8 +13,7 @@
 
     :config
     (defun gemacs--nix-auto-format ()
-      (add-hook 'before-save-hook #'lsp-format-buffer)
-      (add-hook 'before-save-hook #'lsp-organize-imports))
+      (add-hook 'before-save-hook #'lsp-format-buffer))
 
     (add-hook 'nix-mode-hook #'lsp)
     (add-hook 'nix-mode-hook #'gemacs--nix-auto-format)))
