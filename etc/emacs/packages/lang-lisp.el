@@ -3,14 +3,7 @@
 (use-package helpful
   :general
   (leader
-    "df" #'helpful-callable
-    "dv" #'helpful-variable
-    "dx" #'helpful-command
-    "do" #'helpful-symbol
-    "dk" #'helpful-key
-    "dF" #'helpful-function
-    "dM" #'helpful-macro
-    "dd" #'helpful-at-point)
+    "d" '(:keymap help-map))
 
   ([remap describe-function] #'helpful-callable
    [remap describe-variable] #'helpful-variable

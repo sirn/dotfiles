@@ -75,11 +75,11 @@
   (delete-selection-mode +1))
 
 
-(use-feature display-line-numbers-mode
+(use-feature display-line-numbers
   :general
   (leader
-    "ll" #'display-line-numbers-mode
-    "lL" #'global-display-line-numbers-mode))
+    "Ll" #'display-line-numbers-mode
+    "LL" #'global-display-line-numbers-mode))
 
 
 (use-package undo-tree
@@ -303,12 +303,8 @@
   :demand t
 
   :general
-  ("C-c !" '(:keymap flycheck-command-map))
-
   (leader
-    "fp" #'flycheck-previous-error
-    "fn" #'flycheck-next-error
-    "fl" #'flycheck-list-errors)
+    "f" '(:keymap flycheck-command-map))
 
   :preface
   (eval-when-compile
@@ -375,9 +371,7 @@ area."
 (use-package lsp-mode
   :general
   (leader
-    "ef" #'lsp-code-actions-at-point
-    "er" #'lsp-rename
-    "eR" #'lsp-workspace-restart)
+    "l" '(:keymap lsp-command-map))
 
   :custom
   (lsp-enable-snippet t)
@@ -428,8 +422,6 @@ functions."
 
 
 (use-package lsp-ui
-  :bind (("C-c f" . #'lsp-ui-sideline-apply-code-actions))
-
   :preface
   (eval-when-compile
     (declare-function lsp-ui-sideline-apply-code-actions nil)
