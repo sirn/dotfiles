@@ -7,31 +7,33 @@
 (use-package go-mode
   :preface
   (eval-when-compile
-    (declare-function gemacs--eglot-format-buffer nil)
-    (declare-function gemacs--eglot-organize-imports nil)
+    (declare-function lsp nil)
+    (declare-function lsp-format-buffer nil)
+    (declare-function lsp-organize-imports nil)
     (declare-function gemacs--go-auto-format nil)
     (declare-function gemacs--go-beginning-of-defun nil)
     (declare-function gemacs--go-defun-setup nil)
     (declare-function gemacs--go-end-of-defun nil)
-    (declare-function gemacs--go-lsp-bin nil)
     (declare-function go--backward-irrelevant nil))
 
   :config
-  (use-feature eglot
+  (use-feature flycheck-golangci-lint
+    :preface
+    (eval-when-compile
+      (declare-function flycheck-golangci-lint-setup nil))
+
+    :init
+    (add-hook 'go-mode-hook #'flycheck-golangci-lint-setup))
+
+  (use-feature lsp-mode
     :demand t
 
     :config
-    (defun gemacs--go-lsp-bin ()
-      (gemacs--path-join
-        (file-name-as-directory (getenv "HOME"))
-        ".dotfiles/libexec/lsp/gopls"))
-
     (defun gemacs--go-auto-format ()
-      (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
-      (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
+      (add-hook 'before-save-hook #'lsp-format-buffer)
+      (add-hook 'before-save-hook #'lsp-organize-imports))
 
-    (add-to-list 'eglot-server-programs `(go-mode . (,(gemacs--go-lsp-bin))))
-    (add-hook 'go-mode-hook #'eglot-ensure)
+    (add-hook 'go-mode-hook #'lsp)
     (add-hook 'go-mode-hook #'gemacs--go-auto-format))
 
   (defvar gemacs--go-defun-regexp
@@ -86,3 +88,6 @@ See <https://github.com/dominikh/go-mode.el/issues/232>."
     (setq-local end-of-defun-function #'gemacs--go-end-of-defun))
 
   (add-hook 'go-mode-hook #'gemacs--go-defun-setup))
+
+
+(use-package flycheck-golangci-lint)

@@ -3,19 +3,23 @@
 (use-package elixir-mode
   :preface
   (eval-when-compile
-    (declare-function gemacs--eglot-format-buffer nil)
-    (declare-function gemacs--eglot-organize-imports nil)
-    (declare-function gemacs--elixir-auto-format nil))
+    (declare-function lsp nil)
+    (declare-function lsp-format-buffer nil)
+    (declare-function lsp-organize-imports nil)
+    (declare-function gemacs--elixir-auto-format nil)
+    (defvar lsp-elixir-server-command))
 
   :config
-  (use-feature eglot
+  (use-feature lsp-mode
     :demand t
+
+    :init
+    (setq lsp-elixir-server-command '("elixir-ls"))
 
     :config
     (defun gemacs--elixir-auto-format ()
-      (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
-      (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
+      (add-hook 'before-save-hook #'lsp-format-buffer)
+      (add-hook 'before-save-hook #'lsp-organize-imports))
 
-    (add-to-list 'eglot-server-programs '(elixir-mode . ("elixir-language-server")))
-    (add-hook 'elixir-mode-hook #'eglot-ensure)
+    (add-hook 'elixir-mode-hook #'lsp)
     (add-hook 'elixir-mode-hook #'gemacs--elixir-auto-format)))

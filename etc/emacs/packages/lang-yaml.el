@@ -13,17 +13,11 @@
     :config
     (add-hook 'yaml-mode-hook #'apheleia-mode))
 
-  (use-feature flymake
+  (use-feature flycheck
     :demand t
 
     :config
-    (add-hook 'yaml-mode-hook #'flymake-mode))
-
-  (use-feature flymake-yamllint
-    :demand t
-
-    :config
-    (add-hook 'yaml-mode-hook #'flymake-yamllint-setup))
+    (add-hook 'yaml-mode-hook #'flycheck-mode))
 
   (defun gemacs--yaml-maybe-ansible ()
     (when (and
@@ -48,7 +42,7 @@
               (goto-char (point-min))
               (looking-at "\\(---\n\\)?apiVersion:")))
        (apheleia-mode -1)
-       (flymake-mode -1)))
+       (flycheck-mode -1)))
 
   (add-hook 'yaml-mode-hook 'gemacs--yaml-maybe-ansible)
   (add-hook 'yaml-mode-hook 'gemacs--yaml-maybe-k8s))
@@ -58,7 +52,3 @@
 
 
 (use-package ansible-doc)
-
-
-(use-package flymake-yamllint
-  :straight (:host github :repo "shaohme/flymake-yamllint"))

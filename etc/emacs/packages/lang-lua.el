@@ -8,21 +8,12 @@
     :config
     (add-hook 'lua-mode-hook #'apheleia-mode))
 
-  (use-feature flymake
+  (use-feature flycheck
     :demand t
 
     :config
-    (add-hook 'lua-mode-hook #'flymake-mode))
-
-  (use-feature flymake-lua
-    :demand t
-
-    :config
-    (add-hook 'lua-mode-hook #'flymake-lua-load)))
+    (add-hook 'lua-mode-hook #'flycheck-mode)))
 
 
 (use-package pico8-mode
   :straight (:host github :repo "Kaali/pico8-mode"))
-
-
-(use-package flymake-lua)

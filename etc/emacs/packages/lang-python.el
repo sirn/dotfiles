@@ -7,27 +7,35 @@
 
   :preface
   (eval-when-compile
-    (declare-function gemacs--eglot-format-buffer nil)
-    (declare-function gemacs--eglot-organize-imports nil)
+    (declare-function lsp nil)
+    (declare-function lsp-format-buffer nil)
+    (declare-function lsp-organize-imports nil)
     (declare-function gemacs--python-auto-format nil)
-    (declare-function gemacs--python-lsp-bin nil))
+    (defvar lsp-pylsp-server-command)
+    (defvar flycheck-python-pycompile-executable))
 
   :config
-  (use-feature eglot
+  (use-feature flycheck
+    :config
+    (dolist (name '("python" "python2" "python3"))
+      (add-to-list 'safe-local-variable-values
+                   `(flycheck-python-pycompile-executable . ,name))))
+
+  (use-feature lsp-mode
     :demand t
 
-    :config
-    (defun gemacs--python-lsp-bin ()
+    :init
+    (setq lsp-pylsp-server-command
       (gemacs--path-join
         (file-name-as-directory (getenv "HOME"))
         ".dotfiles/libexec/lsp/pylsp"))
 
+    :config
     (defun gemacs--python-auto-format ()
-      (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
-      (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
+      (add-hook 'before-save-hook #'lsp-format-buffer)
+      (add-hook 'before-save-hook #'lsp-organize-imports))
 
-    (add-to-list 'eglot-server-programs `(python-mode . (,(gemacs--python-lsp-bin))))
-    (add-hook 'python-mode-hook #'eglot-ensure)
+    (add-hook 'python-mode-hook #'lsp)
     (add-hook 'python-mode-hook #'gemacs--python-auto-format))
 
   (cond

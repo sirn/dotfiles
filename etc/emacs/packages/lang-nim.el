@@ -1,6 +1,11 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package nim-mode
+  :preface
+  (eval-when-compile
+    (declare-function lsp nil)
+    (declare-function smie-default-forward-token nil))
+
   :config
   (el-patch-defun nim-mode-forward-token ()
     "Handle cases where `nim-smie--line-info' is `nil'."
@@ -17,12 +22,11 @@
               (setq tok ";"))
           tok))))
 
-  (use-feature eglot
+  (use-feature lsp-mode
     :demand t
 
     :config
-    (add-to-list 'eglot-server-programs '(nim-mode . ("nimlsp")))
-    (add-hook 'nim-mode-hook #'eglot-ensure))
+    (add-hook 'nim-mode-hook #'lsp))
 
   (use-feature apheleia
     :demand t

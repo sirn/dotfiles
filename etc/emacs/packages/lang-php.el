@@ -8,8 +8,8 @@
     :config
     (add-hook 'php-mode-hook #'apheleia-mode))
 
-  (use-feature flymake
+  (use-feature flycheck
     :demand t
 
     :config
-    (add-hook 'php-mode-hook #'flymake-mode)))
+    (add-hook 'php-mode-hook #'flycheck-mode)))

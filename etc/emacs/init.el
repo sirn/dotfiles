@@ -159,6 +159,27 @@ specific Emacs version."
   (when (eval cond)
     `(progn ,@body)))
 
+(defmacro gemacs-flet (bindings &rest body)
+  "Temporarily override function definitions using `cl-letf*'.
+BINDINGS are composed of `defun'-ish forms. NAME is the function
+to override. It has access to the original function as a
+lexically bound variable by the same name, for use with
+`funcall'. ARGLIST and BODY are as in `defun'.
+\(fn ((defun NAME ARGLIST &rest BODY) ...) BODY...)"
+  (declare (indent defun))
+  `(cl-letf* (,@(cl-mapcan
+                 (lambda (binding)
+                   (when (memq (car binding) '(defun lambda))
+                     (setq binding (cdr binding)))
+                   (cl-destructuring-bind (name arglist &rest body) binding
+                     (list
+                      `(,name (symbol-function #',name))
+                      `((symbol-function #',name)
+                        (lambda ,arglist
+                          ,@body)))))
+                 bindings))
+     ,@body))
+
 (defun gemacs--path-join (path &rest segments)
   "Join PATH with SEGMENTS using `expand-file-name'.
 First `expand-file-name' is called on the first member of

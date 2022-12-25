@@ -47,25 +47,12 @@
       (nil    . (telephone-line-process-segment
                  telephone-line-buffer-segment))))
   (telephone-line-rhs
-    '((nil    . (gemacs--telephone-line-flymake-segment))
+    '((nil    . (telephone-line-flycheck-segment))
       (nil    . (telephone-line-misc-info-segment))
       (nil    . (telephone-line-major-mode-segment))
       (evil   . (telephone-line-airline-position-segment))))
 
-  :preface
-  (eval-when-compile
-    (defvar flymake-mode-line-format nil))
-
   :config
-  (telephone-line-defsegment* gemacs--telephone-line-flymake-segment ()
-    (when (bound-and-true-p flymake-mode)
-      (ignore face)  ;; silent "unused lexical argument"
-      (telephone-line-raw
-        (if (boundp 'flymake--mode-line-format)
-          flymake--mode-line-format
-          flymake-mode-line-format)
-        t)))
-
   (telephone-line-mode +1))
 
 

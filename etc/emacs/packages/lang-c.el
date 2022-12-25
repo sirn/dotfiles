@@ -8,8 +8,8 @@
     :config
     (add-hook 'cc-mode-hook #'apheleia-mode))
 
-  (use-feature flymake
+  (use-feature flycheck
     :demand t
 
     :config
-    (add-hook 'cc-mode-hook #'flymake-mode)))
+    (add-hook 'cc-mode-hook #'flycheck-mode)))

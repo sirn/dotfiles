@@ -3,17 +3,19 @@
 (use-package typescript-mode
   :preface
   (eval-when-compile
+    (declare-function lsp nil)
+    (declare-function lsp-format-buffer nil)
+    (declare-function lsp-organize-imports nil)
     (declare-function gemacs--typescript-auto-format nil))
 
   :config
-  (use-feature eglot
+  (use-feature lsp-mode
     :demand t
 
     :config
     (defun gemacs--typescript-auto-format ()
-      (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
-      (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
+      (add-hook 'before-save-hook #'lsp-format-buffer)
+      (add-hook 'before-save-hook #'lsp-organize-imports))
 
-    (add-to-list 'eglot-server-programs '(typescript-mode . ("typescript-language-server")))
-    (add-hook 'typescript-mode-hook #'eglot-ensure)
+    (add-hook 'typescript-mode-hook #'lsp)
     (add-hook 'typescript-mode-hook #'gemacs--typescript-auto-format)))

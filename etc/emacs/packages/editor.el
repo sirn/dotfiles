@@ -298,29 +298,49 @@
 ;; --------------------------------------------------------------------------
 ;;; Errors and documentation
 
-(use-feature flymake
+
+(use-package flycheck
   :demand t
 
   :general
+  ("C-c !" '(:keymap flycheck-command-map))
+
   (leader
-   "fn" #'flymake-goto-next-error
-   "fp" #'flymake-goto-prev-error
-   "fl" #'flymake-show-buffer-diagnostics
-   "fP" #'flymake-show-project-diagnostics)
+    "fp" #'flycheck-previous-error
+    "fn" #'flycheck-next-error
+    "fl" #'flycheck-list-errors)
+
+  :preface
+  (eval-when-compile
+    (declare-function flycheck-previous-error nil)
+    (declare-function flycheck-next-error nil)
+    (declare-function flycheck-list-errors nil)
+    (declare-function flycheck-overlay-errors-at nil)
+    (declare-function flycheck-error-line-region nil))
+
+  :init
+  (defun gemacs--flycheck-disable-checkers (&rest checkers)
+    "Disable the given Flycheck syntax CHECKERS, symbols.
+This function affects only the current buffer, and neither causes
+nor requires Flycheck to be loaded."
+    (unless (boundp 'flycheck-disabled-checkers)
+      (setq flycheck-disabled-checkers nil))
+    (make-local-variable 'flycheck-disabled-checkers)
+    (dolist (checker checkers)
+      (cl-pushnew checker flycheck-disabled-checkers)))
 
   :config
-  (remove-hook 'flymake-diagnostic-functions #'flymake-proc-legacy-flymake))
+  ;; Run a syntax check when changing buffers, just in case you
+  ;; modified some other files that impact the current one. See
+  ;; https://github.com/flycheck/flycheck/pull/1308.
+  (add-to-list 'flycheck-check-syntax-automatically 'idle-buffer-switch)
 
-
-(use-package flymake-popon
-  :straight (:type git :repo "https://codeberg.org/akib/emacs-flymake-popon")
-
-  :demand t
-
-  :after flymake
-
-  :config
-  (add-hook 'flymake-mode-hook #'flymake-popon-mode))
+  ;; For the above functionality, check syntax in a buffer that you
+  ;; switched to only briefly. This allows "refreshing" the syntax
+  ;; check state for several buffers quickly after e.g. changing a
+  ;; config file.
+  (setq flycheck-buffer-switch-check-intermediate-buffers t)
+  (setq flycheck-display-errors-delay 0.2))
 
 
 (use-package eldoc
@@ -329,46 +349,146 @@
   :demand t
 
   :custom
-  (eldoc-echo-area-use-multiline-p nil))
+  (eldoc-echo-area-use-multiline-p nil)
+
+  :config
+  (use-feature flycheck
+    :preface
+    (eval-when-compile
+      (declare-function gemacs--advice-disable-eldoc-on-flycheck nil))
+
+    :config
+    (defun gemacs--advice-disable-eldoc-on-flycheck
+      (&rest _)
+      "Disable ElDoc when point is on a Flycheck overlay.
+This prevents ElDoc and Flycheck from fighting over the echo
+area."
+      (not (flycheck-overlay-errors-at (point))))
+
+    (advice-add 'eldoc-display-message-no-interference-p :after-while
+      #'gemacs--advice-disable-eldoc-on-flycheck)))
 
 
 ;; --------------------------------------------------------------------------
 ;;; Language Server Protocol
 
-(use-package eglot
-  :straight (:host github :repo "joaotavora/eglot")
-
+(use-package lsp-mode
   :general
   (leader
-    "ef" #'eglot-code-actions)
+    "ef" #'lsp-code-actions-at-point
+    "er" #'lsp-rename
+    "eR" #'lsp-workspace-restart)
 
   :custom
-  (eglot-autoshutdown t)
+  (lsp-enable-snippet t)
+  (lsp-file-watch-threshold nil)
+  (lsp-restart 'auto-restart)
+  (lsp-headerline-breadcrumb-enable t)
+  (lsp-enable-suggest-server-download nil)
 
   :preface
   (eval-when-compile
-    (declare-function eglot-current-server nil)
-    (declare-function eglot-format-buffer nil)
-    (declare-function eglot-shutdown nil)
-    (declare-function gemacs--advice-eglot-shutdown-project nil)
-    (declare-function gemacs--eglot-format-buffer nil)
-    (declare-function gemacs--eglot-organize-imports nil))
-
-  :init
-  (defun gemacs--eglot-format-buffer ()
-    (eglot-format-buffer))
-
-  (defun gemacs--eglot-organize-imports ()
-    (call-interactively 'eglot-code-action-organize-imports))
+    (declare-function gemacs--lsp-run-from-node-modules nil)
+    (declare-function gemacs--advice-lsp-mode-silence nil))
 
   :config
-  (use-feature project
-    :config
-    (defun gemacs--advice-eglot-shutdown-project (orig-fun &rest args)
-      (let* ((pr (project-current t))
-             (default-directory (project-root pr)))
-        (when-let ((server (eglot-current-server)))
-          (ignore-errors (eglot-shutdown server)))
-        (apply orig-fun args)))
+  (defun gemacs--advice-lsp-mode-silence (format &rest args)
+    "Silence needless diagnostic messages from `lsp-mode'.
+This is a `:before-until' advice for several `lsp-mode' logging
+functions."
+    (or
+      (member format `("No LSP server for %s(check *lsp-log*)."
+                        "Connected to %s."
+                        ,(concat
+                           "Unable to calculate the languageId for current "
+                           "buffer. Take a look at "
+                           "lsp-language-id-configuration.")
+                        ,(concat
+                           "There are no language servers supporting current "
+                           "mode %s registered with `lsp-mode'.")))
+      (and (stringp (car args))
+        (or (string-match-p "^no object for ident .+$" (car args))
+          (string-match-p "^no identifier found$" (car args))))))
 
-    (advice-add 'project-kill-buffers :around #'gemacs--advice-eglot-shutdown-project)))
+  (defun gemacs--lsp-run-from-node-modules (command)
+    "Find LSP executables inside node_modules/.bin if present."
+    (cl-block nil
+      (prog1 command
+        (when-let ((project-dir (locate-dominating-file default-directory "node_modules"))
+                   (binary
+                     (gemacs--path-join
+                       project-dir "node_modules" ".bin" (car command))))
+          (when (file-executable-p binary)
+            (cl-return (cons binary (cdr command))))))))
+
+  (dolist (fun '(lsp-warn lsp--warn lsp--info lsp--error))
+    (advice-add fun :before-until #'gemacs--advice-lsp-mode-silence))
+
+  (advice-add 'lsp-resolve-final-function :filter-return #'gemacs--lsp-run-from-node-modules))
+
+
+(use-package lsp-ui
+  :bind (("C-c f" . #'lsp-ui-sideline-apply-code-actions))
+
+  :preface
+  (eval-when-compile
+    (declare-function lsp-ui-sideline-apply-code-actions nil)
+    (declare-function gemacs--advice-lsp-ui-apply-single-fix nil)
+    (defvar lsp-ui-sideline-show-hover))
+
+  :custom
+  (lsp-ui-sideline-show-hover nil)
+
+  :config
+  (defun gemacs--advice-lsp-ui-apply-single-fix
+    (orig-fun &rest args)
+    "Apply code fix immediately if only one is possible."
+    (gemacs-flet ((defun completing-read (prompt collection &rest args)
+                    (if (= (safe-length collection) 1)
+                      (car collection)
+                      (apply completing-read prompt collection args))))
+      (apply orig-fun args)))
+
+  (advice-add 'lsp-ui-sideline-apply-code-actions :around
+    #'gemacs--advice-lsp-ui-apply-single-fix)
+
+  (use-feature lsp-mode
+    :preface
+    (eval-when-compile
+      (defvar lsp-eldoc-enable-hover))
+
+    :init
+    (setq lsp-eldoc-enable-hover nil)))
+
+
+(use-feature lsp-ui-doc
+  :custom
+  (lsp-ui-doc-winum-ignore nil)
+  (lsp-ui-doc-use-childframe t)
+
+  :preface
+  (eval-when-compile
+    (declare-function gemacs--advice-lsp-ui-doc-allow-multiline nil))
+
+  :config
+  (defun gemacs--advice-lsp-ui-doc-allow-multiline (func &rest args)
+    "Prevent `lsp-ui-doc' from removing newlines from documentation."
+    (gemacs-flet ((defun replace-regexp-in-string
+                    (regexp rep string &rest args)
+                    (if (equal regexp "`\\([\n]+\\)")
+                      string
+                      (apply replace-regexp-in-string
+                        regexp rep string args))))
+      (apply func args)))
+
+  (advice-add 'lsp-ui-doc--render-buffer :around
+    #'gemacs--advice-lsp-ui-doc-allow-multiline))
+
+
+(use-package lsp-treemacs
+  :preface
+  (eval-when-compile
+    (declare-function lsp-treemacs-sync-mode nil))
+
+  :config
+  (lsp-treemacs-sync-mode +1))

@@ -3,17 +3,19 @@
 (use-package nix-mode
   :preface
   (eval-when-compile
+    (declare-function lsp nil)
+    (declare-function lsp-format-buffer nil)
+    (declare-function lsp-organize-imports nil)
     (declare-function gemacs--nix-auto-format nil))
 
   :config
-  (use-feature eglot
+  (use-feature lsp-mode
     :demand t
 
     :config
     (defun gemacs--nix-auto-format ()
-      (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
-      (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
+      (add-hook 'before-save-hook #'lsp-format-buffer)
+      (add-hook 'before-save-hook #'lsp-organize-imports))
 
-    (add-to-list 'eglot-server-programs '(nix-mode . ("rnix-lsp")))
-    (add-hook 'nix-mode-hook #'eglot-ensure)
+    (add-hook 'nix-mode-hook #'lsp)
     (add-hook 'nix-mode-hook #'gemacs--nix-auto-format)))
