@@ -66,6 +66,9 @@
         gemini = mkConfig {
           hostname = "gemini";
         };
+        phoebe = mkConfig {
+          hostname = "phoebe";
+        };
         pyxis = mkConfig {
           hostname = "pyxis";
           system = "aarch64-darwin";
