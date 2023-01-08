@@ -58,7 +58,9 @@
 
 (use-package modus-themes
   :custom
-  (modus-themes-mode-line '(borderless))
+  (modus-themes-common-palette-overrides
+    '((border-mode-line-active bg-mode-line-active)
+      (border-mode-line-inactive bg-mode-line-inactive)))
 
   :config
   (load-theme 'modus-vivendi t))
