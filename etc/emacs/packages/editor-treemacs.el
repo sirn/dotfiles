@@ -1,6 +1,5 @@
  ;; -*- lexical-binding: t; no-native-compile: t -*-
 
-
 (use-package treemacs
   :general
   (leader
@@ -16,14 +15,16 @@
   (treemacs-switch-workspace
     treemacs-create-workspace
     treemacs-rename-workspace
-    treemacs-add-project-to-workspace)
+    treemacs-add-project-to-workspace
+    treemacs-hide-gitignored-files-mode)
 
   :custom
   (treemacs-read-string-input 'from-minibuffer)
 
   :config
   (use-feature treemacs-evil :demand t)
-  (use-feature treemacs-magit :demand t))
+  (use-feature treemacs-magit :demand t)
+  (treemacs-hide-gitignored-files-mode +1))
 
 
 (use-package treemacs-evil)

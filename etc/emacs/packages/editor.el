@@ -21,7 +21,8 @@
     "bd"  #'kill-buffer
     "bD"  #'kill-buffer-and-window
     "bb"  #'switch-to-buffer
-    "wbb" #'switch-to-buffer-other-window))
+    "wbb" #'switch-to-buffer-other-window
+    "wR"  #'redraw-display))
 
 
 ;; --------------------------------------------------------------------------
