@@ -4,7 +4,6 @@ layouts:
   - wide
   - fullscreen
   - column
-  - bsp
 
 mouse-follows-focus: false
 focus-follows-mouse: true
