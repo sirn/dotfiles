@@ -14,6 +14,8 @@ in
     shell = "$SHELL";
     terminal = "screen-256color";
 
+    tmuxp.enable = true;
+
     extraConfig = ''
       set -g mouse on
       set -g set-clipboard on
@@ -40,5 +42,9 @@ in
       bind -T copy-mode M-w send -X copy-pipe-and-cancel "pbcopy"
       bind -T copy-mode-vi y send -X copy-pipe-and-cancel "pbcopy"
     '');
+  };
+
+  home.file = {
+    ".tmuxp" = { source = mkOutOfStoreSymlink "${dotprivDir}/etc/tmuxp"; };
   };
 }
