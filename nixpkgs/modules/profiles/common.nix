@@ -12,6 +12,7 @@
     ../programs/gpg.nix
     ../programs/htop.nix
     ../programs/password-store.nix
+    ../programs/s-tui.nix
     ../programs/tmux.nix
     ../programs/unison.nix
     ../programs/vim.nix

@@ -15,4 +15,5 @@ in
   emacsNativeComp-lucid = (callPackage ./applications/editors/emacs { }).emacsNativeComp-lucid;
 
   unison-nox = (callPackage ./applications/networking/sync/unison-nox { });
+  s-tui = (callPackage ./tools/system/s-tui { });
 }
