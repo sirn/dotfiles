@@ -32,6 +32,7 @@ in
       status.branch = true;
       status.short = true;
       submodule.fetchJobs = 8;
+      protocol.file.allow = "always";
 
       ghq.root = [
         "${homeDirectory}/Dev/src"
