@@ -1,9 +1,11 @@
 ---
 images:
-  - location: "https://cloud-images.ubuntu.com/impish/current/impish-server-cloudimg-amd64.img"
+  - location: "https://download.fedoraproject.org/pub/fedora/linux/releases/37/Cloud/x86_64/images/Fedora-Cloud-Base-37-1.7.x86_64.qcow2"
     arch: "x86_64"
-  - location: "https://cloud-images.ubuntu.com/impish/current/impish-server-cloudimg-arm64.img"
+    digest: "sha256:b5b9bec91eee65489a5745f6ee620573b23337cbb1eb4501ce200b157a01f3a0"
+  - location: "https://download.fedoraproject.org/pub/fedora/linux/releases/37/Cloud/aarch64/images/Fedora-Cloud-Base-37-1.7.aarch64.qcow2"
     arch: "aarch64"
+    digest: "sha256:cc8b0f49bc60875a16eef65ad13e0e86ba502ba3585cc51146f11f4182a628c0"
 
 mounts: []
 
@@ -15,6 +17,7 @@ provision:
   - mode: system
     script: |
       #!/bin/sh
+      dnf -y install podman qemu-user-static
       curl -sfL https://get.k3s.io | sh -
 
 probes:
