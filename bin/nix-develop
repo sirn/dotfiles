@@ -73,12 +73,16 @@ main() {
         exit 1
     fi
 
-    if ! FLAKE_PATH="$(find_flake)"; then
-        printe_err "Could not find flake.nix in the current project directory"
-        exit 1
+    if [ -z "$FLAKE_PATH" ]; then
+        if ! FLAKE_PATH="$(find_flake)"; then
+            printe_err "Could not find flake.nix in the current project directory"
+            exit 1
+        fi
     fi
 
-    FLAKE_URI="path:$FLAKE_PATH"
+    if [ -z "$FLAKE_URI" ]; then
+        FLAKE_URI="path:$FLAKE_PATH"
+    fi
 
     printe_h1 "Running nix-develop"
     run_cmd nix develop "${FLAKE_URI}" "$@"
