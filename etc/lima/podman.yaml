@@ -1,1 +1,65 @@
-templates/podman.yaml
+---
+vmType: "vz"
+
+rosetta:
+  enabled: true
+  binfmt: true
+
+images:
+  - location: "https://download.fedoraproject.org/pub/fedora/linux/releases/37/Cloud/x86_64/images/Fedora-Cloud-Base-37-1.7.x86_64.qcow2"
+    arch: "x86_64"
+    digest: "sha256:b5b9bec91eee65489a5745f6ee620573b23337cbb1eb4501ce200b157a01f3a0"
+  - location: "https://download.fedoraproject.org/pub/fedora/linux/releases/37/Cloud/aarch64/images/Fedora-Cloud-Base-37-1.7.aarch64.qcow2"
+    arch: "aarch64"
+    digest: "sha256:cc8b0f49bc60875a16eef65ad13e0e86ba502ba3585cc51146f11f4182a628c0"
+
+mounts:
+  - location: "~"
+    writable: null
+    sshfs:
+      cache: null
+      followSymlinks: null
+  - location: "/tmp/lima"
+    writable: true
+    sshfs:
+      followSymlinks: null
+
+mountType: "virtiofs"
+
+containerd:
+  system: false
+  user: false
+
+provision:
+  - mode: system
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+      command -v podman >/dev/null 2>&1 && exit 0
+      dnf -y install podman qemu-user-static
+      systemctl --system enable --now podman.socket
+  - mode: user
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+      systemctl --user enable --now podman.socket
+
+probes:
+  - script: |
+      #!/bin/bash
+      set -eux -o pipefail
+      if ! timeout 30s bash -c "until command -v podman >/dev/null 2>&1; do sleep 3; done"; then
+        echo >&2 "podman is not installed yet"
+        exit 1
+      fi
+    hint: See "/var/log/cloud-init-output.log". in the guest
+
+portForwards:
+  - guestSocket: "/run/user/{{.UID}}/podman/podman.sock"
+    hostSocket: "{{.Dir}}/sock/podman.sock"
+
+message: |
+  To run `podman` on the host (assumes podman is installed):
+  $ export CONTAINER_HOST=unix://{{.Dir}}/sock/podman.sock
+  $ podman system connection add {{.Name}} $CONTAINER_HOST
+  $ podman system connection default {{.Name}}
