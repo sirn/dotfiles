@@ -13,6 +13,7 @@ in
 
   emacsNativeComp-nox = (callPackage ./applications/editors/emacs { }).emacsNativeComp-nox;
   emacsNativeComp-lucid = (callPackage ./applications/editors/emacs { }).emacsNativeComp-lucid;
+  lima-bin = (callPackage ./applications/virtualization/lima/bin.nix { });
 
   unison-nox = (callPackage ./applications/networking/sync/unison-nox { });
   s-tui = (callPackage ./tools/system/s-tui { });

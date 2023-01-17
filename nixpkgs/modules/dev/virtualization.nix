@@ -7,6 +7,6 @@ in
   home.packages = with pkgs; [
     qemu
   ] ++ (if isDarwin then [
-    lima
+    local.lima-bin
   ] else [ ]);
 }
