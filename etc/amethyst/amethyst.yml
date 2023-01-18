@@ -6,4 +6,4 @@ layouts:
   - column
 
 mouse-follows-focus: false
-focus-follows-mouse: true
+focus-follows-mouse: false
