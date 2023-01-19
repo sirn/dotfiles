@@ -27,4 +27,4 @@
     :demand t
 
     :config
-    (add-hook 'terraform-mode-hook #'apheleia-mode)))
+    (add-hook 'typescript-mode-hook #'apheleia-mode)))
