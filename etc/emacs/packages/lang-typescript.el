@@ -1,6 +1,10 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package typescript-mode
+  :mode
+  ("\\.tsx\\'"
+   "\\.jsx?\\'")
+
   :preface
   (eval-when-compile
     (declare-function lsp nil)
@@ -14,8 +18,13 @@
 
     :config
     (defun gemacs--typescript-auto-format ()
-      (add-hook 'before-save-hook #'lsp-format-buffer)
       (add-hook 'before-save-hook #'lsp-organize-imports))
 
     (add-hook 'typescript-mode-hook #'lsp)
-    (add-hook 'typescript-mode-hook #'gemacs--typescript-auto-format)))
+    (add-hook 'typescript-mode-hook #'gemacs--typescript-auto-format))
+
+  (use-feature apheleia
+    :demand t
+
+    :config
+    (add-hook 'terraform-mode-hook #'apheleia-mode)))

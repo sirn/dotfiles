@@ -14,9 +14,7 @@
     "\\.mustache\\'"
     "\\.phtml\\'"
     "\\.svelte\\'"
-    "\\.tpl\\.php\\'"
-    "\\.tsx\\'"
-    "\\.jsx?\\'")
+    "\\.tpl\\.php\\'")
 
   :custom
   (web-mode-enable-auto-closing t)
