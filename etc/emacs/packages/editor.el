@@ -485,3 +485,30 @@ functions."
 
   :config
   (lsp-treemacs-sync-mode +1))
+
+
+;; --------------------------------------------------------------------------
+;;; Tree Sitter
+
+
+(use-package tree-sitter
+ :when (version<= emacs-version "29.0"))
+
+
+(use-feature tree-sitter
+  :demand t
+
+  :preface
+  (eval-when-compile
+    (declare-function global-tree-sitter-mode nil)
+    (declare-function tree-sitter-hl-mode nil))
+
+  :config
+  (global-tree-sitter-mode +1)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+
+(use-package tree-sitter-langs
+  :demand t
+
+  :after tree-sitter)
