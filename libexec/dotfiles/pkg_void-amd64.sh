@@ -18,6 +18,7 @@ _run() {
     xbps_install mosh
     xbps_install oksh
     xbps_install opendoas
+    xbps_install rsync
     xbps_install snooze
     xbps_install xtools
 }
