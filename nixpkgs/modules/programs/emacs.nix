@@ -16,9 +16,10 @@ in
       else
         pkgs.local.emacsNativeComp-nox;
     extraPackages = epkgs: [
-      epkgs.notmuch
       epkgs.w3m
-    ];
+    ] ++ (if config.programs.notmuch.enable then [
+      epkgs.notmuch
+    ] else [ ]);
   };
 
   home.file = {
