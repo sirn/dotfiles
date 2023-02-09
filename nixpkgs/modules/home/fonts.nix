@@ -54,9 +54,6 @@ in
     # Ubuntu family
     ubuntu_font_family
 
-    # IPA fonts
-    ipafont
-
     # Takao fonts
     takao
 
