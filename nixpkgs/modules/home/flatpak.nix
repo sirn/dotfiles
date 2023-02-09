@@ -6,6 +6,7 @@ in
 {
   flatpak = {
     enable = true;
+
     globalOverrides = {
       filesystems = [
         "/nix/store:ro"
@@ -16,6 +17,10 @@ in
         "~/.local/share/fonts:ro"
         "~/.local/share/icons:ro"
       ];
+
+      environment = {
+        FONTCONFIG_FILE = "${config.home.homeDirectory}/.config/fontconfig/conf.d";
+      };
     };
   };
 }
