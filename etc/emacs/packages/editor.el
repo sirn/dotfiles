@@ -380,6 +380,7 @@ area."
   (lsp-restart 'auto-restart)
   (lsp-headerline-breadcrumb-enable t)
   (lsp-enable-suggest-server-download nil)
+  (lsp-completion-provider :none)
 
   :preface
   (eval-when-compile
