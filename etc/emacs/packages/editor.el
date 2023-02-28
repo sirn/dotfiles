@@ -256,6 +256,8 @@
 ;;; Autocompletion
 
 (use-package corfu
+  :straight (:files (:defaults "extensions/*") :includes (corfu-popupinfo corfu-echo))
+
   :demand t
 
   :custom
@@ -268,6 +270,24 @@
     :custom
     (completion-cycle-threshold 3)
     (tab-always-indent 'complete)))
+
+
+(use-feature corfu-popupinfo
+  :after corfu
+
+  :general
+  (:keymaps 'corfu-map
+   "M-n" #'corfu-popupinfo-scroll-down
+   "M-p" #'corfu-popupinfo-scroll-up))
+
+
+(use-feature corfu-quick
+  :after corfu
+
+  :general
+  (:keymaps 'corfu-map
+   "M-q" #'corfu-quick-complete
+   "C-q" #'corfu-quick-insert))
 
 
 (use-package corfu-terminal
