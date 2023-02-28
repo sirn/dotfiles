@@ -281,6 +281,19 @@
     (corfu-terminal-mode +1)))
 
 
+(use-package copilot
+  :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+
+  :general
+  (:keymaps 'copilot-completion-map
+   "<tab>" #'copilot-accept-completion
+   "TAB" #'copilot-accept-completion
+   "M-[" #'copilot-previous-completion
+   "M-]" #'copilot-next-completion)
+
+  :init
+  (global-copilot-mode +1))
+
 ;; --------------------------------------------------------------------------
 ;;; Autoformatting
 
