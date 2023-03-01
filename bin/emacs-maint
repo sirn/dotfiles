@@ -13,19 +13,18 @@ BASE_NAME=$(basename "$0")
 ## Utils
 ##
 
-USE_EMACSCLIENT=
-EMACSCLIENT_SOCK=/tmp/emacs$(id -u)/server
+EMACSCLIENT_SOCK=
 
-if [ -n "$XDG_RUNTIME_DIR" ]; then
-    EMACSCLIENT_SOCK="$XDG_RUNTIME_DIR/emacs/server"
-fi
+_detect_emacsclient_sock() {
+    if [ -n "$EMACSCLIENT_SOCK" ]; then
+        return
+    fi
 
-if [ -S "$EMACSCLIENT_SOCK" ]; then
-    USE_EMACSCLIENT=1
-fi
+    EMACSCLIENT_SOCK=$(command emacsclient -e 'server-socket-dir' | tr -d '"')/server
+}
 
-_emacs() {
-    if [ "$USE_EMACSCLIENT" = "1" ]; then
+_maybe_emacsc() {
+    if [ -S "$EMACSCLIENT_SOCK" ]; then
         command emacsclient "$@"
         exit $?
     fi
@@ -42,7 +41,7 @@ _emacs() {
 
 _do_recompile() {
     find "$BASE_DIR/etc/emacs" -iname '*.elc' -delete
-    _emacs --eval '(byte-recompile-directory "'"$BASE_DIR"'/etc/emacs/packages" 0)'
+    _maybe_emacsc --eval '(byte-recompile-directory "'"$BASE_DIR"'/etc/emacs/packages" 0)'
 }
 
 ## Command: straight-freeze
@@ -50,7 +49,7 @@ _do_recompile() {
 ##
 
 _do_straight_freeze() {
-    _emacs --eval '(straight-freeze-versions)'
+    _maybe_emacsc --eval '(straight-freeze-versions)'
 }
 
 ## Command: straight-pull-all
@@ -58,7 +57,7 @@ _do_straight_freeze() {
 ##
 
 _do_straight_pull() {
-    _emacs --eval '(straight-pull-all)'
+    _maybe_emacsc --eval '(straight-pull-all)'
 }
 
 ## Command: straight-thaw
@@ -66,16 +65,18 @@ _do_straight_pull() {
 ##
 
 _do_straight_thaw() {
-    _emacs --eval '(straight-thaw-versions)'
-    _emacs --eval '(straight-rebuild-all)'
+    _maybe_emacsc --eval '(straight-thaw-versions)'
+    _maybe_emacsc --eval '(straight-rebuild-all)'
 }
 
 ## Command: kill
 ## Kill Emacs daemon
 
 _do_kill() {
-    if [ "$USE_EMACSCLIENT" = "1" ]; then
-        _emacs --eval '(kill-emacs)'
+    _detect_emacsclient_sock
+
+    if [ -S "$EMACSCLIENT_SOCK" ]; then
+        command emacsclient --eval '(kill-emacs)'
         exit $?
     fi
 
