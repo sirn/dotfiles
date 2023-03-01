@@ -306,8 +306,8 @@
 
   :general
   (:keymaps 'copilot-completion-map
-   "<tab>" #'copilot-accept-completion
-   "TAB" #'copilot-accept-completion
+   "M-<tab>" #'copilot-accept-completion
+   "M-TAB" #'copilot-accept-completion
    "M-[" #'copilot-previous-completion
    "M-]" #'copilot-next-completion)
 
