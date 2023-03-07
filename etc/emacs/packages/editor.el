@@ -421,6 +421,10 @@ area."
     (declare-function gemacs--advice-lsp-mode-silence nil))
 
   :config
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.git\\'")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.hg\\'")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]tmp\\'")
+
   (defun gemacs--advice-lsp-mode-silence (format &rest args)
     "Silence needless diagnostic messages from `lsp-mode'.
 This is a `:before-until' advice for several `lsp-mode' logging
