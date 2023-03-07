@@ -306,10 +306,10 @@
 
   :general
   (:keymaps 'copilot-completion-map
-   "M-<tab>" #'copilot-accept-completion
-   "M-TAB" #'copilot-accept-completion
-   "M-[" #'copilot-previous-completion
-   "M-]" #'copilot-next-completion)
+   "C-<tab>" #'copilot-accept-completion
+   "C-TAB" #'copilot-accept-completion
+   "C-[" #'copilot-previous-completion
+   "C-]" #'copilot-next-completion)
 
   :init
   (global-copilot-mode +1))
