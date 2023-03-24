@@ -2,6 +2,6 @@
 
 {
   home.packages = with pkgs; [
-    yt-dlp
+    unstable.yt-dlp
   ];
 }
