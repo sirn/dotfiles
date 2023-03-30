@@ -40,7 +40,7 @@
   (defun gemacs--project-try-local (dir)
     "Checks if DIR is a non-VC project."
     (catch 'ret
-      (let ((markers '(".project" ".projectile" "go.mod" "Cargo.toml")))
+      (let ((markers '(".project" ".projectile")))
         (dolist (f markers)
           (when-let ((root (locate-dominating-file dir f)))
             (throw 'ret (cons 'local root)))))))
