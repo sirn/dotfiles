@@ -51,6 +51,9 @@ COMMAND:
                         Switch to the intended output before running
                         this command.
 
+                        Note that this command requires ladspa-sdk and
+                        swh-plugins to be installed.
+
 " "$BASE_NAME"
         exit 2
     fi
