@@ -60,11 +60,8 @@
     in
     {
       homeConfigurations = {
-        apyx = mkConfig {
-          hostname = "apyx";
-        };
-        gemini = mkConfig {
-          hostname = "gemini";
+        terra = mkConfig {
+          hostname = "terra";
         };
         phoebe = mkConfig {
           hostname = "phoebe";
