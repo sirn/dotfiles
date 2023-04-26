@@ -12,6 +12,7 @@ in
     nodePackages.pnpm
     nodePackages.typescript
     nodePackages.typescript-language-server
+    nodePackages.yarn
 
     localNodePackages.eslint
     localNodePackages.eslint-config-prettier
