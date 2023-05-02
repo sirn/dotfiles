@@ -5,7 +5,6 @@ let
   inherit (pkgs.stdenv) isDarwin;
 
   dotfilesDir = "${config.home.homeDirectory}/.dotfiles";
-  dotprivDir = "${config.home.homeDirectory}/.dotpriv";
 in
 {
   programs.notmuch = {
@@ -26,12 +25,8 @@ in
         fi
 
         if printf 't' | ${pkgs.gnupg}/bin/gpg2 -o /dev/null -as - 2>/dev/null; then
-          ${mkOutOfStoreSymlink "${dotprivDir}/libexec/notmuch"}/pre_new
           ${pkgs.isync}/bin/mbsync --all
         fi
-      '';
-      postNew = ''
-        ${mkOutOfStoreSymlink "${dotprivDir}/libexec/notmuch"}/post_new
       '';
     };
   };
