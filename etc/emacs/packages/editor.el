@@ -9,20 +9,16 @@
 
 (use-feature emacs
   :general
-  ("C-x C-b" #'switch-to-buffer)
-
   (leader
-    "wo"  #'other-window
-    "wd"  #'delete-window
-    "wD"  #'delete-other-windows
-    "w-"  #'split-window-below
-    "w/"  #'split-window-right
-    "w="  #'balance-windows
-    "bd"  #'kill-buffer
-    "bD"  #'kill-buffer-and-window
-    "bb"  #'switch-to-buffer
-    "wbb" #'switch-to-buffer-other-window
-    "wR"  #'redraw-display))
+    "wo" #'other-window
+    "wd" #'delete-window
+    "wD" #'delete-other-windows
+    "w-" #'split-window-below
+    "w/" #'split-window-right
+    "w=" #'balance-windows
+    "bd" #'kill-buffer
+    "bD" #'kill-buffer-and-window
+    "wR" #'redraw-display))
 
 
 ;; --------------------------------------------------------------------------
@@ -47,26 +43,10 @@
    "jl" #'avy-goto-line))
 
 
-(use-package ag
-  :general
-  (leader
-   "/" #'ag))
-
-
 (use-package ace-link
   :general
   (leader
    "jL" #'ace-link))
-
-
-(use-package ctrlf
-  :demand t
-
-  :custom
-  (ctrlf-default-search-style 'fuzzy)
-
-  :config
-  (ctrlf-mode +1))
 
 
 (use-feature delsel
@@ -247,7 +227,96 @@
 
 
 ;; --------------------------------------------------------------------------
+;;; Minibuffers
+
+
+(use-package prescient
+  :demand t
+
+  :custom
+  (prescient-history-length 1000)
+
+  :config
+  (prescient-persist-mode +1)
+
+  (use-feature emacs
+    :custom
+    (completion-styles '(prescient basic))))
+
+
+(use-package marginalia
+  :demand t
+
+  :preface
+  (eval-when-compile
+    (declare-function marginalia-mode nil))
+
+  :general
+  (:keymaps 'marginalia-mode-map
+   "M-A" #'marginalia-cycle)
+
+  :config
+  (marginalia-mode +1))
+
+
+(use-package vertico
+  :demand t
+
+  :preface
+  (eval-when-compile
+    (declare-function vertico-mode nil))
+
+  :config
+  (vertico-mode +1))
+
+
+(use-package vertico-prescient
+  :after (vertico prescient)
+
+  :demand t
+
+  :preface
+  (eval-when-compile
+    (declare-function vertico-prescient-mode nil))
+
+  :config
+  (vertico-prescient-mode +1))
+
+
+(use-package consult
+  :general
+  ("C-x C-b" #'consult-buffer
+   "C-x 4 b" #'consult-buffer-other-window
+   "C-x 5 b" #'consult-buffer-other-frame
+   "M-g g"   #'consult-goto-line
+   "M-g M-g" #'consult-goto-line
+   "M-s r"   #'consult-ripgrep)
+
+  (:keymaps 'minibuffer-local-map
+   "M-s" #'consult-history
+   "M-r" #'consult-history)
+
+  (leader
+    "bb"  #'consult-buffer
+    "wbb" #'consult-buffer-other-window
+    "wbB" #'consult-buffer-other-frame
+    "/"   #'consult-ripgrep))
+
+
+(use-package ctrlf
+  :demand t
+
+  :custom
+  (ctrlf-default-search-style 'fuzzy)
+
+  :config
+  (ctrlf-mode +1))
+
+
+
+;; --------------------------------------------------------------------------
 ;;; Snippets
+
 
 (use-feature abbrev)
 
@@ -288,6 +357,19 @@
   (:keymaps 'corfu-map
    "M-q" #'corfu-quick-complete
    "C-q" #'corfu-quick-insert))
+
+
+(use-package corfu-prescient
+  :after (corfu prescient)
+
+  :demand t
+
+  :preface
+  (eval-when-compile
+    (declare-function corfu-prescient-mode nil))
+
+  :config
+  (corfu-prescient-mode +1))
 
 
 (use-package corfu-terminal
@@ -333,6 +415,7 @@
 
 ;; --------------------------------------------------------------------------
 ;;; Autoformatting
+
 
 (use-package apheleia
   :straight (:host github :repo "radian-software/apheleia")
@@ -418,6 +501,7 @@ area."
 
 ;; --------------------------------------------------------------------------
 ;;; Language Server Protocol
+
 
 (use-package lsp-mode
   :general

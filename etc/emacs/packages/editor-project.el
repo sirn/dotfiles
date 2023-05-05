@@ -8,9 +8,7 @@
   :general
   (leader
     "pSS" #'gemacs--project-sync
-    "pf" #'project-find-file
     "pp" #'project-switch-project
-    "pb" #'project-switch-to-buffer
     "pk" #'project-kill-buffers
     "p'" #'project-eshell
     "p!" #'project-async-shell-command
@@ -23,16 +21,12 @@
     (declare-function gemacs--project-sync nil))
 
   :config
-  (use-feature ag
-    :init
-    (defun gemacs--project-ag ()
-      (interactive)
-      (let* ((pr (project-current t))
-             (default-directory (project-root pr)))
-        (call-interactively 'ag-project-regexp)))
+  (use-feature consult
+    :general
+    ("C-x p b" #'consult-project-buffer)
 
-    (general-with-eval-after-load 'general
-      (leader "p/" #'gemacs--project-ag)))
+    (leader
+      "pb" #'consult-project-buffer))
 
   ;; For custom projects without requiring .git
   ;; https://christiantietze.de/posts/2022/03/mark-local-project.el-directories/
@@ -101,3 +95,15 @@
                (pr (project-current nil dir)))
           (project-remember-project pr))))
     (message "Projects successfully synced")))
+
+
+(use-package consult-project-extra
+  :demand t
+
+  :general
+  ("C-c p f" #'consult-project-extra-find
+   "C-c p o" #'consult-project-extra-find-other-window)
+
+  (leader
+   "pf" #'consult-project-extra-find
+   "po" #'consult-project-extra-find-other-window))
