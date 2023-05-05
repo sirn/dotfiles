@@ -124,6 +124,10 @@
     :prefix "SPC"
     :non-normal-prefix "M-SPC")
 
+;; SQLite3 is a shared module and loaded early.
+
+(use-package sqlite3)
+
 ;; --------------------------------------------------------------------------
 ;;; Convenient helpers
 
