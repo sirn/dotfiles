@@ -34,7 +34,7 @@ in
     # textproc
     aspell
     proselint
-    silver-searcher
+    ripgrep
   ] ++ (if isDarwin then [ ] else [
     # Note: duplicity has an actual dependency on pyOpenSSL which is
     # broken on aarch64-darwin. Broken until the issue is resolved
