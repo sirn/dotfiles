@@ -618,15 +618,6 @@ functions."
     #'gemacs--advice-lsp-ui-doc-allow-multiline))
 
 
-(use-package lsp-treemacs
-  :preface
-  (eval-when-compile
-    (declare-function lsp-treemacs-sync-mode nil))
-
-  :config
-  (lsp-treemacs-sync-mode +1))
-
-
 ;; --------------------------------------------------------------------------
 ;;; Tree Sitter
 
