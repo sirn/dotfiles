@@ -15,6 +15,7 @@ in
         pkgs.local.emacsNativeComp-lucid
       else
         pkgs.local.emacsNativeComp-nox;
+
     extraPackages = epkgs: [
       epkgs.w3m
       epkgs.vterm

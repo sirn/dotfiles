@@ -10,6 +10,7 @@ in
   home.packages = with pkgs; [
     # dev
     bmake
+    cmake
     entr
     jq
     mercurial
