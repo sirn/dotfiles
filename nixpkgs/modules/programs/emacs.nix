@@ -17,6 +17,7 @@ in
         pkgs.local.emacsNativeComp-nox;
     extraPackages = epkgs: [
       epkgs.w3m
+      epkgs.vterm
     ] ++ (if config.programs.notmuch.enable then [
       epkgs.notmuch
     ] else [ ]);

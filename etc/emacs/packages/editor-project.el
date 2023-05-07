@@ -10,7 +10,6 @@
     "pSS" #'gemacs--project-sync
     "pp" #'project-switch-project
     "pk" #'project-kill-buffers
-    "p'" #'project-eshell
     "p!" #'project-async-shell-command
     "pc" #'project-compile)
 
@@ -27,6 +26,11 @@
 
     (leader
       "pb" #'consult-project-buffer))
+
+  (use-feature multi-vterm
+    :general
+    (leader
+      "p'" #'multi-vterm-project))
 
   ;; For custom projects without requiring .git
   ;; https://christiantietze.de/posts/2022/03/mark-local-project.el-directories/
