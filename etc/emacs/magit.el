@@ -153,12 +153,10 @@ NAME and ARGS are as in `use-package'."
 ;; --------------------------------------------------------------------------
 ;;; Selection
 
-(use-package selectrum
-  :straight (:host github :repo "radian-software/selectrum")
+(use-package vertico
   :demand t
   :config
-  (selectrum-mode +1))
-
+  (vertico-mode +1))
 
 (use-package prescient
   :demand t
@@ -170,16 +168,11 @@ NAME and ARGS are as in `use-package'."
     :custom
     (completion-styles '(prescient basic))))
 
-
-(use-package selectrum-prescient
-  :straight (:host github
-              :repo "radian-software/prescient.el"
-              :files ("selectrum-prescient.el"))
-
-  :after (selectrum prescient)
+(use-package vertico-prescient
+  :after (vertico prescient)
   :demand t
   :config
-  (selectrum-prescient-mode +1))
+  (vertico-prescient-mode +1))
 
 ;; --------------------------------------------------------------------------
 ;;; UI
