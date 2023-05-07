@@ -32,7 +32,18 @@
   :custom
   ;; Max length for commit message summary is 50 characters as per
   ;; https://chris.beams.io/posts/git-commit/.
-  (git-commit-summary-max-length 50))
+  (git-commit-summary-max-length 50)
+
+  :config
+  (use-feature copilot
+    :preface
+    (eval-when-compile
+      (declare-function gemacs--git-commit-disable-copilot nil))
+
+    :init
+    (defun gemacs--git-commit-disable-copilot ()
+      (copilot-mode -1))
+    (add-to-list 'git-commit-mode-hook #'gemacs--git-commit-disable-copilot)))
 
 
 (use-package ghub)
