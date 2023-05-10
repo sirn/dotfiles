@@ -96,37 +96,39 @@ prependpath "$HOME/.dotpriv/bin"
 ## Nix
 ##
 
-prependnixpath() {
-    case ":$NIX_PATH:" in
-    *:"$1":*) ;;
-    *)
-        NIX_PATH="${1:+$1:}$NIX_PATH"
-        ;;
-    esac
+if [ -z "$DISTROBOX_ENTER_PATH" ]; then
+    prependnixpath() {
+        case ":$NIX_PATH:" in
+            *:"$1":*) ;;
+            *)
+                NIX_PATH="${1:+$1:}$NIX_PATH"
+                ;;
+        esac
 
-    NIX_PATH=${NIX_PATH%%:}
-}
+        NIX_PATH=${NIX_PATH%%:}
+    }
 
-# shellcheck disable=SC1091
-if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
-    . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+    # shellcheck disable=SC1091
+    if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+        . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 
-    # We've reset PATH above; need to do this manually.
-    prependpath "/nix/var/nix/profiles/default/bin"
-    prependpath "$HOME/.nix-profile/bin"
+        # We've reset PATH above; need to do this manually.
+        prependpath "/nix/var/nix/profiles/default/bin"
+        prependpath "$HOME/.nix-profile/bin"
 
-    prependnixpath "$HOME/.nix-defexpr/channels"
-    prependnixpath "/nix/var/nix/profiles/per-user/root/channels"
+        prependnixpath "$HOME/.nix-defexpr/channels"
+        prependnixpath "/nix/var/nix/profiles/per-user/root/channels"
 
-    export NIX_PATH
+        export NIX_PATH
+    fi
+
+    # shellcheck disable=SC1091
+    if [ -e "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
+        . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+    fi
+
+    unset prependnixpath
 fi
-
-# shellcheck disable=SC1091
-if [ -e "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
-    . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
-fi
-
-unset prependnixpath
 
 ## GPG agent
 ##
