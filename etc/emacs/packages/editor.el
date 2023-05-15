@@ -301,7 +301,19 @@
     "bb"  #'consult-buffer
     "wbb" #'consult-buffer-other-window
     "wbB" #'consult-buffer-other-frame
-    "/"   #'consult-ripgrep))
+    "gr"  #'consult-ripgrep
+    "gg"  #'consult-grep)
+
+  :init
+  (use-feature project
+    :config
+    (general-with-eval-after-load 'general
+      (general-define-key :keymaps 'project-prefix-map
+        "g" #'consult-grep
+        "r" #'consult-ripgrep)
+
+      (add-to-list 'project-switch-commands '(consult-grep "Grep") t)
+      (add-to-list 'project-switch-commands '(consult-ripgrep "Ripgrep") t))))
 
 
 (use-package ctrlf

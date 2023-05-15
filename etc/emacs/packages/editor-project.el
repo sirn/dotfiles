@@ -13,6 +13,11 @@
     "p!" #'project-async-shell-command
     "pc" #'project-compile)
 
+  :custom
+  (project-switch-commands
+    '((project-find-file "Find file")
+      (project-dired "Dired")))
+
   :preface
   (eval-when-compile
     (declare-function gemacs--project-try-local nil)
