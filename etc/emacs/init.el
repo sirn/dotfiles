@@ -124,10 +124,6 @@
     :prefix "SPC"
     :non-normal-prefix "M-SPC")
 
-;; SQLite3 is a shared module and loaded early.
-
-(use-package sqlite3)
-
 ;; --------------------------------------------------------------------------
 ;;; Convenient helpers
 
@@ -207,6 +203,15 @@ This is an `:around' advice for many different functions."
 `inhibit-message' for silencing message."
   (let ((inhibit-message t))
     (apply func args)))
+
+
+;; Shared libraries
+
+;; SQLite3 is a shared module and loaded early.
+
+(gemacs-if-compiletime (locate-library "sqlite3")
+  (use-feature sqlite3)
+  (use-package sqlite3))
 
 
 ;; --------------------------------------------------------------------------

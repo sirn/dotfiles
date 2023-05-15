@@ -14,6 +14,9 @@ in
   emacsNativeComp-nox = (callPackage ./applications/editors/emacs { }).emacsNativeComp-nox;
   emacsNativeComp-lucid = (callPackage ./applications/editors/emacs { }).emacsNativeComp-lucid;
   lima-bin = (callPackage ./applications/virtualization/lima/bin.nix { });
+  emacsPackages = {
+    sqlite3 = (callPackage ./applications/editors/emacs/elisp-packages/sqlite3 { });
+  };
 
   unison-nox = (callPackage ./applications/networking/sync/unison-nox { });
   s-tui = (callPackage ./tools/system/s-tui { });

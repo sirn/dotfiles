@@ -19,6 +19,7 @@ in
     extraPackages = epkgs: [
       epkgs.w3m
       epkgs.vterm
+      pkgs.local.emacsPackages.sqlite3
     ] ++ (if config.programs.notmuch.enable then [
       epkgs.notmuch
     ] else [ ]);
