@@ -399,31 +399,7 @@
 (use-package copilot
   :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
 
-  :preface
-  (eval-when-compile
-    (declare-function gemacs--copilot-completion-maybe nil))
-
-  :general
-  (:keymaps 'copilot-completion-map
-   "<tab>" #'gemacs--copilot-completion-maybe
-   "TAB" #'gemacs--copilot-completion-maybe
-   "C-[" #'copilot-previous-completion
-   "C-]" #'copilot-next-completion)
-
-  :init
-  (global-copilot-mode +1)
-
-  :config
-  (defun gemacs--copilot-completion-maybe ()
-    (interactive)
-    (or (copilot-accept-completion)
-        (corfu-complete)))
-
-  (use-feature corfu
-    :init
-    (general-define-key
-      :keymaps 'corfu-map
-      "<tab>" #'gemacs--copilot-completion-maybe)))
+  :commands copilot-mode)
 
 
 ;; --------------------------------------------------------------------------

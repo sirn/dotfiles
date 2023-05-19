@@ -1,8 +1,6 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (defun gemacs--term-setup ()
-  (with-eval-after-load 'copilot
-    (copilot-mode -1))
   (setq-local evil-insert-state-cursor 'box)
   (evil-insert-state))
 
