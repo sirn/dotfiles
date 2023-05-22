@@ -109,11 +109,7 @@
         (cond
           ((eq w 'x)
            (scroll-bar-mode -1)
-           ;; GTK scale to 1.0 with fractional scaling less than 2 (i.e. 1.5)
-           ;; bumping the font size manually for 144 DPI
-           (set-frame-font (format "%s %s"
-                             gemacs-font
-                             (round (* gemacs-font-size 1.5)))
+           (set-frame-font (format "%s %s" gemacs-font gemacs-font-size)
              nil
              t))
           ((eq w 'mac)
