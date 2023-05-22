@@ -12,6 +12,7 @@ in
   droid-serif-thai = (callPackage ./data/fonts/droid-thai-fonts { }).droid-serif-thai;
 
   emacsNativeComp-nox = (callPackage ./applications/editors/emacs { }).emacsNativeComp-nox;
+  emacsNativeComp-pgtk = (callPackage ./applications/editors/emacs { }).emacsNativeComp-pgtk;
   emacsNativeComp-lucid = (callPackage ./applications/editors/emacs { }).emacsNativeComp-lucid;
   lima-bin = (callPackage ./applications/virtualization/lima/bin.nix { });
   emacsPackages = {

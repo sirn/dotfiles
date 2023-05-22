@@ -5,6 +5,13 @@
     nativeComp = true;
   };
 
+  emacsNativeComp-pgtk = pkgs.emacs.override {
+    nativeComp = true;
+    withGTK2 = false;
+    withGTK3 = true;
+    withPgtk = true;
+  };
+
   emacsNativeComp-lucid = pkgs.emacs.override {
     nativeComp = true;
     withGTK2 = false;

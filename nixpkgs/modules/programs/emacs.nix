@@ -12,7 +12,7 @@ in
     enable = true;
     package =
       if config.machine.gui.enable && isLinux then
-        pkgs.local.emacsNativeComp-lucid
+        pkgs.local.emacsNativeComp-pgtk
       else
         pkgs.local.emacsNativeComp-nox;
 
