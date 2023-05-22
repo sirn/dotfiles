@@ -135,7 +135,7 @@ in
           done
 
           # Cleanup old services; logs are cleaned first
-          if [[ -n "$oldGenPath" ]]; then
+          if [[ -n $oldGenPath ]]; then
             oldSvcPath=$oldGenPath/home-files/.local/var/service
             newSvcPath=$newGenPath/home-files/.local/var/service
             for svc in "$oldSvcPath"/*/log "$oldSvcPath"/*; do
