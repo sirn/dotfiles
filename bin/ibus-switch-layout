@@ -1,0 +1,13 @@
+#!/bin/sh
+
+case "$(ibus engine)" in
+    xkb:us::eng )
+        ibus engine libthai
+        ;;
+    libthai )
+        ibus engine mozc-jp
+        ;;
+    mozc-jp )
+        ibus engine xkb:us::eng
+        ;;
+esac

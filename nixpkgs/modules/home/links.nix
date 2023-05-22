@@ -22,5 +22,10 @@ in
         source = mkOutOfStoreSymlink "${dotfilesDir}/etc/amethyst/amethyst.yml";
       };
     })
+    (mkIf (isLinux && config.machine.gui.enable) {
+      ".local/share/applications/ibus-switch-layout.desktop" = {
+        source = mkOutOfStoreSymlink "${dotfilesDir}/share/applications/ibus-switch-layout.desktop";
+      };
+    })
   ];
 }

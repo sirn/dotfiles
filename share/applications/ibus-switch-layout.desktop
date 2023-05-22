@@ -1,0 +1,8 @@
+[Desktop Entry]
+Categories=System;Utility;
+Comment=Switch IBus layout between predefined list of layouts
+Exec=~/.dotfiles/bin/ibus-switch-layout
+Icon=ibus
+Name=IBus Switch Layout
+Terminal=false
+Type=Application
