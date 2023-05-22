@@ -301,8 +301,8 @@
     "bb"  #'consult-buffer
     "wbb" #'consult-buffer-other-window
     "wbB" #'consult-buffer-other-frame
-    "gr"  #'consult-ripgrep
-    "gg"  #'consult-grep)
+    "//"  #'consult-ripgrep
+    "/g"  #'consult-grep)
 
   :init
   (use-feature project
