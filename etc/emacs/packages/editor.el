@@ -310,7 +310,7 @@
     (general-with-eval-after-load 'general
       (general-define-key :keymaps 'project-prefix-map
         "g" #'consult-grep
-        "r" #'consult-ripgrep)
+        "/" #'consult-ripgrep)
 
       (add-to-list 'project-switch-commands '(consult-grep "Grep") t)
       (add-to-list 'project-switch-commands '(consult-ripgrep "Ripgrep") t))))
