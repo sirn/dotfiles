@@ -44,7 +44,7 @@ let
     flake8
     ipwhois
     pip-tools
-    poetry
+    poetry-core
     pyls-flake8
     pyls-isort
     pylsp-mypy
