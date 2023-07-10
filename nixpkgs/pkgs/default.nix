@@ -14,7 +14,6 @@ in
   emacsNativeComp-nox = (callPackage ./applications/editors/emacs { }).emacsNativeComp-nox;
   emacsNativeComp-pgtk = (callPackage ./applications/editors/emacs { }).emacsNativeComp-pgtk;
   emacsNativeComp-lucid = (callPackage ./applications/editors/emacs { }).emacsNativeComp-lucid;
-  lima-bin = (callPackage ./applications/virtualization/lima/bin.nix { });
   emacsPackages = {
     sqlite3 = (callPackage ./applications/editors/emacs/elisp-packages/sqlite3 { });
   };
