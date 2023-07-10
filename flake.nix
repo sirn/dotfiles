@@ -76,9 +76,6 @@
           system = "aarch64-darwin";
           homeDirectory = "/Users/sirn";
         };
-        ws = mkConfig {
-          hostname = "ws";
-        };
       };
     };
 }
