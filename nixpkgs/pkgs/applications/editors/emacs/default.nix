@@ -2,7 +2,7 @@
 
 {
   emacsNativeComp-nox = pkgs.emacs-nox.override {
-    nativeComp = true;
+    withNativeCompilation = true;
   };
 
   emacsNativeComp-pgtk = pkgs.emacs.override {

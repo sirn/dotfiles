@@ -1,17 +1,14 @@
 { config, pkgs, ... }:
 
-# Note: tracking unstable to fix issue with pyOpenSSL broken on Darwin
-# and using python3Packages.buildPythonPackage will prevent installation
-# of the entire derivation.
+# Note: tracking unstable to fix issue with pylsp-mypy broken on Darwin.
+# Might be safe to switch this back to stable after > 23.05.
 #
-# Might be safe to switch this back to stable after > 22.05.
-#
-# See also: https://github.com/pyca/pyopenssl/issues/873
+# See also: https://github.com/NixOS/nixpkgs/issues/235603
 
 let
   inherit (pkgs.stdenv) isDarwin;
 
-  dnspython_2_0_0 = pkgs.python3Packages.dnspython.overridePythonAttrs (orig: rec {
+  dnspython_2_0_0 = pkgs.unstable.python3Packages.dnspython.overridePythonAttrs (orig: rec {
     version = "2.0.0";
     src = pkgs.fetchFromGitHub {
       inherit version;
@@ -22,15 +19,15 @@ let
     };
 
     propagatedBuildInputs = [
-      pkgs.python3Packages.trio
-      pkgs.iana-etc
+      pkgs.unstable.python3Packages.trio
+      pkgs.unstable.iana-etc
     ];
   });
 
-  ipwhois = pkgs.python3Packages.buildPythonPackage rec {
+  ipwhois = pkgs.unstable.python3Packages.buildPythonPackage rec {
     pname = "ipwhois";
     version = "1.2.0";
-    src = pkgs.python3Packages.fetchPypi {
+    src = pkgs.unstable.python3Packages.fetchPypi {
       inherit pname version;
       sha256 = "sha256-gx4/7zuAQSAaBI6UVuO4D0XGyLcXTzTtIR9mtZbIS74=";
     };
@@ -39,7 +36,7 @@ let
     ];
   };
 
-  pythonEnv = pkgs.python310.withPackages (p: with p; [
+  pythonEnv = pkgs.unstable.python311.withPackages (p: with p; [
     black
     flake8
     ipwhois
