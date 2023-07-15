@@ -6,19 +6,19 @@
   };
 
   emacsNativeComp-pgtk = pkgs.emacs.override {
-    nativeComp = true;
+    withNativeCompilation = true;
     withGTK2 = false;
     withGTK3 = true;
     withPgtk = true;
   };
 
   emacsNativeComp-lucid = pkgs.emacs.override {
-    nativeComp = true;
+    withNativeCompilation = true;
     withGTK2 = false;
     withGTK3 = false;
   };
 
   emacsNativeComp-macport = pkgs.emacsMacport.override {
-    nativeComp = true;
+    withNativeCompilation = true;
   };
 }
