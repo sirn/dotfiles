@@ -502,6 +502,7 @@ area."
   :preface
   (eval-when-compile
     (declare-function gemacs--lsp-run-from-node-modules nil)
+    (declare-function gemacs--lsp-setup-corfu nil)
     (declare-function gemacs--advice-lsp-mode-silence nil))
 
   :config
@@ -538,10 +539,15 @@ functions."
           (when (file-executable-p binary)
             (cl-return (cons binary (cdr command))))))))
 
+  (defun gemacs--lsp-setup-corfu ()
+    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+          '(flex)))
+
   (dolist (fun '(lsp-warn lsp--warn lsp--info lsp--error))
     (advice-add fun :before-until #'gemacs--advice-lsp-mode-silence))
 
-  (advice-add 'lsp-resolve-final-function :filter-return #'gemacs--lsp-run-from-node-modules))
+  (advice-add 'lsp-resolve-final-function :filter-return #'gemacs--lsp-run-from-node-modules)
+  (add-hook 'lsp-completion-mode-hook #'gemacs--lsp-setup-corfu))
 
 
 (use-package lsp-ui
