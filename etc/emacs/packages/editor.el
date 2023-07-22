@@ -396,12 +396,6 @@
     (corfu-terminal-mode +1)))
 
 
-(use-package copilot
-  :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
-
-  :commands copilot-mode)
-
-
 ;; --------------------------------------------------------------------------
 ;;; Autoformatting
 
