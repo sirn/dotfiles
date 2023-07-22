@@ -76,6 +76,9 @@
           system = "aarch64-darwin";
           homeDirectory = "/Users/sirn";
         };
+        vega = mkConfig {
+          hostname = "vega";
+        };
       };
     };
 }

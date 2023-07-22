@@ -6,7 +6,7 @@ in
 {
   droid-sans-thai = fetchzip {
     name = "droid-sans-thai-${version}";
-    url = "https://files.mari.sh/pub/fonts/droid-sans-thai.tar.gz";
+    url = "https://files.grid.in.th/pub/fonts/droid-sans-thai.tar.gz";
     sha256 = "sha256-lydkvmPH7SVfymZFwwZ1hbS4jlHZoGZyNWMUHzhl6rA=";
 
     postFetch = ''
@@ -28,7 +28,7 @@ in
 
   droid-serif-thai = fetchzip {
     name = "droid-serif-thai-${version}";
-    url = "https://files.mari.sh/pub/fonts/droid-serif-thai.tar.gz";
+    url = "https://files.grid.in.th/pub/fonts/droid-serif-thai.tar.gz";
     sha256 = "sha256-OYOx/dJyjIhh8DWQMPlHUlAuKnpTsVFfPHNYUV8mEz8=";
 
     postFetch = ''
