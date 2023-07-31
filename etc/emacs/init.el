@@ -227,7 +227,8 @@ This is an `:around' advice for many different functions."
 (use-package no-littering
   :demand t
   :config
-  (setq custom-file (no-littering-expand-etc-file-name "custom.el")))
+  (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
+  (no-littering-theme-backups))
 
 
 ;; --------------------------------------------------------------------------
