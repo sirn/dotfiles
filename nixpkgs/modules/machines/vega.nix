@@ -14,6 +14,7 @@
     # services
     ../runit/emacs.nix
     ../runit/gpg-agent.nix
+    ../runit/syncthing.nix
     ../runit/xlocate.nix
   ];
 }

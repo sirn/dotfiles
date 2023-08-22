@@ -2,7 +2,6 @@
 
 let
   inherit (lib) mkIf;
-  inherit (pkgs.stdenv) isLinux;
   inherit (config.home) username;
 
   homeDir = config.home.homeDirectory;
