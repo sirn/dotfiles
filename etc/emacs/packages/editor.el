@@ -498,6 +498,7 @@ area."
   (lsp-headerline-breadcrumb-enable t)
   (lsp-enable-suggest-server-download nil)
   (lsp-completion-provider :none)
+  (lsp-before-save-edits nil)
 
   :preface
   (eval-when-compile
