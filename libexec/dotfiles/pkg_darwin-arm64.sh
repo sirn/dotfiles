@@ -30,10 +30,6 @@ _run() {
     macports_install xcodes
 }
 
-_run_desktop() {
-    macports_install emacs-mac-app -nativecomp
-}
-
 _run_system() {
     macports_install macfuse
 }
