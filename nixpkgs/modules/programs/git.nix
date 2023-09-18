@@ -50,7 +50,7 @@ in
 
     includes = [
       { path = "${homeDirectory}/.dotpriv/etc/git/gitconfig"; }
-      { path = "${homeDirectory}/.gitconfig_local"; }
+      { path = "${homeDirectory}/.config/git/config_local"; }
     ];
 
     ignores = [
