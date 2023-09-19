@@ -1,7 +1,8 @@
 { config, pkgs, ... }:
 
 {
-  programs.htop = {
+  programs.ssh = {
     enable = true;
+    package = pkgs.openssh;
   };
 }

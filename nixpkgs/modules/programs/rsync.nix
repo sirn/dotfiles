@@ -2,6 +2,6 @@
 
 {
   home.packages = with pkgs; [
-    unstable.yt-dlp
+    rsync
   ];
 }

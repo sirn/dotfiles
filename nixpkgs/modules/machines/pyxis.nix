@@ -4,7 +4,6 @@
   imports = [
     ../profiles/common.nix
     ../profiles/dev.nix
-    ../profiles/devops.nix
     ../profiles/multimedia.nix
 
     # machine-specific
