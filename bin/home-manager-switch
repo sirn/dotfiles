@@ -62,12 +62,19 @@ main() {
         exit 1
     fi
 
-    HOSTNAME=$(hostname | tr '[:upper:]' '[:lower:]')
-    HOSTNAME=${HOSTNAME%%.*}
-    FLAKE_URI="path:${BASE_DIR}"
-    FLAKE_PKG="${FLAKE_URI}#homeConfigurations.${HOSTNAME}.activationPackage"
+    if [ -f "$BASE_DIR"/nix.profile ]; then
+        PROFILE=$(cat "$BASE_DIR"/nix.profile)
+    fi
 
-    printe_h1 "Running home-manager for $HOSTNAME"
+    if [ -z "$PROFILE" ]; then
+        PROFILE=$(hostname | tr '[:upper:]' '[:lower:]')
+        PROFILE=${PROFILE%%.*}
+    fi
+
+    FLAKE_URI="path:${BASE_DIR}"
+    FLAKE_PKG="${FLAKE_URI}#homeConfigurations.${PROFILE}.activationPackage"
+
+    printe_h1 "Running home-manager for $PROFILE"
 
     if ! command -v home-manager >/dev/null; then
         if ! run_cmd nix build --no-link "${FLAKE_PKG}"; then
@@ -81,7 +88,7 @@ main() {
         fi
     fi
 
-    run_cmd home-manager --flake "${FLAKE_URI}#${HOSTNAME}" switch "$@"
+    run_cmd home-manager --flake "${FLAKE_URI}#${PROFILE}" switch "$@"
 }
 
 main "$@"

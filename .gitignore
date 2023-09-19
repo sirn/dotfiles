@@ -23,6 +23,7 @@ ssh/config.d/*
 
 # Runtime
 .config
+nix.profile
 result
 
 # Service
