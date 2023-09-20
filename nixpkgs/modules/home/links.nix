@@ -23,9 +23,11 @@ in
       };
     })
     (mkIf (isLinux && config.machine.gui.enable) {
-      ".config/sway/config" = { source = mkOutOfStoreSymlink "${dotfilesDir}/etc/sway/config"; };
       ".config/foot/foot.ini" = { source = mkOutOfStoreSymlink "${dotfilesDir}/etc/foot/foot.ini"; };
       ".config/fuzzel/fuzzel.ini" = { source = mkOutOfStoreSymlink "${dotfilesDir}/etc/fuzzel/fuzzel.ini"; };
+      ".config/sway/config" = { source = mkOutOfStoreSymlink "${dotfilesDir}/etc/sway/config"; };
+      ".config/waybar/config" = { source = mkOutOfStoreSymlink "${dotfilesDir}/etc/waybar/config"; };
+      ".config/waybar/style.css" = { source = mkOutOfStoreSymlink "${dotfilesDir}/etc/waybar/style.css"; };
     })
   ];
 }

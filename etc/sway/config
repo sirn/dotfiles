@@ -13,7 +13,7 @@ set $menu  fuzzel
 # See also: man 5 sway-output
 #
 output * bg    /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
-output * scale 1.75
+output * scale 1
 
 
 ### Input configuration
@@ -134,22 +134,35 @@ bindsym $mod+r mode "resize"
 # See also: man 5 sway-bar
 #
 bar {
-    position top
-    status_command while date +'%Y-%m-%d %H:%M:%S'; do sleep 1; done
-
-    colors {
-        statusline #ffffff
-        background #323232
-        inactive_workspace #32323200 #32323200 #5c5c5c
-    }
+    swaybar_command waybar
 }
 
-### External programs
+
+# Locking
 #
-exec_always pipewire
-exec_always fcitx5 -r
+bindsym $mod+Ctrl+Shift+L exec swaylock -f -c 000000
+
+
+###
+# Idling
+#
+exec sway-audio-idle-inhibit
+exec swayidle -w \
+    timeout 300 'swaylock -f -c 000000' \
+    timeout 600 'swaymsg "output * dpms off"' \
+    resume 'swaymsg "output * dpms on"' \
+    before-sleep 'swaylock -f -c 000000'
+
+
+###
+# External programs
+#
+exec wl-paste -t text --watch clipman store --no-persist
+exec pipewire
+exec fcitx5 -r
 
 
 ### Include
 #
 include /etc/sway/config.d/*
+include ${HOME}/.config/sway/config_$(hostname)

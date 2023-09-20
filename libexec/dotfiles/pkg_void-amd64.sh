@@ -30,9 +30,13 @@ _run_system() {
 }
 
 _run_sway() {
+    xbps_install clipman
     xbps_install foot
     xbps_install fuzzel
     xbps_install sway
+    xbps_install sway-audio-idle-inhibit
     xbps_install swaybg
+    xbps_install swayidle
     xbps_install swaylock
+    xbps_install Waybar
 }
