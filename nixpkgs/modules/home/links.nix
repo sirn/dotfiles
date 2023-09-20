@@ -26,6 +26,9 @@ in
       ".local/share/applications/ibus-switch-layout.desktop" = {
         source = mkOutOfStoreSymlink "${dotfilesDir}/share/applications/ibus-switch-layout.desktop";
       };
+      ".config/sway/config" = { source = mkOutOfStoreSymlink "${dotfilesDir}/etc/sway/config"; };
+      ".config/foot/foot.ini" = { source = mkOutOfStoreSymlink "${dotfilesDir}/etc/foot/foot.ini"; };
+      ".config/fuzzel/fuzzel.ini" = { source = mkOutOfStoreSymlink "${dotfilesDir}/etc/fuzzel/fuzzel.ini"; };
     })
   ];
 }

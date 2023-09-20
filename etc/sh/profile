@@ -166,11 +166,12 @@ prependpath "$HOME/.cache/rebar3/bin"
 prependpath "$HOME/.local/lib/google-cloud-sdk/bin"
 prependpath "$HOME/.dotfiles/libexec/lsp"
 
+
 ## Local Customization files
 ##
 
 # shellcheck disable=SC1090
-for n in .profile2 .profile_local; do
+for n in .profile2 .profile_local .profile_desktop; do
     if [ -f "$HOME/$n" ]; then
         . "$HOME/$n"
     fi

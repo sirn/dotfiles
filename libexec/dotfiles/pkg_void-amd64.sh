@@ -28,3 +28,11 @@ _run_system() {
     xbps_install iptables-nft
     xbps_alternative iptables iptables-nft
 }
+
+_run_sway() {
+    xbps_install foot
+    xbps_install fuzzel
+    xbps_install sway
+    xbps_install swaybg
+    xbps_install swaylock
+}

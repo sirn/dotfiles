@@ -46,6 +46,7 @@ FLAVOR:
 
     desktop         Install desktop packages.
     system          Install system packages.
+    sway            Install sway packages.
 
 Bootstrap script will default to \`pkg\` without any FLAVORS
 if no PROFILES and FLAVORS is given.
@@ -97,7 +98,7 @@ done
 
 for f in $FLAVORS; do
     case "$f" in
-    desktop | system) ;;
+    desktop | system | sway) ;;
     *)
         printe_err "Unknown flavor: $f"
         exit 1
