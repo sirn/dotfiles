@@ -10,7 +10,11 @@ in
 {
   programs.emacs = {
     enable = true;
-    package = pkgs.local.emacsNativeComp-nox;
+    package =
+      if config.machine.gui.enable && isLinux then
+        pkgs.local.emacsNativeComp-pgtk
+      else
+        pkgs.local.emacsNativeComp-nox;
 
     extraPackages = epkgs: [
       epkgs.w3m
