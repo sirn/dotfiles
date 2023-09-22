@@ -54,9 +54,6 @@ in
     # Ubuntu family
     ubuntu_font_family
 
-    # IPA fonts
-    ipafont
-
     # Takao fonts
     takao
 
@@ -72,6 +69,16 @@ in
   ];
 
   home.file = mkIf isLinux {
+    ".config/fontconfig/fonts.conf" = {
+      text = ''
+        <?xml version='1.0'?>
+        <!DOCTYPE fontconfig SYSTEM 'fonts.dtd'>
+        <fontconfig>
+          <include ignore_missing="yes">/etc/fonts/fonts.conf</include>
+          <include ignore_missing="yes">${config.home.homeDirectory}/.config/fontconfig/conf.d</include>
+        </fontconfig>
+      '';
+    };
     ".config/fontconfig/conf.d/99-dotfiles.conf" = {
       text = ''
         <?xml version='1.0'?>

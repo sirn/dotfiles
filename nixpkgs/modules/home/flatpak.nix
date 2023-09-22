@@ -20,7 +20,7 @@ in
       ];
 
       environment = {
-        FONTCONFIG_FILE = "${config.home.homeDirectory}/.config/fontconfig/conf.d";
+        FONTCONFIG_FILE = "${config.home.homeDirectory}/.config/fontconfig/fonts.conf";
       };
     };
   };
