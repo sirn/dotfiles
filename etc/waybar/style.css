@@ -90,6 +90,10 @@ button:hover {
     color: #2d3436;
 }
 
+#clock {
+    font-weight: bold;
+}
+
 #scratchpad {
     background: rgba(0, 0, 0, 0.2);
 }

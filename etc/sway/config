@@ -204,7 +204,8 @@ for_window [app_id="firefox" title="Firefox — Sharing Indicator"] floating ena
 for_window [app_id="firefox" title="Picture-in-Picture"]          floating enable
 for_window [app_id="firefox" title="Picture-in-Picture"]          sticky enable
 
-for_window [app_id="mpv"] floating enable
+for_window [app_id="mpv"]         floating enable
+for_window [app_id="pavucontrol"] floating enable
 
 
 ### Include

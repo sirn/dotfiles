@@ -22,8 +22,8 @@
     "modules-right": [
         "idle_inhibitor",
         "pulseaudio",
-        "clock",
-        "tray"
+        "tray",
+        "clock"
     ],
 
     // ------------------------------------------------------------------------
@@ -54,17 +54,14 @@
     },
 
     "clock": {
-        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-        "format-alt": "{:%Y-%m-%d}"
+        "format": "{:%b %d, %H:%M}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
     },
 
     "pulseaudio": {
-        "format": "{volume}% {icon} {format_source}",
-        "format-bluetooth": "{volume}% {icon} {format_source}",
-        "format-bluetooth-muted": " {icon} {format_source}",
-        "format-muted": " {format_source}",
-        "format-source": "{volume}% ",
-        "format-source-muted": "",
+        "format": "{icon}{format_source}",
+        "format-source": " ",
+        "format-source-muted": "",
         "format-icons": {
             "headphone": "",
             "hands-free": "",
