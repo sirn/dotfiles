@@ -97,7 +97,11 @@ bindsym $mod+e           layout toggle split
 bindsym $mod+f           fullscreen
 bindsym $mod+s           layout stacking
 bindsym $mod+w           layout tabbed
+
+# Floating & sticky:
+#
 bindsym $mod+Shift+space floating toggle
+bindsym $mod+Shift+grave sticky toggle
 
 # Focusing:
 #
@@ -128,6 +132,11 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
+# Screenshot:
+#
+bindsym $mod+Ctrl+Shift+1 exec grim
+bindsym $mod+Ctrl+Shift+2 exec grim -g "$(slurp)"
+
 
 ###
 # Status Bar
@@ -151,7 +160,7 @@ exec swayidle -w \
     timeout 300 'swaylock -f -c 000000' \
     timeout 600 'swaymsg "output * dpms off"' \
     resume 'swaymsg "output * dpms on"' \
-    before-sleep 'swaylock -f -c 000000'
+    before-sleep 'swaylock -f -c 000000' &
 
 
 ###
@@ -162,29 +171,40 @@ seat * xcursor_theme breeze_cursors 24
 set $gnome-schema org.gnome.desktop.interface
 
 exec_always {
-  gsettings set $gnome-schema document-font-name  "Noto Sans 10"
-  gsettings set $gnome-schema font-name           "Noto Sans 10"
-  gsettings set $gnome-schema icon-theme          "Breeze"
-  gsettings set $gnome-schema gtk-theme           "Breeze"
-  gsettings set $gnome-schema cursor-theme        "breeze_cursors"
-  gsettings set $gnome-schema cursor-size         24
-  gsettings set $gnome-schema monospace-font-name "Hack 10"
+    gsettings set $gnome-schema document-font-name  "Noto Sans 10"
+    gsettings set $gnome-schema font-name           "Noto Sans 10"
+    gsettings set $gnome-schema icon-theme          "Breeze"
+    gsettings set $gnome-schema gtk-theme           "Breeze"
+    gsettings set $gnome-schema cursor-theme        "breeze_cursors"
+    gsettings set $gnome-schema cursor-size         24
+    gsettings set $gnome-schema monospace-font-name "Hack 10"
 }
 
 
 ###
 # External programs
 #
-exec_always pipewire &
-exec_always wl-paste -t text --watch clipman store --no-persist &
-exec_always fcitx5 -r &
-exec_always mako &
+exec pipewire
+exec wl-paste -t text --watch clipman store --no-persist
+exec fcitx5 -r &
+exec mako
 
 # Portals:
 #
-exec_always /usr/libexec/xdg-desktop-portal-wlr &
-exec_always /usr/libexec/xdg-desktop-portal-gtk &
-exec_always /usr/libexec/xdg-desktop-portal -r &
+exec /usr/libexec/xdg-desktop-portal-wlr
+exec /usr/libexec/xdg-desktop-portal-gtk
+exec /usr/libexec/xdg-desktop-portal -r
+
+
+###
+# Window properties
+#
+
+for_window [app_id="firefox" title="Firefox — Sharing Indicator"] floating enable
+for_window [app_id="firefox" title="Picture-in-Picture"]          floating enable
+for_window [app_id="firefox" title="Picture-in-Picture"]          sticky enable
+
+for_window [app_id="mpv"] floating enable
 
 
 ### Include
