@@ -2,14 +2,16 @@
   machine.gui.enable = true;
 
   imports = [
-    ../profiles/common.nix
-    ../profiles/graphical.nix
-    ../profiles/multimedia.nix
+    ../common.nix
 
-    # machine-specific
-    ../home/runit.nix
+    # profile
     ../home/flatpak.nix
+    ../home/fonts.nix
+    ../home/runit.nix
     ../home/sway.nix
+
+    # programs
+    ../programs/mpv.nix
 
     # services
     ../runit/emacs.nix

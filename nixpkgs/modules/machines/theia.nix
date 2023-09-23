@@ -2,12 +2,14 @@
   machine.gui.enable = true;
 
   imports = [
-    ../profiles/common.nix
-    ../profiles/graphical.nix
-    ../profiles/multimedia.nix
+    ../common.nix
 
-    # machine-specific
+    # profile
     ../home/launchd.nix
+    ../home/fonts.nix
+
+    # programs
+    ../programs/mpv.nix
 
     # services
     ../launchd/userenv.nix
