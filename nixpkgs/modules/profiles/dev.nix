@@ -1,5 +1,4 @@
 {
   imports = [
-    ../dev/nix.nix
   ];
 }

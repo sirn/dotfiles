@@ -16,10 +16,13 @@ in
       else
         pkgs.local.emacsNativeComp-nox;
 
-    extraPackages = epkgs: [
+    extraPackages = epkgs: with pkgs; [
       epkgs.w3m
       epkgs.vterm
-      pkgs.local.emacsPackages.sqlite3
+      local.emacsPackages.sqlite3
+
+      # lsps
+      rnix-lsp
     ] ++ (if config.programs.notmuch.enable then [
       epkgs.notmuch
     ] else [ ]);
