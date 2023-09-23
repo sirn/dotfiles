@@ -16,7 +16,6 @@ in
         "~/.dotfiles/etc/fontconfig:ro"
         "~/.local/share/fonts:ro"
         "~/.local/share/icons:ro"
-        "~/.nix-profile/share/fonts:ro"
       ];
 
       environment = {
