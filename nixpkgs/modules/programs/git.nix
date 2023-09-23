@@ -71,6 +71,7 @@ in
       "*.iml"
       "*.pyc"
       ".dev/"
+      ".direnv/"
       ".dir-locals.el"
       ".env"
       ".envrc"
