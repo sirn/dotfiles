@@ -18,10 +18,10 @@ _prompt_git() {
         command git status --porcelain=v2 2>/dev/null |
             awk \
                 -v branch="$_branch" \
-                -v bold="$(tput bold 2>/dev/null || true)" \
-                -v reset="$(tput sgr0 2>/dev/null || true)" \
-                -v green="$(tput setaf 2 2>/dev/null || true)" \
-                -v yellow="$(tput setaf 3 2>/dev/null || true)" \
+                -v bold="%{$(tput bold 2>/dev/null || true)%}" \
+                -v reset="%{$(tput sgr0 2>/dev/null || true)%}" \
+                -v green="%{$(tput setaf 2 2>/dev/null || true)%}" \
+                -v yellow="%{$(tput setaf 3 2>/dev/null || true)%}" \
                 '
                 BEGIN {
                     changed=0
@@ -67,9 +67,9 @@ _prompt_last_exit() {
     if [ -n "$format_code" ]; then
         printf \
             "%s%s%s " \
-            "$format_code" \
+            "%{$format_code%}" \
             "$last_exit" \
-            "\\[$(tput sgr0 2>/dev/null || true)\\]"
+            "%{$(tput sgr0 2>/dev/null || true)%}"
     fi
 }
 
@@ -81,9 +81,9 @@ _prompt_nix() {
     if [ -n "$IN_NIX_SHELL" ]; then
         printf \
             "%s[%s]%s " \
-            "$t_highlight$t_bold" \
+            "%{$t_highlight$t_bold%}" \
             "nix-shell" \
-            "$t_reset"
+            "%{$t_reset%}"
     fi
 }
 
