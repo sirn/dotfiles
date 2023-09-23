@@ -26,6 +26,8 @@ in
       . ${dotfilesDir}/etc/zsh/functions/gg.zsh
       . ${dotfilesDir}/etc/zsh/functions/gq.zsh
       . ${dotfilesDir}/etc/zsh/functions/pcd.zsh
+
+      export WORDCHARS="''${WORDCHARS/\//}"
     '';
   };
 }
