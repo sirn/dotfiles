@@ -35,6 +35,7 @@ _run_sway() {
     xbps_install foot
     xbps_install fuzzel
     xbps_install grim
+    xbps_install libnotify
     xbps_install mako
     xbps_install qt5-wayland
     xbps_install qt6-wayland

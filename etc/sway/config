@@ -134,8 +134,17 @@ bindsym $mod+r mode "resize"
 
 # Screenshot:
 #
-bindsym $mod+Ctrl+Shift+1 exec grim
-bindsym $mod+Ctrl+Shift+2 exec grim -g "$(slurp)"
+bindsym Print exec \
+    env GRIM_DEFAULT_DIR="$HOME/Desktop" \
+    grim && notify-send \
+        "Screenshot captured" \
+        "Screenshot saved to ~/Desktop"
+
+bindsym Shift+Print exec \
+    env GRIM_DEFAULT_DIR="$HOME/Desktop" \
+    grim -g "$(slurp)" && notify-send \
+        "Screenshot captured" \
+        "Screenshot saved to ~/Desktop"
 
 
 ###
