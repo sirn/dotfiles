@@ -3,7 +3,6 @@
 
   imports = [
     ../profiles/common.nix
-    ../profiles/dev.nix
     ../profiles/multimedia.nix
 
     # machine-specific
