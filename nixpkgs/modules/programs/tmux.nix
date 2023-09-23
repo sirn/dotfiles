@@ -11,7 +11,7 @@ in
   programs.tmux = {
     enable = true;
     escapeTime = 0;
-    shell = "$SHELL";
+    shell = "${pkgs.zsh}/bin/zsh";
     terminal = "screen-256color";
 
     tmuxp.enable = true;

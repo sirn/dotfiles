@@ -11,10 +11,7 @@ in
 {
   home.file = mkMerge [
     {
-      ".hgrc" = { source = mkOutOfStoreSymlink "${dotfilesDir}/etc/hg/hgrc"; };
       ".ideavimrc" = { source = mkOutOfStoreSymlink "${dotfilesDir}/etc/ideavim/ideavimrc"; };
-      ".kshrc" = { source = mkOutOfStoreSymlink "${dotfilesDir}/etc/ksh/kshrc"; };
-      ".profile" = { source = mkOutOfStoreSymlink "${dotfilesDir}/etc/sh/profile"; };
       ".ssh/config" = { source = mkOutOfStoreSymlink "${dotfilesDir}/etc/ssh/config"; };
     }
     (mkIf (isDarwin && config.machine.gui.enable) {

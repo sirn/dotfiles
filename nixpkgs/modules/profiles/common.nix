@@ -8,7 +8,9 @@ in
     ../home/email.nix
     ../home/links.nix
     ../home/xdg.nix
+    ../home/shell.nix
     ../programs/aria2.nix
+    ../programs/bash.nix
     ../programs/curl.nix
     ../programs/direnv.nix
     ../programs/emacs.nix
@@ -25,5 +27,6 @@ in
     ../programs/unison.nix
     ../programs/vim.nix
     ../programs/weechat.nix
+    ../programs/zsh.nix
   ];
 }
