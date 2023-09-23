@@ -10,6 +10,7 @@
     # machine-specific
     ../home/runit.nix
     ../home/flatpak.nix
+    ../home/sway.nix
 
     # services
     ../runit/emacs.nix
