@@ -33,7 +33,7 @@
       (add-hook 'before-save-hook #'lsp-format-buffer)
       (add-hook 'before-save-hook #'lsp-organize-imports))
 
-    (add-hook 'go-mode-hook #'lsp)
+    (add-hook 'go-mode-hook #'lsp-deferred)
     (add-hook 'go-mode-hook #'gemacs--go-auto-format))
 
   (defvar gemacs--go-defun-regexp

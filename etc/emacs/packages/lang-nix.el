@@ -15,5 +15,5 @@
     (defun gemacs--nix-auto-format ()
       (add-hook 'before-save-hook #'lsp-format-buffer))
 
-    (add-hook 'nix-mode-hook #'lsp)
+    (add-hook 'nix-mode-hook #'lsp-deferred)
     (add-hook 'nix-mode-hook #'gemacs--nix-auto-format)))

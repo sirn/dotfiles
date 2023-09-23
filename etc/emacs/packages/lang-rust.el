@@ -17,5 +17,5 @@
       (add-hook 'before-save-hook #'lsp-format-buffer)
       (add-hook 'before-save-hook #'lsp-organize-imports))
 
-    (add-hook 'rust-mode-hook #'lsp)
+    (add-hook 'rust-mode-hook #'lsp-deferred)
     (add-hook 'rust-mode-hook #'gemacs--rust-auto-format)))

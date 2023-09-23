@@ -67,9 +67,11 @@ Use the following order for `use-package` and always leave a single line between
       (add-hook 'before-save-hook #'lsp-format-buffer)
       (add-hook 'before-save-hook #'lsp-organize-imports))
 
-    (add-hook 'typescript-mode-hook #'lsp)
+    (add-hook 'typescript-mode-hook #'lsp-deferred)
     (add-hook 'typescript-mode-hook #'gemacs--typescript-auto-format)))
 ```
+
+`lsp-deferred` should be used instead of `lsp` to let it paths after it is initialized by `envrc`.
 
 ## flycheck
 

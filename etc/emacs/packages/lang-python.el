@@ -35,7 +35,7 @@
       (add-hook 'before-save-hook #'lsp-format-buffer)
       (add-hook 'before-save-hook #'lsp-organize-imports))
 
-    (add-hook 'python-mode-hook #'lsp)
+    (add-hook 'python-mode-hook #'lsp-deferred)
     (add-hook 'python-mode-hook #'gemacs--python-auto-format))
 
   (cond

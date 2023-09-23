@@ -20,7 +20,7 @@
     (defun gemacs--typescript-auto-format ()
       (add-hook 'before-save-hook #'lsp-organize-imports))
 
-    (add-hook 'typescript-mode-hook #'lsp)
+    (add-hook 'typescript-mode-hook #'lsp-deferred)
     (add-hook 'typescript-mode-hook #'gemacs--typescript-auto-format))
 
   (use-feature apheleia

@@ -26,7 +26,7 @@
     :demand t
 
     :config
-    (add-hook 'nim-mode-hook #'lsp))
+    (add-hook 'nim-mode-hook #'lsp-deferred))
 
   (use-feature apheleia
     :demand t

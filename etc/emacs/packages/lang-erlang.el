@@ -17,5 +17,5 @@
       (add-hook 'before-save-hook #'lsp-format-buffer)
       (add-hook 'before-save-hook #'lsp-organize-imports))
 
-    (add-hook 'erlang-mode-hook #'lsp)
+    (add-hook 'erlang-mode-hook #'lsp-deferred)
     (add-hook 'elixir-mode-hook #'gemacs--erlang-auto-format)))

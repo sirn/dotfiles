@@ -226,6 +226,18 @@
   (unkillable-scratch +1))
 
 
+(use-package envrc
+  ;; envrc needs to run as late as humanly possible
+  :commands envrc-global-mode
+
+  :general
+  (leader
+    "e" '(:keymap envrc-command-map))
+
+  :init
+  (add-hook 'gemacs-after-init-hook 'envrc-global-mode))
+
+
 ;; --------------------------------------------------------------------------
 ;;; Minibuffers
 
