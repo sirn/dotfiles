@@ -69,6 +69,12 @@
 
 
 ;; --------------------------------------------------------------------------
+;;; System
+
+(setenv "SHELL" (format "%s/.nix-profile/bin/zsh" (getenv "HOME")))
+
+
+;; --------------------------------------------------------------------------
 ;;; Package management
 
 ;; Bootstrap the package manager, `straight.el'. straight.el is also used
