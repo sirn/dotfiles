@@ -15,11 +15,6 @@ cd "$BASE_DIR" || exit 1
 . "$BASE_DIR/libexec/dotfiles/lib/utils_void.sh"
 . "$BASE_DIR/libexec/dotfiles/lib/utils_runit.sh"
 
-_run() {
-    update_shells oksh
-    change_shell oksh
-}
-
 _run_system() {
     printe_h2 "Setting up user service..."
 

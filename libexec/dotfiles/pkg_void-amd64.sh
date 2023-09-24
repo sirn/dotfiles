@@ -16,7 +16,6 @@ cd "$BASE_DIR" || exit 1
 
 _run() {
     xbps_install mosh
-    xbps_install oksh
     xbps_install opendoas
     xbps_install rsync
     xbps_install snooze

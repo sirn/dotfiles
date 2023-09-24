@@ -15,10 +15,6 @@ cd "$BASE_DIR" || exit 1
 . "$BASE_DIR/libexec/dotfiles/lib/utils_darwin.sh"
 . "$BASE_DIR/libexec/dotfiles/lib/utils_launchd.sh"
 
-_run() {
-    change_shell oksh
-}
-
 _run_system() {
     install_launchd -Sl "$BASE_DIR/etc/launchd/sh.null.maxfiles.plist"
 }
