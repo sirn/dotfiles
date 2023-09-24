@@ -54,8 +54,9 @@ in
     # Ubuntu family
     ubuntu_font_family
 
-    # Takao fonts
-    takao
+    # IPA fonts
+    ipafont
+    ipaexfont
 
     # iA fonts
     ia-writer-duospace
