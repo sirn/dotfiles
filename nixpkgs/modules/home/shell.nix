@@ -9,12 +9,22 @@ let
   dotprivDir = "${homeDir}/.dotfiles";
 in
 {
-  home.sessionVariablesExtra = ''
-    export EDITOR=emacs
-    export VISUAL=emacs
-    export PATH=${dotfilesDir}/bin:${homeDir}/.local/bin:$PATH
-    export GOPATH=${homeDir}/Dev/go/gopath:${homeDir}/Dev
-  '' + (lib.optionalString isDarwin ''
-    export PATH=/opt/local/sbin:/opt/local/bin:$PATH
-  '');
+  home.sessionVariables = {
+    EDITOR = "emacs";
+    VISUAL = "emacs";
+
+    # Unless this is set in .profile, Go will loiter go/ in home directory.
+    GOPATH = "${homeDir}/Dev/go/gopath:${homeDir}/Dev";
+  };
+
+  home.sessionPath = [
+    "${dotfilesDir}/bin"
+    "${homeDir}/.local/bin"
+    "/opt/local/sbin"
+    "/opt/local/bin"
+  ];
+
+  home.sessionVariablesExtra = lib.optionalString isDarwin ''
+    . "${pkgs.nix}/etc/profile.d/nix-daemon.sh"
+  '';
 }
