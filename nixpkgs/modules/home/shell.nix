@@ -20,6 +20,8 @@ in
   home.sessionPath = [
     "${dotfilesDir}/bin"
     "${homeDir}/.local/bin"
+    "/usr/local/bin"
+    "/usr/local/sbin"
     "/opt/local/sbin"
     "/opt/local/bin"
   ];
