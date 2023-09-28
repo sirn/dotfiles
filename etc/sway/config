@@ -209,6 +209,10 @@ exec /usr/libexec/xdg-desktop-portal -r
 # Window properties
 #
 
+# Inhibit sleep if any apps is running in full screen
+for_window [app_id=".*"] inhibit_idle fullscreen
+for_window [class=".*"]  inhibit_idle fullscreen
+
 for_window [app_id="firefox" title="Firefox — Sharing Indicator"] floating enable
 for_window [app_id="firefox" title="Picture-in-Picture"]          floating enable
 for_window [app_id="firefox" title="Picture-in-Picture"]          sticky enable
