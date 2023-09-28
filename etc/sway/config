@@ -195,7 +195,7 @@ exec_always {
 #
 exec pipewire
 exec wl-paste -t text --watch clipman store --no-persist
-exec fcitx5 -r &
+exec fcitx5 -r
 exec mako
 
 # Portals:
