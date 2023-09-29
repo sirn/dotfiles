@@ -44,4 +44,7 @@ _run_sway() {
     xbps_install swaybg
     xbps_install swayidle
     xbps_install swaylock
+    xbps_install xdg-desktop-portal
+    xbps_install xdg-desktop-portal-gtk
+    xbps_install xdg-desktop-portal-wlr
 }
