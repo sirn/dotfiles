@@ -19,6 +19,9 @@ in
     enableVteIntegration = true;
 
     initExtra = ''
+      export SHELL=zsh
+      export WORDCHARS="''${WORDCHARS/\//}"
+
       ${gpgScript}
 
       . ${dotfilesDir}/etc/zsh/share/ps1.zsh
@@ -26,8 +29,6 @@ in
       . ${dotfilesDir}/etc/zsh/functions/gg.zsh
       . ${dotfilesDir}/etc/zsh/functions/gq.zsh
       . ${dotfilesDir}/etc/zsh/functions/pcd.zsh
-
-      export WORDCHARS="''${WORDCHARS/\//}"
     '';
   };
 }
