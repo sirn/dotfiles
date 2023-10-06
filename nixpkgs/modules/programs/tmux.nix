@@ -13,11 +13,11 @@ in
     escapeTime = 0;
     shell = "${pkgs.zsh}/bin/zsh";
     terminal = "screen-256color";
+    mouse = true;
 
     tmuxp.enable = true;
 
     extraConfig = ''
-      set -g mouse on
       set -g set-clipboard on
       set -g set-titles on
       set -g set-titles-string "#W via tmux: #S"
