@@ -1,7 +1,10 @@
 { config, lib, pkgs, ... }:
 
-with lib;
 let
+  inherit (lib)
+    attrNames concatStringsSep generators isList listToAttrs mapAttrsToList
+    mkIf mkOption nameValuePair types;
+
   overrideModule = types.submodule {
     options = {
       filesystems = mkOption {

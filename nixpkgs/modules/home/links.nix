@@ -1,12 +1,11 @@
 { config, lib, pkgs, ... }:
 
-with lib;
 let
+  inherit (lib) mkIf mkMerge;
   inherit (config.lib.file) mkOutOfStoreSymlink;
-  inherit (pkgs.stdenv) isLinux isDarwin;
+  inherit (pkgs.stdenv) isDarwin;
 
   dotfilesDir = "${config.home.homeDirectory}/.dotfiles";
-  dotprivDir = "${config.home.homeDirectory}/.dotpriv";
 in
 {
   home.file = mkMerge [

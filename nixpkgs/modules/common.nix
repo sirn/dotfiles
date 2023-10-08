@@ -1,8 +1,5 @@
 { config, pkgs, ... }:
 
-let
-  inherit (pkgs.stdenv) isDarwin;
-in
 {
   imports = [
     ./home/email.nix

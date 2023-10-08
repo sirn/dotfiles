@@ -1,7 +1,10 @@
 { config, lib, pkgs, ... }:
 
-with lib;
 let
+  inherit (lib)
+    concatStringsSep filterAttrs mapAttrs mapAttrs' mapAttrsToList
+    mkIf mkMerge mkOption nameValuePair types;
+
   dstDir = "${config.home.homeDirectory}/.local/var/service";
   logDir = "${config.home.homeDirectory}/.local/var/log";
 

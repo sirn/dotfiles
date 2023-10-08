@@ -1,13 +1,9 @@
 { config, lib, pkgs, ... }:
 
-with lib;
 let
-  inherit (config.lib.file) mkOutOfStoreSymlink;
-  inherit (pkgs.stdenv) isLinux isDarwin;
+  inherit (lib) elemAt mkDefault;
+  inherit (builtins) match;
   inherit (config.home) homeDirectory;
-
-  dotfilesDir = "${homeDirectory}/.dotfiles";
-  dotprivDir = "${homeDirectory}/.dotpriv";
 in
 {
   imports = [
@@ -51,7 +47,7 @@ in
           then "${pkgs.swaylock}/bin/swaylock"
           else "swaylock";
 
-        bgSplit = builtins.match "^(.+)[[:space:]]+(stretch|fill|fit|center|tile).*" cfg.output."*".bg;
+        bgSplit = match "^(.+)[[:space:]]+(stretch|fill|fit|center|tile).*" cfg.output."*".bg;
         bg = elemAt bgSplit 0;
         bgMode = elemAt bgSplit 1;
       in

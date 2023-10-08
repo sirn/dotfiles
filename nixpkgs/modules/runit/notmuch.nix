@@ -1,9 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (lib) mkIf;
-  inherit (pkgs.stdenv) isLinux;
-  inherit (config.home) username homeDirectory;
+  inherit (config.home) homeDirectory;
 in
 {
   runit.services = {

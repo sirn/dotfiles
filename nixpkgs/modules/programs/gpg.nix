@@ -4,7 +4,6 @@ let
   inherit (config.lib.file) mkOutOfStoreSymlink;
   inherit (pkgs.stdenv) isLinux isDarwin;
 
-  dotfilesDir = "${config.home.homeDirectory}/.dotfiles";
   dotprivDir = "${config.home.homeDirectory}/.dotpriv";
 
   pinentryProgram =

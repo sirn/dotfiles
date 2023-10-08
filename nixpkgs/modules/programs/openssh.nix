@@ -4,7 +4,6 @@ let
   inherit (config.home) homeDirectory;
   inherit (pkgs.stdenv) isDarwin;
 
-  dotfilesDir = "${homeDirectory}/.dotfiles";
   dotprivDir = "${homeDirectory}/.dotpriv";
 in
 {

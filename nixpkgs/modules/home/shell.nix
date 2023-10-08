@@ -1,12 +1,10 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (config.lib.file) mkOutOfStoreSymlink;
   inherit (pkgs.stdenv) isDarwin;
   inherit (config.home) homeDirectory;
 
   dotfilesDir = "${homeDirectory}/.dotfiles";
-  dotprivDir = "${homeDirectory}/.dotfiles";
 in
 {
   home.sessionVariables = {

@@ -1,14 +1,8 @@
 { config, pkgs, ... }:
 
-let
-  inherit (config.lib.file) mkOutOfStoreSymlink;
-  inherit (pkgs.stdenv) isDarwin;
-
-  dotfilesDir = "${config.home.homeDirectory}/.dotfiles";
-in
 {
   programs.notmuch = {
-    enable = !isDarwin;
+    enable = true;
 
     new.tags = [ "new" ];
     extraConfig = {

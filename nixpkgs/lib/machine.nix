@@ -1,6 +1,9 @@
 { config, lib, pkgs, ... }:
 
-with lib; {
+let
+  inherit (lib) mkOption types;
+in
+{
   options = {
     machine = {
       nixos = {

@@ -1,9 +1,9 @@
 { config, lib, pkgs, ... }:
 
 let
+  inherit (lib) mkIf;
   inherit (builtins) typeOf stringLength;
   inherit (pkgs.stdenv) isDarwin isLinux;
-  inherit (lib) mkIf;
 
   # Copied from home-manager/modules/programs/mpv.nix
   renderOption = with lib; option:
@@ -28,12 +28,11 @@ let
 in
 mkIf config.machine.gui.enable {
   programs.mpv = {
-    # Only enable mpv for Darwin since I can't figure out how to make
-    # GPU drivers work when Home Manager is only managing user home
-    # and not the entire system (and vo=xv is kinda bad).
+    # Install via Nix on Darwin or NixOS; install via Flatpak otherwise.
     #
-    # Only Linux this is probably better managed via Flatpak.
-    enable = config.machine.gui.enable && isDarwin;
+    # GPU drivers does not work when Home Manager is only managing user
+    # home and not the entire system (and vo=xv is kinda bad).
+    enable = isDarwin || config.machine.nixos.enable;
     defaultProfiles = [ "gpu-hq" ];
     config = {
       hwdec = "auto";
@@ -52,7 +51,7 @@ mkIf config.machine.gui.enable {
     };
   };
 
-  xdg = mkIf (isLinux && config.flatpak.enable) {
+  xdg = mkIf (isLinux && config.flatpak.enable && !config.machine.nixos.enable) {
     configFile = mkIf (config.machine.gui.enable) {
       "mpv/mpv.conf" = {
         text = with lib;
