@@ -15,7 +15,6 @@ in
     userEmail = "sirn@ogsite.net";
 
     lfs.enable = true;
-    delta.enable = true;
 
     signing = {
       key = "8EB047858549B60F2099C9F54AFE17C811D18D20";
