@@ -289,16 +289,17 @@ in
 
   home.file = {
     ".config/xdg-desktop-portal/portals.conf" = {
-      text = ''
-        [preferred]
-        default = wlr
-        org.freedesktop.impl.portal.AppChooser=gtk
-        org.freedesktop.impl.portal.DynamicLauncher=gtk
-        org.freedesktop.impl.portal.FileChooser=gtk
-        org.freedesktop.impl.portal.Inhibit=gtk
-        org.freedesktop.impl.portal.Notification=gtk
-        org.freedesktop.impl.portal.Settings=gtk
-      '';
+      text = lib.generators.toINI { } {
+        preferred = {
+          default = "wlr";
+          "org.freedesktop.impl.portal.AppChooser" = "gtk";
+          "org.freedesktop.impl.portal.DynamicLauncher" = "gtk";
+          "org.freedesktop.impl.portal.FileChooser" = "gtk";
+          "org.freedesktop.impl.portal.Inhibit" = "gtk";
+          "org.freedesktop.impl.portal.Notification" = "gtk";
+          "org.freedesktop.impl.portal.Settings" = "gtk";
+        };
+      };
     };
 
     ".local/libexec/start-xdg-portals" = {
