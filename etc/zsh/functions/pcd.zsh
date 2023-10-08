@@ -13,22 +13,13 @@ pcd() {
         return 1
     fi
 
-    local lscmd
     local dir
-
-    if command -v colorls >/dev/null; then
-        lscmd="command colorls -G -p"
-    elif command ls --version 2>&1 | grep -qe "BusyBox" -e "GNU"; then
-        lscmd="command ls --color -p"
-    elif command ls -G >/dev/null 2>&1; then
-        lscmd="command ls -Gp"
-    fi
 
     dir=$(
         find "$HOME/Projects" \
             -type d \
             -not -iname '.*' |
-            fzf --tac --preview "$lscmd {}"
+            fzf --layout reverse --height 40%
     )
 
     builtin cd "$dir" || return 1

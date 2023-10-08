@@ -3,17 +3,8 @@
 # Quickly jump into project directory.
 #
 gg() {
-    local lscmd
     local dir
     local codedirs
-
-    if command -v colorls >/dev/null; then
-        lscmd="command colorls -G -p"
-    elif command ls --version 2>&1 | grep -qe "BusyBox" -e "GNU"; then
-        lscmd="command ls --color -p"
-    elif command ls -G >/dev/null 2>&1; then
-        lscmd="command ls -Gp"
-    fi
 
     codedirs=()
     if command -v git >/dev/null; then
@@ -47,7 +38,7 @@ gg() {
             -print \
             -prune |
             sort -u |
-            fzf --preview "$lscmd {}" -q "$*"
+            fzf --layout reverse --height 40% -q "$*"
     )
 
     if [ -z "$dir" ]; then
