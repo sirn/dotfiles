@@ -17,13 +17,13 @@
     ./programs/gpg.nix
     ./programs/mercurial.nix
     ./programs/mosh.nix
+    ./programs/neovim.nix
     ./programs/openssh.nix
     ./programs/password-store.nix
     ./programs/ripgrep.nix
     ./programs/rsync.nix
     ./programs/tmux.nix
     ./programs/unison.nix
-    ./programs/vim.nix
     ./programs/weechat.nix
     ./programs/zsh.nix
   ];
