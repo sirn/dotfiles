@@ -37,7 +37,7 @@
             targets.genericLinux.enable = pkgs.stdenv.isLinux;
             home.username = username;
             home.homeDirectory = homeDirectory;
-            home.stateVersion = "22.05";
+            home.stateVersion = "23.05";
           };
         in
         home-manager.lib.homeManagerConfiguration {
