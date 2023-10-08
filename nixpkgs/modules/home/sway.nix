@@ -10,8 +10,16 @@ let
   dotprivDir = "${homeDirectory}/.dotpriv";
 in
 {
+  imports = [
+    ../programs/foot.nix
+    ../programs/fuzzel.nix
+    ../programs/waybar.nix
+  ];
+
   wayland.windowManager.sway = {
     enable = true;
+    xwayland = true;
+    systemdIntegration = config.machine.nixos.enable;
 
     package =
       if config.machine.nixos.enable
@@ -20,7 +28,7 @@ in
 
     config =
       let
-        inherit (config.wayland.windowManager.sway.config) modifier terminal left down up right;
+        cfg = config.wayland.windowManager.sway.config;
 
         swaymsgBin =
           if config.machine.nixos.enable
@@ -42,6 +50,10 @@ in
           if config.machine.nixos.enable
           then "${pkgs.swaylock}/bin/swaylock"
           else "swaylock";
+
+        bgSplit = builtins.match "^(.+)[[:space:]]+(stretch|fill|fit|center|tile).*" cfg.output."*".bg;
+        bg = elemAt bgSplit 0;
+        bgMode = elemAt bgSplit 1;
       in
       {
         modifier = "Mod4";
@@ -59,8 +71,8 @@ in
 
         output = {
           "*" = {
-            bg = "${swayWallpaper} fill";
-            scale = "1";
+            bg = mkDefault "${swayWallpaper} fill";
+            scale = mkDefault "1";
           };
         };
 
@@ -74,66 +86,66 @@ in
         defaultWorkspace = "workspace number 1";
 
         keybindings = {
-          "${modifier}+Return" = "exec ${terminal} ${pkgs.zsh}/bin/zsh";
-          "${modifier}+Shift+q" = "kill";
-          "${modifier}+d" = "exec ${pkgs.fuzzel}/bin/fuzzel";
-          "${modifier}+Shift+c" = "reload";
-          "${modifier}+Shift+e" = "exec ${swaynagBin} -t warning -m 'Really exit?' -B 'Yes, exit sway' '${swaymsgBin} exit'";
+          "${cfg.modifier}+Return" = "exec ${cfg.terminal} ${pkgs.zsh}/bin/zsh";
+          "${cfg.modifier}+Shift+q" = "kill";
+          "${cfg.modifier}+d" = "exec ${pkgs.fuzzel}/bin/fuzzel";
+          "${cfg.modifier}+Shift+c" = "reload";
+          "${cfg.modifier}+Shift+e" = "exec ${swaynagBin} -t warning -m 'Really exit?' -B 'Yes, exit sway' '${swaymsgBin} exit'";
 
           # Focusing
-          "${modifier}+${left}" = "focus left";
-          "${modifier}+${down}" = "focus down";
-          "${modifier}+${up}" = "focus up";
-          "${modifier}+${right}" = "focus right";
-          "${modifier}+Left" = "focus left";
-          "${modifier}+Down" = "focus down";
-          "${modifier}+Up" = "focus up";
-          "${modifier}+Right" = "focus right";
+          "${cfg.modifier}+${cfg.left}" = "focus left";
+          "${cfg.modifier}+${cfg.down}" = "focus down";
+          "${cfg.modifier}+${cfg.up}" = "focus up";
+          "${cfg.modifier}+${cfg.right}" = "focus right";
+          "${cfg.modifier}+Left" = "focus left";
+          "${cfg.modifier}+Down" = "focus down";
+          "${cfg.modifier}+Up" = "focus up";
+          "${cfg.modifier}+Right" = "focus right";
 
           # Moving
-          "${modifier}+Shift+${left}" = "move left";
-          "${modifier}+Shift+${down}" = "move down";
-          "${modifier}+Shift+${up}" = "move up";
-          "${modifier}+Shift+${right}" = "move right";
-          "${modifier}+Shift+Left" = "move left";
-          "${modifier}+Shift+Down" = "move down";
-          "${modifier}+Shift+Up" = "move up";
-          "${modifier}+Shift+Right" = "move right";
+          "${cfg.modifier}+Shift+${cfg.left}" = "move left";
+          "${cfg.modifier}+Shift+${cfg.down}" = "move down";
+          "${cfg.modifier}+Shift+${cfg.up}" = "move up";
+          "${cfg.modifier}+Shift+${cfg.right}" = "move right";
+          "${cfg.modifier}+Shift+Left" = "move left";
+          "${cfg.modifier}+Shift+Down" = "move down";
+          "${cfg.modifier}+Shift+Up" = "move up";
+          "${cfg.modifier}+Shift+Right" = "move right";
 
           # Workspaces
-          "${modifier}+1" = "workspace number 1";
-          "${modifier}+2" = "workspace number 2";
-          "${modifier}+3" = "workspace number 3";
-          "${modifier}+4" = "workspace number 4";
-          "${modifier}+5" = "workspace number 5";
-          "${modifier}+6" = "workspace number 6";
-          "${modifier}+7" = "workspace number 7";
-          "${modifier}+8" = "workspace number 8";
-          "${modifier}+9" = "workspace number 9";
-          "${modifier}+0" = "workspace number 10";
+          "${cfg.modifier}+1" = "workspace number 1";
+          "${cfg.modifier}+2" = "workspace number 2";
+          "${cfg.modifier}+3" = "workspace number 3";
+          "${cfg.modifier}+4" = "workspace number 4";
+          "${cfg.modifier}+5" = "workspace number 5";
+          "${cfg.modifier}+6" = "workspace number 6";
+          "${cfg.modifier}+7" = "workspace number 7";
+          "${cfg.modifier}+8" = "workspace number 8";
+          "${cfg.modifier}+9" = "workspace number 9";
+          "${cfg.modifier}+0" = "workspace number 10";
 
           # Split
-          "${modifier}+b" = "splith";
-          "${modifier}+v" = "splitv";
+          "${cfg.modifier}+b" = "splith";
+          "${cfg.modifier}+v" = "splitv";
 
           # Layouts
-          "${modifier}+e" = "layout toggle split";
-          "${modifier}+f" = "fullscreen";
-          "${modifier}+s" = "layout stacking";
-          "${modifier}+w" = "layout tabbed";
-          "${modifier}+Shift+space" = "floating toggle";
-          "${modifier}+Shift+grave" = "sticky toggle";
+          "${cfg.modifier}+e" = "layout toggle split";
+          "${cfg.modifier}+f" = "fullscreen";
+          "${cfg.modifier}+s" = "layout stacking";
+          "${cfg.modifier}+w" = "layout tabbed";
+          "${cfg.modifier}+Shift+space" = "floating toggle";
+          "${cfg.modifier}+Shift+grave" = "sticky toggle";
 
           # Focusing
-          "${modifier}+space" = "focus mode_toggle";
-          "${modifier}+a" = "focus parent";
+          "${cfg.modifier}+space" = "focus mode_toggle";
+          "${cfg.modifier}+a" = "focus parent";
 
           # Scratchpad
-          "${modifier}+Shift+minus" = "move scratchpad";
-          "${modifier}+minus" = "scratchpad show";
+          "${cfg.modifier}+Shift+minus" = "move scratchpad";
+          "${cfg.modifier}+minus" = "scratchpad show";
 
           # Modes
-          "${modifier}+r" = "mode \"resize\"";
+          "${cfg.modifier}+r" = "mode \"resize\"";
 
           # Screenshots
           "Print" = ''
@@ -155,15 +167,15 @@ in
           '';
 
           # Locking
-          "${modifier}+Ctrl+Shift+L" = "exec ${swaylockBin} -f -c 000000";
+          "${cfg.modifier}+Ctrl+Shift+L" = "exec ${swaylockBin} -f -i ${bg} -s ${bgMode}";
         };
 
         modes = {
           resize = {
-            "${left}" = "resize shrink width 10px";
-            "${down}" = "resize grow height 10px";
-            "${up}" = "resize shrink height 10px";
-            "${right}" = "resize grow width 10px";
+            "${cfg.left}" = "resize shrink width 10px";
+            "${cfg.down}" = "resize grow height 10px";
+            "${cfg.up}" = "resize shrink height 10px";
+            "${cfg.right}" = "resize grow width 10px";
 
             "Left" = "resize shrink width 10px";
             "Down" = "resize grow height 10px";
@@ -177,7 +189,7 @@ in
 
         floating = {
           titlebar = true;
-          modifier = "${modifier}";
+          modifier = "${cfg.modifier}";
         };
 
         bars = [
@@ -194,10 +206,10 @@ in
             {
               command = ''
                 ${pkgs.swayidle}/bin/swayidle -w \
-                    timeout 300 '${swaylockBin} -f -c 000000' \
+                    timeout 300 '${swaylockBin} -f -i ${bg} -s ${bgMode}' \
                     timeout 600 '${swaymsgBin} "output * dpms off"' \
                     resume '${swaymsgBin} "output * dpms on"' \
-                    before-sleep '${swaylockBin} -f -c 000000' &
+                    before-sleep '${swaylockBin} -f -i ${bg} -s ${bgMode}' &
               '';
             }
 
@@ -210,7 +222,7 @@ in
             { command = "gsettings set ${schema} monospace-font-name \"Hack 10\""; always = true; }
 
             { command = "pipewire"; }
-            { command = "${pkgs.wl-clipboard}/bin/wl-paste -t text --watch ${pkgs.clipman}/bin/clipman store --no-persist"; }
+            { command = "${pkgs.wl-clipboard}/bin/wl-paste -pw ${pkgs.wl-clipboard}/wl-copy"; }
             { command = "fcitx5 -r"; }
             { command = "${pkgs.mako}/bin/mako"; }
             { command = "${homeDirectory}/.local/libexec/start-xdg-portals"; }
@@ -277,11 +289,6 @@ in
           ];
         };
       };
-
-    extraConfig = ''
-      include /etc/sway/config.d/*
-      include ${homeDirectory}/.config/sway/config_$(hostname)
-    '';
   };
 
   home.file = {
