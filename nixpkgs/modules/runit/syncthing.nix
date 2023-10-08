@@ -3,9 +3,7 @@
 let
   inherit (lib) mkIf;
   inherit (pkgs.stdenv) isLinux;
-  inherit (config.home) username;
-
-  homeDir = config.home.homeDirectory;
+  inherit (config.home) username homeDirectory;
 in
 {
   runit.services = {
@@ -14,9 +12,9 @@ in
         #!${pkgs.execline}/bin/execlineb
         emptyenv -p
         export PATH ${pkgs.execline}/bin:${pkgs.busybox}/bin
-        export HOME ${homeDir}
-        export XDG_CONFIG_HOME ${homeDir}/.config
-        export XDG_DATA_HOME ${homeDir}/.local/share
+        export HOME ${homeDirectory}
+        export XDG_CONFIG_HOME ${homeDirectory}/.config
+        export XDG_DATA_HOME ${homeDirectory}/.local/share
 
         fdmove -c 2 1
         ${pkgs.syncthing}/bin/syncthing serve --no-browser

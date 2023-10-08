@@ -3,9 +3,7 @@
 let
   inherit (lib) mkIf;
   inherit (pkgs.stdenv) isLinux;
-  inherit (config.home) username;
-
-  homeDir = config.home.homeDirectory;
+  inherit (config.home) username homeDirectory;
 in
 {
   runit.services = {
@@ -14,7 +12,7 @@ in
         #!${pkgs.execline}/bin/execlineb
         emptyenv -p
         export PATH ${pkgs.execline}/bin:${pkgs.busybox}/bin
-        export HOME ${homeDir}
+        export HOME ${homeDirectory}
 
         backtick -n -E uid { id -u }
         define xdg-runtime-dir /run/user/''${uid}
@@ -29,7 +27,7 @@ in
 
         fdmove -c 2 1
         if { test -d ''${xdg-runtime-dir} }
-        ''${shell} -l -c "${config.programs.emacs.finalPackage}/bin/emacs --fg-daemon --chdir=${homeDir}"
+        ''${shell} -l -c "${config.programs.emacs.finalPackage}/bin/emacs --fg-daemon --chdir=${homeDirectory}"
       '';
     };
   };

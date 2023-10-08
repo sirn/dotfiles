@@ -2,11 +2,10 @@
 
 let
   inherit (lib) mkIf;
-  inherit (config.home) username;
+  inherit (config.home) username homeDirectory;
 
   gpgKey = config.programs.gpg.settings.default-key;
-  homeDir = config.home.homeDirectory;
-  dotprivDir = "${homeDir}/.dotpriv";
+  dotprivDir = "${homeDirectory}/.dotpriv";
 in
 {
   runit.services = {
@@ -15,7 +14,7 @@ in
         #!${pkgs.execline}/bin/execlineb
         emptyenv -p
         export PATH ${pkgs.openssh}/bin:${pkgs.execline}/bin:${pkgs.busybox}/bin
-        export HOME ${homeDir}
+        export HOME ${homeDirectory}
 
         backtick -n -E uid { id -u }
         define xdg-runtime-dir /run/user/''${uid}
@@ -27,8 +26,8 @@ in
         fdmove -c 2 1
         backtick -n -E target { ${dotprivDir}/libexec/duplicity/target_cmd.sh }
         if { test -d ''${xdg-runtime-dir} }
-        foreground { mkdir -p ${homeDir}/.local/var/run }
-        ${pkgs.snooze}/bin/snooze -v -R 10m -s 1h -H/1 -t ${homeDir}/.local/var/run/duplicity_timefile
+        foreground { mkdir -p ${homeDirectory}/.local/var/run }
+        ${pkgs.snooze}/bin/snooze -v -R 10m -s 1h -H/1 -t ${homeDirectory}/.local/var/run/duplicity_timefile
         nice -n 20
 
         if {
@@ -36,11 +35,11 @@ in
                 --full-if-older-than=1M
                 --allow-source-mismatch
                 --include-filelist="${dotprivDir}/var/duplicity/filelist.txt"
-                ${homeDir}
+                ${homeDirectory}
                 ''${target}
         }
 
-        foreground { touch ${homeDir}/.local/var/run/duplicity_timefile }
+        foreground { touch ${homeDirectory}/.local/var/run/duplicity_timefile }
         foreground { ''${duplicity} --force remove-all-inc-of-but-n-full 3 ''${target} }
         foreground { ''${duplicity} --force remove-older-than 24M ''${target} }
       '';

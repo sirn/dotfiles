@@ -3,10 +3,10 @@
 let
   inherit (config.lib.file) mkOutOfStoreSymlink;
   inherit (pkgs.stdenv) isDarwin;
+  inherit (config.home) homeDirectory;
 
-  homeDir = config.home.homeDirectory;
-  dotfilesDir = "${homeDir}/.dotfiles";
-  dotprivDir = "${homeDir}/.dotfiles";
+  dotfilesDir = "${homeDirectory}/.dotfiles";
+  dotprivDir = "${homeDirectory}/.dotfiles";
 in
 {
   home.sessionVariables = {
@@ -14,12 +14,12 @@ in
     VISUAL = "emacs";
 
     # Unless this is set in .profile, Go will loiter go/ in home directory.
-    GOPATH = "${homeDir}/Dev/go/gopath:${homeDir}/Dev";
+    GOPATH = "${homeDirectory}/Dev/go/gopath:${homeDirectory}/Dev";
   };
 
   home.sessionPath = [
     "${dotfilesDir}/bin"
-    "${homeDir}/.local/bin"
+    "${homeDirectory}/.local/bin"
     "/usr/local/bin"
     "/usr/local/sbin"
     "/opt/local/sbin"
