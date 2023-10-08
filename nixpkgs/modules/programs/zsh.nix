@@ -13,6 +13,12 @@ in
     enableSyntaxHighlighting = true;
     enableVteIntegration = true;
 
+    autocd = true;
+    history = {
+      expireDuplicatesFirst = true;
+      ignoreDups = true;
+    };
+
     initExtra = ''
       export SHELL=zsh
       export WORDCHARS="''${WORDCHARS/\//}"
