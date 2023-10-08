@@ -120,6 +120,18 @@ in
           "${cfg.modifier}+9" = "workspace number 9";
           "${cfg.modifier}+0" = "workspace number 10";
 
+          # Move workspaces
+          "${cfg.modifier}+Shift+1" = "move to workspace number 1";
+          "${cfg.modifier}+Shift+2" = "move to workspace number 2";
+          "${cfg.modifier}+Shift+3" = "move to workspace number 3";
+          "${cfg.modifier}+Shift+4" = "move to workspace number 4";
+          "${cfg.modifier}+Shift+5" = "move to workspace number 5";
+          "${cfg.modifier}+Shift+6" = "move to workspace number 6";
+          "${cfg.modifier}+Shift+7" = "move to workspace number 7";
+          "${cfg.modifier}+Shift+8" = "move to workspace number 8";
+          "${cfg.modifier}+Shift+9" = "move to workspace number 9";
+          "${cfg.modifier}+Shift+0" = "move to workspace number 10";
+
           # Split
           "${cfg.modifier}+b" = "splith";
           "${cfg.modifier}+v" = "splitv";
