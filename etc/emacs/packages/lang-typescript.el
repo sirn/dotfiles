@@ -5,6 +5,11 @@
   ("\\.tsx\\'"
    "\\.jsx?\\'")
 
+  :init
+  (add-to-list 'major-mode-remap-alist '(typescript-mode . typescript-ts-mode)))
+
+
+(use-feature typescript-ts-mode
   :preface
   (eval-when-compile
     (declare-function lsp nil)
@@ -12,19 +17,10 @@
     (declare-function lsp-organize-imports nil)
     (declare-function gemacs--typescript-auto-format nil))
 
-  :config
-  (use-feature lsp-mode
-    :demand t
+  :init
+  (defun gemacs--typescript-auto-format ()
+    (add-hook 'before-save-hook #'lsp-organize-imports))
 
-    :config
-    (defun gemacs--typescript-auto-format ()
-      (add-hook 'before-save-hook #'lsp-organize-imports))
-
-    (add-hook 'typescript-mode-hook #'lsp-deferred)
-    (add-hook 'typescript-mode-hook #'gemacs--typescript-auto-format))
-
-  (use-feature apheleia
-    :demand t
-
-    :config
-    (add-hook 'typescript-mode-hook #'apheleia-mode)))
+  (add-hook 'typescript-ts-mode-hook #'lsp-deferred)
+  (add-hook 'typescript-ts-mode-hook #'gemacs--typescript-auto-format)
+  (add-hook 'typescript-ts-mode-hook #'apheleia-mode))

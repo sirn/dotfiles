@@ -35,14 +35,10 @@ Use the following order for `use-package` and always leave a single line between
 
 ```elisp
 (use-package markdown-mode
-  :config
-  (use-feature apheleia
-    :demand t
-
-    :config
-    (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier))
-    (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))))
-    (add-hook 'markdown-mode-hook #'apheleia-mode)
+  :init
+  (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))
+  (add-hook 'markdown-mode-hook #'apheleia-mode))
 ```
 
 ## lsp-mode
@@ -58,31 +54,39 @@ Use the following order for `use-package` and always leave a single line between
     (declare-function lsp-organize-imports nil)
     (declare-function gemacs--typescript-auto-format nil))
 
-  :config
-  (use-feature lsp-mode
-    :demand t
+  :init
+  (defun gemacs--typescript-auto-format ()
+    (add-hook 'before-save-hook #'lsp-format-buffer)
+    (add-hook 'before-save-hook #'lsp-organize-imports))
 
-    :config
-    (defun gemacs--typescript-auto-format ()
-      (add-hook 'before-save-hook #'lsp-format-buffer)
-      (add-hook 'before-save-hook #'lsp-organize-imports))
-
-    (add-hook 'typescript-mode-hook #'lsp-deferred)
-    (add-hook 'typescript-mode-hook #'gemacs--typescript-auto-format)))
+  (add-hook 'typescript-mode-hook #'lsp-deferred)
+  (add-hook 'typescript-mode-hook #'gemacs--typescript-auto-format))
 ```
 
 `lsp-deferred` should be used instead of `lsp` to let it paths after it is initialized by `envrc`.
 
+## tree-sitter
+
+`tree-sitter` is explicitly enabled and move hooks into the relevant `-ts-mode`:
+
+```elisp
+(use-package typescript-mode
+  :init
+  (add-to-list 'major-mode-remap-alist '(typescript-mode . typescript-ts-mode)))
+
+(use-feature typescript-ts-mode
+  :init
+  (add-hook 'typescript-ts-mode-hook #'lsp-deferred))
+```
+
+Note the hook is added to `-ts-mode-hook` in this case.
+
 ## flycheck
 
-`flycheck` is explicity enabled per major-mode:
+`flycheck` is explicitly enabled per major-mode:
 
 ```elisp
 (use-feature sh-mode
-  :config
-  (use-feature flycheck
-    :demand t
-
-    :config
-    (add-hook 'sh-mode-hook #'flycheck-mode)))
+  :init
+  (add-hook 'sh-mode-hook #'flycheck-mode))
 ```

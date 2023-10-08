@@ -9,17 +9,12 @@
     (declare-function gemacs--elixir-auto-format nil)
     (defvar lsp-elixir-server-command))
 
-  :config
-  (use-feature lsp-mode
-    :demand t
+  :init
+  (setq lsp-elixir-server-command '("elixir-ls"))
 
-    :init
-    (setq lsp-elixir-server-command '("elixir-ls"))
+  (defun gemacs--elixir-auto-format ()
+    (add-hook 'before-save-hook #'lsp-format-buffer)
+    (add-hook 'before-save-hook #'lsp-organize-imports))
 
-    :config
-    (defun gemacs--elixir-auto-format ()
-      (add-hook 'before-save-hook #'lsp-format-buffer)
-      (add-hook 'before-save-hook #'lsp-organize-imports))
-
-    (add-hook 'elixir-mode-hook #'lsp-deferred)
-    (add-hook 'elixir-mode-hook #'gemacs--elixir-auto-format)))
+  (add-hook 'elixir-mode-hook #'lsp-deferred)
+  (add-hook 'elixir-mode-hook #'gemacs--elixir-auto-format))

@@ -41,18 +41,14 @@ This function calls `json-mode--update-auto-mode' to change the
     (json-mode--update-auto-mode json-mode-auto-mode-list)
     "Regexp generated from the `json-mode-auto-mode-list'.")
 
-  :config
-  (use-feature apheleia
-    :demand t
+  :init
+  (add-to-list 'major-mode-remap-alist '(json-mode . json-ts-mode)))
 
-    :config
-    (add-hook 'json-mode-hook #'apheleia-mode))
 
-  (use-feature flycheck
-    :demand t
-
-    :config
-    (add-hook 'json-mode-hook #'flycheck-mode)))
+(use-feature json-ts-mode
+  :init
+  (add-hook 'json-ts-mode-hook #'apheleia-mode)
+  (add-hook 'json-ts-mode-hook #'flycheck-mode))
 
 
 (use-package jq-mode)

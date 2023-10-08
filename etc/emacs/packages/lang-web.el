@@ -23,6 +23,15 @@
   (web-mode-enable-current-element-highlight t)
   (web-mode-enable-current-column-highlight t)
 
+  :preface
+  (eval-when-compile
+    (declare-function gemacs--web-highlight-after-formatting nil)
+    (declare-function gemacs--web-js-fix-comments nil)
+    (defvar web-mode-fontification-off))
+
+  :init
+  (add-hook 'web-mode-hook #'apheleia-mode)
+
   :config
   (add-to-list 'web-mode-content-types-alist '("jsx" . "\\.js[x]?\\'"))
   (add-to-list 'web-mode-content-types-alist '("jsx" . "\\.cjs\\'"))
@@ -44,31 +53,20 @@
 
   (add-hook 'web-mode-hook #'gemacs--web-js-fix-comments)
 
-  (use-feature apheleia
-    :demand t
-
-    :preface
-    (eval-when-compile
-      (defvar web-mode-fontification-off))
-
-    :config
-    (defun gemacs--web-highlight-after-formatting ()
-      "Make sure syntax highlighting works with Apheleia.
+  (defun gemacs--web-highlight-after-formatting ()
+    "Make sure syntax highlighting works with Apheleia.
 The problem is that `web-mode' doesn't do highlighting correctly
 in the face of arbitrary buffer modifications, and kind of hacks
 around the problem by hardcoding a special case for yanking based
 on the value of `this-command'. So, when buffer modifications
 happen in an unexpected (to `web-mode') way, we have to manually
 poke it. Otherwise the modified text remains unfontified."
-      (setq web-mode-fontification-off nil)
-      (when (and web-mode-scan-beg web-mode-scan-end global-font-lock-mode)
-        (save-excursion
-          (font-lock-fontify-region web-mode-scan-beg web-mode-scan-end))))
+    (setq web-mode-fontification-off nil)
+    (when (and web-mode-scan-beg web-mode-scan-end global-font-lock-mode)
+      (save-excursion
+        (font-lock-fontify-region web-mode-scan-beg web-mode-scan-end))))
 
-    (add-hook 'apheleia-post-format-hook
-      #'gemacs--web-highlight-after-formatting)
-
-    (add-hook 'web-mode-hook #'apheleia-mode)))
+  (add-hook 'apheleia-post-format-hook #'gemacs--web-highlight-after-formatting))
 
 
 (use-feature css-mode)

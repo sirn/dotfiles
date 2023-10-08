@@ -8,14 +8,10 @@
     (declare-function lsp-organize-imports nil)
     (declare-function gemacs--erlang-auto-format nil))
 
-  :config
-  (use-feature lsp-mode
-    :demand t
+  :init
+  (defun gemacs--erlang-auto-format ()
+    (add-hook 'before-save-hook #'lsp-format-buffer)
+    (add-hook 'before-save-hook #'lsp-organize-imports))
 
-    :config
-    (defun gemacs--erlang-auto-format ()
-      (add-hook 'before-save-hook #'lsp-format-buffer)
-      (add-hook 'before-save-hook #'lsp-organize-imports))
-
-    (add-hook 'erlang-mode-hook #'lsp-deferred)
-    (add-hook 'elixir-mode-hook #'gemacs--erlang-auto-format)))
+  (add-hook 'erlang-mode-hook #'lsp-deferred)
+  (add-hook 'elixir-mode-hook #'gemacs--erlang-auto-format))

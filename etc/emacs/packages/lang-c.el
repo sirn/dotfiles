@@ -1,15 +1,11 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-feature cc-mode
-  :config
-  (use-feature apheleia
-    :demand t
+  :init
+  (add-to-list 'major-mode-remap-alist '(cc-mode . c-ts-mode)))
 
-    :config
-    (add-hook 'cc-mode-hook #'apheleia-mode))
 
-  (use-feature flycheck
-    :demand t
-
-    :config
-    (add-hook 'cc-mode-hook #'flycheck-mode)))
+(use-feature c-ts-mode
+  :init
+  (add-hook 'c-ts-mode-hook #'apheleia-mode)
+  (add-hook 'c-ts-mode-hook #'flycheck-mode))

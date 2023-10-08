@@ -19,7 +19,14 @@ in
     extraPackages = epkgs: with pkgs; [
       epkgs.w3m
       epkgs.vterm
+      epkgs.treesit-grammars.with-all-grammars
       local.emacsPackages.sqlite3
+
+      # dev packages (non-lsp)
+      nodejs
+      nodePackages.prettier
+      shellcheck
+      shfmt
 
       # lsps
       rnix-lsp

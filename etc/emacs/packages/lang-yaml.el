@@ -1,23 +1,19 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package yaml-mode
+  :init
+  (add-to-list 'major-mode-remap-alist '(ruby-mode . ruby-ts-mode)))
+
+
+(use-package yaml-ts-mode
   :preface
   (eval-when-compile
     (declare-function gemacs--yaml-maybe-k8s nil)
     (declare-function gemacs--yaml-maybe-ansible nil))
 
-  :config
-  (use-feature apheleia
-    :demand t
-
-    :config
-    (add-hook 'yaml-mode-hook #'apheleia-mode))
-
-  (use-feature flycheck
-    :demand t
-
-    :config
-    (add-hook 'yaml-mode-hook #'flycheck-mode))
+  :init
+  (add-hook 'yaml-ts-mode-hook #'apheleia-mode)
+  (add-hook 'yaml-ts-mode-hook #'flycheck-mode)
 
   (defun gemacs--yaml-maybe-ansible ()
     (when (and
@@ -44,8 +40,8 @@
        (apheleia-mode -1)
        (flycheck-mode -1)))
 
-  (add-hook 'yaml-mode-hook 'gemacs--yaml-maybe-ansible)
-  (add-hook 'yaml-mode-hook 'gemacs--yaml-maybe-k8s))
+  (add-hook 'yaml-ts-mode-hook 'gemacs--yaml-maybe-ansible)
+  (add-hook 'yaml-ts-mode-hook 'gemacs--yaml-maybe-k8s))
 
 
 (use-package ansible)
