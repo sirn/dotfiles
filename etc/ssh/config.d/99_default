@@ -1,6 +1,0 @@
-Host *
-     User sirn
-     PreferredAuthentications publickey
-     ControlMaster auto
-     ControlPath ~/.ssh/ssh-%r@%h:%p
-     ControlPersist 3m

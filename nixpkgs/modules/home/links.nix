@@ -12,7 +12,6 @@ in
   home.file = mkMerge [
     {
       ".ideavimrc" = { source = mkOutOfStoreSymlink "${dotfilesDir}/etc/ideavim/ideavimrc"; };
-      ".ssh/config" = { source = mkOutOfStoreSymlink "${dotfilesDir}/etc/ssh/config"; };
     }
     (mkIf (isDarwin && config.machine.gui.enable) {
       ".amethyst.yml" = {

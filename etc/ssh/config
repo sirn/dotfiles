@@ -1,4 +1,0 @@
-Include ~/.orbstack/ssh/config
-Include ~/.ssh/config.d/*
-Include ~/.dotpriv/etc/ssh/config.d/*
-Include ~/.dotfiles/etc/ssh/config.d/*
