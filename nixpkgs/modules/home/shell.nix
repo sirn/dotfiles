@@ -25,7 +25,6 @@ in
   ];
 
   home.shellAliases = {
-    ll = "ls -al";
     sshi = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null";
   };
 

@@ -9,6 +9,7 @@
     # programs
     ./programs/aria2.nix
     ./programs/bash.nix
+    ./programs/coreutils.nix
     ./programs/curl.nix
     ./programs/direnv.nix
     ./programs/emacs.nix
