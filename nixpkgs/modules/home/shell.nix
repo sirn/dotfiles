@@ -24,10 +24,6 @@ in
     "/opt/local/bin"
   ];
 
-  home.shellAliases = {
-    sshi = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null";
-  };
-
   home.sessionVariablesExtra = lib.optionalString isDarwin ''
     . "${pkgs.nix}/etc/profile.d/nix-daemon.sh"
   '';

@@ -80,4 +80,9 @@ in
       "${homeDirectory}/.orbstack/ssh/config"
     ] else [ ]);
   };
+
+  # Escape hatch
+  home.shellAliases = {
+    sshi = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null";
+  };
 }
