@@ -223,6 +223,7 @@ in
         ###
         # Themes
         #
+
         seat * xcursor_theme breeze_cursors 24
         set $gnome-schema org.gnome.desktop.interface
 
@@ -247,9 +248,7 @@ in
 
         # Portals:
         #
-        exec /usr/libexec/xdg-desktop-portal-wlr
-        exec /usr/libexec/xdg-desktop-portal-gtk
-        exec /usr/libexec/xdg-desktop-portal -r
+        exec ${homeDirectory}/.local/libexec/start-xdg-portals
 
 
         ###
@@ -461,6 +460,37 @@ in
         #scratchpad.empty {
         	background-color: transparent;
         }
+      '';
+    };
+
+    ".config/xdg-desktop-portal/portals.conf" = {
+      text = ''
+        [preferred]
+        default=wlr
+        org.freedesktop.impl.portal.AppChooser=gtk
+        org.freedesktop.impl.portal.DynamicLauncher=gtk
+        org.freedesktop.impl.portal.FileChooser=gtk
+        org.freedesktop.impl.portal.Inhibit=gtk
+        org.freedesktop.impl.portal.Notification=gtk
+        org.freedesktop.impl.portal.Settings=gtk
+      '';
+    };
+
+    ".local/libexec/start-xdg-portals" = {
+      executable = true;
+      text = ''
+        #!${pkgs.bash}/bin/bash
+        pkill -f xdg-desktop-portal
+
+        run_and_disown() {
+            "$@" &
+            sleep 0.5
+            disown
+        }
+
+        run_and_disown /usr/libexec/xdg-desktop-portal-wlr
+        run_and_disown /usr/libexec/xdg-desktop-portal-gtk
+        run_and_disown /usr/libexec/xdg-desktop-portal -vr
       '';
     };
   };
