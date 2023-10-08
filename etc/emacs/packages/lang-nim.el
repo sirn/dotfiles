@@ -7,8 +7,6 @@
     (declare-function smie-default-forward-token nil))
 
   :init
-  (add-to-list 'apheleia-formatters '(nimpretty . ("nimpretty" "--out:/dev/stdout" filepath)))
-  (add-to-list 'apheleia-mode-alist '(nim-mode . nimpretty))
   (add-hook 'nim-mode-hook #'apheleia-mode)
   (add-hook 'nim-mode-hook #'lsp-deferred)
 
@@ -26,4 +24,11 @@
                      -1))
                  (line-number-at-pos))
               (setq tok ";"))
-          tok)))))
+          tok))))
+
+  (use-feature apheleia
+    :demand t
+
+    :config
+    (add-to-list 'apheleia-formatters '(nimpretty . ("nimpretty" "--out:/dev/stdout" filepath)))
+    (add-to-list 'apheleia-mode-alist '(nim-mode . nimpretty))))

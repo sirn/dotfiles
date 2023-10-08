@@ -16,7 +16,8 @@
 
 (use-package evil-collection
   :after evil
-  :demand t
+
+  :defer 1
 
   :config
   (evil-collection-init))
@@ -25,7 +26,7 @@
 (use-package evil-commentary
   :after evil
 
-  :demand t
+  :defer 1
 
   :config
   (evil-commentary-mode +1))
@@ -33,7 +34,8 @@
 
 (use-package evil-mc
   :after evil
-  :demand t
+
+  :defer 1
 
   :config
   (global-evil-mc-mode +1))
@@ -41,7 +43,8 @@
 
 (use-package evil-matchit
   :after evil
-  :demand t
+
+  :defer 1
 
   :config
   (global-evil-matchit-mode +1))
@@ -49,7 +52,8 @@
 
 (use-package evil-surround
   :after evil
-  :demand t
+
+  :defer 1
 
   :config
   (global-evil-surround-mode +1))

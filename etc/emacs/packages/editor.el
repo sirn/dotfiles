@@ -413,7 +413,6 @@
 
 
 (use-package apheleia
-  :demand t
   :straight (:host github :repo "radian-software/apheleia")
 
   :init
@@ -430,8 +429,6 @@
 
 
 (use-package flycheck
-  :demand t
-
   :general
   (leader
     "f" '(:keymap flycheck-command-map))
@@ -500,7 +497,7 @@ area."
 
 
 (use-package lsp-mode
-  :demand t
+  :defer 2
 
   :general
   (leader
@@ -631,7 +628,7 @@ functions."
 
 
 (use-feature tree-sitter
-  :demand t
+  :defer 2
 
   :preface
   (eval-when-compile

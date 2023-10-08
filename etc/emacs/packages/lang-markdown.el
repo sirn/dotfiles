@@ -16,6 +16,12 @@
   (markdown-command "pandoc")
 
   :init
-  (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))
-  (add-hook 'markdown-mode-hook #'apheleia-mode))
+  (add-hook 'markdown-mode-hook #'apheleia-mode)
+
+  :config
+  (use-feature apheleia
+    :demand t
+
+    :config
+    (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier))
+    (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))))
