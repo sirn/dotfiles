@@ -27,6 +27,45 @@ in
           "PreferredAuthentications" = "publickey";
         };
       };
+
+      "bitbucket.org" = {
+        user = "git";
+        extraOptions = {
+          "CheckHostIP" = "no";
+        };
+      };
+
+      "github.com" = {
+        user = "git";
+        extraOptions = {
+          "CheckHostIP" = "no";
+        };
+      };
+
+      "gitlab.com" = {
+        user = "git";
+        extraOptions = {
+          "CheckHostIP" = "no";
+        };
+      };
+
+      "git.sr.ht" = {
+        user = "git";
+        extraOptions = {
+          "CheckHostIP" = "no";
+        };
+      };
+
+      "list-*.linode.com" = {
+        extraOptions = {
+          "CheckHostIP" = "no";
+        };
+      };
+
+      # Aliases
+      "nfs" = {
+        hostname = "ssh.nyc1.nearlyfreespeech.net";
+      };
     };
 
     userKnownHostsFile = lib.concatStringsSep " " [
