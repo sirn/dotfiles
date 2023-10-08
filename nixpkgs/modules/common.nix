@@ -25,7 +25,6 @@
     ./programs/rsync.nix
     ./programs/tmux.nix
     ./programs/unison.nix
-    ./programs/weechat.nix
     ./programs/zsh.nix
   ];
 }
