@@ -11,7 +11,10 @@
     ../home/sway.nix
 
     # programs
+    ../programs/foot.nix
+    ../programs/fuzzel.nix
     ../programs/mpv.nix
+    ../programs/waybar.nix
 
     # services
     ../runit/emacs.nix

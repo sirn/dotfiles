@@ -3,6 +3,16 @@
 with lib; {
   options = {
     machine = {
+      nixos = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = ''
+            Indicates whether the machine is a NixOS system.
+          '';
+        };
+      };
+
       gui = {
         enable = mkOption {
           type = types.bool;

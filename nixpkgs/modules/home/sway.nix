@@ -10,463 +10,285 @@ let
   dotprivDir = "${homeDirectory}/.dotpriv";
 in
 {
-  home.file = {
-    ".config/foot/foot.ini" = {
-      text = ''
-        bold-text-in-bright=yes
-        dpi-aware=no
-        font=PragmataPro Mono:size=12
-      '';
-    };
+  wayland.windowManager.sway = {
+    enable = true;
 
-    ".config/fuzzel/fuzzel.ini" = {
-      text = ''
-        font=monospace:size=12
-        dpi-aware=no
-        terminal=foot -e
-        width=40
-        line-height=18
-        horizontal-pad=8
-        vertical-pad=4
-        layer=overlay
+    package =
+      if config.machine.nixos.enable
+      then pkgs.sway
+      else null;
 
-        [colors]
-        background=1e2225fa
-        selection=285577ff
-        border=494e52ff
-        text=999999ff
-        match=ffffffff
-        selection-text=ddddddff
-        selection-match=ffffffff
+    config =
+      let
+        inherit (config.wayland.windowManager.sway.config) modifier terminal left down up right;
 
-        [border]
-        radius=0
-      '';
-    };
+        swaymsgBin =
+          if config.machine.nixos.enable
+          then "${pkgs.sway-unwrapped}/bin/swaymsg"
+          else "swaymsg";
 
-    ".config/sway/config" = {
-      text = ''
-        ### Variables
-        #
-        set $mod   Mod4
-        set $left  h
-        set $down  j
-        set $up    k
-        set $right l
-        set $term  foot zsh
-        set $menu  fuzzel
+        swaynagBin =
+          if config.machine.nixos.enable
+          then "${pkgs.sway-unwrapped}/bin/swaynag"
+          else "swaynag";
 
+        swayWallpaper =
+          if config.machine.nixos.enable
+          then "${pkgs.sway-unwrapped}/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png"
+          else "/usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png";
 
-        ### Output configuration
-        # See also: man 5 sway-output
-        #
-        output * bg    /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
-        output * scale 1
+        # swaylock needs to access PAM, so we must use the system package on non-NixOS
+        swaylockBin =
+          if config.machine.nixos.enable
+          then "${pkgs.swaylock}/bin/swaylock"
+          else "swaylock";
+      in
+      {
+        modifier = "Mod4";
+        left = "h";
+        down = "j";
+        up = "k";
+        right = "l";
 
+        fonts = {
+          names = [ "monospace" ];
+          size = 10.0;
+        };
 
-        ### Input configuration
-        # See also: man 5 sway-input
-        #
-        input "*" {
-            dwt enabled
-            natural_scroll enabled
-        }
+        terminal = "${pkgs.foot}/bin/foot";
 
+        output = {
+          "*" = {
+            bg = "${swayWallpaper} fill";
+            scale = "1";
+          };
+        };
 
-        ### Key bindings
-        #
+        input = {
+          "*" = {
+            dwt = "enabled";
+            natural_scroll = "enabled";
+          };
+        };
 
-        # Basic:
-        #
-        bindsym $mod+Return  exec $term
-        bindsym $mod+Shift+q kill
-        bindsym $mod+d       exec $menu
-        bindsym $mod+Shift+c reload
-        bindsym $mod+Shift+e exec swaynag -t warning -m 'Really exit?' -B 'Yes, exit sway' 'swaymsg exit'
+        defaultWorkspace = "workspace number 1";
 
-        floating_modifier $mod normal
+        keybindings = {
+          "${modifier}+Return" = "exec ${terminal} ${pkgs.zsh}/bin/zsh";
+          "${modifier}+Shift+q" = "kill";
+          "${modifier}+d" = "exec ${pkgs.fuzzel}/bin/fuzzel";
+          "${modifier}+Shift+c" = "reload";
+          "${modifier}+Shift+e" = "exec ${swaynagBin} -t warning -m 'Really exit?' -B 'Yes, exit sway' '${swaymsgBin} exit'";
 
-        # Moving around:
-        #
-        bindsym $mod+$left  focus left
-        bindsym $mod+$down  focus down
-        bindsym $mod+$up    focus up
-        bindsym $mod+$right focus right
+          # Focusing
+          "${modifier}+${left}" = "focus left";
+          "${modifier}+${down}" = "focus down";
+          "${modifier}+${up}" = "focus up";
+          "${modifier}+${right}" = "focus right";
+          "${modifier}+Left" = "focus left";
+          "${modifier}+Down" = "focus down";
+          "${modifier}+Up" = "focus up";
+          "${modifier}+Right" = "focus right";
 
-        bindsym $mod+Left   focus left
-        bindsym $mod+Down   focus down
-        bindsym $mod+Up     focus up
-        bindsym $mod+Right  focus right
+          # Moving
+          "${modifier}+Shift+${left}" = "move left";
+          "${modifier}+Shift+${down}" = "move down";
+          "${modifier}+Shift+${up}" = "move up";
+          "${modifier}+Shift+${right}" = "move right";
+          "${modifier}+Shift+Left" = "move left";
+          "${modifier}+Shift+Down" = "move down";
+          "${modifier}+Shift+Up" = "move up";
+          "${modifier}+Shift+Right" = "move right";
 
-        bindsym $mod+Shift+$left  move left
-        bindsym $mod+Shift+$down  move down
-        bindsym $mod+Shift+$up    move up
-        bindsym $mod+Shift+$right move right
+          # Workspaces
+          "${modifier}+1" = "workspace number 1";
+          "${modifier}+2" = "workspace number 2";
+          "${modifier}+3" = "workspace number 3";
+          "${modifier}+4" = "workspace number 4";
+          "${modifier}+5" = "workspace number 5";
+          "${modifier}+6" = "workspace number 6";
+          "${modifier}+7" = "workspace number 7";
+          "${modifier}+8" = "workspace number 8";
+          "${modifier}+9" = "workspace number 9";
+          "${modifier}+0" = "workspace number 10";
 
-        bindsym $mod+Shift+Left   move left
-        bindsym $mod+Shift+Down   move down
-        bindsym $mod+Shift+Up     move up
-        bindsym $mod+Shift+Right  move right
+          # Split
+          "${modifier}+b" = "splith";
+          "${modifier}+v" = "splitv";
 
-        # Switch to workspace:
-        #
-        bindsym $mod+1 workspace number 1
-        bindsym $mod+2 workspace number 2
-        bindsym $mod+3 workspace number 3
-        bindsym $mod+4 workspace number 4
-        bindsym $mod+5 workspace number 5
-        bindsym $mod+6 workspace number 6
-        bindsym $mod+7 workspace number 7
-        bindsym $mod+8 workspace number 8
-        bindsym $mod+9 workspace number 9
-        bindsym $mod+0 workspace number 10
+          # Layouts
+          "${modifier}+e" = "layout toggle split";
+          "${modifier}+f" = "fullscreen";
+          "${modifier}+s" = "layout stacking";
+          "${modifier}+w" = "layout tabbed";
+          "${modifier}+Shift+space" = "floating toggle";
+          "${modifier}+Shift+grave" = "sticky toggle";
 
-        # Move focused container to workspace:
-        #
-        bindsym $mod+Shift+1 move container to workspace number 1
-        bindsym $mod+Shift+2 move container to workspace number 2
-        bindsym $mod+Shift+3 move container to workspace number 3
-        bindsym $mod+Shift+4 move container to workspace number 4
-        bindsym $mod+Shift+5 move container to workspace number 5
-        bindsym $mod+Shift+6 move container to workspace number 6
-        bindsym $mod+Shift+7 move container to workspace number 7
-        bindsym $mod+Shift+8 move container to workspace number 8
-        bindsym $mod+Shift+9 move container to workspace number 9
-        bindsym $mod+Shift+0 move container to workspace number 10
+          # Focusing
+          "${modifier}+space" = "focus mode_toggle";
+          "${modifier}+a" = "focus parent";
 
-        # Split current object:
-        #
-        bindsym $mod+b splith
-        bindsym $mod+v splitv
+          # Scratchpad
+          "${modifier}+Shift+minus" = "move scratchpad";
+          "${modifier}+minus" = "scratchpad show";
 
-        # Different layout styles:
-        #
-        bindsym $mod+e           layout toggle split
-        bindsym $mod+f           fullscreen
-        bindsym $mod+s           layout stacking
-        bindsym $mod+w           layout tabbed
+          # Modes
+          "${modifier}+r" = "mode \"resize\"";
 
-        # Floating & sticky:
-        #
-        bindsym $mod+Shift+space floating toggle
-        bindsym $mod+Shift+grave sticky toggle
+          # Screenshots
+          "Print" = ''
+            exec \
+                env GRIM_DEFAULT_DIR="${homeDirectory}/Desktop" \
+                ${pkgs.grim}/bin/grim && \
+                ${pkgs.libnotify}/bin/notify-send \
+                    "Screenshot captured" \
+                    "Screenshot saved to ~/Desktop"
+          '';
 
-        # Focusing:
-        #
-        bindsym $mod+space focus mode_toggle
-        bindsym $mod+a     focus parent
+          "Shift+Print" = ''
+            exec \
+                env GRIM_DEFAULT_DIR="${homeDirectory}/Desktop" \
+                ${pkgs.grim}/bin/grim -g "$(${pkgs.slurp}/bin/slurp)" && \
+                ${pkgs.libnotify}/bin/notify-send \
+                    "Screenshot captured" \
+                    "Screenshot saved to ~/Desktop"
+          '';
 
-        # Scratchpad:
-        #
-        bindsym $mod+Shift+minus move scratchpad
-        bindsym $mod+minus       scratchpad show
+          # Locking
+          "${modifier}+Ctrl+Shift+L" = "exec ${swaylockBin} -f -c 000000";
+        };
 
-        # Resizing:
-        #
-        mode "resize" {
-            bindsym $left  resize shrink width  10px
-            bindsym $down  resize grow   height 10px
-            bindsym $up    resize shrink height 10px
-            bindsym $right resize grow   width  10px
+        modes = {
+          resize = {
+            "${left}" = "resize shrink width 10px";
+            "${down}" = "resize grow height 10px";
+            "${up}" = "resize shrink height 10px";
+            "${right}" = "resize grow width 10px";
 
-            bindsym Left   resize shrink width  10px
-            bindsym Down   resize grow   height 10px
-            bindsym Up     resize shrink height 10px
-            bindsym Right  resize grow   width  10px
+            "Left" = "resize shrink width 10px";
+            "Down" = "resize grow height 10px";
+            "Up" = "resize shrink height 10px";
+            "Right" = "resize grow width 10px";
 
-            bindsym Return mode "default"
-            bindsym Escape mode "default"
-        }
+            "Return" = "mode \"default\"";
+            "Escape" = "mode \"default\"";
+          };
+        };
 
-        bindsym $mod+r mode "resize"
+        floating = {
+          titlebar = true;
+          modifier = "${modifier}";
+        };
 
-        # Screenshot:
-        #
-        bindsym Print exec \
-            env GRIM_DEFAULT_DIR="${homeDirectory}/Desktop" \
-            grim && notify-send \
-                "Screenshot captured" \
-                "Screenshot saved to ~/Desktop"
+        bars = [
+          {
+            command = "${pkgs.waybar}/bin/waybar";
+          }
+        ];
 
-        bindsym Shift+Print exec \
-            env GRIM_DEFAULT_DIR="${homeDirectory}/Desktop" \
-            grim -g "$(slurp)" && notify-send \
-                "Screenshot captured" \
-                "Screenshot saved to ~/Desktop"
-
-
-        ###
-        # Status Bar
-        # See also: man 5 sway-bar
-        #
-        bar {
-            swaybar_command waybar
-        }
-
-
-        # Locking
-        #
-        bindsym $mod+Ctrl+Shift+L exec swaylock -f -c 000000
-
-
-        ###
-        # Idling
-        #
-        exec sway-audio-idle-inhibit
-        exec swayidle -w \
-            timeout 300 'swaylock -f -c 000000' \
-            timeout 600 'swaymsg "output * dpms off"' \
-            resume 'swaymsg "output * dpms on"' \
-            before-sleep 'swaylock -f -c 000000' &
-
-
-        ###
-        # Themes
-        #
-
-        seat * xcursor_theme breeze_cursors 24
-        set $gnome-schema org.gnome.desktop.interface
-
-        exec_always {
-            gsettings set $gnome-schema document-font-name  "Noto Sans 10"
-            gsettings set $gnome-schema font-name           "Noto Sans 10"
-            gsettings set $gnome-schema icon-theme          "Breeze"
-            gsettings set $gnome-schema gtk-theme           "Breeze"
-            gsettings set $gnome-schema cursor-theme        "breeze_cursors"
-            gsettings set $gnome-schema cursor-size         24
-            gsettings set $gnome-schema monospace-font-name "Hack 10"
-        }
-
-
-        ###
-        # External programs
-        #
-        exec pipewire
-        exec wl-paste -t text --watch clipman store --no-persist
-        exec fcitx5 -r
-        exec mako
-
-        # Portals:
-        #
-        exec ${homeDirectory}/.local/libexec/start-xdg-portals
-
-
-        ###
-        # Window properties
-        #
-
-        # Inhibit sleep if any apps is running in full screen
-        for_window [app_id=".*"] inhibit_idle fullscreen
-        for_window [class=".*"]  inhibit_idle fullscreen
-
-        for_window [app_id="firefox" title="Firefox — Sharing Indicator"] floating enable
-        for_window [app_id="firefox" title="Picture-in-Picture"]          floating enable
-        for_window [app_id="firefox" title="Picture-in-Picture"]          sticky enable
-
-        for_window [app_id="mpv"]         floating enable
-        for_window [app_id="pavucontrol"] floating enable
-
-
-        ### Include
-        #
-        include /etc/sway/config.d/*
-        include ${homeDirectory}/.config/sway/config_$(hostname)
-      '';
-    };
-
-    ".config/waybar/config" = {
-      text = ''
-        {
-            // ------------------------------------------------------------------------
-            // Global configurations
-            // ------------------------------------------------------------------------
-            "height": 30,
-            "spacing": 4,
-
-            // ------------------------------------------------------------------------
-            // Modules
-            // ------------------------------------------------------------------------
-            "modules-left": [
-                "sway/workspaces",
-                "sway/mode",
-                "sway/scratchpad",
-                "custom/media"
-            ],
-
-            "modules-center": [
-                "sway/window"
-            ],
-
-            "modules-right": [
-                "idle_inhibitor",
-                "pulseaudio",
-                "tray",
-                "clock"
-            ],
-
-            // ------------------------------------------------------------------------
-            // Module configurations
-            // ------------------------------------------------------------------------
-            "sway/mode": {
-                "format": "<span style=\"italic\">{}</span>"
-            },
-
-            "sway/scratchpad": {
-                "format": "{icon} {count}",
-                "show-empty": false,
-                "format-icons": ["", ""],
-                "tooltip": true,
-                "tooltip-format": "{app}: {title}"
-            },
-
-            "idle_inhibitor": {
-                "format": "{icon}",
-                "format-icons": {
-                    "activated": "",
-                    "deactivated": ""
-                }
-            },
-
-            "tray": {
-                "spacing": 10
-            },
-
-            "clock": {
-                "format": "{:%b %d, %H:%M}",
-                "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
-            },
-
-            "pulseaudio": {
-                "format": "{icon}{format_source}",
-                "format-source": " ",
-                "format-source-muted": "",
-                "format-icons": {
-                    "headphone": "",
-                    "hands-free": "",
-                    "headset": "",
-                    "phone": "",
-                    "portable": "",
-                    "car": "",
-                    "default": ["", "", ""]
-                },
-                "on-click": "pavucontrol"
+        startup =
+          let
+            schema = "org.gnome.desktop.interface";
+          in
+          [
+            {
+              command = ''
+                ${pkgs.swayidle}/bin/swayidle -w \
+                    timeout 300 '${swaylockBin} -f -c 000000' \
+                    timeout 600 '${swaymsgBin} "output * dpms off"' \
+                    resume '${swaymsgBin} "output * dpms on"' \
+                    before-sleep '${swaylockBin} -f -c 000000' &
+              '';
             }
-        }
-      '';
-    };
 
-    ".config/waybar/style.css" = {
-      text = ''
-        * {
-            font-family: FontAwesome, Roboto, Helvetica, Arial, sans-serif;
-            font-size: 13px;
-        }
+            { command = "gsettings set ${schema} document-font-name \"Noto Sans 10\""; always = true; }
+            { command = "gsettings set ${schema} font-name \"Noto Sans 10\""; always = true; }
+            { command = "gsettings set ${schema} icon-theme \"Breeze\""; always = true; }
+            { command = "gsettings set ${schema} gtk-theme \"Breeze\""; always = true; }
+            { command = "gsettings set ${schema} cursor-theme \"breeze_cursors\""; always = true; }
+            { command = "gsettings set ${schema} cursor-size 24"; always = true; }
+            { command = "gsettings set ${schema} monospace-font-name \"Hack 10\""; always = true; }
 
-        window#waybar {
-            background-color: rgba(30, 34, 37, 0.5);
-            color: #ffffff;
-            transition-property: background-color;
-            transition-duration: .5s;
-        }
+            { command = "pipewire"; }
+            { command = "${pkgs.wl-clipboard}/bin/wl-paste -t text --watch ${pkgs.clipman}/bin/clipman store --no-persist"; }
+            { command = "fcitx5 -r"; }
+            { command = "${pkgs.mako}/bin/mako"; }
+            { command = "${homeDirectory}/.local/libexec/start-xdg-portals"; }
+          ];
 
-        window#waybar.hidden {
-            opacity: 0.2;
-        }
+        seat = {
+          "*" = {
+            xcursor_theme = "breeze_cursors 24";
+            hide_cursor = "when-typing enable";
+          };
+        };
 
-        button {
-            box-shadow: inset 0 -3px transparent;
-            border: none;
-            border-radius: 0;
-        }
+        window = {
+          titlebar = true;
+          commands = [
+            {
+              command = "inhibit_idle fullscreen";
+              criteria = {
+                app_id = ".*";
+              };
+            }
+            {
+              command = "inhibit_idle fullscreen";
+              criteria = {
+                class = ".*";
+              };
+            }
 
-        /* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
-        button:hover {
-            background: inherit;
-            box-shadow: inset 0 -3px #ffffff;
-        }
+            {
+              command = "floating enable";
+              criteria = {
+                app_id = "mpv";
+              };
+            }
+            {
+              command = "floating enable";
+              criteria = {
+                app_id = "pavucontrol";
+              };
+            }
 
-        #workspaces button {
-            padding: 0 5px;
-            background-color: transparent;
-            color: #ffffff;
-        }
+            # Firefox
+            {
+              command = "floating enable";
+              criteria = {
+                app_id = "firefox";
+                title = "Firefox - Sharing Indicator";
+              };
+            }
+            {
+              command = "floating enable";
+              criteria = {
+                app_id = "firefox";
+                title = "Picture-in-Picture";
+              };
+            }
+            {
+              command = "sticky enable";
+              criteria = {
+                app_id = "firefox";
+                title = "Picture-in-Picture";
+              };
+            }
+          ];
+        };
+      };
 
-        #workspaces button:hover {
-            background: rgba(0, 0, 0, 0.2);
-        }
+    extraConfig = ''
+      include /etc/sway/config.d/*
+      include ${homeDirectory}/.config/sway/config_$(hostname)
+    '';
+  };
 
-        #workspaces button.focused {
-            background-color: #64727D;
-            box-shadow: inset 0 -3px #ffffff;
-        }
-
-        #workspaces button.urgent {
-            background-color: #eb4d4b;
-        }
-
-        #clock,
-        #tray,
-        #mode,
-        #pulseaudio,
-        #idle_inhibitor,
-        #scratchpad {
-            padding: 0 10px;
-            background-color: rgba(100, 114, 125, 0.3);
-            color: #ffffff;
-        }
-
-        #window,
-        #workspaces {
-            margin: 0 4px;
-        }
-
-        /* If workspaces is the leftmost module, omit left margin */
-        .modules-left > widget:first-child > #workspaces {
-            margin-left: 0;
-        }
-
-        /* If workspaces is the rightmost module, omit right margin */
-        .modules-right > widget:last-child > #workspaces {
-            margin-right: 0;
-        }
-
-        #pulseaudio.muted {
-            background-color: #90b1b1;
-            color: #2a5c45;
-        }
-
-        #tray > .passive {
-            -gtk-icon-effect: dim;
-        }
-
-        #tray > .needs-attention {
-            -gtk-icon-effect: highlight;
-            background-color: #eb4d4b;
-        }
-
-        #idle_inhibitor.activated {
-            background-color: #ecf0f1;
-            color: #2d3436;
-        }
-
-        #clock {
-            font-weight: bold;
-        }
-
-        #scratchpad {
-            background: rgba(0, 0, 0, 0.2);
-        }
-
-        #scratchpad.empty {
-        	background-color: transparent;
-        }
-      '';
-    };
-
+  home.file = {
     ".config/xdg-desktop-portal/portals.conf" = {
       text = ''
         [preferred]
-        default=wlr
+        default = wlr
         org.freedesktop.impl.portal.AppChooser=gtk
         org.freedesktop.impl.portal.DynamicLauncher=gtk
         org.freedesktop.impl.portal.FileChooser=gtk
