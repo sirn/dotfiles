@@ -1,6 +1,0 @@
-{
-    "checks": {
-        "typography.symbols": false,
-        "consistency.spacing": false
-    }
-}

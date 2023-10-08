@@ -3,7 +3,6 @@
 {
   imports = [
     ./home/email.nix
-    ./home/links.nix
     ./home/xdg.nix
     ./home/shell.nix
 

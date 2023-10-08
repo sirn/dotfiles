@@ -16,6 +16,7 @@ in
     ../home/sway.nix
 
     # programs
+    ../programs/intellij.nix
     ../programs/mpv.nix
 
     # services
