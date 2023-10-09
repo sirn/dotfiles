@@ -18,7 +18,7 @@ Use the following order for `use-package` and always leave a single line between
 
 `:commands` must only be used when commands is not marked as autoloaded and must be accompany by a comment:
 
-```elisp
+``` elisp
 (use-package treemacs
   ;; Not exposed via autoload by Treemacs
   :commands (treemacs-switch-workspace
@@ -33,7 +33,7 @@ Use the following order for `use-package` and always leave a single line between
 
 `apheleia` is explicitly enabled per major-mode:
 
-```elisp
+``` elisp
 (use-package markdown-mode
   :init
   (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier))
@@ -45,7 +45,7 @@ Use the following order for `use-package` and always leave a single line between
 
 `lsp-mode` is explicitly enabled per major-mode:
 
-```elisp
+``` elisp
 (use-package typescript-mode
   :preface
   (eval-when-compile
@@ -69,7 +69,7 @@ Use the following order for `use-package` and always leave a single line between
 
 `tree-sitter` is explicitly enabled and move hooks into the relevant `-ts-mode`:
 
-```elisp
+``` elisp
 (use-package typescript-mode
   :init
   (add-to-list 'major-mode-remap-alist '(typescript-mode . typescript-ts-mode)))
@@ -85,7 +85,7 @@ Note the hook is added to `-ts-mode-hook` in this case.
 
 `flycheck` is explicitly enabled per major-mode:
 
-```elisp
+``` elisp
 (use-feature sh-mode
   :init
   (add-hook 'sh-mode-hook #'flycheck-mode))
