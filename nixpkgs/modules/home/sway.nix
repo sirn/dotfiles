@@ -167,11 +167,29 @@ in
 
           "Shift+Print" = ''
             exec \
+                ${pkgs.grim}/bin/grim - | \
+                    ${pkgs.wl-clipboard}/bin/wl-copy -t image/png && \
+                ${pkgs.libnotify}/bin/notify-send \
+                    "Screenshot captured" \
+                    "Screenshot saved to clipboard"
+          '';
+
+          "Alt+Print" = ''
+            exec \
                 env GRIM_DEFAULT_DIR="${homeDirectory}/Desktop" \
                 ${pkgs.grim}/bin/grim -g "$(${pkgs.slurp}/bin/slurp)" && \
                 ${pkgs.libnotify}/bin/notify-send \
                     "Screenshot captured" \
                     "Screenshot saved to ~/Desktop"
+          '';
+
+          "Alt+Shift+Print" = ''
+            exec \
+                ${pkgs.grim}/bin/grim -g "$(${pkgs.slurp}/bin/slurp)" - | \
+                    ${pkgs.wl-clipboard}/bin/wl-copy -t image/png && \
+                ${pkgs.libnotify}/bin/notify-send \
+                    "Screenshot captured" \
+                    "Screenshot saved to clipboard"
           '';
 
           # Locking
