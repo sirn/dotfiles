@@ -83,6 +83,7 @@ in
       epkgs.which-key
       epkgs.winum
       epkgs.yasnippet
+      epkgs.yasnippet-snippets
 
       # Languages
       epkgs.ansible
@@ -115,8 +116,10 @@ in
       epkgs.yaml-mode
 
       # Non-Emacs dev packages (lsp and friends)
+      jq
       nodejs
       pandoc
+      ripgrep
       rnix-lsp
       shellcheck
       shfmt
