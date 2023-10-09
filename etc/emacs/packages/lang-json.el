@@ -5,7 +5,8 @@
   (add-to-list 'major-mode-remap-alist '(json-mode . json-ts-mode)))
 
 
-(use-feature json-ts-mode
+;; Bulitin; tree-sitter
+(use-package json-ts-mode
   :init
   (add-hook 'json-ts-mode-hook #'apheleia-mode)
   (add-hook 'json-ts-mode-hook #'flycheck-mode))

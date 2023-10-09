@@ -12,23 +12,23 @@
 
   :init
   ;; magit binds project-status a bit too late; we're doing this by ourselves.
-  (use-feature project
+  (use-package project
     :config
     (general-with-eval-after-load 'general
       (general-define-key :keymaps 'project-prefix-map "m" #'magit-project-status)
       (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)))
 
   :config
-  (use-feature pinentry
+  (use-package pinentry
     :config
     (dolist (func '(magit-start-git magit-call-git))
       (advice-add func :after #'gemacs--gpg-update-tty)))
 
   ;; Deferred loading
-  (use-feature forge :demand t))
+  (use-package forge :demand t))
 
 
-(use-feature git-commit
+(use-package git-commit
   :custom
   ;; Max length for commit message summary is 50 characters as per
   ;; https://chris.beams.io/posts/git-commit/.
@@ -51,17 +51,12 @@
   (forge-add-default-bindings nil)
 
   :config
-  (use-feature ghub
+  (use-package ghub
     :custom
     ;; BUG: https://github.com/magit/ghub/issues/81
     (ghub-use-workaround-for-emacs-bug 'force))
 
-  (use-feature emacsql-sqlite
-    :custom
-    ;; Put the EmacSQL binary in the repository, not the build dir. That
-    ;; way we don't have to recompile it every time packages get rebuilt
-    ;; by straight.el.
-    (emacsql-sqlite-data-root (straight--repos-dir "emacsql"))))
+  (use-package emacsql-sqlite))
 
 
 (use-package git-gutter

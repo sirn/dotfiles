@@ -9,7 +9,8 @@
   (add-to-list 'major-mode-remap-alist '(typescript-mode . typescript-ts-mode)))
 
 
-(use-feature typescript-ts-mode
+;; Builtin; tree-sitter
+(use-package typescript-ts-mode
   :preface
   (eval-when-compile
     (declare-function lsp nil)

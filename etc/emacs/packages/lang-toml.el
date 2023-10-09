@@ -5,4 +5,5 @@
   (add-to-list 'major-mode-remap-alist '(toml-mode . toml-ts-mode)))
 
 
+;; Builtin; tree-sitter
 (use-package toml-ts-mode)

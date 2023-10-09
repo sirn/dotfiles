@@ -3,8 +3,6 @@
 (use-package project
   :demand t
 
-  :straight (:host github :repo "emacs-straight/project")
-
   :general
   (leader
     "pSS" #'gemacs--project-sync
@@ -25,14 +23,14 @@
     (declare-function gemacs--project-sync nil))
 
   :config
-  (use-feature consult
+  (use-package consult
     :general
     ("C-x p b" #'consult-project-buffer)
 
     (leader
       "pb" #'consult-project-buffer))
 
-  (use-feature multi-vterm
+  (use-package multi-vterm
     :general
     (leader
       "p'" #'multi-vterm-project))

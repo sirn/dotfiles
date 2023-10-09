@@ -4,6 +4,7 @@
   :init
   (add-to-list 'major-mode-remap-alist '(rust-mode . rust-ts-mode)))
 
+;; Builtin; tree-sitter
 (use-package rust-ts-mode
   :preface
   (eval-when-compile

@@ -69,7 +69,7 @@ poke it. Otherwise the modified text remains unfontified."
   (add-hook 'apheleia-post-format-hook #'gemacs--web-highlight-after-formatting))
 
 
-(use-feature css-mode)
+(use-package css-mode)
 
 
 (use-package emmet-mode

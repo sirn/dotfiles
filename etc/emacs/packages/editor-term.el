@@ -5,12 +5,14 @@
   (evil-insert-state))
 
 
-(use-feature term
+;; Builtin
+(use-package term
   :config
   (add-hook 'term-mode-hook #'gemacs--term-setup))
 
 
-(use-feature eshell
+;; Builtin
+(use-package eshell
   :general
   (leader
     "'e" #'eshell)
@@ -19,7 +21,8 @@
   (add-hook 'eshell-mode-hook #'gemacs--term-setup))
 
 
-(use-feature vterm
+;; Builtin
+(use-package vterm
   :general
   (leader
     "'v" #'vterm)
@@ -34,7 +37,7 @@
     "''" #'multi-vterm)
 
   :init
-  (use-feature project
+  (use-package project
     :config
     (general-with-eval-after-load 'general
       (general-define-key :keymaps 'project-prefix-map "'" #'multi-vterm-project)

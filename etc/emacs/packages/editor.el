@@ -7,7 +7,8 @@
 ;; --------------------------------------------------------------------------
 ;;; Key bindings
 
-(use-feature emacs
+;; Builtin
+(use-package emacs
   :general
   (leader
     "wo" #'other-window
@@ -25,7 +26,8 @@
 ;;; Editing behaviors
 
 
-(use-feature emacs
+;; Builtin
+(use-package emacs
   :custom
   (indent-tabs-mode nil)
   (x-alt-keysym 'meta)
@@ -49,14 +51,16 @@
    "jL" #'ace-link))
 
 
-(use-feature delsel
+;; Builtin
+(use-package delsel
   :demand t
 
   :config
   (delete-selection-mode +1))
 
 
-(use-feature display-line-numbers
+;; Builtin
+(use-package display-line-numbers
   :general
   (leader
     "Ll" #'display-line-numbers-mode
@@ -81,7 +85,8 @@
   (global-undo-tree-mode +1))
 
 
-(use-feature subword
+;; Builtin
+(use-package subword
   :demand t
 
   :config
@@ -97,14 +102,11 @@
    "C-c q" #'vr/query-replace)
 
   :config
-  (use-feature visual-regexp-steroids
+  (use-package visual-regexp-steroids
     :demand t))
 
 
-(use-package visual-regexp-steroids
-  :init
-  (let ((repy (straight--repos-file "visual-regexp-steroids.el/regexp.py")))
-    (setq vr/command-python (format "%s %s" "python3" repy))))
+(use-package visual-regexp-steroids)
 
 
 (use-package smartparens
@@ -123,14 +125,15 @@
 
   :init
   (defun gemacs--smartparens-load ()
-    (use-feature smartparens-config :demand t)
+    (use-package smartparens-config :demand t)
     (smartparens-global-mode +1)
     (show-smartparens-global-mode +1)
     (sp-use-paredit-bindings))
   (add-hook 'prog-mode-hook #'gemacs--smartparens-load))
 
 
-(use-feature smartparens-config
+;; Part of smartparens
+(use-package smartparens-config
   :custom
   (sp-highlight-pair-overlay nil)
   (sp-highlight-wrap-overlay nil)
@@ -138,7 +141,8 @@
   (sp-cancel-autoskip-on-backward-movement nil))
 
 
-(use-feature paren
+;; Builtin
+(use-package paren
   :demand t
 
   :config
@@ -148,8 +152,6 @@
 (use-package parinfer-rust-mode
   :diminish parinfer-rust-mode
 
-  :straight t
-
   :custom
   (parinfer-rust-auto-download -1)
 
@@ -157,7 +159,7 @@
   (setq parinfer-rust-library
         (no-littering-expand-var-file-name
          (concat
-          (file-name-as-directory "parinfer-rust")
+          (file-name-as-directory "parinfer-rust/lib")
           (cond
            ((eq system-type 'darwin) "libparinfer_rust.dylib")
            ((eq system-type 'gnu/linux) "libparinfer_rust.so")))))
@@ -173,7 +175,7 @@
   (defun parinfer-rust--check-version (_a _b _c _d)
     nil)
 
-  (use-feature smartparens
+  (use-package smartparens
     :config
     (add-hook 'parinfer-rust-mode-hook #'turn-off-smartparens-mode)))
 
@@ -203,7 +205,8 @@
   (editorconfig-mode +1))
 
 
-(use-feature editorconfig-core
+;; Part of editorconfig
+(use-package editorconfig-core
   :demand t
 
   :init
@@ -251,7 +254,7 @@
   :config
   (prescient-persist-mode +1)
 
-  (use-feature emacs
+  (use-package emacs
     :custom
     (completion-styles '(prescient basic))))
 
@@ -317,7 +320,7 @@
     "/g"  #'consult-grep)
 
   :init
-  (use-feature project
+  (use-package project
     :config
     (general-with-eval-after-load 'general
       (general-define-key :keymaps 'project-prefix-map
@@ -342,16 +345,26 @@
 ;; --------------------------------------------------------------------------
 ;;; Snippets
 
+;; Builtin
+(use-package abbrev)
 
-(use-feature abbrev)
+
+(use-package yasnippet
+  :defer 2
+
+  :preface
+  (eval-when-compile
+    (declare-function yas-global-mode nil))
+
+  :config
+  (yas-global-mode +1))
+
 
 
 ;; --------------------------------------------------------------------------
 ;;; Autocompletion
 
 (use-package corfu
-  :straight (:files (:defaults "extensions/*") :includes (corfu-popupinfo corfu-echo))
-
   :demand t
 
   :custom
@@ -360,13 +373,14 @@
   :init
   (global-corfu-mode +1)
 
-  (use-feature emacs
+  (use-package emacs
     :custom
     (completion-cycle-threshold 3)
     (tab-always-indent 'complete)))
 
 
-(use-feature corfu-popupinfo
+;; Part of corfu
+(use-package corfu-popupinfo
   :after corfu
 
   :general
@@ -375,7 +389,8 @@
    "M-p" #'corfu-popupinfo-scroll-up))
 
 
-(use-feature corfu-quick
+;; Part of corfu
+(use-package corfu-quick
   :after corfu
 
   :general
@@ -398,8 +413,6 @@
 
 
 (use-package corfu-terminal
-  :straight (:type git :repo "https://codeberg.org/akib/emacs-corfu-terminal.git")
-
   :after corfu
 
   :init
@@ -411,10 +424,7 @@
 ;; --------------------------------------------------------------------------
 ;;; Autoformatting
 
-
 (use-package apheleia
-  :straight (:host github :repo "radian-software/apheleia")
-
   :init
   (defun gemacs--save-buffer-reformat-maybe (func &optional arg)
     "Make it so \\[save-buffer] with prefix arg inhibits reformatting."
@@ -467,15 +477,13 @@ nor requires Flycheck to be loaded."
 
 
 (use-package eldoc
-  :straight (:host github :repo "emacs-straight/eldoc")
-
   :demand t
 
   :custom
   (eldoc-echo-area-use-multiline-p nil)
 
   :config
-  (use-feature flycheck
+  (use-package flycheck
     :preface
     (eval-when-compile
       (declare-function gemacs--advice-disable-eldoc-on-flycheck nil))
@@ -491,19 +499,6 @@ area."
     (advice-add 'eldoc-display-message-no-interference-p :after-while
       #'gemacs--advice-disable-eldoc-on-flycheck)))
 
-
-;; --------------------------------------------------------------------------
-;;; Snippets
-
-(use-package yasnippet
-  :defer 2
-
-  :preface
-  (eval-when-compile
-    (declare-function yas-global-mode nil))
-
-  :config
-  (yas-global-mode +1))
 
 ;; --------------------------------------------------------------------------
 ;;; Language Server Protocol
@@ -599,7 +594,7 @@ functions."
   (advice-add 'lsp-ui-sideline-apply-code-actions :around
     #'gemacs--advice-lsp-ui-apply-single-fix)
 
-  (use-feature lsp-mode
+  (use-package lsp-mode
     :preface
     (eval-when-compile
       (defvar lsp-eldoc-enable-hover))
@@ -608,7 +603,7 @@ functions."
     (setq lsp-eldoc-enable-hover nil)))
 
 
-(use-feature lsp-ui-doc
+(use-package lsp-ui-doc
   :custom
   (lsp-ui-doc-winum-ignore nil)
   (lsp-ui-doc-use-childframe t)
@@ -635,12 +630,7 @@ functions."
 ;; --------------------------------------------------------------------------
 ;;; Tree Sitter
 
-
 (use-package tree-sitter
- :when (version<= emacs-version "29.0"))
-
-
-(use-feature tree-sitter
   :defer 2
 
   :preface

@@ -1,14 +1,11 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
-;; Note:
-;; Many parts of this file are taken from Radian with some modifications.
-;; https://github.com/radian-software/radian/blob/242c55c/emacs/radian.el
-
 (use-package go-mode
   :init
   (add-to-list 'major-mode-remap-alist '(go-mode . go-ts-mode)))
 
 
+;; Builtin; tree-sitter
 (use-package go-ts-mode
   :preface
   (eval-when-compile

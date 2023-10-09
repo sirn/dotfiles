@@ -19,7 +19,8 @@
    "C-c C-d" #'helpful-at-point))
 
 
-(use-feature elisp-mode
+;; Builtin
+(use-package elisp-mode
   :preface
   (eval-when-compile
     (declare-function gemacs--advice-elisp-fill-docstrings nil))

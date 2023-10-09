@@ -1,11 +1,11 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
-(use-feature python
+(use-package python
   :init
   (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode)))
 
 
-(use-feature python-ts-mode
+(use-package python-ts-mode
   :custom
   (python-fill-docstring-style 'django)
   (python-indent-guess-indent-offset-verbose nil)

@@ -4,7 +4,6 @@
 
 Use the following order for `use-package` and always leave a single line between keywords:
 
--   `straight`
 -   `demand`
 -   `defer`
 -   `after`
@@ -39,7 +38,7 @@ Use the following order for `use-package` and always leave a single line between
   (add-hook 'markdown-mode-hook #'apheleia-mode))
 ```
 
-Any adjustments to `apheleia`'s variables should be done via `use-feature`:
+Any adjustments to `apheleia`'s variables should be done via `:config`:
 
 ``` elisp
 (use-package markdown-mode
@@ -47,7 +46,7 @@ Any adjustments to `apheleia`'s variables should be done via `use-feature`:
   (add-hook 'markdown-mode-hook #'apheleia-mode)
 
   :config
-  (use-feature apheleia
+  (use-package apheleia
     :config
     (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier))
     (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))))
@@ -86,7 +85,7 @@ Any adjustments to `apheleia`'s variables should be done via `use-feature`:
   :init
   (add-to-list 'major-mode-remap-alist '(typescript-mode . typescript-ts-mode)))
 
-(use-feature typescript-ts-mode
+(use-package typescript-ts-mode
   :init
   (add-hook 'typescript-ts-mode-hook #'lsp-deferred))
 ```
@@ -98,7 +97,7 @@ Note the hook is added to `-ts-mode-hook` in this case.
 `flycheck` is explicitly enabled per major-mode:
 
 ``` elisp
-(use-feature sh-mode
+(use-package sh-mode
   :init
   (add-hook 'sh-mode-hook #'flycheck-mode))
 ```

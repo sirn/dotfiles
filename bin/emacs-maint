@@ -44,31 +44,6 @@ _do_recompile() {
     _maybe_emacsc --eval '(byte-recompile-directory "'"$BASE_DIR"'/etc/emacs/packages" 0)'
 }
 
-## Command: straight-freeze
-## Freeze straight versions
-##
-
-_do_straight_freeze() {
-    _maybe_emacsc --eval '(straight-freeze-versions)'
-}
-
-## Command: straight-pull-all
-## Pull straight versions
-##
-
-_do_straight_pull() {
-    _maybe_emacsc --eval '(straight-pull-all)'
-}
-
-## Command: straight-thaw
-## Restore straight version
-##
-
-_do_straight_thaw() {
-    _maybe_emacsc --eval '(straight-thaw-versions)'
-    _maybe_emacsc --eval '(straight-rebuild-all)'
-}
-
 ## Command: kill
 ## Kill Emacs daemon
 
@@ -99,9 +74,6 @@ COMMAND:
 
     kill                kill emacs daemon
     recompile           recompile elisp in ~/.dotfiles/etc/emacs
-    straight-freeze     freeze version to straight version locks
-    straight-pull       update all straight packages
-    straight-thaw       restore package to locked versions
 
 " "$BASE_NAME"
     exit 2

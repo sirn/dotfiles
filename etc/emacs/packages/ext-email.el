@@ -6,7 +6,7 @@
 ;; requires the version between the emacs client and notmuch to match
 ;; due to exchange format
 (gemacs-when-compiletime (locate-library "notmuch")
-  (use-feature notmuch
+  (use-package notmuch
     ;; Not exposed via autoload by Notmuch
     :commands notmuch
 

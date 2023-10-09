@@ -2,7 +2,7 @@
 
 ;; Nix is managing w3m due to dependency on w3m binary.
 (gemacs-when-compiletime (locate-library "w3m")
-  (use-feature w3m
+  (use-package w3m
     :general
     (leader
       ";W" #'w3m
@@ -16,7 +16,7 @@
       '(("duckduckgo" "https://duckduckgo.com/lite?q=%s" utf-8)))))
 
 
-(use-feature emacs
+(use-package emacs
   :config
   (if (eq system-type 'darwin)
     (progn

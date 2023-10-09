@@ -1,6 +1,6 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
-(use-feature tramp
+(use-package tramp
   :custom
   ;; ControlMaster is configured in ~/.ssh/config; make TRAMP reuse
   ;; that persistent session instead of making its own.

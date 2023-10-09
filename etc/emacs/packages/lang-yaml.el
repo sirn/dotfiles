@@ -5,6 +5,7 @@
   (add-to-list 'major-mode-remap-alist '(ruby-mode . ruby-ts-mode)))
 
 
+;; Builtin; tree-sitter
 (use-package yaml-ts-mode
   :preface
   (eval-when-compile

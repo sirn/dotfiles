@@ -26,7 +26,7 @@
               (setq tok ";"))
           tok))))
 
-  (use-feature apheleia
+  (use-package apheleia
     :demand t
 
     :config

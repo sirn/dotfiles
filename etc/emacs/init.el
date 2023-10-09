@@ -77,74 +77,25 @@
 ;; --------------------------------------------------------------------------
 ;;; Package management
 
-;; Bootstrap the package manager, `straight.el'. straight.el is also used
-;; to bootstrap `use-package', a macro around with-eval-after-load,
-;; and `el-patch', for dynamically patching a package.
-
-(defvar bootstrap-version)
-
-(let ((bootstrap-file
-       (expand-file-name
-        "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-
-(straight-use-package 'use-package)
-(straight-use-package 'el-patch)
-
 (eval-when-compile
-  (defvar straight-use-package-by-default)
   (defvar use-package-always-defer)
+  (defvar use-package-always-ensure)
   (defvar use-package-compute-statistics))
 
-(setq straight-use-package-by-default t)
 (setq use-package-always-defer t)
+(setq use-package-always-ensure nil)
 (setq use-package-compute-statistics nil)
 
 (eval-when-compile
   (require 'use-package)
   (require 'el-patch))
 
-;; Also use straight to load org-mode right before anything else to
-;; make sure nothing depends on Emacs-provided outdated version of org.
-
-(straight-use-package
- '(org :host github :repo "emacs-straight/org-mode" :local-repo "org"))
-
-;; Key bindings are handled by general.el, which replaces both bind-key
-;; and evil-leader; this is loaded early to allow use-package macro
-;; to work correctly.
-
-(use-package general)
-
-(general-create-definer leader
-    :keymaps 'override
-    :states '(normal visual motion insert)
-    :prefix "SPC"
-    :non-normal-prefix "M-SPC")
 
 ;; --------------------------------------------------------------------------
 ;;; Convenient helpers
 
 ;; The following macros are taken from Radian
 ;; https://github.com/radian-software/radian/blob/242c55c/emacs/radian.el
-
-;; A variant of use-package that doesn't attempt to load from straight.
-
-(defmacro use-feature (name &rest args)
-  "Like `use-package', but with `straight-use-package-by-default' disabled.
-NAME and ARGS are as in `use-package'."
-  (declare (indent defun))
-  `(use-package ,name
-     :straight nil
-     ,@args))
 
 (defmacro gemacs-if-compiletime (cond then else)
   "Like `if', but COND is evaluated at compile time.
@@ -211,13 +162,25 @@ This is an `:around' advice for many different functions."
     (apply func args)))
 
 
-;; Shared libraries
 
-;; SQLite3 is a shared module and loaded early.
+;; --------------------------------------------------------------------------
+;;; Early packages
 
-(gemacs-if-compiletime (locate-library "sqlite3")
-  (use-feature sqlite3)
-  (use-package sqlite3))
+;; SQLite3 is a shared module and must be loaded early.
+
+(use-package sqlite3)
+
+;; Key bindings are handled by general.el, which replaces both bind-key
+;; and evil-leader; this is loaded early to allow use-package macro
+;; to work correctly.
+
+(use-package general)
+
+(general-create-definer leader
+    :keymaps 'override
+    :states '(normal visual motion insert)
+    :prefix "SPC"
+    :non-normal-prefix "M-SPC")
 
 
 ;; --------------------------------------------------------------------------

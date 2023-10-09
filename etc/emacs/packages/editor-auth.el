@@ -1,6 +1,7 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
-(use-feature epg
+;; Builtin
+(use-package epg
   :custom
   (epg-pinentry-mode 'loopback))
 
@@ -29,7 +30,8 @@
   (pinentry-start))
 
 
-(use-feature auth-source
+;; Builtin
+(use-package auth-source
   :demand t
 
   :config
@@ -42,6 +44,7 @@
   :demand t)
 
 
+;; Builtin
 (use-package auth-source-pass
   :demand t
 

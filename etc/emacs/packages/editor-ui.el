@@ -67,16 +67,21 @@
 
 
 (use-package osx-trash
+  :when (eq system-type 'darwin)
+
   :config
   (osx-trash-setup))
 
 
 (use-package pbcopy
+  :when (eq system-type 'darwin)
+
   :config
   (turn-on-pbcopy))
 
 
-(use-feature emacs
+;; Builtin
+(use-package emacs
   :preface
   (eval-when-compile
     (declare-function scroll-bar-mode nil)
@@ -177,13 +182,13 @@
       (global-set-key (kbd "s-W") 'delete-frame)
       (global-set-key (kbd "s-n") 'make-frame))
 
-    (use-feature osx-trash :demand t)
-    (use-feature pbcopy :demand t))
+    (use-package osx-trash :demand t)
+    (use-package pbcopy :demand t))
 
   ;; Enable theme as late as is humanly possible. This reduces
   ;; frame flashing and other artifacts during startup.
 
   (add-hook 'gemacs-after-init-hook
     `(lambda ()
-       (use-feature telephone-line :demand t)
-       (use-feature modus-themes :demand t))))
+       (use-package telephone-line :demand t)
+       (use-package modus-themes :demand t))))

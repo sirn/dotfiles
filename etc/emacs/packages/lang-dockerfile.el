@@ -5,4 +5,5 @@
   (add-to-list 'major-mode-remap-alist '(dockerfile-mode . dockerfile-ts-mode)))
 
 
+;; Builtins; tree-sitter
 (use-package dockerfile-ts-mode)

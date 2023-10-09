@@ -43,31 +43,13 @@
 ;; --------------------------------------------------------------------------
 ;;; Package configurations
 
-(defvar bootstrap-version)
-
-(let ((bootstrap-file
-       (expand-file-name
-        "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-
-(straight-use-package 'use-package)
-(straight-use-package 'el-patch)
-
 (eval-when-compile
-  (defvar straight-use-package-by-default)
   (defvar use-package-always-defer)
+  (defvar use-package-always-ensure)
   (defvar use-package-compute-statistics))
 
-(setq straight-use-package-by-default t)
 (setq use-package-always-defer t)
+(setq use-package-always-ensure nil)
 (setq use-package-compute-statistics nil)
 
 (eval-when-compile
@@ -78,24 +60,14 @@
 ;; and evil-leader; this is loaded early to allow use-package macro
 ;; to work correctly.
 
-(use-package general)
+(use-package general
+  :demand t)
 
 (general-create-definer leader
   :keymaps 'override
   :states '(normal visual motion insert)
   :prefix "SPC"
   :non-normal-prefix "M-SPC")
-
-;; --------------------------------------------------------------------------
-;;; Convenient helpers
-
-(defmacro use-feature (name &rest args)
-  "Like `use-package', but with `straight-use-package-by-default' disabled.
-NAME and ARGS are as in `use-package'."
-  (declare (indent defun))
-  `(use-package ,name
-     :straight nil
-     ,@args))
 
 ;; --------------------------------------------------------------------------
 ;;; Saner defaults
@@ -122,7 +94,7 @@ NAME and ARGS are as in `use-package'."
 
   :init
   (defun setup-standalone-magit ()
-    (magit-status)
+    (magit-project-status)
     (delete-other-windows)
     (evil-local-set-key 'normal "q" #'save-buffers-kill-emacs))
 
@@ -164,7 +136,7 @@ NAME and ARGS are as in `use-package'."
   (prescient-history-length 1000)
   :config
   (prescient-persist-mode +1)
-  (use-feature emacs
+  (use-package emacs
     :custom
     (completion-styles '(prescient basic))))
 
@@ -177,7 +149,7 @@ NAME and ARGS are as in `use-package'."
 ;; --------------------------------------------------------------------------
 ;;; UI
 
-(use-feature emacs
+(use-package emacs
   :general
   (leader
     "wo"  #'other-window
@@ -196,6 +168,7 @@ NAME and ARGS are as in `use-package'."
   (menu-bar-mode -1))
 
 (use-package telephone-line
+  :demand t
   :init
   (defun setup-modeline ()
     (telephone-line-mode +1))
