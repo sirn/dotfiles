@@ -1,6 +1,0 @@
-#!/bin/sh
-#
-# Wrapper to use GnuPG2 instead of GPG.
-#
-
-exec gpg2 "$@"
