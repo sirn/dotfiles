@@ -24,9 +24,10 @@ in
 
       # dev packages (non-lsp)
       nodejs
-      nodePackages.prettier
+      pandoc
       shellcheck
       shfmt
+      terraform
 
       # lsps
       rnix-lsp
