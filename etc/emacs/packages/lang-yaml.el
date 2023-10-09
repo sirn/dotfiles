@@ -10,7 +10,9 @@
   :preface
   (eval-when-compile
     (declare-function gemacs--yaml-maybe-k8s nil)
-    (declare-function gemacs--yaml-maybe-ansible nil))
+    (declare-function gemacs--yaml-maybe-ansible nil)
+    (declare-function apheleia-mode nil)
+    (declare-function ansible nil))
 
   :init
   (add-hook 'yaml-ts-mode-hook #'apheleia-mode)

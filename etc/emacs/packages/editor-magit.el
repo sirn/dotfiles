@@ -46,9 +46,9 @@
   (eval-when-compile
     (defvar forge-add-default-bindings))
 
-  :custom
+  :init
   ;; BUG: https://github.com/emacs-evil/evil-collection/issues/543
-  (forge-add-default-bindings nil)
+  (setq forge-add-default-bindings nil)
 
   :config
   (use-package ghub
@@ -63,6 +63,10 @@
   :custom
   ;; BUG: https://github.com/syohex/emacs-git-gutter/issues/24
   (git-gutter:disabled-modes '(fundamental-mode org-mode))
+
+  :preface
+  (eval-when-compile
+    (declare-function global-git-gutter-mode nil))
 
   ;; Since our magit is defer-loaded, git-gutter need to wait for magit
   ;; to prevent `ad-handle-definition' warning due to `vc-revert' being

@@ -71,6 +71,7 @@ in
       epkgs.smartparens
       epkgs.sql-indent
       epkgs.telephone-line
+      epkgs.tree-sitter
       epkgs.treesit-grammars.with-all-grammars
       epkgs.undo-tree
       epkgs.unkillable-scratch

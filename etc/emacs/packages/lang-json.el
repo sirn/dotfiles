@@ -7,6 +7,10 @@
 
 ;; Bulitin; tree-sitter
 (use-package json-ts-mode
+  :preface
+  (eval-when-compile
+    (declare-function apheleia-mode nil))
+
   :init
   (add-hook 'json-ts-mode-hook #'apheleia-mode)
   (add-hook 'json-ts-mode-hook #'flycheck-mode))

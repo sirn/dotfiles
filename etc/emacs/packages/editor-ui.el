@@ -69,12 +69,20 @@
 (use-package osx-trash
   :when (eq system-type 'darwin)
 
+  :preface
+  (eval-when-compile
+    (declare-function osx-trash-setup nil))
+
   :config
   (osx-trash-setup))
 
 
 (use-package pbcopy
   :when (eq system-type 'darwin)
+
+  :preface
+  (eval-when-compile
+    (declare-function pbcopy nil))
 
   :config
   (turn-on-pbcopy))

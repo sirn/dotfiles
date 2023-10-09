@@ -19,6 +19,10 @@
 
   :defer 1
 
+  :preface
+  (eval-when-compile
+    (declare-function evil-collection-init nil))
+
   :config
   (evil-collection-init))
 
@@ -27,6 +31,10 @@
   :after evil
 
   :defer 1
+
+  :preface
+  (eval-when-compile
+    (declare-function evil-commentary-mode nil))
 
   :config
   (evil-commentary-mode +1))
@@ -37,6 +45,10 @@
 
   :defer 1
 
+  :preface
+  (eval-when-compile
+    (declare-function global-evil-mc-mode nil))
+
   :config
   (global-evil-mc-mode +1))
 
@@ -46,6 +58,10 @@
 
   :defer 1
 
+  :preface
+  (eval-when-compile
+    (declare-function global-evil-matchit-mode nil))
+
   :config
   (global-evil-matchit-mode +1))
 
@@ -54,6 +70,10 @@
   :after evil
 
   :defer 1
+
+  :preface
+  (eval-when-compile
+    (declare-function global-evil-surround-mode nil))
 
   :config
   (global-evil-surround-mode +1))

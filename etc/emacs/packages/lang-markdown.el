@@ -1,6 +1,10 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package pandoc-mode
+  :preface
+  (eval-when-compile
+    (declare-function pandoc-mode nil))
+
   :init
   (add-hook 'rst-mode-hook #'pandoc-mode)
   (add-hook 'markdown-mode-hook #'pandoc-mode)
@@ -9,6 +13,10 @@
   :config
   (use-package apheleia
     :demand t
+
+    :preface
+    (eval-when-compile
+      (declare-function apheleia-mode nil))
 
     :config
     (add-to-list 'apheleia-formatters '(pandoc-gfm . ("pandoc" "-t" "gfm" "--wrap" "preserve")))

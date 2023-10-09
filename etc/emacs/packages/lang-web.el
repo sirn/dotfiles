@@ -27,6 +27,7 @@
   (eval-when-compile
     (declare-function gemacs--web-highlight-after-formatting nil)
     (declare-function gemacs--web-js-fix-comments nil)
+    (declare-function apheleia-mode nil)
     (defvar web-mode-fontification-off))
 
   :init

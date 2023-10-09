@@ -13,6 +13,10 @@
 (use-package typescript-ts-mode
   :preface
   (eval-when-compile
+    (declare-function apheleia-mode nil))
+
+  :preface
+  (eval-when-compile
     (declare-function lsp nil)
     (declare-function lsp-format-buffer nil)
     (declare-function lsp-organize-imports nil)

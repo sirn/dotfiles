@@ -1,11 +1,6 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package python
-  :init
-  (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode)))
-
-
-(use-package python-ts-mode
   :custom
   (python-fill-docstring-style 'django)
   (python-indent-guess-indent-offset-verbose nil)
@@ -19,6 +14,7 @@
     (defvar flycheck-python-pycompile-executable))
 
   :init
+  (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
   (dolist (name '("python" "python2" "python3"))
     (add-to-list 'safe-local-variable-values
                  `(flycheck-python-pycompile-executable . ,name)))

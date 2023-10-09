@@ -13,7 +13,8 @@
     (declare-function lsp-format-buffer nil)
     (declare-function lsp-organize-imports nil)
     (declare-function gemacs--go-auto-format nil)
-    (declare-function go--backward-irrelevant nil))
+    (declare-function go--backward-irrelevant nil)
+    (declare-function flycheck-golangci-lint-setup nil))
 
   :init
   (defun gemacs--go-auto-format ()

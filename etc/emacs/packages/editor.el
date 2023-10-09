@@ -121,7 +121,10 @@
 
   :preface
   (eval-when-compile
-    (declare-function gemacs--smartparens-load nil))
+    (declare-function gemacs--smartparens-load nil)
+    (declare-function sp-use-paredit-bindings nil)
+    (declare-function show-smartparens-global-mode nil)
+    (declare-function smartparens-global-mode nil))
 
   :init
   (defun gemacs--smartparens-load ()
@@ -152,6 +155,10 @@
 (use-package parinfer-rust-mode
   :diminish parinfer-rust-mode
 
+  :preface
+  (eval-when-compile
+    (declare-function parinfer-rust-mode nil))
+
   :custom
   (parinfer-rust-auto-download -1)
 
@@ -176,16 +183,28 @@
     nil)
 
   (use-package smartparens
+    :preface
+    (eval-when-compile
+      (declare-function turn-off-smartparens-mode nil))
+
     :config
     (add-hook 'parinfer-rust-mode-hook #'turn-off-smartparens-mode)))
 
 
 (use-package rainbow-delimiters
+  :preface
+  (eval-when-compile
+    (declare-function rainbow-delimiters-mode nil))
+
   :init
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
 
 (use-package rainbow-mode
+  :preface
+  (eval-when-compile
+    (declare-function rainbow-mode nil))
+
   :init
   (add-hook 'prog-mode-hook #'rainbow-mode))
 
@@ -194,6 +213,10 @@
 
 
 (use-package editorconfig
+  :preface
+  (eval-when-compile
+    (declare-function editorconfig-mode nil))
+
   :init
   (defun gemacs--editorconfig-load ()
     "Load `editorconfig' when initially finding a file."
@@ -208,6 +231,10 @@
 ;; Part of editorconfig
 (use-package editorconfig-core
   :demand t
+
+  :preface
+  (eval-when-compile
+    (declare-function dtrt-indent-mode nil))
 
   :init
   (defun gemacs--dtrt-maybe-enable ()
@@ -367,6 +394,10 @@
 (use-package corfu
   :demand t
 
+  :preface
+  (eval-when-compile
+    (declare-function global-corfu-mode nil))
+
   :custom
   (corfu-auto t)
 
@@ -415,6 +446,10 @@
 (use-package corfu-terminal
   :after corfu
 
+  :preface
+  (eval-when-compile
+    (declare-function corfu-terminal-mode nil))
+
   :init
   ;; No :demand, only load when running in terminal.
   (unless (display-graphic-p)
@@ -424,14 +459,7 @@
 ;; --------------------------------------------------------------------------
 ;;; Autoformatting
 
-(use-package apheleia
-  :init
-  (defun gemacs--save-buffer-reformat-maybe (func &optional arg)
-    "Make it so \\[save-buffer] with prefix arg inhibits reformatting."
-    (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
-      (funcall func)))
-
-  (advice-add 'save-buffer :around #'gemacs--save-buffer-reformat-maybe))
+(use-package apheleia)
 
 
 ;; --------------------------------------------------------------------------

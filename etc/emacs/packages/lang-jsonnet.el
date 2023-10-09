@@ -4,6 +4,10 @@
   :init
   (add-hook 'jsonnet-mode-hook #'apheleia-mode)
 
+  :preface
+  (eval-when-compile
+    (declare-function apheleia-mode nil))
+
   :config
   (use-package apheleia
     :demand t

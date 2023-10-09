@@ -168,19 +168,22 @@ This is an `:around' advice for many different functions."
 
 ;; SQLite3 is a shared module and must be loaded early.
 
-(use-package sqlite3)
+(use-package sqlite3
+  :demand t)
 
 ;; Key bindings are handled by general.el, which replaces both bind-key
 ;; and evil-leader; this is loaded early to allow use-package macro
 ;; to work correctly.
 
-(use-package general)
+(eval-when-compile
+  (use-package general
+    :demand t)
 
-(general-create-definer leader
-    :keymaps 'override
-    :states '(normal visual motion insert)
-    :prefix "SPC"
-    :non-normal-prefix "M-SPC")
+  (general-create-definer leader
+      :keymaps 'override
+      :states '(normal visual motion insert)
+      :prefix "SPC"
+      :non-normal-prefix "M-SPC"))
 
 
 ;; --------------------------------------------------------------------------

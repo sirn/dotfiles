@@ -6,6 +6,10 @@
 
 
 (use-package c-ts-mode
+  :preface
+  (eval-when-compile
+    (declare-function apheleia-mode nil))
+
   :init
   (add-hook 'c-ts-mode-hook #'apheleia-mode)
   (add-hook 'c-ts-mode-hook #'flycheck-mode))

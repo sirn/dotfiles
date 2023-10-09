@@ -3,7 +3,8 @@
 (use-package nim-mode
   :preface
   (eval-when-compile
-    (declare-function lsp nil)
+    (declare-function lsp-deferred nil)
+    (declare-function apheleia-mode nil)
     (declare-function smie-default-forward-token nil))
 
   :init
