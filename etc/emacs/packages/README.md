@@ -36,9 +36,21 @@ Use the following order for `use-package` and always leave a single line between
 ``` elisp
 (use-package markdown-mode
   :init
-  (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))
   (add-hook 'markdown-mode-hook #'apheleia-mode))
+```
+
+Any adjustments to `apheleia`'s variables should be done via `use-feature`:
+
+``` elisp
+(use-package markdown-mode
+  :init
+  (add-hook 'markdown-mode-hook #'apheleia-mode)
+
+  :config
+  (use-feature apheleia
+    :config
+    (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier))
+    (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))))
 ```
 
 ## lsp-mode
@@ -67,7 +79,7 @@ Use the following order for `use-package` and always leave a single line between
 
 ## tree-sitter
 
-`tree-sitter` is explicitly enabled and move hooks into the relevant `-ts-mode`:
+`tree-sitter` is explicitly enabled and hooks are to be moved into the relevant `-ts-mode`:
 
 ``` elisp
 (use-package typescript-mode

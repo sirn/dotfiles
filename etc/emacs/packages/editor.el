@@ -493,6 +493,19 @@ area."
 
 
 ;; --------------------------------------------------------------------------
+;;; Snippets
+
+(use-package yasnippet
+  :defer 2
+
+  :preface
+  (eval-when-compile
+    (declare-function yas-global-mode nil))
+
+  :config
+  (yas-global-mode +1))
+
+;; --------------------------------------------------------------------------
 ;;; Language Server Protocol
 
 
