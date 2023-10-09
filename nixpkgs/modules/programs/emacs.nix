@@ -140,6 +140,14 @@ in
     ".emacs.d/var/parinfer-rust" = {
       source = "${pkgs.parinfer-rust}";
     };
+    ".local/bin/emacsc" = {
+      executable = true;
+      text = ''
+        #!${pkgs.bash}/bin/bash
+        # Run Emacs Client on console
+        exec ${config.programs.emacs.finalPackage}/bin/emacsclient -t -a "" "$@"
+      '';
+    };
     ".local/bin/magit" = {
       executable = true;
       text = ''
