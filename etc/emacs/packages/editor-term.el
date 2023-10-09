@@ -27,6 +27,9 @@
   (leader
     "'v" #'vterm)
 
+  :custom
+  (vterm-shell "zsh")
+
   :config
   (add-hook 'vterm-mode-hook #'gemacs--term-setup))
 

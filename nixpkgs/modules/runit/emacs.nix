@@ -13,12 +13,14 @@ in
         export HOME ${homeDirectory}
 
         backtick -n -E uid { id -u }
+        backtick -n -E user { id -un }
         define xdg-runtime-dir /run/user/''${uid}
         backtick -n -E shell {
             redirfd -r 0 /etc/passwd
-            awk "BEGIN { FS=\":\" } /^${username}:/ { print $7 }"
+            awk "BEGIN { FS=\":\" } /^''${user}:/ { print $7 }"
         }
 
+        export USER ''${user}
         export SHELL ''${shell}
         export XDG_RUNTIME_DIR ''${xdg-runtime-dir}
         export SSH_AUTH_SOCK ''${xdg-runtime-dir}/gnupg/S.gpg-agent.ssh
