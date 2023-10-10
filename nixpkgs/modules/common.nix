@@ -16,6 +16,7 @@
     ./programs/fzf.nix
     ./programs/git.nix
     ./programs/gpg.nix
+    ./programs/magit.nix
     ./programs/mercurial.nix
     ./programs/mosh.nix
     ./programs/neovim.nix

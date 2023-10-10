@@ -15,6 +15,7 @@ in
     ../home/runit.nix
 
     # programs
+    ../programs/emacsc.nix
     ../programs/foot.nix
     ../programs/fuzzel.nix
     ../programs/intellij.nix

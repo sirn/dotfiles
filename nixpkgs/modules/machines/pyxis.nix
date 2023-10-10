@@ -10,6 +10,7 @@
 
     # programs
     ../programs/amethyst.nix
+    ../programs/emacsc.nix
     ../programs/intellij.nix
     ../programs/mpv.nix
 

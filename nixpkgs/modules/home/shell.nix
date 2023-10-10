@@ -8,7 +8,6 @@ let
 in
 {
   home.sessionVariables = {
-    EDITOR = "emacs";
     VISUAL = "emacs";
 
     # Unless this is set in .profile, Go will loiter go/ in home directory.
