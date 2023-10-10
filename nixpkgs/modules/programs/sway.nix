@@ -7,9 +7,9 @@ let
 in
 {
   imports = [
-    ../programs/foot.nix
-    ../programs/fuzzel.nix
-    ../programs/waybar.nix
+    ./foot.nix
+    ./fuzzel.nix
+    ./waybar.nix
   ];
 
   wayland.windowManager.sway = {

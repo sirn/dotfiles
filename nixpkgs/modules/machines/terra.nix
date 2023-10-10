@@ -13,11 +13,11 @@ in
     ../home/flatpak.nix
     ../home/fonts.nix
     ../home/runit.nix
-    ../home/sway.nix
 
     # programs
     ../programs/intellij.nix
     ../programs/mpv.nix
+    ../programs/sway.nix
 
     # services
     ../runit/emacs.nix
