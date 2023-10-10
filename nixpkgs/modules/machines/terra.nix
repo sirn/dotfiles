@@ -15,9 +15,12 @@ in
     ../home/runit.nix
 
     # programs
+    ../programs/foot.nix
+    ../programs/fuzzel.nix
     ../programs/intellij.nix
     ../programs/mpv.nix
     ../programs/sway.nix
+    ../programs/waybar.nix
 
     # services
     ../runit/emacs.nix

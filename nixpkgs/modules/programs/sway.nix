@@ -6,12 +6,6 @@ let
   inherit (config.home) homeDirectory;
 in
 {
-  imports = [
-    ./foot.nix
-    ./fuzzel.nix
-    ./waybar.nix
-  ];
-
   wayland.windowManager.sway = {
     enable = true;
     xwayland = true;
