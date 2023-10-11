@@ -20,20 +20,18 @@
   (eval-when-compile
     (declare-function gemacs--project-try-local nil)
     (declare-function gemacs--project-ag nil)
-    (declare-function gemacs--project-sync nil))
+    (declare-function gemacs--project-sync nil)
+    (declare-function consult-project-buffer nil)
+    (declare-function multi-vterm-project nil))
 
   :config
-  (use-package consult
-    :general
-    ("C-x p b" #'consult-project-buffer)
+  (general-with-eval-after-load 'general
+    (with-eval-after-load 'consult
+      (general-define-key "C-x p b" #'consult-project-buffer)
+      (leader "pb" #'consult-project-buffer))
 
-    (leader
-      "pb" #'consult-project-buffer))
-
-  (use-package multi-vterm
-    :general
-    (leader
-      "p'" #'multi-vterm-project))
+    (with-eval-after-load 'multi-vterm
+      (leader "p'" #'multi-vterm-project)))
 
   ;; For custom projects without requiring .git
   ;; https://christiantietze.de/posts/2022/03/mark-local-project.el-directories/

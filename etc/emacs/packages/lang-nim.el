@@ -27,9 +27,6 @@
               (setq tok ";"))
           tok))))
 
-  (use-package apheleia
-    :demand t
-
-    :config
+  (with-eval-after-load 'apheleia
     (add-to-list 'apheleia-formatters '(nimpretty . ("nimpretty" "--out:/dev/stdout" filepath)))
     (add-to-list 'apheleia-mode-alist '(nim-mode . nimpretty))))

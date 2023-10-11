@@ -3,7 +3,8 @@
 (use-package pandoc-mode
   :preface
   (eval-when-compile
-    (declare-function pandoc-mode nil))
+    (declare-function pandoc-mode nil)
+    (declare-function apheleia-mode nil))
 
   :init
   (add-hook 'rst-mode-hook #'pandoc-mode)
@@ -11,14 +12,7 @@
   (add-hook 'pandoc-mode-hook #'apheleia-mode)
 
   :config
-  (use-package apheleia
-    :demand t
-
-    :preface
-    (eval-when-compile
-      (declare-function apheleia-mode nil))
-
-    :config
+  (with-eval-after-load 'apheleia
     (add-to-list 'apheleia-formatters '(pandoc-gfm . ("pandoc" "-t" "gfm" "--wrap" "preserve")))
     (add-to-list 'apheleia-formatters '(pandoc-markdown . ("pandoc" "-t" "markdown" "--wrap" "preserve")))
     (add-to-list 'apheleia-formatters '(pandoc-rst . ("pandoc" "-t" "rst" "--wrap" "preserve")))

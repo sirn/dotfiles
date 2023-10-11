@@ -8,16 +8,13 @@
     (declare-function gemacs--makefile-disable-dtrt-indent nil))
 
   :config
-  (use-package editorconfig
-    :config
+  (with-eval-after-load 'editorconfig
     (defun gemacs--makefile-disable-editorconfig ()
       "Disable editorconfig-mode for Makefile."
       (editorconfig-mode -1))
-
     (add-hook 'makefile-mode-hook #'gemacs--makefile-disable-editorconfig))
 
-  (use-package dtrt-indent
-    :config
+  (with-eval-after-load 'dtrt-indent
     (defun gemacs--makefile-disable-dtrt-indent ()
       "Disable dtrt-indent-mode for Makefile."
       (dtrt-indent-mode -1))

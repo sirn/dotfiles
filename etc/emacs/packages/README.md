@@ -46,8 +46,7 @@ Any adjustments to `apheleia`'s variables should be done via `:config`:
   (add-hook 'markdown-mode-hook #'apheleia-mode)
 
   :config
-  (use-package apheleia
-    :config
+  (with-eval-after-load 'apheleia
     (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier))
     (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))))
 ```

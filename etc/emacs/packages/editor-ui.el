@@ -82,7 +82,7 @@
 
   :preface
   (eval-when-compile
-    (declare-function pbcopy nil))
+    (declare-function turn-on-pbcopy nil))
 
   :config
   (turn-on-pbcopy))
@@ -190,13 +190,13 @@
       (global-set-key (kbd "s-W") 'delete-frame)
       (global-set-key (kbd "s-n") 'make-frame))
 
-    (use-package osx-trash :demand t)
-    (use-package pbcopy :demand t))
+    (require 'osx-trash)
+    (require 'pbcopy))
 
   ;; Enable theme as late as is humanly possible. This reduces
   ;; frame flashing and other artifacts during startup.
 
   (add-hook 'gemacs-after-init-hook
     `(lambda ()
-       (use-package telephone-line :demand t)
-       (use-package modus-themes :demand t))))
+       (require 'telephone-line)
+       (require 'modus-themes))))

@@ -2,14 +2,16 @@
 
 (use-package restclient
   :config
-  (use-package jq-mode
-    :demand t))
+  (require 'jq-mode))
 
 
 (use-package ob-restclient
+  :preface
+  (eval-when-compile
+    (defvar org-babel-load-languages))
+
   :init
-  (use-package org
-    :config
+  (with-eval-after-load 'org
     (org-babel-do-load-languages
       'org-label-load-languages
       (append org-babel-load-languages

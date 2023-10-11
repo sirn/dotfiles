@@ -12,20 +12,18 @@
 
   :init
   ;; magit binds project-status a bit too late; we're doing this by ourselves.
-  (use-package project
-    :config
+  (with-eval-after-load 'project
     (general-with-eval-after-load 'general
       (general-define-key :keymaps 'project-prefix-map "m" #'magit-project-status)
       (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)))
 
   :config
-  (use-package pinentry
-    :config
+  (with-eval-after-load 'pinentry
     (dolist (func '(magit-start-git magit-call-git))
       (advice-add func :after #'gemacs--gpg-update-tty)))
 
   ;; Deferred loading
-  (use-package forge :demand t))
+  (require 'forge))
 
 
 (use-package git-commit
@@ -51,12 +49,9 @@
   (setq forge-add-default-bindings nil)
 
   :config
-  (use-package ghub
-    :custom
+  (with-eval-after-load 'ghub
     ;; BUG: https://github.com/magit/ghub/issues/81
-    (ghub-use-workaround-for-emacs-bug 'force))
-
-  (use-package emacsql-sqlite))
+    (setq ghub-use-workaround-for-emacs-bug 'force)))
 
 
 (use-package git-gutter

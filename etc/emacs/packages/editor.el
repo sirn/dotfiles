@@ -102,8 +102,7 @@
    "C-c q" #'vr/query-replace)
 
   :config
-  (use-package visual-regexp-steroids
-    :demand t))
+  (require 'visual-regexp-steroids))
 
 
 (use-package visual-regexp-steroids)
@@ -128,7 +127,7 @@
 
   :init
   (defun gemacs--smartparens-load ()
-    (use-package smartparens-config :demand t)
+    (require 'smartparens-config)
     (smartparens-global-mode +1)
     (show-smartparens-global-mode +1)
     (sp-use-paredit-bindings))
@@ -157,7 +156,8 @@
 
   :preface
   (eval-when-compile
-    (declare-function parinfer-rust-mode nil))
+    (declare-function parinfer-rust-mode nil)
+    (declare-function turn-off-smartparens-mode nil))
 
   :custom
   (parinfer-rust-auto-download -1)
@@ -182,12 +182,7 @@
   (defun parinfer-rust--check-version (_a _b _c _d)
     nil)
 
-  (use-package smartparens
-    :preface
-    (eval-when-compile
-      (declare-function turn-off-smartparens-mode nil))
-
-    :config
+  (with-eval-after-load 'smartparens
     (add-hook 'parinfer-rust-mode-hook #'turn-off-smartparens-mode)))
 
 
@@ -281,9 +276,8 @@
   :config
   (prescient-persist-mode +1)
 
-  (use-package emacs
-    :custom
-    (completion-styles '(prescient basic))))
+  (with-eval-after-load 'emacs
+    (setq completion-styles '(prescient basic))))
 
 
 (use-package marginalia
@@ -347,8 +341,7 @@
     "/g"  #'consult-grep)
 
   :init
-  (use-package project
-    :config
+  (with-eval-after-load 'project
     (general-with-eval-after-load 'general
       (general-define-key :keymaps 'project-prefix-map
         "g" #'consult-grep
@@ -404,10 +397,9 @@
   :init
   (global-corfu-mode +1)
 
-  (use-package emacs
-    :custom
-    (completion-cycle-threshold 3)
-    (tab-always-indent 'complete)))
+  (with-eval-after-load 'emacs
+    (setq completion-cycle-threshold 3)
+    (setq tab-always-indent 'complete)))
 
 
 ;; Part of corfu
@@ -507,23 +499,22 @@ nor requires Flycheck to be loaded."
 (use-package eldoc
   :demand t
 
+  :preface
+  (eval-when-compile
+    (declare-function gemacs--advice-disable-eldoc-on-flycheck nil))
+
   :custom
   (eldoc-echo-area-use-multiline-p nil)
 
   :config
-  (use-package flycheck
-    :preface
-    (eval-when-compile
-      (declare-function gemacs--advice-disable-eldoc-on-flycheck nil))
-
-    :config
-    (defun gemacs--advice-disable-eldoc-on-flycheck
-      (&rest _)
-      "Disable ElDoc when point is on a Flycheck overlay.
+  (defun gemacs--advice-disable-eldoc-on-flycheck
+    (&rest _)
+    "Disable ElDoc when point is on a Flycheck overlay.
 This prevents ElDoc and Flycheck from fighting over the echo
 area."
-      (not (flycheck-overlay-errors-at (point))))
+    (not (flycheck-overlay-errors-at (point))))
 
+  (with-eval-after-load 'flycheck
     (advice-add 'eldoc-display-message-no-interference-p :after-while
       #'gemacs--advice-disable-eldoc-on-flycheck)))
 
@@ -604,7 +595,8 @@ functions."
   (eval-when-compile
     (declare-function lsp-ui-sideline-apply-code-actions nil)
     (declare-function gemacs--advice-lsp-ui-apply-single-fix nil)
-    (defvar lsp-ui-sideline-show-hover))
+    (defvar lsp-ui-sideline-show-hover)
+    (defvar lsp-eldoc-enable-hover))
 
   :custom
   (lsp-ui-sideline-show-hover nil)
@@ -622,12 +614,7 @@ functions."
   (advice-add 'lsp-ui-sideline-apply-code-actions :around
     #'gemacs--advice-lsp-ui-apply-single-fix)
 
-  (use-package lsp-mode
-    :preface
-    (eval-when-compile
-      (defvar lsp-eldoc-enable-hover))
-
-    :init
+  (with-eval-after-load 'lsp-mode
     (setq lsp-eldoc-enable-hover nil)))
 
 

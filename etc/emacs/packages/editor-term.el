@@ -35,13 +35,16 @@
 
 
 (use-package multi-vterm
+  :preface
+  (eval-when-compile
+    (declare-function multi-vterm-project nil))
+
   :general
   (leader
     "''" #'multi-vterm)
 
   :init
-  (use-package project
-    :config
+  (with-eval-after-load 'project
     (general-with-eval-after-load 'general
       (general-define-key :keymaps 'project-prefix-map "'" #'multi-vterm-project)
       (add-to-list 'project-switch-commands '(multi-vterm-project "VTerm") t))))

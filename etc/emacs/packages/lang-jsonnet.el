@@ -9,10 +9,7 @@
     (declare-function apheleia-mode nil))
 
   :config
-  (use-package apheleia
-    :demand t
-
-    :config
+  (with-eval-after-load 'apheleia
     (add-to-list 'apheleia-formatters
      '(jsonnetfmt . ("jsonnetfmt"
                       "--indent" "2"
