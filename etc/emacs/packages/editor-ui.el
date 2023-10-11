@@ -88,6 +88,21 @@
   (turn-on-pbcopy))
 
 
+(use-package posframe
+  :demand t
+
+  :preface
+  (eval-when-compile
+    (declare-function flycheck-posframe-mode nil)
+    (declare-function flycheck-posframe-configure-pretty-defaults nil))
+
+  :config
+  (with-eval-after-load 'flycheck
+    (require 'flycheck-posframe)
+    (flycheck-posframe-configure-pretty-defaults)
+    (add-hook 'flycheck-mode-hook #'flycheck-posframe-mode)))
+
+
 ;; Builtin
 (use-package emacs
   :preface

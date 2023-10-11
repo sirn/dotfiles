@@ -496,6 +496,9 @@ nor requires Flycheck to be loaded."
   (setq flycheck-display-errors-delay 0.2))
 
 
+(use-package flycheck-posframe)
+
+
 (use-package eldoc
   :demand t
 

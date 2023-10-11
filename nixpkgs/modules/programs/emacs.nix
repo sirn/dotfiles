@@ -48,6 +48,7 @@ in
       epkgs.evil-surround
       epkgs.flycheck
       epkgs.flycheck-golangci-lint
+      epkgs.flycheck-posframe
       epkgs.forge
       epkgs.ghub
       epkgs.git-commit
@@ -62,6 +63,7 @@ in
       epkgs.parinfer-rust-mode
       epkgs.password-store
       epkgs.pinentry
+      epkgs.posframe
       epkgs.prescient
       epkgs.project
       epkgs.psc-ide
