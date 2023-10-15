@@ -3,7 +3,7 @@
 let
   inherit (lib)
     attrNames concatStringsSep generators isList listToAttrs mapAttrsToList
-    mkIf mkOption nameValuePair types;
+    mkIf mkMerge mkOption nameValuePair types;
 
   overrideModule = types.submodule {
     options = {
@@ -12,6 +12,22 @@ let
         default = [ ];
         description = ''
           List of filesystem paths to allow in an application.
+        '';
+      };
+
+      sockets = mkOption {
+        type = with types; listOf str;
+        default = [ ];
+        description = ''
+          List of extra sockets to allow in an application.
+        '';
+      };
+
+      talk-names = mkOption {
+        type = with types; listOf str;
+        default = [ ];
+        description = ''
+          List of talk names to allow in an application.
         '';
       };
 
@@ -59,12 +75,15 @@ let
   };
 
   renderOverrideContextSection = v:
-    if v.filesystems != [ ]
-    then [
-      (nameValuePair "Context" {
-        filesystems = v.filesystems;
-      })
-    ]
+    let
+      contextAttrs = (listToAttrs ([ ] ++
+        (if v.filesystems != [ ] then [ (nameValuePair "filesystems" v.filesystems) ] else [ ]) ++
+        (if v.sockets != [ ] then [ (nameValuePair "sockets" v.sockets) ] else [ ]) ++
+        (if v.talk-names != [ ] then [ (nameValuePair "talk-names" v.talk-names) ] else [ ])
+      ));
+    in
+    if contextAttrs != { }
+    then [ (nameValuePair "Context" contextAttrs) ]
     else [ ];
 
   renderOverrideEnvironmentSection = v:
@@ -131,7 +150,7 @@ in
 
           echo "Flatpak applications are not managed by Home Manager."
           echo "The following applications should be installed manually:"
-          for appid in $appids; do
+          for appid in ''${appids[@]}; do
             echo "  $appid"
           done
         }
