@@ -14,6 +14,7 @@
     ../programs/foot.nix
     ../programs/fuzzel.nix
     ../programs/intellij.nix
+    ../programs/kanshi.nix
     ../programs/looking-glass-client.nix
     ../programs/mpv.nix
     ../programs/sway.nix
@@ -25,14 +26,4 @@
     ../runit/syncthing.nix
     ../runit/xlocate.nix
   ];
-
-  wayland.windowManager.sway = {
-    config = {
-      output = {
-        "*" = {
-          scale = "1.5";
-        };
-      };
-    };
-  };
 }

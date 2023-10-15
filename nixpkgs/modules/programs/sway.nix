@@ -242,6 +242,7 @@ in
             { command = "gsettings set ${schema} monospace-font-name \"Hack 10\""; always = true; }
 
             { command = "pipewire"; }
+            { command = "${pkgs.kanshi}/bin/kanshi"; }
             { command = "${pkgs.wl-clipboard}/bin/wl-paste -pw ${pkgs.wl-clipboard}/wl-copy"; }
             { command = "fcitx5 -r"; }
             { command = "${pkgs.mako}/bin/mako"; }

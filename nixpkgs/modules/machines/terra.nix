@@ -19,6 +19,7 @@ in
     ../programs/foot.nix
     ../programs/fuzzel.nix
     ../programs/intellij.nix
+    ../programs/kanshi.nix
     ../programs/mpv.nix
     ../programs/sway.nix
     ../programs/waybar.nix
@@ -35,7 +36,6 @@ in
       output = {
         "*" = {
           bg = "${homeDirectory}/Pictures/Wallpapers/Manifest/Moonrise.jpg fill";
-          scale = "1.7";
         };
       };
     };
