@@ -12,21 +12,23 @@
         lg_27uk650_w = "LG Electronics LG HDR 4K 0x00006393";
       in
       {
+        # Note: position must also take scale into account
+        # e.g. 3840x2160 at 1.5x scale should use 3840/1.5 = 2560 for x position
         text = ''
           profile main_dual {
-            output "${apple_pro_xdr_display}" position 2194,0 scale 2
-            output "${lg_27uk650_w}" position 0,0 scale 1.5
+            output "${lg_27uk650_w}" mode 3840x2160 position 0,0 scale 1.5
+            output "${apple_pro_xdr_display}" mode 6016x3384 position 2560,0 scale 2
             exec swaymsg workspace 1, move workspace to output '"${apple_pro_xdr_display}"'
             exec swaymsg workspace 10, move workspace to output '"${lg_27uk650_w}"'
           }
 
           profile main_single_lg {
-            output "${lg_27uk650_w}" position 0,0 scale 1.5
+            output "${lg_27uk650_w}" mode 3840x2160 position 0,0 scale 1.5
             exec swaymsg workspace 1, move workspace to output '"${lg_27uk650_w}"'
           }
 
           profile main_single_xdr {
-            output "${apple_pro_xdr_display}" position 0,0 scale 2
+            output "${apple_pro_xdr_display}" mode 6016x3384 position 0,0 scale 2
             exec swaymsg workspace 1, move workspace to output '"${apple_pro_xdr_display}"'
           }
         '';
