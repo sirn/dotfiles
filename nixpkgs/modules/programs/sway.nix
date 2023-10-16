@@ -218,35 +218,103 @@ in
           }
         ];
 
-        startup =
-          let
-            schema = "org.gnome.desktop.interface";
-          in
+        startup = let
+          pipewireBin =
+            if config.machine.nixos.enable
+            then "${pkgs.pipewire}/bin/pipewire"
+            else "pipewire";
+
+          fcitxBin =
+            if config.machine.nixos.enable
+            then "${pkgs.fcitx5}/bin/fcitx5"
+            else "fcitx5";
+
+        startXdgPortal = let
+          xdgDesktopPortalBin = 
+            if config.machine.nixos.enable
+            then "${pkgs.xdg-desktop-portal}/libexec/xdg-desktop-portal"
+            else "/usr/libexec/xdg-desktop-portal";
+
+          xdgDesktopPortalWlrBin = 
+            if config.machine.nixos.enable
+            then "${pkgs.xdg-desktop-portal-wlr}/libexec/xdg-desktop-portal-wlr"
+            else "/usr/libexec/xdg-desktop-portal-wlr";
+
+          xdgDesktopPortalGtkBin = 
+            if config.machine.nixos.enable
+            then "${pkgs.xdg-desktop-portal-gtk}/libexec/xdg-desktop-portal-gtk"
+            else "/usr/libexec/xdg-desktop-portal-gtk";
+        in
+          pkgs.writeScriptBin "start-xdg-portals" ''
+            #!${pkgs.bash}/bin/bash
+            pkill -Af xdg-desktop-portal
+
+            run_and_disown() {
+                "$@" &
+                sleep 0.5
+                disown
+            }
+
+            run_and_disown ${xdgDesktopPortalWlrBin}
+            run_and_disown ${xdgDesktopPortalGtkBin}
+            run_and_disown ${xdgDesktopPortalBin} -vr
+          '';
+
+        startKanshi = pkgs.writeScriptBin "start-kanshi" ''
+          #!${pkgs.bash}/bin/bash
+          pkill -Af kanshi
+
+          run_and_disown() {
+              "$@" &
+              sleep 0.5
+              disown
+          }
+
+          run_and_disown ${pkgs.kanshi}/bin/kanshi
+        '';
+
+        setupGnomeAppearance = let
+          gsettingsBin =
+            if config.machine.nixos.enable
+            then "${pkgs.glib.bin}/bin/gsettings"
+            else "gsettings";
+        in
+          pkgs.writeScriptBin "setup-gnome-appearance" ''
+            #!${pkgs.bash}/bin/bash
+
+            gnome_set() {
+              ${gsettingsBin} set org.gnome.desktop.interface "$@"
+            }
+
+            gnome_set color-scheme prefer-dark
+            gnome_set cursor-size 24
+            gnome_set cursor-theme "breeze_cursors"
+            gnome_set document-font-name "Noto Sans 10"
+            gnome_set font-name "Noto Sans 10"
+            gnome_set gtk-theme "Breeze"
+            gnome_set icon-theme "Breeze"
+            gnome_set monospace-font-name "Hack 10"
+          '';
+        in
           [
             {
               command = ''
                 ${pkgs.swayidle}/bin/swayidle -w \
-                    timeout 300 '${swaylockBin} -f -i ${bg} -s ${bgMode}' \
-                    timeout 600 '${swaymsgBin} "output * dpms off"' \
-                    resume '${swaymsgBin} "output * dpms on"' \
-                    before-sleep '${swaylockBin} -f -i ${bg} -s ${bgMode}' &
+                  timeout 300 '${swaylockBin} -f -i ${bg} -s ${bgMode}' \
+                  timeout 600 '${swaymsgBin} "output * dpms off"' \
+                  resume '${swaymsgBin} "output * dpms on"' \
+                  before-sleep '${swaylockBin} -f -i ${bg} -s ${bgMode}' &
               '';
             }
 
-            { command = "gsettings set ${schema} document-font-name \"Noto Sans 10\""; always = true; }
-            { command = "gsettings set ${schema} font-name \"Noto Sans 10\""; always = true; }
-            { command = "gsettings set ${schema} icon-theme \"Breeze\""; always = true; }
-            { command = "gsettings set ${schema} gtk-theme \"Breeze\""; always = true; }
-            { command = "gsettings set ${schema} cursor-theme \"breeze_cursors\""; always = true; }
-            { command = "gsettings set ${schema} cursor-size 24"; always = true; }
-            { command = "gsettings set ${schema} monospace-font-name \"Hack 10\""; always = true; }
+            { command = "${setupGnomeAppearance}/bin/setup-gnome-appearance"; always = true; }
+            { command = "${startKanshi}/bin/start-kanshi"; always = true; }
 
-            { command = "pipewire"; }
-            { command = "${pkgs.kanshi}/bin/kanshi"; }
+            { command = "${pipewireBin}"; }
             { command = "${pkgs.wl-clipboard}/bin/wl-paste -pw ${pkgs.wl-clipboard}/wl-copy"; }
-            { command = "fcitx5 -r"; }
+            { command = "${fcitxBin} -r"; }
             { command = "${pkgs.mako}/bin/mako"; }
-            { command = "${homeDirectory}/.local/libexec/start-xdg-portals"; }
+            { command = "${startXdgPortal}/bin/start-xdg-portals"; }
           ];
 
         seat = {
@@ -325,24 +393,6 @@ in
           "org.freedesktop.impl.portal.Settings" = "gtk";
         };
       };
-    };
-
-    ".local/libexec/start-xdg-portals" = {
-      executable = true;
-      text = ''
-        #!${pkgs.bash}/bin/bash
-        pkill -f xdg-desktop-portal
-
-        run_and_disown() {
-            "$@" &
-            sleep 0.5
-            disown
-        }
-
-        run_and_disown /usr/libexec/xdg-desktop-portal-wlr
-        run_and_disown /usr/libexec/xdg-desktop-portal-gtk
-        run_and_disown /usr/libexec/xdg-desktop-portal -vr
-      '';
     };
   };
 
