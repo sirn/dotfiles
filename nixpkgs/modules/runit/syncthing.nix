@@ -15,7 +15,7 @@ in
         export XDG_DATA_HOME ${homeDirectory}/.local/share
 
         fdmove -c 2 1
-        ${pkgs.syncthing}/bin/syncthing serve --no-browser
+        ${pkgs.syncthing}/bin/syncthing serve --no-browser --no-upgrade
       '';
     };
   };

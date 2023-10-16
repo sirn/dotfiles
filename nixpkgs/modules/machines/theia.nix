@@ -15,7 +15,8 @@
     ../programs/mpv.nix
 
     # services
-    ../launchd/userenv.nix
     ../launchd/emacs.nix
+    ../launchd/syncthing.nix
+    ../launchd/userenv.nix
   ];
 }
