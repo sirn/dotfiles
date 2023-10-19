@@ -20,6 +20,8 @@ in
     };
 
     initExtra = ''
+      bindkey -e
+
       export SHELL=zsh
       export WORDCHARS="''${WORDCHARS/\//}"
 
