@@ -1,75 +1,39 @@
 { config, lib, pkgs, ... }:
 
 let
+  emacsPackage = pkgs.emacsPackagesFor pkgs.emacs;
+
+  emacsWithPackages = emacsPackage.emacsWithPackages (epkgs: with epkgs; [
+    evil
+    evil-collection
+    general
+    general
+    magit
+    modus-themes
+    no-littering
+    prescient
+    project
+    telephone-line
+    vertico
+    vertico-prescient
+
+    pkgs.git
+    pkgs.gitAndTools.git-lfs
+    pkgs.gitAndTools.git-crypt
+  ]);
+
   magitInit = pkgs.writeTextDir "share/emacs/site-lisp/magit-init.el" ''
-    ;; --------------------------------------------------------------------------
-    ;;; Early configurations
-
-    ;; Prevent package.el from modifying this file.
-
     (setq package-enable-at-startup nil)
-
-    ;; Disable byte-compilation warnings from native-compiled packages
-    ;; from being reported asynchronously into the UI.
-
     (setq native-comp-async-report-warnings-errors nil)
-
-    ;; Setup base emacs directory for standalone Magit
-
     (setq user-emacs-directory (format "~/.emacs.d/magit/%s/" emacs-version))
-
-    ;; Use dedicated custom.el file within Magit directory.
-
     (setq custom-file (concat user-emacs-directory "custom.el"))
 
-    ;; --------------------------------------------------------------------------
-    ;;; GnuTLS
-
-    (with-eval-after-load 'gnutls
-      (eval-when-compile
-        (require 'gnutls)
-        (defvar gnutls-trustfiles))
-
-      (setq gnutls-verify-error t)
-      (setq gnutls-min-prime-bits 3072)
-      (when (< emacs-major-version 27)
-        (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"))
-
-      (let ((cert "/usr/local/etc/libressl/cert.pem"))
-        (when (file-exists-p cert)
-          (add-to-list 'gnutls-trustfiles cert))))
-
-    ;; --------------------------------------------------------------------------
-    ;;; Package configurations
-
-    (eval-when-compile
-      (defvar use-package-always-defer)
-      (defvar use-package-always-ensure)
-      (defvar use-package-compute-statistics))
-
-    (setq use-package-always-defer t)
-    (setq use-package-always-ensure nil)
-    (setq use-package-compute-statistics nil)
-
-    (eval-when-compile
-      (require 'use-package)
-      (require 'el-patch))
-
-    ;; Key bindings are handled by general.el, which replaces both bind-key
-    ;; and evil-leader; this is loaded early to allow use-package macro
-    ;; to work correctly.
-
-    (use-package general
-      :demand t)
-
-    (general-create-definer leader
+    (require 'general)
+    (general-create-definer leader-def
       :keymaps 'override
       :states '(normal visual motion insert)
       :prefix "SPC"
       :non-normal-prefix "M-SPC")
-
-    ;; --------------------------------------------------------------------------
-    ;;; Saner defaults
 
     (setq make-backup-files nil)
     (setq auto-save-default nil)
@@ -78,127 +42,74 @@ let
     (setq initial-scratch-message nil)
     (defalias 'yes-or-no-p 'y-or-n-p)
 
-    ;; --------------------------------------------------------------------------
-    ;;; Magit
+    (require 'magit)
+    (leader-def "gs" #'magit-project-status)
+    (setq magit-no-message '("Turning on magit-auto-revert-mode..."))
+    (setq magit-bind-magit-project-status nil)
+    (setq magit-remote-set-if-missing t)
+    (defun setup-standalone-magit ()
+      (magit-project-status)
+      (delete-other-windows)
+      (with-eval-after-load 'evil
+        (evil-local-set-key 'normal "q" #'save-buffers-kill-emacs)))
+    (add-hook 'after-init-hook 'setup-standalone-magit)
 
-    (use-package magit
-      :general
-      (leader
-        "gs" #'magit-project-status)
+    (setq evil-want-integration t)
+    (setq evil-want-keybinding nil)
+    (require 'evil)
+    (require 'evil-collection)
+    (evil-collection-init 'magit)
+    (evil-mode +1)
 
-      :custom
-      (magit-no-message '("Turning on magit-auto-revert-mode..."))
-      (magit-bind-magit-project-status nil)
-      (magit-remote-set-if-missing t)
+    (require 'project)
+    (require 'vertico)
+    (vertico-mode +1)
 
-      :init
-      (defun setup-standalone-magit ()
-        (magit-project-status)
-        (delete-other-windows)
-        (evil-local-set-key 'normal "q" #'save-buffers-kill-emacs))
+    (require 'prescient)
+    (require 'vertico-prescient)
+    (setq prescient-history-length 1000)
+    (setq completion-styles '(prescient basic))
+    (prescient-persist-mode +1)
+    (vertico-prescient-mode +1)
 
-      (add-hook 'after-init-hook 'setup-standalone-magit))
+    (leader-def
+      "wo"  #'other-window
+      "wd"  #'delete-window
+      "wD"  #'delete-other-windows
+      "w-"  #'split-window-below
+      "w/"  #'split-window-right
+      "w="  #'balance-windows
+      "bd"  #'kill-buffer
+      "bD"  #'kill-buffer-and-window
+      "bb"  #'switch-to-buffer
+      "wbb" #'switch-to-buffer-other-window)
 
-    ;; --------------------------------------------------------------------------
-    ;;; Evil
+    (tool-bar-mode -1)
+    (menu-bar-mode -1)
 
-    (use-package evil
-      :demand t
-      :custom
-      (evil-want-integration t)
-      (evil-want-keybinding nil))
+    (require 'telephone-line)
+    (defun setup-modeline ()
+      (telephone-line-mode +1))
+    (add-hook 'after-init-hook 'setup-modeline)
 
-    (use-package evil-collection
-      :after evil
-      :demand t
-      :config
-      (evil-collection-init 'magit)
-      (evil-mode +1))
-
-    ;; --------------------------------------------------------------------------
-    ;;; Project
-
-    (use-package project
-      :demand t)
-
-    ;; --------------------------------------------------------------------------
-    ;;; Selection
-
-    (use-package vertico
-      :demand t
-      :config
-      (vertico-mode +1))
-
-    (use-package prescient
-      :demand t
-      :custom
-      (prescient-history-length 1000)
-      :config
-      (prescient-persist-mode +1)
-      (use-package emacs
-        :custom
-        (completion-styles '(prescient basic))))
-
-    (use-package vertico-prescient
-      :after (vertico prescient)
-      :demand t
-      :config
-      (vertico-prescient-mode +1))
-
-    ;; --------------------------------------------------------------------------
-    ;;; UI
-
-    (use-package emacs
-      :general
-      (leader
-        "wo"  #'other-window
-        "wd"  #'delete-window
-        "wD"  #'delete-other-windows
-        "w-"  #'split-window-below
-        "w/"  #'split-window-right
-        "w="  #'balance-windows
-        "bd"  #'kill-buffer
-        "bD"  #'kill-buffer-and-window
-        "bb"  #'switch-to-buffer
-        "wbb" #'switch-to-buffer-other-window)
-
-      :config
-      (tool-bar-mode -1)
-      (menu-bar-mode -1))
-
-    (use-package telephone-line
-      :demand t
-      :init
-      (defun setup-modeline ()
-        (telephone-line-mode +1))
-
-      (add-hook 'after-init-hook 'setup-modeline))
-
-    (use-package modus-themes
-      :demand t
-      :init
-      (defun setup-ui ()
-        (setq modus-themes-mode-line '(borderless))
-        (load-theme 'modus-vivendi t))
-
-      (add-hook 'after-init-hook 'setup-ui))
-
-    ;; --------------------------------------------------------------------------
-    ;;; Finalizing
+    (require 'modus-themes)
+    (defun setup-ui ()
+      (setq modus-themes-mode-line '(borderless))
+      (load-theme 'modus-vivendi t))
+    (add-hook 'after-init-hook 'setup-ui)
 
     (run-hooks 'after-init-hook)
   '';
 
-  magit = pkgs.writeScriptBin "magit" ''
+  magitWrapped = pkgs.writeScriptBin "magit" ''
     #!${pkgs.bash}/bin/bash
-    # Runs Magit in a standalone mode
     if [ "$(git rev-parse --is-inside-work-tree)" = "true" ]; then
-        exec emacs -q --no-splash -nw \
-            -l "${config.programs.emacs.finalPackage.deps}/share/emacs/site-lisp/site-start.el" \
+        exec ${emacsWithPackages}/bin/emacs -q --no-splash -nw \
+            -l "${emacsWithPackages.deps}/share/emacs/site-lisp/site-start.el" \
             -l "${magitInit}/share/emacs/site-lisp/magit-init.el"
     fi
   '';
 in
 {
-  home.packages = [ magit ];
+  home.packages = [ magitWrapped ];
 }
