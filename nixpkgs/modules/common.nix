@@ -16,6 +16,7 @@
     ./programs/fzf.nix
     ./programs/git.nix
     ./programs/gpg.nix
+    ./programs/htop.nix
     ./programs/magit.nix
     ./programs/mercurial.nix
     ./programs/mosh.nix
@@ -24,6 +25,7 @@
     ./programs/password-store.nix
     ./programs/ripgrep.nix
     ./programs/rsync.nix
+    ./programs/s-tui.nix
     ./programs/tmux.nix
     ./programs/unison.nix
     ./programs/zsh.nix
