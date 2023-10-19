@@ -1,5 +1,3 @@
-{ config, pkgs, ... }:
-
 {
   imports = [
     ./home/email.nix
@@ -25,7 +23,6 @@
     ./programs/password-store.nix
     ./programs/ripgrep.nix
     ./programs/rsync.nix
-    ./programs/s-tui.nix
     ./programs/tmux.nix
     ./programs/unison.nix
     ./programs/zsh.nix

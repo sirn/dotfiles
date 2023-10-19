@@ -21,6 +21,7 @@ in
     ../programs/intellij.nix
     ../programs/mpv.nix
     ../programs/obsidian.nix
+    ../programs/s-tui.nix
     ../programs/thunderbird.nix
 
     # services
