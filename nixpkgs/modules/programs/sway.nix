@@ -315,6 +315,13 @@ in
               fi
             '';
 
+            startSwayidleUnlock = pkgs.writeScriptBin "start-swayidle-unlock" ''
+              #!${pkgs.bash}/bin/bash
+              if [ -f "$HOME"/.config/swayidle/hook.sh ]; then
+                "$HOME"/.config/swayidle/hook.sh unlock
+              fi
+            '';
+
             startSwayidleResume = pkgs.writeScriptBin "start-swayidle-resume" ''
               #!${pkgs.bash}/bin/bash
               ${swaymsgBin} "output * dpms on"
@@ -337,6 +344,7 @@ in
                 timeout 300 '${startSwayidleLock}/bin/start-swayidle-lock' \
                 timeout 600 '${startSwayidleOff}/bin/start-swayidle-off' \
                 resume '${startSwayidleResume}/bin/start-swayidle-resume' \
+                unlock '${startSwayidleUnlock}/bin/start-swayidle-unlock' \
                 before-sleep '${startSwayidleLock}/bin/start-swayidle-lock'
             '';
           in
