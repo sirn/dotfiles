@@ -218,84 +218,88 @@ in
           }
         ];
 
-        startup = let
-          pipewireBin =
-            if config.machine.nixos.enable
-            then "${pkgs.pipewire}/bin/pipewire"
-            else "pipewire";
+        startup =
+          let
+            pipewireBin =
+              if config.machine.nixos.enable
+              then "${pkgs.pipewire}/bin/pipewire"
+              else "pipewire";
 
-          fcitxBin =
-            if config.machine.nixos.enable
-            then "${pkgs.fcitx5}/bin/fcitx5"
-            else "fcitx5";
+            fcitxBin =
+              if config.machine.nixos.enable
+              then "${pkgs.fcitx5}/bin/fcitx5"
+              else "fcitx5";
 
-        startXdgPortal = let
-          xdgDesktopPortalBin = 
-            if config.machine.nixos.enable
-            then "${pkgs.xdg-desktop-portal}/libexec/xdg-desktop-portal"
-            else "/usr/libexec/xdg-desktop-portal";
+            startXdgPortal =
+              let
+                xdgDesktopPortalBin =
+                  if config.machine.nixos.enable
+                  then "${pkgs.xdg-desktop-portal}/libexec/xdg-desktop-portal"
+                  else "/usr/libexec/xdg-desktop-portal";
 
-          xdgDesktopPortalWlrBin = 
-            if config.machine.nixos.enable
-            then "${pkgs.xdg-desktop-portal-wlr}/libexec/xdg-desktop-portal-wlr"
-            else "/usr/libexec/xdg-desktop-portal-wlr";
+                xdgDesktopPortalWlrBin =
+                  if config.machine.nixos.enable
+                  then "${pkgs.xdg-desktop-portal-wlr}/libexec/xdg-desktop-portal-wlr"
+                  else "/usr/libexec/xdg-desktop-portal-wlr";
 
-          xdgDesktopPortalGtkBin = 
-            if config.machine.nixos.enable
-            then "${pkgs.xdg-desktop-portal-gtk}/libexec/xdg-desktop-portal-gtk"
-            else "/usr/libexec/xdg-desktop-portal-gtk";
-        in
-          pkgs.writeScriptBin "start-xdg-portals" ''
-            #!${pkgs.bash}/bin/bash
-            pkill -Af xdg-desktop-portal
+                xdgDesktopPortalGtkBin =
+                  if config.machine.nixos.enable
+                  then "${pkgs.xdg-desktop-portal-gtk}/libexec/xdg-desktop-portal-gtk"
+                  else "/usr/libexec/xdg-desktop-portal-gtk";
+              in
+              pkgs.writeScriptBin "start-xdg-portals" ''
+                #!${pkgs.bash}/bin/bash
+                pkill -Af xdg-desktop-portal
 
-            run_and_disown() {
-                "$@" &
-                sleep 0.5
-                disown
-            }
+                run_and_disown() {
+                    "$@" &
+                    sleep 0.5
+                    disown
+                }
 
-            run_and_disown ${xdgDesktopPortalWlrBin}
-            run_and_disown ${xdgDesktopPortalGtkBin}
-            run_and_disown ${xdgDesktopPortalBin} -vr
-          '';
+                run_and_disown ${xdgDesktopPortalWlrBin}
+                run_and_disown ${xdgDesktopPortalGtkBin}
+                run_and_disown ${xdgDesktopPortalBin} -vr
+              '';
 
-        startKanshi = pkgs.writeScriptBin "start-kanshi" ''
-          #!${pkgs.bash}/bin/bash
-          pkill -Af kanshi
+            startKanshi = pkgs.writeScriptBin "start-kanshi" ''
+              #!${pkgs.bash}/bin/bash
+              pkill -Af kanshi
 
-          run_and_disown() {
-              "$@" &
-              sleep 0.5
-              disown
-          }
+              run_and_disown() {
+                  "$@" &
+                  sleep 0.5
+                  disown
+              }
 
-          run_and_disown ${pkgs.kanshi}/bin/kanshi
-        '';
+              run_and_disown ${pkgs.kanshi}/bin/kanshi
+            '';
 
-        setupGnomeAppearance = let
-          gsettingsBin =
-            if config.machine.nixos.enable
-            then "${pkgs.glib.bin}/bin/gsettings"
-            else "gsettings";
-        in
-          pkgs.writeScriptBin "setup-gnome-appearance" ''
-            #!${pkgs.bash}/bin/bash
+            setupGnomeAppearance =
+              let
+                gsettingsBin =
+                  if config.machine.nixos.enable
+                  then "${pkgs.glib.bin}/bin/gsettings"
+                  else "gsettings";
+              in
+              pkgs.writeScriptBin "setup-gnome-appearance" ''
+                #!${pkgs.bash}/bin/bash
 
-            gnome_set() {
-              ${gsettingsBin} set org.gnome.desktop.interface "$@"
-            }
+                gnome_set() {
+                  ${gsettingsBin} set org.gnome.desktop.interface "$@"
+                }
 
-            gnome_set color-scheme prefer-dark
-            gnome_set cursor-size 24
-            gnome_set cursor-theme "breeze_cursors"
-            gnome_set document-font-name "Noto Sans 10"
-            gnome_set font-name "Noto Sans 10"
-            gnome_set gtk-theme "Breeze"
-            gnome_set icon-theme "Breeze"
-            gnome_set monospace-font-name "Hack 10"
-          '';
-        in
+                gnome_set color-scheme prefer-dark
+                gnome_set cursor-size 24
+                gnome_set cursor-theme "breeze_cursors"
+                gnome_set document-font-name "Noto Sans 10"
+                gnome_set font-name "Noto Sans 10"
+                gnome_set gtk-theme "Breeze"
+                gnome_set icon-theme "Breeze"
+                gnome_set monospace-font-name "Hack 10"
+              '';
+
+          in
           [
             {
               command = ''
@@ -561,5 +565,5 @@ in
   home.packages =
     if config.machine.nixos.enable
     then with pkgs; [ breeze-qt5 breeze-gtk ]
-    else [];
+    else [ ];
 }
