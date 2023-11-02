@@ -252,9 +252,9 @@ in
                 pkill -Af xdg-desktop-portal
 
                 run_and_disown() {
-                    "$@" &
-                    sleep 0.5
-                    disown
+                  "$@" &
+                  sleep 0.5
+                  disown
                 }
 
                 run_and_disown ${xdgDesktopPortalWlrBin}
@@ -267,9 +267,9 @@ in
               pkill -Af kanshi
 
               run_and_disown() {
-                  "$@" &
-                  sleep 0.5
-                  disown
+                "$@" &
+                sleep 0.5
+                disown
               }
 
               run_and_disown ${pkgs.kanshi}/bin/kanshi
