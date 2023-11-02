@@ -299,53 +299,21 @@ in
                 gnome_set monospace-font-name "Hack 10"
               '';
 
-            startSwayidleLock = pkgs.writeScriptBin "start-swayidle-lock" ''
-              #!${pkgs.bash}/bin/bash
-              ${swaylockBin} -f -i ${bg} -s ${bgMode}
-              if [ -f "$HOME"/.config/swayidle/hook.sh ]; then
-                "$HOME"/.config/swayidle/hook.sh lock
-              fi
-            '';
-
-            startSwayidleOff = pkgs.writeScriptBin "start-swayidle-off" ''
-              #!${pkgs.bash}/bin/bash
-              ${swaymsgBin} "output * dpms off"
-              if [ -f "$HOME"/.config/swayidle/hook.sh ]; then
-                "$HOME"/.config/swayidle/hook.sh off
-              fi
-            '';
-
-            startSwayidleUnlock = pkgs.writeScriptBin "start-swayidle-unlock" ''
-              #!${pkgs.bash}/bin/bash
-              if [ -f "$HOME"/.config/swayidle/hook.sh ]; then
-                "$HOME"/.config/swayidle/hook.sh unlock
-              fi
-            '';
-
-            startSwayidleResume = pkgs.writeScriptBin "start-swayidle-resume" ''
-              #!${pkgs.bash}/bin/bash
-              ${swaymsgBin} "output * dpms on"
-              if [ -f "$HOME"/.config/swayidle/hook.sh ]; then
-                "$HOME"/.config/swayidle/hook.sh resume
-              fi
-            '';
-
             startSwayidle = pkgs.writeScriptBin "start-swayidle" ''
               #!${pkgs.bash}/bin/bash
               pkill -Af swayidle
 
               run_and_disown() {
-                  "$@" &
-                  sleep 0.5
-                  disown
+                "$@" &
+                sleep 0.5
+                disown
               }
 
               run_and_disown ${pkgs.swayidle}/bin/swayidle -w \
-                timeout 300 '${startSwayidleLock}/bin/start-swayidle-lock' \
-                timeout 600 '${startSwayidleOff}/bin/start-swayidle-off' \
-                resume '${startSwayidleResume}/bin/start-swayidle-resume' \
-                unlock '${startSwayidleUnlock}/bin/start-swayidle-unlock' \
-                before-sleep '${startSwayidleLock}/bin/start-swayidle-lock'
+                timeout 300 '${swaylockBin} -f -i ${bg} -s ${bgMode}' \
+                timeout 600 '${swaymsgBin} "output * dpms off"' \
+                resume '${swaymsgBin} "output * dpms on"' \
+                before-sleep '${swaylockBin} -f -i ${bg} -s ${bgMode}'
             '';
           in
           [
