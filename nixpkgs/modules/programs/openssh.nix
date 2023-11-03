@@ -23,8 +23,8 @@ in
         user = "sirn";
         extraOptions = {
           "CheckHostIP" = "yes";
-          "StrictHostKeyChecking" = "yes";
-          "PreferredAuthentications" = "publickey";
+          "StrictHostKeyChecking" = "accept-new";
+          "PreferredAuthentications" = "publickey,keyboard-interactive,password";
         };
       };
 
@@ -79,10 +79,5 @@ in
     ] ++ (if isDarwin then [
       "${homeDirectory}/.orbstack/ssh/config"
     ] else [ ]);
-  };
-
-  # Escape hatch
-  home.shellAliases = {
-    sshi = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null";
   };
 }
