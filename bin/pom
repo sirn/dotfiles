@@ -150,6 +150,7 @@ pom_git_clone() {
 
     RET=0
     POM_GIT_REPO_ROOT=$POM_ROOT/$POM_GIT_REPO_DIR
+    cmd_run mkdir -p "$POM_GIT_REPO_ROOT"
     cmd_run git clone --recurse-submodules "$POM_GIT_REPO" "$POM_GIT_REPO_ROOT" || RET=$?
 
     # Clone failed
