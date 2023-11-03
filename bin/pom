@@ -96,7 +96,7 @@ pom_cache_update() {
     msg_debug "Search dirs: $*"
     find "$@" \
         -maxdepth "$POM_SEARCHDEPTH" \
-        -exec test -d '{}'/.git \; \
+        -exec test -e '{}'/.git \; \
         -print \
         -prune 2>/dev/null |
         sort -u >"$POM_CACHE".new

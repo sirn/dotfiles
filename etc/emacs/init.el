@@ -26,6 +26,7 @@
 ;; --------------------------------------------------------------------------
 ;;; Pre-initialization
 
+(require 's)
 (require 'map)
 (require 'subr-x)
 
