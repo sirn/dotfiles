@@ -106,13 +106,6 @@ pom_cache_update() {
     msg_debug "Renamed ${POM_CACHE}.new into $POM_CACHE"
 }
 
-pom_datadir_prepare() {
-    if [ ! -d "$POM_DATADIR" ]; then
-        mkdir -p "$POM_DATADIR"
-        msg_debug "Creating cache directory"
-    fi
-}
-
 ## pom git
 ## -----------------------------------------------------------------------------
 
@@ -166,7 +159,6 @@ pom_git_clone() {
         exit 1
     fi
 
-    pom_datadir_prepare
     pom_cache_update
     msg "Successfully cloned $POM_GIT_REPO into $POM_GIT_REPO_ROOT"
 }
@@ -351,7 +343,6 @@ EOF
 ## -----------------------------------------------------------------------------
 
 pom_list_print() {
-    pom_datadir_prepare
     cat "$POM_CACHE"
 }
 
@@ -394,7 +385,6 @@ pom_list() {
 
     case "$POM_SUBCOMMAND" in
     "")
-        pom_datadir_prepare
         [ "$POM_LIST_UPDATE" = 1 ] && pom_cache_update
         pom_list_print "$@"
         ;;
@@ -412,7 +402,6 @@ pom_list() {
 ## -----------------------------------------------------------------------------
 
 pom_sync() {
-    pom_datadir_prepare
     pom_cache_update
     msg "Successfully synced."
 }
@@ -448,6 +437,11 @@ main() {
         POM_COMMAND=$1
         shift
         msg_debug "env POM_COMMAND=$POM_COMMAND"
+    fi
+
+    if [ ! -d "$POM_DATADIR" ]; then
+        mkdir -p "$POM_DATADIR"
+        msg_debug "Creating cache directory"
     fi
 
     case "$POM_COMMAND" in
