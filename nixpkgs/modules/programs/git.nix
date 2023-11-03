@@ -34,7 +34,7 @@ in
       submodule.fetchJobs = 8;
       protocol.file.allow = "always";
 
-      ghq.root = [
+      pom.root = [
         "${homeDirectory}/Dev/src"
         "${homeDirectory}/Dev/workspace"
         "${homeDirectory}/Dev/go/gopath/src"

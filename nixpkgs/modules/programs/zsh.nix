@@ -30,7 +30,6 @@ in
       . ${dotfilesDir}/etc/zsh/share/ps1.zsh
       . ${dotfilesDir}/etc/zsh/functions/cd.zsh
       . ${dotfilesDir}/etc/zsh/functions/gg.zsh
-      . ${dotfilesDir}/etc/zsh/functions/gq.zsh
       . ${dotfilesDir}/etc/zsh/functions/pcd.zsh
     '';
   };
