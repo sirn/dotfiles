@@ -60,8 +60,8 @@
     in
     {
       homeConfigurations = {
-        terra = mkConfig {
-          hostname = "terra";
+        helios = mkConfig {
+          hostname = "helios";
         };
         phoebe = mkConfig {
           hostname = "phoebe";
@@ -70,6 +70,9 @@
           hostname = "pyxis";
           system = "aarch64-darwin";
           homeDirectory = "/Users/sirn";
+        };
+        terra = mkConfig {
+          hostname = "terra";
         };
         theia = mkConfig {
           hostname = "theia";

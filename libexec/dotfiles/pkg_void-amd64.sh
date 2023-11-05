@@ -29,6 +29,10 @@ _run_system() {
 }
 
 _run_sway() {
+    xbps_install breeze
+    xbps_install breeze-cursors
+    xbps_install breeze-gtk
+    xbps_install hicolor-icon-theme
     xbps_install qt5-wayland
     xbps_install qt6-wayland
     xbps_install sway
