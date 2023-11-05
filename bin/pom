@@ -8,7 +8,7 @@ POM_ROOTS=
 POM_ROOT=
 POM_SEARCHDEPTH=${POM_SEARCHDEPT:-3}
 
-POM_DEBUG=${POM_DEBUG:-0}
+POM_LOGLEVEL=${POM_LOGLEVEL:-"info"}
 POM_DRYRUN=${POM_DRYRUN:-0}
 POM_DATADIR=
 POM_CACHE=
@@ -31,31 +31,80 @@ msg() {
         "$*"
 }
 
-msg_notice() {
-    printf >&2 "%s[%s]%s %sNOTICE: %s%s\\n" \
-        "$c_blue" "$PROG" "$c_reset" \
-        "$c_white" "$*" "$c_reset"
-}
+case "$POM_LOGLEVEL" in
+debug)
+    POM_LOGLEVEL_I=0
+    ;;
+warn | warning)
+    POM_LOGLEVEL_I=2
+    ;;
+error)
+    POM_LOGLEVEL_I=3
+    ;;
+*) # Info
+    POM_LOGLEVEL_I=1
+    ;;
+esac
 
-msg_warn() {
-    printf >&2 "%s[%s]%s %sWARNING: %s%s\\n" \
-        "$c_blue" "$PROG" "$c_reset" \
-        "$c_yellow" "$*" "$c_reset"
-}
-
-msg_error() {
-    printf >&2 "%s[%s]%s %sERROR: %s%s\\n" \
-        "$c_blue" "$PROG" "$c_reset" \
-        "$c_red" "$*" "$c_reset"
-}
-
-msg_debug() {
-    if [ "$POM_DEBUG" = "1" ]; then
+if [ "$POM_LOGLEVEL_I" -lt 1 ]; then
+    msg_debug() {
         printf >&2 "%s[%s]%s %sDEBUG:%s %s\\n" \
             "$c_blue" "$PROG" "$c_reset" \
             "$c_bold" "$c_reset" "$*"
-    fi
-}
+    }
+else
+    msg_debug() {
+        :
+    }
+fi
+
+if [ "$POM_LOGLEVEL_I" -lt 2 ]; then
+    msg_info() {
+        printf >&2 "%s[%s]%s %sINFO: %s%s\\n" \
+            "$c_blue" "$PROG" "$c_reset" \
+            "$c_white" "$*" "$c_reset"
+    }
+
+    msg_info_verbose() {
+        if [ "$POM_VERBOSE" = "1" ]; then
+            printf >&2 "%s[%s]%s %sVERBOSE: %s%s\\n" \
+                "$c_blue" "$PROG" "$c_reset" \
+                "$c_white" "$*" "$c_reset"
+        fi
+    }
+else
+    msg_info() {
+        :
+    }
+
+    msg_info_verbose() {
+        :
+    }
+fi
+
+if [ "$POM_LOGLEVEL_I" -lt 3 ]; then
+    msg_warn() {
+        printf >&2 "%s[%s]%s %sWARNING: %s%s\\n" \
+            "$c_blue" "$PROG" "$c_reset" \
+            "$c_yellow" "$*" "$c_reset"
+    }
+else
+    msg_warn() {
+        :
+    }
+fi
+
+if [ "$POM_LOGLEVEL_I" -lt 4 ]; then
+    msg_error() {
+        printf >&2 "%s[%s]%s %sERROR: %s%s\\n" \
+            "$c_blue" "$PROG" "$c_reset" \
+            "$c_red" "$*" "$c_reset"
+    }
+else
+    msg_error() {
+        :
+    }
+fi
 
 cmd_run_nd() {
     msg_debug "Command [no dry-run]: $*"
@@ -142,7 +191,7 @@ pom_git_clone() {
         fi
 
         if [ -d "$n/$POM_GIT_REPO_DIR" ]; then
-            msg "$n/$POM_GIT_REPO_DIR already exists"
+            msg_warn "$n/$POM_GIT_REPO_DIR already exists"
             exit 0
         fi
     done
@@ -161,7 +210,7 @@ pom_git_clone() {
     fi
 
     pom_cache_update
-    msg "Successfully cloned $POM_GIT_REPO into $POM_GIT_REPO_ROOT"
+    msg_info "Successfully cloned $POM_GIT_REPO into $POM_GIT_REPO_ROOT"
 }
 
 pom_git_pull_all() {
@@ -218,7 +267,7 @@ pom_git_run_all() {
         if [ "$POM_GIT_RUN_ALL_CHECK_WORKDIR" = "1" ]; then
             GIT_STATUS=$(cmd_run_nd git -C "$p" status --porcelain=v2) || RET=$?
             if [ "$GIT_STATUS" != "" ]; then
-                msg "Skipping $p: workdir is dirty (-w)"
+                msg_info_verbose "Skipping $p: workdir is dirty (-w)"
                 continue
             fi
         fi
@@ -239,12 +288,12 @@ pom_git_run_all() {
             done
 
             if [ "$MATCHED" != "1" ]; then
-                msg "Skipping $p: $GIT_HEAD is not in branch allowed list (-b)"
+                msg_info_verbose "Skipping $p: $GIT_HEAD is not in branch allowed list (-b)"
                 continue
             fi
         fi
 
-        msg "Running git -C $p $*"
+        msg_info "Running git -C $p $*"
 
         RET=0
         cmd_run git -C "$p" "$@" || RET=$?
@@ -319,7 +368,7 @@ pom_git() {
 
 pom_help() {
     cat >&2 <<EOF
-Usage: $PROG COMMAND [SUBCOMMAND...] [OPTIONS...]
+Usage: $PROG [OPTIONS] COMMAND [SUBCOMMAND...]
 
 Run \`$PROG COMMAND help' for further subcommands.
 
@@ -336,6 +385,11 @@ COMMAND:
 
     sync
         Synchronizes project cache with POM root
+
+OPTIONS
+
+    -v
+        Verbose logging
 
 EOF
 }
@@ -404,7 +458,7 @@ pom_list() {
 
 pom_sync() {
     pom_cache_update
-    msg "Successfully synced."
+    msg_info "Successfully synced."
 }
 
 ## Entrypoint
@@ -412,7 +466,7 @@ pom_sync() {
 
 main() {
     if ! command -v git >/dev/null; then
-        msg "git is required to be installed"
+        msg_error "git is required to be installed"
         exit 1
     fi
 
@@ -432,6 +486,24 @@ main() {
     msg_debug "env POM_SEARCHDEPTH=$POM_SEARCHDEPTH"
     msg_debug "env POM_DATADIR=$POM_DATADIR"
     msg_debug "env POM_CACHE=$POM_CACHE"
+
+    POM_VERBOSE=0
+    OPTIND=1
+
+    while getopts "v" opt; do
+        case "$opt" in
+        v) POM_VERBOSE=1 ;;
+        *) ;;
+        esac
+    done
+
+    msg_debug "env POM_VERBOSE=$POM_VERBOSE"
+
+    shift $((OPTIND - 1))
+
+    if [ "${1:-}" = "--" ]; then
+        shift
+    fi
 
     POM_COMMAND=
     if [ "$#" -gt 0 ]; then
