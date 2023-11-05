@@ -292,8 +292,8 @@ in
                 gnome_set color-scheme prefer-dark
                 gnome_set cursor-size 24
                 gnome_set cursor-theme "breeze_cursors"
-                gnome_set document-font-name "Noto Sans 10"
-                gnome_set font-name "Noto Sans 10"
+                gnome_set document-font-name "sans-serif 10"
+                gnome_set font-name "sans-serif 10"
                 gnome_set gtk-theme "Breeze"
                 gnome_set icon-theme "Breeze"
                 gnome_set monospace-font-name "Hack 10"

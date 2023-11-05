@@ -42,6 +42,9 @@ in
     noto-fonts
     noto-fonts-extra
 
+    # Inter family
+    inter
+
     # Hack family
     hack-font
 
