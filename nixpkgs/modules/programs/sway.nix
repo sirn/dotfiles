@@ -567,6 +567,10 @@ in
   home.sessionVariablesExtra = ''
     export XDG_CURRENT_DESKTOP=sway
     export QT_QPA_PLATFORMTHEME=kde
+
+    # https://github.com/swaywm/sway/issues/3814
+    # https://github.com/swaywm/wlroots/issues/3189
+    export WLR_NO_HARDWARE_CURSORS=1
   '';
 
   home.packages =
