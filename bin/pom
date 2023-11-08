@@ -337,7 +337,8 @@ EOF
 
 pom_git() {
     POM_SUBCOMMAND=
-    if [ "$#" -gt 0 ] && [ "${*#-*}" = "$*" ]; then
+    POM_ARGV=$*
+    if [ "$#" -gt 0 ] && [ "${POM_ARGV#-*}" = "$*" ]; then
         POM_SUBCOMMAND=$1
         shift
         msg_debug "POM_SUBCOMMAND: $POM_SUBCOMMAND"
@@ -425,7 +426,8 @@ EOF
 
 pom_list() {
     POM_SUBCOMMAND=
-    if [ "$#" -gt 0 ] && [ "${*#-*}" = "$*" ]; then
+    POM_ARGV=$*
+    if [ "$#" -gt 0 ] && [ "${POM_ARGV#-*}" = "$*" ]; then
         POM_SUBCOMMAND=$1
         shift
         msg_debug "env POM_SUBCOMMAND=$POM_SUBCOMMAND"
