@@ -61,15 +61,14 @@ in
     ipafont
     ipaexfont
 
+    # TLWG
+    tlwg
+
     # iA fonts
     ia-writer-duospace
     local.ia-writer-duo-static
     local.ia-writer-mono-static
     local.ia-writer-quattro-static
-
-    # Droid Sans Thai
-    local.droid-sans-thai
-    local.droid-serif-thai
   ];
 
   home.file = mkIf isLinux {
