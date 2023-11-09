@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (lib) elemAt mkDefault;
+  inherit (lib) elemAt mkDefault mkIf;
   inherit (builtins) match;
   inherit (config.home) homeDirectory;
 in
@@ -281,6 +281,11 @@ in
                   if config.machine.nixos.enable
                   then "${pkgs.glib.bin}/bin/gsettings"
                   else "gsettings";
+
+                colorScheme =
+                  if config.machine.gui.preferDark
+                  then "prefer-dark"
+                  else "default";
               in
               pkgs.writeScriptBin "setup-gnome-appearance" ''
                 #!${pkgs.bash}/bin/bash
@@ -289,7 +294,7 @@ in
                   ${gsettingsBin} set org.gnome.desktop.interface "$@"
                 }
 
-                gnome_set color-scheme prefer-dark
+                gnome_set color-scheme ${colorScheme}
                 gnome_set cursor-size 24
                 gnome_set cursor-theme "breeze_cursors"
                 gnome_set document-font-name "sans-serif 10"
@@ -414,7 +419,7 @@ in
     };
 
     # This is necessary to get breeze-dark to apply for Qt applications
-    ".config/kdeglobals" = {
+    ".config/kdeglobals" = mkIf config.machine.gui.preferDark {
       text = ''
         [ColorEffects:Disabled]
         ChangeSelectionColor=

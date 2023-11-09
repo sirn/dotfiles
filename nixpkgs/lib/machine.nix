@@ -26,6 +26,14 @@ in
             by other modules.
           '';
         };
+
+        preferDark = mkOption {
+          type = types.bool;
+          default = false;
+          description = ''
+            Whether to prefers dark theme over the default theme.
+          '';
+        };
       };
     };
   };
