@@ -336,6 +336,7 @@ in
         seat = {
           "*" = {
             xcursor_theme = "breeze_cursors 24";
+            hide_cursor = "when-typing disable";
           };
         };
 
