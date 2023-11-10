@@ -16,7 +16,6 @@
     ../programs/intellij.nix
     ../programs/looking-glass-client.nix
     ../programs/mpv.nix
-    ../programs/obsidian.nix
     ../programs/s-tui.nix
     ../programs/thunderbird.nix
 
