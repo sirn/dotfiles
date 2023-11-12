@@ -127,6 +127,13 @@ in
       pkgs.shellcheck
       pkgs.shfmt
       pkgs.terraform
+
+      # Hack for visual-regexp-steroids referring to python by default
+      # We can't easily resolve path to visual-regexp-steroids.py easily from Emacs
+      (pkgs.writeScriptBin "python3-hack" ''
+        #!${pkgs.bash}/bin/bash
+        exec "${pkgs.python311}/bin/python3" "$@"
+      '')
     ] ++ (if config.programs.notmuch.enable then [
       notmuch
     ] else [ ]) ++ (if isDarwin then [
