@@ -275,6 +275,7 @@ in
               run_and_disown ${pkgs.kanshi}/bin/kanshi
             '';
 
+            # wlsunset on stable is buggy
             startWlsunset = pkgs.writeScriptBin "start-wlsunset" ''
               #!${pkgs.bash}/bin/bash
               pkill -Af wlsunset
@@ -285,7 +286,7 @@ in
                 disown
               }
 
-              run_and_disown ${pkgs.wlsunset}/bin/wlsunset -S 7:00 -s 21:00 -t 4000
+              run_and_disown ${pkgs.unstable.wlsunset}/bin/wlsunset -S 7:00 -s 21:00 -t 4000
             '';
 
             setupGnomeAppearance =
