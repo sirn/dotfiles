@@ -275,6 +275,19 @@ in
               run_and_disown ${pkgs.kanshi}/bin/kanshi
             '';
 
+            startWlsunset = pkgs.writeScriptBin "start-wlsunset" ''
+              #!${pkgs.bash}/bin/bash
+              pkill -Af wlsunset
+
+              run_and_disown() {
+                "$@" &
+                sleep 0.5
+                disown
+              }
+
+              run_and_disown ${pkgs.wlsunset}/bin/wlsunset -S 7:00 -s 21:00 -t 4000
+            '';
+
             setupGnomeAppearance =
               let
                 gsettingsBin =
@@ -325,6 +338,7 @@ in
             { command = "${startSwayidle}/bin/start-swayidle"; always = true; }
             { command = "${setupGnomeAppearance}/bin/setup-gnome-appearance"; always = true; }
             { command = "${startKanshi}/bin/start-kanshi"; always = true; }
+            { command = "${startWlsunset}/bin/start-wlsunset"; always = true; }
 
             { command = "${pipewireBin}"; }
             { command = "${pkgs.wl-clipboard}/bin/wl-paste -pw ${pkgs.wl-clipboard}/wl-copy"; }
