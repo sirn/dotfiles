@@ -169,6 +169,7 @@ pom_git_clone() {
 
     POM_GIT_REPO_DIR=$(
         echo "$POM_GIT_REPO" |
+            tr '[:upper:]' '[:lower:]' |
             sed -E 's|^.*://||;
                     s|^.*@||;
                     s|:[0-9]+/|/|;
