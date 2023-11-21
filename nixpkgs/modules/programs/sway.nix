@@ -400,6 +400,13 @@ in
               };
             }
             {
+              command = "floating enable";
+              criteria = {
+                app_id = "firefox";
+                title = "Extension:.*1Password.*";
+              };
+            }
+            {
               command = "sticky enable";
               criteria = {
                 app_id = "firefox";
