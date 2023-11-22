@@ -45,6 +45,10 @@ in
         "ssh://git@gitlab.com/".insteadOf = "https://gitlab.com/";
         "ssh://git@git.sr.ht/".insteadOf = "https://git.sr.ht/";
       };
+
+      safe.directory = [
+        "/etc/nixos"
+      ];
     };
 
     includes = [
