@@ -82,6 +82,9 @@
         vega = mkConfig {
           hostname = "vega";
         };
+        ws = mkConfig {
+          hostname = "ws";
+        };
       };
     };
 }
