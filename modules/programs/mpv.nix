@@ -28,11 +28,11 @@ let
 in
 mkIf config.desktop.enable {
   programs.mpv = {
-    # Install via Nix on Darwin or NixOS; install via Flatpak otherwise.
+    # Install via Nix on Darwin or if Flatpak was not requested.
     #
     # GPU drivers does not work when Home Manager is only managing user
     # home and not the entire system (and vo=xv is kinda bad).
-    enable = isDarwin || config.machine.isNixOS;
+    enable = isDarwin || config.flatpak.enable;
     defaultProfiles = [ "gpu-hq" ];
     config = {
       hwdec = "auto";
@@ -51,7 +51,7 @@ mkIf config.desktop.enable {
     };
   };
 
-  xdg = mkIf (isLinux && config.flatpak.enable && !config.machine.isNixOS) {
+  xdg = mkIf (isLinux && config.flatpak.enable) {
     configFile = {
       "mpv/mpv.conf" = {
         text = with lib;
