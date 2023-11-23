@@ -14,7 +14,7 @@
     let
       overlays = [
         (final: prev: {
-          local = import ./nixpkgs/pkgs { pkgs = prev; };
+          local = import ./pkgs { pkgs = prev; };
           unstable = import nixpkgs-unstable {
             system = prev.system;
             config.allowUnfree = true;
@@ -51,10 +51,10 @@
           pkgs = nixpkgs.legacyPackages.${system};
           modules = [
             defaultConfig
-            ./nixpkgs/lib/flatpak.nix
-            ./nixpkgs/lib/machine.nix
-            ./nixpkgs/lib/runit.nix
-            ./nixpkgs/modules/machines/${hostname}.nix
+            ./lib/flatpak.nix
+            ./lib/machine.nix
+            ./lib/runit.nix
+            ./modules/machines/${hostname}.nix
           ];
         };
     in
