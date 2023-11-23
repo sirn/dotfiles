@@ -12,5 +12,8 @@ in
     # programs
     ../programs/emacsc.nix
     ../programs/s-tui.nix
+
+    # services
+    ../services/gpg-agent.nix
   ];
 }

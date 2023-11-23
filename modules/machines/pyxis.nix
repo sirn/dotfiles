@@ -16,9 +16,7 @@
 
     # services
     ../services/emacs.nix
+    ../services/gpg-agent.nix
     ../services/syncthing.nix
-
-    # launchd specific
-    ../launchd/userenv.nix
   ];
 }
