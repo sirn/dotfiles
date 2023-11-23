@@ -14,6 +14,7 @@ in
     ../programs/s-tui.nix
 
     # services
+    ../services/emacs.nix
     ../services/gpg-agent.nix
   ];
 }

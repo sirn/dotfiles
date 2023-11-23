@@ -6,6 +6,12 @@ let
   inherit (lib) mkIf;
 in
 {
+  services = mkIf config.machine.nixos.enable {
+    syncthing = {
+      enable = true;
+    };
+  };
+
   runit.services = mkIf (isLinux && config.machine.runit.enable) {
     syncthing = {
       runScript = ''

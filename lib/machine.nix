@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (lib) mkOption types;
+  inherit (lib) mkIf mkOption types;
 in
 {
   options = {
@@ -44,6 +44,14 @@ in
             Whether to prefers dark theme over the default theme.
           '';
         };
+      };
+    };
+  };
+
+  config = {
+    systemd = mkIf config.machine.nixos.enable {
+      user = {
+        startServices = true;
       };
     };
   };

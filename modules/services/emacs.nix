@@ -6,6 +6,15 @@ let
   inherit (lib) mkIf;
 in
 {
+  services = mkIf config.machine.nixos.enable {
+    emacs = {
+      enable = true;
+      socketActivation = {
+        enable = true;
+      };
+    };
+  };
+
   runit.services = mkIf (isLinux && config.machine.runit.enable) {
     emacs = {
       runScript = ''
