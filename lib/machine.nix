@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
+  inherit (pkgs.stdenv) isDarwin;
   inherit (lib) mkIf mkOption types;
 in
 {
@@ -53,6 +54,14 @@ in
       user = {
         startServices = true;
       };
+    };
+
+    runit = mkIf config.machine.runit.enable {
+      enable = true;
+    };
+
+    launchd = mkIf isDarwin {
+      enable = true;
     };
   };
 }

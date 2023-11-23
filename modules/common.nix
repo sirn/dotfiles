@@ -11,6 +11,7 @@
     ./programs/curl.nix
     ./programs/direnv.nix
     ./programs/emacs.nix
+    ./programs/emacsc.nix
     ./programs/fzf.nix
     ./programs/git.nix
     ./programs/gpg.nix
@@ -26,5 +27,9 @@
     ./programs/tmux.nix
     ./programs/unison.nix
     ./programs/zsh.nix
+
+    # services
+    ./services/emacs.nix
+    ./services/gpg-agent.nix
   ];
 }
