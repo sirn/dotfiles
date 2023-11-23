@@ -15,7 +15,7 @@ in
     };
   };
 
-  runit.services = mkIf (isLinux && config.machine.runit.enable) {
+  runit.services = mkIf (isLinux && config.runit.enable) {
     emacs = {
       runScript = ''
         #!${pkgs.execline}/bin/execlineb

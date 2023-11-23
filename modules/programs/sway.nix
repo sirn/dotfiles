@@ -5,7 +5,7 @@ let
   inherit (builtins) match;
   inherit (config.home) homeDirectory;
 in
-{
+mkIf config.machine.gui.enable {
   wayland.windowManager.sway = {
     enable = true;
     xwayland = true;

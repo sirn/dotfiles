@@ -1,6 +1,9 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
-{
+let
+  inherit (lib) mkIf;
+in
+mkIf config.machine.gui.enable {
   programs.looking-glass-client = {
     enable = true;
 

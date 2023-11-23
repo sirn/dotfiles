@@ -4,7 +4,7 @@ let
   inherit (lib) mkIf;
   inherit (pkgs.stdenv) isLinux;
 in
-{
+mkIf config.machine.gui.enable {
   flatpak.applications = mkIf (isLinux && config.flatpak.enable) {
     "org.mozilla.firefox" = {
       overrides = {

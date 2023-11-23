@@ -1,4 +1,9 @@
-{
+{ config, lib, ... }:
+
+let
+  inherit (lib) mkIf;
+in
+mkIf config.machine.gui.enable {
   home.file = {
     ".ideavimrc" = {
       text = ''

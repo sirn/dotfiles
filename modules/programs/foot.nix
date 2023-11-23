@@ -1,6 +1,9 @@
 { config, lib, pkgs, ... }:
 
-{
+let
+  inherit (lib) mkIf;
+in
+mkIf config.machine.gui.enable {
   programs.foot = {
     enable = true;
 

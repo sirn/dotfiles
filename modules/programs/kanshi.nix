@@ -1,6 +1,9 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
-{
+let
+  inherit (lib) mkIf;
+in
+mkIf config.machine.gui.enable {
   home.packages = with pkgs; [
     kanshi
   ];

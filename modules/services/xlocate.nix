@@ -6,7 +6,7 @@ let
   inherit (lib) mkIf;
 in
 {
-  runit.services = mkIf (isLinux && config.machine.runit.enable) {
+  runit.services = mkIf (isLinux && config.runit.enable) {
     xlocate = {
       runScript = ''
         #!${pkgs.execline}/bin/execlineb

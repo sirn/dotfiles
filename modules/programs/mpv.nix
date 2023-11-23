@@ -52,7 +52,7 @@ mkIf config.machine.gui.enable {
   };
 
   xdg = mkIf (isLinux && config.flatpak.enable && !config.machine.nixos.enable) {
-    configFile = mkIf (config.machine.gui.enable) {
+    configFile = {
       "mpv/mpv.conf" = {
         text = with lib;
           let

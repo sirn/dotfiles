@@ -149,9 +149,9 @@ in
           fi
 
           echo "Flatpak applications are not managed by Home Manager."
-          echo "The following applications should be installed manually:"
+          echo "Suggested commands:"
           for appid in ''${appids[@]}; do
-            echo "  $appid"
+            echo "flatpak install $appid"
           done
         }
 

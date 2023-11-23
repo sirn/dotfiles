@@ -1,9 +1,10 @@
 { config, lib, ... }:
 
-{
+let
+  inherit (lib) mkIf;
+in
+mkIf config.machine.gui.enable {
   flatpak = {
-    enable = true;
-
     globalOverrides = {
       filesystems = [
         "/nix/store:ro"

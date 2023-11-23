@@ -9,7 +9,7 @@ let
   dotprivDir = "${homeDirectory}/.dotpriv";
 in
 {
-  runit.services = mkIf (isLinux && config.machine.runit.enable) {
+  runit.services = mkIf (isLinux && config.runit.enable) {
     duplicity = {
       runScript = ''
         #!${pkgs.execline}/bin/execlineb

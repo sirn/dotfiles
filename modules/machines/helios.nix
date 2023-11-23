@@ -1,10 +1,11 @@
 {
-  machine.runit.enable = true;
+  flatpak.enable = true;
   machine.gui.enable = true;
+  runit.enable = true;
 
   imports = [
     ../common.nix
-    ../common-linux-desktop.nix
+    ../common-linux.nix
 
     # services
     ../services/syncthing.nix

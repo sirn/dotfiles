@@ -17,16 +17,6 @@ in
         };
       };
 
-      runit = {
-        enable = mkOption {
-          type = types.bool;
-          default = false;
-          description = ''
-            Indiciates whether the machine is a Runit system.
-          '';
-        };
-      };
-
       gui = {
         enable = mkOption {
           type = types.bool;
@@ -54,14 +44,6 @@ in
       user = {
         startServices = true;
       };
-    };
-
-    runit = mkIf config.machine.runit.enable {
-      enable = true;
-    };
-
-    launchd = mkIf isDarwin {
-      enable = true;
     };
   };
 }
