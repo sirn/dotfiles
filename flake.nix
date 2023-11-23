@@ -23,12 +23,7 @@
       ];
 
       mkConfig =
-        { hostname
-        , username ? "sirn"
-        , system ? "x86_64-linux"
-        , homeDirectory ? "/home/${username}"
-        , ...
-        }:
+        { hostname, username, system, homeDirectory, ... }:
         let
           defaultConfig = { pkgs, ... }: {
             nixpkgs.overlays = overlays;
@@ -57,34 +52,38 @@
             ./modules/machines/${hostname}.nix
           ];
         };
+
+      mkLinuxConfig =
+        { hostname
+        , username ? "sirn"
+        , system ? "x86_64-linux"
+        , homeDirectory ? "/home/${username}"
+        , ...
+        }:
+        mkConfig {
+          inherit hostname username system homeDirectory;
+        };
+
+      mkDarwinConfig =
+        { hostname
+        , username ? "sirn"
+        , system ? "aarch64-darwin"
+        , homeDirectory ? "/Users/${username}"
+        , ...
+        }:
+        mkConfig {
+          inherit hostname username system homeDirectory;
+        };
     in
     {
       homeConfigurations = {
-        helios = mkConfig {
-          hostname = "helios";
-        };
-        phoebe = mkConfig {
-          hostname = "phoebe";
-        };
-        pyxis = mkConfig {
-          hostname = "pyxis";
-          system = "aarch64-darwin";
-          homeDirectory = "/Users/sirn";
-        };
-        terra = mkConfig {
-          hostname = "terra";
-        };
-        theia = mkConfig {
-          hostname = "theia";
-          system = "aarch64-darwin";
-          homeDirectory = "/Users/sirn";
-        };
-        vega = mkConfig {
-          hostname = "vega";
-        };
-        ws = mkConfig {
-          hostname = "ws";
-        };
+        helios = mkLinuxConfig { hostname = "helios"; };
+        phoebe = mkLinuxConfig { hostname = "phoebe"; };
+        pyxis = mkDarwinConfig { hostname = "pyxis"; };
+        terra = mkLinuxConfig { hostname = "terra"; };
+        theia = mkDarwinConfig { hostname = "theia"; };
+        vega = mkLinuxConfig { hostname = "vega"; };
+        ws = mkLinuxConfig { hostname = "ws"; };
       };
     };
 }
