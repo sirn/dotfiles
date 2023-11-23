@@ -2,9 +2,11 @@
 
 let
   inherit (config.home) username homeDirectory;
+  inherit (pkgs) isLinux isDarwin;
+  inherit (lib) mkIf;
 in
 {
-  runit.services = {
+  runit.services = mkIf isLinux && config.machine.runit.enable {
     emacs = {
       runScript = ''
         #!${pkgs.execline}/bin/execlineb
@@ -29,6 +31,20 @@ in
         if { test -d ''${xdg-runtime-dir} }
         ''${shell} -l -c "${config.programs.emacs.finalPackage}/bin/emacs --fg-daemon --chdir=${homeDirectory}"
       '';
+    };
+  };
+
+  launchd.agents.emacs = mkIf isDarwin {
+    enable = true;
+    config = {
+      RunAtLoad = true;
+      KeepAlive = true;
+      ProgramArguments = [
+        "/bin/sh"
+        "-l"
+        "-c"
+        "${config.programs.emacs.finalPackage}/bin/emacs --fg-daemon --chdir=$HOME"
+      ];
     };
   };
 }

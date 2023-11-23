@@ -16,6 +16,16 @@ in
         };
       };
 
+      runit = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = ''
+            Indiciates whether the machine is a Runit system.
+          '';
+        };
+      };
+
       gui = {
         enable = mkOption {
           type = types.bool;

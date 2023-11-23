@@ -2,9 +2,11 @@
 
 let
   inherit (config.home) homeDirectory;
+  inherit (pkgs) isLinux isDarwin;
+  inherit (lib) mkIf;
 in
 {
-  runit.services = {
+  runit.services = mkIf isLinux && config.machine.runit.enable {
     syncthing = {
       runScript = ''
         #!${pkgs.execline}/bin/execlineb
@@ -17,6 +19,19 @@ in
         fdmove -c 2 1
         ${pkgs.syncthing}/bin/syncthing serve --no-browser --no-upgrade
       '';
+    };
+  };
+
+  launchd.agents.syncthing = mkIf isDarwin {
+    enable = true;
+    config = {
+      RunAtLoad = true;
+      KeepAlive = true;
+      ProgramArguments = [
+        "${pkgs.syncthing}/bin/syncthing"
+        "--no-browser"
+        "--no-upgrade"
+      ];
     };
   };
 }

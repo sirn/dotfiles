@@ -2,9 +2,11 @@
 
 let
   inherit (config.home) homeDirectory;
+  inherit (pkgs) isLinux;
+  inherit (lib) mkIf;
 in
 {
-  runit.services = {
+  runit.services = mkIf isLinux && config.machine.runit.enable {
     notmuch = {
       runScript = ''
         #!${pkgs.execline}/bin/execlineb

@@ -1,4 +1,5 @@
 {
+  machine.runit.enable = true;
   machine.gui.enable = true;
 
   imports = [
@@ -20,9 +21,9 @@
     ../programs/thunderbird.nix
 
     # services
-    ../runit/emacs.nix
-    ../runit/gpg-agent.nix
-    ../runit/syncthing.nix
-    ../runit/xlocate.nix
+    ../services/emacs.nix
+    ../services/gpg-agent.nix
+    ../services/syncthing.nix
+    ../services/xlocate.nix
   ];
 }

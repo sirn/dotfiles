@@ -4,6 +4,7 @@ let
   inherit (config.home) homeDirectory;
 in
 {
+  machine.runit.enable = true;
   machine.gui.enable = true;
 
   imports = [
@@ -25,10 +26,10 @@ in
     ../programs/thunderbird.nix
 
     # services
-    ../runit/emacs.nix
-    ../runit/gpg-agent.nix
-    ../runit/syncthing.nix
-    ../runit/xlocate.nix
+    ../services/emacs.nix
+    ../services/gpg-agent.nix
+    ../services/syncthing.nix
+    ../services/xlocate.nix
   ];
 
   wayland.windowManager.sway = {
