@@ -2,11 +2,11 @@
 
 let
   inherit (config.home) homeDirectory;
-  inherit (pkgs) isLinux;
+  inherit (pkgs.stdenv) isLinux;
   inherit (lib) mkIf;
 in
 {
-  runit.services = mkIf isLinux && config.machine.runit.enable {
+  runit.services = mkIf (isLinux && config.machine.runit.enable) {
     xlocate = {
       runScript = ''
         #!${pkgs.execline}/bin/execlineb

@@ -2,11 +2,12 @@
 
 let
   inherit (config.home) homeDirectory;
-  inherit (pkgs) isLinux;
-  inherit (lib) mkIf;
+  inherit (pkgs.stdenv) isLinux isDarwin;
+  inherit (lib) mkForce mkIf;
 in
 {
   runit.services = mkIf isLinux && config.machine.runit.enable {
+  runit.services = mkIf (isLinux && config.machine.runit.enable) {
     gpg-agent = {
       runScript = ''
         #!${pkgs.execline}/bin/execlineb

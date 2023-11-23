@@ -2,11 +2,11 @@
 
 let
   inherit (config.home) homeDirectory;
-  inherit (pkgs) isLinux isDarwin;
+  inherit (pkgs.stdenv) isLinux isDarwin;
   inherit (lib) mkIf;
 in
 {
-  runit.services = mkIf isLinux && config.machine.runit.enable {
+  runit.services = mkIf (isLinux && config.machine.runit.enable) {
     syncthing = {
       runScript = ''
         #!${pkgs.execline}/bin/execlineb

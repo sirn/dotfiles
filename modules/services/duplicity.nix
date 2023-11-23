@@ -2,14 +2,14 @@
 
 let
   inherit (config.home) homeDirectory;
-  inherit (pkgs) isLinux;
+  inherit (pkgs.stdenv) isLinux;
   inherit (lib) mkIf;
 
   gpgKey = config.programs.gpg.settings.default-key;
   dotprivDir = "${homeDirectory}/.dotpriv";
 in
 {
-  runit.services = mkIf isLinux && config.machine.runit.enable {
+  runit.services = mkIf (isLinux && config.machine.runit.enable) {
     duplicity = {
       runScript = ''
         #!${pkgs.execline}/bin/execlineb
