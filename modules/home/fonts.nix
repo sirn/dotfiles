@@ -17,7 +17,7 @@ let
     '';
   });
 in
-mkIf config.machine.gui.enable {
+mkIf config.desktop.enable {
   fonts.fontconfig.enable = isLinux;
 
   home.packages = with pkgs; [

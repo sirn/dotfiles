@@ -3,7 +3,7 @@
 let
   inherit (lib) mkIf;
 in
-mkIf config.machine.gui.enable {
+mkIf config.desktop.enable {
   programs.looking-glass-client = {
     enable = true;
 
@@ -11,7 +11,7 @@ mkIf config.machine.gui.enable {
     # Nix and the host mismatched. Only enable for NixOS. Also,
     # looking-glass-client.package can't use null.
     package =
-      if config.machine.nixos.enable
+      if config.machine.isNixOS
       then pkgs.looking-glass-client
       else
         pkgs.writeTextFile {

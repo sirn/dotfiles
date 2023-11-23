@@ -1,6 +1,6 @@
 {
+  desktop.enable = true;
   launchd.enable = true;
-  machine.gui.enable = true;
 
   imports = [
     ../common.nix

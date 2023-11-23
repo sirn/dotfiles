@@ -1,6 +1,6 @@
 {
+  desktop.enable = true;
   flatpak.enable = true;
-  machine.gui.enable = true;
   runit.enable = true;
 
   imports = [

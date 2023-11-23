@@ -5,14 +5,14 @@ let
   inherit (builtins) match;
   inherit (config.home) homeDirectory;
 in
-mkIf config.machine.gui.enable {
+mkIf config.desktop.enable {
   wayland.windowManager.sway = {
     enable = true;
     xwayland = true;
-    systemdIntegration = config.machine.nixos.enable;
+    systemdIntegration = config.machine.isNixOS;
 
     package =
-      if config.machine.nixos.enable
+      if config.machine.isNixOS
       then pkgs.sway
       else null;
 
@@ -21,23 +21,23 @@ mkIf config.machine.gui.enable {
         cfg = config.wayland.windowManager.sway.config;
 
         swaymsgBin =
-          if config.machine.nixos.enable
+          if config.machine.isNixOS
           then "${pkgs.sway-unwrapped}/bin/swaymsg"
           else "swaymsg";
 
         swaynagBin =
-          if config.machine.nixos.enable
+          if config.machine.isNixOS
           then "${pkgs.sway-unwrapped}/bin/swaynag"
           else "swaynag";
 
         swayWallpaper =
-          if config.machine.nixos.enable
+          if config.machine.isNixOS
           then "${pkgs.sway-unwrapped}/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png"
           else "/usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png";
 
         # swaylock needs to access PAM, so we must use the system package on non-NixOS
         swaylockBin =
-          if config.machine.nixos.enable
+          if config.machine.isNixOS
           then "${pkgs.swaylock}/bin/swaylock"
           else "swaylock";
 
@@ -221,29 +221,29 @@ mkIf config.machine.gui.enable {
         startup =
           let
             pipewireBin =
-              if config.machine.nixos.enable
+              if config.machine.isNixOS
               then "${pkgs.pipewire}/bin/pipewire"
               else "pipewire";
 
             fcitxBin =
-              if config.machine.nixos.enable
+              if config.machine.isNixOS
               then "${pkgs.fcitx5}/bin/fcitx5"
               else "fcitx5";
 
             startXdgPortal =
               let
                 xdgDesktopPortalBin =
-                  if config.machine.nixos.enable
+                  if config.machine.isNixOS
                   then "${pkgs.xdg-desktop-portal}/libexec/xdg-desktop-portal"
                   else "/usr/libexec/xdg-desktop-portal";
 
                 xdgDesktopPortalWlrBin =
-                  if config.machine.nixos.enable
+                  if config.machine.isNixOS
                   then "${pkgs.xdg-desktop-portal-wlr}/libexec/xdg-desktop-portal-wlr"
                   else "/usr/libexec/xdg-desktop-portal-wlr";
 
                 xdgDesktopPortalGtkBin =
-                  if config.machine.nixos.enable
+                  if config.machine.isNixOS
                   then "${pkgs.xdg-desktop-portal-gtk}/libexec/xdg-desktop-portal-gtk"
                   else "/usr/libexec/xdg-desktop-portal-gtk";
               in
@@ -292,12 +292,12 @@ mkIf config.machine.gui.enable {
             setupGnomeAppearance =
               let
                 gsettingsBin =
-                  if config.machine.nixos.enable
+                  if config.machine.isNixOS
                   then "${pkgs.glib.bin}/bin/gsettings"
                   else "gsettings";
 
                 colorScheme =
-                  if config.machine.gui.preferDark
+                  if config.desktop.preferDark
                   then "prefer-dark"
                   else "default";
               in
@@ -441,7 +441,7 @@ mkIf config.machine.gui.enable {
     };
 
     # This is necessary to get breeze-dark to apply for Qt applications
-    ".config/kdeglobals" = mkIf config.machine.gui.preferDark {
+    ".config/kdeglobals" = mkIf config.desktop.preferDark {
       text = ''
         [ColorEffects:Disabled]
         ChangeSelectionColor=
@@ -601,7 +601,7 @@ mkIf config.machine.gui.enable {
   '';
 
   home.packages =
-    if config.machine.nixos.enable
+    if config.machine.isNixOS
     then with pkgs; [ breeze-qt5 breeze-gtk ]
     else [ ];
 }

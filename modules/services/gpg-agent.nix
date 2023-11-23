@@ -36,10 +36,10 @@ let
   '';
 
   pinentryProgram =
-    if config.machine.gui.enable && isLinux then
+    if config.desktop.enable && isLinux then
       "${pkgs.pinentry-qt}/bin/pinentry-qt"
     else
-      if config.machine.gui.enable && isDarwin then
+      if config.desktop.enable && isDarwin then
         "${pkgs.pinentry_mac}/Applications/pinentry-mac.app/Contents/MacOS/pinentry-mac"
       else
         "${pkgs.pinentry}/bin/pinentry";
@@ -54,7 +54,7 @@ in
   #    $ systemctl --user start gpg-agent{,-ssh}.socket
   #
   # See also: https://github.com/nix-community/home-manager/issues/3567
-  systemd.user = mkIf config.machine.nixos.enable {
+  systemd.user = mkIf config.machine.isNixOS {
     services.gpg-agent = {
       Unit = {
         Description = "GnuPG cryptographic agent and passphrase cache";

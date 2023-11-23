@@ -4,8 +4,8 @@ let
   inherit (config.home) homeDirectory;
 in
 {
+  desktop.enable = true;
   flatpak.enable = true;
-  machine.gui.enable = true;
   runit.enable = true;
 
   imports = [

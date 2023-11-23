@@ -1,5 +1,5 @@
 {
-  machine.nixos.enable = true;
+  machine.isNixOS = true;
 
   imports = [
     ../common.nix

@@ -3,7 +3,7 @@
 let
   inherit (lib) mkIf;
 in
-mkIf config.machine.gui.enable {
+mkIf config.desktop.enable {
   flatpak = {
     globalOverrides = {
       filesystems = [

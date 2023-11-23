@@ -11,7 +11,7 @@ in
   programs.emacs = {
     enable = true;
     package =
-      if config.machine.gui.enable && isLinux then
+      if config.desktop.enable && isLinux then
         pkgs.local.emacsNativeComp-pgtk
       else
         pkgs.local.emacsNativeComp-nox;

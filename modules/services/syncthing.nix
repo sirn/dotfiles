@@ -6,7 +6,7 @@ let
   inherit (lib) mkIf;
 in
 {
-  services = mkIf config.machine.nixos.enable {
+  services = mkIf config.machine.isNixOS {
     syncthing = {
       enable = true;
     };
