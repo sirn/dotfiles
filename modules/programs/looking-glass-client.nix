@@ -1,24 +1,17 @@
 { config, lib, pkgs, ... }:
 
 let
+  inherit (pkgs.stdenv) isLinux;
   inherit (lib) mkIf;
-in
-mkIf config.desktop.enable {
-  programs.looking-glass-client = {
-    enable = true;
 
+  cfg = config.programs.looking-glass-client;
+  settingsFormat = pkgs.formats.ini { };
+in
+mkIf (isLinux && config.desktop.enable) {
+  programs.looking-glass-client = {
     # Looking Glass requires EGL, which doesn't work when versions between
-    # Nix and the host mismatched. Only enable for NixOS. Also,
-    # looking-glass-client.package can't use null.
-    package =
-      if config.machine.isNixOS
-      then pkgs.looking-glass-client
-      else
-        pkgs.writeTextFile {
-          name = "looking-glass-client";
-          text = "install looking-glass using os package manager";
-          destination = "/var/looking-glass-client";
-        };
+    # Nix and the host mismatched. Only enable on NixOS.
+    enable = config.machine.isNixOS;
 
     settings = {
       input = {
@@ -37,6 +30,15 @@ mkIf config.desktop.enable {
 
       audio = {
         periodSize = 4096;
+      };
+    };
+  };
+
+  # Configure only in case of non-NixOS
+  xdg = mkIf (!config.machine.isNixOS) {
+    configFile = {
+      "looking-glass/client.ini" = mkIf (cfg.settings != { }) {
+        source = settingsFormat.generate ("looking-glass-client.ini") cfg.settings;
       };
     };
   };
