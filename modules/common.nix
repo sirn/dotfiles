@@ -20,6 +20,7 @@
     ./programs/mercurial.nix
     ./programs/mosh.nix
     ./programs/neovim.nix
+    ./programs/nix-index.nix
     ./programs/openssh.nix
     ./programs/password-store.nix
     ./programs/ripgrep.nix
