@@ -83,7 +83,7 @@ mkIf config.desktop.enable {
 
   home.packages =
     if config.machine.isNixOS
-    then with pkgs; [ breeze-qt5 breeze-gtk ]
+    then with pkgs; [ breeze-qt5 breeze-gtk breeze-icons ]
     else [ ];
 
   home.sessionVariablesExtra = ''
