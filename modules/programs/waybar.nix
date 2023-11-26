@@ -46,21 +46,28 @@ mkIf config.desktop.enable {
           tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
         };
 
-        "pulseaudio" = {
-          format = "{icon}{format_source}";
-          format-source = " ";
-          format-source-muted = "";
-          format-icons = {
-            headphone = "";
-            hands-free = "";
-            headset = "";
-            phone = "";
-            portable = "";
-            car = "";
-            default = [ "" "" "" ];
+        "pulseaudio" =
+          let
+            pavucontrolBin =
+              if config.machine.isNixOS
+              then "${pkgs.pavucontrol}/bin/pavucontrol"
+              else "pavucontrol";
+          in
+          {
+            format = "{icon}{format_source}";
+            format-source = " ";
+            format-source-muted = "";
+            format-icons = {
+              headphone = "";
+              hands-free = "";
+              headset = "";
+              phone = "";
+              portable = "";
+              car = "";
+              default = [ "" "" "" ];
+            };
+            on-click = "${pavucontrolBin}";
           };
-          on-click = "pavucontrol";
-        };
       };
     };
 
