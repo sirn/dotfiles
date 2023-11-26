@@ -37,4 +37,10 @@ mkIf config.desktop.enable {
       };
     };
   };
+
+  wayland.windowManager.sway = mkIf config.programs.foot.enable {
+    config = {
+      terminal = "${config.programs.foot.package}/bin/foot";
+    };
+  };
 }

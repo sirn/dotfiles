@@ -170,4 +170,14 @@ mkIf config.desktop.enable {
       }
     '';
   };
+
+  wayland.windowManager.sway = mkIf config.programs.waybar.enable {
+    config = {
+      bars = [
+        {
+          command = "${config.programs.waybar.package}/bin/waybar";
+        }
+      ];
+    };
+  };
 }

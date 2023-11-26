@@ -1,7 +1,6 @@
-{ machine, ... }:
-
 {
   imports = [
+    ./home/desktop.nix
     ./home/flatpak.nix
     ./home/fonts.nix
     ./home/sway.nix
