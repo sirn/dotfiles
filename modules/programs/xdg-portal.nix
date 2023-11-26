@@ -2,21 +2,6 @@
 
 let
   inherit (lib) mkIf;
-
-  xdgDesktopPortalBin =
-    if config.machine.isNixOS
-    then "${pkgs.xdg-desktop-portal}/libexec/xdg-desktop-portal"
-    else "/usr/libexec/xdg-desktop-portal";
-
-  xdgDesktopPortalWlrBin =
-    if config.machine.isNixOS
-    then "${pkgs.xdg-desktop-portal-wlr}/libexec/xdg-desktop-portal-wlr"
-    else "/usr/libexec/xdg-desktop-portal-wlr";
-
-  xdgDesktopPortalGtkBin =
-    if config.machine.isNixOS
-    then "${pkgs.xdg-desktop-portal-gtk}/libexec/xdg-desktop-portal-gtk"
-    else "/usr/libexec/xdg-desktop-portal-gtk";
 in
 {
   wayland.windowManager.sway = mkIf (!config.machine.isNixOS) {
@@ -34,9 +19,9 @@ in
                 disown
               }
 
-              run_and_disown ${xdgDesktopPortalWlrBin}
-              run_and_disown ${xdgDesktopPortalGtkBin}
-              run_and_disown ${xdgDesktopPortalBin} -vr
+              run_and_disown /usr/libexec/xdg-desktop-portal-wlr
+              run_and_disown /usr/libexec/xdg-desktop-portal-gtk
+              run_and_disown /usr/libexec/xdg-desktop-portal -vr
             ''}/bin/start-xdg-portals
           '';
         }
@@ -48,13 +33,9 @@ in
     ".config/xdg-desktop-portal/portals.conf" = {
       text = lib.generators.toINI { } {
         preferred = {
-          default = "wlr";
-          "org.freedesktop.impl.portal.AppChooser" = "gtk";
-          "org.freedesktop.impl.portal.DynamicLauncher" = "gtk";
-          "org.freedesktop.impl.portal.FileChooser" = "gtk";
-          "org.freedesktop.impl.portal.Inhibit" = "gtk";
-          "org.freedesktop.impl.portal.Notification" = "gtk";
-          "org.freedesktop.impl.portal.Settings" = "gtk";
+          default = "gtk";
+          "org.freedesktop.impl.portal.Screencast" = "wlr";
+          "org.freedesktop.impl.portal.Screenshot" = "wlr";
         };
       };
     };

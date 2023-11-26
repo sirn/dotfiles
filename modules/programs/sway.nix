@@ -232,6 +232,14 @@ mkIf config.desktop.enable {
               };
             }
 
+            # Portals
+            {
+              command = "floating enable";
+              criteria = {
+                app_id = "org.freedesktop.impl.portal.*";
+              };
+            }
+
             # Firefox
             {
               command = "floating enable";
