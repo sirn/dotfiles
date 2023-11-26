@@ -34,7 +34,7 @@ in
           };
 
           Service = {
-            ExecStart = "${cfg.package}/bin/wl-paste -pw ${cfg.package}/wl-copy";
+            ExecStart = "${cfg.package}/bin/wl-paste -pw ${cfg.package}/bin/wl-copy";
           };
 
           Install = {
@@ -50,7 +50,7 @@ in
         mkIf (!config.services.wl-clipboard.enable) {
           config = {
             startup = [
-              { command = "${cfg.package}/bin/wl-paste -pw ${cfg.package}/wl-copy"; }
+              { command = "${cfg.package}/bin/wl-paste -pw ${cfg.package}/bin/wl-copy"; }
             ];
           };
         };

@@ -36,6 +36,7 @@ mkIf config.desktop.enable {
         apple_pro_xdr_display = "Apple Computer Inc ProDisplayXDR 0x00001F07";
         lg_27uk650_w = "LG Electronics LG HDR 4K 0x00006393";
         asus_pa148 = "ASUSTek COMPUTER INC ASUS PA148 N9LMTF061468";
+        tcl_tv = "TCL Corporation TV-monitor 0x00000101";
       in
       {
         "main_dual" = {
@@ -85,6 +86,16 @@ mkIf config.desktop.enable {
               mode = "1920x1080";
               position = "0,0";
               scale = 1.5;
+            }
+          ];
+        };
+        "main_single_tcltv" = {
+          outputs = [
+            {
+              criteria = "${tcl_tv}";
+              mode = "3840x2160";
+              position = "0,0";
+              scale = 2.0;
             }
           ];
         };

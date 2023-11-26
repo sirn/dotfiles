@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 
 let
-  inherit (lib) concatStringsSep mkIf mkOption types;
+  inherit (lib) concatStringsSep mkForce mkIf mkOption types;
 
   cfg = config.services.wlsunset;
 
@@ -51,7 +51,9 @@ in
 
       systemd.user.services = mkIf cfg.enable {
         wlsunset = {
-          ExecStart = "${cfg.package}/bin/wlsunset ${concatStringsSep " " args}";
+          Service = mkForce {
+            ExecStart = "${cfg.package}/bin/wlsunset ${concatStringsSep " " args}";
+          };
         };
       };
 
