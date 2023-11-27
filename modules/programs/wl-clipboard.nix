@@ -1,9 +1,14 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (lib) mkEnableOption mkIf mkOption types;
+  inherit (lib) concatStringsSep mkEnableOption mkIf mkOption types;
 
   cfg = config.services.wl-clipboard;
+
+  args = [
+    "-p"
+    "-w ${cfg.package}/bin/wl-copy"
+  ];
 in
 {
   options.services.wl-clipboard = {
@@ -24,6 +29,7 @@ in
     mkIf config.desktop.enable {
       services.wl-clipboard = {
         enable = config.machine.isNixOS;
+        package = pkgs.local.wl-clipboard;
       };
 
       systemd.user.services = mkIf cfg.enable {
@@ -34,7 +40,7 @@ in
           };
 
           Service = {
-            ExecStart = "${cfg.package}/bin/wl-paste -pw ${cfg.package}/bin/wl-copy";
+            ExecStart = "${cfg.package}/bin/wl-paste ${concatStringsSep " " args}";
           };
 
           Install = {
@@ -50,7 +56,7 @@ in
         mkIf (!config.services.wl-clipboard.enable) {
           config = {
             startup = [
-              { command = "${cfg.package}/bin/wl-paste -pw ${cfg.package}/bin/wl-copy"; }
+              { command = "${cfg.package}/bin/wl-paste ${concatStringsSep " " args}"; }
             ];
           };
         };

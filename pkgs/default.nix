@@ -21,4 +21,5 @@ in
 
   unison-nox = (callPackage ./applications/networking/sync/unison-nox { });
   s-tui = (callPackage ./tools/system/s-tui { });
+  wl-clipboard = (callPackage ./tools/wayland/wl-clipboard/wrapped.nix { });
 }
