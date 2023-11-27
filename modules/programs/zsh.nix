@@ -6,8 +6,11 @@ in
 {
   programs.zsh = {
     enable = true;
-    enableSyntaxHighlighting = true;
     enableVteIntegration = true;
+
+    syntaxHighlighting = {
+      enable = true;
+    };
 
     autocd = true;
     history = {
