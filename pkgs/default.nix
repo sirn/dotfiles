@@ -1,25 +1,32 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 let
-  callPackage = pkgs.lib.callPackageWith (pkgs);
+  inherit (lib) callPackageWith recurseIntoAttrs;
 
+  callPackage = callPackageWith (pkgs);
 in
 {
-  ia-writer-duo-static = (callPackage ./data/fonts/ia-fonts { }).ia-writer-duo-static;
-  ia-writer-mono-static = (callPackage ./data/fonts/ia-fonts { }).ia-writer-mono-static;
-  ia-writer-quattro-static = (callPackage ./data/fonts/ia-fonts { }).ia-writer-quattro-static;
-  droid-sans-thai = (callPackage ./data/fonts/droid-thai-fonts { }).droid-sans-thai;
-  droid-serif-thai = (callPackage ./data/fonts/droid-thai-fonts { }).droid-serif-thai;
+  inherit (recurseIntoAttrs (callPackage ./data/fonts/ia-fonts { }))
+    ia-writer-duo-static
+    ia-writer-mono-static
+    ia-writer-quattro-static;
 
-  emacsNativeComp-nox = (callPackage ./applications/editors/emacs { }).emacsNativeComp-nox;
-  emacsNativeComp-pgtk = (callPackage ./applications/editors/emacs { }).emacsNativeComp-pgtk;
-  emacsNativeComp-lucid = (callPackage ./applications/editors/emacs { }).emacsNativeComp-lucid;
-  emacsNativeComp-macport = (callPackage ./applications/editors/emacs { }).emacsNativeComp-macport;
+  inherit (recurseIntoAttrs (callPackage ./applications/editors/emacs { }))
+    emacs
+    emacs-nox
+    emacs-pgtk
+    emacs-lucid
+    emacs-macport;
+
   emacsPackages = {
     sqlite3 = (callPackage ./applications/editors/emacs/elisp-packages/sqlite3 { });
+
+    visual-regexp-steroids = (callPackage ./applications/editors/emacs/elisp-packages/visual-regexp-steroids { });
   };
 
   unison-nox = (callPackage ./applications/networking/sync/unison-nox { });
+
   s-tui = (callPackage ./tools/system/s-tui { });
+
   wl-clipboard = (callPackage ./tools/wayland/wl-clipboard/wrapped.nix { });
 }

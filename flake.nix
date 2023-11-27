@@ -14,7 +14,11 @@
     let
       overlays = [
         (final: prev: {
-          local = import ./pkgs { pkgs = prev; };
+          local = import ./pkgs {
+            pkgs = prev;
+            lib = prev.lib;
+          };
+
           unstable = import nixpkgs-unstable {
             system = prev.system;
             config.allowUnfree = true;

@@ -1,24 +1,31 @@
-{ lib, pkgs }:
+{ pkgs
+, emacs29
+, emacs29-nox
+, emacs29-macport
+, ...
+}:
 
 {
-  emacsNativeComp-nox = pkgs.emacs29-nox.override {
+  emacs = emacs29;
+
+  emacs-nox = emacs29-nox.override {
     withNativeCompilation = true;
   };
 
-  emacsNativeComp-pgtk = pkgs.emacs29.override {
+  emacs-pgtk = emacs29.override {
     withNativeCompilation = true;
     withGTK2 = false;
     withGTK3 = true;
     withPgtk = true;
   };
 
-  emacsNativeComp-lucid = pkgs.emacs29.override {
+  emacs-lucid = emacs29.override {
     withNativeCompilation = true;
     withGTK2 = false;
     withGTK3 = false;
   };
 
-  emacsNativeComp-macport = pkgs.emacs29-macport.override {
+  emacs-macport = emacs29-macport.override {
     withNativeCompilation = true;
   };
 }

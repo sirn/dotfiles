@@ -12,12 +12,12 @@ in
     enable = true;
     package =
       if config.desktop.enable && isLinux then
-        pkgs.local.emacsNativeComp-pgtk
+        pkgs.local.emacs-pgtk
       else
         if config.desktop.enable && isDarwin then
-          pkgs.local.emacsNativeComp-macport
+          pkgs.local.emacs-macport
         else
-          pkgs.local.emacsNativeComp-nox;
+          pkgs.local.emacs-nox;
 
     extraPackages = epkgs: with epkgs; [
       # Early packages
@@ -25,9 +25,9 @@ in
       general
       no-littering
       org
-      pkgs.local.emacsPackages.sqlite3
       s
       use-package
+      pkgs.local.emacsPackages.sqlite3
 
       # Packages
       ace-link
@@ -84,13 +84,13 @@ in
       vertico
       vertico-prescient
       visual-regexp
-      visual-regexp-steroids
       vterm
       w3m
       which-key
       winum
       yasnippet
       yasnippet-snippets
+      pkgs.local.emacsPackages.visual-regexp-steroids
 
       # Languages
       ansible
@@ -131,13 +131,6 @@ in
       pkgs.shellcheck
       pkgs.shfmt
       pkgs.terraform
-
-      # Hack for visual-regexp-steroids referring to python by default
-      # We can't easily resolve path to visual-regexp-steroids.py easily from Emacs
-      (pkgs.writeScriptBin "python3-hack" ''
-        #!${pkgs.bash}/bin/bash
-        exec "${pkgs.python311}/bin/python3" "$@"
-      '')
     ] ++ (if config.programs.notmuch.enable then [
       notmuch
     ] else [ ]) ++ (if isDarwin then [
