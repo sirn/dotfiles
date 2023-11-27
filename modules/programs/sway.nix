@@ -8,7 +8,10 @@ mkIf config.desktop.enable {
   wayland.windowManager.sway = {
     enable = true;
     xwayland = true;
-    systemdIntegration = config.machine.isNixOS;
+
+    systemd = {
+      enable = config.machine.isNixOS;
+    };
 
     package =
       if config.machine.isNixOS
