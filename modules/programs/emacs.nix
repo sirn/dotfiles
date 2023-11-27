@@ -14,16 +14,20 @@ in
       if config.desktop.enable && isLinux then
         pkgs.local.emacsNativeComp-pgtk
       else
-        pkgs.local.emacsNativeComp-nox;
+        if config.desktop.enable && isDarwin then
+          pkgs.local.emacsNativeComp-macport
+        else
+          pkgs.local.emacsNativeComp-nox;
 
     extraPackages = epkgs: with epkgs; [
       # Early packages
       el-patch
       general
       no-littering
-      use-package
       org
       pkgs.local.emacsPackages.sqlite3
+      s
+      use-package
 
       # Packages
       ace-link
