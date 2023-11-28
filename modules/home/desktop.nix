@@ -72,19 +72,29 @@ mkIf config.desktop.enable {
       };
   };
 
+  # Setting qt platformTheme and style via Home Manager on non-NixOS
+  # can cause SEGFAULT due to dependency mismatch.
   qt = {
-    enable = true;
-    style.name = "breeze";
+    enable = config.machine.isNixOS;
+    platformTheme = "kde";
+    style = {
+      name = "breeze";
+    };
   };
 
-  home.packages =
-    if config.machine.isNixOS
-    then with pkgs; [ breeze-qt5 breeze-gtk breeze-icons ]
-    else [ ];
-
-  home.sessionVariablesExtra = ''
-    export QT_QPA_PLATFORMTHEME=kde
-  '';
+  home = mkIf config.machine.isNixOS
+    {
+      packages = with pkgs; [
+        breeze-qt5
+        breeze-gtk
+        breeze-icons
+      ];
+    } // (mkIf (!config.machine.isNixOS) {
+    sessionVariables = {
+      QT_QPA_PLATFORMTHEME = config.qt.platformTheme;
+      QT_STYLE_OVERRIDE = config.qt.style.name;
+    };
+  });
 
   # This is necessary to get breeze-dark to apply for Qt applications
   xdg.configFile = {

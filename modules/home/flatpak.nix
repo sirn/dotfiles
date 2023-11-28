@@ -24,6 +24,7 @@ mkIf config.desktop.enable {
           "${config.home.homeDirectory}/.nix-profile/share/icons"
           "/nix/profile/share/icons"
           "/nix/var/nix/profiles/default/share/icons"
+          "/run/host/share/icons"
           "/usr/share/icons"
         ];
       };
