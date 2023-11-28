@@ -53,7 +53,7 @@
             ./lib/desktop.nix
             ./lib/flatpak.nix
             ./lib/machine.nix
-            ./lib/runit.nix
+            ./lib/runit/runit.nix
             ./modules/machines/${hostname}.nix
           ];
         };
