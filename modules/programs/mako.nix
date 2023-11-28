@@ -9,14 +9,14 @@ mkIf config.desktop.enable {
   };
 
   # non-NixOS; assume no systemd
-  wayland.windowManager.sway =
+  wayexec.services =
     mkIf (!config.services.mako.enable) {
-      config = {
-        startup = [
-          {
-            command = "${pkgs.mako}/bin/mako";
-          }
-        ];
+      mako = {
+        runScript = ''
+          #!${pkgs.execline}/bin/execlineb
+          fdmove -c 2 1
+          ${pkgs.mako}/bin/mako
+        '';
       };
     };
 }

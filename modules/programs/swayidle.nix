@@ -37,26 +37,15 @@ mkIf config.desktop.enable {
   };
 
   # non-NixOS; assume no systemd
-  wayland.windowManager.sway =
+  wayexec.services =
     mkIf (!config.services.swayidle.enable) {
-      config = {
-        startup = [
-          {
-            always = true;
-            command = "${pkgs.writeScriptBin "start-swayidle" ''
-              #!${pkgs.bash}/bin/bash
-              pkill -Af swayidle
-
-              run_and_disown() {
-                "$@" &
-                sleep 0.5
-                disown
-              }
-
-              run_and_disown ${config.services.swayidle.package}/bin/swayidle -w ${concatStringsSep " " args}
-            ''}/bin/start-swayidle";
-          }
-        ];
+      swayidle = {
+        # bash is used here due to shell escaping shenanigans
+        runScript = ''
+          #!${pkgs.bash}/bin/bash
+          fdmove -c 2 1
+          exec ${config.services.swayidle.package}/bin/swayidle -w ${concatStringsSep " " args}
+        '';
       };
     };
 }

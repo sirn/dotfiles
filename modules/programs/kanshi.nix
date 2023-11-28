@@ -113,28 +113,14 @@ mkIf config.desktop.enable {
   };
 
   # non-NixOS; assume no systemd
-  wayland.windowManager.sway =
+  wayexec.services =
     mkIf (!config.services.kanshi.enable) {
-      config = {
-        startup = [
-          {
-            always = true;
-            command = ''
-              ${pkgs.writeScriptBin "start-kanshi" ''
-                #!${pkgs.bash}/bin/bash
-                pkill -Af kanshi
-
-                run_and_disown() {
-                  "$@" &
-                  sleep 0.5
-                  disown
-                }
-
-                run_and_disown ${pkgs.kanshi}/bin/kanshi
-              ''}/bin/start-kanshi
-            '';
-          }
-        ];
+      kanshi = {
+        runScript = ''
+          #!${pkgs.execline}/bin/execlineb
+          fdmove -c 2 1
+          ${pkgs.kanshi}/bin/kanshi
+        '';
       };
     };
 }

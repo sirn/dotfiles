@@ -52,12 +52,14 @@ in
       };
 
       # non-NixOS; assume no systemd
-      wayland.windowManager.sway =
+      wayexec.services =
         mkIf (!config.services.wl-clipboard.enable) {
-          config = {
-            startup = [
-              { command = "${cfg.package}/bin/wl-paste ${concatStringsSep " " args}"; }
-            ];
+          wl-clipboard = {
+            runScript = ''
+              #!${pkgs.execline}/bin/execlineb
+              fdmove -c 2 1
+              ${cfg.package}/bin/wl-paste ${concatStringsSep " " args}
+            '';
           };
         };
     };

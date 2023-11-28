@@ -47,12 +47,6 @@ mkIf config.desktop.enable {
         };
 
         "pulseaudio" =
-          let
-            pavucontrolBin =
-              if config.machine.isNixOS
-              then "${pkgs.pavucontrol}/bin/pavucontrol"
-              else "pavucontrol";
-          in
           {
             format = "{icon}{format_source}";
             format-source = " ";
@@ -66,7 +60,6 @@ mkIf config.desktop.enable {
               car = "";
               default = [ "" "" "" ];
             };
-            on-click = "${pavucontrolBin}";
           };
       };
     };
@@ -178,13 +171,27 @@ mkIf config.desktop.enable {
     '';
   };
 
-  wayland.windowManager.sway = mkIf config.programs.waybar.enable {
-    config = {
-      bars = [
-        {
-          command = "${config.programs.waybar.package}/bin/waybar";
-        }
-      ];
+  wayland.windowManager.sway =
+    mkIf config.programs.waybar.enable {
+      config = {
+        bars = [ ];
+      };
     };
-  };
+
+  wayexec.services =
+    mkIf config.programs.waybar.enable {
+      waybar = {
+        runScript = ''
+          #!${pkgs.execline}/bin/execlineb
+          if {
+            redirfd -w 1 /dev/null
+            env SVDIR=${config.home.homeDirectory}/${config.wayexec.serviceDir}
+            if { sv check fcitx5 }
+            if { sv check pipewire }
+          }
+          fdmove -c 2 1
+          ${config.programs.waybar.package}/bin/waybar
+        '';
+      };
+    };
 }

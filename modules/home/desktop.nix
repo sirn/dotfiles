@@ -14,38 +14,34 @@ mkIf config.desktop.enable {
     };
   };
 
-  # non-NixOS; assume no systemd
   wayland.windowManager.sway =
     {
       config = {
-        startup = [
-          (mkIf (config.i18n.inputMethod.enabled != "fcitx5") {
-            command = "fcitx5 -r";
-          })
-          (mkIf (!config.machine.isNixOS) {
-            command = ''
-              ${pkgs.writeScriptBin "start-pipewire" ''
-                #!${pkgs.bash}/bin/bash
-                pkill -Af pipewire
-                pkill -Af wireplumber
-
-                run_and_disown() {
-                  "$@" &
-                  sleep 0.5
-                  disown
-                }
-
-                run_and_disown pipewire
-              ''}/bin/start-pipewire
-            '';
-          })
-        ];
-
         seat = {
           "*" = {
             xcursor_theme = "${config.gtk.cursorTheme.name} ${toString config.gtk.cursorTheme.size}";
           };
         };
+      };
+    };
+
+  # non-NixOS; assume no systemd
+  wayexec.services =
+    {
+      fcitx5 = mkIf (config.i18n.inputMethod.enabled != "fcitx5") {
+        runScript = ''
+          #!${pkgs.execline}/bin/execlineb
+          fdmove -c 2 1
+          fcitx5 -D -r
+        '';
+      };
+
+      pipewire = mkIf (!config.machine.isNixOS) {
+        runScript = ''
+          #!${pkgs.execline}/bin/execlineb
+          fdmove -c 2 1
+          pipewire
+        '';
       };
     };
 

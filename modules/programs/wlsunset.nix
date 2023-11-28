@@ -58,28 +58,14 @@ in
       };
 
       # non-NixOS; assume no systemd
-      wayland.windowManager.sway =
+      wayexec.services =
         mkIf (!config.services.wlsunset.enable) {
-          config = {
-            startup = [
-              {
-                always = true;
-                command = ''
-                  ${pkgs.writeScriptBin "start-wlsunset" ''
-                    #!${pkgs.bash}/bin/bash
-                    pkill -Af wlsunset
-
-                    run_and_disown() {
-                      "$@" &
-                      sleep 0.5
-                      disown
-                    }
-
-                    run_and_disown ${pkgs.unstable.wlsunset}/bin/wlsunset ${concatStringsSep " " args}
-                  ''}/bin/start-wlsunset
-                '';
-              }
-            ];
+          wlsunset = {
+            runScript = ''
+              #!${pkgs.execline}/bin/execlineb
+              fdmove -c 2 1
+              ${pkgs.unstable.wlsunset}/bin/wlsunset ${concatStringsSep " " args}
+            '';
           };
         };
     };
