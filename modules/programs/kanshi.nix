@@ -33,70 +33,60 @@ mkIf config.desktop.enable {
 
     profiles =
       let
-        apple_pro_xdr_display = "Apple Computer Inc ProDisplayXDR 0x00001F07";
-        lg_27uk650_w = "LG Electronics LG HDR 4K 0x00006393";
-        asus_pa148 = "ASUSTek COMPUTER INC ASUS PA148 N9LMTF061468";
-        tcl_tv = "TCL Corporation TV-monitor 0x00000101";
+        apple_pro_display_xdr = {
+          criteria = "Apple Computer Inc ProDisplayXDR 0x00001F07";
+          mode = "6016x3384";
+          position = "2560,0";
+          scale = 2.0;
+        };
+        lg_27uk650_w = {
+          criteria = "LG Electronics LG HDR 4K 0x00006393";
+          mode = "3840x2160";
+          position = "0,0";
+          scale = 1.5;
+        };
+        asus_pa148 = {
+          criteria = "ASUSTek COMPUTER INC ASUS PA148 N9LMTF061468";
+          mode = "1920x1080";
+          position = "0,0";
+          scale = 1.5;
+        };
+        tcl_tv = {
+          criteria = "TCL Corporation TV-monitor 0x00000101";
+          mode = "3840x2160";
+          position = "0,0";
+          scale = 2.0;
+        };
       in
       {
         "main_dual" = {
           outputs = [
-            {
-              criteria = "${apple_pro_xdr_display}";
-              mode = "6016x3384";
-              position = "2560,0";
-              scale = 2.0;
-            }
-            {
-              criteria = "${lg_27uk650_w}";
-              mode = "3840x2160";
-              position = "0,0";
-              scale = 1.5;
-            }
+            (apple_pro_display_xdr // { position = "2560,0"; })
+            lg_27uk650_w
           ];
           exec = [
-            "${swaymsgBin} workspace 1, move workspace to output '\"${apple_pro_xdr_display}\"'"
-            "${swaymsgBin} workspace 10, move workspace to output '\"${lg_27uk650_w}\"'"
+            "${swaymsgBin} workspace 1, move workspace to output '\"${apple_pro_display_xdr.criteria}\"'"
+            "${swaymsgBin} workspace 10, move workspace to output '\"${lg_27uk650_w.criteria}\"'"
           ];
         };
-        "main_single_lg" = {
+        "main_lg" = {
           outputs = [
-            {
-              criteria = "${lg_27uk650_w}";
-              mode = "3840x2160";
-              position = "0,0";
-              scale = 1.5;
-            }
+            lg_27uk650_w
           ];
         };
-        "main_single_xdr" = {
+        "main_xdr" = {
           outputs = [
-            {
-              criteria = "${apple_pro_xdr_display}";
-              mode = "6016x3384";
-              position = "0,0";
-              scale = 2.0;
-            }
+            apple_pro_display_xdr
           ];
         };
-        "main_single_pa148" = {
+        "main_pa148" = {
           outputs = [
-            {
-              criteria = "${asus_pa148}";
-              mode = "1920x1080";
-              position = "0,0";
-              scale = 1.5;
-            }
+            asus_pa148
           ];
         };
-        "main_single_tcltv" = {
+        "main_tcltv" = {
           outputs = [
-            {
-              criteria = "${tcl_tv}";
-              mode = "3840x2160";
-              position = "0,0";
-              scale = 2.0;
-            }
+            tcl_tv
           ];
         };
       };
