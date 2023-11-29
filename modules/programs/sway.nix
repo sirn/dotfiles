@@ -271,6 +271,20 @@ mkIf config.desktop.enable {
                 title = "Picture-in-Picture";
               };
             }
+
+            # Looking Glass
+            {
+              command = "fullscreen";
+              criteria = {
+                app_id = "looking-glass-client";
+              };
+            }
+            {
+              command = "move to workspace number 10";
+              criteria = {
+                app_id = "looking-glass-client";
+              };
+            }
           ];
         };
       };
