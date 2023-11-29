@@ -33,4 +33,16 @@ mkIf config.desktop.enable {
       };
     };
   };
+
+  wayland.windowManager.sway =
+    let
+      swaycfg = config.wayland.windowManager.sway.config;
+    in
+    {
+      config = {
+        keybindings = {
+          "${swaycfg.modifier}+d" = "exec ${config.programs.fuzzel.package}/bin/fuzzel";
+        };
+      };
+    };
 }

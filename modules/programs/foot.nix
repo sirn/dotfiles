@@ -9,6 +9,7 @@ mkIf config.desktop.enable {
 
     settings = {
       main = {
+        shell = "${config.programs.zsh.package}/bin/zsh";
         term = "xterm-256color";
         font = "PragmataPro Mono:size=12";
         bold-text-in-bright = "yes";
@@ -38,13 +39,25 @@ mkIf config.desktop.enable {
     };
   };
 
-  wayland.windowManager.sway = mkIf config.programs.foot.enable {
-    config = {
-      terminal = "${config.programs.foot.package}/bin/foot";
+  wayland.windowManager.sway =
+    let
+      swaycfg = config.wayland.windowManager.sway.config;
+      footBin = "${config.programs.foot.package}/bin/foot";
+    in
+    {
+      config = {
+        terminal = footBin;
+        keybindings = {
+          "${swaycfg.modifier}+Return" = "exec ${footBin}";
+        };
+      };
     };
-  };
 
-  programs.fuzzel = mkIf config.programs.foot.enable {
-    terminal = "${config.programs.foot.package}/bin/foot";
+  programs.fuzzel = {
+    settings = {
+      main = {
+        terminal = "${config.programs.foot.package}/bin/foot";
+      };
+    };
   };
 }

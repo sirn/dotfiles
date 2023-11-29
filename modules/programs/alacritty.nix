@@ -1,16 +1,29 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf replaceStrings;
   inherit (pkgs.stdenv) isDarwin;
+
+  cfg = config.programs.alacritty;
+
+  alacrittyBin =
+    if config.machine.isNixOS || isDarwin
+    then "${cfg.package}/bin/alacritty"
+    else "alacritty";
 in
 mkIf config.desktop.enable {
   programs.alacritty = {
-    enable = true;
+    # Alacritty depends on GL stuff, which means we can't use Nix packages
+    # on a non-NixOS due to library mismatch.
+    enable = config.machine.isNixOS || isDarwin;
 
     settings = {
       font = {
-        size = 14.0;
+        size =
+          if isDarwin
+          then 14.0
+          else 12.0;
+
         normal = {
           family = "PragmataPro Mono";
         };
@@ -55,16 +68,30 @@ mkIf config.desktop.enable {
     };
   };
 
-  wayland.windowManager.sway = mkIf config.programs.alacritty.enable {
-    config = {
-      terminal = "${config.programs.alacritty.package}/bin/alacritty";
+  # For non-NixOS and non-Darwin, only configure.
+  xdg.configFile = mkIf (!cfg.enable) {
+    "alacritty/alacritty.yml" = mkIf (cfg.settings != { }) {
+      text = replaceStrings [ "\\\\" ] [ "\\" ] (builtins.toJSON cfg.settings);
     };
   };
 
-  programs.fuzzel = mkIf config.programs.alacritty.enable {
+  wayland.windowManager.sway =
+    let
+      swaycfg = config.wayland.windowManager.sway.config;
+    in
+    {
+      config = {
+        terminal = alacrittyBin;
+        keybindings = {
+          "${swaycfg.modifier}+Return" = "exec ${alacrittyBin}";
+        };
+      };
+    };
+
+  programs.fuzzel = {
     settings = {
       main = {
-        terminal = "${config.programs.alacritty.package}/bin/alacritty";
+        terminal = alacrittyBin;
       };
     };
   };

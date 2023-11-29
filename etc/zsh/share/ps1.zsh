@@ -91,7 +91,7 @@ _prompt_init() {
     setopt promptsubst
 
     case "$TERM" in
-        xterm* | rxvt* | foot*)
+        xterm* | rxvt* | foot* | alacritty*)
             PROMPT="\
 $(_prompt_nix)\
 $(_prompt_hostname) \
