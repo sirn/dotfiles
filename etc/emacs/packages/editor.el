@@ -164,12 +164,12 @@
 
   :init
   (setq parinfer-rust-library
-        (no-littering-expand-var-file-name
-         (concat
-          (file-name-as-directory "parinfer-rust/lib")
-          (cond
-           ((eq system-type 'darwin) "libparinfer_rust.dylib")
-           ((eq system-type 'gnu/linux) "libparinfer_rust.so")))))
+    (no-littering-expand-var-file-name
+     (concat
+      (file-name-as-directory "parinfer-rust/lib")
+      (cond
+       ((eq system-type 'darwin) "libparinfer_rust.dylib")
+       ((eq system-type 'gnu/linux) "libparinfer_rust.so")))))
 
   (add-hook 'clojure-mode-hook #'parinfer-rust-mode)
   (add-hook 'emacs-lisp-mode-hook #'parinfer-rust-mode)
@@ -655,6 +655,11 @@ functions."
   (eval-when-compile
     (declare-function global-tree-sitter-mode nil)
     (declare-function tree-sitter-hl-mode nil))
+
+  :init
+  (add-to-list
+   'treesit-extra-load-path
+   (no-littering-expand-var-file-name "treesit-grammars/lib"))
 
   :config
   (global-tree-sitter-mode +1)

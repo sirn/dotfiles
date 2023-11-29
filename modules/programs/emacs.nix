@@ -146,5 +146,8 @@ in
     ".emacs.d/var/parinfer-rust" = {
       source = "${pkgs.parinfer-rust}";
     };
+    ".emacs.d/var/treesit-grammars" = {
+      source = "${pkgs.emacsPackages.treesit-grammars.with-all-grammars}";
+    };
   };
 }
