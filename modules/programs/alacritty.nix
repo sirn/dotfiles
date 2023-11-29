@@ -62,6 +62,10 @@ mkIf config.desktop.enable {
   };
 
   programs.fuzzel = mkIf config.programs.alacritty.enable {
-    terminal = "${config.programs.alacritty.package}/bin/alacritty";
+    settings = {
+      main = {
+        terminal = "${config.programs.alacritty.package}/bin/alacritty";
+      };
+    };
   };
 }
