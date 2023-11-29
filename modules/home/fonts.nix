@@ -29,6 +29,7 @@ mkIf config.desktop.enable {
     ia-writer-duospace
     ibm-plex
     inter
+    iosevka
     ipaexfont
     ipafont
     noto-fonts

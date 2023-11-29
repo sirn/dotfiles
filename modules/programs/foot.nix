@@ -16,24 +16,24 @@ mkIf config.desktop.enable {
       };
 
       colors = {
-        background = "242424";
-        foreground = "ffffff";
-        regular0 = "242424";
-        regular1 = "f62b5a";
-        regular2 = "47b413";
-        regular3 = "e3c401";
-        regular4 = "24acd4";
-        regular5 = "f2affd";
-        regular6 = "13c299";
-        regular7 = "e6e6e6";
-        bright0 = "616161";
-        bright1 = "ff4d51";
-        bright2 = "35d450";
-        bright3 = "e9e836";
-        bright4 = "5dc5f8";
-        bright5 = "feabf2";
-        bright6 = "24dfc4";
-        bright7 = "ffffff";
+        background = "232627";
+        foreground = "eff0f1";
+        regular0 = "232627";
+        regular1 = "ed1515";
+        regular2 = "11d116";
+        regular3 = "f67400";
+        regular4 = "1d99f3";
+        regular5 = "9b59b6";
+        regular6 = "1abc9c";
+        regular7 = "c5c8c6";
+        bright0 = "7f8c8d";
+        bright1 = "c0392b";
+        bright2 = "1cdc9a";
+        bright3 = "fdbc4b";
+        bright4 = "3daee9";
+        bright5 = "8e44ad";
+        bright6 = "16a085";
+        bright7 = "fcfcfc";
       };
     };
   };
@@ -42,5 +42,9 @@ mkIf config.desktop.enable {
     config = {
       terminal = "${config.programs.foot.package}/bin/foot";
     };
+  };
+
+  programs.fuzzel = mkIf config.programs.foot.enable {
+    terminal = "${config.programs.foot.package}/bin/foot";
   };
 }

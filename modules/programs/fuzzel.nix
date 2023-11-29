@@ -11,7 +11,6 @@ mkIf config.desktop.enable {
       main = {
         font = "monospace:size=12";
         dpi-aware = "no";
-        terminal = "foot -e";
         width = "40";
         line-height = "18";
         horizontal-pad = "8";
