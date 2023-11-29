@@ -23,7 +23,6 @@ mkIf config.desktop.enable {
             swaycfg.output."*".bg;
       in
       {
-        daemonize = true;
         image = elemAt bgSplit 0;
         scaling = elemAt bgSplit 1;
       };
