@@ -78,6 +78,9 @@ in
       sql-indent
       telephone-line
       tree-sitter
+      treemacs
+      treemacs-evil
+      treemacs-magit
       treesit-grammars.with-all-grammars
       undo-tree
       unkillable-scratch
@@ -126,6 +129,7 @@ in
       pkgs.jq
       pkgs.nodejs
       pkgs.pandoc
+      pkgs.python311 # used by treemacs
       pkgs.ripgrep
       pkgs.rnix-lsp
       pkgs.shellcheck
