@@ -36,7 +36,7 @@ mkIf config.desktop.enable {
         apple_pro_display_xdr = {
           criteria = "Apple Computer Inc ProDisplayXDR 0x00001F07";
           mode = "6016x3384";
-          position = "2560,0";
+          position = "0,0";
           scale = 2.0;
         };
         lg_27uk650_w = {
