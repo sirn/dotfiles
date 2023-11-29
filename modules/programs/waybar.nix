@@ -7,6 +7,10 @@ mkIf config.desktop.enable {
   programs.waybar = {
     enable = true;
 
+    systemd = {
+      enable = config.machine.isNixOS;
+    };
+
     settings = {
       mainBar = {
         height = 30;
@@ -171,15 +175,14 @@ mkIf config.desktop.enable {
     '';
   };
 
-  wayland.windowManager.sway =
-    mkIf config.programs.waybar.enable {
-      config = {
-        bars = [ ];
-      };
+  wayland.windowManager.sway = {
+    config = {
+      bars = [ ];
     };
+  };
 
   wayexec.services =
-    mkIf config.programs.waybar.enable {
+    mkIf (!config.programs.waybar.systemd.enable) {
       waybar = {
         runScript = ''
           #!${pkgs.execline}/bin/execlineb
