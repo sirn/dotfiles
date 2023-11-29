@@ -21,51 +21,29 @@ mkIf config.desktop.enable {
   fonts.fontconfig.enable = isLinux;
 
   home.packages = with pkgs; [
-    # Fira family
     fira
-    fira-mono
     fira-code
     fira-code-symbols
-
-    # Source Pro family
-    source-code-pro
-    source-sans-pro
-    source-serif-pro
-
-    # Source Han family
-    source-han-sans
-    source-han-mono
-    source-han-serif
-    source-han-code-jp
-
-    # Noto family
+    fira-mono
+    hack-font
+    ia-writer-duospace
+    ibm-plex
+    inter
+    ipaexfont
+    ipafont
     noto-fonts
     noto-fonts-extra
-
-    # Inter family
-    inter
-
-    # Hack family
-    hack-font
-
-    # Twemoji family
+    source-code-pro
+    source-han-code-jp
+    source-han-mono
+    source-han-sans
+    source-han-serif
+    source-sans-pro
+    source-serif-pro
+    tlwg
     twemojiWithoutFontconfig
-
-    # IBM Plex family
-    ibm-plex
-
-    # Ubuntu family
     ubuntu_font_family
 
-    # IPA fonts
-    ipafont
-    ipaexfont
-
-    # TLWG
-    tlwg
-
-    # iA fonts
-    ia-writer-duospace
     local.ia-writer-duo-static
     local.ia-writer-mono-static
     local.ia-writer-quattro-static
