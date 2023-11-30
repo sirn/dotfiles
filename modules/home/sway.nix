@@ -1,6 +1,5 @@
 {
   imports = [
-    ../programs/foot.nix
     ../programs/fuzzel.nix
     ../programs/kanshi.nix
     ../programs/mako.nix

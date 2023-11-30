@@ -1,4 +1,4 @@
-{ config, ... }:
+{ pkgs, config, ... }:
 
 let
   inherit (config.home) homeDirectory;
@@ -26,4 +26,10 @@ in
       };
     };
   };
+
+  # Nvidia can be pretty problematic.
+  # See also https://github.com/alacritty/alacritty/issues/6359
+  home.sessionVariablesExtra = ''
+    export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/50_mesa.json
+  '';
 }

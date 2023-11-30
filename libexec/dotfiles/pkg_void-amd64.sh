@@ -29,6 +29,7 @@ _run_system() {
 }
 
 _run_sway() {
+    xbps_install alacritty
     xbps_install breeze
     xbps_install breeze-cursors
     xbps_install breeze-gtk

@@ -5,6 +5,7 @@
     ./home/shell.nix
 
     # programs
+    ./programs/alacritty.nix
     ./programs/aria2.nix
     ./programs/bash.nix
     ./programs/coreutils.nix
