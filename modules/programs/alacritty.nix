@@ -35,30 +35,30 @@ mkIf config.desktop.enable {
 
       colors = {
         primary = {
-          background = "#232627";
-          foreground = "#eff0f1";
+          background = "#242424";
+          foreground = "#ffffff";
         };
 
         normal = {
-          black = "#232627";
-          red = "#ed1515";
-          green = "#11d116";
-          yellow = "#f67400";
-          blue = "#1d99f3";
-          magenta = "#9b59b6";
-          cyan = "#1abc9c";
-          white = "#c5c8c6";
+          black = "#242424";
+          red = "#f62b5a";
+          green = "#47b413";
+          yellow = "#e3c401";
+          blue = "#24acd4";
+          magenta = "#f2affd";
+          cyan = "#13c299";
+          white = "#e6e6e6";
         };
 
         bright = {
-          black = "#7f8c8d";
-          red = "#c0392b";
-          green = "#1cdc9a";
-          yellow = "#fdbc4b";
-          blue = "#3daee9";
-          magenta = "#8e44ad";
-          cyan = "#16a085";
-          white = "#fcfcfc";
+          black = "#616161";
+          red = "#ff4d51";
+          green = "#35d450";
+          yellow = "#e9e836";
+          blue = "#5dc5f8";
+          magenta = "#feabf2";
+          cyan = "#24dfc4";
+          white = "#ffffff";
         };
       };
 
