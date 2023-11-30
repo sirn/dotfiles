@@ -18,6 +18,10 @@ mkIf config.desktop.enable {
     enable = config.machine.isNixOS || isDarwin;
 
     settings = {
+      window = {
+        option_as_alt = "Both";
+      };
+
       font = {
         size =
           if isDarwin
