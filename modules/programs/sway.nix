@@ -234,6 +234,15 @@ mkIf config.desktop.enable {
               };
             }
 
+            # Dolphin
+            {
+              command = "floating enable";
+              criteria = {
+                app_id = "org.kde.dolphin";
+                title = "Moving.*";
+              };
+            }
+
             # Portals
             {
               command = "floating enable";
