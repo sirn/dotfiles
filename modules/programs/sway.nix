@@ -242,6 +242,13 @@ mkIf config.desktop.enable {
                 title = "Moving.*";
               };
             }
+            {
+              command = "floating enable";
+              criteria = {
+                app_id = "org.kde.dolphin";
+                title = "Copying.*";
+              };
+            }
 
             # Portals
             {
