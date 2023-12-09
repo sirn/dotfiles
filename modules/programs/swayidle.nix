@@ -43,7 +43,7 @@ mkIf config.desktop.enable {
         # bash is used here due to shell escaping shenanigans
         runScript = ''
           #!${pkgs.bash}/bin/bash
-          fdmove -c 2 1
+          exec 2>&1
           exec ${config.services.swayidle.package}/bin/swayidle -w ${concatStringsSep " " args}
         '';
       };
