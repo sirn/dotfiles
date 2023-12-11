@@ -89,12 +89,13 @@ mkIf config.desktop.enable {
         breeze-gtk
         breeze-icons
       ];
-    } // (mkIf (!config.machine.isNixOS) {
-    sessionVariables = {
-      QT_QPA_PLATFORMTHEME = config.qt.platformTheme;
-      QT_STYLE_OVERRIDE = config.qt.style.name;
-    };
-  });
+    } // (
+    mkIf (!config.machine.isNixOS) {
+      sessionVariables = {
+        QT_QPA_PLATFORMTHEME = config.qt.platformTheme;
+        QT_STYLE_OVERRIDE = config.qt.style.name;
+      };
+    });
 
   # This is necessary to get breeze-dark to apply for Qt applications
   xdg.configFile = {
