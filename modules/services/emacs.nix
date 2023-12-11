@@ -24,8 +24,10 @@ in
         export HOME ${homeDirectory}
 
         backtick -n -E uid { id -u }
+        define xdg-runtime-dir ${config.machine.xdgRuntimePrefix}/''${uid}
+        if { test -d ''${xdg-runtime-dir} }
+
         backtick -n -E user { id -un }
-        define xdg-runtime-dir /run/user/''${uid}
         backtick -n -E shell {
             redirfd -r 0 /etc/passwd
             awk "BEGIN { FS=\":\" } /^''${user}:/ { print $7 }"
@@ -34,10 +36,11 @@ in
         export USER ''${user}
         export SHELL ''${shell}
         export XDG_RUNTIME_DIR ''${xdg-runtime-dir}
-        export SSH_AUTH_SOCK ''${xdg-runtime-dir}/gnupg/S.gpg-agent.ssh
+
+        backtick -n -E agent-ssh-socket { ${pkgs.gnupg}/bin/gpgconf --list-dirs agent-ssh-socket }
+        export SSH_AUTH_SOCK ''${agent-ssh-socket}
 
         fdmove -c 2 1
-        if { test -d ''${xdg-runtime-dir} }
         ''${shell} -l -c "${config.programs.emacs.finalPackage}/bin/emacs --fg-daemon --chdir=${homeDirectory}"
       '';
     };

@@ -18,15 +18,15 @@ in
         export HOME ${homeDirectory}
 
         backtick -n -E uid { id -u }
-        define xdg-runtime-dir /run/user/''${uid}
-        define -s duplicity "${pkgs.duplicity}/bin/duplicity --gpg-binary=${pkgs.gnupg}/bin/gpg2 --encrypt-key=${gpgKey} --use-agent"
+        define xdg-runtime-dir ${config.machine.xdgRuntimePrefix}/''${uid}
+        if { test -d ''${xdg-runtime-dir} }
 
-        export XDG_RUNTIME_DIR ''${xdg-runtime-dir}
-        export SSH_AUTH_SOCK ''${xdg-runtime-dir}/gnupg/S.gpg-agent.ssh
+        define -s duplicity "${pkgs.duplicity}/bin/duplicity --gpg-binary=${pkgs.gnupg}/bin/gpg2 --encrypt-key=${gpgKey} --use-agent"
+        backtick -n -E agent-ssh-socket { ${pkgs.gnupg}/bin/gpgconf --list-dirs agent-ssh-socket }
+        export SSH_AUTH_SOCK ''${agent-ssh-socket}
 
         fdmove -c 2 1
         backtick -n -E target { ${dotprivDir}/libexec/duplicity/target_cmd.sh }
-        if { test -d ''${xdg-runtime-dir} }
         foreground { mkdir -p ${homeDirectory}/.local/var/run }
         ${pkgs.snooze}/bin/snooze -v -R 10m -s 1h -H/1 -t ${homeDirectory}/.local/var/run/duplicity_timefile
         nice -n 20
