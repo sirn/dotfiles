@@ -33,7 +33,10 @@ _run_sway() {
     xbps_install breeze
     xbps_install breeze-cursors
     xbps_install breeze-gtk
+    xbps_install ffmpegthumbs
     xbps_install hicolor-icon-theme
+    xbps_install kdegraphics-thumbnailers
+    xbps_install kio-extras
     xbps_install qt5-wayland
     xbps_install qt6-wayland
     xbps_install sway
@@ -41,5 +44,6 @@ _run_sway() {
     xbps_install swaylock
     xbps_install xdg-desktop-portal
     xbps_install xdg-desktop-portal-gtk
+    xbps_install xdg-desktop-portal-kde
     xbps_install xdg-desktop-portal-wlr
 }
