@@ -27,10 +27,6 @@ mkIf (isLinux && config.desktop.enable) {
         audio = true;
         captureOnStart = true;
       };
-
-      audio = {
-        periodSize = 4096;
-      };
     };
   };
 
