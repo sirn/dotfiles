@@ -295,12 +295,6 @@ mkIf config.desktop.enable {
                 app_id = "looking-glass-client";
               };
             }
-            {
-              command = "move to workspace number 10";
-              criteria = {
-                app_id = "looking-glass-client";
-              };
-            }
           ];
         };
       };
