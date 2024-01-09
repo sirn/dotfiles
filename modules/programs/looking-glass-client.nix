@@ -27,6 +27,10 @@ mkIf (isLinux && config.desktop.enable) {
         audio = true;
         captureOnStart = true;
       };
+
+      egl = {
+        scale = 2;
+      };
     };
   };
 
