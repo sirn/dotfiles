@@ -25,6 +25,7 @@
     ./programs/nix-index.nix
     ./programs/openssh.nix
     ./programs/password-store.nix
+    ./programs/podman.nix
     ./programs/ripgrep.nix
     ./programs/rsync.nix
     ./programs/tmux.nix
