@@ -11,7 +11,6 @@
     ./programs/coreutils.nix
     ./programs/curl.nix
     ./programs/direnv.nix
-    ./programs/distrobox.nix
     ./programs/emacs.nix
     ./programs/emacsc.nix
     ./programs/fzf.nix
