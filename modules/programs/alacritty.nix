@@ -1,10 +1,13 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (lib) mkIf replaceStrings;
+  inherit (lib) mkIf replaceStrings concatStringsSep;
   inherit (pkgs.stdenv) isDarwin;
+  inherit (pkgs) formats;
 
   cfg = config.programs.alacritty;
+
+  tomlFormat = formats.toml { };
 
   alacrittyBin =
     if config.machine.isNixOS || isDarwin
@@ -18,9 +21,10 @@ mkIf config.desktop.enable {
     enable = config.machine.isNixOS || isDarwin;
 
     settings = {
-      window = {
-        option_as_alt = "Both";
-      };
+      window =
+        if isDarwin
+        then { option_as_alt = "Both"; }
+        else { };
 
       font = {
         size =
@@ -74,8 +78,15 @@ mkIf config.desktop.enable {
 
   # For non-NixOS and non-Darwin, only configure.
   xdg.configFile = mkIf (!cfg.enable) {
-    "alacritty/alacritty.yml" = mkIf (cfg.settings != { }) {
-      text = replaceStrings [ "\\\\" ] [ "\\" ] (builtins.toJSON cfg.settings);
+    "alacritty/alacritty.toml" = mkIf (cfg.settings != { }) {
+      source =
+        (tomlFormat.generate "alacritty.toml" cfg.settings).overrideAttrs
+          (finalAttrs: prevAttrs: {
+            buildCommand = concatStringsSep "\n" [
+              prevAttrs.buildCommand
+              "substituteInPlace $out --replace '\\\\' '\\'"
+            ];
+          });
     };
   };
 
