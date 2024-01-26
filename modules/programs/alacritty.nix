@@ -66,6 +66,33 @@ mkIf config.desktop.enable {
         };
       };
 
+      hints = {
+        enabled = [
+          {
+            command =
+              if isDarwin
+              then "open"
+              else "${pkgs.xdg-utils}/bin/xdg-open";
+
+            hyperlinks = true;
+            post_processing = true;
+            persist = false;
+
+            mouse = {
+              enabled = true;
+              mods = "Control";
+            };
+
+            binding = {
+              key = "J"; # Ctrl+Shift+U is being used to enter Unicode literal with Fcitx
+              mods = "Control|Shift";
+            };
+
+            regex = "(https://|http://)[^\\u0000-\\u001F\\u007F-\\u009F<>\"\\\\s{-}\\\\^⟨⟩`]+";
+          }
+        ];
+      };
+
       shell = {
         program = "${config.programs.zsh.package}/bin/zsh";
         args =
@@ -77,18 +104,20 @@ mkIf config.desktop.enable {
   };
 
   # For non-NixOS and non-Darwin, only configure.
-  xdg.configFile = mkIf (!cfg.enable) {
-    "alacritty/alacritty.toml" = mkIf (cfg.settings != { }) {
-      source =
-        (tomlFormat.generate "alacritty.toml" cfg.settings).overrideAttrs
-          (finalAttrs: prevAttrs: {
-            buildCommand = concatStringsSep "\n" [
-              prevAttrs.buildCommand
-              "substituteInPlace $out --replace '\\\\' '\\'"
-            ];
-          });
+  xdg.configFile = mkIf
+    (!cfg.enable)
+    {
+      "alacritty/alacritty.toml" = mkIf (cfg.settings != { }) {
+        source =
+          (tomlFormat.generate "alacritty.toml" cfg.settings).overrideAttrs
+            (finalAttrs: prevAttrs: {
+              buildCommand = concatStringsSep "\n" [
+                prevAttrs.buildCommand
+                "substituteInPlace $out --replace '\\\\' '\\'"
+              ];
+            });
+      };
     };
-  };
 
   wayland.windowManager.sway =
     let
