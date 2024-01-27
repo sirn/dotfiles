@@ -25,7 +25,7 @@ in
       set -wg automatic-rename on
       set -wg automatic-rename-format "#{pane_current_path} — #{pane_current_command}"
 
-      set -g status-left "#[fg=white,bg=colour30,bold] #S@#h #[fg=colour30,bg=default] "
+      set -g status-left "#[fg=white,bg=colour30,bold] #S@#h #[default,fg=colour30] "
       set -g status-left-style ""
       set -g status-left-length 32
       set -g status-right "#[fg=white,bg=black]#[fg=black,bg=white] %H:%M "
