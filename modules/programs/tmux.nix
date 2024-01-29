@@ -25,7 +25,7 @@ in
       set -wg automatic-rename on
       set -wg automatic-rename-format "#{pane_current_path} — #{pane_current_command}"
 
-      set -g status-left "#[fg=white,bg=colour30,bold] #S@#h #[default,fg=colour30] "
+      set -g status-left "#[fg=colour6,bg=colour8,bold] #S@#h #[default,fg=colour8] "
       set -g status-left-style ""
       set -g status-left-length 32
       set -g status-right "#[fg=white,bg=black]#[fg=black,bg=white] %H:%M "
@@ -33,7 +33,7 @@ in
       set -g status-style bg=default
       set -wg window-status-current-format "#[fg=white,bold]‹#I› #{pane_current_command}"
       set -wg window-status-current-style ""
-      set -wg window-status-format "#[fg=colour59]‹#I› #{pane_current_command}"
+      set -wg window-status-format "#[fg=colour8]‹#I› #{pane_current_command}"
       set -wg window-status-style ""
 
       bind -T prefix r source-file "${homeDirectory}/.config/tmux/tmux.conf"
