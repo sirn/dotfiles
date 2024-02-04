@@ -36,21 +36,15 @@ mkIf config.desktop.enable {
     ];
   };
 
-  # swayidle seems to fork itself on trigger, which makes runit very confused.
-  wayland.windowManager.sway =
+  wayexec.services =
     mkIf (!config.services.swayidle.enable) {
-      config = {
-        startup = [
-          {
-            command = ''
-              ${pkgs.writeScriptBin "start-swayidle" ''
-                #!${pkgs.bash}/bin/bash
-                exec 2>&1
-                exec ${config.services.swayidle.package}/bin/swayidle -w ${concatStringsSep " " args}
-              ''}/bin/start-swayidle
-            '';
-          }
-        ];
+      swayidle = {
+        # bash is used here due to shell escaping shenanigans
+        runScript = ''
+          #!${pkgs.bash}/bin/bash
+          exec 2>&1
+          exec ${config.services.swayidle.package}/bin/swayidle -w ${concatStringsSep " " args}
+        '';
       };
     };
 }

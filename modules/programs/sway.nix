@@ -116,10 +116,6 @@ mkIf config.desktop.enable {
           "${cfg.modifier}+Shift+9" = "move to workspace number 9";
           "${cfg.modifier}+Shift+0" = "move to workspace number 10";
 
-          # DPMS
-          "${cfg.modifier}+Alt+Shift+Q" = "exec ${swaymsgBin} output \"'*'\" dpms off";
-          "${cfg.modifier}+Alt+Shift+A" = "exec ${swaymsgBin} output \"'*'\" dpms on";
-
           # Split
           "${cfg.modifier}+b" = "splith";
           "${cfg.modifier}+v" = "splitv";
