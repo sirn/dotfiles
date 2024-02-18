@@ -120,6 +120,7 @@ mkIf config.desktop.enable {
       #tray,
       #mode,
       #pulseaudio,
+      #custom-audio_idle_inhibitor,
       #idle_inhibitor,
       #scratchpad {
         padding: 0 10px;
@@ -156,6 +157,7 @@ mkIf config.desktop.enable {
         background-color: #eb4d4b;
       }
 
+      #custom-audio_idle_inhibitor,
       #idle_inhibitor.activated {
         background-color: #ecf0f1;
         color: #2d3436;

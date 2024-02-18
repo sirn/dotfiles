@@ -25,4 +25,25 @@ mkIf config.desktop.enable {
         '';
       };
     };
+
+  programs.waybar =
+    mkIf config.programs.waybar.enable {
+      settings = {
+        mainBar = {
+          modules-right = [ "custom/audio_idle_inhibitor" ];
+
+          "custom/audio_idle_inhibitor" = {
+            format = "{icon}";
+            exec = "${pkg}/bin/sway-audio-idle-inhibit --dry-print-both-waybar";
+            return-type = "json";
+            format-icons = {
+              output = "";
+              input = "";
+              output-input = "";
+              none = "";
+            };
+          };
+        };
+      };
+    };
 }
