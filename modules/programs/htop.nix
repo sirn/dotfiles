@@ -18,7 +18,7 @@
       sort_key = config.lib.htop.fields.PERCENT_CPU;
       tree_sort_direction = config.programs.htop.settings.sort_direction;
       tree_sort_key = config.programs.htop.settings.sort_key;
-      tree_view = 1;
+      tree_view = 0;
     };
   };
 }
