@@ -88,6 +88,7 @@ mkIf config.desktop.enable {
         breeze-qt5
         breeze-gtk
         breeze-icons
+        hicolor-icon-theme
       ];
     } // (
     mkIf (!config.machine.isNixOS) {
