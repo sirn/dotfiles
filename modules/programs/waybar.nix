@@ -64,6 +64,7 @@ mkIf config.desktop.enable {
               car = "";
               default = [ "" "" "" ];
             };
+            on-click = "${pkgs.pavucontrol}/bin/pavucontrol";
           };
       };
     };
