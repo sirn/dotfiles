@@ -51,6 +51,12 @@ mkIf config.desktop.enable {
           position = "0,0";
           scale = 1.5;
         };
+        innocn_pu15_pre = {
+          criteria = "Beihai Century Joint Innovation Technology Co.,Ltd PU15-PRE FK1UC1R060115";
+          mode = "3840x2160";
+          position = "0,0";
+          scale = 2.0;
+        };
         tcl_tv = {
           criteria = "TCL Corporation TV-monitor 0x00000101";
           mode = "3840x2160";
@@ -82,6 +88,11 @@ mkIf config.desktop.enable {
         "main_pa148" = {
           outputs = [
             asus_pa148
+          ];
+        };
+        "main_pu15_pre" = {
+          outputs = [
+            innocn_pu15_pre
           ];
         };
         "main_tcltv" = {
