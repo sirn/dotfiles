@@ -31,7 +31,6 @@ in
 
       # Packages
       ace-link
-      apheleia
       avy
       consult
       consult-project-extra
@@ -94,6 +93,7 @@ in
       winum
       yasnippet
       yasnippet-snippets
+      pkgs.local.emacsPackages.apheleia
       pkgs.local.emacsPackages.visual-regexp-steroids
 
       # Languages

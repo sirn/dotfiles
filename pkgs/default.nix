@@ -19,6 +19,8 @@ in
     emacs-macport;
 
   emacsPackages = {
+    apheleia = (callPackage ./applications/editors/emacs/elisp-packages/apheleia { });
+
     sqlite3 = (callPackage ./applications/editors/emacs/elisp-packages/sqlite3 { });
 
     visual-regexp-steroids = (callPackage ./applications/editors/emacs/elisp-packages/visual-regexp-steroids { });
