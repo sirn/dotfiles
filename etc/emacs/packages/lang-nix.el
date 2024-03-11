@@ -1,15 +1,20 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package nix-mode
+  :init
+  (add-to-list 'major-mode-remap-alist '(nix-mode . nix-ts-mode)))
+
+
+(use-package nix-ts-mode
   :preface
   (eval-when-compile
-    (declare-function lsp nil)
-    (declare-function lsp-format-buffer nil)
-    (declare-function gemacs--nix-auto-format nil))
+    (declare-function apheleia-mode nil))
 
   :init
-  (defun gemacs--nix-auto-format ()
-    (add-hook 'before-save-hook #'lsp-format-buffer))
+  (add-hook 'nix-ts-mode-hook #'apheleia-mode)
+  (add-hook 'nix-ts-mode-hook #'flycheck-mode)
 
-  (add-hook 'nix-mode-hook #'lsp-deferred)
-  (add-hook 'nix-mode-hook #'gemacs--nix-auto-format))
+  :config
+  (with-eval-after-load 'apheleia
+    (add-to-list 'apheleia-formatters '(nixpkgs-fmt . ("nixpkgs-fmt" inplace)))
+    (add-to-list 'apheleia-mode-alist '(nix-ts-mode . nixpkgs-fmt))))

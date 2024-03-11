@@ -63,6 +63,7 @@ in
       marginalia
       modus-themes
       multi-vterm
+      nix-ts-mode
       ob-restclient
       parinfer-rust-mode
       password-store
@@ -127,11 +128,11 @@ in
 
       # Non-Emacs dev packages (lsp and friends)
       pkgs.jq
+      pkgs.nixpkgs-fmt
       pkgs.nodejs
       pkgs.pandoc
       pkgs.python311 # used by treemacs
       pkgs.ripgrep
-      pkgs.rnix-lsp
       pkgs.shellcheck
       pkgs.shfmt
       pkgs.terraform
