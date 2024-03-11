@@ -21,6 +21,7 @@
     ./programs/mosh.nix
     ./programs/neovim.nix
     ./programs/nix-index.nix
+    ./programs/jq.nix
     ./programs/openssh.nix
     ./programs/password-store.nix
     ./programs/podman.nix
