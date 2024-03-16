@@ -1,7 +1,7 @@
 {
   desktop.enable = true;
   flatpak.enable = true;
-  runit.enable = true;
+  machine.isNixOS = true;
 
   imports = [
     ../common.nix
