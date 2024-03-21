@@ -15,7 +15,7 @@
       overlays = [
         (final: prev: {
           local = import ./pkgs {
-            pkgs = prev;
+            pkgs = final;
             lib = prev.lib;
           };
 

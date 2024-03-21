@@ -16,12 +16,13 @@
     ./programs/git.nix
     ./programs/gpg.nix
     ./programs/htop.nix
+    ./programs/jq.nix
+    ./programs/localias.nix
     ./programs/magit.nix
     ./programs/mercurial.nix
     ./programs/mosh.nix
     ./programs/neovim.nix
     ./programs/nix-index.nix
-    ./programs/jq.nix
     ./programs/openssh.nix
     ./programs/password-store.nix
     ./programs/podman.nix

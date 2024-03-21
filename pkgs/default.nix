@@ -4,6 +4,8 @@ let
   inherit (lib) callPackageWith recurseIntoAttrs;
 
   callPackage = callPackageWith (pkgs);
+
+  callPackageUnstable = callPackageWith (pkgs.unstable);
 in
 {
   inherit (recurseIntoAttrs (callPackage ./data/fonts/ia-fonts { }))
@@ -25,6 +27,8 @@ in
 
     visual-regexp-steroids = (callPackage ./applications/editors/emacs/elisp-packages/visual-regexp-steroids { });
   };
+
+  localias = (callPackage ./development/web/localias { });
 
   unison-nox = (callPackage ./applications/networking/sync/unison-nox { });
 
