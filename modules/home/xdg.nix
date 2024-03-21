@@ -8,6 +8,11 @@ in
   xdg = {
     enable = true;
 
+    userDirs = {
+      enable = true;
+      createDirectories = true;
+    };
+
     # Having shared-mime-info on non-NixOS can cause havoc for some apps
     # that don't ignore invalid entries e.g. xdg-desktop-portal-kde
     mime = {

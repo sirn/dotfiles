@@ -23,7 +23,13 @@ in
     "/opt/local/bin"
   ];
 
-  home.sessionVariablesExtra = lib.optionalString isDarwin ''
-    . "${pkgs.nix}/etc/profile.d/nix-daemon.sh"
-  '';
+  home.sessionVariablesExtra =
+    (lib.optionalString isDarwin ''
+      . "${pkgs.nix}/etc/profile.d/nix-daemon.sh"
+    '') +
+
+    # https://github.com/nix-community/home-manager/issues/855
+    (lib.optionalString config.machine.isNixOS ''
+      ${pkgs.systemd.out}/bin/systemctl --user import-environment PATH
+    '');
 }

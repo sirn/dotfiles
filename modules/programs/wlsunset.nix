@@ -43,6 +43,8 @@ in
         # wlsunset on stable is buggy
         package = pkgs.unstable.wlsunset;
 
+        systemdTarget = "sway-session.target";
+
         latitude = "";
         longitude = "";
         sunrise = "7:00";

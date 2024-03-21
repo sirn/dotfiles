@@ -9,6 +9,8 @@ mkIf config.desktop.enable {
 
     systemd = {
       enable = config.machine.isNixOS;
+
+      target = "sway-session.target";
     };
 
     settings = {

@@ -27,6 +27,8 @@ mkIf config.desktop.enable {
   services.swayidle = {
     enable = config.machine.isNixOS;
 
+    systemdTarget = "sway-session.target";
+
     timeouts = [
       {
         timeout = 600;

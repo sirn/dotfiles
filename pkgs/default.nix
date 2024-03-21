@@ -35,6 +35,4 @@ in
   s-tui = (callPackage ./tools/system/s-tui { });
 
   wl-clipboard = (callPackage ./tools/wayland/wl-clipboard/wrapped.nix { });
-
-  xdg-desktop-portal-kde = (callPackage ./desktop/plasma-5/xdg-desktop-portal-kde.nix { });
 }
