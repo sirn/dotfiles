@@ -43,13 +43,13 @@ mkIf config.desktop.enable {
           criteria = "LG Electronics LG HDR 4K 0x00006393";
           mode = "3840x2160";
           position = "0,0";
-          scale = 1.5;
+          scale = 2.0;
         };
         asus_pa148 = {
           criteria = "ASUSTek COMPUTER INC ASUS PA148 N9LMTF061468";
           mode = "1920x1080";
           position = "0,0";
-          scale = 1.5;
+          scale = 1.0;
         };
         innocn_pu15_pre = {
           criteria = "Beihai Century Joint Innovation Technology Co.,Ltd PU15-PRE FK1UC1R060115";
