@@ -34,7 +34,7 @@ mkIf config.desktop.enable {
     profiles =
       let
         apple_pro_display_xdr = {
-          criteria = "Apple Computer Inc ProDisplayXDR 0x00001F07";
+          criteria = "Apple Computer Inc ProDisplayXDR 0x130B1C07";
           mode = "6016x3384";
           position = "0,0";
           scale = 2.0;
