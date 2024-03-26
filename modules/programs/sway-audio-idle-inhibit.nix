@@ -11,6 +11,7 @@ mkIf config.desktop.enable {
       sway-audio-idle-inhibit = {
         Service = {
           ExecStart = "${pkg}/bin/sway-audio-idle-inhibit";
+          Restart = true;
         };
 
         Install = { WantedBy = [ "sway-session.target" ]; };
