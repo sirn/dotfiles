@@ -67,7 +67,7 @@ mkIf config.desktop.enable {
       {
         "main_dual" = {
           outputs = [
-            (apple_pro_display_xdr // { position = "2560,0"; })
+            (apple_pro_display_xdr // { position = "1920,0"; })
             lg_27uk650_w
           ];
           exec = [
