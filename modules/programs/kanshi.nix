@@ -39,32 +39,14 @@ mkIf config.desktop.enable {
           position = "0,0";
           scale = 2.0;
         };
-        lg_27uk650_w = {
-          criteria = "LG Electronics LG HDR 4K 0x00036193";
-          mode = "3840x2160";
-          position = "0,0";
-          scale = 2.0;
-        };
         asus_pa148 = {
           criteria = "ASUSTek COMPUTER INC ASUS PA148 N9LMTF061468";
           mode = "1920x1080";
           position = "0,0";
           scale = 1.0;
         };
-        innocn_pu15_pre = {
-          criteria = "Beihai Century Joint Innovation Technology Co.,Ltd PU15-PRE FK1UC1R060115";
-          mode = "3840x2160";
-          position = "0,0";
-          scale = 2.0;
-        };
-        cuview_x3_pro = {
-          criteria = "DO NOT USE - RTK Pi-X3 Pro demoset-1"; # lol
-          mode = "3840x2160";
-          position = "0.0";
-          scale = 2.0;
-        };
-        tcl_tv = {
-          criteria = "TCL Corporation TV-monitor 0x00000101";
+        fallback = {
+          criteria = "*";
           mode = "3840x2160";
           position = "0,0";
           scale = 2.0;
@@ -74,16 +56,7 @@ mkIf config.desktop.enable {
         "main_dual" = {
           outputs = [
             (apple_pro_display_xdr // { position = "1920,0"; })
-            lg_27uk650_w
-          ];
-          exec = [
-            "${swaymsgBin} workspace 1, move workspace to output '\"${apple_pro_display_xdr.criteria}\"'"
-            "${swaymsgBin} workspace 10, move workspace to output '\"${lg_27uk650_w.criteria}\"'"
-          ];
-        };
-        "main_lg" = {
-          outputs = [
-            lg_27uk650_w
+            fallback
           ];
         };
         "main_xdr" = {
@@ -96,19 +69,9 @@ mkIf config.desktop.enable {
             asus_pa148
           ];
         };
-        "main_pu15_pre" = {
+        "main_fallback" = {
           outputs = [
-            innocn_pu15_pre
-          ];
-        };
-        "main_x3_pro" = {
-          outputs = [
-            cuview_x3_pro
-          ];
-        };
-        "main_tcltv" = {
-          outputs = [
-            tcl_tv
+            fallback
           ];
         };
       };
