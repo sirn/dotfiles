@@ -57,6 +57,12 @@ mkIf config.desktop.enable {
           position = "0,0";
           scale = 2.0;
         };
+        cuview_x3_pro = {
+          criteria = "DO NOT USE - RTK Pi-X3 Pro demoset-1"; # lol
+          mode = "3840x2160";
+          position = "0.0";
+          scale = 2.0;
+        };
         tcl_tv = {
           criteria = "TCL Corporation TV-monitor 0x00000101";
           mode = "3840x2160";
@@ -93,6 +99,11 @@ mkIf config.desktop.enable {
         "main_pu15_pre" = {
           outputs = [
             innocn_pu15_pre
+          ];
+        };
+        "main_x3_pro" = {
+          outputs = [
+            cuview_x3_pro
           ];
         };
         "main_tcltv" = {
