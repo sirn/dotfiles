@@ -37,6 +37,7 @@
             home.username = username;
             home.homeDirectory = homeDirectory;
             home.stateVersion = "23.11";
+            news.display = "silent";
           };
         in
         home-manager.lib.homeManagerConfiguration {
