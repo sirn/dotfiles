@@ -24,7 +24,7 @@ in
         export HOME ${homeDirectory}
 
         backtick -n -E uid { id -u }
-        define xdg-runtime-dir ${config.machine.xdgRuntimePrefix}/''${uid}
+        define xdg-runtime-dir /run/user/''${uid}
         if { test -d ''${xdg-runtime-dir} }
 
         backtick -n -E user { id -un }

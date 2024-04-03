@@ -23,7 +23,7 @@ in
   home = mkIf isLinux {
     sessionVariablesExtra = ''
       if [ -z "$XDG_RUNTIME_DIR" ]; then
-        export XDG_RUNTIME_DIR=${config.machine.xdgRuntimePrefix}/$(id -u)
+        export XDG_RUNTIME_DIR=/run/user/$(id -u)
 
         if [ ! -d "$XDG_RUNTIME_DIR" ]; then
           mkdir -p "$XDG_RUNTIME_DIR"

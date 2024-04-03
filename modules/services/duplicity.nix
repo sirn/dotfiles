@@ -18,7 +18,7 @@ in
         export HOME ${homeDirectory}
 
         backtick -n -E uid { id -u }
-        define xdg-runtime-dir ${config.machine.xdgRuntimePrefix}/''${uid}
+        define xdg-runtime-dir /run/user/''${uid}
         if { test -d ''${xdg-runtime-dir} }
 
         define -s duplicity "${pkgs.duplicity}/bin/duplicity --gpg-binary=${pkgs.gnupg}/bin/gpg2 --encrypt-key=${gpgKey} --use-agent"

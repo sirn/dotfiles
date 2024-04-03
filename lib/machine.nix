@@ -14,14 +14,6 @@ in
           Indicates whether the machine is a NixOS system.
         '';
       };
-
-      xdgRuntimePrefix = mkOption {
-        type = types.lines;
-        default = "/run/user";
-        description = ''
-          Prefix for XDG_RUNTIME_DIR without the user ID.
-        '';
-      };
     };
   };
 
