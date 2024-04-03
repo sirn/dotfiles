@@ -8,7 +8,7 @@ in
   xdg = {
     enable = true;
 
-    userDirs = {
+    userDirs = mkIf isLinux {
       enable = true;
       createDirectories = true;
     };
