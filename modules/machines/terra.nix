@@ -6,7 +6,6 @@ in
 {
   desktop.enable = true;
   flatpak.enable = true;
-  machine.isNixOS = true;
 
   imports = [
     ../common.nix
