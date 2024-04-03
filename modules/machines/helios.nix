@@ -8,6 +8,5 @@
 
     # services
     ../services/syncthing.nix
-    ../services/xlocate.nix
   ];
 }

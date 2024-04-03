@@ -29,11 +29,11 @@ _run_system() {
 }
 
 _run_sway() {
-    xbps_install alacritty
     xbps_install breeze
     xbps_install breeze-cursors
     xbps_install breeze-gtk
     xbps_install ffmpegthumbs
+    xbps_install foot
     xbps_install hicolor-icon-theme
     xbps_install kdegraphics-thumbnailers
     xbps_install kio-extras
