@@ -13,9 +13,23 @@
 
   :config
   (with-eval-after-load 'apheleia
-    (add-to-list 'apheleia-formatters '(pandoc-gfm . ("pandoc" "-t" "gfm" "--wrap" "preserve")))
-    (add-to-list 'apheleia-formatters '(pandoc-markdown . ("pandoc" "-t" "markdown" "--wrap" "preserve")))
-    (add-to-list 'apheleia-formatters '(pandoc-rst . ("pandoc" "-t" "rst" "--wrap" "preserve")))
+    (add-to-list
+      'apheleia-formatters
+      '(pandoc-gfm . ("pandoc" "-t" "gfm" "--wrap" "preserve"
+                       (apheleia-formatters-indent "-p" "--tab-stop" 'tab-width)
+                       (apheleia-formatters-fill-column "--columns"))))
+    (add-to-list
+      'apheleia-formatters
+      '(pandoc-markdown . ("pandoc" "-t" "markdown" "--wrap" "preserve"
+                            (apheleia-formatters-indent "-p" "--tab-stop" 'tab-width)
+                            (apheleia-formatters-fill-column "--columns"))))
+
+    (add-to-list
+      'apheleia-formatters
+      '(pandoc-rst . ("pandoc" "-t" "rst" "--wrap" "preserve"
+                       (apheleia-formatters-indent "-p" "--tab-stop" 'tab-width)
+                       (apheleia-formatters-fill-column "--columns"))))
+
     (add-to-list 'apheleia-mode-alist '(gfm-mode . pandoc-gfm))
     (add-to-list 'apheleia-mode-alist '(markdown-mode . pandoc-markdown))
     (add-to-list 'apheleia-mode-alist '(rst-mode . pandoc-rst))))
