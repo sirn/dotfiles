@@ -481,7 +481,7 @@ main() {
 
     POM_ROOTS=${POM_ROOTS%%:}
     POM_ROOT=${POM_ROOTS%%:*}
-    POM_DATADIR=${POM_ROOT}/.pom
+    POM_DATADIR=${XDG_STATE_HOME:-$HOME/.local/state}/pom
     POM_CACHE=${POM_DATADIR}/cache
 
     msg_debug "env POM_ROOTS=$POM_ROOTS"
