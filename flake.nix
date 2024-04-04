@@ -71,6 +71,17 @@
           inherit hostname username system homeDirectory;
         };
 
+      mkLinuxArmConfig =
+        { hostname
+        , username ? "sirn"
+        , system ? "aarch64-linux"
+        , homeDirectory ? "/home/${username}"
+        , ...
+        }:
+        mkConfig {
+          inherit hostname username system homeDirectory;
+        };
+
       mkDarwinConfig =
         { hostname
         , username ? "sirn"
@@ -90,7 +101,7 @@
         terra = mkLinuxConfig { hostname = "terra"; };
         theia = mkDarwinConfig { hostname = "theia"; };
         vega = mkLinuxConfig { hostname = "vega"; };
-        ws = mkLinuxConfig { hostname = "ws"; };
+        ws = mkLinuxArmConfig { hostname = "ws"; };
       };
     };
 }
