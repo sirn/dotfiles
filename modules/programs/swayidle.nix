@@ -3,6 +3,8 @@
 let
   inherit (lib) concatMap concatStringsSep escapeShellArg mkIf optionals;
 
+  swaycfg = config.wayland.windowManager.sway.config;
+
   swaymsgBin =
     if config.wayland.windowManager.sway.package != null
     then "${config.wayland.windowManager.sway.package}/bin/swaymsg"
@@ -36,6 +38,14 @@ mkIf config.desktop.enable {
         resumeCommand = "${swaymsgBin} \"output * dpms on\"";
       }
     ];
+  };
+
+  wayland.windowManager.sway = {
+    config = {
+      keybindings = {
+        "${swaycfg.modifier}+Ctrl+Shift+L" = "exec pkill -USR1 -f ${config.services.swayidle.package}/bin/swayidle";
+      };
+    };
   };
 
   wayexec.services =

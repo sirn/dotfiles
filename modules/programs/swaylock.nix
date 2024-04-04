@@ -29,14 +29,6 @@ mkIf config.desktop.enable {
       };
   };
 
-  wayland.windowManager.sway = {
-    config = {
-      keybindings = {
-        "${swaycfg.modifier}+Ctrl+Shift+L" = "exec ${swaylockBin}";
-      };
-    };
-  };
-
   services.swayidle = {
     timeouts = [
       {
