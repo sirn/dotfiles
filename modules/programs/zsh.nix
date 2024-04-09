@@ -21,8 +21,10 @@ in
     initExtra = ''
       bindkey -e
 
-      export SHELL=zsh
       export WORDCHARS="''${WORDCHARS/\//}"
+      if [[ $- == *"i"* ]]; then
+        export SHELL=${config.programs.zsh.package}/bin/zsh
+      fi
 
       . ${dotfilesDir}/etc/zsh/share/ps1.zsh
       . ${dotfilesDir}/etc/zsh/functions/cd.zsh
