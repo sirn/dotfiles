@@ -33,45 +33,69 @@ mkIf config.desktop.enable {
 
     profiles =
       let
-        apple_pro_display_xdr = {
-          criteria = "Apple Computer Inc ProDisplayXDR 0x00001F07";
-          mode = "6016x3384";
+        default = {
+          criteria = "*";
+          mode = "3840x2160";
           position = "0,0";
           scale = 2.0;
         };
+
+        apple_pro_display_xdr = default // {
+          criteria = "Apple Computer Inc ProDisplayXDR 0x00001F07";
+          mode = "6016x3384";
+        };
+
+        lg_27uk650_w = default // {
+          criteria = "LG Electronics LG HDR 4K 0x00006393";
+        };
+
+        innocn_pu15_pre = default // {
+          criteria = "Beihai Century Joint Innovation Technology Co.,Ltd PU15-PRE FK1UC1R060115";
+        };
+
+        cuview_pix3_pro = default // {
+          criteria = "DO NOT USE - RTK Pi-X3 Pro demoset-1"; #lol
+        };
+
         asus_pa148 = {
           criteria = "ASUSTek COMPUTER INC ASUS PA148 N9LMTF061468";
           mode = "1920x1080";
           position = "0,0";
           scale = 1.0;
         };
-        fallback = {
-          criteria = "*";
-          mode = "3840x2160";
-          position = "0,0";
-          scale = 2.0;
-        };
       in
       {
-        "main_dual" = {
+        "dual_xdr_uk650w" = {
           outputs = [
             (apple_pro_display_xdr // { position = "1920,0"; })
-            fallback
+            lg_27uk650_w
           ];
         };
-        "main_xdr" = {
+        "dual_pu15" = {
+          outputs = [
+            (innocn_pu15_pre // { position = "1920,0"; })
+            lg_27uk650_w
+          ];
+        };
+        "dual_cuview" = {
+          outputs = [
+            (cuview_pix3_pro // { position = "1920,0"; })
+            lg_27uk650_w
+          ];
+        };
+        "only_xdr" = {
           outputs = [
             apple_pro_display_xdr
           ];
         };
-        "main_pa148" = {
+        "only_pa148" = {
           outputs = [
             asus_pa148
           ];
         };
-        "main_fallback" = {
+        "fallback" = {
           outputs = [
-            fallback
+            default
           ];
         };
       };
