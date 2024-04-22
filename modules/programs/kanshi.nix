@@ -47,6 +47,7 @@ mkIf config.desktop.enable {
 
         lg_27uk650_w = default // {
           criteria = "LG Electronics LG HDR 4K 0x00006393";
+          scale = 1.75;
         };
 
         innocn_pu15_pre = default // {
@@ -60,7 +61,6 @@ mkIf config.desktop.enable {
         asus_pa148 = {
           criteria = "ASUSTek COMPUTER INC ASUS PA148 N9LMTF061468";
           mode = "1920x1080";
-          position = "0,0";
           scale = 1.0;
         };
       in
