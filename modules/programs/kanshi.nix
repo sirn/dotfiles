@@ -47,7 +47,7 @@ mkIf config.desktop.enable {
 
         lg_27uk650_w = default // {
           criteria = "LG Electronics LG HDR 4K 0x00006393";
-          scale = 1.75;
+          scale = 1.5;
         };
 
         innocn_pu15_pre = default // {
@@ -67,7 +67,7 @@ mkIf config.desktop.enable {
       {
         "dual_xdr_uk650w" = {
           outputs = [
-            (apple_pro_display_xdr // { position = "1920,0"; })
+            (apple_pro_display_xdr // { position = "2560,0"; })
             lg_27uk650_w
           ];
         };
@@ -88,14 +88,14 @@ mkIf config.desktop.enable {
             apple_pro_display_xdr
           ];
         };
+        "only_uk650w" = {
+          outputs = [
+            lg_27uk650_w
+          ];
+        };
         "only_pa148" = {
           outputs = [
             asus_pa148
-          ];
-        };
-        "fallback" = {
-          outputs = [
-            default
           ];
         };
       };
