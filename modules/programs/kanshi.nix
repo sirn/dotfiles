@@ -65,9 +65,9 @@ mkIf config.desktop.enable {
         };
       in
       {
-        "dual_xdr_uk650w" = {
+        "dual_cuview" = {
           outputs = [
-            (apple_pro_display_xdr // { position = "2560,0"; })
+            (cuview_pix3_pro // { position = "1920,0"; })
             lg_27uk650_w
           ];
         };
@@ -77,15 +77,25 @@ mkIf config.desktop.enable {
             lg_27uk650_w
           ];
         };
-        "dual_cuview" = {
+        "dual_xdr_uk650w" = {
           outputs = [
-            (cuview_pix3_pro // { position = "1920,0"; })
+            (apple_pro_display_xdr // { position = "2560,0"; })
             lg_27uk650_w
           ];
         };
-        "only_xdr" = {
+        "only_cuview" = {
           outputs = [
-            apple_pro_display_xdr
+            cuview_pix3_pro
+          ];
+        };
+        "only_pu15" = {
+          outputs = [
+            innocn_pu15_pre
+          ];
+        };
+        "only_pa148" = {
+          outputs = [
+            asus_pa148
           ];
         };
         "only_uk650w" = {
@@ -93,9 +103,9 @@ mkIf config.desktop.enable {
             lg_27uk650_w
           ];
         };
-        "only_pa148" = {
+        "only_xdr" = {
           outputs = [
-            asus_pa148
+            apple_pro_display_xdr
           ];
         };
       };
