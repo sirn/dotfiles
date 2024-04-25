@@ -10,8 +10,8 @@
 
   :init
   (defun gemacs--erlang-auto-format ()
-    (add-hook 'before-save-hook #'lsp-format-buffer)
-    (add-hook 'before-save-hook #'lsp-organize-imports))
+    (add-hook 'before-save-hook #'lsp-format-buffer t t)
+    (add-hook 'before-save-hook #'lsp-organize-imports t t))
 
   (add-hook 'erlang-mode-hook #'lsp-deferred)
   (add-hook 'elixir-mode-hook #'gemacs--erlang-auto-format))

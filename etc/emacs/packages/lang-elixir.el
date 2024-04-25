@@ -13,8 +13,8 @@
   (setq lsp-elixir-server-command '("elixir-ls"))
 
   (defun gemacs--elixir-auto-format ()
-    (add-hook 'before-save-hook #'lsp-format-buffer)
-    (add-hook 'before-save-hook #'lsp-organize-imports))
+    (add-hook 'before-save-hook #'lsp-format-buffer t t)
+    (add-hook 'before-save-hook #'lsp-organize-imports t t))
 
   (add-hook 'elixir-mode-hook #'lsp-deferred)
   (add-hook 'elixir-mode-hook #'gemacs--elixir-auto-format))

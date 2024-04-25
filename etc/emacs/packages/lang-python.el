@@ -20,8 +20,8 @@
                  `(flycheck-python-pycompile-executable . ,name)))
 
   (defun gemacs--python-auto-format ()
-    (add-hook 'before-save-hook #'lsp-format-buffer)
-    (add-hook 'before-save-hook #'lsp-organize-imports))
+    (add-hook 'before-save-hook #'lsp-format-buffer t t)
+    (add-hook 'before-save-hook #'lsp-organize-imports t t))
 
   (cond
     ((executable-find "python3") (setq python-shell-interpreter "python3"))

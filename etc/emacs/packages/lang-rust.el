@@ -15,8 +15,8 @@
 
   :init
   (defun gemacs--rust-auto-format ()
-    (add-hook 'before-save-hook #'lsp-format-buffer)
-    (add-hook 'before-save-hook #'lsp-organize-imports))
+    (add-hook 'before-save-hook #'lsp-format-buffer t t)
+    (add-hook 'before-save-hook #'lsp-organize-imports t t))
 
   (add-hook 'rust-ts-mode-hook #'lsp-deferred)
   (add-hook 'rust-ts-mode-hook #'gemacs--rust-auto-format))

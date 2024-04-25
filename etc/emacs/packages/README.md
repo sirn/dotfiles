@@ -66,8 +66,8 @@ Any adjustments to `apheleia`'s variables should be done via `:config`:
 
   :init
   (defun gemacs--typescript-auto-format ()
-    (add-hook 'before-save-hook #'lsp-format-buffer)
-    (add-hook 'before-save-hook #'lsp-organize-imports))
+    (add-hook 'before-save-hook #'lsp-format-buffer t t)
+    (add-hook 'before-save-hook #'lsp-organize-imports t t))
 
   (add-hook 'typescript-mode-hook #'lsp-deferred)
   (add-hook 'typescript-mode-hook #'gemacs--typescript-auto-format))

@@ -8,15 +8,18 @@
 (use-package ruby-ts-mode
   :preface
   (eval-when-compile
-    (declare-function lsp nil)
-    (declare-function lsp-format-buffer nil)
-    (declare-function lsp-organize-imports nil)
-    (declare-function gemacs--ruby-auto-format nil))
+    (declare-function apheleia-mode nil))
 
   :init
-  (defun gemacs--ruby-auto-format ()
-    (add-hook 'before-save-hook #'lsp-format-buffer)
-    (add-hook 'before-save-hook #'lsp-organize-imports))
+  (defun gemacs--ruby-flycheck ()
+    (setq-local flycheck-checker 'ruby-standard)
+    (setq-local flycheck-disabled-checkers '(ruby-rubocop)))
 
-  (add-hook 'ruby-ts-mode-hook #'lsp-deferred)
-  (add-hook 'ruby-ts-mode-hook #'gemacs--ruby-auto-format))
+  (add-hook 'ruby-ts-mode-hook #'flycheck-mode)
+  (add-hook 'ruby-ts-mode-hook #'apheleia-mode)
+  (add-hook 'ruby-ts-mode-hook #'gemacs--ruby-flycheck)
+
+  :config
+  (with-eval-after-load 'apheleia
+    (add-to-list 'apheleia-formatters '(rubyfmt . ("rubyfmt")))
+    (add-to-list 'apheleia-mode-alist '(ruby-ts-mode . rubyfmt))))
