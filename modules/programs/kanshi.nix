@@ -61,7 +61,7 @@ mkIf config.desktop.enable {
         asus_pa148 = {
           criteria = "ASUSTek COMPUTER INC ASUS PA148 N9LMTF061468";
           mode = "1920x1080";
-          scale = 1.0;
+          scale = 1.5;
         };
       in
       {
