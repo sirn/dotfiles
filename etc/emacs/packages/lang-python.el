@@ -7,9 +7,6 @@
 
   :preface
   (eval-when-compile
-    (declare-function lsp nil)
-    (declare-function lsp-format-buffer nil)
-    (declare-function lsp-organize-imports nil)
     (declare-function gemacs--python-auto-format nil)
     (defvar flycheck-python-pycompile-executable))
 
@@ -19,14 +16,18 @@
     (add-to-list 'safe-local-variable-values
                  `(flycheck-python-pycompile-executable . ,name)))
 
-  (defun gemacs--python-auto-format ()
-    (add-hook 'before-save-hook #'lsp-format-buffer t t)
-    (add-hook 'before-save-hook #'lsp-organize-imports t t))
-
   (cond
     ((executable-find "python3") (setq python-shell-interpreter "python3"))
     ((executable-find "python2") (setq python-shell-interpreter "python2"))
     (t (setq python-shell-interpreter "python")))
 
-  (add-hook 'python-ts-mode-hook #'lsp-deferred)
-  (add-hook 'python-ts-mode-hook #'gemacs--python-auto-format))
+  (defun gemacs--python-auto-format ()
+    (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
+    (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
+
+  (add-hook 'python-ts-mode-hook #'eglot-ensure)
+  (add-hook 'python-ts-mode-hook #'flycheck-mode)
+  (add-hook 'python-ts-mode-hook #'gemacs--python-auto-format)
+
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs '(python-ts-mode . ("pylsp")))))

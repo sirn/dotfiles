@@ -8,15 +8,16 @@
 (use-package rust-ts-mode
   :preface
   (eval-when-compile
-    (declare-function lsp nil)
-    (declare-function lsp-format-buffer nil)
-    (declare-function lsp-organize-imports nil)
     (declare-function gemacs--rust-auto-format nil))
 
   :init
   (defun gemacs--rust-auto-format ()
-    (add-hook 'before-save-hook #'lsp-format-buffer t t)
-    (add-hook 'before-save-hook #'lsp-organize-imports t t))
+    (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
+    (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
 
-  (add-hook 'rust-ts-mode-hook #'lsp-deferred)
-  (add-hook 'rust-ts-mode-hook #'gemacs--rust-auto-format))
+  (add-hook 'rust-ts-mode-hook #'eglot-ensure)
+  (add-hook 'rust-ts-mode-hook #'flycheck-mode)
+  (add-hook 'rust-ts-mode-hook #'gemacs--rust-auto-format)
+
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs '(rust-ts-mode . ("rls")))))

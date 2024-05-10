@@ -3,13 +3,11 @@
 (use-package nim-mode
   :preface
   (eval-when-compile
-    (declare-function lsp-deferred nil)
     (declare-function apheleia-mode nil)
     (declare-function smie-default-forward-token nil))
 
   :init
   (add-hook 'nim-mode-hook #'apheleia-mode)
-  (add-hook 'nim-mode-hook #'lsp-deferred)
 
   :config
   (el-patch-defun nim-mode-forward-token ()
@@ -29,4 +27,10 @@
 
   (with-eval-after-load 'apheleia
     (add-to-list 'apheleia-formatters '(nimpretty . ("nimpretty" "--out:/dev/stdout" filepath)))
-    (add-to-list 'apheleia-mode-alist '(nim-mode . nimpretty))))
+    (add-to-list 'apheleia-mode-alist '(nim-mode . nimpretty)))
+
+  (add-hook 'nim-mode-hook #'eglot-ensure)
+  (add-hook 'nim-mode-hook #'flycheck-mode)
+
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs '(nim-mode . ("nimlsp")))))

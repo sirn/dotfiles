@@ -38,6 +38,7 @@ in
       corfu-prescient
       corfu-terminal
       ctrlf
+      dired-sidebar
       dtrt-indent
       editorconfig
       eldoc
@@ -50,6 +51,7 @@ in
       evil-mc
       evil-surround
       flycheck
+      flycheck-eglot
       flycheck-golangci-lint
       flycheck-posframe
       forge
@@ -57,7 +59,6 @@ in
       git-commit
       git-gutter
       helpful
-      lsp-ui
       magit
       marginalia
       modus-themes
@@ -78,9 +79,6 @@ in
       sql-indent
       telephone-line
       tree-sitter
-      treemacs
-      treemacs-evil
-      treemacs-magit
       treesit-grammars.with-all-grammars
       undo-tree
       unkillable-scratch
@@ -111,7 +109,6 @@ in
       jq-mode
       json-mode
       jsonnet-mode
-      lsp-mode
       lua-mode
       markdown-mode
       nim-mode

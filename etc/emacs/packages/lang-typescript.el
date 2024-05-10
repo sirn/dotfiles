@@ -17,15 +17,16 @@
 
   :preface
   (eval-when-compile
-    (declare-function lsp nil)
-    (declare-function lsp-format-buffer nil)
-    (declare-function lsp-organize-imports nil)
     (declare-function gemacs--typescript-auto-format nil))
 
   :init
   (defun gemacs--typescript-auto-format ()
-    (add-hook 'before-save-hook #'lsp-organize-imports))
+    (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
+    (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
 
-  (add-hook 'typescript-ts-mode-hook #'lsp-deferred)
+  (add-hook 'typescript-ts-mode-hook #'eglot-ensure)
+  (add-hook 'typescript-ts-mode-hook #'flycheck-mode)
   (add-hook 'typescript-ts-mode-hook #'gemacs--typescript-auto-format)
-  (add-hook 'typescript-ts-mode-hook #'apheleia-mode))
+
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs '(typescript-ts-mode . ("typescript-language-server")))))

@@ -51,29 +51,32 @@ Any adjustments to `apheleia`'s variables should be done via `:config`:
     (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))))
 ```
 
-## lsp-mode
+## eglot
 
-`lsp-mode` is explicitly enabled per major-mode:
+`eglot` is explicitly enabled per major-mode:
 
 ``` elisp
 (use-package typescript-mode
   :preface
   (eval-when-compile
-    (declare-function lsp nil)
-    (declare-function lsp-format-buffer nil)
-    (declare-function lsp-organize-imports nil)
     (declare-function gemacs--typescript-auto-format nil))
 
   :init
-  (defun gemacs--typescript-auto-format ()
-    (add-hook 'before-save-hook #'lsp-format-buffer t t)
-    (add-hook 'before-save-hook #'lsp-organize-imports t t))
+  (use-package eglot
+    :demand t
 
-  (add-hook 'typescript-mode-hook #'lsp-deferred)
-  (add-hook 'typescript-mode-hook #'gemacs--typescript-auto-format))
+    :config
+    (defun gemacs--typescript-auto-format ()
+      (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
+      (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
+
+    (add-hook 'typescript-mode-hook #'eglot-ensure)
+    (add-hook 'typescript-mode-hook #'flycheck-mode)
+    (add-hook 'typescript-mode-hook #'gemacs--typescript-auto-format)
+
+    (with-eval-after-load 'eglot'
+      (add-to-list 'eglot-server-programs '(typescript-mode . ("typescript-language-server")))))
 ```
-
-`lsp-deferred` should be used instead of `lsp` to let it paths after it is initialized by `envrc`.
 
 ## tree-sitter
 
@@ -86,7 +89,7 @@ Any adjustments to `apheleia`'s variables should be done via `:config`:
 
 (use-package typescript-ts-mode
   :init
-  (add-hook 'typescript-ts-mode-hook #'lsp-deferred))
+  (add-hook 'typescript-ts-mode-hook #'eglot-ensure))
 ```
 
 Note the hook is added to `-ts-mode-hook` in this case.

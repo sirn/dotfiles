@@ -526,123 +526,49 @@ area."
 ;;; Language Server Protocol
 
 
-(use-package lsp-mode
-  :defer 2
+(use-package flycheck-eglot
+  :after (flycheck eglot)
 
+  :config
+  (global-flycheck-eglot-mode t))
+
+
+(use-package eglot
   :general
   (leader
-    "l" '(:keymap lsp-command-map))
+    "ll" #'eglot-code-actions
+    "lR" #'eglot-rename)
 
   :custom
-  (lsp-enable-snippet t)
-  (lsp-file-watch-threshold nil)
-  (lsp-restart 'auto-restart)
-  (lsp-headerline-breadcrumb-enable t)
-  (lsp-enable-suggest-server-download nil)
-  (lsp-completion-provider :none)
-  (lsp-before-save-edits nil)
+  (eglot-autoshutdown t)
 
   :preface
   (eval-when-compile
-    (declare-function gemacs--lsp-run-from-node-modules nil)
-    (declare-function gemacs--lsp-setup-corfu nil)
-    (declare-function gemacs--advice-lsp-mode-silence nil))
+    (declare-function eglot-current-server nil)
+    (declare-function eglot-format-buffer nil)
+    (declare-function eglot-shutdown nil)
+    (declare-function gemacs--advice-eglot-shutdown-project nil)
+    (declare-function gemacs--eglot-format-buffer nil)
+    (declare-function gemacs--eglot-organize-imports nil))
+
+  :init
+  (defun gemacs--eglot-format-buffer ()
+    (eglot-format-buffer))
+
+  (defun gemacs--eglot-organize-imports ()
+    (call-interactively 'eglot-code-action-organize-imports))
 
   :config
-  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.git\\'")
-  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.hg\\'")
-  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]tmp\\'")
+  (use-package project
+    :config
+    (defun gemacs--advice-eglot-shutdown-project (orig-fun &rest args)
+      (let* ((pr (project-current t))
+             (default-directory (project-root pr)))
+        (when-let ((server (eglot-current-server)))
+          (ignore-errors (eglot-shutdown server)))
+        (apply orig-fun args)))
 
-  (defun gemacs--advice-lsp-mode-silence (format &rest args)
-    "Silence needless diagnostic messages from `lsp-mode'.
-This is a `:before-until' advice for several `lsp-mode' logging
-functions."
-    (or
-      (member format `("No LSP server for %s(check *lsp-log*)."
-                        "Connected to %s."
-                        ,(concat
-                           "Unable to calculate the languageId for current "
-                           "buffer. Take a look at "
-                           "lsp-language-id-configuration.")
-                        ,(concat
-                           "There are no language servers supporting current "
-                           "mode %s registered with `lsp-mode'.")))
-      (and (stringp (car args))
-        (or (string-match-p "^no object for ident .+$" (car args))
-          (string-match-p "^no identifier found$" (car args))))))
-
-  (defun gemacs--lsp-run-from-node-modules (command)
-    "Find LSP executables inside node_modules/.bin if present."
-    (cl-block nil
-      (prog1 command
-        (when-let ((project-dir (locate-dominating-file default-directory "node_modules"))
-                   (binary
-                     (gemacs--path-join
-                       project-dir "node_modules" ".bin" (car command))))
-          (when (file-executable-p binary)
-            (cl-return (cons binary (cdr command))))))))
-
-  (defun gemacs--lsp-setup-corfu ()
-    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
-          '(flex)))
-
-  (dolist (fun '(lsp-warn lsp--warn lsp--info lsp--error))
-    (advice-add fun :before-until #'gemacs--advice-lsp-mode-silence))
-
-  (advice-add 'lsp-resolve-final-function :filter-return #'gemacs--lsp-run-from-node-modules)
-  (add-hook 'lsp-completion-mode-hook #'gemacs--lsp-setup-corfu))
-
-
-(use-package lsp-ui
-  :preface
-  (eval-when-compile
-    (declare-function lsp-ui-sideline-apply-code-actions nil)
-    (declare-function gemacs--advice-lsp-ui-apply-single-fix nil)
-    (defvar lsp-ui-sideline-show-hover)
-    (defvar lsp-eldoc-enable-hover))
-
-  :custom
-  (lsp-ui-sideline-show-hover nil)
-
-  :config
-  (defun gemacs--advice-lsp-ui-apply-single-fix
-    (orig-fun &rest args)
-    "Apply code fix immediately if only one is possible."
-    (gemacs-flet ((defun completing-read (prompt collection &rest args)
-                    (if (= (safe-length collection) 1)
-                      (car collection)
-                      (apply completing-read prompt collection args))))
-      (apply orig-fun args)))
-
-  (advice-add 'lsp-ui-sideline-apply-code-actions :around
-    #'gemacs--advice-lsp-ui-apply-single-fix)
-
-  (with-eval-after-load 'lsp-mode
-    (setq lsp-eldoc-enable-hover nil)))
-
-
-(use-package lsp-ui-doc
-  :custom
-  (lsp-ui-doc-winum-ignore nil)
-  (lsp-ui-doc-use-childframe t)
-
-  :preface
-  (eval-when-compile
-    (declare-function gemacs--advice-lsp-ui-doc-allow-multiline nil))
-
-  :config
-  (defun gemacs--advice-lsp-ui-doc-allow-multiline (func &rest args)
-    "Prevent `lsp-ui-doc' from removing newlines from documentation."
-    (gemacs-flet ((defun replace-regexp-in-string
-                    (regexp rep string &rest args)
-                    (if (equal regexp "`\\([\n]+\\)")
-                      string
-                      (apply replace-regexp-in-string
-                        regexp rep string args))))
-      (apply func args)))
-
-  (advice-add 'lsp-ui-doc--render-buffer :around
-    #'gemacs--advice-lsp-ui-doc-allow-multiline))
+    (advice-add 'project-kill-buffers :around #'gemacs--advice-eglot-shutdown-project)))
 
 
 ;; --------------------------------------------------------------------------
