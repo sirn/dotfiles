@@ -4,4 +4,7 @@
   :general
   (leader
     "tt" #'dired-sidebar-toggle-sidebar
-    "tT" #'dired-sidebar-toggle-with-current-directory))
+    "tT" #'dired-sidebar-toggle-with-current-directory)
+
+  :config
+  (setq dired-sidebar-theme 'ascii))
