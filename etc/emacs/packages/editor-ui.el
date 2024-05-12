@@ -80,9 +80,14 @@
 
   :config
   (with-eval-after-load 'flycheck
-    (require 'flycheck-posframe)
-    (flycheck-posframe-configure-pretty-defaults)
-    (add-hook 'flycheck-mode-hook #'flycheck-posframe-mode)))
+    (when (posframe-workable-p)
+      (require 'flycheck-posframe)
+      (flycheck-posframe-configure-pretty-defaults)
+      (add-hook 'flycheck-mode-hook #'flycheck-posframe-mode)))
+
+  (with-eval-after-load 'ace-window
+    (when (posframe-workable-p)
+      (ace-window-posframe-mode +1))))
 
 
 ;; Builtin

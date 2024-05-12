@@ -11,7 +11,6 @@
 (use-package emacs
   :general
   (leader
-    "wo" #'other-window
     "wd" #'delete-window
     "wD" #'delete-other-windows
     "w-" #'split-window-below
