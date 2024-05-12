@@ -495,7 +495,10 @@ nor requires Flycheck to be loaded."
   (setq flycheck-display-errors-delay 0.2))
 
 
-(use-package flycheck-posframe)
+(use-package flycheck-posframe
+  :config
+  (with-eval-after-load 'ace-window
+    (add-to-list 'aw-ignored-buffers "*flycheck-posframe-buffer*")))
 
 
 (use-package eldoc

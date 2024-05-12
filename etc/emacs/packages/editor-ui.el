@@ -4,6 +4,7 @@
   :demand t
 
   :general
+  ("C-x o" #'ace-window)
   (leader
    "ww" #'ace-window))
 
