@@ -31,6 +31,7 @@ in
 
       # Packages
       ace-link
+      ace-window
       avy
       consult
       consult-project-extra
@@ -88,7 +89,6 @@ in
       vterm
       w3m
       which-key
-      winum
       yasnippet
       yasnippet-snippets
       pkgs.local.emacsPackages.apheleia

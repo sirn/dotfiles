@@ -1,27 +1,11 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
-(use-package winum
+(use-package ace-window
   :demand t
 
   :general
   (leader
-    "0" #'winum-select-window-0
-    "1" #'winum-select-window-1
-    "2" #'winum-select-window-2
-    "3" #'winum-select-window-3
-    "4" #'winum-select-window-4
-    "5" #'winum-select-window-5
-    "6" #'winum-select-window-6
-    "7" #'winum-select-window-7
-    "8" #'winum-select-window-8
-    "9" #'winum-select-window-9)
-
-  :custom
-  (winum-auto-setup-mode-line nil)
-  (winum-scope 'frame-local)
-
-  :config
-  (winum-mode +1))
+   "ww" #'ace-window))
 
 
 (use-package which-key
@@ -29,7 +13,6 @@
 
   :config
   (which-key-mode +1))
-
 
 
 (use-package telephone-line
@@ -40,8 +23,7 @@
   (telephone-line-primary-left-separator 'telephone-line-utf-abs-left)
   (telephone-line-secondary-left-separator 'telephone-line-utf-abs-hollow-left)
   (telephone-line-lhs
-    '((accent . (telephone-line-window-number-segment))
-      (evil   . (telephone-line-evil-tag-segment))
+    '((evil   . (telephone-line-evil-tag-segment))
       (nil    . (telephone-line-vc-segment))
       (nil    . (telephone-line-project-segment))
       (nil    . (telephone-line-process-segment
