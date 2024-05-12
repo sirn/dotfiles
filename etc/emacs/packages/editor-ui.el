@@ -6,7 +6,10 @@
   :general
   ("C-x o" #'ace-window)
   (leader
-   "ww" #'ace-window))
+   "ww" #'ace-window)
+
+  :config
+  (setq aw-dispatch-always t))
 
 
 (use-package which-key
