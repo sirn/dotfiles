@@ -1,6 +1,9 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package sh-script
+  :mode
+  (("\\.bats\\'" . bash-ts-mode))
+
   :preface
   (eval-when-compile
     (declare-function apheleia-mode nil))
