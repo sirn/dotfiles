@@ -1,16 +1,6 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package pandoc-mode
-  :preface
-  (eval-when-compile
-    (declare-function pandoc-mode nil)
-    (declare-function apheleia-mode nil))
-
-  :init
-  (add-hook 'rst-mode-hook #'pandoc-mode)
-  (add-hook 'markdown-mode-hook #'pandoc-mode)
-  (add-hook 'pandoc-mode-hook #'apheleia-mode)
-
   :config
   (with-eval-after-load 'apheleia
     (add-to-list
