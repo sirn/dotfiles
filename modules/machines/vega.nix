@@ -5,8 +5,5 @@
   imports = [
     ../common.nix
     ../common-linux.nix
-
-    # services
-    ../services/syncthing.nix
   ];
 }
