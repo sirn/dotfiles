@@ -12,8 +12,8 @@ in
     settings = {
       default-key = "0x4AFE17C811D18D20";
       local-user = [
-        "0x8FB3641FEB97EE77!"
-        "0x45FD642A9664BCDE!"
+        "0xB8B8BEB8DCA7A542!"
+        "0x865D6A23205F35CA!"
       ];
 
       no-secmem-warning = true;
