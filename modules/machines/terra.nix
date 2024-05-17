@@ -7,5 +7,8 @@
   imports = [
     ../common.nix
     ../common-linux.nix
+
+    # services
+    ../services/dropbox.nix
   ];
 }
