@@ -5,7 +5,7 @@
     ".amethyst.yml" = {
       text = lib.generators.toYAML { } {
         layouts = [ "tall" "wide" "fullscreen" "column" ];
-        mouse-follows-focus = true;
+        mouse-follows-focus = false;
         focus-follows-mouse = true;
 
         floating = [
