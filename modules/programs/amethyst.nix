@@ -6,7 +6,7 @@
       text = lib.generators.toYAML { } {
         layouts = [ "tall" "wide" "fullscreen" "column" ];
         mouse-follows-focus = false;
-        focus-follows-mouse = true;
+        focus-follows-mouse = false;
 
         floating = [
           "com.adobe.illustrator"
