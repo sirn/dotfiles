@@ -9,6 +9,7 @@ in
 {
   home.sessionVariables = {
     VISUAL = "emacs";
+    LANG = "en_US.UTF-8";
 
     # Unless this is set in .profile, Go will loiter go/ in home directory.
     GOPATH = "${homeDirectory}/Dev/go/gopath:${homeDirectory}/Dev";
