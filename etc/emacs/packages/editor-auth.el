@@ -17,9 +17,6 @@
   ;; gpg-agent use INSIDE_EMACS environment variable to detect that we're
   ;; running in Emacs, but the environment variable is set in term-mode.
   ;; We do it here so all pinentry actually goes to Emacs.
-  ;;
-  ;; Also this hook has a nice effect of auto-starting gpg-agent when
-  ;; needed by ssh.
   (setenv "INSIDE_EMACS" emacs-version)
 
   (defun gemacs--gpg-update-tty (&rest _args)

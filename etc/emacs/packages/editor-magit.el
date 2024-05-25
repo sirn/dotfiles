@@ -20,7 +20,7 @@
   :config
   (with-eval-after-load 'pinentry
     (dolist (func '(magit-start-git magit-call-git))
-      (advice-add func :after #'gemacs--gpg-update-tty)))
+      (advice-add func :before #'gemacs--gpg-update-tty)))
 
   ;; Deferred loading
   (require 'forge))
