@@ -27,22 +27,39 @@ let
 
   gpgInitScript = ''
     GPG_TTY=$(tty); export GPG_TTY
+    PINENTRY_USER_DATA=USE_CURSES; export PINENTRY_USER_DATA
     ${gpgSshSupportStr}
   '';
 
   gpgFishInitScript = ''
     set -gx GPG_TTY (tty)
+    set -gx PINENTRY_USER_DATA USE_CURSES
     ${gpgSshSupportStr}
   '';
 
-  pinentryProgram =
+  pinentryProgramActual =
     if config.desktop.enable && isLinux then
       "${pkgs.pinentry-qt}/bin/pinentry-qt"
     else
       if config.desktop.enable && isDarwin then
         "${pkgs.pinentry_mac}/Applications/pinentry-mac.app/Contents/MacOS/pinentry-mac"
       else
-        "${pkgs.pinentry}/bin/pinentry";
+        "${pkgs.pinentry.tty}/bin/pinentry-tty";
+
+  pinentryProgram = "${
+    pkgs.writeScriptBin "pinentry-wrapper" ''
+      #!${pkgs.bash}/bin/bash
+      # Wrapper to always force pinentry to use TTY if PINENTRY_USER_DATA=USE_TTY is set.
+      # https://superuser.com/questions/1457167/
+      pinentry=${pinentryProgramActual}
+
+      case "$PINENTRY_USER_DATA" in
+        *USE_TTY* ) pinentry="${pkgs.pinentry.tty}/bin/pinentry-tty";;
+        *USE_CURSES* ) pinentry=${pkgs.pinentry.curses}/bin/pinentry-curses;;
+      esac
+
+      exec "$pinentry" "$@"
+    ''}/bin/pinentry-wrapper";
 in
 {
   # services.gpg-agent also writes configuration, which is something we
