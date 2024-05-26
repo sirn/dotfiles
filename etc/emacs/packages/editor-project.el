@@ -91,17 +91,13 @@
     (declare-function tabspaces-mode nil)
     (defvar gemacs--tabspaces-consult-source)
     (defvar tabspaces-default-tab)
-    (defvar tabspaces-session)
     (defvar tabspaces-remove-to-default)
-    (defvar tabspaces-session-auto-restore)
     (defvar tabspaces-use-filtered-buffers-as-default))
 
   :init
   (setq tabspaces-default-tab "default")
   (setq tabspaces-use-filtered-buffers-as-default t)
   (setq tabspaces-remove-to-default t)
-  (setq tabspaces-session t)
-  (setq tabspaces-session-auto-restore t)
   (add-hook 'after-init-hook #'tabspaces-mode)
 
   :config
