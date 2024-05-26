@@ -40,6 +40,8 @@ in
       corfu-terminal
       ctrlf
       dired-sidebar
+      embark
+      embark-consult
       dtrt-indent
       editorconfig
       eldoc

@@ -254,7 +254,7 @@
 
   :general
   (leader
-    "e" '(:keymap envrc-command-map))
+    "E" '(:keymap envrc-command-map))
 
   :init
   (add-hook 'gemacs-after-init-hook 'envrc-global-mode))
@@ -343,6 +343,29 @@
 
       (add-to-list 'project-switch-commands '(consult-grep "Grep") t)
       (add-to-list 'project-switch-commands '(consult-ripgrep "Ripgrep") t))))
+
+
+(use-package embark
+  :demand t
+
+  :general
+  (leader
+    "e" '(:keymap embark-command-map))
+
+  :init
+  (setq prefix-help-command #'embark-prefix-help-command)
+
+  :config
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+
+(use-package embark-consult
+  :demand t
+  :init
+  (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
 
 
 (use-package ctrlf
