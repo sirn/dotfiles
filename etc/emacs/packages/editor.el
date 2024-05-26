@@ -24,7 +24,6 @@
 ;; --------------------------------------------------------------------------
 ;;; Editing behaviors
 
-
 ;; Builtin
 (use-package emacs
   :custom
@@ -265,7 +264,6 @@
 ;; --------------------------------------------------------------------------
 ;;; Minibuffers
 
-
 (use-package prescient
   :demand t
 
@@ -456,7 +454,6 @@
 ;; --------------------------------------------------------------------------
 ;;; Errors and documentation
 
-
 (use-package flycheck
   :general
   (leader
@@ -526,7 +523,6 @@ area."
 
 ;; --------------------------------------------------------------------------
 ;;; Language Server Protocol
-
 
 (use-package flycheck-eglot
   :after (flycheck eglot)
