@@ -68,6 +68,7 @@ in
       ob-restclient
       parinfer-rust-mode
       password-store
+      perspective
       pinentry
       posframe
       prescient

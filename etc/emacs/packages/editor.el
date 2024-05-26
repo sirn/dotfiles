@@ -16,8 +16,6 @@
     "w-" #'split-window-below
     "w/" #'split-window-right
     "w=" #'balance-windows
-    "bd" #'kill-buffer
-    "bD" #'kill-buffer-and-window
     "wR" #'redraw-display))
 
 

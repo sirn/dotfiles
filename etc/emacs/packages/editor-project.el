@@ -72,9 +72,11 @@
   :demand t
 
   :general
-  ("C-c p f" #'consult-project-extra-find
+  ("C-x p b" #'consult-project-extra-find
+   "C-c p f" #'consult-project-extra-find
    "C-c p o" #'consult-project-extra-find-other-window)
 
   (leader
+   "pb" #'consult-project-extra-find
    "pf" #'consult-project-extra-find
    "po" #'consult-project-extra-find-other-window))
