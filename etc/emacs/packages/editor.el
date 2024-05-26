@@ -11,11 +11,12 @@
 (use-package emacs
   :general
   (leader
-    "wd" #'delete-window
-    "wD" #'delete-other-windows
+    "bd" #'kill-buffer
     "w-" #'split-window-below
     "w/" #'split-window-right
     "w=" #'balance-windows
+    "wD" #'delete-other-windows
+    "wd" #'delete-window
     "wR" #'redraw-display))
 
 
@@ -317,8 +318,6 @@
 (use-package consult
   :general
   ("C-x C-b" #'consult-buffer
-   "C-x 4 b" #'consult-buffer-other-window
-   "C-x 5 b" #'consult-buffer-other-frame
    "M-g g"   #'consult-goto-line
    "M-g M-g" #'consult-goto-line
    "M-s r"   #'consult-ripgrep

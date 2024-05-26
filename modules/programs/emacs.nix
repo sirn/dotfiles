@@ -68,7 +68,6 @@ in
       ob-restclient
       parinfer-rust-mode
       password-store
-      perspective
       pinentry
       posframe
       prescient
@@ -79,6 +78,7 @@ in
       restclient
       smartparens
       sql-indent
+      tabspaces
       telephone-line
       tree-sitter
       treesit-grammars.with-all-grammars
