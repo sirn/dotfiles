@@ -3,8 +3,8 @@
 (use-package dired-sidebar
   :general
   (leader
-    "tt" #'dired-sidebar-toggle-sidebar
-    "tT" #'dired-sidebar-toggle-with-current-directory)
+    "TT" #'dired-sidebar-toggle-sidebar
+    "Tt" #'dired-sidebar-toggle-with-current-directory)
 
   :config
   (setq dired-sidebar-theme 'ascii))
