@@ -19,6 +19,15 @@
   (which-key-mode +1))
 
 
+;; Builtin
+(use-package tab-bar
+  :demand t
+
+  :init
+  (setq tab-bar-new-tab-choice "*scratch*")
+  (setq tab-bar-close-button-show nil))
+
+
 (use-package telephone-line
   :custom
   (telephone-line-height 18)

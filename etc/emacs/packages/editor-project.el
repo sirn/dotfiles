@@ -8,11 +8,12 @@
 
   :general
   (leader
-    "pSS" #'gemacs--project-sync
-    "pp" #'project-switch-project
-    "pk" #'project-kill-buffers
-    "p!" #'project-async-shell-command
-    "pc" #'project-compile)
+    "p" '(:keymap project-prefix-map))
+
+  (:keymaps 'project-prefix-map
+    "SS" #'gemacs--project-sync
+    "b" #'consult-project-buffer
+    "'" #'multi-vterm-project)
 
   :custom
   (project-switch-commands
@@ -27,15 +28,6 @@
     (declare-function multi-vterm-project nil))
 
   :config
-  (general-with-eval-after-load 'general
-    (general-define-key :keymaps 'project-prefix-map "f" #'projectile)
-
-    (with-eval-after-load 'consult
-      (leader "pb" #'consult-project-buffer))
-
-    (with-eval-after-load 'multi-vterm
-      (leader "p'" #'multi-vterm-project)))
-
   ;; For custom projects without requiring .git
   ;; https://christiantietze.de/posts/2022/03/mark-local-project.el-directories/
 
@@ -75,15 +67,11 @@
   :demand t
 
   :general
-  (leader
-   "pb" #'consult-project-extra-find
-   "pf" #'consult-project-extra-find
-   "po" #'consult-project-extra-find-other-window)
+  (:keymaps 'project-prefix-map
+    "f" #'consult-project-extra-find)
 
   :init
-  (with-eval-after-load 'general
-    (general-define-key :keymaps 'project-prefix-map "f" #'consult-project-extra-find)
-    (add-to-list 'project-switch-commands '(consult-project-extra-find "Find file") t)))
+  (add-to-list 'project-switch-commands '(consult-project-extra-find "Find file") t))
 
 
 ;; --------------------------------------------------------------------------
@@ -94,28 +82,13 @@
 
   :general
   (leader
-    "PP" #'tabspaces-switch-or-create-workspace
-    "Pp" #'tabspaces-open-or-create-project-and-workspace
-    "Pb" #'tabspaces-switch-buffer-and-tab
-    "PC" #'tabspaces-clear-buffers
-    "Pr" #'tabspaces-remove-selected-buffer
-    "PR" #'tabspaces-remove-current-buffer
-    "Pk" #'tabspaces-close-workspace
-    "PK" #'tabspaces-kill-buffers-close-workspace)
+    "t" '(:keymap tabspaces-command-map))
 
   :preface
   (eval-when-compile
     (declare-function consult--buffer-state nil)
     (declare-function consult--source-buffer nil)
-    (declare-function tabspaces-close-workspace nil)
-    (declare-function tabspaces-kill-buffers-close-workspace nil)
     (declare-function tabspaces-mode nil)
-    (declare-function tabspaces-open-or-create-project-and-workspace nil)
-    (declare-function tabspaces-clear-buffers nil)
-    (declare-function tabspaces-remove-current-buffer nil)
-    (declare-function tabspaces-remove-selected-buffer nil)
-    (declare-function tabspaces-switch-buffer-and-tab nil)
-    (declare-function tabspaces-switch-or-create-workspace nil)
     (defvar gemacs--tabspaces-consult-source)
     (defvar tabspaces-default-tab)
     (defvar tabspaces-session)
