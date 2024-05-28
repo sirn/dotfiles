@@ -89,6 +89,7 @@
     (declare-function consult--buffer-state nil)
     (declare-function consult--source-buffer nil)
     (declare-function tabspaces-mode nil)
+    (declare-function gemacs--tabspaces-init nil)
     (defvar gemacs--tabspaces-consult-source)
     (defvar tabspaces-default-tab)
     (defvar tabspaces-remove-to-default)
@@ -98,7 +99,12 @@
   (setq tabspaces-default-tab "default")
   (setq tabspaces-use-filtered-buffers-as-default t)
   (setq tabspaces-remove-to-default t)
-  (add-hook 'after-init-hook #'tabspaces-mode)
+
+  (defun gemacs--tabspaces-init ()
+    (tabspaces-mode +1)
+    (tab-bar-rename-tab tabspaces-default-tab))
+
+  (add-hook 'after-init-hook #'gemacs--tabspaces-init)
 
   :config
   (with-eval-after-load 'consult
