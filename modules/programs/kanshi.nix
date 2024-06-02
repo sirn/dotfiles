@@ -46,7 +46,7 @@ mkIf config.desktop.enable {
         };
 
         lg_27uk650_w = default // {
-          criteria = "LG Electronics LG HDR 4K 0x00006393";
+          criteria = "LG Electronics LG HDR 4K 0x00036193";
           scale = 1.5;
         };
 
