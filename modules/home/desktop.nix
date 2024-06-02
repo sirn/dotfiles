@@ -76,7 +76,9 @@ mkIf config.desktop.enable {
   # can cause SEGFAULT due to dependency mismatch.
   qt = {
     enable = config.machine.isNixOS;
-    platformTheme = "kde";
+    platformTheme = {
+      name = "kde";
+    };
     style = {
       name = "breeze";
     };

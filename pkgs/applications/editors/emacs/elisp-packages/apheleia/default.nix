@@ -7,6 +7,6 @@ emacsPackages.apheleia.overrideDerivation (attrs: {
     wrapProgram $out/share/emacs/site-lisp/elpa/${attrs.pname}-${attrs.version}/scripts/formatters/apheleia-npx \
       --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.nodePackages.prettier ]}
     wrapProgram $out/share/emacs/site-lisp/elpa/${attrs.pname}-${attrs.version}/scripts/formatters/apheleia-phpcs \
-      --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.php83Packages.phpcs ]}
+      --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.php83Packages.php-codesniffer ]}
   '';
 })

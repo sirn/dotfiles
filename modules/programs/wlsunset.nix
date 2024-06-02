@@ -1,40 +1,22 @@
 { config, pkgs, lib, ... }:
 
 let
-  inherit (lib) concatStringsSep mkForce mkIf mkOption types;
+  inherit (lib) cli concatStringsSep mkForce mkIf mkOption types;
 
   cfg = config.services.wlsunset;
 
-  args = [
-    "-t ${toString cfg.temperature.night}"
-    "-T ${toString cfg.temperature.day}"
-    "-g ${cfg.gamma}"
-  ] ++ (if cfg.latitude != "" && config.longitude != "" then [
-    "-l ${cfg.latitude}"
-    "-L ${cfg.longitude}"
-  ] else [ ]) ++ (if cfg.sunrise != "" && cfg.sunset != "" then [
-    "-S ${cfg.sunrise}"
-    "-s ${cfg.sunset}"
-  ] else [ ]);
+  args = cli.toGNUCommandLineShell { } {
+    t = cfg.temperature.night;
+    T = cfg.temperature.day;
+    g = cfg.gamma;
+    l = cfg.latitude;
+    L = cfg.longitude;
+    S = cfg.sunrise;
+    s = cfg.sunset;
+    o = cfg.output;
+  };
 in
 {
-  # Hack to support sunrise and sunset options from unstable.
-  options.services.wlsunset = {
-    sunrise = mkOption {
-      type = types.str;
-      description = ''
-        A fixed time for sunrise.
-      '';
-    };
-
-    sunset = mkOption {
-      type = types.str;
-      description = ''
-        A fixed time for sunset.
-      '';
-    };
-  };
-
   config =
     mkIf config.desktop.enable {
       services.wlsunset = {
@@ -45,10 +27,8 @@ in
 
         systemdTarget = "sway-session.target";
 
-        latitude = "";
-        longitude = "";
-        sunrise = "7:00";
-        sunset = "21:00";
+        latitude = 35.67;
+        longitude = 139.77;
         temperature = {
           night = 5000;
         };
@@ -57,7 +37,7 @@ in
       systemd.user.services = mkIf cfg.enable {
         wlsunset = {
           Service = mkForce {
-            ExecStart = "${cfg.package}/bin/wlsunset ${concatStringsSep " " args}";
+            ExecStart = "${cfg.package}/bin/wlsunset ${args}";
           };
         };
       };
@@ -69,7 +49,7 @@ in
             runScript = ''
               #!${pkgs.execline}/bin/execlineb
               fdmove -c 2 1
-              ${pkgs.unstable.wlsunset}/bin/wlsunset ${concatStringsSep " " args}
+              ${pkgs.unstable.wlsunset}/bin/wlsunset ${args}
             '';
           };
         };

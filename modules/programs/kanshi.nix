@@ -17,7 +17,7 @@ let
     + optionalString (scale != null) " scale ${toString scale}"
     + optionalString (transform != null) " transform ${transform}";
 
-  profileStr = name:
+  settingStr = name:
     { outputs, exec, ... }: ''
       profile ${name} {
         ${
@@ -31,7 +31,7 @@ mkIf config.desktop.enable {
   services.kanshi = {
     enable = config.machine.isNixOS;
 
-    profiles =
+    settings =
       let
         default = {
           criteria = "*";
@@ -64,58 +64,82 @@ mkIf config.desktop.enable {
           scale = 1.5;
         };
       in
-      {
-        "dual_cuview" = {
-          outputs = [
-            (cuview_pix3_pro // { position = "1920,0"; })
-            lg_27uk650_w
-          ];
-        };
-        "dual_pu15" = {
-          outputs = [
-            (innocn_pu15_pre // { position = "1920,0"; })
-            lg_27uk650_w
-          ];
-        };
-        "dual_xdr_uk650w" = {
-          outputs = [
-            (apple_pro_display_xdr // { position = "2560,0"; })
-            lg_27uk650_w
-          ];
-        };
-        "only_cuview" = {
-          outputs = [
-            cuview_pix3_pro
-          ];
-        };
-        "only_pu15" = {
-          outputs = [
-            innocn_pu15_pre
-          ];
-        };
-        "only_pa148" = {
-          outputs = [
-            asus_pa148
-          ];
-        };
-        "only_uk650w" = {
-          outputs = [
-            lg_27uk650_w
-          ];
-        };
-        "only_xdr" = {
-          outputs = [
-            apple_pro_display_xdr
-          ];
-        };
-      };
+      [
+        {
+          profile = {
+            name = "dual_cuview";
+            outputs = [
+              (cuview_pix3_pro // { position = "1920,0"; })
+              lg_27uk650_w
+            ];
+          };
+        }
+        {
+          profile = {
+            name = "dual_pu15";
+            outputs = [
+              (innocn_pu15_pre // { position = "1920,0"; })
+              lg_27uk650_w
+            ];
+          };
+        }
+        {
+          profile = {
+            name = "dual_xdr_uk650w";
+            outputs = [
+              (apple_pro_display_xdr // { position = "2560,0"; })
+              lg_27uk650_w
+            ];
+          };
+        }
+        {
+          profile = {
+            name = "only_cuview";
+            outputs = [
+              cuview_pix3_pro
+            ];
+          };
+        }
+        {
+          profile = {
+            name = "only_pu15";
+            outputs = [
+              innocn_pu15_pre
+            ];
+          };
+        }
+        {
+          profile = {
+            name = "only_pa148";
+            outputs = [
+              asus_pa148
+            ];
+          };
+        }
+        {
+          profile = {
+            name = "only_uk650w";
+            outputs = [
+              lg_27uk650_w
+            ];
+          };
+        }
+        {
+          profile = {
+            name = "only_xdr";
+            outputs = [
+              apple_pro_display_xdr
+            ];
+          };
+        }
+      ];
   };
 
   # non-NixOS
   xdg.configFile = mkIf (!config.services.kanshi.enable) {
     "kanshi/config" = {
       text = ''
-        ${concatStringsSep "\n" (mapAttrsToList profileStr config.services.kanshi.profiles)}
+        ${concatStringsSep "\n" (mapAttrsToList settingStr config.services.kanshi.settings)}
         ${config.services.kanshi.extraConfig}
       '';
     };

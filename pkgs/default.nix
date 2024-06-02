@@ -28,8 +28,6 @@ in
     visual-regexp-steroids = (callPackage ./applications/editors/emacs/elisp-packages/visual-regexp-steroids { });
   };
 
-  localias = (callPackage ./development/web/localias { });
-
   unison-nox = (callPackage ./applications/networking/sync/unison-nox { });
 
   s-tui = (callPackage ./tools/system/s-tui { });
