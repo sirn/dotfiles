@@ -17,11 +17,12 @@
     "\\.tpl\\.php\\'")
 
   :custom
-  (web-mode-enable-auto-closing t)
   (web-mode-auto-close-style 1)
+  (web-mode-enable-auto-closing t)
+  (web-mode-enable-auto-pairing nil)
   (web-mode-enable-auto-quoting nil)
-  (web-mode-enable-current-element-highlight t)
   (web-mode-enable-current-column-highlight t)
+  (web-mode-enable-current-element-highlight t)
 
   :preface
   (eval-when-compile
