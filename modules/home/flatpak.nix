@@ -5,6 +5,8 @@ let
 in
 {
   flatpak = {
+    enable = true;
+
     globalOverrides = {
       filesystems = [
         "/nix/store:ro"
