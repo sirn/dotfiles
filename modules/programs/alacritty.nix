@@ -14,7 +14,7 @@ let
     then "${cfg.package}/bin/alacritty"
     else "alacritty";
 in
-mkIf config.desktop.enable {
+{
   programs.alacritty = {
     # Alacritty depends on GL stuff, which means we can't use Nix packages
     # on a non-NixOS due to library mismatch.

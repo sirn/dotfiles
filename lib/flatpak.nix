@@ -129,7 +129,7 @@ in
     };
   };
 
-  config = {
+  config = mkIf config.flatpak.enable {
     xdg.dataFile = listToAttrs (
       (if config.flatpak.globalOverrides != null
       then [ (mkOverrideFile "global" config.flatpak.globalOverrides) ]
@@ -139,7 +139,7 @@ in
         (attrNames config.flatpak.applications))
     );
 
-    home.activation = mkIf config.flatpak.enable {
+    home.activation = {
       # TODO: have Home Manager manage Flatpak installations?
       noticeFlatpakApplications = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         noticeFlatpakApplications() {

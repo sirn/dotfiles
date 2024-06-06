@@ -5,7 +5,7 @@ let
 
   pkg = pkgs.unstable.sway-audio-idle-inhibit;
 in
-mkIf config.desktop.enable {
+{
   systemd.user.services =
     mkIf config.machine.isNixOS {
       sway-audio-idle-inhibit = {

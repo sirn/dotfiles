@@ -3,7 +3,7 @@
 let
   inherit (lib) mkIf;
 in
-mkIf config.desktop.enable {
+{
   services.mako = {
     enable = config.machine.isNixOS;
   };

@@ -25,7 +25,7 @@ let
   args = cfg.extraArgs ++ (concatMap mkTimeout cfg.timeouts)
     ++ (concatMap mkEvent cfg.events);
 in
-mkIf config.desktop.enable {
+{
   services.swayidle = {
     enable = config.machine.isNixOS;
 

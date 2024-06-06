@@ -26,7 +26,7 @@ let
     listsAsDuplicateKeys = true;
   };
 in
-mkIf config.desktop.enable {
+{
   programs.mpv = {
     # Install via Nix on Darwin or if Flatpak was not requested.
     #
@@ -41,7 +41,7 @@ mkIf config.desktop.enable {
     };
   };
 
-  flatpak.applications = mkIf (isLinux && config.flatpak.enable) {
+  flatpak.applications = mkIf isLinux {
     "io.mpv.Mpv" = {
       overrides = {
         filesystems = [

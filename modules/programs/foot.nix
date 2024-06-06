@@ -3,7 +3,7 @@
 let
   inherit (lib) mkIf;
 in
-mkIf config.desktop.enable {
+{
   programs.foot = {
     enable = true;
 

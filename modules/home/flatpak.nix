@@ -3,7 +3,7 @@
 let
   inherit (lib) concatStringsSep mkIf;
 in
-mkIf config.desktop.enable {
+{
   flatpak = {
     globalOverrides = {
       filesystems = [

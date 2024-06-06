@@ -7,7 +7,7 @@ let
   cfg = config.programs.looking-glass-client;
   settingsFormat = pkgs.formats.ini { };
 in
-mkIf (isLinux && config.desktop.enable) {
+{
   programs.looking-glass-client = {
     # Looking Glass requires EGL, which doesn't work when versions between
     # Nix and the host mismatched. Only enable on NixOS.

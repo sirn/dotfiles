@@ -4,13 +4,14 @@ let
   inherit (lib) mkDefault mkIf;
   inherit (config.home) homeDirectory;
 in
-mkIf config.desktop.enable {
+{
   wayland.windowManager.sway = {
     enable = true;
     xwayland = true;
 
     systemd = {
       enable = config.machine.isNixOS;
+      xdgAutoStart = config.wayland.windowManager.sway.systemd.enable;
     };
 
     package =

@@ -1,5 +1,4 @@
 {
-  desktop.enable = true;
   launchd.enable = true;
 
   imports = [

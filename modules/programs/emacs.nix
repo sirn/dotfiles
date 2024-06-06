@@ -11,11 +11,11 @@ in
   programs.emacs = {
     enable = true;
     package =
-      if config.desktop.enable && isLinux then
-        pkgs.local.emacs-pgtk
+      if isDarwin then
+        pkgs.local.emacs-nox
       else
-        if config.desktop.enable && isDarwin then
-          pkgs.local.emacs-macport
+        if isLinux then
+          pkgs.local.emacs-pgtk
         else
           pkgs.local.emacs-nox;
 

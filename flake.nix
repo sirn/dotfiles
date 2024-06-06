@@ -51,7 +51,6 @@
           pkgs = nixpkgs.legacyPackages.${system};
           modules = [
             defaultConfig
-            ./lib/desktop.nix
             ./lib/flatpak.nix
             ./lib/machine.nix
             ./lib/runit/runit.nix

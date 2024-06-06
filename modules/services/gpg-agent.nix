@@ -38,13 +38,10 @@ let
   '';
 
   pinentryProgramActual =
-    if config.desktop.enable && isLinux then
-      "${pkgs.pinentry-qt}/bin/pinentry-qt"
+    if isDarwin then
+      "${pkgs.pinentry_mac}/Applications/pinentry-mac.app/Contents/MacOS/pinentry-mac"
     else
-      if config.desktop.enable && isDarwin then
-        "${pkgs.pinentry_mac}/Applications/pinentry-mac.app/Contents/MacOS/pinentry-mac"
-      else
-        "${pkgs.pinentry.tty}/bin/pinentry-tty";
+      "${pkgs.pinentry.tty}/bin/pinentry-tty";
 
   pinentryProgram = "${
     pkgs.writeScriptBin "pinentry-wrapper" ''

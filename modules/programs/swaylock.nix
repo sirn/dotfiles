@@ -10,7 +10,7 @@ let
     then "${config.programs.swaylock.package}/bin/swaylock"
     else "swaylock";
 in
-mkIf config.desktop.enable {
+{
   programs.swaylock = {
     # swaylock needs to access PAM, so we must use the system package on non-NixOS
     enable = config.machine.isNixOS;

@@ -27,7 +27,7 @@ let
       }
     '';
 in
-mkIf config.desktop.enable {
+{
   services.kanshi = {
     enable = config.machine.isNixOS;
 
