@@ -8,7 +8,7 @@ pcd() {
         return
     fi
 
-    if [ ! -d "$HOME/Projects" ]; then
+    if [ ! -d "$HOME/Dropbox/Projects" ]; then
         echo >&2 "No projects directory"
         return 1
     fi
@@ -16,7 +16,7 @@ pcd() {
     local dir
 
     dir=$(
-        find "$HOME/Projects" \
+        find "$HOME/Dropbox/Projects" \
             -type d \
             -not -iname '.*' |
             fzf --layout reverse --height 40%
