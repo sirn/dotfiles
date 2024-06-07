@@ -8,7 +8,7 @@
     # profiles
     ../home/flatpak.nix
     ../home/fonts.nix
-    ../home/sway.nix
+    ../home/plasma.nix
 
     # programs
     ../programs/firefox.nix
