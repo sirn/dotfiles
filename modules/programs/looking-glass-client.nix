@@ -13,6 +13,8 @@ in
     # Nix and the host mismatched. Only enable on NixOS.
     enable = config.machine.isNixOS;
 
+    package = pkgs.local.looking-glass-client;
+
     settings = {
       input = {
         escapeKey = 100;

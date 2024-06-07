@@ -28,9 +28,11 @@ in
     visual-regexp-steroids = (callPackage ./applications/editors/emacs/elisp-packages/visual-regexp-steroids { });
   };
 
-  unison-nox = (callPackage ./applications/networking/sync/unison-nox { });
+  looking-glass-client = (callPackage ./applications/virtualization/looking-glass-client { });
 
   s-tui = (callPackage ./tools/system/s-tui { });
+
+  unison-nox = (callPackage ./applications/networking/sync/unison-nox { });
 
   wl-clipboard = (callPackage ./tools/wayland/wl-clipboard/wrapped.nix { });
 }
