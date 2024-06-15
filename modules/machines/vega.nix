@@ -11,8 +11,8 @@
     ../home/sway.nix
 
     # programs
-    ../programs/alacritty.nix
     ../programs/firefox.nix
+    ../programs/foot.nix
     ../programs/intellij.nix
     ../programs/looking-glass-client.nix
     ../programs/mpv.nix
