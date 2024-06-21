@@ -1,6 +1,12 @@
 { pkgs, ... }:
 
 {
+  imports = [
+    ../programs/ark.nix
+    ../programs/gwenview.nix
+    ../programs/okular.nix
+  ];
+
   home = {
     sessionVariables = {
       QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";

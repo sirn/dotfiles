@@ -5,13 +5,7 @@ let
   inherit (pkgs.stdenv) isLinux;
 in
 {
-  flatpak.applications = mkIf isLinux {
-    "org.mozilla.Thunderbird" = {
-      overrides = {
-        environment = {
-          MOZ_ENABLE_WAYLAND = "1";
-        };
-      };
-    };
+  programs.thunderbird = {
+    enable = isLinux;
   };
 }
