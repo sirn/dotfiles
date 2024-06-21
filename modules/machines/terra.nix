@@ -18,6 +18,7 @@
     ../programs/intellij.nix
     ../programs/looking-glass-client.nix
     ../programs/mpv.nix
+    ../programs/thunderbird.nix
 
     # services
     ../services/dropbox.nix
