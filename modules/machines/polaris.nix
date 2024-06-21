@@ -14,6 +14,7 @@
     ../programs/firefox.nix
     ../programs/foot.nix
     ../programs/intellij.nix
+    ../programs/krita.nix
     ../programs/mpv.nix
   ];
 }
