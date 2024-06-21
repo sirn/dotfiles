@@ -7,5 +7,11 @@ in
 {
   programs.thunderbird = {
     enable = isLinux;
+
+    profiles = {
+      main = {
+        isDefault = true;
+      };
+    };
   };
 }
