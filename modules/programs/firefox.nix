@@ -2,11 +2,12 @@
 
 let
   inherit (lib) mkIf;
-  inherit (pkgs.stdenv) isLinux;
+  inherit (pkgs.stdenv) isLinux isDarwin;
 in
 {
   programs.firefox = {
-    enable = isLinux;
+    enable = true;
+    package = if isLinux then pkgs.firefox else null;
 
     profiles = {
       main = {
