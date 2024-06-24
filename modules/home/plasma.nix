@@ -20,4 +20,8 @@
       size = 24;
     };
   };
+
+  programs.firefox.nativeMessagingHosts = [
+    pkgs.kdePackages.plasma-browser-integration
+  ];
 }
