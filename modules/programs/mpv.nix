@@ -32,7 +32,7 @@ in
     #
     # GPU drivers does not work when Home Manager is only managing user
     # home and not the entire system (and vo=xv is kinda bad).
-    enable = isDarwin || (isLinux && !config.machine.isNixOS);
+    enable = isDarwin || (isLinux && config.machine.isNixOS);
     defaultProfiles = [ "gpu-hq" ];
     config = {
       hwdec = "auto";
