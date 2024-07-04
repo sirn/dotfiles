@@ -16,5 +16,6 @@
     ../programs/intellij.nix
     ../programs/krita.nix
     ../programs/mpv.nix
+    ../programs/thunderbird.nix
   ];
 }
