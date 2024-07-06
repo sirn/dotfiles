@@ -44,7 +44,12 @@ in
           user_pref("privacy.trackingprotection.enabled", true);
           user_pref("privacy.trackingprotection.fingerprinting.enabled", true);
           user_pref("dom.security.https_only_mode", true);
-        '';
+        '' + (if isLinux then ''
+
+          // Linux-specific
+          user_pref("media.ffmpeg.enabled", true);
+          user_pref("media.ffmpeg.vaapi.enabled", true);
+        '' else "");
       };
     };
   };
