@@ -139,24 +139,52 @@ in
         (attrNames config.flatpak.applications))
     );
 
-    home.activation = {
-      # TODO: have Home Manager manage Flatpak installations?
-      noticeFlatpakApplications = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        noticeFlatpakApplications() {
-          appids=(${concatStringsSep " " (mapAttrsToList (n: v: v.name) config.flatpak.applications)})
-          if [[ ''${#appids[@]} -lt 1 ]]; then
-            return
-          fi
+    home.activation =
+      let
+        inherit (config.home) homeDirectory;
+      in
+      {
+        # TODO: have Home Manager manage Flatpak installations?
+        noticeFlatpakApplications = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          noticeFlatpakApplications() {
+            appids=(${concatStringsSep " " (mapAttrsToList (n: v: v.name) config.flatpak.applications)})
+            if [[ ''${#appids[@]} -lt 1 ]]; then
+              return
+            fi
 
-          echo "Flatpak applications are not managed by Home Manager."
-          echo "Suggested commands:"
-          for appid in ''${appids[@]}; do
-            echo "flatpak install $appid"
-          done
-        }
+            echo "Flatpak applications are not managed by Home Manager."
+            echo "Suggested commands:"
+            for appid in ''${appids[@]}; do
+              echo "flatpak install $appid"
+            done
+          }
 
-        noticeFlatpakApplications
-      '';
-    };
+          noticeFlatpakApplications
+        '';
+
+        cleanFlatpakDatadir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          cleanFlatpakDatadir() {
+            baseDir="${homeDirectory}/.var/app"
+
+            for appDir in "''${baseDir}"/*; do
+              if [ ! -d "''${appDir}" ]; then
+                continue
+              fi
+
+              appName=''${appDir##''$baseDir/}
+              nixProfileDir=''${appDir}/.local/state/nix
+
+              if [ -d "''${nixProfileDir}/profiles" ]; then
+                echo "Cleaning up $appName"
+                rm "''${nixProfileDir}/profiles"/*
+                rm -d "''${nixProfileDir}/profiles"
+                rm -d "''${nixProfileDir}"
+              fi
+            done
+          }
+
+          cleanFlatpakDatadir
+        '';
+      };
   };
 }
