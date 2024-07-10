@@ -19,6 +19,10 @@ in
         key = config.programs.git.signing.key;
         sign-all = true;
       };
+
+      ui = {
+        editor = config.home.sessionVariables.EDITOR;
+      };
     };
   };
 
