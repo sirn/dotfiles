@@ -17,6 +17,7 @@
     ./programs/gpg.nix
     ./programs/htop.nix
     ./programs/jq.nix
+    ./programs/jujutsu.nix
     ./programs/magit.nix
     ./programs/mercurial.nix
     ./programs/mosh.nix
