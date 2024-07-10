@@ -145,7 +145,12 @@ pom_cache_update() {
     msg_debug "Search dirs: $*"
     find "$@" \
         -maxdepth "$POM_SEARCHDEPTH" \
+        -and \
+        \( \
         -exec test -e '{}'/.git \; \
+        -or -exec test -e '{}'/.hg \; \
+        -or -exec test -e '{}'/.jj \; \
+        \) \
         -print \
         -prune 2>/dev/null |
         sort -u >"$POM_CACHE".new
@@ -175,7 +180,8 @@ pom_git_clone() {
                     s|:[0-9]+/|/|;
                     s|:|/|;
                     s|.hg$||;
-                    s|.git$||'
+                    s|.git$||;
+                    s|.jj$||'
     )
 
     msg_debug "env POM_GIT_REPO=$POM_GIT_REPO"
