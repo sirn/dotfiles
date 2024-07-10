@@ -369,6 +369,101 @@ pom_git() {
     esac
 }
 
+## pom jj
+## -----------------------------------------------------------------------------
+
+pom_jj_clone() {
+    if [ "$#" -lt 1 ]; then
+        pom_jj_help "$@"
+        exit 1
+    fi
+
+    POM_JJ_REPO=$1
+    shift
+
+    POM_JJ_REPO_DIR=$(
+        echo "$POM_JJ_REPO" |
+            tr '[:upper:]' '[:lower:]' |
+            sed -E 's|^.*://||;
+                    s|^.*@||;
+                    s|:[0-9]+/|/|;
+                    s|:|/|;
+                    s|.git$||'
+    )
+
+    msg_debug "env POM_JJ_REPO=$POM_JJ_REPO"
+    msg_debug "env POM_JJ_REPO_DIR=$POM_JJ_REPO_DIR"
+
+    OLDIFS=$IFS
+    IFS=:
+    for n in $POM_ROOTS; do
+        msg_debug "Searching $n/$POM_JJ_REPO_DIR"
+
+        if [ -d "$n/$POM_JJ_REPO_DIR" ] && [ ! -d "$n/$POM_JJ_REPO_DIR/.jj" ]; then
+            msg_error "$n/$POM_JJ_REPO_DIR already exists but is not a Jujutsu directory."
+            exit 1
+        fi
+
+        if [ -d "$n/$POM_JJ_REPO_DIR" ]; then
+            msg_warn "$n/$POM_JJ_REPO_DIR already exists"
+            exit 0
+        fi
+    done
+    IFS=$OLDIFS
+
+    RET=0
+    POM_JJ_REPO_ROOT=$POM_ROOT/$POM_JJ_REPO_DIR
+    cmd_run mkdir -p "$POM_JJ_REPO_ROOT"
+    cmd_run jj git clone "$POM_JJ_REPO" "$POM_JJ_REPO_ROOT" || RET=$?
+
+    # Clone failed
+    if [ "$RET" != "0" ]; then
+        rmdir "$POM_JJ_REPO_DIR" 2>/dev/null || true
+        msg_error "Failed to clone $POM_JJ_REPO into $POM_JJ_REPO_ROOT"
+        exit 1
+    fi
+
+    pom_cache_update
+    msg_info "Successfully cloned $POM_JJ_REPO into $POM_JJ_REPO_ROOT"
+}
+
+pom_jj_help() {
+    cat >&2 <<EOF
+Usage: $PROG jj [SUBCOMMAND...]
+
+Run Jujutsu commands inside POM root or POM project directory.
+
+SUBCOMMANDS:
+
+    clone REPO
+        Clone a repository into POM root
+
+EOF
+}
+
+pom_jj() {
+    POM_SUBCOMMAND=
+    POM_ARGV=$*
+    if [ "$#" -gt 0 ] && [ "${POM_ARGV#-*}" = "$*" ]; then
+        POM_SUBCOMMAND=$1
+        shift
+        msg_debug "POM_SUBCOMMAND: $POM_SUBCOMMAND"
+    fi
+
+    case "$POM_SUBCOMMAND" in
+    clone)
+        pom_jj_clone "$@"
+        ;;
+    help)
+        pom_jj_help "$@"
+        ;;
+    *)
+        pom_jj_help "$@"
+        exit 2
+        ;;
+    esac
+}
+
 ## pom help
 ## -----------------------------------------------------------------------------
 
@@ -382,6 +477,9 @@ COMMAND:
 
     git
         Run a Git command within POM root
+
+    jj
+        Run a Jujutsu command within POM root
 
     help
         Prints this help
@@ -527,6 +625,9 @@ main() {
     case "$POM_COMMAND" in
     git)
         pom_git "$@"
+        ;;
+    jj)
+        pom_jj "$@"
         ;;
     help)
         pom_help "$@"
