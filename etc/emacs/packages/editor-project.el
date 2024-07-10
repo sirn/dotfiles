@@ -32,9 +32,9 @@
   ;; https://christiantietze.de/posts/2022/03/mark-local-project.el-directories/
 
   (defun gemacs--project-try-local (dir)
-    "Checks if DIR is a non-VC project."
+    "Checks if DIR is a Jujutsu or non-VC project."
     (catch 'ret
-      (let ((markers '(".project" ".projectile")))
+      (let ((markers '(".project" ".projectile" ".jj")))
         (dolist (f markers)
           (when-let ((root (locate-dominating-file dir f)))
             (throw 'ret (cons 'local root)))))))
