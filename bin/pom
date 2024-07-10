@@ -179,9 +179,7 @@ pom_git_clone() {
                     s|^.*@||;
                     s|:[0-9]+/|/|;
                     s|:|/|;
-                    s|.hg$||;
-                    s|.git$||;
-                    s|.jj$||'
+                    s|.git$||'
     )
 
     msg_debug "env POM_GIT_REPO=$POM_GIT_REPO"
