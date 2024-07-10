@@ -21,7 +21,9 @@ in
       };
 
       ui = {
+        default-command = "log";
         editor = config.home.sessionVariables.EDITOR;
+        pager = ":builtin";
       };
     };
   };
