@@ -16,8 +16,9 @@
     "'" #'multi-vterm-project)
 
   :custom
-  (project-switch-commands
-    '((project-dired "Dired")))
+  (project-vc-extra-root-markers '(".jj"))
+  (project-vc-ignores '(".jj"))
+  (project-switch-commands '((project-dired "Dired")))
 
   :preface
   (eval-when-compile
@@ -34,7 +35,7 @@
   (defun gemacs--project-try-local (dir)
     "Checks if DIR is a Jujutsu or non-VC project."
     (catch 'ret
-      (let ((markers '(".project" ".projectile" ".jj")))
+      (let ((markers '(".project" ".projectile")))
         (dolist (f markers)
           (when-let ((root (locate-dominating-file dir f)))
             (throw 'ret (cons 'local root)))))))
