@@ -31,12 +31,40 @@ _prompt_git() {
                 /^1 .M/ { changed=1 }
                 /^[^1]/ { changed=1 }
                 END {
-                    printf "%s%s%s", bold, branch, reset
+                    printf "git:%s%s%s", bold, branch, reset
                     if (staged) { printf "%s%s", green, "*" }
                     if (changed) { printf "%s%s", yellow, "*" }
                     printf "%s ", reset
                 }'
     fi
+}
+
+_prompt_jj() {
+    if ! command jj root >/dev/null 2>&1; then
+        return
+    fi
+
+    local _spec
+    _spec=$(command jj log --ignore-working-copy --no-graph -r @ -T 'separate(":",
+        change_id.shortest(),
+        if(empty, "0", "1"),
+    )')
+
+    local _changeid=${_spec%%:*};
+    local _changed=${_spec##${_changeid}:}
+
+    printf "jj:%s%s%s" \
+           "$(tput bold 2>/dev/null || true)" \
+           "$_changeid" \
+           "$(tput sgr0 2>/dev/null || true)"
+
+    if [ "$_changed" = "1" ]; then
+        printf "%s*%s" \
+               "$(tput setaf 3 2>/dev/null || true)" \
+               "$(tput sgr0 2>/dev/null || true)"
+    fi
+
+    printf " "
 }
 
 _prompt_pwd() {
@@ -97,6 +125,7 @@ $(_prompt_nix)\
 $(_prompt_hostname) \
 \$(_prompt_pwd) \
 \$(_prompt_git)\
+\$(_prompt_jj)\
 \$(_prompt_last_exit)\
 $(_prompt) "
             ;;
