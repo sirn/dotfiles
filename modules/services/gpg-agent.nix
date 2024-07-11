@@ -209,5 +209,5 @@ in
 
   programs.bash.initExtra = gpgInitScript;
   programs.zsh.initExtra = gpgInitScript;
-  programs.fish.interactiveShellInit = gpgInitScript;
+  programs.fish.interactiveShellInit = gpgFishInitScript;
 }
