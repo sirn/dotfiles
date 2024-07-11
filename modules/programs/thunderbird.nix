@@ -6,7 +6,8 @@ let
 in
 {
   programs.thunderbird = {
-    enable = isLinux;
+    enable = true;
+    package = if isLinux then pkgs.thunderbird else null;
 
     profiles = {
       main = {
