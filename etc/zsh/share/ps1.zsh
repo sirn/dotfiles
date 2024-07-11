@@ -54,14 +54,14 @@ _prompt_jj() {
     local _changed=${_spec##${_changeid}:}
 
     printf "jj:%s%s%s" \
-           "$(tput bold 2>/dev/null || true)" \
+           "%{$(tput bold 2>/dev/null || true)%}" \
            "$_changeid" \
-           "$(tput sgr0 2>/dev/null || true)"
+           "%{$(tput sgr0 2>/dev/null || true)%}"
 
     if [ "$_changed" = "1" ]; then
         printf "%s*%s" \
-               "$(tput setaf 3 2>/dev/null || true)" \
-               "$(tput sgr0 2>/dev/null || true)"
+               "%{$(tput setaf 3 2>/dev/null || true)%}" \
+               "%{$(tput sgr0 2>/dev/null || true)%}"
     fi
 
     printf " "
