@@ -19,6 +19,7 @@
     ../programs/looking-glass-client.nix
     ../programs/mpv.nix
     ../programs/thunderbird.nix
+    ../programs/zed.nix
 
     # services
     ../services/dropbox.nix

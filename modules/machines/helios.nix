@@ -16,5 +16,6 @@
     ../programs/intellij.nix
     ../programs/looking-glass-client.nix
     ../programs/mpv.nix
+    ../programs/zed.nix
   ];
 }
