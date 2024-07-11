@@ -26,7 +26,7 @@ in
         default-command = "log";
         diff-editor = ":builtin";
         editor = config.home.sessionVariables.EDITOR;
-        pager = "${pkgs.less}/bin/less";
+        pager = ":builtin";
       };
     };
   };
