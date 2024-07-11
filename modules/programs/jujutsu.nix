@@ -8,6 +8,8 @@ in
   programs.jujutsu = {
     enable = true;
 
+    package = pkgs.unstable.jujutsu;
+
     settings = {
       user = {
         email = config.programs.git.userEmail;
