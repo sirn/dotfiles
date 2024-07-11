@@ -135,6 +135,7 @@ $(_prompt) "
 $(_prompt_nix)\
 \$(_prompt_pwd) \
 \$(_prompt_git)\
+\$(_prompt_jj)\
 \$(_prompt_last_exit)\
 $(_prompt) "
             ;;
