@@ -102,10 +102,15 @@
   (setq tabspaces-remove-to-default t)
 
   (defun gemacs--tabspaces-init ()
+    ;; Force override; otherwise tabspaces will end up with incomplete
+    ;; project-switch-commands (that are defined through customs)
+    (require 'project)
+    (setq tabspaces-project-switch-commands project-switch-commands)
+
     (tabspaces-mode +1)
     (tab-bar-rename-tab tabspaces-default-tab))
 
-  (add-hook 'after-init-hook #'gemacs--tabspaces-init)
+  (add-hook 'gemacs-after-init-hook #'gemacs--tabspaces-init)
 
   :config
   (with-eval-after-load 'consult
