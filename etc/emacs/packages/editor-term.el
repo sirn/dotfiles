@@ -7,6 +7,10 @@
 
 ;; Builtin
 (use-package term
+  :init
+  (with-eval-after-load 'with-editor
+    (add-hook 'term-mode-hook #'with-editor-export-editor))
+
   :config
   (add-hook 'term-mode-hook #'gemacs--term-setup))
 
@@ -16,6 +20,10 @@
   :general
   (leader
     "'e" #'eshell)
+
+  :init
+  (with-eval-after-load 'with-editor
+    (add-hook 'eshell-mode-hook #'with-editor-export-editor))
 
   :config
   (add-hook 'eshell-mode-hook #'gemacs--term-setup))
@@ -29,6 +37,10 @@
 
   :custom
   (vterm-shell "zsh")
+
+  :init
+  (with-eval-after-load 'with-editor
+    (add-hook 'vterm-mode-hook #'with-editor-export-editor))
 
   :config
   (add-hook 'vterm-mode-hook #'gemacs--term-setup))
@@ -47,4 +59,7 @@
   (with-eval-after-load 'project
     (general-with-eval-after-load 'general
       (general-define-key :keymaps 'project-prefix-map "'" #'multi-vterm-project)
-      (add-to-list 'project-switch-commands '(multi-vterm-project "VTerm") t))))
+      (add-to-list 'project-switch-commands '(multi-vterm-project "VTerm") t)))
+
+  (with-eval-after-load 'with-editor
+    (add-hook 'multi-vterm-mode-hook #'with-editor-export-editor)))

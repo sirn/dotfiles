@@ -124,6 +124,7 @@ in
       toml-mode
       typescript-mode
       web-mode
+      with-editor
       yaml-mode
 
       # Non-Emacs dev packages (lsp and friends)

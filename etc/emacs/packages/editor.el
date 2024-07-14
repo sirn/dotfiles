@@ -260,6 +260,10 @@
   (add-hook 'gemacs-after-init-hook 'envrc-global-mode))
 
 
+(use-package with-editor
+  :demand t)
+
+
 ;; --------------------------------------------------------------------------
 ;;; Minibuffers
 
@@ -395,7 +399,6 @@
 
   :config
   (yas-global-mode +1))
-
 
 
 ;; --------------------------------------------------------------------------
