@@ -25,7 +25,6 @@ in
       ui = {
         default-command = "log";
         diff-editor = ":builtin";
-        editor = config.home.sessionVariables.EDITOR;
         pager = ":builtin";
       };
     };
