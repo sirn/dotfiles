@@ -119,8 +119,6 @@
   (defvar gemacs-font-size 11)
 
   (setq-default frame-title-format '("%f"))
-  (add-to-list 'default-frame-alist '(height . 60))
-  (add-to-list 'default-frame-alist '(width . 120))
 
   (tool-bar-mode -1)
   (menu-bar-mode -1)
