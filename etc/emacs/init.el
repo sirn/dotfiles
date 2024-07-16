@@ -91,6 +91,8 @@
   (require 'use-package)
   (require 'el-patch))
 
+(setq el-patch-warn-on-eval-template nil)
+
 
 ;; --------------------------------------------------------------------------
 ;;; Convenient helpers

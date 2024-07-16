@@ -8,7 +8,7 @@
 
   :general
   (leader
-    "p" '(:keymap project-prefix-map))
+   "p" '(:keymap project-prefix-map))
 
   (:keymaps 'project-prefix-map
     "SS" #'gemacs--project-sync
@@ -29,6 +29,18 @@
     (declare-function multi-vterm-project nil))
 
   :config
+  ;; project.el doesn't support custom find args (which are used when project
+  ;; is not Git or Mercurial). Thankfully we can bruteforce our way in.
+
+  (el-patch-define-and-eval-template
+    (defun project--files-in-directory)
+    (xref--find-ignores-arguments
+      (el-patch-wrap 1 1
+        (append
+          ignores
+          '(".*/*" "tmp/*" "vendor/*")))
+      "./"))
+
   ;; For custom projects without requiring .git
   ;; https://christiantietze.de/posts/2022/03/mark-local-project.el-directories/
 
