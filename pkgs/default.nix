@@ -28,7 +28,9 @@ in
     visual-regexp-steroids = (callPackage ./applications/editors/emacs/elisp-packages/visual-regexp-steroids { });
   };
 
-  looking-glass-client = (callPackage ./applications/virtualization/looking-glass-client { });
+  looking-glass-client_b6 = (callPackage ./applications/virtualization/looking-glass-client/b6.nix { });
+
+  looking-glass-client_b7 = (callPackage ./applications/virtualization/looking-glass-client/b7.nix { });
 
   s-tui = (callPackage ./tools/system/s-tui { });
 
