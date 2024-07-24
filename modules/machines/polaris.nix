@@ -19,5 +19,8 @@
     ../programs/parsec.nix
     ../programs/thunderbird.nix
     ../programs/zed.nix
+
+    # services
+    ../services/dropbox.nix
   ];
 }
