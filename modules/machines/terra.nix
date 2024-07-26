@@ -24,6 +24,4 @@
     # services
     ../services/dropbox.nix
   ];
-
-  programs.looking-glass-client.package = pkgs.local.looking-glass-client_b7;
 }
