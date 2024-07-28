@@ -30,4 +30,11 @@
   (add-hook 'python-ts-mode-hook #'gemacs--python-auto-format)
 
   (with-eval-after-load 'eglot
-    (add-to-list 'eglot-server-programs '(python-ts-mode . ("pylsp")))))
+    (add-to-list 'eglot-server-programs '(python-ts-mode . ("pylsp")))
+    (setq-default eglot-workspace-configuration
+      '((pylsp
+          (plugins
+            (black (enabled . t))
+            (flake8 (enabled . t))
+            (pycodestyle (enabled . nil))
+            (pyflakes (enabled . t))))))))

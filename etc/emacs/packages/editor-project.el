@@ -38,7 +38,7 @@
       (el-patch-wrap 1 1
         (append
           ignores
-          '(".*/*" "tmp/*" "vendor/*")))
+          '(".*/*" "__pycache__/*" "node_modules/*" "tmp/*" "venv/*" "vendor/*")))
       "./"))
 
   ;; For custom projects without requiring .git
