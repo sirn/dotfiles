@@ -34,7 +34,6 @@ in
       ace-window
       avy
       consult
-      consult-project-extra
       corfu
       corfu-prescient
       corfu-terminal
@@ -128,6 +127,7 @@ in
       yaml-mode
 
       # Non-Emacs dev packages (lsp and friends)
+      pkgs.fd
       pkgs.jq
       pkgs.nixpkgs-fmt
       pkgs.nodejs

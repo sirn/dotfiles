@@ -12,6 +12,7 @@
 
   (:keymaps 'project-prefix-map
     "SS" #'gemacs--project-sync
+    "f" #'gemacs--project-fd
     "b" #'consult-project-buffer
     "'" #'multi-vterm-project)
 
@@ -22,24 +23,24 @@
 
   :preface
   (eval-when-compile
-    (declare-function gemacs--project-try-local nil)
     (declare-function gemacs--project-ag nil)
+    (declare-function gemacs--project-fd nil)
     (declare-function gemacs--project-sync nil)
+    (declare-function gemacs--project-try-local nil)
     (declare-function consult-project-buffer nil)
     (declare-function multi-vterm-project nil))
 
   :config
-  ;; project.el doesn't support custom find args (which are used when project
-  ;; is not Git or Mercurial). Thankfully we can bruteforce our way in.
+  ;; project-find-file does not read gitignore for non-Git projects
+  ;; instead of using project-find-file, we use consult-fd with
+  ;; fd utility instead.
 
-  (el-patch-define-and-eval-template
-    (defun project--files-in-directory)
-    (xref--find-ignores-arguments
-      (el-patch-wrap 1 1
-        (append
-          ignores
-          '(".*/*" "__pycache__/*" "node_modules/*" "tmp/*" "venv/*" "vendor/*")))
-      "./"))
+  (defun gemacs--project-fd ()
+    (interactive)
+    (when-let (proj (project-current t))
+      (consult-fd (project-root proj))))
+
+  (add-to-list 'project-switch-commands '(gemacs--project-find-fd "Find file") t)
 
   ;; For custom projects without requiring .git
   ;; https://christiantietze.de/posts/2022/03/mark-local-project.el-directories/
@@ -74,17 +75,6 @@
              (pr (project-current nil dir)))
         (project-remember-project pr)))
     (message "Projects successfully synced")))
-
-
-(use-package consult-project-extra
-  :demand t
-
-  :general
-  (:keymaps 'project-prefix-map
-    "f" #'consult-project-extra-find)
-
-  :init
-  (add-to-list 'project-switch-commands '(consult-project-extra-find "Find file") t))
 
 
 ;; --------------------------------------------------------------------------

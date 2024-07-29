@@ -338,6 +338,9 @@
     "//"  #'consult-ripgrep
     "/g"  #'consult-grep)
 
+  :custom
+  (consult-fd-args '("fd" "--no-require-git" "--full-path" "--color=never"))
+
   :init
   (with-eval-after-load 'project
     (general-with-eval-after-load 'general
