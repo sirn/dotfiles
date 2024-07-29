@@ -40,7 +40,7 @@
     (when-let (proj (project-current t))
       (consult-fd (project-root proj))))
 
-  (add-to-list 'project-switch-commands '(gemacs--project-find-fd "Find file") t)
+  (add-to-list 'project-switch-commands '(gemacs--project-fd "Find file") t)
 
   ;; For custom projects without requiring .git
   ;; https://christiantietze.de/posts/2022/03/mark-local-project.el-directories/
