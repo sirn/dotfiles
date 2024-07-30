@@ -7,6 +7,5 @@
     ./programs/amethyst.nix
     ./programs/firefox.nix
     ./programs/intellij.nix
-    ./programs/mpv.nix
   ];
 }
