@@ -68,8 +68,6 @@ in
       nix-ts-mode
       ob-restclient
       parinfer-rust-mode
-      password-store
-      pinentry
       posframe
       prescient
       project

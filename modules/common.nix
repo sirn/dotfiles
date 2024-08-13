@@ -14,7 +14,6 @@
     ./programs/emacsc.nix
     ./programs/fzf.nix
     ./programs/git.nix
-    ./programs/gpg.nix
     ./programs/htop.nix
     ./programs/jq.nix
     ./programs/jujutsu.nix
@@ -24,7 +23,6 @@
     ./programs/neovim.nix
     ./programs/nix-index.nix
     ./programs/openssh.nix
-    ./programs/password-store.nix
     ./programs/podman.nix
     ./programs/ripgrep.nix
     ./programs/rsync.nix
@@ -34,6 +32,5 @@
 
     # services
     ./services/emacs.nix
-    ./services/gpg-agent.nix
   ];
 }
