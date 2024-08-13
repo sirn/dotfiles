@@ -12,10 +12,10 @@
 
     # programs
     ../programs/firefox.nix
-    ../programs/foot.nix
     ../programs/intellij.nix
     ../programs/krita.nix
     ../programs/thunderbird.nix
+    ../programs/wezterm.nix
     ../programs/zed.nix
 
     # services

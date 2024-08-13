@@ -12,9 +12,9 @@
 
     # programs
     ../programs/firefox.nix
-    ../programs/foot.nix
     ../programs/intellij.nix
     ../programs/looking-glass-client.nix
+    ../programs/wezterm.nix
     ../programs/zed.nix
   ];
 }
