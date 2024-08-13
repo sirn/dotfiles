@@ -37,9 +37,6 @@ in
         export SHELL ''${shell}
         export XDG_RUNTIME_DIR ''${xdg-runtime-dir}
 
-        backtick -n -E agent-ssh-socket { ${pkgs.gnupg}/bin/gpgconf --list-dirs agent-ssh-socket }
-        export SSH_AUTH_SOCK ''${agent-ssh-socket}
-
         fdmove -c 2 1
         ''${shell} -l -c "${config.programs.emacs.finalPackage}/bin/emacs --fg-daemon --chdir=${homeDirectory}"
       '';
