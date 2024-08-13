@@ -16,12 +16,6 @@ in
         name = config.programs.git.userName;
       };
 
-      signing = {
-        backend = "gpg";
-        key = config.programs.git.signing.key;
-        sign-all = true;
-      };
-
       ui = {
         default-command = "log";
         diff-editor = ":builtin";

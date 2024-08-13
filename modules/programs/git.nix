@@ -16,11 +16,6 @@ in
 
     lfs.enable = true;
 
-    signing = {
-      key = "8EB047858549B60F2099C9F54AFE17C811D18D20";
-      signByDefault = true;
-    };
-
     extraConfig = {
       branch.autoSetupMerge = true;
       color.ui = "auto";
@@ -28,7 +23,6 @@ in
       init.defaultBranch = "main";
       pull.rebase = true;
       push.default = "nothing";
-      push.gpgSign = "if-asked";
       status.branch = true;
       status.short = true;
       submodule.fetchJobs = 8;
