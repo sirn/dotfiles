@@ -144,7 +144,7 @@ rec {
           serviceDir = config."${rname}".serviceDir;
           logDir = config."${rname}".logDir;
         in
-        {
+        mkIf config."${rname}".enable {
           home.file = mkMerge [
             (mkScripts (n: "${serviceDir}/${n}/run") runScripts)
             (mkScripts (n: "${serviceDir}/${n}/finish") finishScripts)
