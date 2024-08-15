@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
+  inherit (pkgs.stdenv) isLinux;
   inherit (lib) concatStringsSep mapAttrsToList mkIf optionalString;
 
   swaymsgBin =
@@ -29,7 +30,7 @@ let
 in
 {
   services.kanshi = {
-    enable = true;
+    enable = isLinux;
 
     settings =
       let

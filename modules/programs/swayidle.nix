@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
+  inherit (pkgs.stdenv) isLinux;
   inherit (lib) concatMap concatStringsSep escapeShellArg mkIf optionals;
 
   swaycfg = config.wayland.windowManager.sway.config;
@@ -27,7 +28,7 @@ let
 in
 {
   services.swayidle = {
-    enable = true;
+    enable = isLinux;
 
     systemdTarget = "sway-session.target";
 

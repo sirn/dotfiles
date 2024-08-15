@@ -1,6 +1,7 @@
 { config, pkgs, lib, ... }:
 
 let
+  inherit (pkgs.stdenv) isLinux;
   inherit (lib) cli concatStringsSep mkForce mkIf mkOption types;
 
   cfg = config.services.wlsunset;
@@ -19,7 +20,7 @@ in
 {
   config = {
     services.wlsunset = {
-      enable = true;
+      enable = isLinux;
 
       # wlsunset on stable is buggy
       package = pkgs.unstable.wlsunset;

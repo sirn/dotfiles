@@ -7,7 +7,8 @@ let
 in
 {
   services.emacs = {
-    enable = true;
+    enable = isLinux;
+
     socketActivation = {
       enable = true;
     };

@@ -7,7 +7,7 @@ let
 in
 {
   services.syncthing = {
-    enable = true;
+    enable = isLinux;
   };
 
   runit.services.syncthing = {
@@ -26,6 +26,7 @@ in
 
   launchd.agents.syncthing = {
     enable = true;
+
     config = {
       RunAtLoad = true;
       KeepAlive = true;
