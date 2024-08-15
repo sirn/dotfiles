@@ -32,5 +32,6 @@
 
     # services
     ./services/emacs.nix
+    ./services/ssh-agent.nix
   ];
 }
