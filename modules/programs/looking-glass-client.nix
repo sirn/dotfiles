@@ -36,8 +36,8 @@ in
     };
   };
 
-  # Configure only in case of non-NixOS
-  xdg = mkIf (!config.machine.isNixOS) {
+  # Configure-only when included
+  xdg = mkIf (!config.programs.looking-glass-client.enable) {
     configFile = {
       "looking-glass/client.ini" = mkIf (cfg.settings != { }) {
         source = settingsFormat.generate ("looking-glass-client.ini") cfg.settings;

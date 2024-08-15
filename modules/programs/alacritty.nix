@@ -17,7 +17,7 @@ in
 {
   programs.alacritty = {
     # Alacritty depends on GL stuff, which means we can't use Nix packages
-    # on a non-NixOS due to library mismatch.
+    # on a non-NixOS or non-Darwin due to a library mismatch.
     enable = config.machine.isNixOS || isDarwin;
 
     settings = {

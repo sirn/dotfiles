@@ -10,11 +10,13 @@ in
     xwayland = true;
 
     systemd = {
-      enable = config.machine.isNixOS;
+      enable = true;
       xdgAutoStart = config.wayland.windowManager.sway.systemd.enable;
     };
 
     package =
+      # Sway requires matching the system libraries (GL and such)
+      # using NixOS package on non-NixOS can lead to surprises
       if config.machine.isNixOS
       then pkgs.sway
       else null;

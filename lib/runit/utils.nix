@@ -153,7 +153,7 @@ rec {
 
           # NOTE: runit supervise directory can't be symlinked from the Nix store
           # since runit only readlink for one level to create run directory
-          home.activation = mkIf config.runit.enable {
+          home.activation = mkIf config."${rname}".enable {
             "setupRunitServices${rsuffix}" = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
               setupRunitServices${rsuffix}() {
                 local svcs

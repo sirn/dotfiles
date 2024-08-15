@@ -29,7 +29,7 @@ let
 in
 {
   services.kanshi = {
-    enable = config.machine.isNixOS;
+    enable = true;
 
     settings =
       let
@@ -135,25 +135,11 @@ in
       ];
   };
 
-  # non-NixOS
-  xdg.configFile = mkIf (!config.services.kanshi.enable) {
-    "kanshi/config" = {
-      text = ''
-        ${concatStringsSep "\n" (mapAttrsToList settingStr config.services.kanshi.settings)}
-        ${config.services.kanshi.extraConfig}
-      '';
-    };
+  wayexec.services.kanshi = {
+    runScript = ''
+      #!${pkgs.execline}/bin/execlineb
+      fdmove -c 2 1
+      ${pkgs.kanshi}/bin/kanshi
+    '';
   };
-
-  # non-NixOS; assume no systemd
-  wayexec.services =
-    mkIf (!config.services.kanshi.enable) {
-      kanshi = {
-        runScript = ''
-          #!${pkgs.execline}/bin/execlineb
-          fdmove -c 2 1
-          ${pkgs.kanshi}/bin/kanshi
-        '';
-      };
-    };
 }

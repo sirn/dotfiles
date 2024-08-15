@@ -19,7 +19,7 @@ in
 {
   config = {
     services.wlsunset = {
-      enable = config.machine.isNixOS;
+      enable = true;
 
       # wlsunset on stable is buggy
       package = pkgs.unstable.wlsunset;
@@ -33,24 +33,18 @@ in
       };
     };
 
-    systemd.user.services = mkIf cfg.enable {
-      wlsunset = {
-        Service = mkForce {
-          ExecStart = "${cfg.package}/bin/wlsunset ${args}";
-        };
+    systemd.user.services.wlsunset = {
+      Service = mkForce {
+        ExecStart = "${cfg.package}/bin/wlsunset ${args}";
       };
     };
 
-    # non-NixOS; assume no systemd
-    wayexec.services =
-      mkIf (!config.services.wlsunset.enable) {
-        wlsunset = {
-          runScript = ''
-            #!${pkgs.execline}/bin/execlineb
-            fdmove -c 2 1
-            ${pkgs.unstable.wlsunset}/bin/wlsunset ${args}
-          '';
-        };
-      };
+    wayexec.services.wlsunset = {
+      runScript = ''
+        #!${pkgs.execline}/bin/execlineb
+        fdmove -c 2 1
+        ${pkgs.unstable.wlsunset}/bin/wlsunset ${args}
+      '';
+    };
   };
 }

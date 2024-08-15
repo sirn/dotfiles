@@ -18,6 +18,7 @@ in
     ../programs/xdg-portal.nix
   ];
 
+  # On non-NixOS, this should be installed using OS package manager.
   i18n.inputMethod = mkIf config.machine.isNixOS {
     enabled = "fcitx5";
 
@@ -38,7 +39,6 @@ in
     };
   };
 
-  # non-NixOS; assume no systemd
   wayexec.services = {
     fcitx5 = mkIf (config.i18n.inputMethod.enabled != "fcitx5") {
       runScript = ''
@@ -48,7 +48,7 @@ in
       '';
     };
 
-    pipewire = mkIf (!config.machine.isNixOS) {
+    pipewire = {
       runScript = ''
         #!${pkgs.execline}/bin/execlineb
         fdmove -c 2 1
@@ -82,10 +82,11 @@ in
       };
   };
 
-  # Setting qt platformTheme and style via Home Manager on non-NixOS
-  # can cause SEGFAULT due to dependency mismatch.
   qt = {
+    # Setting qt platformTheme and style via Home Manager on non-NixOS
+    # can cause SEGFAULT due to dependency mismatch.
     enable = config.machine.isNixOS;
+
     platformTheme = {
       name = "kde";
     };
@@ -94,6 +95,8 @@ in
     };
   };
 
+  # Installing themes through Home Manager on NixOS can cause errors
+  # due to some of these themes require a matching system libraries
   home = mkIf config.machine.isNixOS
     {
       packages = with pkgs; [
@@ -103,6 +106,8 @@ in
         hicolor-icon-theme
       ];
     } // (
+    # On a non-NixOS, we just provide the proper environment variables
+    # for it to pick up the correct themes installed with the system
     mkIf (!config.machine.isNixOS) {
       sessionVariables = {
         QT_QPA_PLATFORMTHEME = config.qt.platformTheme;

@@ -5,18 +5,14 @@ let
 in
 {
   services.mako = {
-    enable = config.machine.isNixOS;
+    enable = true;
   };
 
-  # non-NixOS; assume no systemd
-  wayexec.services =
-    mkIf (!config.services.mako.enable) {
-      mako = {
-        runScript = ''
-          #!${pkgs.execline}/bin/execlineb
-          fdmove -c 2 1
-          ${pkgs.mako}/bin/mako
-        '';
-      };
-    };
+  wayexec.services.mako = {
+    runScript = ''
+      #!${pkgs.execline}/bin/execlineb
+      fdmove -c 2 1
+      ${pkgs.mako}/bin/mako
+    '';
+  };
 }

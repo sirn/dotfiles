@@ -5,6 +5,7 @@ let
 in
 {
   wayexec.services =
+    # On NixOS, this is configured via system configuration.
     mkIf (!config.machine.isNixOS) {
       xdg-desktop-portal-wlr = {
         runScript = ''
@@ -50,8 +51,8 @@ in
       };
     };
 
-  # On NixOS, this is configured via system configuration.
   home.file =
+    # On NixOS, this is configured via system configuration.
     mkIf (!config.machine.isNixOS) {
       ".config/xdg-desktop-portal/portals.conf" = {
         text = lib.generators.toINI { } {

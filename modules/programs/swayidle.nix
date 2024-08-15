@@ -27,7 +27,7 @@ let
 in
 {
   services.swayidle = {
-    enable = config.machine.isNixOS;
+    enable = true;
 
     systemdTarget = "sway-session.target";
 
@@ -48,15 +48,12 @@ in
     };
   };
 
-  wayexec.services =
-    mkIf (!config.services.swayidle.enable) {
-      swayidle = {
-        # bash is used here due to shell escaping shenanigans
-        runScript = ''
-          #!${pkgs.bash}/bin/bash
-          exec 2>&1
-          exec ${config.services.swayidle.package}/bin/swayidle -w ${concatStringsSep " " args}
-        '';
-      };
-    };
+  wayexec.services.swayidle = {
+    # bash is used here due to shell escaping shenanigans
+    runScript = ''
+      #!${pkgs.bash}/bin/bash
+      exec 2>&1
+      exec ${config.services.swayidle.package}/bin/swayidle -w ${concatStringsSep " " args}
+    '';
+  };
 }

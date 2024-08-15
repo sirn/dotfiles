@@ -18,7 +18,7 @@ in
   };
 
   config = {
-    systemd = mkIf config.machine.isNixOS {
+    systemd = mkIf config.systemd.user.enable {
       user = {
         startServices = true;
       };
