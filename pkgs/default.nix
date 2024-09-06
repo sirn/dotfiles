@@ -28,6 +28,8 @@ in
     visual-regexp-steroids = (callPackage ./applications/editors/emacs/elisp-packages/visual-regexp-steroids { });
   };
 
+  firefox-csshacks = (callPackage ./applications/networking/browsers/firefox/csshacks.nix { });
+
   looking-glass-client_b6 = (callPackage ./applications/virtualization/looking-glass-client/b6.nix { });
 
   looking-glass-client_b7 = (callPackage ./applications/virtualization/looking-glass-client/b7.nix { });
