@@ -54,7 +54,6 @@ in
         '' else "");
 
         userChrome = ''
-          @import url("${csshacks}/chrome/buttonlike_toolbarbuttons.css");
           @import url("${csshacks}/chrome/window_control_placeholder_support.css");
         '' + (if isLinux then ''
           @import url("${csshacks}/chrome/hide_tabs_toolbar.css");
