@@ -37,12 +37,6 @@ in
     };
   };
 
-  home.file = mkIf (isDarwin && config.programs.jujutsu.settings != { }) {
-    "Library/Application Support/jj/config.toml" = {
-      source = config.xdg.configFile."jj/config.toml".source;
-    };
-  };
-
   # Shell completion based on
   # https://github.com/martinvonz/jj/blob/0690922ca15ced55e417edab806c982b0cc42b84/docs/install-and-setup.md
   programs.bash.initExtra = ''
