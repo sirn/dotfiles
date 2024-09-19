@@ -23,10 +23,7 @@ _preflight() {
 }
 
 _run() {
-    macports_install carthage
-    macports_install mosh
     macports_install opendoas
-    macports_install xcodes
 }
 
 _run_system() {
