@@ -101,7 +101,7 @@
         terra = mkLinuxConfig { hostname = "terra"; };
         theia = mkDarwinConfig { hostname = "theia"; };
         vega = mkLinuxConfig { hostname = "vega"; };
-        ws = mkLinuxArmConfig { hostname = "ws"; };
+        ws = mkLinuxConfig { hostname = "ws"; };
       };
     };
 }
