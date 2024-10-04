@@ -52,14 +52,6 @@ in
           user_pref("media.ffmpeg.enabled", true);
           user_pref("media.ffmpeg.vaapi.enabled", true);
         '' else "");
-
-        userChrome = ''
-          @import url("${csshacks}/chrome/window_control_placeholder_support.css");
-        '' + (if isLinux then ''
-          @import url("${csshacks}/chrome/hide_tabs_toolbar.css");
-        '' else "") + (if isDarwin then ''
-          @import url("${csshacks}/chrome/hide_tabs_toolbar_osx.css");
-        '' else "");
       };
     };
   };
