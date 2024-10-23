@@ -13,6 +13,7 @@ in
   home.packages = [ emacsc ];
 
   home.sessionVariables = {
+    VISUAL = "${emacsc}/bin/emacsc";
     EDITOR = "${emacsc}/bin/emacsc";
   };
 }
