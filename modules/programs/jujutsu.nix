@@ -20,19 +20,6 @@ in
         default-command = "log";
         diff-editor = ":builtin";
         pager = ":builtin";
-
-        # Hack! With, Jujutsu $VISUAL has higher priority
-        # than $EDITOR, but we cannot hard-code $EDITOR
-        # here due to we need with-editor to override $EDITOR
-        editor = "${pkgs.writeScriptBin "jjedit" ''
-          #!${pkgs.bash}/bin/bash
-          # Forces jujutsu to use $EDITOR
-          if [ -n "$EDITOR" ]; then
-            exec $EDITOR "$@"
-          fi
-
-          exec vim "$@"
-        ''}/bin/jjedit";
       };
     };
   };
