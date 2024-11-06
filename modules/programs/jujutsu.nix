@@ -19,7 +19,7 @@ in
       ui = {
         default-command = "log";
         diff-editor = ":builtin";
-        pager = ":builtin";
+        pager = "${pkgs.less}/bin/less -FRX";
       };
     };
   };
