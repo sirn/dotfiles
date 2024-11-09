@@ -12,6 +12,13 @@
 
   outputs = { nixpkgs, nixpkgs-unstable, home-manager, ... }:
     let
+      config = {
+        allowUnfree = true;
+        permittedInsecurePackages = [
+          "openssl-1.1.1w" # sublime4
+        ];
+      };
+
       overlays = [
         (final: prev: {
           local = import ./pkgs {
@@ -21,7 +28,7 @@
 
           unstable = import nixpkgs-unstable {
             system = prev.system;
-            config.allowUnfree = true;
+            config = config;
           };
         })
       ];
@@ -31,7 +38,7 @@
         let
           defaultConfig = { pkgs, ... }: {
             nixpkgs.overlays = overlays;
-            nixpkgs.config.allowUnfree = true;
+            nixpkgs.config = config;
             programs.home-manager.enable = true;
             targets.genericLinux.enable = pkgs.stdenv.isLinux;
             home.username = username;

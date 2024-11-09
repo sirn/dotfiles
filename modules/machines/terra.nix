@@ -16,9 +16,9 @@
     ../programs/firefox.nix
     ../programs/intellij.nix
     ../programs/looking-glass-client.nix
+    ../programs/sublime-text.nix
     ../programs/thunderbird.nix
     ../programs/wezterm.nix
-    ../programs/zed.nix
 
     # services
     ../services/dropbox.nix
