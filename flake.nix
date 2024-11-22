@@ -2,10 +2,10 @@
   description = "Home Manager configuration";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.05";
+      url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -43,7 +43,7 @@
             targets.genericLinux.enable = pkgs.stdenv.isLinux;
             home.username = username;
             home.homeDirectory = homeDirectory;
-            home.stateVersion = "23.11";
+            home.stateVersion = "24.11";
             news.display = "silent";
           };
         in

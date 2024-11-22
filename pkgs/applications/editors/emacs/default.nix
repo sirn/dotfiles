@@ -14,14 +14,12 @@
 
   emacs-pgtk = emacs29.override {
     withNativeCompilation = true;
-    withGTK2 = false;
     withGTK3 = true;
     withPgtk = true;
   };
 
   emacs-lucid = emacs29.override {
     withNativeCompilation = true;
-    withGTK2 = false;
     withGTK3 = false;
   };
 

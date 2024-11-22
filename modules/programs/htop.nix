@@ -16,8 +16,8 @@
       shadow_other_users = 1;
       sort_direction = 0;
       sort_key = config.lib.htop.fields.PERCENT_CPU;
-      tree_sort_direction = config.programs.htop.settings.sort_direction;
-      tree_sort_key = config.programs.htop.settings.sort_key;
+      tree_sort_direction = 0;
+      tree_sort_key = config.lib.htop.fields.PERCENT_CPU;
       tree_view = 0;
     };
   };
