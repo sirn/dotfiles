@@ -1,5 +1,8 @@
 { config, pkgs, ... }:
 
+let
+  inherit (pkgs.stdenv) isDarwin isLinux;
+in
 {
   programs.wezterm = {
     enable = true;
@@ -42,18 +45,14 @@
     extraConfig = ''
       local config = wezterm.config_builder()
       local shell = "${config.programs.zsh.package}/bin/zsh"
-      local is_linux <const> = wezterm.target_triple:find("linux") ~= nil
-      local is_darwin <const> = wezterm.target_triple:find("darwin") ~= nil
 
       config.color_scheme = 'foot'
-      config.default_prog = is_darwin and { shell, "--login" } or { shell };
       config.enable_scroll_bar = true
       config.font = wezterm.font 'PragmataPro Mono'
-      config.font_size = is_darwin and 14.0 or 12.0
       config.freetype_load_target = 'Light'
       config.freetype_load_flags = 'NO_HINTING'
       config.hide_tab_bar_if_only_one_tab = true
-      config.prefer_egl = true;
+      config.prefer_egl = true
       config.use_ime = true
 
       config.window_padding = {
@@ -63,6 +62,17 @@
         bottom = '0',
       }
 
+    '' + (if isLinux then ''
+      config.default_prog = { shell };
+      config.font_size = 12.0
+      config.front_end = "WebGpu"
+      config.enable_wayland = true
+
+    '' else "") + (if isDarwin then ''
+      config.default_prog = { shell, "--login" }
+      config.font_size = 14.0;
+
+    '' else "") + ''
       return config
     '';
   };
