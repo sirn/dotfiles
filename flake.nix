@@ -87,17 +87,6 @@
           inherit hostname username system homeDirectory;
         };
 
-      mkLinuxArmConfig =
-        { hostname
-        , username ? "sirn"
-        , system ? "aarch64-linux"
-        , homeDirectory ? "/home/${username}"
-        , ...
-        }:
-        mkConfig {
-          inherit hostname username system homeDirectory;
-        };
-
       mkDarwinConfig =
         { hostname
         , username ? "sirn"
