@@ -8,9 +8,12 @@
       url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    jujutsu.url = "github:martinvonz/jj";
+    wezterm.url = "github:wez/wezterm?dir=nix";
   };
 
-  outputs = { nixpkgs, nixpkgs-unstable, home-manager, ... }:
+  outputs = { nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs:
     let
       config = {
         allowUnfree = true;
@@ -25,10 +28,17 @@
             pkgs = final;
             lib = prev.lib;
           };
-
+        })
+        (final: prev: {
           unstable = import nixpkgs-unstable {
-            system = prev.system;
+            system = final.system;
             config = config;
+          };
+        })
+        (final: prev: {
+          nightlies = {
+            jujutsu = inputs.jujutsu.packages.${final.system}.jujutsu;
+            wezterm = inputs.wezterm.packages.${final.system}.default;
           };
         })
       ];
