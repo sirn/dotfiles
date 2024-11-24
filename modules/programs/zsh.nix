@@ -14,11 +14,12 @@ in
 
     autocd = true;
     history = {
+      append = true;
+      expireDuplicatesFirst = true;
+      ignoreAllDups = true;
+      ignoreDups = true;
       save = 1000;
       size = 1000;
-      expireDuplicatesFirst = true;
-      ignoreDups = true;
-      ignoreAllDups = true;
     };
 
     initExtra = ''
