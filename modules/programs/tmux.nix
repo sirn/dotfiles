@@ -1,9 +1,10 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   inherit (pkgs.stdenv) isDarwin;
   inherit (config.home) homeDirectory;
   inherit (config.lib.file) mkOutOfStoreSymlink;
+  inherit (lib) optionalString;
 
   dotprivDir = "${config.home.homeDirectory}/.dotpriv";
 in
@@ -38,10 +39,12 @@ in
 
       bind -T prefix r source-file "${homeDirectory}/.config/tmux/tmux.conf"
       bind -T copy-mode-vi v send -X begin-selection
-    '' + (if !isDarwin then "" else ''
-      bind -T copy-mode M-w send -X copy-pipe-and-cancel "pbcopy"
-      bind -T copy-mode-vi y send -X copy-pipe-and-cancel "pbcopy"
-    '');
+
+      ${optionalString isDarwin ''
+        bind -T copy-mode M-w send -X copy-pipe-and-cancel "pbcopy"
+        bind -T copy-mode-vi y send -X copy-pipe-and-cancel "pbcopy"
+      ''}
+    '';
   };
 
   home.file = {

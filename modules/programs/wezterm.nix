@@ -1,7 +1,8 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   inherit (pkgs.stdenv) isDarwin isLinux;
+  inherit (lib) optionalString;
 in
 {
   programs.wezterm = {
@@ -62,17 +63,18 @@ in
         bottom = '0',
       }
 
-    '' + (if isLinux then ''
-      config.default_prog = { shell };
-      config.font_size = 12.0
-      config.front_end = "WebGpu"
-      config.enable_wayland = true
+      ${optionalString isLinux ''
+        config.default_prog = { shell };
+        config.font_size = 12.0
+        config.front_end = "WebGpu"
+        config.enable_wayland = true
+      ''}
 
-    '' else "") + (if isDarwin then ''
-      config.default_prog = { shell, "--login" }
-      config.font_size = 14.0;
+      ${optionalString isDarwin ''
+        config.default_prog = { shell, "--login" }
+        config.font_size = 14.0;
+      ''}
 
-    '' else "") + ''
       return config
     '';
   };
