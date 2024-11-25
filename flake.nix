@@ -4,16 +4,28 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+
     home-manager = {
       url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    jujutsu.url = "github:martinvonz/jj";
-    wezterm.url = "github:wez/wezterm?dir=nix";
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    jujutsu = {
+      url = "github:martinvonz/jj";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    wezterm = {
+      url = "github:wez/wezterm?dir=nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs:
+  outputs = { nixpkgs, nixpkgs-unstable, home-manager, nix-index-database, ... }@inputs:
     let
       config = {
         allowUnfree = true;
@@ -73,6 +85,7 @@
             ./lib/runit/runit.nix
             ./lib/runit/wayexec.nix
             ./modules/machines/${hostname}.nix
+            nix-index-database.hmModules.nix-index
           ];
         };
 
