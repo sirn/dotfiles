@@ -72,7 +72,7 @@
 ;; --------------------------------------------------------------------------
 ;;; System
 
-(setenv "SHELL" (format "%s/.nix-profile/bin/zsh" (getenv "HOME")))
+(setenv "SHELL" (format "%s/.nix-profile/bin/fish" (getenv "HOME")))
 
 
 ;; --------------------------------------------------------------------------

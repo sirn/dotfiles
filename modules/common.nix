@@ -12,6 +12,7 @@
     ./programs/direnv.nix
     ./programs/emacs.nix
     ./programs/emacsc.nix
+    ./programs/fish.nix
     ./programs/fzf.nix
     ./programs/git.nix
     ./programs/htop.nix
@@ -28,7 +29,6 @@
     ./programs/rsync.nix
     ./programs/tmux.nix
     ./programs/unison.nix
-    ./programs/zsh.nix
 
     # services
     ./services/emacs.nix

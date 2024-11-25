@@ -9,7 +9,7 @@ in
 
     settings = {
       main = {
-        shell = "${config.programs.zsh.package}/bin/zsh";
+        shell = "${config.programs.fish.package}/bin/fish";
         term = "xterm-256color";
         font = "PragmataPro Mono:size=12";
         bold-text-in-bright = "yes";

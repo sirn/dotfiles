@@ -45,7 +45,7 @@ in
 
     extraConfig = ''
       local config = wezterm.config_builder()
-      local shell = "${config.programs.zsh.package}/bin/zsh"
+      local shell = "${config.programs.fish.package}/bin/fish"
 
       config.color_scheme = 'foot'
       config.enable_scroll_bar = true

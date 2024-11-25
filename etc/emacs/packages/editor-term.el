@@ -36,7 +36,7 @@
     "'v" #'vterm)
 
   :custom
-  (vterm-shell "zsh")
+  (vterm-shell "fish")
 
   :init
   (with-eval-after-load 'with-editor

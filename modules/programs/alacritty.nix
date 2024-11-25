@@ -94,7 +94,7 @@ in
       };
 
       shell = {
-        program = "${config.programs.zsh.package}/bin/zsh";
+        program = "${config.programs.fish.package}/bin/fish";
         args =
           if isDarwin
           then [ "--login" ]
