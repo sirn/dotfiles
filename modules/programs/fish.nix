@@ -17,8 +17,10 @@ in
     interactiveShellInit = ''
       set fish_greeting ""
 
-      # Display system details on new terminal
-      ${pkgs.fastfetch}/bin/fastfetch
+      if test -z $INSIDE_EMACS
+        # Display system details on new terminal
+        ${pkgs.fastfetch}/bin/fastfetch
+      end
     '';
 
     functions = {
