@@ -63,6 +63,9 @@ in
         bottom = '0',
       }
 
+      config.initial_cols = 120
+      config.initial_rows = 36
+
       ${optionalString isLinux ''
         config.default_prog = { shell };
         config.font_size = 12.0
