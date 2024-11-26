@@ -15,7 +15,10 @@ in
     ];
 
     interactiveShellInit = ''
-      set fish_greeting
+      set fish_greeting ""
+
+      # Display system details on new terminal
+      ${pkgs.fastfetch}/bin/fastfetch
     '';
 
     functions = {
