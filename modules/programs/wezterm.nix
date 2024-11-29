@@ -49,7 +49,11 @@ in
 
       config.color_scheme = 'foot'
       config.enable_scroll_bar = true
-      config.font = wezterm.font 'PragmataPro Mono'
+      config.font = wezterm.font_with_fallback({
+        'PragmataPro Mono',
+        'Source Han Code JP',
+      })
+
       config.freetype_load_target = 'Light'
       config.freetype_load_flags = 'NO_HINTING'
       config.hide_tab_bar_if_only_one_tab = true
