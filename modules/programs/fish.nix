@@ -15,15 +15,6 @@ in
       { name = "autopair"; src = pkgs.fishPlugins.autopair.src; }
     ];
 
-    interactiveShellInit = ''
-      set fish_greeting ""
-
-      if test -z $INSIDE_EMACS
-        # Display system details on new terminal
-        ${pkgs.fastfetch}/bin/fastfetch
-      end
-    '';
-
     functions = {
       gg = {
         body = ''
@@ -46,6 +37,15 @@ in
             return
           end
           cd $dir
+        '';
+      };
+
+      fish_greeting = {
+        body = ''
+          if test -z $INSIDE_EMACS
+            # Display system details on new terminal
+            ${pkgs.fastfetch}/bin/fastfetch
+          end
         '';
       };
     };
