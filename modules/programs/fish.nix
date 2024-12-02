@@ -63,7 +63,7 @@ in
             prompt_connection = "Disconnected";
             prompt_spacing = "Sparse";
             icons = "Few icons";
-            transient = "No";
+            transient = "Yes";
           }
         }"} >/dev/null 2>&1
       }
