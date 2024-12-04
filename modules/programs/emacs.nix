@@ -58,7 +58,6 @@ in
       flycheck-posframe
       forge
       ghub
-      git-commit
       git-gutter
       helpful
       magit
