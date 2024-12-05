@@ -49,6 +49,12 @@ in
         '';
       };
     };
+
+    interactiveShellInit = ''
+      set -g sponge_successful_exit_codes 0
+      set -g sponge_allow_previously_successful false
+      set -g sponge_delay 10
+    '';
   };
 
   home.activation = {
