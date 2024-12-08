@@ -14,6 +14,7 @@
     ../programs/firefox.nix
     ../programs/intellij.nix
     ../programs/krita.nix
+    ../programs/mpv.nix
     ../programs/sublime-text.nix
     ../programs/thunderbird.nix
     ../programs/wezterm.nix

@@ -14,6 +14,7 @@
     ../programs/firefox.nix
     ../programs/intellij.nix
     ../programs/looking-glass-client.nix
+    ../programs/mpv.nix
     ../programs/sublime-text.nix
     ../programs/wezterm.nix
   ];
