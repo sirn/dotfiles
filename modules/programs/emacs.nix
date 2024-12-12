@@ -56,6 +56,7 @@ in
       flycheck-eglot
       flycheck-golangci-lint
       flycheck-posframe
+      flycheck-rust
       forge
       ghub
       git-gutter

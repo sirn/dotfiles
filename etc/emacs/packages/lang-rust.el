@@ -4,6 +4,8 @@
   :init
   (add-to-list 'major-mode-remap-alist '(rust-mode . rust-ts-mode)))
 
+(use-package flycheck-rust-setup)
+
 ;; Builtin; tree-sitter
 (use-package rust-ts-mode
   :preface
@@ -17,7 +19,8 @@
 
   (add-hook 'rust-ts-mode-hook #'eglot-ensure)
   (add-hook 'rust-ts-mode-hook #'flycheck-mode)
+  (add-hook 'rust-ts-mode-hook #'flycheck-rust-setup)
   (add-hook 'rust-ts-mode-hook #'gemacs--rust-auto-format)
 
   (with-eval-after-load 'eglot
-    (add-to-list 'eglot-server-programs '(rust-ts-mode . ("rls")))))
+    (add-to-list 'eglot-server-programs '(rust-ts-mode . ("rust-analyzer")))))
