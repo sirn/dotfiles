@@ -61,7 +61,22 @@
   :general
   (leader
     "Ll" #'display-line-numbers-mode
-    "LL" #'global-display-line-numbers-mode))
+    "LL" #'global-display-line-numbers-mode)
+
+  :init
+  (global-display-line-numbers-mode +1))
+
+
+;; Builtin
+(use-package display-fill-column-indicator-mode
+  :general
+  (leader
+    "Lf" #'display-fill-column-indicator-mode
+    "LF" #'global-display-fill-column-indicator-mode)
+
+  :init
+  (global-display-fill-column-indicator-mode +1))
+
 
 
 (use-package undo-tree
