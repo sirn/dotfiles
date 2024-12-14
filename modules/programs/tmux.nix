@@ -19,6 +19,7 @@ in
     tmuxp.enable = true;
 
     extraConfig = ''
+      set -g default-command "exec ${config.programs.tmux.shell}"
       set -g set-clipboard on
       set -g set-titles on
       set -g set-titles-string "#W via tmux: #S"
