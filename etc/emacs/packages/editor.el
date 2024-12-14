@@ -175,10 +175,6 @@
   (add-hook 'lisp-mode-hook #'parinfer-rust-mode)
 
   :config
-  ;; Workaround for https://github.com/justinbarclay/parinfer-rust-mode/issues/40
-  (defun parinfer-rust--check-version (_a _b _c _d)
-    nil)
-
   (with-eval-after-load 'smartparens
     (add-hook 'parinfer-rust-mode-hook #'turn-off-smartparens-mode)))
 

@@ -148,7 +148,7 @@ in
       source = mkOutOfStoreSymlink "${dotfilesDir}/etc/emacs/init.el";
     };
     ".emacs.d/var/parinfer-rust" = {
-      source = "${pkgs.parinfer-rust}";
+      source = "${pkgs.parinfer-rust-emacs}";
     };
     ".emacs.d/var/treesit-grammars" = {
       source = "${pkgs.emacsPackages.treesit-grammars.with-all-grammars}";
