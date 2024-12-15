@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf mkMerge;
   inherit (builtins) typeOf stringLength;
   inherit (pkgs.stdenv) isDarwin isLinux;
 
@@ -40,12 +40,15 @@ in
       };
     };
 
-    config = {
-      hwdec = "auto";
-    } // mkIf isLinux {
-      vo = "gpu-next";
-      gpu-api = "vulkan";
-    };
+    config = mkMerge [
+      {
+        hwdec = "auto";
+      }
+      (mkIf isLinux {
+        vo = "gpu-next";
+        gpu-api = "vulkan";
+      })
+    ];
   };
 
   # On a non-NixOS, we only configure MPV without installing
