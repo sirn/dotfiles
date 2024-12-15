@@ -3,6 +3,7 @@
     ./home/fonts.nix
 
     # programs
+    ./programs/ffmpeg.nix
     ./programs/firefox.nix
     ./programs/intellij.nix
     ./programs/mpv.nix

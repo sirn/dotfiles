@@ -11,6 +11,7 @@
     ../home/plasma.nix
 
     # programs
+    ../programs/ffmpeg.nix
     ../programs/firefox.nix
     ../programs/intellij.nix
     ../programs/krita.nix
