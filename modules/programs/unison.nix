@@ -2,6 +2,8 @@
 
 {
   home.packages = with pkgs; [
-    local.unison-nox
+    (unison.override {
+      enableX11 = false;
+    })
   ];
 }

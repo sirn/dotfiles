@@ -2,6 +2,10 @@
 
 {
   home.packages = with pkgs; [
-    local.s-tui
+    (s-tui.overrideAttrs (orig: rec {
+      propagatedBuildInputs = orig.propagatedBuildInputs ++ [
+        stress-ng
+      ];
+    }))
   ];
 }

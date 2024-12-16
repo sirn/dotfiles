@@ -11,13 +11,10 @@ in
   programs.emacs = {
     enable = true;
     package =
-      if isDarwin then
-        pkgs.local.emacs-nox
+      if isLinux then
+        pkgs.emacs29-pgtk
       else
-        if isLinux then
-          pkgs.local.emacs-pgtk
-        else
-          pkgs.local.emacs-nox;
+        pkgs.emacs29-nox;
 
     extraPackages = epkgs: with epkgs; [
       # Early packages
@@ -91,8 +88,25 @@ in
       which-key
       yasnippet
       yasnippet-snippets
-      pkgs.local.emacsPackages.apheleia
-      pkgs.local.emacsPackages.visual-regexp-steroids
+
+      (apheleia.overrideDerivation
+        (attrs: {
+          nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
+
+          postInstall = ''
+            wrapProgram $out/share/emacs/site-lisp/elpa/${attrs.pname}-${attrs.version}/scripts/formatters/apheleia-npx \
+              --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.nodePackages.prettier ]}
+            wrapProgram $out/share/emacs/site-lisp/elpa/${attrs.pname}-${attrs.version}/scripts/formatters/apheleia-phpcs \
+              --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.php83Packages.php-codesniffer ]}
+          '';
+        }))
+
+      (visual-regexp-steroids.overrideDerivation (attrs: {
+        postPatch = ''
+          substituteInPlace visual-regexp-steroids.el \
+            --replace "python %s" "${pkgs.python311}/bin/python3 %s"
+        '';
+      }))
 
       # Languages
       ansible
