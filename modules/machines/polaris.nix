@@ -19,6 +19,7 @@
     ../programs/sublime-text.nix
     ../programs/thunderbird.nix
     ../programs/wezterm.nix
+    ../programs/yt-dlp.nix
 
     # services
     ../services/dropbox.nix
