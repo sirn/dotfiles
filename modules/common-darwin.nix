@@ -5,6 +5,7 @@
     # programs
     ./programs/ffmpeg.nix
     ./programs/firefox.nix
+    ./programs/imagemagick.nix
     ./programs/intellij.nix
     ./programs/mpv.nix
     ./programs/sublime-text.nix

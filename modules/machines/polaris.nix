@@ -13,6 +13,7 @@
     # programs
     ../programs/ffmpeg.nix
     ../programs/firefox.nix
+    ../programs/imagemagick.nix
     ../programs/intellij.nix
     ../programs/krita.nix
     ../programs/mpv.nix
