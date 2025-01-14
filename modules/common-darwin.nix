@@ -1,6 +1,7 @@
 {
   imports = [
     ./home/fonts.nix
+    ./home/home.nix
 
     # programs
     ./programs/ffmpeg.nix
