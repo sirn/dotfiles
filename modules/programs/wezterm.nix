@@ -7,7 +7,6 @@ in
 {
   programs.wezterm = {
     enable = true;
-    package = pkgs.nightlies.wezterm;
 
     colorSchemes = {
       foot = {

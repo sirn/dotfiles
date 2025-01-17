@@ -14,15 +14,6 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    jujutsu = {
-      url = "github:martinvonz/jj";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    wezterm = {
-      url = "github:wez/wezterm?dir=nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = { nixpkgs, nixpkgs-unstable, home-manager, nix-index-database, ... }@inputs:
@@ -45,12 +36,6 @@
           unstable = import nixpkgs-unstable {
             system = final.system;
             config = config;
-          };
-        })
-        (final: prev: {
-          nightlies = {
-            jujutsu = inputs.jujutsu.packages.${final.system}.jujutsu;
-            wezterm = inputs.wezterm.packages.${final.system}.default;
           };
         })
       ];
