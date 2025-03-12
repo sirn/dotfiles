@@ -38,15 +38,6 @@ in
           cd $dir
         '';
       };
-
-      fish_greeting = {
-        body = ''
-          if test -z $INSIDE_EMACS
-            # Display system details on new terminal
-            ${pkgs.fastfetch}/bin/fastfetch
-          end
-        '';
-      };
     };
 
     interactiveShellInit = ''
