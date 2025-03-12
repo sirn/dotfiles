@@ -38,6 +38,10 @@ in
           cd $dir
         '';
       };
+
+      fish_greeting = {
+        body = "";
+      };
     };
 
     interactiveShellInit = ''
