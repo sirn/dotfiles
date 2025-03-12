@@ -12,9 +12,9 @@ in
     enable = true;
     package =
       if isLinux then
-        pkgs.emacs29-pgtk
+        pkgs.emacs30-pgtk
       else
-        pkgs.emacs29-nox;
+        pkgs.emacs30-nox;
 
     extraPackages = epkgs: with epkgs; [
       # Early packages
