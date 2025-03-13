@@ -8,6 +8,7 @@ in
 {
   programs.fish = {
     enable = true;
+    package = pkgs.unstable.fish;
 
     plugins = [
       { name = "sponge"; src = pkgs.fishPlugins.sponge.src; }
