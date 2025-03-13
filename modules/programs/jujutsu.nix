@@ -43,5 +43,31 @@ in
     interactiveShellInit = ''
       ${config.programs.jujutsu.package}/bin/jj util completion fish | source
     '';
+
+    functions = {
+      # https://gist.github.com/hroi/d0dc0e95221af858ee129fd66251897e
+      fish_jj_prompt = {
+        body = ''
+          if not ${config.programs.jujutsu.package}/bin/jj root --quiet &>/dev/null
+            return 1
+          end
+
+          ${config.programs.jujutsu.package}/bin/jj log --ignore-working-copy --no-graph --color always -r @ -T '
+            surround(" (", ")",
+              separate(
+                " ",
+                bookmarks.join(", "),
+                change_id.shortest(),
+                commit_id.shortest(),
+                if(conflict, "conflict"),
+                if(empty, "empty"),
+                if(divergent, "divergent"),
+                if(hidden, "hidden"),
+              )
+            )
+          '
+        '';
+      };
+    };
   };
 }

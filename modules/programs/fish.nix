@@ -42,6 +42,16 @@ in
       fish_greeting = {
         body = "";
       };
+
+      fish_vcs_prompt = {
+        body = ''
+          fish_git_prompt $argv
+          or fish_hg_prompt $argv
+          or fish_fossil_prompt $argv
+          ${if config.programs.jujutsu.enable then "or fish_jj_prompt $argv" else ""}
+        '';
+      };
+
     };
 
     interactiveShellInit = ''
