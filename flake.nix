@@ -101,7 +101,6 @@
         helios = mkLinuxConfig { hostname = "helios"; };
         phoebe = mkLinuxConfig { hostname = "phoebe"; };
         polaris = mkLinuxConfig { hostname = "polaris"; };
-        pyxis = mkDarwinConfig { hostname = "pyxis"; };
         terra = mkLinuxConfig { hostname = "terra"; };
         theia = mkDarwinConfig { hostname = "theia"; };
         vega = mkLinuxConfig { hostname = "vega"; };
