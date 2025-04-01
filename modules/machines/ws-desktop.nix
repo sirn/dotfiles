@@ -1,4 +1,6 @@
 {
+  machine.isNixOS = false;
+
   imports = [
     ../common.nix
     ../common-linux.nix
