@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   inherit (lib) mkIf;
@@ -33,4 +33,21 @@ in
       exec /usr/local/bin/docker-compose "$@"
     '')
   ] else [ ]);
+
+  # On non-NixOS, these paths must be defined separately.
+  xdg.configFile = mkIf (!isDarwin && !config.machine.isNixOS) {
+    "containers/registries.conf" = {
+      text = ''
+        [registries.search]
+        registries = ['docker.io']
+
+        [registries.block]
+        registries = []
+      '';
+    };
+
+    "containers/policy.json" = {
+      source = "${pkgs.skopeo.src}/default-policy.json";
+    };
+  };
 }
