@@ -29,4 +29,4 @@
   (add-hook 'typescript-ts-mode-hook #'gemacs--typescript-auto-format)
 
   (with-eval-after-load 'eglot
-    (add-to-list 'eglot-server-programs '(typescript-ts-mode . ("typescript-language-server")))))
+    (add-to-list 'eglot-server-programs '(typescript-ts-mode . ("typescript-language-server" "--stdio")))))
