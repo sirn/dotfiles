@@ -54,6 +54,7 @@
       config.hide_tab_bar_if_only_one_tab = true
       config.prefer_egl = true
       config.use_ime = true
+      config.mux_enable_ssh_agent = false
 
       config.window_padding = {
         left = '0.2cell',

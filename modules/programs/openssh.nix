@@ -58,11 +58,6 @@ in
           "CheckHostIP" = "no";
         };
       };
-
-      # Aliases
-      "nfs" = {
-        hostname = "ssh.nyc1.nearlyfreespeech.net";
-      };
     };
 
     userKnownHostsFile = lib.concatStringsSep " " [
