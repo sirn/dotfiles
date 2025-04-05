@@ -18,6 +18,10 @@
       (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)))
 
   :config
+  (with-eval-after-load 'pinentry
+    (dolist (func '(magit-start-git magit-call-git))
+      (advice-add func :before #'gemacs--gpg-update-tty)))
+
   ;; Deferred loading
   (require 'forge))
 

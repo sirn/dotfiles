@@ -32,12 +32,12 @@ in
       corfu-terminal
       ctrlf
       dired-sidebar
-      embark
-      embark-consult
       dtrt-indent
       editorconfig
       eldoc
       emacsql-sqlite
+      embark
+      embark-consult
       envrc
       evil
       evil-collection
@@ -61,6 +61,7 @@ in
       nix-ts-mode
       ob-restclient
       parinfer-rust-mode
+      pinentry
       posframe
       prescient
       project
