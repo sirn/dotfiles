@@ -15,6 +15,7 @@
     ./programs/fish.nix
     ./programs/fzf.nix
     ./programs/git.nix
+    ./programs/gpg.nix
     ./programs/htop.nix
     ./programs/jq.nix
     ./programs/jujutsu.nix
@@ -32,6 +33,7 @@
 
     # services
     ./services/emacs.nix
+    ./services/gpg-agent.nix
     ./services/ssh-agent.nix
   ];
 }
