@@ -5,7 +5,7 @@
     enable = lib.mkDefault true;
 
     settings = {
-      default-key = "0x48AB9BABBE427D60";
+      default-key = "0x65513F82ACB5F854";
     };
   };
 }
