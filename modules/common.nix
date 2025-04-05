@@ -34,6 +34,5 @@
     # services
     ./services/emacs.nix
     ./services/gpg-agent.nix
-    ./services/ssh-agent.nix
   ];
 }

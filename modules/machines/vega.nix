@@ -11,6 +11,7 @@
     ../home/sway.nix
 
     # programs
+    ../programs/1password.nix
     ../programs/ffmpeg.nix
     ../programs/firefox.nix
     ../programs/imagemagick.nix
