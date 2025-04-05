@@ -32,3 +32,21 @@ Setup home directory with Home Manager:
 ``` shell
 $ ~/.dotfiles/bin/home-manager-switch
 ```
+
+## Configuration
+
+### Profile
+
+By default, `home-manager-switch` script will use the current hostname as the profile name. To override, put a profile name in `nix.profile` file:
+
+``` shell
+$ echo ws > nix.profile
+```
+
+### Non-NixOS Linux
+
+On a non-NixOS systems, a filename called `nix.generic` should be created to instruct Nixpkgs to not install packages that are known to depend on the host library (such as OpenGL).
+
+``` shell
+$ touch nix.generic
+```

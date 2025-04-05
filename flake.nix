@@ -48,6 +48,7 @@
             nixpkgs.config = config;
             programs.home-manager.enable = true;
             targets.genericLinux.enable = pkgs.stdenv.isLinux;
+            machine.isNixOS = !builtins.pathExists ./nix.generic;
             home.username = username;
             home.homeDirectory = homeDirectory;
             home.stateVersion = "24.11";
@@ -103,9 +104,7 @@
         theia = mkDarwinConfig { hostname = "theia"; };
         vega = mkLinuxConfig { hostname = "vega"; };
         ws = mkLinuxConfig { hostname = "ws"; };
-        ws-foreign = mkLinuxConfig { hostname = "ws-foreign"; };
         ws-desktop = mkLinuxConfig { hostname = "ws-desktop"; };
-        ws-desktop-foreign = mkLinuxConfig { hostname = "ws-desktop-foreign"; };
       };
     };
 }
