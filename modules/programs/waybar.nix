@@ -185,18 +185,4 @@ in
       bars = [ ];
     };
   };
-
-  wayexec.services.waybar = {
-    runScript = ''
-      #!${pkgs.execline}/bin/execlineb
-      if {
-        redirfd -w 1 /dev/null
-        env SVDIR=${config.home.homeDirectory}/${config.wayexec.serviceDir}
-        if { sv check fcitx5 }
-        if { sv check pipewire }
-      }
-      fdmove -c 2 1
-      ${config.programs.waybar.package}/bin/waybar
-    '';
-  };
 }

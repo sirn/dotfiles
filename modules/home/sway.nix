@@ -6,16 +6,16 @@ in
 {
   imports = [
     ../programs/fuzzel.nix
-    ../programs/kanshi.nix
-    ../programs/mako.nix
-    ../programs/sway-audio-idle-inhibit.nix
     ../programs/sway.nix
-    ../programs/swayidle.nix
-    ../programs/swaylock.nix
     ../programs/waybar.nix
-    ../programs/wayexec.nix
-    ../programs/wlsunset.nix
     ../programs/xdg-portal.nix
+
+    ../services/kanshi.nix
+    ../services/mako.nix
+    ../services/sway-audio-idle-inhibit.nix
+    ../services/swayidle.nix
+    ../services/swaylock.nix
+    ../services/wlsunset.nix
   ];
 
   # On non-NixOS, this should be installed using OS package manager.
@@ -36,24 +36,6 @@ in
           xcursor_theme = "${config.gtk.cursorTheme.name} ${toString config.gtk.cursorTheme.size}";
         };
       };
-    };
-  };
-
-  wayexec.services = {
-    fcitx5 = mkIf (config.i18n.inputMethod.enabled != "fcitx5") {
-      runScript = ''
-        #!${pkgs.execline}/bin/execlineb
-        fdmove -c 2 1
-        fcitx5 -D -r
-      '';
-    };
-
-    pipewire = {
-      runScript = ''
-        #!${pkgs.execline}/bin/execlineb
-        fdmove -c 2 1
-        pipewire
-      '';
     };
   };
 

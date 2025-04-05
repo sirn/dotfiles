@@ -67,8 +67,6 @@
             defaultConfig
             ./lib/flatpak.nix
             ./lib/machine.nix
-            ./lib/runit/runit.nix
-            ./lib/runit/wayexec.nix
             ./modules/machines/${hostname}.nix
             nix-index-database.hmModules.nix-index
           ];

@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
-  services.syncthing = {
+  services.mako = {
     enable = true;
   };
 }

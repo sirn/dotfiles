@@ -15,14 +15,6 @@ in
     Install = { WantedBy = [ "sway-session.target" ]; };
   };
 
-  wayexec.services.sway-audio-idle-inhibit = {
-    runScript = ''
-      #!${pkgs.execline}/bin/execlineb
-      fdmove -c 2 1
-      ${pkg}/bin/sway-audio-idle-inhibit
-    '';
-  };
-
   programs.waybar = {
     settings = {
       mainBar = {

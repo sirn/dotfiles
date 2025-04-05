@@ -1,36 +1,14 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (pkgs.stdenv) isLinux;
-  inherit (lib) concatStringsSep mapAttrsToList mkIf optionalString;
-
   swaymsgBin =
     if config.wayland.windowManager.sway.package != null
     then "${config.wayland.windowManager.sway.package}/bin/swaymsg"
     else "swaymsg";
-
-  # Copied from home-manager/modules/services/kanshi.nix
-  outputStr =
-    { criteria, status, mode, position, scale, transform, ... }:
-    ''output "${criteria}"'' + optionalString (status != null) " ${status}"
-    + optionalString (mode != null) " mode ${mode}"
-    + optionalString (position != null) " position ${position}"
-    + optionalString (scale != null) " scale ${toString scale}"
-    + optionalString (transform != null) " transform ${transform}";
-
-  settingStr = name:
-    { outputs, exec, ... }: ''
-      profile ${name} {
-        ${
-          concatStringsSep "\n  "
-          (map outputStr outputs ++ map (cmd: "exec ${cmd}") exec)
-        }
-      }
-    '';
 in
 {
   services.kanshi = {
-    enable = isLinux;
+    enable = true;
 
     settings =
       let
@@ -134,13 +112,5 @@ in
           };
         }
       ];
-  };
-
-  wayexec.services.kanshi = {
-    runScript = ''
-      #!${pkgs.execline}/bin/execlineb
-      fdmove -c 2 1
-      ${pkgs.kanshi}/bin/kanshi
-    '';
   };
 }

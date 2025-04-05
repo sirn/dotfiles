@@ -6,7 +6,7 @@ let
 in
 {
   # Not using services.ssh-agent.enable here since we need to configure this
-  # on both Darwin and Linux; and services.ssh-agenet.enable has an assertion
+  # on both Darwin and Linux; and services.ssh-agent.enable has an assertion
   # against non-Linux
   systemd.user.services.ssh-agent = {
     Install.WantedBy = [ "default.target" ];
