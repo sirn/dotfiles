@@ -1,11 +1,6 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (pkgs.stdenv) isDarwin;
-  inherit (config.home) homeDirectory;
-  inherit (config.lib.file) mkOutOfStoreSymlink;
-  inherit (lib) optionalString;
-
   dotprivDir = "${config.home.homeDirectory}/.dotpriv";
 in
 {
@@ -38,10 +33,10 @@ in
       set -wg window-status-format "#[fg=colour8]‹#I› #{pane_current_command}"
       set -wg window-status-style ""
 
-      bind -T prefix r source-file "${homeDirectory}/.config/tmux/tmux.conf"
+      bind -T prefix r source-file "${config.home.homeDirectory}/.config/tmux/tmux.conf"
       bind -T copy-mode-vi v send -X begin-selection
 
-      ${optionalString isDarwin ''
+      ${lib.optionalString pkgs.stdenv.isDarwin ''
         bind -T copy-mode M-w send -X copy-pipe-and-cancel "pbcopy"
         bind -T copy-mode-vi y send -X copy-pipe-and-cancel "pbcopy"
       ''}
@@ -49,6 +44,6 @@ in
   };
 
   home.file = {
-    ".tmuxp" = { source = mkOutOfStoreSymlink "${dotprivDir}/etc/tmuxp"; };
+    ".tmuxp" = { source = config.lib.file.mkOutOfStoreSymlink "${dotprivDir}/etc/tmuxp"; };
   };
 }

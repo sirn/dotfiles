@@ -1,9 +1,6 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (pkgs.stdenv) isLinux;
-  inherit (lib) mkDefault mkIf;
-
   cfg = config.programs.looking-glass-client;
   settingsFormat = pkgs.formats.ini { };
 in
@@ -13,7 +10,7 @@ in
     # Nix and the host mismatched. Only enable on NixOS.
     enable = config.machine.isNixOS;
 
-    package = mkDefault pkgs.local.looking-glass-client_b6;
+    package = lib.mkDefault pkgs.local.looking-glass-client_b6;
 
     settings = {
       input = {
@@ -37,9 +34,9 @@ in
   };
 
   # Configure-only when included
-  xdg = mkIf (!config.programs.looking-glass-client.enable) {
+  xdg = lib.mkIf (!config.programs.looking-glass-client.enable) {
     configFile = {
-      "looking-glass/client.ini" = mkIf (cfg.settings != { }) {
+      "looking-glass/client.ini" = lib.mkIf (cfg.settings != { }) {
         source = settingsFormat.generate ("looking-glass-client.ini") cfg.settings;
       };
     };

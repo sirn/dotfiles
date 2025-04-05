@@ -1,15 +1,12 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (lib) mkIf;
-  inherit (pkgs.stdenv) isLinux isDarwin;
-
   csshacks = pkgs.local.firefox-csshacks;
 in
 {
   programs.firefox = {
     enable = true;
-    package = if isLinux then pkgs.firefox else null;
+    package = if pkgs.stdenv.isLinux then pkgs.firefox else null;
 
     profiles = {
       main = {

@@ -1,8 +1,6 @@
 { config, pkgs, lib, ... }:
 
 let
-  inherit (lib) mkIf;
-
   pkg = pkgs.unstable.sway-audio-idle-inhibit;
 in
 {

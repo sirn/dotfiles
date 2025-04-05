@@ -1,9 +1,5 @@
 { pkgs, lib, ... }:
 
-let
-  inherit (pkgs.stdenv) isLinux isDarwin;
-  inherit (lib) mkIf;
-in
 {
   # Not using services.ssh-agent.enable here since we need to configure this
   # on both Darwin and Linux; and services.ssh-agent.enable has an assertion

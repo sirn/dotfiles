@@ -1,10 +1,6 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (lib) mkIf mkMerge;
-  inherit (builtins) typeOf stringLength;
-  inherit (pkgs.stdenv) isDarwin isLinux;
-
   # Copied from home-manager/modules/programs/mpv.nix
   renderOption = with lib; option:
     rec {
@@ -12,12 +8,12 @@ let
       float = int;
       bool = lib.hm.booleans.yesNo option;
       string = option;
-    }.${typeOf option};
+    }.${builtins.typeOf option};
 
   renderOptionValue = with lib; value:
     let
       rendered = renderOption value;
-      length = toString (stringLength rendered);
+      length = toString (builtins.stringLength rendered);
     in
     "%${length}%${rendered}";
 
@@ -32,7 +28,7 @@ in
     # to fallback to vo=xv, which is bad.
     enable = config.machine.isNixOS;
 
-    profiles = mkIf isLinux {
+    profiles = lib.mkIf pkgs.stdenv.isLinux {
       hdr = {
         profile-cond = "get(\"video-params/primaries\") == \"bt.2020\"";
         target-colorspace-hint = true;
@@ -40,11 +36,11 @@ in
       };
     };
 
-    config = mkMerge [
+    config = lib.mkMerge [
       {
         hwdec = "auto";
       }
-      (mkIf isLinux {
+      (lib.mkIf pkgs.stdenv.isLinux {
         vo = "gpu-next";
         gpu-api = "vulkan";
       })
@@ -54,7 +50,7 @@ in
   # On a non-NixOS, we only configure MPV without installing
   # the package (mpv should be installed via system's package
   # manager).
-  xdg = mkIf (!config.machine.isNixOS) {
+  xdg = lib.mkIf (!config.machine.isNixOS) {
     configFile = {
       "mpv/mpv.conf" = {
         text = with lib;
@@ -62,11 +58,11 @@ in
             cfg = config.programs.mpv;
           in
           ''
-            ${optionalString
+            ${lib.optionalString
               (cfg.defaultProfiles != [ ])
-              (renderOptions { profile = concatStringsSep "," cfg.defaultProfiles; })}
-            ${optionalString (cfg.config != { }) (renderOptions cfg.config)}
-            ${optionalString (cfg.profiles != { }) (renderOptions cfg.profiles)}
+              (renderOptions { profile = lib.concatStringsSep "," cfg.defaultProfiles; })}
+            ${lib.optionalString (cfg.config != { }) (renderOptions cfg.config)}
+            ${lib.optionalString (cfg.profiles != { }) (renderOptions cfg.profiles)}
           '';
       };
     };

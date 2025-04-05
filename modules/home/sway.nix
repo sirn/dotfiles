@@ -1,8 +1,5 @@
 { config, lib, pkgs, ... }:
 
-let
-  inherit (lib) mkIf;
-in
 {
   imports = [
     ../programs/fuzzel.nix
@@ -19,7 +16,7 @@ in
   ];
 
   # On non-NixOS, this should be installed using OS package manager.
-  i18n.inputMethod = mkIf config.machine.isNixOS {
+  i18n.inputMethod = lib.mkIf config.machine.isNixOS {
     enabled = "fcitx5";
 
     fcitx5 = {
@@ -79,7 +76,7 @@ in
 
   # Installing themes through Home Manager on NixOS can cause errors
   # due to some of these themes require a matching system libraries
-  home = mkIf config.machine.isNixOS
+  home = lib.mkIf config.machine.isNixOS
     {
       packages = with pkgs; [
         breeze-qt5
@@ -90,7 +87,7 @@ in
     } // (
     # On a non-NixOS, we just provide the proper environment variables
     # for it to pick up the correct themes installed with the system
-    mkIf (!config.machine.isNixOS) {
+    lib.mkIf (!config.machine.isNixOS) {
       sessionVariables = {
         QT_QPA_PLATFORMTHEME = config.qt.platformTheme;
         QT_STYLE_OVERRIDE = config.qt.style.name;

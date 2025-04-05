@@ -1,14 +1,10 @@
 { lib, config, pkgs, ... }:
 
-let
-  inherit (pkgs.stdenv) isLinux;
-  inherit (lib) mkIf;
-in
 {
   xdg = {
     enable = true;
 
-    userDirs = mkIf isLinux {
+    userDirs = lib.mkIf pkgs.stdenv.isLinux {
       enable = true;
       createDirectories = true;
     };
@@ -20,7 +16,7 @@ in
     };
   };
 
-  home = mkIf isLinux {
+  home = lib.mkIf pkgs.stdenv.isLinux {
     sessionVariablesExtra = ''
       if [ -z "$XDG_RUNTIME_DIR" ]; then
         export XDG_RUNTIME_DIR=/run/user/$(id -u)

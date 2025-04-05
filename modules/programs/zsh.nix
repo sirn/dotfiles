@@ -1,8 +1,5 @@
 { config, lib, pkgs, ... }:
 
-let
-  dotfilesDir = "${config.home.homeDirectory}/.dotfiles";
-in
 {
   programs.zsh = {
     enable = true;

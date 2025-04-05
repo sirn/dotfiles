@@ -1,10 +1,7 @@
 { config, pkgs, ... }:
 
-let
-  inherit (config.home) homeDirectory;
-in
 {
-  accounts.email.maildirBasePath = "${homeDirectory}/Mail";
+  accounts.email.maildirBasePath = "${config.home.homeDirectory}/Mail";
 
   accounts.email.accounts = {
     ogsite = {

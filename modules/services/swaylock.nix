@@ -1,8 +1,6 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (lib) concatStrings elemAt mapAttrsToList mkIf;
-
   swaycfg = config.wayland.windowManager.sway.config;
 
   swaylockBin =
@@ -24,8 +22,8 @@ in
       in
       {
         daemonize = true;
-        image = elemAt bgSplit 0;
-        scaling = elemAt bgSplit 1;
+        image = lib.elemAt bgSplit 0;
+        scaling = lib.elemAt bgSplit 1;
       };
   };
 
@@ -45,9 +43,9 @@ in
   };
 
   # Copied from home-manager/modules/programs/swaylock.nix
-  xdg.configFile = mkIf (!config.programs.swaylock.enable) {
+  xdg.configFile = lib.mkIf (!config.programs.swaylock.enable) {
     "swaylock/config" = {
-      text = concatStrings (mapAttrsToList
+      text = lib.concatStrings (lib.mapAttrsToList
         (n: v:
           if v == false then ""
           else (if v == true then n else n + "=" + builtins.toString v) + "\n")

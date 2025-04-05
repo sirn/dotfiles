@@ -1,14 +1,10 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (config.home) homeDirectory;
-  inherit (pkgs.stdenv) isLinux;
-  inherit (lib) mkIf;
-
   dotfilesDir = "${config.home.homeDirectory}/.dotfiles";
 in
 {
-  fonts.fontconfig.enable = isLinux;
+  fonts.fontconfig.enable = pkgs.stdenv.isLinux;
 
   home.packages = with pkgs; [
     fira
@@ -39,7 +35,7 @@ in
     local.ia-writer-quattro-static
   ];
 
-  home.file = mkIf isLinux {
+  home.file = lib.mkIf pkgs.stdenv.isLinux {
     ".config/fontconfig/fonts.conf" = {
       text = ''
         <?xml version='1.0'?>

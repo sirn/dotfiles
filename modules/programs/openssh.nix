@@ -1,10 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (config.home) homeDirectory;
-  inherit (pkgs.stdenv) isDarwin;
-
-  dotprivDir = "${homeDirectory}/.dotpriv";
+  dotprivDir = "${config.home.homeDirectory}/.dotpriv";
 in
 {
   programs.ssh = {
@@ -13,7 +10,7 @@ in
 
     compression = true;
     controlMaster = "auto";
-    controlPath = "${homeDirectory}/.ssh/ssh-%r@%h:%p";
+    controlPath = "${config.home.homeDirectory}/.ssh/ssh-%r@%h:%p";
     controlPersist = "10m";
     serverAliveCountMax = 3;
     serverAliveInterval = 30;
@@ -69,15 +66,15 @@ in
     };
 
     userKnownHostsFile = lib.concatStringsSep " " [
-      "${homeDirectory}/.ssh/known_hosts"
-      "${homeDirectory}/.ssh/known_hosts2"
+      "${config.home.homeDirectory}/.ssh/known_hosts"
+      "${config.home.homeDirectory}/.ssh/known_hosts2"
       "${dotprivDir}/etc/ssh/known_hosts"
     ];
 
     includes = [
       "${dotprivDir}/etc/ssh/config.d/*"
-    ] ++ (if isDarwin then [
-      "${homeDirectory}/.orbstack/ssh/config"
+    ] ++ (if pkgs.stdenv.isDarwin then [
+      "${config.home.homeDirectory}/.orbstack/ssh/config"
     ] else [ ]);
   };
 }

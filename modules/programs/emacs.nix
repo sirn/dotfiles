@@ -1,17 +1,13 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (pkgs.stdenv) isLinux isDarwin;
-  inherit (config.lib.file) mkOutOfStoreSymlink;
-  inherit (config.home) homeDirectory;
-
   dotfilesDir = "${config.home.homeDirectory}/.dotfiles";
 in
 {
   programs.emacs = {
     enable = true;
     package =
-      if isLinux then
+      if pkgs.stdenv.isLinux then
         pkgs.emacs30-pgtk
       else
         pkgs.emacs30-nox;
@@ -151,7 +147,7 @@ in
       pkgs.terraform
     ] ++ (if config.programs.notmuch.enable then [
       notmuch
-    ] else [ ]) ++ (if isDarwin then [
+    ] else [ ]) ++ (if pkgs.stdenv.isDarwin then [
       osx-trash
       pbcopy
     ] else [ ]);
@@ -159,7 +155,7 @@ in
 
   home.file = {
     ".emacs.d/init.el" = {
-      source = mkOutOfStoreSymlink "${dotfilesDir}/etc/emacs/init.el";
+      source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/etc/emacs/init.el";
     };
     ".emacs.d/var/parinfer-rust" = {
       source = "${pkgs.parinfer-rust-emacs}";

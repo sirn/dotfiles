@@ -1,8 +1,5 @@
 { config, lib, ... }:
 
-let
-  inherit (lib) concatStringsSep mkIf;
-in
 {
   flatpak = {
     enable = true;
@@ -21,7 +18,7 @@ in
 
       environment = {
         FONTCONFIG_FILE = "${config.home.homeDirectory}/.config/fontconfig/fonts.conf";
-        XCURSOR_PATH = concatStringsSep ":" [
+        XCURSOR_PATH = lib.concatStringsSep ":" [
           "${config.home.homeDirectory}/.local/share/icons"
           "${config.home.homeDirectory}/.nix-profile/share/icons"
           "/nix/profile/share/icons"

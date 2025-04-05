@@ -1,8 +1,5 @@
 { config, pkgs, ... }:
 
-let
-  inherit (config.home) homeDirectory;
-in
 {
   home.packages = with pkgs; [
     gitAndTools.git-crypt
@@ -29,9 +26,9 @@ in
       protocol.file.allow = "always";
 
       pom.root = [
-        "${homeDirectory}/Dev/src"
-        "${homeDirectory}/Dev/workspace"
-        "${homeDirectory}/Dev/go/gopath/src"
+        "${config.home.homeDirectory}/Dev/src"
+        "${config.home.homeDirectory}/Dev/workspace"
+        "${config.home.homeDirectory}/Dev/go/gopath/src"
       ];
 
       url = {
@@ -46,8 +43,8 @@ in
     };
 
     includes = [
-      { path = "${homeDirectory}/.dotpriv/etc/git/gitconfig"; }
-      { path = "${homeDirectory}/.config/git/config_local"; }
+      { path = "${config.home.homeDirectory}/.dotpriv/etc/git/gitconfig"; }
+      { path = "${config.home.homeDirectory}/.config/git/config_local"; }
     ];
 
     ignores = [

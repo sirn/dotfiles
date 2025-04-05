@@ -1,8 +1,7 @@
 { pkgs, ... }:
 
 let
-  inherit (pkgs) formats;
-  jsonFormat = formats.json { };
+  jsonFormat = pkgs.formats.json { };
 in
 {
   home.packages = with pkgs; [

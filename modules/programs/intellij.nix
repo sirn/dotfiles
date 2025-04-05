@@ -1,8 +1,5 @@
 { config, lib, ... }:
 
-let
-  inherit (lib) mkIf;
-in
 {
   home.file = {
     ".ideavimrc" = {

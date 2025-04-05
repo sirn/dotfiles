@@ -1,16 +1,12 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (lib) mkIf replaceStrings concatStringsSep;
-  inherit (pkgs.stdenv) isDarwin;
-  inherit (pkgs) formats;
-
   cfg = config.programs.alacritty;
 
-  tomlFormat = formats.toml { };
+  tomlFormat = pkgs.formats.toml { };
 
   alacrittyBin =
-    if config.machine.isNixOS || isDarwin
+    if config.machine.isNixOS || pkgs.stdenv.isDarwin
     then "${cfg.package}/bin/alacritty"
     else "alacritty";
 in
@@ -18,17 +14,17 @@ in
   programs.alacritty = {
     # Alacritty depends on GL stuff, which means we can't use Nix packages
     # on a non-NixOS or non-Darwin due to a library mismatch.
-    enable = config.machine.isNixOS || isDarwin;
+    enable = config.machine.isNixOS || pkgs.stdenv.isDarwin;
 
     settings = {
       window =
-        if isDarwin
+        if pkgs.stdenv.isDarwin
         then { option_as_alt = "Both"; }
         else { };
 
       font = {
         size =
-          if isDarwin
+          if pkgs.stdenv.isDarwin
           then 14.0
           else 12.0;
 
@@ -70,7 +66,7 @@ in
         enabled = [
           {
             command =
-              if isDarwin
+              if pkgs.stdenv.isDarwin
               then "open"
               else "${pkgs.xdg-utils}/bin/xdg-open";
 
@@ -96,7 +92,7 @@ in
       shell = {
         program = "${config.programs.fish.package}/bin/fish";
         args =
-          if isDarwin
+          if pkgs.stdenv.isDarwin
           then [ "--login" ]
           else [ ];
       };
@@ -104,14 +100,14 @@ in
   };
 
   # For non-NixOS and non-Darwin, only configure.
-  xdg.configFile = mkIf
+  xdg.configFile = lib.mkIf
     (!cfg.enable)
     {
-      "alacritty/alacritty.toml" = mkIf (cfg.settings != { }) {
+      "alacritty/alacritty.toml" = lib.mkIf (cfg.settings != { }) {
         source =
           (tomlFormat.generate "alacritty.toml" cfg.settings).overrideAttrs
             (finalAttrs: prevAttrs: {
-              buildCommand = concatStringsSep "\n" [
+              buildCommand = lib.concatStringsSep "\n" [
                 prevAttrs.buildCommand
                 "substituteInPlace $out --replace '\\\\' '\\'"
               ];

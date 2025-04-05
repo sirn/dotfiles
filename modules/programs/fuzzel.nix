@@ -1,8 +1,5 @@
 { config, lib, pkgs, ... }:
 
-let
-  inherit (lib) mkIf;
-in
 {
   programs.fuzzel = {
     enable = true;

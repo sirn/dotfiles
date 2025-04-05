@@ -1,38 +1,34 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (lib)
-    attrNames concatStringsSep generators isList listToAttrs mapAttrsToList
-    mkIf mkMerge mkOption nameValuePair types;
-
-  overrideModule = types.submodule {
+  overrideModule = lib.types.submodule {
     options = {
-      filesystems = mkOption {
-        type = with types; listOf str;
+      filesystems = lib.mkOption {
+        type = with lib.types; listOf str;
         default = [ ];
         description = ''
           List of filesystem paths to allow in an application.
         '';
       };
 
-      sockets = mkOption {
-        type = with types; listOf str;
+      sockets = lib.mkOption {
+        type = with lib.types; listOf str;
         default = [ ];
         description = ''
           List of extra sockets to allow in an application.
         '';
       };
 
-      talk-names = mkOption {
-        type = with types; listOf str;
+      talk-names = lib.mkOption {
+        type = with lib.types; listOf str;
         default = [ ];
         description = ''
           List of talk names to allow in an application.
         '';
       };
 
-      environment = mkOption {
-        type = with types; attrsOf str;
+      environment = lib.mkOption {
+        type = with lib.types; attrsOf str;
         default = { };
         description = ''
           Extra environment variable to set in Flatpak application.
@@ -43,8 +39,8 @@ let
 
   flatpakOpts = { name, config, ... }: {
     options = {
-      name = mkOption {
-        type = types.str;
+      name = lib.mkOption {
+        type = lib.types.str;
         readOnly = true;
         description = ''
           Unique application ID for Flatpak applications.
@@ -53,7 +49,7 @@ let
         '';
       };
 
-      overrides = mkOption {
+      overrides = lib.mkOption {
         type = overrideModule;
         description = "Override configuration for Flatpak applications.";
         default = { };
@@ -66,33 +62,33 @@ let
   };
 
   renderOptionValue = v:
-    if isList v then concatStringsSep ";" v
-    else generators.mkValueStringDefault { } v;
+    if lib.isList v then lib.concatStringsSep ";" v
+    else lib.generators.mkValueStringDefault { } v;
 
-  renderOptions = generators.toINI {
-    mkKeyValue = generators.mkKeyValueDefault { mkValueString = renderOptionValue; } "=";
+  renderOptions = lib.generators.toINI {
+    mkKeyValue = lib.generators.mkKeyValueDefault { mkValueString = renderOptionValue; } "=";
     listsAsDuplicateKeys = false;
   };
 
   renderOverrideContextSection = v:
     let
-      contextAttrs = (listToAttrs ([ ] ++
-        (if v.filesystems != [ ] then [ (nameValuePair "filesystems" v.filesystems) ] else [ ]) ++
-        (if v.sockets != [ ] then [ (nameValuePair "sockets" v.sockets) ] else [ ]) ++
-        (if v.talk-names != [ ] then [ (nameValuePair "talk-names" v.talk-names) ] else [ ])
+      contextAttrs = (lib.listToAttrs ([ ] ++
+        (if v.filesystems != [ ] then [ (lib.nameValuePair "filesystems" v.filesystems) ] else [ ]) ++
+        (if v.sockets != [ ] then [ (lib.nameValuePair "sockets" v.sockets) ] else [ ]) ++
+        (if v.talk-names != [ ] then [ (lib.nameValuePair "talk-names" v.talk-names) ] else [ ])
       ));
     in
     if contextAttrs != { }
-    then [ (nameValuePair "Context" contextAttrs) ]
+    then [ (lib.nameValuePair "Context" contextAttrs) ]
     else [ ];
 
   renderOverrideEnvironmentSection = v:
     if v.environment != { }
-    then [ (nameValuePair "Environment" v.environment) ]
+    then [ (lib.nameValuePair "Environment" v.environment) ]
     else [ ];
 
-  mkOverrideFile = n: v: nameValuePair "flatpak/overrides/${n}" {
-    text = renderOptions (listToAttrs (
+  mkOverrideFile = n: v: lib.nameValuePair "flatpak/overrides/${n}" {
+    text = renderOptions (lib.listToAttrs (
       (renderOverrideContextSection v) ++
       (renderOverrideEnvironmentSection v)
     ));
@@ -106,8 +102,8 @@ in
 {
   options = {
     flatpak = {
-      enable = mkOption {
-        type = types.bool;
+      enable = lib.mkOption {
+        type = lib.types.bool;
         default = false;
         description = ''
           Whether to enable Flatpak support. This option does not write any settings
@@ -115,28 +111,28 @@ in
         '';
       };
 
-      applications = mkOption {
-        type = types.attrsOf (types.submodule flatpakOpts);
+      applications = lib.mkOption {
+        type = lib.types.attrsOf (lib.types.submodule flatpakOpts);
         default = { };
         description = "List of Flatpak application settings.";
       };
 
-      globalOverrides = mkOption {
-        type = types.nullOr overrideModule;
+      globalOverrides = lib.mkOption {
+        type = lib.types.nullOr overrideModule;
         default = null;
         description = "Define global overrides";
       };
     };
   };
 
-  config = mkIf config.flatpak.enable {
-    xdg.dataFile = listToAttrs (
+  config = lib.mkIf config.flatpak.enable {
+    xdg.dataFile = lib.listToAttrs (
       (if config.flatpak.globalOverrides != null
       then [ (mkOverrideFile "global" config.flatpak.globalOverrides) ]
       else [ ]) ++
       (map
         (n: mkOverrideFile n config.flatpak.applications.${n}.overrides)
-        (attrNames config.flatpak.applications))
+        (lib.attrNames config.flatpak.applications))
     );
 
     home.activation =
@@ -147,7 +143,7 @@ in
         # TODO: have Home Manager manage Flatpak installations?
         noticeFlatpakApplications = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           noticeFlatpakApplications() {
-            appids=(${concatStringsSep " " (mapAttrsToList (n: v: v.name) config.flatpak.applications)})
+            appids=(${lib.concatStringsSep " " (lib.mapAttrsToList (n: v: v.name) config.flatpak.applications)})
             if [[ ''${#appids[@]} -lt 1 ]]; then
               return
             fi

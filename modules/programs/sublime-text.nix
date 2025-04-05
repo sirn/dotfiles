@@ -1,11 +1,8 @@
 { config, pkgs, lib, ... }:
 
 let
-  inherit (lib) mkIf;
-  inherit (pkgs.stdenv) isDarwin isLinux;
-
   configHome =
-    if isLinux
+    if pkgs.stdenv.isLinux
     then ".config/sublime-text"
     else "Library/Application Support/Sublime Text";
 
@@ -13,12 +10,12 @@ let
     theme = "Meetio Theme.sublime-theme";
     color_scheme = "Meetio Darker.sublime-color-scheme";
     font_face = "PragmataPro Mono";
-    font_size = if isDarwin then 14 else 12;
+    font_size = if pkgs.stdenv.isDarwin then 14 else 12;
   };
 in
 {
   home.packages =
-    if isLinux
+    if pkgs.stdenv.isLinux
     then with pkgs; [ unstable.sublime4 ]
     else [ ];
 

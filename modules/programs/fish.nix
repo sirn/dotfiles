@@ -1,10 +1,5 @@
 { config, lib, pkgs, ... }:
 
-let
-  inherit (lib) cli escapeShellArg mkIf mkMerge;
-
-  dotfilesDir = "${config.home.homeDirectory}/.dotfiles";
-in
 {
   programs.fish = {
     enable = true;

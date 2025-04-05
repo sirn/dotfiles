@@ -1,9 +1,5 @@
 { config, lib, pkgs, ... }:
 
-let
-  inherit (lib) mkDefault mkIf;
-  inherit (config.home) homeDirectory;
-in
 {
   wayland.windowManager.sway = {
     enable = true;
@@ -55,8 +51,8 @@ in
 
         output = {
           "*" = {
-            bg = mkDefault "${swayWallpaper} fill";
-            scale = mkDefault "1";
+            bg = lib.mkDefault "${swayWallpaper} fill";
+            scale = lib.mkDefault "1";
           };
         };
 
@@ -145,7 +141,7 @@ in
           # Screenshots
           "Print" = ''
             exec \
-                env GRIM_DEFAULT_DIR="${homeDirectory}/Desktop" \
+                env GRIM_DEFAULT_DIR="${config.home.homeDirectory}/Desktop" \
                 ${pkgs.grim}/bin/grim && \
                 ${pkgs.libnotify}/bin/notify-send \
                     "Screenshot captured" \
@@ -163,7 +159,7 @@ in
 
           "Alt+Print" = ''
             exec \
-                env GRIM_DEFAULT_DIR="${homeDirectory}/Desktop" \
+                env GRIM_DEFAULT_DIR="${config.home.homeDirectory}/Desktop" \
                 ${pkgs.grim}/bin/grim -g "$(${pkgs.slurp}/bin/slurp)" && \
                 ${pkgs.libnotify}/bin/notify-send \
                     "Screenshot captured" \

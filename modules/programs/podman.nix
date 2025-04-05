@@ -1,14 +1,10 @@
 { config, pkgs, lib, ... }:
 
-let
-  inherit (lib) mkIf;
-  inherit (pkgs.stdenv) isDarwin isLinux;
-in
 {
   home.packages = with pkgs; [
     skopeo
   ] ++
-  (if isLinux then [
+  (if pkgs.stdenv.isLinux then [
     podman
     podman-compose
 
@@ -22,7 +18,7 @@ in
       exec ${podman-compose}/bin/podman-compose "$@"
     '')
   ] else [ ]) ++
-  (if isDarwin then [
+  (if pkgs.stdenv.isDarwin then [
     (pkgs.writeScriptBin "podman" ''
       #!${pkgs.bash}/bin/bash
       exec /usr/local/bin/docker "$@"
@@ -35,7 +31,7 @@ in
   ] else [ ]);
 
   # On non-NixOS, these paths must be defined separately.
-  xdg.configFile = mkIf (!isDarwin && !config.machine.isNixOS) {
+  xdg.configFile = lib.mkIf (!pkgs.stdenv.isDarwin && !config.machine.isNixOS) {
     "containers/registries.conf" = {
       text = ''
         [registries.search]
