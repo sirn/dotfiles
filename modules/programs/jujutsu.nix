@@ -11,10 +11,17 @@
         name = config.programs.git.userName;
       };
 
+      signing = lib.mkIf config.programs.gpg.enable {
+        behavior = "own";
+        backend = "gpg";
+        "backend.gpg.program" = "${config.programs.gpg.package}/bin/gpg";
+      };
+
       ui = {
         default-command = "log";
         diff-editor = ":builtin";
         pager = "${pkgs.less}/bin/less -FRX";
+        "show-cryptographic-signatures" = config.programs.gpg.enable;
       };
     };
   };

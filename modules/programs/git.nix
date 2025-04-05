@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   home.packages = with pkgs; [
@@ -13,6 +13,12 @@
 
     lfs.enable = true;
 
+    signing = lib.mkIf config.programs.gpg.enable {
+      signByDefault = true;
+      gpgPath = "${config.programs.gpg.package}/bin/gpg";
+      key = config.programs.gpg.settings.default-key;
+    };
+
     extraConfig = {
       branch.autoSetupMerge = true;
       color.ui = "auto";
@@ -20,6 +26,7 @@
       init.defaultBranch = "main";
       pull.rebase = true;
       push.default = "nothing";
+      push.gpgSign = "if-asked";
       status.branch = true;
       status.short = true;
       submodule.fetchJobs = 8;
