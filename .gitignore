@@ -25,6 +25,7 @@ ssh/config.d/*
 .config
 nix.profile
 nix.generic
+local.nix
 result
 
 # Service
