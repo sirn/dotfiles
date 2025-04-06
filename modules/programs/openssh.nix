@@ -17,7 +17,6 @@ in
 
     matchBlocks = {
       "*" = {
-        user = "sirn";
         extraOptions = {
           "CheckHostIP" = "yes";
           "StrictHostKeyChecking" = "accept-new";
