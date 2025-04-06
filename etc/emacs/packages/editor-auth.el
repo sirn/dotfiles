@@ -31,6 +31,6 @@
   :demand t
 
   :config
-  (setq auth-sources `(,(no-littering-expand-etc-file-name "authinfo.gpg"
-                          ,(expand-file-name "~/.authinfo.gpg")
-                          ,(expand-file-name "~/.netrc")))))
+  (setq auth-sources `(,(no-littering-expand-etc-file-name "authinfo.gpg")
+                        ,(expand-file-name "~/.authinfo.gpg")
+                        ,(expand-file-name "~/.netrc"))))
