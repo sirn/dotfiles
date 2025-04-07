@@ -7,10 +7,11 @@ in
   programs.emacs = {
     enable = true;
     package =
-      if pkgs.stdenv.isLinux then
-        pkgs.emacs30-pgtk
-      else
-        pkgs.emacs30-nox;
+      lib.mkDefault
+        (if pkgs.stdenv.isLinux then
+          pkgs.emacs-pgtk
+        else
+          pkgs.emacs-nox);
 
     extraPackages = epkgs: with epkgs; [
       # Early packages

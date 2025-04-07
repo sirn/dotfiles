@@ -8,8 +8,8 @@
   programs.git = {
     enable = true;
 
-    userName = "Sirn Thanabulpong";
-    userEmail = "sirn@ogsite.net";
+    userName = lib.mkDefault "Sirn Thanabulpong";
+    userEmail = lib.mkDefault "sirn@ogsite.net";
 
     lfs.enable = true;
 
