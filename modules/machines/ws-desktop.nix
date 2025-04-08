@@ -4,5 +4,6 @@
 
     # programs
     ../programs/wezterm.nix
+    ../programs/sublime-text.nix
   ];
 }
