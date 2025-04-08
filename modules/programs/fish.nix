@@ -51,6 +51,31 @@
         '';
       };
 
+      pbcopy = lib.mkIf pkgs.stdenv.isLinux {
+        body = ''
+          if test -n "$WAYLAND_DISPLAY"
+            ${pkgs.wl-clipboard}/bin/wl-copy
+          else if test -n "$DISPLAY"
+            ${pkgs.xclip}/bin/xclip -selection clipboard
+          else
+            echo >&2 "Error: not desktop?"
+            exit 1
+          end
+        '';
+      };
+
+      pbpaste = lib.mkIf pkgs.stdenv.isLinux {
+        body = ''
+          if test -n "$WAYLAND_DISPLAY"
+            ${pkgs.wl-clipboard}/bin/wl-paste
+          else if test -n "$DISPLAY"
+            ${pkgs.xclip}/bin/xclip -selection clipboard -o
+          else
+            echo >&2 "Error: not desktop?"
+            exit 1
+          end
+        '';
+      };
     };
 
     interactiveShellInit = ''
