@@ -1,4 +1,6 @@
 {
+  flatpak.enable = true;
+
   imports = [
     ./ws.nix
 
