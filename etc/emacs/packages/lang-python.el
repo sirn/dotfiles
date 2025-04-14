@@ -25,8 +25,11 @@
     (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
     (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
 
+  (defun gemacs--python-disable-flycheck ()
+    (flycheck-mode -1))
+
   (add-hook 'python-ts-mode-hook #'eglot-ensure)
-  (add-hook 'python-ts-mode-hook #'flycheck-mode)
+  (add-hook 'python-ts-mode-hook #'gemacs--python-disable-flycheck)
   (add-hook 'python-ts-mode-hook #'gemacs--python-auto-format)
 
   (with-eval-after-load 'eglot
