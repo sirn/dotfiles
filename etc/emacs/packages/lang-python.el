@@ -7,7 +7,7 @@
 
   :preface
   (eval-when-compile
-    (declare-function gemacs--python-auto-format nil)
+    (declare-function apheleia-mode nil)
     (defvar flycheck-python-pycompile-executable))
 
   :init
@@ -21,16 +21,12 @@
     ((executable-find "python2") (setq python-shell-interpreter "python2"))
     (t (setq python-shell-interpreter "python")))
 
-  (defun gemacs--python-auto-format ()
-    (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
-    (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
-
   (defun gemacs--python-disable-flycheck ()
     (flycheck-mode -1))
 
   (add-hook 'python-ts-mode-hook #'eglot-ensure)
+  (add-hook 'python-ts-mode-hook #'apheleia-mode)
   (add-hook 'python-ts-mode-hook #'gemacs--python-disable-flycheck)
-  (add-hook 'python-ts-mode-hook #'gemacs--python-auto-format)
 
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs
@@ -44,4 +40,7 @@
             (black (enabled . t))
             (flake8 (enabled . t))
             (pycodestyle (enabled . nil))
-            (pyflakes (enabled . t))))))))
+            (pyflakes (enabled . t)))))))
+
+  (with-eval-after-load 'apheleia
+    (add-to-list 'apheleia-mode-alist '(python-ts-mode . (isort black)))))
