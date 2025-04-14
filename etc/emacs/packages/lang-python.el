@@ -33,7 +33,11 @@
   (add-hook 'python-ts-mode-hook #'gemacs--python-auto-format)
 
   (with-eval-after-load 'eglot
-    (add-to-list 'eglot-server-programs '(python-ts-mode . ("pylsp")))
+    (add-to-list 'eglot-server-programs
+      `(python-ts-mode . ,(eglot-alternatives
+                            '(("pylsp")
+                              ("pyright-langserver" "--stdio")))))
+
     (setq-default eglot-workspace-configuration
       '((pylsp
           (plugins
