@@ -28,6 +28,7 @@
     ./programs/podman.nix
     ./programs/ripgrep.nix
     ./programs/rsync.nix
+    ./programs/sl.nix
     ./programs/tmux.nix
     ./programs/unison.nix
 
