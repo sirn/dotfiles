@@ -1,10 +1,12 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package php-mode
-  :preface
-  (eval-when-compile
-    (declare-function apheleia-mode nil))
-
   :init
-  (add-hook 'php-mode-hook #'apheleia-mode)
-  (add-hook 'php-mode-hook #'flycheck-mode))
+  (add-hook 'php-mode-hook #'eglot-ensure)
+  (add-hook 'php-mode-hook #'flycheck-mode)
+
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs
+      `(php-mode . ,(eglot-alternatives
+                      '(("intelephense" "--stdio")
+                        ("phpactor" "language-server")))))))
