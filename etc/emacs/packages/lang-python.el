@@ -21,12 +21,9 @@
     ((executable-find "python2") (setq python-shell-interpreter "python2"))
     (t (setq python-shell-interpreter "python")))
 
-  (defun gemacs--python-disable-flycheck ()
-    (flycheck-mode -1))
-
   (add-hook 'python-ts-mode-hook #'eglot-ensure)
+  (add-hook 'python-ts-mode-hook #'flycheck-mode)
   (add-hook 'python-ts-mode-hook #'apheleia-mode)
-  (add-hook 'python-ts-mode-hook #'gemacs--python-disable-flycheck)
 
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs

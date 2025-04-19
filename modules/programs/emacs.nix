@@ -136,13 +136,12 @@ in
       with-editor
       yaml-mode
 
-      # Non-Emacs dev packages (lsp and friends)
+      # Non-Emacs dev packages
       pkgs.fd
       pkgs.jq
       pkgs.nixpkgs-fmt
       pkgs.nodejs
       pkgs.pandoc
-      pkgs.python311 # used by treemacs
       pkgs.ripgrep
       pkgs.shellcheck
       pkgs.shfmt
