@@ -8,5 +8,7 @@
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs
       `(php-mode . ,(eglot-alternatives
-                      '(("intelephense" "--stdio")
+                      `(("intelephense" "--stdio"
+                          :initializationOptions
+                          (:licenceKey ,(expand-file-name "~/.config/intelephense/licence.txt")))
                         ("phpactor" "language-server")))))))
