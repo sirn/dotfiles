@@ -580,7 +580,10 @@ area."
   :general
   (leader
     "ll" #'eglot-code-actions
-    "lR" #'eglot-rename)
+    "lR" #'eglot-rename
+    "lfi" #'eglot-find-implementation
+    "lfd" #'eglot-find-declaration
+    "lft" #'eglot-find-typeDefinition)
 
   :custom
   (eglot-autoshutdown t)
