@@ -358,7 +358,7 @@
     "/g"  #'consult-grep)
 
   :custom
-  (consult-fd-args '("fd" "--no-require-git" "--full-path" "--color=never"))
+  (consult-fd-args '("fd" "--full-path" "--color=never"))
 
   :init
   (with-eval-after-load 'project
