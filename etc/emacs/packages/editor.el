@@ -570,8 +570,6 @@ area."
 ;;; Language Server Protocol
 
 (use-package flycheck-eglot
-  :after (flycheck eglot)
-
   :config
   (global-flycheck-eglot-mode t))
 
@@ -614,7 +612,10 @@ area."
           (ignore-errors (eglot-shutdown server)))
         (apply orig-fun args)))
 
-    (advice-add 'project-kill-buffers :around #'gemacs--advice-eglot-shutdown-project)))
+    (advice-add 'project-kill-buffers :around #'gemacs--advice-eglot-shutdown-project))
+
+  (use-package flycheck-eglot
+    :demand t))
 
 
 (use-package xref
