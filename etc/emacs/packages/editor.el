@@ -581,9 +581,9 @@ area."
   (leader
     "ll" #'eglot-code-actions
     "lR" #'eglot-rename
-    "lfi" #'eglot-find-implementation
-    "lfd" #'eglot-find-declaration
-    "lft" #'eglot-find-typeDefinition)
+    "ji" #'eglot-find-implementation
+    "jd" #'eglot-find-declaration
+    "jt" #'eglot-find-typeDefinition)
 
   :custom
   (eglot-autoshutdown t)
@@ -615,6 +615,12 @@ area."
         (apply orig-fun args)))
 
     (advice-add 'project-kill-buffers :around #'gemacs--advice-eglot-shutdown-project)))
+
+
+(use-package xref
+  :general
+  (leader
+    "jr" #'xref-find-references))
 
 
 ;; --------------------------------------------------------------------------
