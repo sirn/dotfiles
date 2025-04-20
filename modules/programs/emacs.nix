@@ -140,6 +140,10 @@ in
       # notmuch package also contains notmuch-mode so it needs to be here
       # instead of in emacs-bin-deps below
       notmuch
+    ] else [ ]) ++ (if pkgs.stdenv.isDarwin then [
+
+      osx-trash
+      pbcopy
     ] else [ ]);
   };
 
@@ -171,10 +175,7 @@ in
           # LSPs
           pyright
           intelephense
-        ] ++ (if pkgs.stdenv.isDarwin then [
-          osx-trash
-          pbcopy
-        ] else [ ]);
+        ];
 
         phases = [ "installPhase" ];
 
