@@ -268,7 +268,15 @@
     "E" '(:keymap envrc-command-map))
 
   :init
-  (add-hook 'gemacs-after-init-hook 'envrc-global-mode))
+  (defun gemacs--envrc-inject-emacs-bin-deps (&rest _)
+    "Injects local emacs-bin-deps"
+    (add-to-list 'exec-path (expand-file-name "~/.emacs.d/var/emacs-bin-deps") t))
+
+  (add-hook 'gemacs-after-init-hook 'envrc-global-mode)
+
+  :config
+  (with-eval-after-load 'envrc
+    (advice-add 'envrc--apply :after #'gemacs--envrc-inject-emacs-bin-deps)))
 
 
 (use-package with-editor

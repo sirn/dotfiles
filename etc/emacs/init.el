@@ -209,6 +209,10 @@ This is an `:around' advice for many different functions."
 ;; --------------------------------------------------------------------------
 ;;; Packages
 
+(let ((emacs-bin-deps-dir "~/.emacs.d/var/emacs-bin-deps"))
+  (if (file-directory-p emacs-bin-deps-dir)
+    (add-to-list 'exec-path (expand-file-name emacs-bin-deps-dir) t)))
+
 (let ((loaded (mapcar
                 #'file-name-sans-extension
                 (delq nil (mapcar #'car load-history)))))
