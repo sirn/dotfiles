@@ -1,9 +1,14 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package terraform-mode
-  :preface
-  (eval-when-compile
-    (declare-function apheleia-mode nil))
-
   :init
-  (add-hook 'terraform-mode-hook #'apheleia-mode))
+  (defun gemacs--terraform-auto-format ()
+    (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
+    (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
+
+  (add-hook 'terraform-mode-hook #'eglot-ensure)
+  (add-hook 'terraform-mode-hook #'flycheck-mode)
+  (add-hook 'terraform-mode-hook #'gemacs--terraform-auto-format)
+
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs '(terraform-mode . ("terraform-ls" "serve")))))

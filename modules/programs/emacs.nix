@@ -170,11 +170,23 @@ in
           ripgrep
           shellcheck
           shfmt
-          terraform
+          tenv
 
           # LSPs
-          pyright
           intelephense
+          pyright
+          typescript-language-server
+
+          # terraform-ls looks up `terraform` binary via $PATH but bin deps
+          # is injected via exec-path only, so we need to inject bin deps path
+          # explicitly here
+          (terraform-ls.overrideDerivation (attrs: {
+            nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
+            postInstall = ''
+              wrapProgram $out/bin/terraform-ls \
+                --prefix PATH : ${config.home.homeDirectory}/.emacs.d/var/emacs-bin-deps
+            '';
+          }))
         ];
 
         phases = [ "installPhase" ];
