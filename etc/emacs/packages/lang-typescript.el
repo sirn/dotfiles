@@ -13,10 +13,6 @@
 (use-package typescript-ts-mode
   :preface
   (eval-when-compile
-    (declare-function apheleia-mode nil))
-
-  :preface
-  (eval-when-compile
     (declare-function gemacs--typescript-auto-format nil))
 
   :init
