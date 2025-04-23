@@ -62,20 +62,16 @@ Any adjustments to `apheleia`'s variables should be done via `:config`:
     (declare-function gemacs--typescript-auto-format nil))
 
   :init
-  (use-package eglot
-    :demand t
+  (defun gemacs--typescript-auto-format ()
+    (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
+    (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
 
-    :config
-    (defun gemacs--typescript-auto-format ()
-      (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
-      (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
+  (add-hook 'typescript-mode-hook #'eglot-ensure)
+  (add-hook 'typescript-mode-hook #'flycheck-mode)
+  (add-hook 'typescript-mode-hook #'gemacs--typescript-auto-format)
 
-    (add-hook 'typescript-mode-hook #'eglot-ensure)
-    (add-hook 'typescript-mode-hook #'flycheck-mode)
-    (add-hook 'typescript-mode-hook #'gemacs--typescript-auto-format)
-
-    (with-eval-after-load 'eglot'
-      (add-to-list 'eglot-server-programs '(typescript-mode . ("typescript-language-server")))))
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs '(typescript-mode . ("typescript-language-server")))))
 ```
 
 ## tree-sitter
