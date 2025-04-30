@@ -6,7 +6,14 @@ in
 {
   programs.firefox = {
     enable = true;
-    package = if pkgs.stdenv.isLinux then pkgs.firefox else null;
+    package = lib.mkDefault
+      (if config.machine.isNixOS
+      then pkgs.firefox
+      else null);
+
+    # By default, this is set to 2, which fails on non-NixOS Firefox
+    # https://github.com/nix-community/home-manager/issues/6170
+    profileVersion = null;
 
     profiles = {
       main = {
@@ -43,6 +50,10 @@ in
           user_pref("privacy.trackingprotection.enabled", true);
           user_pref("privacy.trackingprotection.fingerprinting.enabled", true);
           user_pref("dom.security.https_only_mode", true);
+        '';
+
+        userChrome = ''
+          @import url("${csshacks}/chrome/hide_tabs_toolbar_v2.css");
         '';
       };
     };

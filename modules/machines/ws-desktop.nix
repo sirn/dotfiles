@@ -5,7 +5,8 @@
     ./ws.nix
 
     # programs
-    ../programs/wezterm.nix
+    ../programs/firefox.nix
     ../programs/sublime-text.nix
+    ../programs/wezterm.nix
   ];
 }

@@ -6,8 +6,8 @@ fetchFromGitHub {
 
   owner = "MrOtherGuy";
   repo = "firefox-csshacks";
-  rev = "d08d7791fa154c4ff4e374b87ecde16a1a4d7e17";
-  sha256 = "sha256-wTqHc96IMHt1nOAvffA1ejVagQJmi+uiV6udOpLk4AM=";
+  rev = "016521f0a21bbb76e8eff4b8410c1e049f081c77";
+  sha256 = "sha256-dUboMxvWSP1PS9NT8PsmfOMF1HKqvH6jUAT1La5k6wM=";
 
   meta = with lib; {
     description = "Firefox CSS hacks";
