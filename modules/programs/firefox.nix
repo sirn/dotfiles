@@ -54,6 +54,7 @@ in
 
         userChrome = ''
           @import url("${csshacks}/chrome/hide_tabs_toolbar_v2.css");
+          @import url("${csshacks}/chrome/autohide_sidebar.css");
         '';
       };
     };
