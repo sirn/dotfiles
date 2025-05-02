@@ -28,6 +28,7 @@ in
       ace-window
       avy
       consult
+      consult-flyspell
       corfu
       corfu-prescient
       corfu-terminal
@@ -158,6 +159,9 @@ in
     ".emacs.d/var/treesit-grammars" = {
       source = pkgs.emacsPackages.treesit-grammars.with-all-grammars;
     };
+    ".emacs.d/var/scowl" = {
+      source = pkgs.scowl;
+    };
     ".emacs.d/var/emacs-bin-deps" = {
       source = (pkgs.stdenv.mkDerivation {
         name = "emacs-bin-deps";
@@ -172,6 +176,7 @@ in
           shellcheck
           shfmt
           tenv
+          hunspell.bin
 
           # LSPs
           intelephense
