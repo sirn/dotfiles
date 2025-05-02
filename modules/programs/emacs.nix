@@ -47,6 +47,7 @@ in
       evil-mc
       evil-surround
       flycheck
+      gptel
       flycheck-eglot
       flycheck-golangci-lint
       flycheck-posframe
