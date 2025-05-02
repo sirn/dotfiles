@@ -7,6 +7,7 @@
     # programs
     ./programs/aria2.nix
     ./programs/bash.nix
+    ./programs/claude-code.nix
     ./programs/coreutils.nix
     ./programs/curl.nix
     ./programs/direnv.nix
