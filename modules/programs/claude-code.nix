@@ -2,6 +2,6 @@
 
 {
   home.packages = [
-    pkgs.unstable.claude-code
+    pkgs.local.claude-code
   ];
 }
