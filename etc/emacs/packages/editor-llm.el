@@ -13,6 +13,9 @@
   (gptel-default-mode 'org-mode)
   (gptel-model 'claude-3-5-sonnet-20240620)
 
+  :init
+  (add-hook 'gptel-mode-hook #'visual-line-mode)
+
   :config
   (defun gemacs--gptel-api-key-from-auth-source (host)
     "Retrieve API key for HOST from auth-source."
@@ -21,9 +24,8 @@
           (funcall secret)
         secret)))
 
-  (with-eval-after-load 'gptel
-    (let ((api-key (gemacs--gptel-api-key-from-auth-source "anthropic.com")))
-      (setq gptel-backend (gptel-make-anthropic
-                           "Claude Sonnet"
-                           :key api-key
-                           :stream t)))))
+  (let ((api-key (gemacs--gptel-api-key-from-auth-source "anthropic.com")))
+    (setq gptel-backend (gptel-make-anthropic
+                         "Claude Sonnet"
+                         :key api-key
+                         :stream t))))
