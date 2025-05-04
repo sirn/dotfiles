@@ -15,7 +15,7 @@ in
     ia-writer-duospace
     ibm-plex
     inter
-    iosevka-bin
+    iosevka
     ipaexfont
     ipafont
     noto-fonts
