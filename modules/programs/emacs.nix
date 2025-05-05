@@ -186,6 +186,7 @@ in
           nodePackages.svelte-language-server
           vscode-langservers-extracted
           typescript-language-server
+          yaml-language-server
 
           # terraform-ls looks up `terraform` binary via $PATH but bin deps
           # is injected via exec-path only, so we need to inject bin deps path
