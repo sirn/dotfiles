@@ -179,6 +179,7 @@ in
           hunspell.bin
 
           # LSPs
+          gopls
           intelephense
           pyright
           typescript-language-server
