@@ -17,7 +17,7 @@
     "'" #'multi-vterm-project)
 
   :custom
-  (project-vc-extra-root-markers '(".jj"))
+  (project-vc-extra-root-markers '(".jj" "go.mod"))
   (project-vc-ignores '(".jj"))
   (project-switch-commands '((project-dired "Dired")))
 
