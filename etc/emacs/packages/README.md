@@ -56,7 +56,7 @@ Any adjustments to `apheleia`'s variables should be done via `:config`:
 `eglot` is explicitly enabled per major-mode:
 
 ``` elisp
-(use-package typescript-mode
+(use-package typescript-ts-mode
   :preface
   (eval-when-compile
     (declare-function gemacs--typescript-auto-format nil))
@@ -71,7 +71,7 @@ Any adjustments to `apheleia`'s variables should be done via `:config`:
   (add-hook 'typescript-mode-hook #'gemacs--typescript-auto-format)
 
   (with-eval-after-load 'eglot
-    (add-to-list 'eglot-server-programs '(typescript-mode . ("typescript-language-server")))))
+    (add-to-list 'eglot-server-programs '(typescript-ts-mode . ("typescript-language-server" "--stdio")))))
 ```
 
 ## tree-sitter

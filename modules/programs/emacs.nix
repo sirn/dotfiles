@@ -114,7 +114,6 @@ in
       clojure-mode
       dockerfile-mode
       elixir-mode
-      emmet-mode
       erlang
       go-mode
       groovy-mode
@@ -137,6 +136,7 @@ in
       web-mode
       with-editor
       yaml-mode
+      zencoding-mode
 
     ] ++ (if config.programs.notmuch.enable then [
       # notmuch package also contains notmuch-mode so it needs to be here
