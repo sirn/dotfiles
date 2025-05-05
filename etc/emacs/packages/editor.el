@@ -358,7 +358,9 @@
     "/g"  #'consult-grep)
 
   :custom
-  (consult-fd-args '("fd" "--full-path" "--color=never"))
+  (consult-fd-args (if (locate-dominating-file default-directory ".git")
+                       '("fd" "--full-path" "--color=never")
+                     '("fd" "--full-path" "--color=never" "--no-require-git")))
 
   :init
   (with-eval-after-load 'project
