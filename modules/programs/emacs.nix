@@ -130,6 +130,7 @@ in
       php-mode
       purescript-mode
       rust-mode
+      svelte-mode
       terraform-mode
       toml-mode
       typescript-mode
@@ -182,6 +183,8 @@ in
           gopls
           intelephense
           pyright
+          nodePackages.svelte-language-server
+          vscode-langservers-extracted
           typescript-language-server
 
           # terraform-ls looks up `terraform` binary via $PATH but bin deps

@@ -31,13 +31,24 @@
   (web-mode-markup-indent-offset 2)
   (web-mode-sql-indent-offset 2)
 
+  ;; Inline script/style
+  (web-mode-script-padding 2)
+  (web-mode-style-padding 2)
+
   :preface
   (eval-when-compile
     (declare-function apheleia-mode nil)
+    (declare-function eglot-ensure nil)
+    (declare-function flycheck-mode nil)
     (defvar web-mode-fontification-off))
 
   :init
   (add-hook 'web-mode-hook #'apheleia-mode)
+  (add-hook 'web-mode-hook #'eglot-ensure)
+  (add-hook 'web-mode-hook #'flycheck-mode)
+
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs '(web-mode . ("vscode-html-language-server" "--stdio"))))
 
   :config
   (add-to-list 'web-mode-content-types-alist '("jsx" . "\\.js[x]?\\'")))
