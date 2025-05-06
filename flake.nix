@@ -27,6 +27,12 @@
 
       overlays = [
         (final: prev: {
+          # Track latest LTS
+          # https://nodejs.org/en/about/previous-releases
+          nodejs = prev.nodejs_22;
+          nodejs-slim = prev.nodejs-slim_22;
+        })
+        (final: prev: {
           local = import ./pkgs {
             pkgs = final;
             lib = prev.lib;
