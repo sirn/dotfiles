@@ -23,9 +23,12 @@
                    :stream t
                    :models
                    '(anthropic/claude-3.7-sonnet
-                     google/gemini-2.5-pro-preview-03-25
+                     anthropic/claude-3.5-sonnet
+                     google/gemini-2.5-pro-preview
                      google/gemini-2.5-flash-preview
-                     openai/gpt-4o-mini)))
+                     openai/gpt-4o-mini
+                     openai/gpt-4.1
+                     openai/gpt-4.1-mini)))
 
   :init
   (add-hook 'gptel-mode-hook #'visual-line-mode))
