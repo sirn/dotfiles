@@ -49,6 +49,11 @@
         'Source Han Code JP',
       })
 
+      config.command_palette_font = wezterm.font_with_fallback({
+        'PragmataPro Mono',
+        'Source Han Code JP',
+      })
+
       config.freetype_load_target = 'Light'
       config.freetype_load_flags = 'NO_HINTING'
       config.hide_tab_bar_if_only_one_tab = true
