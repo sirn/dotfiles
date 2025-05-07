@@ -5,7 +5,9 @@
 
   :general
   (leader
-    "gg" #'gptel)
+    "mm" #'gptel
+    "mp" #'gptel-system-prompt
+    "mM" #'gptel-menu)
 
   :preface
   (eval-when-compile
@@ -26,8 +28,4 @@
                      openai/gpt-4o-mini)))
 
   :init
-  (add-hook 'gptel-mode-hook #'visual-line-mode)
-
-  :config
-  (general-define-key :keymaps 'gptel-mode-map
-    "C-c C-c" #'gptel-menu))
+  (add-hook 'gptel-mode-hook #'visual-line-mode))
