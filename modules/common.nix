@@ -6,6 +6,7 @@
 
     # programs
     ./programs/aria2.nix
+    ./programs/aider-chat.nix
     ./programs/bash.nix
     ./programs/claude-code.nix
     ./programs/coreutils.nix
