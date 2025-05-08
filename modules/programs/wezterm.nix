@@ -41,18 +41,17 @@
     extraConfig = ''
       local config = wezterm.config_builder()
       local shell = "${config.programs.fish.package}/bin/fish"
+      local font = wezterm.font_with_fallback({
+        'PragmataPro Mono Liga',
+        'Source Han Code JP',
+      })
 
       config.color_scheme = 'foot'
       config.enable_scroll_bar = true
-      config.font = wezterm.font_with_fallback({
-        'PragmataPro Mono Liga',
-        'Source Han Code JP',
-      })
-
-      config.command_palette_font = wezterm.font_with_fallback({
-        'PragmataPro Mono Liga',
-        'Source Han Code JP',
-      })
+      config.font = font
+      config.command_palette_font = font
+      config.pane_select_font = font
+      config.char_select_font = font
 
       config.freetype_load_target = 'Light'
       config.freetype_load_flags = 'NO_HINTING'
@@ -60,6 +59,7 @@
       config.prefer_egl = true
       config.use_ime = true
       config.mux_enable_ssh_agent = false
+      config.warn_about_missing_glyphs = false
 
       config.window_padding = {
         left = '0.2cell',
@@ -74,6 +74,9 @@
       ${lib.optionalString pkgs.stdenv.isLinux ''
         config.default_prog = { shell };
         config.font_size = 12.0
+        config.command_palette_font_size = 12.0
+        config.pane_select_font_size = 12.0
+        config.char_select_font_size = 12.0
         config.front_end = "WebGpu"
         config.enable_wayland = true
       ''}
@@ -81,6 +84,9 @@
       ${lib.optionalString pkgs.stdenv.isDarwin ''
         config.default_prog = { shell, "--login" }
         config.font_size = 14.0;
+        config.command_palette_font_size = 14.0
+        config.pane_select_font_size = 14.0
+        config.char_select_font_size = 14.0
       ''}
 
       return config
