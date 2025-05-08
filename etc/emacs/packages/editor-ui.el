@@ -61,17 +61,6 @@
   (load-theme 'modus-vivendi t))
 
 
-(use-package osx-trash
-  :when (eq system-type 'darwin)
-
-  :preface
-  (eval-when-compile
-    (declare-function osx-trash-setup nil))
-
-  :config
-  (osx-trash-setup))
-
-
 (use-package pbcopy
   :when (eq system-type 'darwin)
 
@@ -184,8 +173,6 @@
   ;; Enable macOS-specific setups
 
   (gemacs-when-compiletime (eq system-type 'darwin)
-    (setq dired-use-ls-dired nil)
-
     (when (display-graphic-p)
       (defun mac-toggle-fullscreen ()
         (interactive)
@@ -205,7 +192,6 @@
       (global-set-key (kbd "s-W") 'delete-frame)
       (global-set-key (kbd "s-n") 'make-frame))
 
-    (require 'osx-trash)
     (require 'pbcopy))
 
   ;; Enable theme as late as is humanly possible. This reduces
