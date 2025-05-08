@@ -45,12 +45,12 @@
       config.color_scheme = 'foot'
       config.enable_scroll_bar = true
       config.font = wezterm.font_with_fallback({
-        'PragmataPro Mono',
+        'PragmataPro Mono Liga',
         'Source Han Code JP',
       })
 
       config.command_palette_font = wezterm.font_with_fallback({
-        'PragmataPro Mono',
+        'PragmataPro Mono Liga',
         'Source Han Code JP',
       })
 
