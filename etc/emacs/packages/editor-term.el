@@ -4,7 +4,7 @@
   (setq-local evil-insert-state-cursor 'box)
   (display-line-numbers-mode -1)
   (display-fill-column-indicator-mode -1)
-  (evil-emacs-state))
+  (evil-insert-state))
 
 
 ;; Builtin
