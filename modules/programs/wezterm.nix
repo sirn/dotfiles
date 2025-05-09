@@ -3,6 +3,7 @@
 {
   programs.wezterm = {
     enable = config.machine.isNixOS || pkgs.stdenv.isDarwin;
+    package = pkgs.unstable.wezterm;
 
     colorSchemes = {
       foot = {
@@ -49,9 +50,14 @@
       config.color_scheme = 'foot'
       config.enable_scroll_bar = true
       config.font = font
-      config.command_palette_font = font
-      config.pane_select_font = font
-      config.char_select_font = font
+
+      local version_prefix = string.sub(wezterm.version, 1, 6)
+      local version_num = tonumber(version_prefix) or 0
+      if version_num >= 202505 then
+        config.command_palette_font = font
+        config.pane_select_font = font
+        config.char_select_font = font
+      end
 
       config.freetype_load_target = 'Light'
       config.freetype_load_flags = 'NO_HINTING'
