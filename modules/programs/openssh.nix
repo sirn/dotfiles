@@ -1,8 +1,5 @@
 { config, lib, pkgs, ... }:
 
-let
-  dotprivDir = "${config.home.homeDirectory}/.dotpriv";
-in
 {
   programs.ssh = {
     enable = true;
@@ -72,11 +69,9 @@ in
     userKnownHostsFile = lib.concatStringsSep " " [
       "${config.home.homeDirectory}/.ssh/known_hosts"
       "${config.home.homeDirectory}/.ssh/known_hosts2"
-      "${dotprivDir}/etc/ssh/known_hosts"
     ];
 
     includes = [
-      "${dotprivDir}/etc/ssh/config.d/*"
       "${config.home.homeDirectory}/.ssh/config.d/*"
     ] ++ (if pkgs.stdenv.isDarwin then [
       "${config.home.homeDirectory}/.orbstack/ssh/config"

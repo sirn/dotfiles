@@ -1,8 +1,5 @@
 { config, lib, pkgs, ... }:
 
-let
-  dotprivDir = "${config.home.homeDirectory}/.dotpriv";
-in
 {
   programs.tmux = {
     enable = true;
@@ -10,8 +7,6 @@ in
     shell = "${config.programs.fish.package}/bin/fish";
     terminal = "screen-256color";
     mouse = true;
-
-    tmuxp.enable = true;
 
     extraConfig = ''
       set -g default-command "exec ${config.programs.tmux.shell}"
@@ -41,9 +36,5 @@ in
         bind -T copy-mode-vi y send -X copy-pipe-and-cancel "pbcopy"
       ''}
     '';
-  };
-
-  home.file = {
-    ".tmuxp" = { source = config.lib.file.mkOutOfStoreSymlink "${dotprivDir}/etc/tmuxp"; };
   };
 }

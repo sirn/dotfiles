@@ -229,14 +229,6 @@ This is an `:around' advice for many different functions."
 
 
 ;; --------------------------------------------------------------------------
-;;; Extra config
-
-(let ((private-init-file "~/.dotpriv/etc/emacs/init.el"))
-  (if (file-exists-p private-init-file)
-    (load (file-name-sans-extension private-init-file))))
-
-
-;; --------------------------------------------------------------------------
 ;;; Finalizing
 
 (run-hooks 'gemacs-after-init-hook)

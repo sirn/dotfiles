@@ -69,7 +69,6 @@
     (interactive)
     (project-forget-zombie-projects)
     (project-remember-project (project-current nil "~/.dotfiles"))
-    (project-remember-project (project-current nil "~/.dotpriv"))
     (seq-doseq (projdir (gemacs--project-sync--projdirs))
       (let* ((dir (abbreviate-file-name projdir))
              (pr (project-current nil dir)))

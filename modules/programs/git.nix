@@ -50,7 +50,6 @@
     };
 
     includes = [
-      { path = "${config.home.homeDirectory}/.dotpriv/etc/git/gitconfig"; }
       { path = "${config.home.homeDirectory}/.config/git/config_local"; }
     ];
 
