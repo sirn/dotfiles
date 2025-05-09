@@ -589,9 +589,9 @@ area."
   (leader
     "ll" #'eglot-code-actions
     "lR" #'eglot-rename
-    "ji" #'eglot-find-implementation
-    "jd" #'eglot-find-declaration
-    "jt" #'eglot-find-typeDefinition)
+    "jI" #'eglot-find-implementation
+    "jD" #'eglot-find-declaration
+    "jT" #'eglot-find-typeDefinition)
 
   :custom
   (eglot-autoshutdown t)
@@ -631,7 +631,8 @@ area."
 (use-package xref
   :general
   (leader
-    "jr" #'xref-find-references))
+    "jr" #'xref-find-references
+    "jd" #'xref-find-definitions))
 
 
 ;; --------------------------------------------------------------------------
