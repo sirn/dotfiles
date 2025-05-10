@@ -8,6 +8,7 @@
   programs.git = {
     ignores = [
       "CLAUDE.local.md"
+      ".claude/"
     ];
   };
 
