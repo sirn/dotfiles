@@ -1,5 +1,6 @@
 # Dotfiles-specific
 config.override.nix
+secrets
 
 # Nasty system caches
 .DS_Store
@@ -14,19 +15,9 @@ Thumbs.db
 *.elc
 *~
 
-# SSH stuff
-ssh/config.d/*
-!ssh/config.d/9*
-
-# Ansible stuff
-*.retry
-
 # Runtime
 .config
 nix.profile
 nix.generic
 local.nix
 result
-
-# Service
-sv/*/**/supervise
