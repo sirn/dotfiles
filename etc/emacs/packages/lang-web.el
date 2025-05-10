@@ -12,7 +12,9 @@
     "\\.jinja2?\\'"
     "\\.mako\\'"
     "\\.mustache\\'"
-    "\\.phtml\\'")
+    "\\.phtml\\'"
+    "\\.twig\\'"
+    "\\.tpl\\'")
 
   :custom
   (web-mode-auto-close-style 1)
