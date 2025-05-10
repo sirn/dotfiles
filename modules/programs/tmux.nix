@@ -5,6 +5,7 @@
     enable = true;
     escapeTime = 0;
     shell = "${config.programs.fish.package}/bin/fish";
+    terminal = "screen-256color";
     mouse = true;
 
     extraConfig = ''
