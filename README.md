@@ -4,25 +4,25 @@
 
 Clone the repository:
 
-``` shell
+```shell
 $ git clone git@git.sr.ht:~sirn/dotfiles ~/.dotfiles
 ```
 
 Install Nix:
 
-``` shell
+```shell
 $ sh <(curl -L https://nixos.org/nix/install) --daemon
 ```
 
 Configure nix, edit `~/.config/nix/nix.conf`:
 
-``` ini
+```ini
 experimental-features = nix-command flakes
 ```
 
 Setup home directory with Home Manager:
 
-``` shell
+```shell
 $ HM_PROFILE=$(hostname -s)
 $ nix build --no-link .#homeConfigurations.$HM_PROFILE.activationPackage
 $ $(nix path-info .#homeConfigurations.$HM_PROFILE.activationPackage)/activate
@@ -36,10 +36,19 @@ $ home-manager switch --flake .#$HM_PROFILE
 
 ## Configuration
 
-### Non-NixOS Linux
+### Local Configuration
 
-On a non-NixOS systems, a filename called `nix.generic` should be created to instruct Nixpkgs to not install packages that are known to depend on the host library (such as OpenGL).
+Create a file named `local.nix` to have a machine-specific configuration that is not committed a machine profile.
 
-``` shell
-$ touch nix.generic
+```nix
+{
+  import = [
+    ./modules/programs/bitwarden.nix
+    ./modules/services/languagetool.nix
+  ];
+
+  # Prevent installation of nix packages that are known to be problematic
+  # on a non-NixOS (e.g. depending on GL libraries).
+  machine.isNixOS = false;
+}
 ```

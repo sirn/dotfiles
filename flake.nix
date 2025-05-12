@@ -48,7 +48,6 @@
             nixpkgs.config = config;
             programs.home-manager.enable = true;
             targets.genericLinux.enable = pkgs.stdenv.isLinux;
-            machine.isNixOS = pkgs.stdenv.isLinux && !builtins.pathExists ./nix.generic;
             home.username = username;
             home.homeDirectory = homeDirectory;
             home.stateVersion = "24.11";
