@@ -63,7 +63,7 @@
           };
         };
 
-        "list-*.linode.com" = insertBefore {
+        "lish-*.linode.com" = insertBefore {
           extraOptions = {
             "CheckHostIP" = "no";
           };
