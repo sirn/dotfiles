@@ -20,28 +20,21 @@ Configure nix, edit `~/.config/nix/nix.conf`:
 experimental-features = nix-command flakes
 ```
 
-Setup Home Manager:
-
-``` shell
-$ nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
-$ nix-channel --update
-```
-
 Setup home directory with Home Manager:
 
 ``` shell
-$ ~/.dotfiles/bin/home-manager-switch
+$ HM_PROFILE=$(hostname -s)
+$ nix build --no-link .#homeConfigurations.$HM_PROFILE.activationPackage
+$ $(nix path-info .#homeConfigurations.$HM_PROFILE.activationPackage)/activate
+```
+
+On subsequent updates, use:
+
+```shell
+$ home-manager switch --flake .#$HM_PROFILE
 ```
 
 ## Configuration
-
-### Profile
-
-By default, `home-manager-switch` script will use the current hostname as the profile name. To override, put a profile name in `nix.profile` file:
-
-``` shell
-$ echo ws > nix.profile
-```
 
 ### Non-NixOS Linux
 

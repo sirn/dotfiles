@@ -4,8 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Build/Test Commands
 
-- Apply changes: `home-manager-switch`
-- Test changes without applying: `home-manager build --flake path:~/.dotfiles#<profile>`
+- Apply changes: `home-manager switch --flake path:~/.dotfiles#<profile>`
+- Test changes without applying: `home-manager build --no-out-link --flake path:~/.dotfiles#<profile>`
 - Check repository diff: `jj diff`
 - Check repository status: `jj status`
 - Squash commit: `jj squash -m $(jj log --no-graph -r @- -T 'self.description()')`
