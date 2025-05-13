@@ -128,6 +128,7 @@ in
       nix-mode
       pandoc-mode
       php-mode
+      protobuf-mode
       purescript-mode
       rust-mode
       svelte-mode
@@ -178,6 +179,7 @@ in
           shfmt
           tenv
           hunspell.bin
+          buf
 
           # LSPs
           gopls
@@ -187,6 +189,7 @@ in
           vscode-langservers-extracted
           typescript-language-server
           yaml-language-server
+          protols
 
           # terraform-ls looks up `terraform` binary via $PATH but bin deps
           # is injected via exec-path only, so we need to inject bin deps path
