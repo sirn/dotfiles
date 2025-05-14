@@ -30,6 +30,7 @@
         ## General guidelines
 
         - Try to do things in batch, e.g. when doing a mass replace, use `sed` instead of going through each file
+        - If MCP is present for a task (for example, web search, filesystem access outside of project), prefer to use MCP
         - When presented with a URL after an error, do follow that URL to find out the details
 
         ## Coding styles
