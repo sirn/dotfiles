@@ -11,8 +11,8 @@
       else pkgs.pinentry-curses
     );
 
-    defaultCacheTtl = 3600;
-    defaultCacheTtlSsh = 3600;
+    defaultCacheTtl = 28800;
+    defaultCacheTtlSsh = 28800;
     maxCacheTtl = 43200;
     maxCacheTtlSsh = 43200;
 
