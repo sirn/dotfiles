@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: Nix Module Template
+# key: mkmodule
+# --
+{ config, lib, pkgs, ... }:
+
+{
+  ${1:option} = {
+    ${2:enable} = ${3:true};
+    $0
+  };
+}

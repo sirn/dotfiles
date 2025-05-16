@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Markdown link
+# key: link
+# --
+[${1:text}](${2:link})$0

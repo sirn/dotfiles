@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: TODO comment
+# key: todo
+# --
+${1:TODO}: ${2:description} `(format-time-string "[%Y-%m-%d]")`$0

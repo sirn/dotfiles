@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# name: Python Class
+# key: class
+# --
+class ${1:ClassName}:
+    """
+    ${2:Class docstring}
+    """
+    
+    def __init__(self, ${3:params}):
+        """
+        Initialize $1
+        """
+        ${4:pass}
+        
+    $0

@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+# name: React Functional Component (TypeScript)
+# key: rfc
+# --
+import React from 'react';
+
+interface ${1:ComponentName}Props {
+  ${2:prop}: ${3:type};
+}
+
+export const $1: React.FC<$1Props> = ({ $2 }) => {
+  return (
+    <div>
+      $0
+    </div>
+  );
+};
+
+export default $1;

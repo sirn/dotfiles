@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: Go test function
+# key: test
+# --
+func Test${1:Name}(t *testing.T) {
+	$0
+}

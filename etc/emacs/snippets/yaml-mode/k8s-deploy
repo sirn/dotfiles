@@ -1,0 +1,25 @@
+# -*- mode: snippet -*-
+# name: Kubernetes Deployment
+# key: k8s-deploy
+# --
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${1:name}
+  namespace: ${2:default}
+spec:
+  replicas: ${3:1}
+  selector:
+    matchLabels:
+      app: $1
+  template:
+    metadata:
+      labels:
+        app: $1
+    spec:
+      containers:
+      - name: $1
+        image: ${4:image}:${5:tag}
+        ports:
+        - containerPort: ${6:80}
+$0

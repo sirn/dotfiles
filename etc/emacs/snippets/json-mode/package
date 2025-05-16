@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+# name: package.json template
+# key: pkg
+# --
+{
+  "name": "${1:project-name}",
+  "version": "${2:0.1.0}",
+  "description": "${3:Description}",
+  "main": "${4:index.js}",
+  "scripts": {
+    "test": "${5:echo \"Error: no test specified\" && exit 1}"
+  },
+  "keywords": [
+    $6
+  ],
+  "author": "$7",
+  "license": "${8:MIT}"
+}
+$0

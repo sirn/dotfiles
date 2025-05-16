@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: Markdown code block
+# key: ```
+# --
+\`\`\`${1:language}
+$0
+\`\`\`

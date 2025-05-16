@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: Go main package
+# key: main
+# --
+package main
+
+import (
+	"fmt"$0
+)
+
+func main() {
+	fmt.Println("Hello, world!")
+}

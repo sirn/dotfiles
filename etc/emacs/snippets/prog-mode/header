@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: File header
+# key: header
+# --
+${1:/**
+ * File: `(file-name-nondirectory (buffer-file-name))`
+ * 
+ * ${2:Description}
+ * 
+ * Created: `(format-time-string "%Y-%m-%d")`
+ */}
+$0
