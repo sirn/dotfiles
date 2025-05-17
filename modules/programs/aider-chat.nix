@@ -14,7 +14,9 @@
   home.file.".aider.conf.yml" = {
     text = ''
       dark-mode: true
-      no-git: true
+      git: false
+      auto-commits: false
+      dirty-commits: false
     '';
   };
 }
