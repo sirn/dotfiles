@@ -14,6 +14,7 @@
     ./programs/direnv.nix
     ./programs/emacs.nix
     ./programs/emacsc.nix
+    ./programs/fd.nix
     ./programs/fish.nix
     ./programs/fzf.nix
     ./programs/git.nix
