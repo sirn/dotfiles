@@ -26,6 +26,20 @@
     };
   };
 
+  # Fix for 0.29.0 deprecating ~/Library/Application Support on Darwin
+  # Removable after home-manager >= 25.05
+  home.file = lib.mkIf pkgs.stdenv.isDarwin {
+    "Library/Application Support/jj/config.toml" = {
+      enable = false;
+    };
+
+    "${config.xdg.configHome}/jj/config.toml" = {
+      source = (pkgs.formats.toml { }).generate
+        "jujutsu-config"
+        config.programs.jujutsu.settings;
+    };
+  };
+
   # Shell completion based on
   # https://github.com/martinvonz/jj/blob/0690922ca15ced55e417edab806c982b0cc42b84/docs/install-and-setup.md
   programs.bash = {
