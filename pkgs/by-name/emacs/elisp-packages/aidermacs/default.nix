@@ -11,7 +11,7 @@ with emacs.pkgs; melpaBuild rec {
     sha256 = "sha256-f6D8ZjCjGl11kbB/VQERuE2Fc/+T4OfH2B7sPGoE4ZY=";
   };
 
-  packageRequires = [ ];
+  packageRequires = [ markdown-mode ];
 
   meta = with lib; {
     homepage = "https://github.com/MatthewZMD/aidermacs";
