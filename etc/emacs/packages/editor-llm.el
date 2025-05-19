@@ -5,9 +5,9 @@
 
   :general
   (leader
-    "mm" #'gptel
-    "mp" #'gptel-system-prompt
-    "mM" #'gptel-menu)
+    "gg" #'gptel
+    "gp" #'gptel-system-prompt
+    "gM" #'gptel-menu)
 
   :preface
   (eval-when-compile
@@ -32,3 +32,13 @@
 
   :init
   (add-hook 'gptel-mode-hook #'visual-line-mode))
+
+(use-package aidermacs
+  :defer t
+
+  :general
+  (leader
+    "ma" #'aidermacs-transient-menu)
+
+  :config
+  (setq aidermacs-chat-completion-function 'aidermacs-chat-completion-with-gptel))

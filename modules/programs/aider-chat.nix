@@ -2,7 +2,7 @@
 
 {
   home.packages = [
-    pkgs.unstable.aider-chat
+    pkgs.unstable.aider-chat-full
   ];
 
   programs.git = {

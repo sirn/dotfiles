@@ -47,6 +47,7 @@ in
       evil-mc
       evil-surround
       flycheck
+      pkgs.unstable.emacsPackages.aidermacs
       gptel
       flycheck-eglot
       flycheck-golangci-lint
