@@ -28,7 +28,6 @@ in
       ace-window
       avy
       consult
-      consult-flyspell
       corfu
       corfu-prescient
       corfu-terminal

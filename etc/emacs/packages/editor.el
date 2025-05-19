@@ -373,14 +373,6 @@
       (add-to-list 'project-switch-commands '(consult-ripgrep "Ripgrep") t))))
 
 
-(use-package consult-flyspell
-  :demand t
-
-  :general
-  (leader
-    "if" #'consult-flyspell))
-
-
 (use-package embark
   :demand t
 
