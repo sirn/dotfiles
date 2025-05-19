@@ -14,6 +14,8 @@ in
     ia-writer-quattro-static;
 
   emacsPackages = {
+    aidermacs = (callPackage ./by-name/emacs/elisp-packages/aidermacs { });
+
     sqlite3 = (callPackage ./by-name/emacs/elisp-packages/sqlite3 { });
   };
 

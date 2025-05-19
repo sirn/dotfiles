@@ -47,7 +47,6 @@ in
       evil-mc
       evil-surround
       flycheck
-      pkgs.unstable.emacsPackages.aidermacs
       gptel
       flycheck-eglot
       flycheck-golangci-lint
@@ -88,6 +87,7 @@ in
       which-key
       yasnippet
       yasnippet-snippets
+      pkgs.local.emacsPackages.aidermacs
 
       (apheleia.overrideDerivation
         (attrs: {
