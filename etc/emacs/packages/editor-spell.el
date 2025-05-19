@@ -28,15 +28,3 @@
     "iw" #'ispell-word
     "ib" #'ispell-buffer
     "ir" #'ispell-region))
-
-
-;; Builtin
-(use-package flyspell
-  :preface
-  (eval-when-compile
-    (declare-function flyspell-mode nil)
-    (declare-function flyspell-prog-mode nil))
-
-  :hook
-  (text-mode . flyspell-mode)
-  (prog-mode . flyspell-prog-mode))
