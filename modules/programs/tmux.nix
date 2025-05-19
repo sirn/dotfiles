@@ -37,4 +37,14 @@
       ''}
     '';
   };
+
+  home.file = {
+    ".tmux_init" = {
+      executable = true;
+      text = ''
+        #!/bin/sh -l
+        exec ${config.programs.tmux.package}/bin/tmux new-session -A -s main
+      '';
+    };
+  };
 }
