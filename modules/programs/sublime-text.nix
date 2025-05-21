@@ -41,7 +41,7 @@ in
       sha256 = "sha256-tVG5Qlvtfyh+GKvXusIO0ysCjSSo9Udp+3Ej1qR1cDA=";
     };
 
-    "${configHome}/Packages/User/Preferences.sublime-settings" = {
+    "${configHome}/Packages/Home/Preferences.sublime-settings" = {
       text = builtins.toJSON sublimeConfig;
     };
   };
