@@ -27,6 +27,20 @@ in
       sha256 = "sha256-cyfihghCrCj0ctCATFlo4A2RVLy7Rs6cxPGueSSKURQ=";
     };
 
+    "${configHome}/Packages/Nix".source = pkgs.fetchFromGitHub {
+      owner = "wmertens";
+      repo = "sublime-nix";
+      rev = "V2.4.0";
+      sha256 = "sha256-gZFUFSiY2MxiEiiPDekiyYfQlY8+zUhXb0Y98xCpqrs=";
+    };
+
+    "${configHome}/Packages/LSP".source = pkgs.fetchFromGitHub {
+      owner = "sublimelsp";
+      repo = "LSP";
+      rev = "4070-2.3.0";
+      sha256 = "sha256-tVG5Qlvtfyh+GKvXusIO0ysCjSSo9Udp+3Ej1qR1cDA=";
+    };
+
     "${configHome}/Packages/User/Preferences.sublime-settings" = {
       text = builtins.toJSON sublimeConfig;
     };
