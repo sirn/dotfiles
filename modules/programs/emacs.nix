@@ -37,8 +37,6 @@ in
       editorconfig
       eldoc
       emacsql-sqlite
-      embark
-      embark-consult
       envrc
       evil
       evil-collection
