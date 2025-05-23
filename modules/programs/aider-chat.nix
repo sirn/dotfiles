@@ -26,7 +26,7 @@
         {
           name = "anthropic/claude-sonnet-4-20250514";
           edit_format = "diff";
-          weak-model-name = "anthropic/claude-3-5-haiku-20241022";
+          weak_model_name = "anthropic/claude-3-5-haiku-20241022";
           use_repo_map = true;
           overeager = true;
         }
