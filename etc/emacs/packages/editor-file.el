@@ -18,13 +18,7 @@
     "Tt" #'dired-sidebar-toggle-with-current-directory)
 
   :config
-  (setq dired-sidebar-theme 'ascii)
-
-  (defun gemacs--dired-sidebar-setup ()
-    (display-line-numbers-mode -1)
-    (display-fill-column-indicator-mode -1))
-
-  (add-hook 'dired-sidebar-mode-hook #'gemacs--dired-sidebar-setup))
+  (setq dired-sidebar-theme 'ascii))
 
 
 (use-package osx-trash

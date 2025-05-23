@@ -32,8 +32,7 @@
 
   :init
   (defun gemacs--gptel-initialize-buffer ()
-    (display-line-numbers-mode -1)
-    (display-fill-column-indicator-mode -1))
+    (visual-line-mode t))
 
   (add-hook 'gptel-mode-hook #'gemacs--gptel-initialize-buffer))
 
