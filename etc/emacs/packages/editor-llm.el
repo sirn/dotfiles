@@ -5,9 +5,7 @@
 
   :general
   (leader
-    "gg" #'gptel
-    "gP" #'gptel-system-prompt
-    "gM" #'gptel-menu)
+    "gg" #'gemacs--gptel-transient-menu)
 
   :preface
   (eval-when-compile
@@ -16,21 +14,73 @@
   :custom
   (gptel-default-mode 'org-mode)
   (gptel-model 'openai/gpt-4o-mini)
-  (gptel-backend (gptel-make-openai "OpenRouter"
-                   :host "openrouter.ai"
-                   :endpoint "/api/v1/chat/completions"
-                   :key #'gptel-api-key-from-auth-source
-                   :stream t
-                   :models
-                   '(anthropic/claude-3.7-sonnet
-                     anthropic/claude-3.5-sonnet
-                     google/gemini-2.5-pro-preview
-                     google/gemini-2.5-flash-preview
-                     openai/gpt-4o-mini
-                     openai/gpt-4.1
-                     openai/gpt-4.1-mini)))
+  (gptel-backend gemacs--gptel-openrouter-backend)
 
   :init
+  (require 'transient)
+  
+  (defvar gemacs--gptel-openrouter-backend
+    (gptel-make-openai "OpenRouter"
+      :host "openrouter.ai"
+      :endpoint "/api/v1/chat/completions"
+      :key #'gptel-api-key-from-auth-source
+      :stream t
+      :models
+      '(anthropic/claude-opus-4
+        anthropic/claude-sonnet-4
+        anthropic/claude-3.7-sonnet
+        anthropic/claude-3.5-sonnet
+        google/gemini-2.5-pro-preview
+        google/gemini-2.5-flash-preview
+        openai/gpt-4o-mini
+        openai/gpt-4.1
+        openai/gpt-4.1-mini)))
+
+  (defvar gemacs--gptel-anthropic-backend
+    (gptel-make-anthropic "Anthropic"
+      :key #'gptel-api-key-from-auth-source
+      :stream t
+      :models
+      '(claude-opus-4-20250514
+        claude-sonnet-4-20250514
+        claude-3-7-sonnet-20250219
+        claude-3-5-haiku-20241022)))
+
+  (defun gemacs--gptel-set-backend (backend &optional model)
+    "Set the gptel backend to BACKEND and MODEL if provided."
+    (setq gptel-backend backend)
+    (when model
+      (setq gptel-model model))
+    (message "GPTel backend set to %s, model: %s"
+             (gptel-backend-name backend)
+             gptel-model))
+  
+  (transient-define-prefix gemacs--gptel-backend-menu ()
+    "Select GPTel backend."
+    ["Select Backend"
+     ("o" "OpenRouter"
+      (lambda ()
+        (interactive)
+        (gemacs--gptel-set-backend
+         gemacs--gptel-openrouter-backend
+         'openai/gpt-4o-mini)))
+     ("a" "Anthropic"
+      (lambda ()
+        (interactive)
+        (gemacs--gptel-set-backend
+         gemacs--gptel-anthropic-backend
+         'claude-sonnet-4-20250514)))])
+
+  (transient-define-prefix gemacs--gptel-transient-menu ()
+    "GPTel commands."
+    ["GPTel Commands"
+     ("o" "Open GPTel" gptel)
+     ("s" "Send message" gptel-send)]
+    ["Configuration"
+     ("p" "System prompt" gptel-system-prompt)
+     ("m" "Menu" gptel-menu)
+     (";" "Switch backend" gemacs--gptel-backend-menu)])
+
   (defun gemacs--gptel-initialize-buffer ()
     (visual-line-mode t))
 
@@ -44,9 +94,7 @@
   (leader
     "ga" #'aidermacs-transient-menu)
 
-  :config
-  (setq aidermacs-chat-completion-function 'aidermacs-chat-completion-with-gptel)
-
+  :preface
   (defun gemacs--aidermacs-project-root ()
     "Return the project root if in a project, otherwise `default-directory'."
     (if (project-current)
@@ -60,8 +108,5 @@
       (apply orig-fun args)))
   (advice-add 'aidermacs-run :around #'gemacs--aidermacs-run-around)
 
-  (defun gemacs--aidermacs-initialize-buffer ()
-    (display-line-numbers-mode -1)
-    (display-fill-column-indicator-mode -1))
-
-  (add-hook 'aidermacs-comint-mode-hook #'gemacs--aidermacs-initialize-buffer))
+  :config
+  (setq aidermacs-chat-completion-function 'aidermacs-chat-completion-with-gptel))
