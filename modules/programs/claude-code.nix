@@ -2,7 +2,7 @@
 
 {
   home.packages = [
-    (pkgs.unstable.claude-code.overrideDerivation (attrs: {
+    (pkgs.local.claude-code.overrideDerivation (attrs: {
       # MCP typically requires npx/uvx/etc.; let's make sure that
       # nodejs/uv is always available to claude
       postInstall = attrs.postInstall + ''
