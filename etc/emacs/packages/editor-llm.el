@@ -6,7 +6,7 @@
   :general
   (leader
     "gg" #'gptel
-    "gp" #'gptel-system-prompt
+    "gP" #'gptel-system-prompt
     "gM" #'gptel-menu)
 
   :preface
@@ -31,16 +31,23 @@
                      openai/gpt-4.1-mini)))
 
   :init
-  (add-hook 'gptel-mode-hook #'visual-line-mode))
+  (defun gemacs--gptel-initialize-buffer ()
+    (display-line-numbers-mode -1)
+    (display-fill-column-indicator-mode -1))
+
+  (add-hook 'gptel-mode-hook #'gemacs--gptel-initialize-buffer))
+
 
 (use-package aidermacs
   :defer t
 
   :general
   (leader
-    "ma" #'aidermacs-transient-menu)
+    "ga" #'aidermacs-transient-menu)
 
   :config
+  (setq aidermacs-chat-completion-function 'aidermacs-chat-completion-with-gptel)
+
   (defun gemacs--aidermacs-project-root ()
     "Return the project root if in a project, otherwise `default-directory'."
     (if (project-current)
@@ -48,10 +55,14 @@
       default-directory))
   (advice-add 'aidermacs-project-root :override #'gemacs--aidermacs-project-root)
 
-  (defun gemacs--around-aidermacs-run (orig-fun &rest args)
+  (defun gemacs--aidermacs-run-around (orig-fun &rest args)
     "Run `aidermacs-run' with `default-directory' set to project root."
     (let ((default-directory (gemacs--aidermacs-project-root)))
       (apply orig-fun args)))
-  (advice-add 'aidermacs-run :around #'gemacs--around-aidermacs-run)
+  (advice-add 'aidermacs-run :around #'gemacs--aidermacs-run-around)
 
-  (setq aidermacs-chat-completion-function 'aidermacs-chat-completion-with-gptel))
+  (defun gemacs--aidermacs-initialize-buffer ()
+    (display-line-numbers-mode -1)
+    (display-fill-column-indicator-mode -1))
+
+  (add-hook 'aidermacs-comint-mode-hook #'gemacs--aidermacs-initialize-buffer))
