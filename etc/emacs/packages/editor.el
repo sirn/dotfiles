@@ -527,65 +527,6 @@ area."
 
 
 ;; --------------------------------------------------------------------------
-;;; Language Server Protocol
-
-(use-package flycheck-eglot
-  :config
-  (global-flycheck-eglot-mode t))
-
-
-(use-package eglot
-  :general
-  (leader
-    "ll" #'eglot-code-actions
-    "lR" #'eglot-rename
-    "jI" #'eglot-find-implementation
-    "jD" #'eglot-find-declaration
-    "jT" #'eglot-find-typeDefinition)
-
-  :custom
-  (eglot-autoshutdown t)
-
-  :preface
-  (eval-when-compile
-    (declare-function eglot-current-server nil)
-    (declare-function eglot-format-buffer nil)
-    (declare-function eglot-shutdown nil)
-    (declare-function gemacs--advice-eglot-shutdown-project nil)
-    (declare-function gemacs--eglot-format-buffer nil)
-    (declare-function gemacs--eglot-organize-imports nil))
-
-  :init
-  (defun gemacs--eglot-format-buffer ()
-    (eglot-format-buffer))
-
-  (defun gemacs--eglot-organize-imports ()
-    (call-interactively 'eglot-code-action-organize-imports))
-
-  :config
-  (use-package project
-    :config
-    (defun gemacs--advice-eglot-shutdown-project (orig-fun &rest args)
-      (let* ((pr (project-current t))
-             (default-directory (project-root pr)))
-        (when-let ((server (eglot-current-server)))
-          (ignore-errors (eglot-shutdown server)))
-        (apply orig-fun args)))
-
-    (advice-add 'project-kill-buffers :around #'gemacs--advice-eglot-shutdown-project))
-
-  (use-package flycheck-eglot
-    :demand t))
-
-
-(use-package xref
-  :general
-  (leader
-    "jr" #'xref-find-references
-    "jd" #'xref-find-definitions))
-
-
-;; --------------------------------------------------------------------------
 ;;; Tree Sitter
 
 (use-package tree-sitter
