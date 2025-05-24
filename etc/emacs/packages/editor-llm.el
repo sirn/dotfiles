@@ -18,7 +18,7 @@
 
   :init
   (require 'transient)
-  
+
   (defvar gemacs--gptel-openrouter-backend
     (gptel-make-openai "OpenRouter"
       :host "openrouter.ai"
@@ -54,7 +54,7 @@
     (message "GPTel backend set to %s, model: %s"
              (gptel-backend-name backend)
              gptel-model))
-  
+
   (transient-define-prefix gemacs--gptel-backend-menu ()
     "Select GPTel backend."
     ["Select Backend"
@@ -109,4 +109,10 @@
   (advice-add 'aidermacs-run :around #'gemacs--aidermacs-run-around)
 
   :config
+  ;; Set environment variables for API keys if they exist in auth-source
+  (dolist (api-config '(("openrouter.ai" . "OPENROUTER_API_KEY")
+                        ("api.anthropic.com" . "ANTHROPIC_API_KEY")))
+    (when-let ((key (auth-source-pick-first-password :host (car api-config) :user "apikey")))
+      (setenv (cdr api-config) key)))
+
   (setq aidermacs-chat-completion-function 'aidermacs-chat-completion-with-gptel))
