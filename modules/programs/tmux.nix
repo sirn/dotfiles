@@ -31,6 +31,9 @@
       bind -T prefix r source-file "${config.home.homeDirectory}/.config/tmux/tmux.conf"
       bind -T copy-mode-vi v send -X begin-selection
 
+      bind -T prefix X resize-pane -x 85%
+      bind -T prefix Y resize-pane -y 85%
+
       ${lib.optionalString pkgs.stdenv.isDarwin ''
         bind -T copy-mode M-w send -X copy-pipe-and-cancel "pbcopy"
         bind -T copy-mode-vi y send -X copy-pipe-and-cancel "pbcopy"
