@@ -87,6 +87,7 @@
 
       # User files
       ".lspconfig"
+      "pyrightconfig.json"
       "stdout"
     ];
   };
