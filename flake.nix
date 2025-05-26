@@ -26,13 +26,6 @@
       };
 
       overlays = [
-        (final: prev:
-          if prev.stdenv.isDarwin then {
-            # Track latest LTS
-            # https://nodejs.org/en/about/previous-releases
-            nodejs = prev.nodejs_22;
-            nodejs-slim = prev.nodejs-slim_22;
-          } else { })
         (final: prev: {
           local = import ./pkgs {
             pkgs = final;
