@@ -5,11 +5,13 @@
     enable = config.programs.gpg.enable;
     enableSshSupport = true;
 
-    pinentryPackage = lib.mkDefault (
-      if pkgs.stdenv.isDarwin
-      then pkgs.pinentry_mac
-      else pkgs.pinentry-curses
-    );
+    pinentry = {
+      package = lib.mkDefault (
+        if pkgs.stdenv.isDarwin
+        then pkgs.pinentry_mac
+        else pkgs.pinentry-curses
+      );
+    };
 
     defaultCacheTtl = 21600;
     defaultCacheTtlSsh = 21600;

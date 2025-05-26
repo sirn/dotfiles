@@ -15,7 +15,7 @@
 
     signing = lib.mkIf config.programs.gpg.enable {
       signByDefault = true;
-      gpgPath = "${config.programs.gpg.package}/bin/gpg";
+      signer = "${config.programs.gpg.package}/bin/gpg";
       key = config.programs.gpg.settings.default-key;
     };
 

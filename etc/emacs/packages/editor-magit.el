@@ -36,9 +36,6 @@
 (use-package ghub)
 
 
-(use-package emacsql-sqlite)
-
-
 (use-package forge
   :preface
   (eval-when-compile

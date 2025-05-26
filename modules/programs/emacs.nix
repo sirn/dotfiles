@@ -36,7 +36,6 @@ in
       dtrt-indent
       editorconfig
       eldoc
-      emacsql-sqlite
       envrc
       evil
       evil-collection
