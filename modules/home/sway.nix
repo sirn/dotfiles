@@ -79,9 +79,9 @@
   home = lib.mkIf config.machine.isNixOS
     {
       packages = with pkgs; [
-        breeze-qt5
-        breeze-gtk
-        breeze-icons
+        kdePackages.breeze
+        kdePackages.breeze-gtk
+        kdePackages.breeze-icons
         hicolor-icon-theme
       ];
     } // (
