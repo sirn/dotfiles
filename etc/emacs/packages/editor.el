@@ -12,12 +12,35 @@
   :general
   (leader
     "bd" #'kill-buffer
+    "bBS" #'gemacs--save-all-buffers
+    "bBR" #'gemacs--revert-all-buffers
     "w-" #'split-window-below
     "w/" #'split-window-right
     "w=" #'balance-windows
     "wD" #'delete-other-windows
     "wd" #'delete-window
-    "wR" #'redraw-display))
+    "wR" #'redraw-display)
+
+  :config
+  (defun gemacs--save-all-buffers ()
+    "Save all modified buffers without confirmation."
+    (interactive)
+    (save-some-buffers t))
+
+  (defun gemacs--revert-all-buffers ()
+    "Revert all file buffers without confirmation.
+Buffers visiting files are reverted without confirmation.
+Other buffers are left alone."
+    (interactive)
+    (let ((buffers (buffer-list))
+          (count 0))
+      (dolist (buffer buffers)
+        (with-current-buffer buffer
+          (when (and buffer-file-name (file-exists-p buffer-file-name))
+            (let ((revert-without-query '(".*")))
+              (revert-buffer t t t))
+            (setq count (1+ count)))))
+      (message "Reverted %d buffer(s)" count))))
 
 
 ;; --------------------------------------------------------------------------
