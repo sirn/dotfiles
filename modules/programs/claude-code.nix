@@ -29,15 +29,17 @@
 
         ## General guidelines
 
+        - When web search is needed, prefer Brave Search
         - Try to do things in batch, e.g. when doing a mass replace, use `sed` instead of going through each file
-        - When web search is needed, prefer Brave Search over Web Search when available
         - When presented with a URL after an error, do follow that URL to find out the details
+        - When creating temporary files, use /tmp
 
         ## Coding styles
 
         - Make sure no empty space at the end of line
         - Make sure that an empty line is not consist of just space
         - Do not add unnecessary comments when the code itself is self-explanatory
+        - When working with Golang code, always run `gofmt`
 
         ## Executing commands
 
