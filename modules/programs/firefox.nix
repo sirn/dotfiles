@@ -37,12 +37,6 @@ in
           user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
           user_pref("svg.context-properties.content.enabled", true);
 
-          // Rendering
-          user_pref("gfx.color_management.enablev4", true);
-          user_pref("gfx.color_management.mode", 1);
-          user_pref("gfx.color_management.rendering_intent", 0);
-          user_pref("gfx.compositor.glcontext.opaque", true);
-
           // Privacy protection
           user_pref("browser.contentblocking.category", "strict");
           user_pref("network.cookie.cookieBehavior", 1);
