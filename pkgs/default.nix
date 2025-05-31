@@ -19,6 +19,8 @@ in
     sqlite3 = (callPackage ./by-name/emacs/elisp-packages/sqlite3 { });
   };
 
+  aider-chat = (callPackage ./by-name/aider-chat { });
+
   claude-code = (callPackage ./by-name/claude-code { });
 
   firefox-csshacks = (callPackage ./by-name/firefox/csshacks.nix { });
