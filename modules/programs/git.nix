@@ -86,6 +86,7 @@
       "out/"
 
       # User files
+      "*.local.md"
       ".lspconfig"
       "pyrightconfig.json"
       "stdout"
