@@ -48,7 +48,7 @@
         - If there's a Makefile in a project, prefer to use make rather than running the command directly
         - When encountered a command line error, first consult manual with `--help` or `man`
         - When using sed, take account the difference between `-i` usage in macOS and Linux
-        - You have `nix-shell` at your disposal; when a command is missing, try `nix-shell -p <package> --run ...`
+        - You have `nix` at your disposal; when a command is missing, try using comma `, <command> <args...>`
 
         ## VCS usage
 
