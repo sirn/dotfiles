@@ -56,4 +56,9 @@ in
       '';
     };
   };
+
+  # https://wiki.archlinux.org/title/Font_configuration
+  gtk.gtk4.extraConfig = lib.mkIf pkgs.stdenv.isLinux {
+    gtk-hint-font-metrics = true;
+  };
 }
