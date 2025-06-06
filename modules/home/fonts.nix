@@ -16,9 +16,10 @@ in
     ibm-plex
     inter
     iosevka
-    ipaexfont
-    ipafont
     noto-fonts
+    noto-fonts-cjk-sans
+    noto-fonts-cjk-serif
+    noto-fonts-color-emoji
     noto-fonts-extra
     source-code-pro
     source-han-code-jp
