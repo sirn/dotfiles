@@ -15,7 +15,6 @@
     ".aider.conf.yml" = {
       source = (pkgs.formats.yaml { }).generate "aider.conf.yml" {
         dark-mode = true;
-        git = false;
         auto-commits = false;
         dirty-commits = false;
       };
