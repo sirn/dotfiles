@@ -84,8 +84,8 @@ in
         <fontconfig>
           <match target="font">
             ${editMode "antialias" "bool" "true"}
-            ${editMode "hinting" "bool" "true"}
-            ${editMode "hintstyle" "const" "hintslight"}
+            ${editMode "hinting" "bool" "false"}
+            ${editMode "hintstyle" "const" "hintnone"}
             ${editMode "lcdfilter" "const" "lcddefault"}
             ${editMode "rgba" "const" "rgb"}
           </match>
