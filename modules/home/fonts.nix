@@ -2,6 +2,12 @@
 
 let
   dotfilesDir = "${config.home.homeDirectory}/.dotfiles";
+
+  editMode = name: type: value: ''
+    <edit mode="assign" name="${name}">
+      <${type}>${value}</${type}>
+    </edit>
+  '';
 in
 {
   fonts.fontconfig.enable = pkgs.stdenv.isLinux;
@@ -19,7 +25,6 @@ in
     noto-fonts
     noto-fonts-cjk-sans
     noto-fonts-cjk-serif
-    noto-fonts-color-emoji
     noto-fonts-extra
     source-code-pro
     source-han-code-jp
@@ -37,22 +42,18 @@ in
   ];
 
   home.file = lib.mkIf pkgs.stdenv.isLinux {
-    ".config/fontconfig/fonts.conf" = {
+    ".config/fontconfig/conf.d/99-antialias.conf" = {
       text = ''
         <?xml version='1.0'?>
         <!DOCTYPE fontconfig SYSTEM 'fonts.dtd'>
         <fontconfig>
-          <include ignore_missing="yes">/etc/fonts/fonts.conf</include>
-          <include ignore_missing="yes">${config.home.homeDirectory}/.config/fontconfig/conf.d</include>
-        </fontconfig>
-      '';
-    };
-    ".config/fontconfig/conf.d/99-dotfiles.conf" = {
-      text = ''
-        <?xml version='1.0'?>
-        <!DOCTYPE fontconfig SYSTEM 'fonts.dtd'>
-        <fontconfig>
-          <include ignore_missing="yes">${dotfilesDir}/etc/fontconfig/conf.d</include>
+          <match target="font">
+            ${editMode "antialias" "bool" "true"}
+            ${editMode "hinting" "bool" "false"}
+            ${editMode "hintstyle" "const" "hintnone"}
+            ${editMode "lcdfilter" "const" "lcddefault"}
+            ${editMode "rgba" "const" "rgb"}
+          </match>
         </fontconfig>
       '';
     };
