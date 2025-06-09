@@ -25,5 +25,6 @@
 
     # services
     ../services/dropbox.nix
+    ../services/dropbox-symlinks.nix
   ];
 }
