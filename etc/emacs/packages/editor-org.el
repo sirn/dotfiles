@@ -26,7 +26,7 @@
   :config
   (setq gemacs--org-agenda-dir (expand-file-name "~/Org/"))
   (setq org-agenda-files (list gemacs--org-agenda-dir))
-  (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)")))
+  (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d!)")))
   (setq org-capture-templates
     `(("i" "Inbox" entry (file+headline ,(concat gemacs--org-agenda-dir "inbox.org") "Inbox")
        "* TODO %?"))))
