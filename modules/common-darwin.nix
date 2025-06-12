@@ -15,6 +15,6 @@
     ./programs/yt-dlp.nix
 
     # services
-    ../services/dropbox-symlinks.nix
+    ./services/dropbox-symlinks.nix
   ];
 }
