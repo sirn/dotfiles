@@ -42,6 +42,7 @@ in
       evil-commentary
       evil-matchit
       evil-mc
+      evil-org
       evil-surround
       flycheck
       gptel

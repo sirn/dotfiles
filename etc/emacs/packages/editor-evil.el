@@ -77,3 +77,22 @@
 
   :config
   (global-evil-surround-mode +1))
+
+
+(use-package evil-org
+  :after evil
+
+  :defer 1
+
+  :preface
+  (eval-when-compile
+    (declare-function evil-org-set-key-theme nil)
+    (declare-function evil-org-agenda-set-keys nil))
+
+  :hook
+  (org-mode . evil-org-mode)
+
+  :config
+  (evil-org-set-key-theme '(navigation insert textobjects additional calendar))
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
