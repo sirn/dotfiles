@@ -90,6 +90,7 @@
       ".lspconfig"
       "pyrightconfig.json"
       "stdout"
+      "tmp/"
     ];
   };
 }

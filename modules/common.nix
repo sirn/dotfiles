@@ -16,7 +16,7 @@
     ./programs/emacsc.nix
     ./programs/fd.nix
     ./programs/fish.nix
-    ./programs/fzf.nix
+    ./programs/fzy.nix
     ./programs/git.nix
     ./programs/gpg.nix
     ./programs/htop.nix

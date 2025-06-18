@@ -13,7 +13,7 @@
     functions = {
       gg = {
         body = ''
-          set -l dir ($HOME/.dotfiles/bin/pom list | fzf --layout reverse --height 40% -q "$argv")
+          set -l dir ($HOME/.dotfiles/bin/pom list | fzy -q "$argv")
           if not set -q dir
             return
           end
@@ -27,7 +27,7 @@
             echo >&2 "No projects directory"
             return 1
           end
-          set -l dir (find "$HOME/Dropbox/Projects" -type d -not -iname ".*" | fzf --layout reverse --height 40% -q "$argv")
+          set -l dir (find "$HOME/Dropbox/Projects" -type d -not -iname ".*" | fzy -q "$argv")
           if not set -q dir
             return
           end

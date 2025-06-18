@@ -28,7 +28,7 @@
       # Quickly jump into project directory.
       gg() {
         local dir
-        dir=$($HOME/.dotfiles/bin/pom list | fzf --layout reverse --height 40% -q "$*")
+        dir=$($HOME/.dotfiles/bin/pom list | fzy -q "$*")
         if [ -z "$dir" ]; then
             return
         fi
@@ -43,7 +43,7 @@
         fi
 
         local dir
-        dir=$(find "$HOME/Dropbox/Projects" -type d -not -iname '.*' | fzf --layout reverse --height 40% -q "$*")
+        dir=$(find "$HOME/Dropbox/Projects" -type d -not -iname '.*' | fzy -q "$*")
         builtin cd "$dir" || return 1
       }
     '';
