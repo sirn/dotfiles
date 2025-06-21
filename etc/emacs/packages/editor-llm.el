@@ -13,7 +13,7 @@
 
   :custom
   (gptel-default-mode 'org-mode)
-  (gptel-model 'openai/gpt-4o-mini)
+  (gptel-model 'google/gemini-2.5-pro-preview)
   (gptel-backend gemacs--gptel-openrouter-backend)
 
   :init
