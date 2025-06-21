@@ -13,14 +13,9 @@
   (ispell-alternate-dictionary (expand-file-name "~/.emacs.d/var/scowl/share/dict/words.txt"))
 
   :config
+  (setenv "DICTIONARY" ispell-dictionary)
   (let ((hunspell-dict-dir (expand-file-name "~/.emacs.d/var/scowl/share/hunspell")))
-    (setenv "DICTIONARY" ispell-dictionary)
-    (setenv "DICPATH" hunspell-dict-dir)
-    (let ((aff-file (expand-file-name "en_US.aff" hunspell-dict-dir)))
-      (when (and (file-exists-p aff-file))
-        (setq ispell-hunspell-dict-paths-alist `(("en_US" ,aff-file)))
-        (ispell-set-spellchecker-params)
-        (ispell-hunspell-add-multi-dic "en_US"))))
+    (setenv "DICPATH" hunspell-dict-dir))
 
   :general
   (leader
