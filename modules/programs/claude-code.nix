@@ -20,8 +20,8 @@
     ];
   };
 
-  home.file = {
-    ".claude/CLAUDE.md" = lib.mkDefault {
+  xdg.configFile = {
+    "claude/CLAUDE.md" = lib.mkDefault {
       text = ''
         # CLAUDE.md
 
