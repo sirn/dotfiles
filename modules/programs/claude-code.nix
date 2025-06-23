@@ -34,6 +34,7 @@
         - You MUST follow a URL when presented, e.g. after an error, to figure out what's wrong with the code
         - You SHOULD create temporary files in a directory name tmp/
         - You SHOULD ask the user if the instruction is unclear, need more context, or require any kind of user input
+        - You SHOULD discuss the changes with Gemini and ChatGPT (when available) when planning for changes
 
         ## Coding styles
 
