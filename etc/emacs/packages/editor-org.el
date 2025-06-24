@@ -32,6 +32,7 @@
      ("RET" "Capture to inbox" (lambda () (interactive) (org-capture nil "i")))]
     ["Views & Search"
      ("l" "Agenda list" org-agenda-list)
+     ("t" "Todo list" org-todo-list)
      ("g" "QL view" org-ql-view)
      ("s" "Search in Org directory" org-ql-find-in-org-directory)
      ("f" "Search in current buffer" org-ql-find)]
@@ -105,4 +106,7 @@
            :order 8)
           (:name "Waiting"
            :todo "WAITING"
-           :order 20))))
+           :order 20)
+          (:name "Inbox"
+           :file-path "inbox.org"
+           :order 30))))
