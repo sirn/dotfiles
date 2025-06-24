@@ -377,8 +377,8 @@ Other buffers are left alone."
 
   (leader
     "SPC f"  #'consult-fd
-    "SPC o"  #'consult-outline
     "SPC b"  #'consult-buffer
+    "SPC o"  #'consult-outline
     "w b" #'consult-buffer-other-window
     "w B" #'consult-buffer-other-frame
     "s r"  #'consult-ripgrep

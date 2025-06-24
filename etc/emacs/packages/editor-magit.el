@@ -3,7 +3,7 @@
 (use-package magit
   :general
   (leader
-    "gs" #'magit-project-status)
+    "g" #'magit-project-status)
 
   :custom
   (magit-no-message '("Turning on magit-auto-revert-mode..."))

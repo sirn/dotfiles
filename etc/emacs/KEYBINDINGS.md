@@ -50,7 +50,7 @@ The primary prefix for finding files, buffers, and managing projects.
 | `SPC b` | `consult-buffer` | Find buffer. |
 | `SPC f` | `consult-fd` | Find file in project using `fd`. |
 | `SPC k` | `kill-buffer` | Kill the current buffer. |
-| `SPC o` | `consult-outline` | Search headlines/definitions in the current buffer. |
+| `SPC o` | `consult-outline` | Search for headings in the current buffer. |
 | `SPC p` | `(Prefix)` | Project-specific commands. |
 | `SPC p '` | `multi-vterm-project` | Open a terminal in the project root. |
 | `SPC p b` | `consult-project-buffer` | Find a buffer belonging to the current project. |
@@ -145,7 +145,7 @@ The primary prefix for finding files, buffers, and managing projects.
 
 | Key | Command | Description |
 | :--- | :--- | :--- |
-| `g s` | `magit-project-status` | Open Magit status for the current project. |
+| `g` | `magit-project-status` | Open Magit status for the current project. |
 
 ### `h` - Help
 
@@ -157,7 +157,7 @@ The primary prefix for finding files, buffers, and managing projects.
 
 | Key | Command | Description |
 | :--- | :--- | :--- |
-| `o o` | `(Prefix)` | Org mode commands (capture, agenda, etc.). |
+| `o` | `(Prefix)` | Org mode commands (capture, agenda, etc.). |
 
 ### `s` - Search / Jump
 
