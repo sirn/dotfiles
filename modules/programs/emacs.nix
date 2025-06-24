@@ -18,10 +18,15 @@ in
       el-patch
       general
       no-littering
-      org
       s
       use-package
       pkgs.local.emacsPackages.sqlite3
+
+      # Org packages
+      org
+      org-modern
+      org-ql
+      org-super-agenda
 
       # Packages
       ace-link
