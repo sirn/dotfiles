@@ -51,6 +51,10 @@
     `(("i" "Inbox" entry (file+headline ,(concat org-directory "inbox.org") "Inbox")
        "* TODO %?")))
   (setq org-startup-folded 'content)
+
+  (unless (file-directory-p org-directory)
+    (make-directory org-directory t))
+
   (add-hook 'gemacs-after-init-hook #'gemacs--org-init-hook)
   (add-hook 'org-agenda-mode-hook #'gemacs--org-agenda-mode-hook))
 
