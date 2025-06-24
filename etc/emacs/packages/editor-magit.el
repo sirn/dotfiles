@@ -10,13 +10,6 @@
   (magit-bind-magit-project-status nil)
   (magit-remote-set-if-missing t)
 
-  :init
-  ;; magit binds project-status a bit too late; we're doing this by ourselves.
-  (with-eval-after-load 'project
-    (general-with-eval-after-load 'general
-      (general-define-key :keymaps 'project-prefix-map "m" #'magit-project-status)
-      (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)))
-
   :config
   (with-eval-after-load 'pinentry
     (dolist (func '(magit-start-git magit-call-git))

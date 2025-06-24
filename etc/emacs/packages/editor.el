@@ -11,9 +11,9 @@
 (use-package emacs
   :general
   (leader
-    "bd" #'kill-buffer
-    "bBS" #'gemacs--save-all-buffers
-    "bBR" #'gemacs--revert-all-buffers
+    "SPC k" #'kill-buffer
+    "SPC S" #'gemacs--save-all-buffers
+    "SPC R" #'gemacs--revert-all-buffers
     "w-" #'split-window-below
     "w/" #'split-window-right
     "w=" #'balance-windows
@@ -60,15 +60,15 @@ Other buffers are left alone."
 (use-package avy
   :general
   (leader
-   "jj" #'avy-goto-char
-   "jJ" #'avy-goto-char-2
-   "jl" #'avy-goto-line))
+   "s j" #'avy-goto-char
+   "s J" #'avy-goto-char-2
+   "s l" #'avy-goto-line))
 
 
 (use-package ace-link
   :general
   (leader
-   "jL" #'ace-link))
+   "s L" #'ace-link))
 
 
 ;; Builtin
@@ -83,14 +83,14 @@ Other buffers are left alone."
 (use-package display-line-numbers
   :general
   (leader
-    "Ll" #'display-line-numbers-mode))
+    "t l" #'display-line-numbers-mode))
 
 
 ;; Builtin
 (use-package display-fill-column-indicator-mode
   :general
   (leader
-    "Lf" #'display-fill-column-indicator-mode))
+    "t f" #'display-fill-column-indicator-mode))
 
 
 
@@ -99,7 +99,7 @@ Other buffers are left alone."
 
   :general
   (leader
-   "uv" #'undo-tree-visualize)
+   "e u" #'undo-tree-visualize)
 
   :custom
   (undo-tree-enable-undo-in-region nil)
@@ -138,12 +138,12 @@ Other buffers are left alone."
 (use-package smartparens
   :general
   (leader
-   "s>" #'sp-forward-slurp-sexp
-   "s<" #'sp-backward-slurp-sexp
-   "sk" #'sp-kill-whole-line
-   "s(" #'sp-wrap-round
-   "s{" #'sp-wrap-curly
-   "sd" #'sp-splice-sexp)
+   "e x >" #'sp-forward-slurp-sexp
+   "e x <" #'sp-backward-slurp-sexp
+   "e x k" #'sp-kill-whole-line
+   "e x (" #'sp-wrap-round
+   "e x {" #'sp-wrap-curly
+   "e x d" #'sp-splice-sexp)
 
   :preface
   (eval-when-compile
@@ -280,7 +280,7 @@ Other buffers are left alone."
 
   :general
   (leader
-    "E" '(:keymap envrc-command-map))
+    "SPC p e" '(:keymap envrc-command-map))
 
   :init
   (defun gemacs--envrc-inject-emacs-bin-deps (&rest _)
@@ -308,10 +308,15 @@ Other buffers are left alone."
   (prescient-history-length 1000)
 
   :config
-  (prescient-persist-mode +1)
+  (prescient-persist-mode +1))
 
-  (with-eval-after-load 'emacs
-    (setq completion-styles '(prescient basic))))
+
+(use-package orderless
+  :demand t
+
+  :custom
+  (completion-styles '(orderless basic))
+  (orderless-matching-styles '(orderless-initialism orderless-literal orderless-regexp)))
 
 
 (use-package marginalia
@@ -336,6 +341,9 @@ Other buffers are left alone."
   (eval-when-compile
     (declare-function vertico-mode nil))
 
+  :custom
+  (vertico-cycle t)
+
   :config
   (vertico-mode +1))
 
@@ -358,6 +366,8 @@ Other buffers are left alone."
   ("C-x C-b" #'consult-buffer
    "M-g g"   #'consult-goto-line
    "M-g M-g" #'consult-goto-line
+   "M-g i"   #'consult-imenu
+   "M-g I"   #'consult-imenu-multi
    "M-s r"   #'consult-ripgrep
    "M-y"     #'consult-yank-pop)
 
@@ -366,26 +376,44 @@ Other buffers are left alone."
    "M-r" #'consult-history)
 
   (leader
-    "bb"  #'consult-buffer
-    "wbb" #'consult-buffer-other-window
-    "wbB" #'consult-buffer-other-frame
-    "//"  #'consult-ripgrep
-    "/g"  #'consult-grep)
+    "SPC f"  #'consult-fd
+    "SPC o"  #'consult-outline
+    "SPC b"  #'consult-buffer
+    "w b" #'consult-buffer-other-window
+    "w B" #'consult-buffer-other-frame
+    "s r"  #'consult-ripgrep
+    "s g"  #'consult-grep)
 
   :custom
   (consult-fd-args '((if (locate-dominating-file default-directory ".git")
                          '("fd" "--full-path" "--color=never")
-                       '("fd" "--full-path" "--color=never" "--no-require-git"))))
+                       '("fd" "--full-path" "--color=never" "--no-require-git")))))
 
-  :init
-  (with-eval-after-load 'project
-    (general-with-eval-after-load 'general
-      (general-define-key :keymaps 'project-prefix-map
-        "g" #'consult-grep
-        "/" #'consult-ripgrep)
 
-      (add-to-list 'project-switch-commands '(consult-grep "Grep") t)
-      (add-to-list 'project-switch-commands '(consult-ripgrep "Ripgrep") t))))
+(use-package embark
+  :demand t
+
+  :general
+  ("C-." #'embark-act)
+  ("C-;" #'embark-dwim)
+  ("C-h B" #'embark-bindings)
+
+  (:keymaps 'minibuffer-local-map
+   "C-," #'embark-export)
+
+  :config
+  ;; Hide the mode line in the embark minibuffer
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Actions\\*\\'"
+                 (display-buffer-with-side-window)
+                 (side . bottom)
+                 (window-height . 0.25))))
+
+
+(use-package embark-consult
+  :after (embark consult)
+  :demand t
+  :hook (embark-collect-mode . consult-preview-at-point-mode))
 
 
 (use-package ctrlf
@@ -485,7 +513,7 @@ Other buffers are left alone."
 (use-package flycheck
   :general
   (leader
-    "f" '(:keymap flycheck-command-map))
+    "c e" '(:keymap flycheck-command-map))
 
   :preface
   (eval-when-compile

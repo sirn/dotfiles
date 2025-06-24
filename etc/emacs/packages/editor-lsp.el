@@ -8,7 +8,7 @@
 (use-package eglot
   :general
   (leader
-    "ll" #'gemacs--eglot-transient-menu)
+    "c l" #'gemacs--eglot-transient-menu)
 
   :custom
   (eglot-autoshutdown t)
@@ -64,7 +64,7 @@
 (use-package xref
   :general
   (leader
-    "lx" #'gemacs--xref-transient-menu)
+    "c x" #'gemacs--xref-transient-menu)
 
   :init
   (require 'transient)

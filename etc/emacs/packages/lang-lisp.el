@@ -3,7 +3,7 @@
 (use-package helpful
   :general
   (leader
-    "d" '(:keymap help-map))
+    "h" '(:keymap help-map))
 
   ([remap describe-function] #'helpful-callable
    [remap describe-variable] #'helpful-variable

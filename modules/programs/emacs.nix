@@ -41,6 +41,8 @@ in
       dtrt-indent
       editorconfig
       eldoc
+      embark
+      embark-consult
       envrc
       evil
       evil-collection
@@ -65,6 +67,7 @@ in
       multi-vterm
       nix-ts-mode
       ob-restclient
+      orderless
       parinfer-rust-mode
       pinentry
       posframe

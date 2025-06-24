@@ -5,9 +5,9 @@
   (use-package w3m
     :general
     (leader
-      ";W" #'w3m
-      ";w" #'w3m-goto-url
-      ";s" #'w3m-search)
+      "A w W" #'w3m
+      "A w w" #'w3m-goto-url
+      "A w s" #'w3m-search)
 
     :custom
     (mm-text-html-renderer #'w3m)

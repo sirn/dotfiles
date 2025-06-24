@@ -4,7 +4,7 @@
   :demand t
   :general
   (leader
-    "go" #'gemacs--org-transient-menu)
+    "o o" #'gemacs--org-transient-menu)
 
   :init
   (require 'transient)

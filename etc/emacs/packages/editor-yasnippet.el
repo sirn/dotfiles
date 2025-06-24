@@ -5,9 +5,9 @@
 
   :general
   (leader
-   "ys" #'yas-insert-snippet
-   "yn" #'yas-new-snippet
-   "yv" #'yas-visit-snippet-file)
+   "e y s" #'yas-insert-snippet
+   "e y n" #'yas-new-snippet
+   "e y v" #'yas-visit-snippet-file)
 
   :preface
   (eval-when-compile

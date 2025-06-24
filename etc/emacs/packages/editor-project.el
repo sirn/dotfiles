@@ -7,30 +7,65 @@
   :demand t
 
   :general
+  ("C-x C-f" #'project-find-file)
   (leader
-   "p" '(:keymap project-prefix-map))
+   "SPC p" '(:keymap project-prefix-map))
 
   (:keymaps 'project-prefix-map
-    "SS" #'gemacs--project-sync
-    "f" #'gemacs--project-fd
+    "'" #'multi-vterm-project
     "b" #'consult-project-buffer
-    "'" #'multi-vterm-project)
+    "d" #'project-dired
+    "f" #'gemacs--project-fd
+    "g" #'consult-grep
+    "m" #'magit-project-status
+    "r" #'consult-ripgrep
+    "s" #'gemacs--project-sync)
 
   :custom
   (project-vc-extra-root-markers '(".jj" "go.mod"))
   (project-vc-ignores '(".jj"))
-  (project-switch-commands '((project-dired "Dired")))
 
   :preface
   (eval-when-compile
+    (require 'transient)
     (declare-function gemacs--project-ag nil)
     (declare-function gemacs--project-fd nil)
     (declare-function gemacs--project-sync nil)
     (declare-function gemacs--project-try-local nil)
     (declare-function consult-project-buffer nil)
-    (declare-function multi-vterm-project nil))
+    (declare-function consult-grep nil)
+    (declare-function consult-ripgrep nil)
+    (declare-function magit-project-status nil)
+    (declare-function multi-vterm-project nil)
+    (declare-function project-dired nil)
+    (declare-function project-read-project-name nil)
+    (declare-function project-switch-project nil)
+    (declare-function gemacs--override-project-switch-project nil)
+    (declare-function gemacs--project-switch-command nil)
+    (declare-function gemacs--project-switch-transient-menu nil))
 
   :config
+  (transient-define-prefix gemacs--project-switch-transient-menu ()
+    "Project commands"
+    ["Find & Search"
+     ("f" "Find file (fd)" gemacs--project-fd)
+     ("g" "Grep" consult-grep)
+     ("r" "Ripgrep" consult-ripgrep)]
+    ["Git & Buffers"
+     ("m" "Magit status" magit-project-status)
+     ("b" "Consult buffer" consult-project-buffer)]
+    ["Project Actions"
+     ("d" "Dired" project-dired)
+     ("'" "VTerm" multi-vterm-project)
+     ("s" "Sync projects" gemacs--project-sync)])
+
+  (defun gemacs--project-switch-command ()
+    "Switch to a project-specific command via a transient menu."
+    (interactive)
+    (gemacs--project-switch-transient-menu))
+
+  (setq project-switch-commands #'gemacs--project-switch-command)
+
   ;; project-find-file does not read gitignore for non-Git projects
   ;; instead of using project-find-file, we use consult-fd with
   ;; fd utility instead.
@@ -39,8 +74,6 @@
     (interactive)
     (when-let (proj (project-current t))
       (consult-fd (project-root proj))))
-
-  (add-to-list 'project-switch-commands '(gemacs--project-fd "Find file") t)
 
   ;; For custom projects without requiring .git
   ;; https://christiantietze.de/posts/2022/03/mark-local-project.el-directories/
@@ -84,14 +117,16 @@
 
   :general
   (leader
-    "t" '(:keymap tabspaces-command-map))
+    "SPC t" '(:keymap tabspaces-command-map))
 
   :preface
   (eval-when-compile
     (declare-function consult--buffer-state nil)
     (declare-function consult--source-buffer nil)
     (declare-function tabspaces-mode nil)
+    (declare-function tabspaces-project-switch-command nil)
     (declare-function gemacs--tabspaces-init nil)
+    (declare-function gemacs--project-switch-command nil)
     (defvar gemacs--tabspaces-consult-source)
     (defvar tabspaces-default-tab)
     (defvar tabspaces-remove-to-default)
@@ -103,17 +138,14 @@
   (setq tabspaces-remove-to-default t)
 
   (defun gemacs--tabspaces-init ()
-    ;; Force override; otherwise tabspaces will end up with incomplete
-    ;; project-switch-commands (that are defined through customs)
-    (require 'project)
-    (setq tabspaces-project-switch-commands project-switch-commands)
-
     (tabspaces-mode +1)
     (tab-bar-rename-tab tabspaces-default-tab))
 
   (add-hook 'gemacs-after-init-hook #'gemacs--tabspaces-init)
 
   :config
+  (setq tabspaces-project-switch-commands #'gemacs--project-switch-command)
+
   (with-eval-after-load 'consult
     (consult-customize consult--source-buffer :hidden t :default nil)
     (defvar gemacs--tabspaces-consult-source

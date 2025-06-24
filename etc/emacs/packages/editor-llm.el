@@ -5,7 +5,7 @@
 
   :general
   (leader
-    "gg" #'gemacs--gptel-transient-menu)
+    "a g" #'gemacs--gptel-transient-menu)
 
   :preface
   (eval-when-compile
@@ -92,7 +92,7 @@
 
   :general
   (leader
-    "ga" #'aidermacs-transient-menu)
+    "a a" #'aidermacs-transient-menu)
 
   :preface
   (defun gemacs--aidermacs-project-root ()

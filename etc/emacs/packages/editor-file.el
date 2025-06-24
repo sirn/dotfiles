@@ -1,6 +1,9 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package dired
+  :general
+  ("C-x C-j" #'dired-jump)
+
   :config
   (pcase system-type
     ((or 'darwin 'berkeley-unix)
@@ -14,8 +17,8 @@
 
   :general
   (leader
-    "TT" #'dired-sidebar-toggle-sidebar
-    "Tt" #'dired-sidebar-toggle-with-current-directory)
+    "t T" #'dired-sidebar-toggle-sidebar
+    "t t" #'dired-sidebar-toggle-with-current-directory)
 
   :config
   (setq dired-sidebar-theme 'ascii))

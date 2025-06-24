@@ -19,7 +19,7 @@
 
   :general
   (leader
-    "ii" #'ispell
-    "iw" #'ispell-word
-    "ib" #'ispell-buffer
-    "ir" #'ispell-region))
+    "e i i" #'ispell
+    "e i w" #'ispell-word
+    "e i b" #'ispell-buffer
+    "e i r" #'ispell-region))

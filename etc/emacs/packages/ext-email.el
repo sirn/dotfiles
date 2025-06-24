@@ -12,8 +12,8 @@
 
     :general
     (leader
-      "mm" #'notmuch
-      "mc" #'notmuch-mua-new-mail)
+      "A m m" #'notmuch
+      "A m c" #'notmuch-mua-new-mail)
 
     :custom
     (message-send-mail-function #'message-send-mail-with-sendmail)
