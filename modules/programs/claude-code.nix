@@ -40,9 +40,10 @@
 
         - You MUST make sure there is no empty space at the end of line
         - You MUST make sure that a blank line is not consist solely of just a space
-        - You SHOULD NOT add unnecessary comments when the code itself is self-explanatory
-        - You SHOULD run `gofmt` when working with Golang code
-        - You SHOULD run `black` (`poetry run black`) when working with Python code
+        - You MUST NOT add unnecessary comments when the code itself is self-explanatory
+        - You MUST NOT split functions into smaller functions unless instructed
+        - You MAY run `gofmt` when working with Golang code
+        - You MAY run `black` (`poetry run black`) when working with Python code
 
         ## Executing commands
 
