@@ -31,6 +31,7 @@ in
       # Packages
       ace-link
       ace-window
+      aidermacs
       avy
       consult
       corfu
@@ -52,7 +53,6 @@ in
       evil-org
       evil-surround
       flycheck
-      gptel
       flycheck-eglot
       flycheck-golangci-lint
       flycheck-posframe
@@ -60,6 +60,7 @@ in
       forge
       ghub
       git-gutter
+      gptel
       helpful
       magit
       marginalia
@@ -93,7 +94,6 @@ in
       which-key
       yasnippet
       yasnippet-snippets
-      pkgs.local.emacsPackages.aidermacs
 
       (apheleia.overrideDerivation
         (attrs: {

@@ -10,7 +10,7 @@ in
     # Nix and the host mismatched. Only enable on NixOS.
     enable = config.machine.isNixOS;
 
-    package = lib.mkDefault pkgs.local.looking-glass-client_b6;
+    package = pkgs.looking-glass-client;
 
     settings = {
       input = {
