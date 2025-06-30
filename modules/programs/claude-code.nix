@@ -15,13 +15,12 @@
 
   programs.git = {
     ignores = [
-      "CLAUDE.local.md"
       ".claude/"
     ];
   };
 
-  xdg.configFile = {
-    "claude/CLAUDE.md" = lib.mkDefault {
+  home.file = {
+    ".claude/CLAUDE.md" = lib.mkDefault {
       text = ''
         # CLAUDE.md
 
@@ -48,6 +47,7 @@
         ## Executing commands
 
         - You SHOULD use `rg` over `grep`
+        - You SHOULD use `fd` over `find`
         - You SHOULD use `podman` over `docker`
         - You SHOULD use `make` when there's a `Makefile` in the project rather than running a command directly
         - You SHOULD try `--help` when executing a command line resulting in an error
