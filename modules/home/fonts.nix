@@ -3,20 +3,6 @@
 let
   dotfilesDir = "${config.home.homeDirectory}/.dotfiles";
 
-  aliasFontLang = lang: family: font: ''
-    <match target="pattern">
-      <test name="lang">
-        <string>${lang}</string>
-      </test>
-      <test name="family">
-        <string>${family}</string>
-      </test>
-      <edit name="family" mode="prepend">
-        <string>${font}</string>
-      </edit>
-    </match>
-  '';
-
   editMode = name: type: value: ''
     <edit mode="assign" name="${name}">
       <${type}>${value}</${type}>
@@ -67,16 +53,6 @@ in
   };
 
   home.file = lib.mkIf pkgs.stdenv.isLinux {
-    ".config/fontconfig/conf.d/80-japanese.conf" = {
-      text = ''
-        <?xml version='1.0'?>
-        <!DOCTYPE fontconfig SYSTEM 'fonts.dtd'>
-        <fontconfig>
-          ${aliasFontLang "ja" "serif" "Noto Serif CJK JP"}
-          ${aliasFontLang "ja" "sans-serif" "Noto Sans CJK JP"}
-        </fontconfig>
-      '';
-    };
     ".config/fontconfig/conf.d/99-antialias.conf" = {
       text = ''
         <?xml version='1.0'?>
