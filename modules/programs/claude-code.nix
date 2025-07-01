@@ -31,7 +31,8 @@
         - You MUST keep the conversation concise and precise
         - You MUST to use Brave Search over Web Search
         - You MUST follow a URL when presented, e.g. after an error, to figure out what's wrong with the code
-        - You SHOULD create temporary files in a directory name tmp/
+        - You SHOULD create temporary files in a directory name tmp/ and put .gitignore in it that ignores everything
+        - You SHOULD ask the user to split the task if the task is deemed too long
         - You SHOULD ask the user if the instruction is unclear, need more context, or require any kind of user input
         - You SHOULD discuss the changes with Gemini and ChatGPT (when available) when planning for changes
 
@@ -46,10 +47,12 @@
 
         ## Executing commands
 
+        - You MUST ask the user to run a long-running process (web server, daemons) instead of running it on your own
         - You SHOULD use `rg` over `grep`
         - You SHOULD use `fd` over `find`
         - You SHOULD use `podman` over `docker`
         - You SHOULD use `make` when there's a `Makefile` in the project rather than running a command directly
+        - You SHOULD use `task` when there's a `Taskfile` in the project rather than running a command directly
         - You SHOULD try `--help` when executing a command line resulting in an error
         - You SHOULD use comma (`, <command> <args...>`) when a command is missing (comma before command name is important)
         - You MAY use `nix`, but MAY NOT use `nix-env -i` to install packages directly
