@@ -104,7 +104,6 @@
         theia = mkDarwinConfig { hostname = "theia"; };
         vega = mkLinuxConfig { hostname = "vega"; };
         ws = mkLinuxConfig { hostname = "ws"; };
-        ws-desktop = mkLinuxConfig { hostname = "ws-desktop"; };
       };
     };
 }
