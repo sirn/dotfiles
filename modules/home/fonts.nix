@@ -2,6 +2,12 @@
 
 let
   dotfilesDir = "${config.home.homeDirectory}/.dotfiles";
+
+  editMode = name: type: value: ''
+    <edit mode="assign" name="${name}">
+      <${type}>${value}</${type}>
+    </edit>
+  '';
 in
 {
   fonts = {
@@ -44,5 +50,23 @@ in
   # https://wiki.archlinux.org/title/Font_configuration
   gtk.gtk4.extraConfig = lib.mkIf pkgs.stdenv.isLinux {
     gtk-hint-font-metrics = true;
+  };
+
+  home.file = lib.mkIf pkgs.stdenv.isLinux {
+    ".config/fontconfig/conf.d/99-antialias.conf" = {
+      text = ''
+        <?xml version='1.0'?>
+        <!DOCTYPE fontconfig SYSTEM 'fonts.dtd'>
+        <fontconfig>
+          <match target="font">
+            ${editMode "antialias" "bool" "true"}
+            ${editMode "hinting" "bool" "false"}
+            ${editMode "hintstyle" "const" "hintnone"}
+            ${editMode "lcdfilter" "const" "lcddefault"}
+            ${editMode "rgba" "const" "rgb"}
+          </match>
+        </fontconfig>
+      '';
+    };
   };
 }
