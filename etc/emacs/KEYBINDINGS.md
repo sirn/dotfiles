@@ -48,7 +48,8 @@ The primary prefix for finding files, buffers, and managing projects.
 | Key | Command | Description |
 | :--- | :--- | :--- |
 | `SPC b` | `consult-buffer` | Find buffer. |
-| `SPC f` | `consult-fd` | Find file in project using `fd`. |
+| `SPC f` | `consult-fd` | Find file using `fd`. |
+| `SPC F` | `find-file` | Find file. |
 | `SPC k` | `kill-buffer` | Kill the current buffer. |
 | `SPC o` | `consult-outline` | Search for headings in the current buffer. |
 | `SPC p` | `(Prefix)` | Project-specific commands. |

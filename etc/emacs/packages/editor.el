@@ -14,6 +14,7 @@
     "SPC k" #'kill-buffer
     "SPC S" #'gemacs--save-all-buffers
     "SPC R" #'gemacs--revert-all-buffers
+    "SPC F" #'find-file
     "w-" #'split-window-below
     "w/" #'split-window-right
     "w=" #'balance-windows
@@ -21,7 +22,7 @@
     "wd" #'delete-window
     "wR" #'redraw-display)
 
-  :config
+  :init
   (defun gemacs--save-all-buffers ()
     "Save all modified buffers without confirmation."
     (interactive)
@@ -364,6 +365,7 @@ Other buffers are left alone."
 (use-package consult
   :general
   ("C-x C-b" #'consult-buffer
+   "C-x C-f" #'consult-fd
    "M-g g"   #'consult-goto-line
    "M-g M-g" #'consult-goto-line
    "M-g i"   #'consult-imenu
