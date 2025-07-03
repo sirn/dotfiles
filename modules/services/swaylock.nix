@@ -6,7 +6,7 @@ let
   swaylockBin =
     if config.programs.swaylock.enable
     then "${config.programs.swaylock.package}/bin/swaylock"
-    else "swaylock";
+    else "/usr/bin/swaylock"; # no relative path here due to systemd unit setting PATH=
 in
 {
   programs.swaylock = {
