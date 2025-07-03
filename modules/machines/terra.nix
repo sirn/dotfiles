@@ -10,7 +10,8 @@
     # profiles
     ../home/flatpak.nix
     ../home/fonts.nix
-    ../home/plasma.nix
+    ../home/sway-dark.nix
+    ../home/sway.nix
 
     # programs
     ../programs/1password.nix
