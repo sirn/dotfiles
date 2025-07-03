@@ -38,7 +38,7 @@
     {
       config = {
         keybindings = {
-          "${swaycfg.modifier}+d" = "exec ${config.programs.fuzzel.package}/bin/fuzzel";
+          "${swaycfg.modifier}+d" = "exec ${config.programs.fuzzel.package}/bin/fuzzel --match-workers 4 --render-workers 4";
         };
       };
     };
