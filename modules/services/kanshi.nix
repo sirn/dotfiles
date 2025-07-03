@@ -13,6 +13,7 @@ in
     settings =
       let
         default = {
+          status = lib.mkDefault "enable";
           criteria = "*";
           mode = "3840x2160";
           position = "0,0";
