@@ -59,7 +59,9 @@
         input = {
           "*" = {
             dwt = "enabled";
-            natural_scroll = "enabled";
+          };
+          "type:keyboard" = {
+            xkb_options = "ctrl:nocaps";
           };
         };
 

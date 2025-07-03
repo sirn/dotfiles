@@ -1,12 +1,37 @@
-{
-  home.file = {
-    # Set by KDE systemsettings when using breeze
-    ".config/gtkrc-2.0" = {
-      text = ''
-        gtk-alternative-button-order = 1
-      '';
-    };
+{ config, pkgs, ... }:
 
+let
+  gsettingsBin =
+    if config.machine.isNixOS
+    then "${pkgs.glib.bin}/bin/gsettings"
+    else "gsettings";
+
+  setupGnomeAppearance =
+    pkgs.writeScriptBin "setup-gnome-appearance" ''
+      #!${pkgs.bash}/bin/bash
+
+      gnome_set() {
+        ${gsettingsBin} set org.gnome.desktop.interface "$@"
+      }
+
+      gnome_set color-scheme prefer-dark
+      gnome_set cursor-size 24
+      gnome_set cursor-theme "breeze_cursors"
+      gnome_set document-font-name "Noto Sans 10"
+      gnome_set font-name "Noto Sans 10"
+      gnome_set gtk-theme "Breeze"
+      gnome_set icon-theme "Breeze"
+      gnome_set monospace-font-name "Hack 10"
+    '';
+in
+{
+  wayland.windowManager.sway.config = {
+    startup = [
+      { command = "${setupGnomeAppearance}/bin/setup-gnome-appearance"; }
+    ];
+  };
+
+  home.file = {
     # This is necessary to get breeze-dark to apply for Qt applications
     ".config/kdeglobals" = {
       text = ''
@@ -157,9 +182,4 @@
       '';
     };
   };
-
-  home.sessionVariablesExtra = ''
-    export XDG_CURRENT_DESKTOP=sway
-    export QT_QPA_PLATFORMTHEME=kde
-  '';
 }
