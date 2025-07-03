@@ -70,7 +70,7 @@
 
     style = ''
       * {
-        font-family: FontAwesome, sans-serif;
+        font-family: FontAwesome, "Noto Sans", sans-serif;
         font-size: 13px;
       }
 
