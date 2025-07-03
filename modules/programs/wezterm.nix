@@ -1,5 +1,11 @@
 { config, lib, pkgs, ... }:
 
+let
+  weztermBin =
+    if config.machine.isNixOS || pkgs.stdenv.isDarwin
+    then "${config.programs.wezterm.package}/bin/wezterm"
+    else "wezterm";
+in
 {
   programs.wezterm = {
     enable = config.machine.isNixOS || pkgs.stdenv.isDarwin;
@@ -125,4 +131,25 @@
           })
         cfg.colorSchemes)
     ]));
+
+  wayland.windowManager.sway =
+    let
+      swaycfg = config.wayland.windowManager.sway.config;
+    in
+    {
+      config = {
+        terminal = weztermBin;
+        keybindings = {
+          "${swaycfg.modifier}+Return" = "exec ${weztermBin}";
+        };
+      };
+    };
+
+  programs.fuzzel = {
+    settings = {
+      main = {
+        terminal = weztermBin;
+      };
+    };
+  };
 }

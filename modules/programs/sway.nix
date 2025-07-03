@@ -7,7 +7,7 @@
 
     systemd = {
       enable = true;
-      xdgAutoStart = config.wayland.windowManager.sway.systemd.enable;
+      xdgAutostart = true;
     };
 
     package =

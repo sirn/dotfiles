@@ -24,17 +24,9 @@ in
           mode = "6016x3384";
         };
 
-        lg_27uk650_w = default // {
-          criteria = "LG Electronics LG HDR 4K 0x00036193";
+        dell_aw3225qf = default // {
+          criteria = "Dell Inc. AW3225QF 13T4YZ3";
           scale = 1.5;
-        };
-
-        innocn_pu15_pre = default // {
-          criteria = "Beihai Century Joint Innovation Technology Co.,Ltd PU15-PRE FK1UC1R060115";
-        };
-
-        cuview_pix3_pro = default // {
-          criteria = "DO NOT USE - RTK Pi-X3 Pro demoset-1"; #lol
         };
 
         asus_pa148 = {
@@ -42,48 +34,40 @@ in
           mode = "1920x1080";
           scale = 1.5;
         };
+
+        system76 = {
+          criteria = "Chimei Innolux Corporation 0x148A Unknown";
+          mode = "1920x1200";
+          scale = 1.0;
+        };
       in
       [
         {
           profile = {
-            name = "dual_cuview";
+            name = "dual_system76_3225qf";
             outputs = [
-              (cuview_pix3_pro // { position = "1920,0"; })
-              lg_27uk650_w
+              (dell_aw3225qf // {
+                mode = "3840x2160@60Hz";
+              })
+              (system76 // {
+                status = "disable";
+              })
             ];
           };
         }
         {
           profile = {
-            name = "dual_pu15";
+            name = "only_3225qf";
             outputs = [
-              (innocn_pu15_pre // { position = "1920,0"; })
-              lg_27uk650_w
+              dell_aw3225qf
             ];
           };
         }
         {
           profile = {
-            name = "dual_xdr_uk650w";
+            name = "only_xdr";
             outputs = [
-              (apple_pro_display_xdr // { position = "2560,0"; })
-              lg_27uk650_w
-            ];
-          };
-        }
-        {
-          profile = {
-            name = "only_cuview";
-            outputs = [
-              cuview_pix3_pro
-            ];
-          };
-        }
-        {
-          profile = {
-            name = "only_pu15";
-            outputs = [
-              innocn_pu15_pre
+              apple_pro_display_xdr
             ];
           };
         }
@@ -97,17 +81,9 @@ in
         }
         {
           profile = {
-            name = "only_uk650w";
+            name = "only_system76";
             outputs = [
-              lg_27uk650_w
-            ];
-          };
-        }
-        {
-          profile = {
-            name = "only_xdr";
-            outputs = [
-              apple_pro_display_xdr
+              system76
             ];
           };
         }

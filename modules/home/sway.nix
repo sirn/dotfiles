@@ -89,7 +89,7 @@
     # for it to pick up the correct themes installed with the system
     lib.mkIf (!config.machine.isNixOS) {
       sessionVariables = {
-        QT_QPA_PLATFORMTHEME = config.qt.platformTheme;
+        QT_QPA_PLATFORMTHEME = config.qt.platformTheme.name;
         QT_STYLE_OVERRIDE = config.qt.style.name;
       };
     });
