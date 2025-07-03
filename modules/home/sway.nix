@@ -17,7 +17,8 @@
 
   # On non-NixOS, this should be installed using OS package manager.
   i18n.inputMethod = lib.mkIf config.machine.isNixOS {
-    enabled = "fcitx5";
+    enable = true;
+    type = "fcitx5";
 
     fcitx5 = {
       addons = with pkgs; [
@@ -33,6 +34,13 @@
           xcursor_theme = "${config.gtk.cursorTheme.name} ${toString config.gtk.cursorTheme.size}";
         };
       };
+
+      # If we're running on nixOS, let's also attempt to start kdewallet
+      # alongside with the session; this should already be unlocked via PAM
+      startup =
+        if config.machine.isNixOS
+        then [{ command = "${pkgs.kdePackages.kwallet-pam}/libexec/pam_kwallet_init"; }]
+        else [ ];
     };
   };
 
@@ -74,23 +82,12 @@
     };
   };
 
-  # Installing themes through Home Manager on NixOS can cause errors
-  # due to some of these themes require a matching system libraries
-  home = lib.mkIf config.machine.isNixOS
-    {
-      packages = with pkgs; [
-        kdePackages.breeze
-        kdePackages.breeze-gtk
-        kdePackages.breeze-icons
-        hicolor-icon-theme
-      ];
-    } // (
-    # On a non-NixOS, we just provide the proper environment variables
-    # for it to pick up the correct themes installed with the system
-    lib.mkIf (!config.machine.isNixOS) {
-      sessionVariables = {
-        QT_QPA_PLATFORMTHEME = config.qt.platformTheme.name;
-        QT_STYLE_OVERRIDE = config.qt.style.name;
-      };
-    });
+  # On a non-NixOS, we just provide the proper environment variables
+  # for it to pick up the correct themes installed with the system
+  home = lib.mkIf (!config.machine.isNixOS) {
+    sessionVariables = {
+      QT_QPA_PLATFORMTHEME = config.qt.platformTheme.name;
+      QT_STYLE_OVERRIDE = config.qt.style.name;
+    };
+  };
 }
