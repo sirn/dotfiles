@@ -70,7 +70,7 @@
 
     style = ''
       * {
-        font-family: FontAwesome, Roboto, Helvetica, Arial, sans-serif;
+        font-family: FontAwesome, sans-serif;
         font-size: 13px;
       }
 
