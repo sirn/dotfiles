@@ -27,6 +27,7 @@ in
 
         dell_aw3225qf = default // {
           criteria = "Dell Inc. AW3225QF 13T4YZ3";
+          scale = 1.5;
         };
 
         asus_pa148 = {
