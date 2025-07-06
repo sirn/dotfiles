@@ -1,0 +1,160 @@
+#!/bin/sh
+#
+# Enables all connected outputs in Sway.
+#
+
+## Internal
+## ----------------------------------------------------------------------------
+PROG=$(basename "$0")
+DRY_RUN=0
+SWAY_SOCKET=""
+DEBUG=0
+
+## Messages
+## -----------------------------------------------------------------------------
+
+c_blue=$(tput setaf 4 2>/dev/null || true)
+c_bold=$(tput bold 2>/dev/null || true)
+c_yellow=$(tput setaf 3 2>/dev/null || true)
+c_red=$(tput setaf 1 2>/dev/null || true)
+c_reset=$(tput sgr0 2>/dev/null || true)
+c_white=$(tput setaf 7 2>/dev/null || true)
+
+msg() {
+    printf >&2 "%s[%s]%s %s\\n" \
+        "$c_blue" "$PROG" "$c_reset" \
+        "$*"
+}
+
+msg_debug() {
+    if [ "${DEBUG:-0}" = "1" ]; then
+        printf >&2 "%s[%s]%s %sDEBUG:%s %s\\n" \
+            "$c_blue" "$PROG" "$c_reset" \
+            "$c_bold" "$c_reset" "$*"
+    fi
+}
+
+msg_info() {
+    printf >&2 "%s[%s]%s %sINFO: %s%s\\n" \
+        "$c_blue" "$PROG" "$c_reset" \
+        "$c_white" "$*" "$c_reset"
+}
+
+msg_error() {
+    printf >&2 "%s[%s]%s %sERROR: %s%s\\n" \
+        "$c_blue" "$PROG" "$c_reset" \
+        "$c_red" "$*" "$c_reset"
+}
+
+cmd_run() {
+    msg_debug "Command: $*"
+    RET=0
+    if [ "$DRY_RUN" = "1" ]; then
+        echo >&2 "$@"
+    else
+        "$@"
+        RET=$?
+    fi
+    msg_debug "Command exit: $RET"
+    return $RET
+}
+
+cmd_run_nd() {
+    msg_debug "Command [no dry-run]: $*"
+    RET=0
+    "$@" 2>/dev/null
+    RET=$?
+    msg_debug "Command exit: $RET"
+    return $RET
+}
+
+swaymsg_query() {
+    if [ -n "$SWAY_SOCKET" ]; then
+        cmd_run_nd swaymsg -s "$SWAY_SOCKET" "$@"
+    else
+        cmd_run_nd swaymsg "$@"
+    fi
+    return $?
+}
+
+swaymsg_run() {
+    if [ -n "$SWAY_SOCKET" ]; then
+        cmd_run swaymsg -s "$SWAY_SOCKET" "$@"
+    else
+        cmd_run swaymsg "$@"
+    fi
+    return $?
+}
+
+## sway-enable-all-monitors help
+## ----------------------------------------------------------------------------
+
+usage() {
+    cat >&2 <<EOF
+Usage: $PROG [OPTIONS]
+
+Enables all connected outputs in Sway.
+
+OPTIONS:
+    -n              Dry-run mode. Print commands instead of executing them.
+    -s SOCKET_PATH  Specify the sway socket path to use.
+    -v              Enable debug logging.
+    -h              Show this help message.
+EOF
+}
+
+## Main Logic
+## ----------------------------------------------------------------------------
+
+run_enable() {
+    if ! command -v swaymsg >/dev/null; then
+        msg_error "swaymsg command not found. Is sway installed?"
+        exit 1
+    fi
+
+    if ! command -v jq >/dev/null; then
+        msg_error "jq command not found. Is jq installed?"
+        exit 1
+    fi
+
+    swaymsg_query -t get_outputs -r | jq -r '.[] | .name' | while read -r output_name; do
+        if [ -z "$output_name" ]; then
+            continue
+        fi
+
+        msg_info "Enabling output: $output_name"
+        swaymsg_run output "$output_name" enable
+    done
+}
+
+## Entrypoint
+## ----------------------------------------------------------------------------
+
+main() {
+    OPTIND=1
+    while getopts "nhvs:" opt; do
+        case "$opt" in
+        n) DRY_RUN=1 ;;
+        v) DEBUG=1 ;;
+        s) SWAY_SOCKET="$OPTARG" ;;
+        h)
+            usage
+            exit 0
+            ;;
+        *)
+            usage
+            exit 1
+            ;;
+        esac
+    done
+
+    shift $((OPTIND - 1))
+
+    if [ "$DRY_RUN" = "1" ]; then
+        msg "Dry-run mode enabled. No changes will be made."
+    fi
+
+    run_enable
+}
+
+main "$@"
