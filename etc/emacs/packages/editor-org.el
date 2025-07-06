@@ -46,7 +46,7 @@
   (setq org-archive-location (concat org-directory "archive/%s_archive::"))
   (setq org-log-done 'time)
   (setq org-log-into-drawer t)
-  (setq org-todo-keywords '((sequence "TODO(t)" "CURRENT(c)" "WAITING(w)" "|" "DONE(d!)")))
+  (setq org-todo-keywords '((sequence "TODO(t)" "CURRENT(c)" "ONHOLD(h)" "WAITING(w)" "|" "DONE(d!)" "DROPPED(x!)")))
   (setq org-capture-templates
     `(("i" "Inbox" entry (file+headline ,(concat org-directory "inbox.org") "Inbox")
        "* TODO %?")))
@@ -68,7 +68,15 @@
   :after org
   :init
   (add-hook 'org-mode-hook #'org-modern-mode)
-  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
+  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
+
+  :config
+  (with-eval-after-load 'modus-themes
+    (modus-themes-with-colors
+      (setq org-modern-todo-faces
+        `(("CURRENT" . (:inherit org-modern-todo :foreground ,yellow-warmer))
+          ("WAITING" . (:inherit org-modern-todo :foreground ,cyan-faint))
+          ("ONHOLD" . (:inherit org-modern-todo :foreground ,fg-dim)))))))
 
 
 (use-package org-ql
@@ -83,34 +91,27 @@
   :config
   (org-super-agenda-mode 1)
   (setq org-super-agenda-header-map nil)
-  (setq org-super-agenda-groups
-        '((:name "Due"
-           :time-grid t
-           :date today
-           :todo "TODAY"
-           :scheduled today
-           :deadline today
-           :deadline past
-           :face error
-           :order 1)
-          (:name "Do First"
-           :priority "A"
-           :order 4)
-          (:name "Do Next"
-           :priority "B"
-           :order 5)
-          (:name "Do Later"
-           :priority "C"
-           :order 6)
-          (:name "Do Someday"
-           :priority<= "D"
-           :order 7)
-          (:name "Due Soon"
-           :deadline future
-           :order 8)
+  (with-eval-after-load 'modus-themes
+    (modus-themes-with-colors
+      (setq org-super-agenda-groups
+        `((:name "Current"
+           :todo "CURRENT"
+           :order 1
+           :face (:foreground ,yellow-faint))
+          (:name "Prioritized"
+           :and (:priority "A" :date today)
+           :order 2)
           (:name "Waiting"
            :todo "WAITING"
-           :order 20)
-          (:name "Inbox"
-           :file-path "inbox.org"
-           :order 30))))
+           :face (:foreground ,cyan-faint)
+           :order 10)
+          (:name "Past Due"
+           :scheduled past
+           :deadline past
+           :order 4)
+          (:name "Due"
+           :time-grid t
+           :order 9)
+          (:name "Today"
+           :date t
+           :order 5))))))
