@@ -43,6 +43,12 @@ in
           mode = "1920x1200";
           scale = 1.0;
         };
+
+        dell_u3425we = {
+          criteria = "Dell Inc. DELL U3425WE 7WWR3Z3";
+          mode = "3440x1440@120Hz";
+          scale = 1.0;
+        };
       in
       [
         {
@@ -55,6 +61,17 @@ in
               (system76 // {
                 status = "disable";
               })
+            ];
+          };
+        }
+        {
+          profile = {
+            name = "dual_system76_u3425we";
+            outputs = [
+              (dell_u3425we // {
+                position = "1920,0";
+              })
+              system76
             ];
           };
         }
