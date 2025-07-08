@@ -18,7 +18,7 @@
 
         # Disable Git unless explicitly enabled since Aider will nag
         # about creating Git otherwise (I'm using jj...)
-        no-git = true;
+        git = false;
 
         # Don't auto commit.
         auto-commits = false;
