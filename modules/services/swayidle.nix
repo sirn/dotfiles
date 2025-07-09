@@ -16,7 +16,7 @@ in
 
     timeouts = [
       {
-        timeout = 600;
+        timeout = 300;
         command = "${swaymsgBin} \"output * dpms off\"";
         resumeCommand = "${swaymsgBin} \"output * dpms on\"";
       }
