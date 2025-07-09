@@ -6,7 +6,7 @@ let
   swaymsgBin =
     if config.wayland.windowManager.sway.package != null
     then "${config.wayland.windowManager.sway.package}/bin/swaymsg"
-    else "swaymsg";
+    else "/usr/bin/swaymsg";
 in
 {
   services.swayidle = {
