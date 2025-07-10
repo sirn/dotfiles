@@ -37,44 +37,8 @@ in
           mode = "1920x1080";
           scale = 1.5;
         };
-
-        system76 = {
-          criteria = "Chimei Innolux Corporation 0x148A Unknown";
-          mode = "1920x1200";
-          scale = 1.0;
-        };
-
-        dell_u3425we = {
-          criteria = "Dell Inc. DELL U3425WE 7WWR3Z3";
-          mode = "3440x1440@120Hz";
-          scale = 1.0;
-        };
       in
       [
-        {
-          profile = {
-            name = "dual_system76_3225qf";
-            outputs = [
-              (dell_aw3225qf // {
-                mode = "3840x2160@60Hz";
-              })
-              (system76 // {
-                status = "disable";
-              })
-            ];
-          };
-        }
-        {
-          profile = {
-            name = "dual_system76_u3425we";
-            outputs = [
-              (dell_u3425we // {
-                position = "1920,0";
-              })
-              system76
-            ];
-          };
-        }
         {
           profile = {
             name = "only_3225qf";
@@ -96,14 +60,6 @@ in
             name = "only_pa148";
             outputs = [
               asus_pa148
-            ];
-          };
-        }
-        {
-          profile = {
-            name = "only_system76";
-            outputs = [
-              system76
             ];
           };
         }
