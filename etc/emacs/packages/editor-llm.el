@@ -13,11 +13,38 @@
 
   :custom
   (gptel-default-mode 'org-mode)
-  (gptel-model 'google/gemini-2.5-pro-preview)
-  (gptel-backend gemacs--gptel-openrouter-backend)
+  (gptel-model 'gemini-2.5-pro)
 
   :init
   (require 'transient)
+
+  (defvar gemacs--gptel-anthropic-backend
+    (gptel-make-anthropic "Anthropic"
+      :key #'gptel-api-key-from-auth-source
+      :stream t
+      :models
+      '(claude-opus-4-0
+        claude-sonnet-4-0
+        claude-3-7-sonnet-latest
+        claude-3-5-haiku-latest)))
+
+  (defvar gemacs--gptel-gemini-backend
+    (gptel-make-gemini "Gemini"
+      :key #'gptel-api-key-from-auth-source
+      :stream t
+      :models
+      '(gemini-2.5-pro
+        gemini-2.5-flash)))
+
+  (defvar gemacs--gptel-openai-backend
+    (gptel-make-openai "OpenAI"
+      :key #'gptel-api-key-from-auth-source
+      :stream t
+      :models
+      '(o3-pro
+        o3
+        o4-mini
+        gpt-4.1)))
 
   (defvar gemacs--gptel-openrouter-backend
     (gptel-make-openai "OpenRouter"
@@ -26,25 +53,11 @@
       :key #'gptel-api-key-from-auth-source
       :stream t
       :models
-      '(anthropic/claude-opus-4
-        anthropic/claude-sonnet-4
-        anthropic/claude-3.7-sonnet
-        anthropic/claude-3.5-sonnet
-        google/gemini-2.5-pro-preview
-        google/gemini-2.5-flash-preview
-        openai/gpt-4o-mini
-        openai/gpt-4.1
-        openai/gpt-4.1-mini)))
-
-  (defvar gemacs--gptel-anthropic-backend
-    (gptel-make-anthropic "Anthropic"
-      :key #'gptel-api-key-from-auth-source
-      :stream t
-      :models
-      '(claude-opus-4-20250514
-        claude-sonnet-4-20250514
-        claude-3-7-sonnet-20250219
-        claude-3-5-haiku-20241022)))
+      '(meta-llama/llama-4-maverick
+        meta-llama/llama-4-scout
+        x-ai/grok-4
+        x-ai/grok-3
+        x-ai/grok-3-mini)))
 
   (defun gemacs--gptel-set-backend (backend &optional model)
     "Set the gptel backend to BACKEND and MODEL if provided."
@@ -58,18 +71,30 @@
   (transient-define-prefix gemacs--gptel-backend-menu ()
     "Select GPTel backend."
     ["Select Backend"
-     ("o" "OpenRouter"
-      (lambda ()
-        (interactive)
-        (gemacs--gptel-set-backend
-         gemacs--gptel-openrouter-backend
-         'openai/gpt-4o-mini)))
      ("a" "Anthropic"
       (lambda ()
         (interactive)
         (gemacs--gptel-set-backend
          gemacs--gptel-anthropic-backend
-         'claude-sonnet-4-20250514)))])
+         'claude-sonnet-4-0)))
+     ("g" "Gemini"
+      (lambda ()
+        (interactive)
+        (gemacs--gptel-set-backend
+         gemacs--gptel-gemini-backend
+         'gemini-2.5-flash)))
+     ("o" "OpenAI"
+      (lambda ()
+        (interactive)
+        (gemacs--gptel-set-backend
+         gemacs--gptel-openai-backend
+         'o3)))
+     ("r" "OpenRouter"
+      (lambda ()
+        (interactive)
+        (gemacs--gptel-set-backend
+         gemacs--gptel-openrouter-backend
+         'x-ai/grok-4)))])
 
   (transient-define-prefix gemacs--gptel-transient-menu ()
     "GPTel commands."
@@ -84,7 +109,9 @@
   (defun gemacs--gptel-initialize-buffer ()
     (visual-line-mode t))
 
-  (add-hook 'gptel-mode-hook #'gemacs--gptel-initialize-buffer))
+  (add-hook 'gptel-mode-hook #'gemacs--gptel-initialize-buffer)
+
+  (setq gptel-backend gemacs--gptel-gemini-backend))
 
 
 (use-package aidermacs
@@ -111,7 +138,9 @@
   :config
   ;; Set environment variables for API keys if they exist in auth-source
   (dolist (api-config '(("openrouter.ai" . "OPENROUTER_API_KEY")
-                        ("api.anthropic.com" . "ANTHROPIC_API_KEY")))
+                        ("api.anthropic.com" . "ANTHROPIC_API_KEY")
+                        ("generativelanguage.googleapis.com" . "GEMINI_API_KEY")
+                        ("api.openai.com" . "OPENAI_API_KEY")))
     (when-let ((key (auth-source-pick-first-password :host (car api-config) :user "apikey")))
       (setenv (cdr api-config) key)))
 
