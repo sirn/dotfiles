@@ -24,7 +24,7 @@ in
           user_pref("browser.download.open_pdf_attachments_inline", true);
           user_pref("browser.newtabpage.activity-stream.feeds.section.highlights", false);
           user_pref("browser.newtabpage.activity-stream.feeds.topsites", false);
-          user_pref("browser.search.separatePrivateDefault.ui.enabled", true);
+          user_pref("browser.search.separatePrivateDefault.ui.enabled", false);
           user_pref("browser.sessionstore.warnOnQuit", true);
           user_pref("browser.startup.page", 3);
           user_pref("browser.urlbar.oneOffSearches", true);
