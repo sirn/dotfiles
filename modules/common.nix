@@ -1,14 +1,13 @@
 {
   imports = [
     ./home/email.nix
-    ./home/xdg.nix
+    ./home/llm-agent.nix
     ./home/shell.nix
+    ./home/xdg.nix
 
     # programs
-    ./programs/aider-chat.nix
     ./programs/aria2.nix
     ./programs/bash.nix
-    ./programs/claude-code.nix
     ./programs/coreutils.nix
     ./programs/curl.nix
     ./programs/direnv.nix
@@ -17,7 +16,6 @@
     ./programs/fd.nix
     ./programs/fish.nix
     ./programs/fzy.nix
-    ./programs/gemini.nix
     ./programs/git.nix
     ./programs/gpg.nix
     ./programs/htop.nix

@@ -16,6 +16,11 @@
       source = (pkgs.formats.yaml { }).generate "aider.conf.yml" {
         dark-mode = true;
 
+        # This file will require importing home/llm-agent.nix
+        read = [
+          "${config.home.homeDirectory}/.local/var/AGENTS.md"
+        ];
+
         # Disable Git unless explicitly enabled since Aider will nag
         # about creating Git otherwise (I'm using jj...)
         git = false;
