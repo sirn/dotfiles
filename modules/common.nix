@@ -17,6 +17,7 @@
     ./programs/fd.nix
     ./programs/fish.nix
     ./programs/fzy.nix
+    ./programs/gemini.nix
     ./programs/git.nix
     ./programs/gpg.nix
     ./programs/htop.nix
