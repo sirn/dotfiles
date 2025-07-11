@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   home.packages = [
@@ -24,6 +24,10 @@
         auto-commits = false;
         dirty-commits = false;
       };
+    };
+
+    ".aider/oauth-keys.env" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.env";
     };
   };
 }
