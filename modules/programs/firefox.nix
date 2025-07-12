@@ -46,10 +46,6 @@ in
           user_pref("privacy.trackingprotection.fingerprinting.enabled", true);
           user_pref("dom.security.https_only_mode", true);
         '';
-
-        userChrome = ''
-          @import url("${csshacks}/chrome/hide_tabs_toolbar_v2.css");
-        '';
       };
     };
   };
