@@ -272,6 +272,20 @@
               };
             }
 
+            # Google Chrome (annoyingly did not set app_id)
+            {
+              command = "floating enable";
+              criteria = {
+                title = "Picture in picture";
+              };
+            }
+            {
+              command = "sticky enable";
+              criteria = {
+                title = "Picture in picture";
+              };
+            }
+
             # Firefox
             {
               command = "floating enable";
@@ -285,13 +299,6 @@
               criteria = {
                 app_id = "firefox";
                 title = "Picture-in-Picture";
-              };
-            }
-            {
-              command = "floating enable";
-              criteria = {
-                app_id = "firefox";
-                title = "Extension:.*1Password.*";
               };
             }
             {
