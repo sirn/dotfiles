@@ -1,48 +1,4 @@
 { config, lib, pkgs, ... }:
-
-let
-  dotfilesDir = "${config.home.homeDirectory}/.dotfiles";
-
-  aliasFont = family: font: ''
-    <alias binding="strong">
-      <family>${family}</family>
-      <prefer>
-        <family>${font}</family>
-      </prefer>
-    </alias>
-  '';
-
-  aliasFontLang = lang: family: font: ''
-    <match target="pattern">
-      <test name="lang">
-        <string>${lang}</string>
-      </test>
-      <test name="family">
-        <string>${family}</string>
-      </test>
-      <edit name="family" mode="prepend" binding="strong">
-        <string>${font}</string>
-      </edit>
-    </match>
-  '';
-
-  substituteFont = srcFont: dstFont: ''
-    <match target="pattern">
-      <test name="family" compare="eq">
-        <string>${srcFont}</string>
-      </test>
-      <edit name="family" mode="assign" binding="strong">
-        <string>${dstFont}</string>
-      </edit>
-    </match>
-  '';
-
-  editMode = name: type: value: ''
-    <edit mode="assign" name="${name}">
-      <${type}>${value}</${type}>
-    </edit>
-  '';
-in
 {
   fonts = {
     fontconfig = {
@@ -92,16 +48,86 @@ in
         <?xml version='1.0'?>
         <!DOCTYPE fontconfig SYSTEM 'fonts.dtd'>
         <fontconfig>
-          ${substituteFont "Arial" "sans-serif"}
-          ${substituteFont "Courier New" "monospace"}
-          ${substituteFont "Helvetica Neue" "sans-serif"}
-          ${substituteFont "Helvetica" "sans-serif"}
-          ${substituteFont "Menlo" "monospace"}
-          ${substituteFont "Segoe UI" "sans-serif"}
-          ${substituteFont "Tahoma" "sans-serif"}
-          ${substituteFont "Times New Roman" "serif"}
-          ${substituteFont "Times" "serif"}
-          ${substituteFont "Verdana" "sans-serif"}
+          <match target="pattern">
+            <test name="family" compare="eq">
+              <string>Arial</string>
+            </test>
+            <edit name="family" mode="assign" binding="strong">
+              <string>sans-serif</string>
+            </edit>
+          </match>
+          <match target="pattern">
+            <test name="family" compare="eq">
+              <string>Courier New</string>
+            </test>
+            <edit name="family" mode="assign" binding="strong">
+              <string>monospace</string>
+            </edit>
+          </match>
+          <match target="pattern">
+            <test name="family" compare="eq">
+              <string>Helvetica Neue</string>
+            </test>
+            <edit name="family" mode="assign" binding="strong">
+              <string>sans-serif</string>
+            </edit>
+          </match>
+          <match target="pattern">
+            <test name="family" compare="eq">
+              <string>Helvetica</string>
+            </test>
+            <edit name="family" mode="assign" binding="strong">
+              <string>sans-serif</string>
+            </edit>
+          </match>
+          <match target="pattern">
+            <test name="family" compare="eq">
+              <string>Menlo</string>
+            </test>
+            <edit name="family" mode="assign" binding="strong">
+              <string>monospace</string>
+            </edit>
+          </match>
+          <match target="pattern">
+            <test name="family" compare="eq">
+              <string>Segoe UI</string>
+            </test>
+            <edit name="family" mode="assign" binding="strong">
+              <string>sans-serif</string>
+            </edit>
+          </match>
+          <match target="pattern">
+            <test name="family" compare="eq">
+              <string>Tahoma</string>
+            </test>
+            <edit name="family" mode="assign" binding="strong">
+              <string>sans-serif</string>
+            </edit>
+          </match>
+          <match target="pattern">
+            <test name="family" compare="eq">
+              <string>Times New Roman</string>
+            </test>
+            <edit name="family" mode="assign" binding="strong">
+              <string>serif</string>
+            </edit>
+          </match>
+          <match target="pattern">
+            <test name="family" compare="eq">
+              <string>Times</string>
+            </test>
+            <edit name="family" mode="assign" binding="strong">
+              <string>serif</string>
+            </edit>
+          </match>
+          <match target="pattern">
+            <test name="family" compare="eq">
+              <string>Verdana</string>
+            </test>
+            <edit name="family" mode="assign" binding="strong">
+              <string>sans-serif</string>
+            </edit>
+          </match>
         </fontconfig>
       '';
     };
@@ -110,11 +136,61 @@ in
         <?xml version='1.0'?>
         <!DOCTYPE fontconfig SYSTEM 'fonts.dtd'>
         <fontconfig>
-          ${aliasFontLang "ja" "serif" "Noto Serif CJK JP"}
-          ${aliasFontLang "ja" "sans-serif" "Noto Sans CJK JP"}
-          ${aliasFontLang "th" "serif" "Loma"}
-          ${aliasFontLang "th" "sans-serif" "Waree"}
-          ${aliasFontLang "th" "monospace" "Tlwg Typewriter"}
+          <match target="pattern">
+            <test name="lang">
+              <string>ja</string>
+            </test>
+            <test name="family">
+              <string>serif</string>
+            </test>
+            <edit name="family" mode="prepend" binding="strong">
+              <string>Noto Serif CJK JP</string>
+            </edit>
+          </match>
+          <match target="pattern">
+            <test name="lang">
+              <string>ja</string>
+            </test>
+            <test name="family">
+              <string>sans-serif</string>
+            </test>
+            <edit name="family" mode="prepend" binding="strong">
+              <string>Noto Sans CJK JP</string>
+            </edit>
+          </match>
+          <match target="pattern">
+            <test name="lang">
+              <string>th</string>
+            </test>
+            <test name="family">
+              <string>serif</string>
+            </test>
+            <edit name="family" mode="prepend" binding="strong">
+              <string>Loma</string>
+            </edit>
+          </match>
+          <match target="pattern">
+            <test name="lang">
+              <string>th</string>
+            </test>
+            <test name="family">
+              <string>sans-serif</string>
+            </test>
+            <edit name="family" mode="prepend" binding="strong">
+              <string>Waree</string>
+            </edit>
+          </match>
+          <match target="pattern">
+            <test name="lang">
+              <string>th</string>
+            </test>
+            <test name="family">
+              <string>monospace</string>
+            </test>
+            <edit name="family" mode="prepend" binding="strong">
+              <string>Tlwg Typewriter</string>
+            </edit>
+          </match>
         </fontconfig>
       '';
     };
@@ -123,9 +199,59 @@ in
         <?xml version='1.0'?>
         <!DOCTYPE fontconfig SYSTEM 'fonts.dtd'>
         <fontconfig>
-          ${aliasFont "sans-serif" "Noto Sans"}
-          ${aliasFont "serif" "Noto Serif"}
-          ${aliasFont "monospace" "Hack"}
+          <alias binding="strong">
+            <family>sans-serif</family>
+            <prefer>
+              <family>Noto Sans</family>
+            </prefer>
+          </alias>
+          <alias binding="strong">
+            <family>serif</family>
+            <prefer>
+              <family>Noto Serif</family>
+            </prefer>
+          </alias>
+          <alias binding="strong">
+            <family>monospace</family>
+            <prefer>
+              <family>Hack</family>
+            </prefer>
+          </alias>
+        </fontconfig>
+      '';
+    };
+    ".config/fontconfig/conf.d/20-emoji.conf" = {
+      text = ''
+        <?xml version='1.0'?>
+        <!DOCTYPE fontconfig SYSTEM 'fonts.dtd'>
+        <fontconfig>
+          <!-- Prioritize Noto Color Emoji for emoji family -->
+          <alias>
+            <family>emoji</family>
+            <prefer>
+              <family>Noto Color Emoji</family>
+            </prefer>
+          </alias>
+          
+          <!-- Map emoji requests specifically -->
+          <match target="pattern">
+            <test name="family" compare="eq">
+              <string>emoji</string>
+            </test>
+            <edit name="family" mode="prepend">
+              <string>Noto Color Emoji</string>
+            </edit>
+          </match>
+
+          <!-- Replace Noto Sans Symbols with color emoji for emoji ranges -->
+          <match target="font">
+            <test name="family" compare="eq">
+              <string>Noto Sans Symbols</string>
+            </test>
+            <edit name="family" mode="prepend">
+              <string>Noto Color Emoji</string>
+            </edit>
+          </match>
         </fontconfig>
       '';
     };
@@ -135,11 +261,21 @@ in
         <!DOCTYPE fontconfig SYSTEM 'fonts.dtd'>
         <fontconfig>
           <match target="font">
-            ${editMode "antialias" "bool" "true"}
-            ${editMode "hinting" "bool" "false"}
-            ${editMode "hintstyle" "const" "hintnone"}
-            ${editMode "lcdfilter" "const" "lcddefault"}
-            ${editMode "rgba" "const" "rgb"}
+            <edit mode="assign" name="antialias">
+              <bool>true</bool>
+            </edit>
+            <edit mode="assign" name="hinting">
+              <bool>false</bool>
+            </edit>
+            <edit mode="assign" name="hintstyle">
+              <const>hintnone</const>
+            </edit>
+            <edit mode="assign" name="lcdfilter">
+              <const>lcddefault</const>
+            </edit>
+            <edit mode="assign" name="rgba">
+              <const>rgb</const>
+            </edit>
           </match>
         </fontconfig>
       '';
