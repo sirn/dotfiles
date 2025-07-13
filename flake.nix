@@ -69,7 +69,7 @@
             ./lib/machine.nix
             ./modules/machines/${hostname}.nix
             (if builtins.pathExists ./local.nix then ./local.nix else { })
-            nix-index-database.hmModules.nix-index
+            nix-index-database.homeModules.nix-index
           ];
         };
 
