@@ -32,6 +32,7 @@
     ./programs/sl.nix
     ./programs/ssh.nix
     ./programs/tmux.nix
+    ./programs/tree.nix
     ./programs/unison.nix
 
     # services
