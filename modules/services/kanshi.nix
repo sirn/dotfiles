@@ -25,11 +25,12 @@ in
         apple_pro_display_xdr = default // {
           criteria = "Apple Computer Inc ProDisplayXDR 0x00001F07";
           mode = "6016x3384";
+          scale = 2.0;
         };
 
         dell_aw3225qf = default // {
           criteria = "Dell Inc. AW3225QF 13T4YZ3";
-          scale = 1.5;
+          scale = 1.25;
         };
 
         asus_pa148 = {
