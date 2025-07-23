@@ -19,8 +19,9 @@
 
       ui = {
         default-command = "log";
+        diff-formatter = ":git";
         diff-editor = ":builtin";
-        pager = "${pkgs.less}/bin/less -FRX";
+        pager = "${pkgs.delta}/bin/delta";
         "show-cryptographic-signatures" = config.programs.gpg.enable;
       };
     };
