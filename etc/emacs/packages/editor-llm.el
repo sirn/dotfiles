@@ -54,10 +54,7 @@
       :stream t
       :models
       '(meta-llama/llama-4-maverick
-        meta-llama/llama-4-scout
-        x-ai/grok-4
-        x-ai/grok-3
-        x-ai/grok-3-mini)))
+        meta-llama/llama-4-scout)))
 
   (defun gemacs--gptel-set-backend (backend &optional model)
     "Set the gptel backend to BACKEND and MODEL if provided."
@@ -94,7 +91,7 @@
         (interactive)
         (gemacs--gptel-set-backend
          gemacs--gptel-openrouter-backend
-         'x-ai/grok-4)))])
+         'meta-llama/llama-4-maverick)))])
 
   (transient-define-prefix gemacs--gptel-transient-menu ()
     "GPTel commands."
