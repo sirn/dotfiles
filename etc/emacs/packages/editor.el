@@ -54,7 +54,6 @@ Other buffers are left alone."
   (x-alt-keysym 'meta)
 
   :config
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
   (put 'downcase-region 'disabled nil))
 
 
@@ -93,6 +92,17 @@ Other buffers are left alone."
   (leader
     "t f" #'display-fill-column-indicator-mode))
 
+;; Builtin
+(use-package whitespace
+  :general
+  (leader
+    "tw" #'whitespace-mode)
+
+  :custom
+  (whitespace-style '(face tabs tab-mark spaces space-mark trailing lines-tail))
+
+  :config
+  (add-hook 'before-save-hook 'whitespace-cleanup))
 
 
 (use-package undo-tree
