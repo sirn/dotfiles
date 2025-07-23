@@ -2,7 +2,12 @@
 
 {
   home.packages = with pkgs; [
-    unstable.gemini-cli
+    (pkgs.writeScriptBin "gemini" ''
+      #!${pkgs.bash}/bin/bash
+      # Runs Gemini from Npx
+      PATH=${pkgs.nodejs_20}/bin:${pkgs.uv}/bin:$PATH
+      exec ${pkgs.nodejs_20}/bin/npx --yes @google/gemini-cli "$@"
+    '')
   ];
 
   programs.git = {

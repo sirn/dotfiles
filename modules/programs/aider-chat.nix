@@ -2,7 +2,12 @@
 
 {
   home.packages = [
-    pkgs.unstable.aider-chat
+    (pkgs.writeScriptBin "aider" ''
+      #!${pkgs.bash}/bin/bash
+      # Runs Claude Code from uvx
+      PATH=${pkgs.nodejs_20}/bin:${pkgs.uv}/bin:$PATH
+      exec ${pkgs.uv}/bin/uvx --managed-python --python 3.12 --from aider-chat aider "$@"
+    '')
   ];
 
   programs.git = {

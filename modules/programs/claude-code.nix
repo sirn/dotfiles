@@ -2,15 +2,12 @@
 
 {
   home.packages = [
-    (pkgs.unstable.claude-code.overrideDerivation (attrs: {
-      # MCP typically requires npx/uvx/etc.; let's make sure that
-      # nodejs/uv is always available to claude
-      postInstall = attrs.postInstall + ''
-        wrapProgram $out/bin/claude \
-          --prefix PATH : ${pkgs.nodejs}/bin \
-          --prefix PATH : ${pkgs.uv}/bin
-      '';
-    }))
+    (pkgs.writeScriptBin "claude" ''
+      #!${pkgs.bash}/bin/bash
+      # Runs Claude Code from Npx
+      PATH=${pkgs.nodejs_20}/bin:${pkgs.uv}/bin:$PATH
+      exec ${pkgs.nodejs_20}/bin/npx --yes @anthropic-ai/claude-code "$@"
+    '')
   ];
 
   programs.git = {
