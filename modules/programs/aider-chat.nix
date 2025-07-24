@@ -12,10 +12,10 @@ let
     targetPkgs = pkgs: with pkgs; [
       uvxAiderChat
 
-      # C extensions
-      gcc
+      # Used by uvx
       openssl
       pkg-config
+      stdenv.cc.cc
       zlib
 
       # For dynamically linked binaries
