@@ -1,13 +1,35 @@
 { config, lib, pkgs, ... }:
 
+let
+  uvxAiderChat = pkgs.writeScriptBin "aider" ''
+    #!${pkgs.bash}/bin/bash
+    # Runs Aider from uvx
+    exec ${pkgs.uv}/bin/uvx --managed-python --python 3.12 --from aider-chat aider "$@"
+  '';
+
+  fhsAiderChat = pkgs.buildFHSEnv {
+    name = "aider";
+    targetPkgs = pkgs: with pkgs; [
+      uvxAiderChat
+
+      # C extensions
+      gcc
+      openssl
+      pkg-config
+      zlib
+
+      # For dynamically linked binaries
+      nix-ld
+    ];
+
+    runScript = "aider";
+  };
+in
 {
   home.packages = [
-    (pkgs.writeScriptBin "aider" ''
-      #!${pkgs.bash}/bin/bash
-      # Runs Claude Code from uvx
-      PATH=${pkgs.nodejs_20}/bin:${pkgs.uv}/bin:$PATH
-      exec ${pkgs.uv}/bin/uvx --managed-python --python 3.12 --from aider-chat aider "$@"
-    '')
+    (if pkgs.stdenv.isDarwin
+    then uvxAiderChat
+    else fhsAiderChat)
   ];
 
   programs.git = {
