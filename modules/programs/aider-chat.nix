@@ -4,32 +4,12 @@ let
   uvxAiderChat = pkgs.writeScriptBin "aider" ''
     #!${pkgs.bash}/bin/bash
     # Runs Aider from uvx
-    exec ${pkgs.uv}/bin/uvx --managed-python --python 3.12 --from aider-chat aider "$@"
+    exec ${pkgs.local.wrapped-uv}/bin/uvx --managed-python --python 3.12 --from aider-chat aider "$@"
   '';
-
-  fhsAiderChat = pkgs.buildFHSEnv {
-    name = "aider";
-    targetPkgs = pkgs: with pkgs; [
-      uvxAiderChat
-
-      # Used by uvx
-      openssl
-      pkg-config
-      stdenv.cc.cc
-      zlib
-
-      # For dynamically linked binaries
-      nix-ld
-    ];
-
-    runScript = "aider";
-  };
 in
 {
   home.packages = [
-    (if pkgs.stdenv.isDarwin
-    then uvxAiderChat
-    else fhsAiderChat)
+    uvxAiderChat
   ];
 
   programs.git = {

@@ -20,4 +20,6 @@ in
   firefox-csshacks = (callPackage ./by-name/firefox/csshacks.nix { });
 
   wl-clipboard = (callPackage ./by-name/wl-clipboard/wrapped.nix { });
+
+  wrapped-uv = (callPackage ./by-name/wrapped-uv/wrapped.nix { });
 }
