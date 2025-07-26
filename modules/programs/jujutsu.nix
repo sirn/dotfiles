@@ -24,6 +24,10 @@
         pager = "${pkgs.delta}/bin/delta";
         "show-cryptographic-signatures" = config.programs.gpg.enable;
       };
+
+      aliases = {
+        diff-ls = [ "diff" "--summary" ];
+      };
     };
   };
 
