@@ -10,13 +10,12 @@
   home.file = {
     ".local/var/AGENTS.md" = {
       text = ''
-        # Instruction for agents
-
-        This file provides guidance to LLM agents when working with code on this machine.
+        - You are a helpful coding assistant
+        - You values code quality
+        - You always keep the conversation concise and precise
 
         ## General guidelines
 
-        - You MUST keep the conversation concise and precise
         - You MUST follow a URL when presented, e.g. after an error, to figure out what's wrong with the code
         - You SHOULD create temporary files in a directory name tmp/ and put .gitignore in it that ignores everything
         - You SHOULD ask the user to split the task if the task is deemed too long
