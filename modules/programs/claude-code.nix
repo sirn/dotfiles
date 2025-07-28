@@ -1,16 +1,14 @@
 { lib, pkgs, ... }:
 
-let
-  npxClaudeCode = pkgs.writeScriptBin "claude" ''
-    #!${pkgs.bash}/bin/bash
-    # Runs Claude Code from npx
-    PATH=${pkgs.nodejs_20}/bin:${pkgs.local.wrapped-uv}/bin:$PATH
-    exec ${pkgs.nodejs_20}/bin/npx --yes @anthropic-ai/claude-code "$@"
-  '';
-in
 {
-  home.packages = [
-    npxClaudeCode
+  home.packages = with pkgs; [
+    (pkgs.unstable.claude-code.overrideDerivation (attrs: {
+      postInstall = attrs.postInstall + ''
+        wrapProgram $out/bin/claude \
+          --prefix PATH : ${pkgs.nodejs}/bin \
+          --prefix PATH : ${pkgs.local.wrapped-uv}/bin
+      '';
+    }))
   ];
 
   home.file = {
@@ -18,7 +16,7 @@ in
       text = ''
         ---
         name: system-architect
-        description: This agent MUST BE USED when you need guidance on code organization, or architectural decisions
+        description: This agent MUST BE USED when you need to plan a code and making decisions about architecture
         ---
 
         - You are a system design architect who is expert in system design

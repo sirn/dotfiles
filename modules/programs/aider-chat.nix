@@ -1,15 +1,8 @@
 { config, lib, pkgs, ... }:
 
-let
-  uvxAiderChat = pkgs.writeScriptBin "aider" ''
-    #!${pkgs.bash}/bin/bash
-    # Runs Aider from uvx
-    exec ${pkgs.local.wrapped-uv}/bin/uvx --managed-python --python 3.12 --from aider-chat aider "$@"
-  '';
-in
 {
-  home.packages = [
-    uvxAiderChat
+  home.packages = with pkgs; [
+    unstable.aider-chat
   ];
 
   programs.git = {
