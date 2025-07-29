@@ -28,7 +28,7 @@
       # Quickly jump into project directory.
       gg() {
         local dir
-        dir=$($HOME/.dotfiles/bin/pom list | fzy -q "$*")
+        dir=$($HOME/.dotfiles/bin/pom list | ${pkgs.fzy}/bin/fzy -q "$*")
         if [ -z "$dir" ]; then
             return
         fi
@@ -36,14 +36,24 @@
       }
 
       # Change directory in a project directory.
-      pcd() {
+      ggp() {
         if [ ! -d "$HOME/Dropbox/Projects" ]; then
           echo >&2 "No projects directory"
           return 1
         fi
 
         local dir
-        dir=$(find "$HOME/Dropbox/Projects" -type d -not -iname '.*' | fzy -q "$*")
+        dir=$(${pkgs.fd}/bin/fd --type d . "$HOME/Dropbox/Projects" | ${pkgs.fzy}/bin/fzy -q "$*")
+        builtin cd "$dir" || return 1
+      }
+
+      # Change to a subdirectory of the current directory.
+      ggd() {
+        local dir
+        dir=$(${pkgs.fd}/bin/fd --type d . | ${pkgs.fzy}/bin/fzy -q "$*")
+        if [ -z "$dir" ]; then
+            return
+        fi
         builtin cd "$dir" || return 1
       }
     '';

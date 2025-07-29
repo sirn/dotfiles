@@ -13,7 +13,7 @@
     functions = {
       gg = {
         body = ''
-          set -l dir ($HOME/.dotfiles/bin/pom list | fzy -q "$argv")
+          set -l dir ($HOME/.dotfiles/bin/pom list | ${pkgs.fzy}/bin/fzy -q "$argv")
           if not set -q dir
             return
           end
@@ -21,13 +21,23 @@
         '';
       };
 
-      pcd = {
+      ggp = {
         body = ''
           if not test -d $HOME/Dropbox/Projects
             echo >&2 "No projects directory"
             return 1
           end
-          set -l dir (find "$HOME/Dropbox/Projects" -type d -not -iname ".*" | fzy -q "$argv")
+          set -l dir (${pkgs.fd}/bin/fd --type d . "$HOME/Dropbox/Projects" | ${pkgs.fzy}/bin/fzy -q "$argv")
+          if not set -q dir
+            return
+          end
+          cd $dir
+        '';
+      };
+
+      ggd = {
+        body = ''
+          set -l dir (${pkgs.fd}/bin/fd --type d . | ${pkgs.fzy}/bin/fzy -q "$argv")
           if not set -q dir
             return
           end
