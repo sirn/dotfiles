@@ -44,6 +44,9 @@
 
         local dir
         dir=$(${pkgs.fd}/bin/fd --type d . "$HOME/Dropbox/Projects" | ${pkgs.fzy}/bin/fzy -q "$*")
+        if [ -z "$dir" ]; then
+            return
+        fi
         builtin cd "$dir" || return 1
       }
 
