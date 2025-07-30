@@ -11,7 +11,11 @@ in
   home.packages = with pkgs; [
     podman-compose
     skopeo
-  ];
+  ] ++ (
+    if pkgs.stdenv.isDarwin
+    then [ podman ]
+    else [ ]
+  );
 
   # On Linux, also enable socket activation
   xdg.configFile = lib.mkIf cfg.enable {
