@@ -248,6 +248,7 @@ in
     }
 
     default_mode "locked"
+    default_shell "${config.programs.fish.package}/bin/fish"
     show_startup_tips false
     show_release_notes false
 
