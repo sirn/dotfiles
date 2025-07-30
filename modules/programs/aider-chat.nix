@@ -72,13 +72,13 @@ let
     doCheck = false;
   };
 
-  aider-chat-full-with-gcp = pkgs.unstable.aider-chat-full.overridePythonAttrs (oldAttrs: {
+  aider-chat-with-gcp = pkgs.unstable.aider-chat.overridePythonAttrs (oldAttrs: {
     propagatedBuildInputs = (oldAttrs.propagatedBuildInputs or [ ]) ++ [ google-cloud-aiplatform ];
   });
 in
 {
   home.packages = [
-    aider-chat-full-with-gcp
+    aider-chat-with-gcp
   ];
 
   programs.git = {
