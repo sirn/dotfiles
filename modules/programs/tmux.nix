@@ -1,15 +1,18 @@
 { config, lib, pkgs, ... }:
 
+let
+  cfg = config.programs.tmux;
+in
 {
   programs.tmux = {
     enable = true;
     escapeTime = 0;
-    shell = "${config.programs.fish.package}/bin/fish";
+    shell = "${config.programs.fish.package}/bin/fish"; # Keep this referencing fish package
     terminal = "screen-256color";
     mouse = true;
 
     extraConfig = ''
-      set -g default-command "exec ${config.programs.tmux.shell}"
+      set -g default-command "exec ${cfg.shell}"
       set -g set-clipboard on
       set -g set-titles on
       set -g set-titles-string "#W via tmux: #S"
@@ -46,7 +49,7 @@
       executable = true;
       text = ''
         #!/bin/sh -l
-        exec ${config.programs.tmux.package}/bin/tmux new-session -A -s main
+        exec ${cfg.package}/bin/tmux new-session -A -s main
       '';
     };
   };

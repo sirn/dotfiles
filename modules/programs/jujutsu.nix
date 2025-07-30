@@ -1,5 +1,8 @@
 { config, lib, pkgs, ... }:
 
+let
+  cfg = config.programs.jujutsu;
+in
 {
   programs.jujutsu = {
     enable = true;
@@ -41,7 +44,7 @@
     "${config.xdg.configHome}/jj/config.toml" = {
       source = (pkgs.formats.toml { }).generate
         "jujutsu-config"
-        config.programs.jujutsu.settings;
+        cfg.settings;
     };
   };
 
@@ -49,7 +52,7 @@
   # https://github.com/martinvonz/jj/blob/0690922ca15ced55e417edab806c982b0cc42b84/docs/install-and-setup.md
   programs.bash = {
     initExtra = ''
-      source <(${config.programs.jujutsu.package}/bin/jj util completion bash)
+      source <(${cfg.package}/bin/jj util completion bash)
     '';
   };
 
@@ -57,24 +60,24 @@
     initExtra = ''
       autoload -U compinit
       compinit
-      source <(${config.programs.jujutsu.package}/bin/jj util completion zsh)
+      source <(${cfg.package}/bin/jj util completion zsh)
     '';
   };
 
   programs.fish = {
     interactiveShellInit = ''
-      ${config.programs.jujutsu.package}/bin/jj util completion fish | source
+      ${cfg.package}/bin/jj util completion fish | source
     '';
 
     functions = {
       # https://gist.github.com/hroi/d0dc0e95221af858ee129fd66251897e
       fish_jj_prompt = {
         body = ''
-          if not ${config.programs.jujutsu.package}/bin/jj root --quiet &>/dev/null
+          if not ${cfg.package}/bin/jj root --quiet &>/dev/null
             return 1
           end
 
-          ${config.programs.jujutsu.package}/bin/jj log --ignore-working-copy --no-graph --color always -r @ -T '
+          ${cfg.package}/bin/jj log --ignore-working-copy --no-graph --color always -r @ -T '
             surround(" (", ")",
               separate(
                 " ",

@@ -1,5 +1,8 @@
 { config, lib, pkgs, ... }:
 
+let
+  cfg = config.programs.fuzzel;
+in
 {
   programs.fuzzel = {
     enable = true;
@@ -38,7 +41,7 @@
     {
       config = {
         keybindings = {
-          "${swaycfg.modifier}+d" = "exec ${config.programs.fuzzel.package}/bin/fuzzel --match-workers 4 --render-workers 4";
+          "${swaycfg.modifier}+d" = "exec ${cfg.package}/bin/fuzzel --match-workers 4 --render-workers 4";
         };
       };
     };

@@ -1,5 +1,8 @@
 { config, lib, pkgs, ... }:
 
+let
+  cfg = config.programs.zsh;
+in
 {
   programs.zsh = {
     enable = true;
@@ -22,7 +25,7 @@
     initExtra = ''
       export WORDCHARS="''${WORDCHARS/\//}"
       if [[ $- == *"i"* ]]; then
-        export SHELL=${config.programs.zsh.package}/bin/zsh
+        export SHELL=${cfg.package}/bin/zsh
       fi
 
       # Quickly jump into project directory.

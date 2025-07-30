@@ -1,5 +1,8 @@
 { config, lib, pkgs, ... }:
 
+let
+  cfg = config.programs.foot;
+in
 {
   programs.foot = {
     enable = true;
@@ -39,7 +42,7 @@
   wayland.windowManager.sway =
     let
       swaycfg = config.wayland.windowManager.sway.config;
-      footBin = "${config.programs.foot.package}/bin/foot";
+      footBin = "${cfg.package}/bin/foot";
     in
     {
       config = {
@@ -53,7 +56,7 @@
   programs.fuzzel = {
     settings = {
       main = {
-        terminal = "${config.programs.foot.package}/bin/foot";
+        terminal = "${cfg.package}/bin/foot";
       };
     };
   };
