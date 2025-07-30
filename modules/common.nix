@@ -26,7 +26,6 @@
     ./programs/mosh.nix
     ./programs/neovim.nix
     ./programs/nix-index.nix
-    ./programs/podman.nix
     ./programs/ripgrep.nix
     ./programs/rsync.nix
     ./programs/sl.nix
@@ -38,5 +37,6 @@
     # services
     ./services/emacs.nix
     ./services/gpg-agent.nix
+    ./services/podman.nix
   ];
 }
