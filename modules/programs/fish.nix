@@ -13,6 +13,16 @@
     functions = {
       gg = {
         body = ''
+          set -l dir (${pkgs.fd}/bin/fd --type d . | ${pkgs.fzy}/bin/fzy -q "$argv")
+          if test -z "$dir"
+            return
+          end
+          cd $dir
+        '';
+      };
+
+      ggd = {
+        body = ''
           set -l dir ($HOME/.dotfiles/bin/pom list | ${pkgs.fzy}/bin/fzy -q "$argv")
           if test -z "$dir"
             return
@@ -28,16 +38,6 @@
             return 1
           end
           set -l dir (${pkgs.fd}/bin/fd --type d . "$HOME/Dropbox/Projects" | ${pkgs.fzy}/bin/fzy -q "$argv")
-          if test -z "$dir"
-            return
-          end
-          cd $dir
-        '';
-      };
-
-      ggd = {
-        body = ''
-          set -l dir (${pkgs.fd}/bin/fd --type d . | ${pkgs.fzy}/bin/fzy -q "$argv")
           if test -z "$dir"
             return
           end
