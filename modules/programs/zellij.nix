@@ -11,7 +11,7 @@ in
   xdg.configFile."zellij/config.kdl".text = ''
     keybinds clear-defaults=true {
       locked {
-        bind "Ctrl g" { SwitchToMode "normal"; }
+        bind "Ctrl q" { SwitchToMode "normal"; }
       }
       pane {
         bind "left" { MoveFocus "left"; }
@@ -149,7 +149,6 @@ in
       }
       normal {
         bind "f" { ToggleFloatingPanes; SwitchToMode "locked"; }
-        bind "Ctrl g" { Write 7; SwitchToMode "locked"; }
       }
       shared_among "normal" "locked" {
         bind "Alt left" { MoveFocusOrTab "left"; }
@@ -170,7 +169,6 @@ in
       }
       shared_except "locked" "renametab" "renamepane" {
         bind "Ctrl g" { SwitchToMode "locked"; }
-        bind "Ctrl q" { Quit; }
       }
       shared_except "locked" "entersearch" {
         bind "enter" { SwitchToMode "locked"; }

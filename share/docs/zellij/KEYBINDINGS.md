@@ -23,10 +23,15 @@ The default mode is `locked`, and most keybindings switch between modes.
 
 | Key | Action |
 |:----|:-------|
-| `Ctrl+g` | Switch to locked mode |
-| `Ctrl+q` | Quit Zellij |
+| `Ctrl+q` | Switch to locked mode |
 | `Enter` | Switch to locked mode |
 | `Esc` | Switch to locked mode |
+
+## Locked Mode
+
+| Key | Action |
+|:----|:-------|
+| `Ctrl+g` | Switch from locked mode |
 
 ## Pane Mode (`p`)
 
@@ -132,4 +137,3 @@ The default mode is `locked`, and most keybindings switch between modes.
 | Key | Action |
 |:----|:-------|
 | `f` | Toggle floating panes |
-| `Ctrl+g` | Send bell character |
