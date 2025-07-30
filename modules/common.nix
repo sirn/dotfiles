@@ -33,6 +33,7 @@
     ./programs/tmux.nix
     ./programs/tree.nix
     ./programs/unison.nix
+    ./programs/zellij.nix
 
     # services
     ./services/emacs.nix
