@@ -62,6 +62,25 @@ in
         fi
         builtin cd "$dir" || return 1
       }
+
+      # Navigate to ancestor directories.
+      bb() {
+        local current_dir dirs dir
+        current_dir=$(pwd)
+        dirs=""
+        while [ "$current_dir" != "/" ]; do
+          current_dir=$(dirname "$current_dir")
+          dirs="$dirs$current_dir"$'\n'
+        done
+        if [ -z "$dirs" ]; then
+          return
+        fi
+        dir=$(printf "%s" "$dirs" | ${pkgs.fzy}/bin/fzy -q "$*")
+        if [ -z "$dir" ]; then
+          return
+        fi
+        builtin cd "$dir" || return 1
+      }
     '';
   };
 }

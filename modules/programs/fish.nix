@@ -45,6 +45,25 @@
         '';
       };
 
+      bb = {
+        body = ''
+          set -l current_dir (pwd)
+          set -l dirs
+          while test "$current_dir" != "/"
+            set current_dir (dirname "$current_dir")
+            set dirs $dirs "$current_dir"
+          end
+          if test (count $dirs) -eq 0
+            return
+          end
+          set -l dir (printf "%s\n" $dirs | ${pkgs.fzy}/bin/fzy -q "$argv")
+          if test -z "$dir"
+            return
+          end
+          cd $dir
+        '';
+      };
+
       fish_greeting = {
         body = "";
       };
