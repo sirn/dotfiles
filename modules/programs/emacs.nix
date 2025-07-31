@@ -183,7 +183,6 @@ in
           ripgrep
           shellcheck
           shfmt
-          tenv
           hunspell.bin
           buf
 
@@ -196,6 +195,18 @@ in
           typescript-language-server
           yaml-language-server
           protols
+
+          # wrap tenv to auto-install appropriate terraform version
+          (tenv.overrideDerivation (attrs: {
+            nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
+            postInstall = ''
+              for program in "$out"/bin/*; do
+                if [ -f "$program" ]; then
+                  wrapProgram "$program" --set TENV_AUTO_INSTALL true
+                fi
+              done
+            '';
+          }))
 
           # terraform-ls looks up `terraform` binary via $PATH but bin deps
           # is injected via exec-path only, so we need to inject bin deps path
