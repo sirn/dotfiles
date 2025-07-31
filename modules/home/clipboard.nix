@@ -1,10 +1,15 @@
 { lib, pkgs, ... }:
 
 let
+  wl-clipboard = pkgs.wl-clipboard.overrideDerivation (attrs: {
+    buildInputs = (attrs.buildInputs or [ ]) ++ [ pkgs.coreutils ];
+    nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
+  });
+
   pbcopy = pkgs.writeScriptBin "pbcopy" ''
     #!${pkgs.bash}/bin/bash
     if test -n "$WAYLAND_DISPLAY"; then
-      exec ${pkgs.local.wl-clipboard}/bin/wl-copy
+      exec ${wl-clipboard}/bin/wl-copy
     elif test -n "$DISPLAY"; then
       exec ${pkgs.xclip}/bin/xclip -selection clipboard
     else
@@ -16,7 +21,7 @@ let
   pbpaste = pkgs.writeScriptBin "pbpaste" ''
     #!${pkgs.bash}/bin/bash
     if test -n "$WAYLAND_DISPLAY"; then
-      exec ${pkgs.local.wl-clipboard}/bin/wl-paste
+      exec ${wl-clipboard}/bin/wl-paste
     elif test -n "$DISPLAY"; then
       exec ${pkgs.xclip}/bin/xclip -selection clipboard -o
     else
