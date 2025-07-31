@@ -252,18 +252,7 @@ in
     show_startup_tips false
     show_release_notes false
 
-    ${lib.optionalString pkgs.stdenv.isDarwin ''copy_command "pbcopy"''}
-    ${lib.optionalString pkgs.stdenv.isLinux ''copy_command "${pkgs.writeScriptBin "copy-to-clipboard" ''
-      #!${pkgs.bash}/bin/bash
-      if test -n "$WAYLAND_DISPLAY"
-        ${pkgs.wl-clipboard}/bin/wl-copy
-      else if test -n "$DISPLAY"
-        ${pkgs.xclip}/bin/xclip -selection clipboard
-      else
-        echo >&2 "Error: not desktop?"
-        exit 1
-      end
-    ''}/bin/copy-to-clipboard"''}
+    copy_command "${config.machine.clipboard.copy.command}"
   '';
 
   home.file = {

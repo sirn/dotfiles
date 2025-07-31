@@ -14,6 +14,34 @@ in
           Indicates whether the machine is a NixOS system.
         '';
       };
+
+      clipboard = {
+        copy = {
+          command = mkOption {
+            type = types.str;
+            default =
+              if pkgs.stdenv.isDarwin
+              then "pbcopy"
+              else "${pkgs.xclip}/bin/xclip -selection clipboard";
+            description = ''
+              Command to copy to clipboard
+            '';
+          };
+        };
+
+        paste = {
+          command = mkOption {
+            type = types.str;
+            default =
+              if pkgs.stdenv.isDarwin
+              then "pbpaste"
+              else "${pkgs.xclip}/bin/xclip -selection clipboard -o";
+            description = ''
+              Command to paste from clipboard
+            '';
+          };
+        };
+      };
     };
   };
 
