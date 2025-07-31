@@ -25,7 +25,6 @@
     ./programs/magit.nix
     ./programs/mercurial.nix
     ./programs/mosh.nix
-    ./programs/neovim.nix
     ./programs/nix-index.nix
     ./programs/ripgrep.nix
     ./programs/rsync.nix
