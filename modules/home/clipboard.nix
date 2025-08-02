@@ -12,9 +12,6 @@ let
       exec ${wl-clipboard}/bin/wl-copy
     elif test -n "$DISPLAY"; then
       exec ${pkgs.xclip}/bin/xclip -selection clipboard
-    else
-      echo >&2 "Error: not a desktop?"
-      exit 1
     fi
   '';
 
@@ -24,9 +21,6 @@ let
       exec ${wl-clipboard}/bin/wl-paste
     elif test -n "$DISPLAY"; then
       exec ${pkgs.xclip}/bin/xclip -selection clipboard -o
-    else
-      echo >&2 "Error: not a desktop?"
-      exit 1
     fi
   '';
 in
