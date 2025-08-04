@@ -28,9 +28,17 @@ in
         "show-cryptographic-signatures" = config.programs.gpg.enable;
       };
 
-      aliases = {
-        diff-ls = [ "diff" "--summary" ];
-      };
+      aliases =
+        let
+          jjSnapshot = pkgs.writeScriptBin "jj-snapshot" ''
+            #!${pkgs.bash}/bin/bash
+            ${cfg.package}/bin/jj commit -m  "snapshot: $(${pkgs.coreutils}/bin/date +%s)"
+          '';
+        in
+        {
+          snapshot = [ "util" "exec" "--" "${jjSnapshot}/bin/jj-snapshot" ];
+          diff-ls = [ "diff" "--summary" ];
+        };
     };
   };
 
