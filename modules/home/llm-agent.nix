@@ -20,7 +20,6 @@
         - You SHOULD create temporary files in a directory name tmp/ and put .gitignore in it that ignores everything
         - You SHOULD ask the user to split the task if the task is deemed too long
         - You SHOULD ask the user if the instruction is unclear, need more context, or require any kind of user input
-        - You SHOULD discuss the changes with Gemini and ChatGPT (when available) when planning for changes
 
         ## Coding styles
 
@@ -30,6 +29,7 @@
         - You MUST NOT split functions into smaller functions unless instructed
         - You MAY run `gofmt` when working with Golang code
         - You MAY run `black` (`poetry run black`) when working with Python code
+        - You SHOULD only write test for public interfaces, not internal behavior (unless such behavior can be observed from public)
 
         ## Executing commands
 
