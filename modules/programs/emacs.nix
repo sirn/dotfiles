@@ -68,7 +68,7 @@ in
       nix-ts-mode
       ob-restclient
       orderless
-      origami
+      outline-indent
       parinfer-rust-mode
       pinentry
       prescient

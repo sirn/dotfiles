@@ -610,25 +610,21 @@ area."
 ;; --------------------------------------------------------------------------
 ;;; Code folding
 
-(use-package origami
+(use-package outline-indent
   :general
   (leader
-    "t o" #'origami-mode
-    "z z" #'origami-toggle-node
-    "z c" #'origami-close-node
-    "z o" #'origami-open-node
-    "z r" #'origami-open-all-nodes
-    "z m" #'origami-close-all-nodes
-    "z n" #'origami-next-fold
-    "z p" #'origami-previous-fold)
+    "t o" #'outline-indent-minor-mode
+    "z z" #'outline-toggle-children
+    "z c" #'outline-hide-subtree
+    "z o" #'outline-show-subtree
+    "z r" #'outline-show-all
+    "z m" #'outline-hide-body
+    "z n" #'outline-next-visible-heading
+    "z p" #'outline-previous-visible-heading)
 
   :preface
   (eval-when-compile
-    (declare-function origami-mode nil)
-    (declare-function global-origami-mode nil))
+    (declare-function outline-indent-minor-mode nil))
 
   :init
-  (add-hook 'prog-mode-hook #'origami-mode)
-
-  :config
-  (global-origami-mode +1))
+  (add-hook 'prog-mode-hook #'outline-indent-minor-mode))

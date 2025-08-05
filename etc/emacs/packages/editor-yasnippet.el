@@ -16,9 +16,7 @@
 
   :custom
   (yas-snippet-dirs
-   `(,(expand-file-name "~/.dotfiles/etc/emacs/snippets")
-     ,(expand-file-name "~/.local/share/emacs/snippets")
-     ,(expand-file-name "~/.local/share/yasnippets")))
+   `(,(expand-file-name "~/.dotfiles/etc/emacs/snippets")))
 
   :config
   (yas-reload-all)
