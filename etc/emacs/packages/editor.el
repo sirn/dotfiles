@@ -337,8 +337,13 @@ Other buffers are left alone."
   (eval-when-compile
     (declare-function marginalia-mode nil))
 
+  :custom
+  (marginalia-max-relative-age (* 60 60 24 7))
+  (marginalia-field-width 80)
+  (marginalia-separator "    ")
+
   :general
-  (:keymaps 'marginalia-mode-map
+  (:keymaps 'minibuffer-local-map
    "M-A" #'marginalia-cycle)
 
   :config
@@ -388,13 +393,13 @@ Other buffers are left alone."
    "M-r" #'consult-history)
 
   (leader
-    "SPC f"  #'consult-fd
-    "SPC b"  #'consult-buffer
-    "SPC o"  #'consult-outline
-    "w b" #'consult-buffer-other-window
-    "w B" #'consult-buffer-other-frame
-    "s r"  #'consult-ripgrep
-    "s g"  #'consult-grep)
+    "SPC f" #'consult-fd
+    "SPC b" #'consult-buffer
+    "SPC o" #'consult-outline
+    "w b"   #'consult-buffer-other-window
+    "w B"   #'consult-buffer-other-frame
+    "s s"   #'consult-ripgrep
+    "s g"   #'consult-grep)
 
   :custom
   (consult-fd-args '((if (locate-dominating-file default-directory ".git")
@@ -406,20 +411,13 @@ Other buffers are left alone."
   :demand t
 
   :general
-  ("C-." #'embark-act)
-  ("C-;" #'embark-dwim)
-  ("C-h B" #'embark-bindings)
+  (leader
+   "c e a" #'embark-act
+   "c e e" #'embark-dwim
+   "c e b" #'embark-bindings)
 
   (:keymaps 'minibuffer-local-map
-   "C-," #'embark-export)
-
-  :config
-  ;; Hide the mode line in the embark minibuffer
-  (add-to-list 'display-buffer-alist
-               '("\\`\\*Embark Actions\\*\\'"
-                 (display-buffer-with-side-window)
-                 (side . bottom)
-                 (window-height . 0.25))))
+   "C-," #'embark-export))
 
 
 (use-package embark-consult
@@ -525,7 +523,10 @@ Other buffers are left alone."
 (use-package flycheck
   :general
   (leader
-    "c e" '(:keymap flycheck-command-map))
+    "c f" '(:keymap flycheck-command-map))
+
+  (:keymaps 'flycheck-command-map
+   "f" #'flycheck-list-errors)
 
   :preface
   (eval-when-compile
@@ -560,10 +561,6 @@ nor requires Flycheck to be loaded."
   (setq flycheck-display-errors-delay 0.2))
 
 
-(use-package flycheck-posframe
-  :config
-  (with-eval-after-load 'ace-window
-    (add-to-list 'aw-ignored-buffers "*flycheck-posframe-buffer*")))
 
 
 (use-package eldoc
@@ -608,3 +605,30 @@ area."
   :config
   (global-tree-sitter-mode +1)
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+
+;; --------------------------------------------------------------------------
+;;; Code folding
+
+(use-package origami
+  :general
+  (leader
+    "t o" #'origami-mode
+    "z z" #'origami-toggle-node
+    "z c" #'origami-close-node
+    "z o" #'origami-open-node
+    "z r" #'origami-open-all-nodes
+    "z m" #'origami-close-all-nodes
+    "z n" #'origami-next-fold
+    "z p" #'origami-previous-fold)
+
+  :preface
+  (eval-when-compile
+    (declare-function origami-mode nil)
+    (declare-function global-origami-mode nil))
+
+  :init
+  (add-hook 'prog-mode-hook #'origami-mode)
+
+  :config
+  (global-origami-mode +1))

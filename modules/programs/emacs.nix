@@ -55,7 +55,6 @@ in
       flycheck
       flycheck-eglot
       flycheck-golangci-lint
-      flycheck-posframe
       flycheck-rust
       forge
       ghub
@@ -69,9 +68,9 @@ in
       nix-ts-mode
       ob-restclient
       orderless
+      origami
       parinfer-rust-mode
       pinentry
-      posframe
       prescient
       project
       psc-ide

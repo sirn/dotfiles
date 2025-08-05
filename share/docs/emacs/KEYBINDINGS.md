@@ -13,9 +13,6 @@ These keybindings are generally available in most modes.
 | `C-x C-f` | `project-find-file` | Find file in the current project. |
 | `C-x C-j` | `dired-jump` | Open directory of current buffer in Dired. |
 | `C-c C-d` | `helpful-at-point` | Show help for the symbol at point. |
-| `C-.` | `embark-act` | Show contextual actions for the item at point. |
-| `C-;` | `embark-dwim` | Execute the default action for the item at point. |
-| `C-h B` | `embark-bindings` | Show all possible Embark actions for the current context. |
 | `M-%` | `vr/query-replace` | `visual-regexp` query replace. |
 | `M-g g` | `consult-goto-line` | Go to a specific line number in the current buffer. |
 | `M-g i` | `consult-imenu` | Search for definitions/sections in the current buffer. |
@@ -53,6 +50,7 @@ The primary prefix for finding files, buffers, and managing projects.
 | `SPC k` | `kill-buffer` | Kill the current buffer. |
 | `SPC o` | `consult-outline` | Search for headings in the current buffer. |
 | `SPC p` | `(Prefix)` | Project-specific commands. |
+| `SPC p p` | `project-switch-project` | Switch to another project. |
 | `SPC p '` | `multi-vterm-project` | Open a terminal in the project root. |
 | `SPC p b` | `consult-project-buffer` | Find a buffer belonging to the current project. |
 | `SPC p d` | `project-dired` | Open project root in Dired. |
@@ -102,7 +100,12 @@ The primary prefix for finding files, buffers, and managing projects.
 
 | Key | Command | Description |
 | :--- | :--- | :--- |
-| `c e` | `(Prefix)` | Flycheck error-checking commands. |
+| `c e` | `(Prefix)` | Embark commands. |
+| `c e a` | `embark-act` | Show contextual actions for the item at point. |
+| `c e e` | `embark-dwim` | Execute the default action for the item at point. |
+| `c e b` | `embark-bindings` | Show all possible Embark actions for the current context. |
+| `c f` | `(Prefix)` | Flycheck error-checking commands. |
+| `c f f` | `flycheck-list-errors` | List all flycheck errors (main flycheck action). |
 | `c l` | `(Prefix)` | Eglot (LSP) commands. |
 | `c x` | `(Prefix)` | Xref (cross-reference) commands. |
 
@@ -153,6 +156,7 @@ The primary prefix for finding files, buffers, and managing projects.
 | Key | Command | Description |
 | :--- | :--- | :--- |
 | `h` | `(Prefix)` | `helpful` and other help commands. |
+| `h h` | `helpful-at-point` | Show help for symbol at point. |
 
 ### `o` - Org Mode
 
@@ -164,8 +168,8 @@ The primary prefix for finding files, buffers, and managing projects.
 
 | Key | Command | Description |
 | :--- | :--- | :--- |
+| `s s` | `consult-ripgrep` | Search project with `ripgrep` (main search). |
 | `s g` | `consult-grep` | Search project with `grep`. |
-| `s r` | `consult-ripgrep` | Search project with `ripgrep`. |
 | `s j` | `avy-goto-char` | Jump to a character on screen. |
 | `s J` | `avy-goto-char-2` | Jump to a 2-character sequence on screen. |
 | `s l` | `avy-goto-line` | Jump to a line on screen. |
@@ -177,6 +181,7 @@ The primary prefix for finding files, buffers, and managing projects.
 | :--- | :--- | :--- |
 | `t f` | `display-fill-column-indicator-mode` | Toggle the fill-column indicator. |
 | `t l` | `display-line-numbers-mode` | Toggle line numbers. |
+| `t o` | `origami-mode` | Toggle Origami code folding mode. |
 | `t t` | `dired-sidebar-toggle-with-current-directory` | Toggle Dired sidebar at current directory. |
 | `t T` | `dired-sidebar-toggle-sidebar` | Toggle Dired sidebar. |
 
@@ -193,3 +198,15 @@ The primary prefix for finding files, buffers, and managing projects.
 | `w D` | `delete-other-windows` | Delete all other windows. |
 | `w R` | `redraw-display` | Redraw the display. |
 | `w w` | `ace-window` | Select a window to switch to. |
+
+### `z` - Code Folding (Origami)
+
+| Key | Command | Description |
+| :--- | :--- | :--- |
+| `z z` | `origami-toggle-node` | Toggle fold at point (main folding action). |
+| `z c` | `origami-close-node` | Close fold at point. |
+| `z o` | `origami-open-node` | Open fold at point. |
+| `z r` | `origami-open-all-nodes` | Open all folds in buffer. |
+| `z m` | `origami-close-all-nodes` | Close all folds in buffer. |
+| `z n` | `origami-next-fold` | Move to next fold. |
+| `z p` | `origami-previous-fold` | Move to previous fold. |

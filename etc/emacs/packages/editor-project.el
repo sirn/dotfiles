@@ -18,8 +18,9 @@
     "f" #'gemacs--project-fd
     "g" #'consult-grep
     "m" #'magit-project-status
-    "r" #'consult-ripgrep
-    "s" #'gemacs--project-sync)
+    "p" #'project-switch-project
+    "s" #'consult-ripgrep
+    "S" #'gemacs--project-sync)
 
   :custom
   (project-vc-extra-root-markers '(".jj" "go.mod"))
@@ -51,10 +52,10 @@
       (consult-project-buffer "Project buffer" "b")
       (project-dired "Dired" "d")
       (consult-grep "Grep" "g")
-      (consult-ripgrep "Ripgrep" "r")
+      (consult-ripgrep "Ripgrep" "s")
       (magit-project-status "Magit status" "m")
       (multi-vterm-project "VTerm" "'")
-      (gemacs--project-sync "Sync projects" "s")))
+      (gemacs--project-sync "Sync projects" "S")))
 
   ;; project-find-file does not read gitignore for non-Git projects
   ;; instead of using project-find-file, we use consult-fd with

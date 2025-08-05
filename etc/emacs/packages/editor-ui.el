@@ -73,26 +73,6 @@
   (turn-on-pbcopy))
 
 
-(use-package posframe
-  :demand t
-
-  :preface
-  (eval-when-compile
-    (declare-function flycheck-posframe-mode nil)
-    (declare-function flycheck-posframe-configure-pretty-defaults nil))
-
-  :config
-  (with-eval-after-load 'flycheck
-    (when (posframe-workable-p)
-      (require 'flycheck-posframe)
-      (flycheck-posframe-configure-pretty-defaults)
-      (add-hook 'flycheck-mode-hook #'flycheck-posframe-mode)))
-
-  (with-eval-after-load 'ace-window
-    (when (posframe-workable-p)
-      (ace-window-posframe-mode +1))))
-
-
 ;; Builtin
 (use-package emacs
   :preface
