@@ -9,6 +9,7 @@
    "ww" #'ace-window)
 
   :config
+  (setq aw-scope 'frame)
   (setq aw-dispatch-always t))
 
 
