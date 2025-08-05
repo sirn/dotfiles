@@ -45,26 +45,16 @@
     (declare-function gemacs--project-switch-transient-menu nil))
 
   :config
-  (transient-define-prefix gemacs--project-switch-transient-menu ()
-    "Project commands"
-    ["Find & Search"
-     ("f" "Find file (fd)" gemacs--project-fd)
-     ("g" "Grep" consult-grep)
-     ("r" "Ripgrep" consult-ripgrep)]
-    ["Git & Buffers"
-     ("m" "Magit status" magit-project-status)
-     ("b" "Consult buffer" consult-project-buffer)]
-    ["Project Actions"
-     ("d" "Dired" project-dired)
-     ("'" "VTerm" multi-vterm-project)
-     ("s" "Sync projects" gemacs--project-sync)])
-
-  (defun gemacs--project-switch-command ()
-    "Switch to a project-specific command via a transient menu."
-    (interactive)
-    (gemacs--project-switch-transient-menu))
-
-  (setq project-switch-commands #'gemacs--project-switch-command)
+  (setq
+    project-switch-commands
+    '((gemacs--project-fd "Find file (fd)" "f")
+      (consult-project-buffer "Project buffer" "b")
+      (project-dired "Dired" "d")
+      (consult-grep "Grep" "g")
+      (consult-ripgrep "Ripgrep" "r")
+      (magit-project-status "Magit status" "m")
+      (multi-vterm-project "VTerm" "'")
+      (gemacs--project-sync "Sync projects" "s")))
 
   ;; project-find-file does not read gitignore for non-Git projects
   ;; instead of using project-find-file, we use consult-fd with
@@ -74,6 +64,7 @@
     (interactive)
     (when-let (proj (project-current t))
       (consult-fd (project-root proj))))
+
 
   ;; For custom projects without requiring .git
   ;; https://christiantietze.de/posts/2022/03/mark-local-project.el-directories/
@@ -107,57 +98,3 @@
              (pr (project-current nil dir)))
         (project-remember-project pr)))
     (message "Projects successfully synced")))
-
-
-;; --------------------------------------------------------------------------
-;;; Workspace
-
-(use-package tabspaces
-  :demand t
-
-  :general
-  (leader
-    "SPC t" '(:keymap tabspaces-command-map))
-
-  :preface
-  (eval-when-compile
-    (declare-function consult--buffer-state nil)
-    (declare-function consult--source-buffer nil)
-    (declare-function tabspaces-mode nil)
-    (declare-function tabspaces-project-switch-command nil)
-    (declare-function gemacs--tabspaces-init nil)
-    (declare-function gemacs--project-switch-command nil)
-    (defvar gemacs--tabspaces-consult-source)
-    (defvar tabspaces-default-tab)
-    (defvar tabspaces-remove-to-default)
-    (defvar tabspaces-use-filtered-buffers-as-default))
-
-  :init
-  (setq tabspaces-default-tab "default")
-  (setq tabspaces-use-filtered-buffers-as-default t)
-  (setq tabspaces-remove-to-default t)
-
-  (defun gemacs--tabspaces-init ()
-    (tabspaces-mode +1)
-    (tab-bar-rename-tab tabspaces-default-tab))
-
-  (add-hook 'gemacs-after-init-hook #'gemacs--tabspaces-init)
-
-  :config
-  (setq tabspaces-project-switch-commands #'gemacs--project-switch-command)
-
-  (with-eval-after-load 'consult
-    (consult-customize consult--source-buffer :hidden t :default nil)
-    (defvar gemacs--tabspaces-consult-source
-      (list
-       :name "Workspace Buffers"
-       :narrow ?w
-       :history 'buffer-name-history
-       :category 'buffer
-       :state #'consult--buffer-state
-       :default t
-       :items (lambda () (consult--buffer-query
-                          :predicate #'tabspaces--local-buffer-p
-                          :sort 'visibility
-                          :as #'buffer-name))))
-    (add-to-list 'consult-buffer-sources 'gemacs--tabspaces-consult-source)))

@@ -80,7 +80,6 @@ in
       restclient
       smartparens
       sql-indent
-      tabspaces
       telephone-line
       tree-sitter
       treesit-grammars.with-all-grammars
