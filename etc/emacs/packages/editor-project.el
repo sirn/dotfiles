@@ -9,7 +9,7 @@
   :general
   ("C-x C-f" #'project-find-file)
   (leader
-   "SPC p" '(:keymap project-prefix-map))
+   "p" '(:keymap project-prefix-map))
 
   (:keymaps 'project-prefix-map
     "'" #'multi-vterm-project

@@ -11,10 +11,10 @@
 (use-package emacs
   :general
   (leader
-    "SPC k" #'kill-buffer
-    "SPC S" #'gemacs--save-all-buffers
-    "SPC R" #'gemacs--revert-all-buffers
-    "SPC F" #'find-file
+    "b k" #'kill-buffer
+    "b S" #'gemacs--save-all-buffers
+    "b R" #'gemacs--revert-all-buffers
+    "f F" #'find-file
     "w-" #'split-window-below
     "w/" #'split-window-right
     "w=" #'balance-windows
@@ -291,7 +291,7 @@ Other buffers are left alone."
 
   :general
   (leader
-    "SPC p e" '(:keymap envrc-command-map))
+    "E" '(:keymap envrc-command-map))
 
   :init
   (defun gemacs--envrc-inject-emacs-bin-deps (&rest _)
@@ -393,13 +393,13 @@ Other buffers are left alone."
    "M-r" #'consult-history)
 
   (leader
-    "SPC f" #'consult-fd
-    "SPC b" #'consult-buffer
-    "SPC o" #'consult-outline
-    "w b"   #'consult-buffer-other-window
-    "w B"   #'consult-buffer-other-frame
-    "s s"   #'consult-ripgrep
-    "s g"   #'consult-grep)
+    "f f" #'consult-fd
+    "f o" #'consult-outline
+    "b b" #'consult-buffer
+    "w b" #'consult-buffer-other-window
+    "w B" #'consult-buffer-other-frame
+    "s s" #'consult-ripgrep
+    "s g" #'consult-grep)
 
   :custom
   (consult-fd-args '((if (locate-dominating-file default-directory ".git")

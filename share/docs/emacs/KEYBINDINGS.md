@@ -38,31 +38,51 @@ These bindings are active only when running Emacs on macOS.
 
 All custom commands are organized under the `<leader>` key, which is `SPC` (Spacebar). Prefixes are marked with `(Prefix)` and will show a `which-key` menu.
 
-### `SPC` - Workspace / Find
+### `SPC b` - Buffer Management
 
-The primary prefix for finding files, buffers, and managing projects.
+Buffer operations and management commands.
 
 | Key | Command | Description |
 | :--- | :--- | :--- |
-| `SPC b` | `consult-buffer` | Find buffer. |
-| `SPC f` | `consult-fd` | Find file using `fd`. |
-| `SPC F` | `find-file` | Find file. |
-| `SPC k` | `kill-buffer` | Kill the current buffer. |
-| `SPC o` | `consult-outline` | Search for headings in the current buffer. |
+| `SPC b b` | `consult-buffer` | Find buffer. |
+| `SPC b k` | `kill-buffer` | Kill the current buffer. |
+| `SPC b R` | `gemacs--revert-all-buffers` | Revert all file-visiting buffers. |
+| `SPC b S` | `gemacs--save-all-buffers` | Save all modified buffers. |
+
+### `SPC f` - File Operations
+
+File finding and navigation commands.
+
+| Key | Command | Description |
+| :--- | :--- | :--- |
+| `SPC f f` | `consult-fd` | Find file using `fd`. |
+| `SPC f F` | `find-file` | Find file. |
+| `SPC f o` | `consult-outline` | Search for headings in the current buffer. |
+
+### `SPC p` - Project Commands
+
+Project-specific commands and operations.
+
+| Key | Command | Description |
+| :--- | :--- | :--- |
 | `SPC p` | `(Prefix)` | Project-specific commands. |
 | `SPC p p` | `project-switch-project` | Switch to another project. |
 | `SPC p '` | `multi-vterm-project` | Open a terminal in the project root. |
 | `SPC p b` | `consult-project-buffer` | Find a buffer belonging to the current project. |
 | `SPC p d` | `project-dired` | Open project root in Dired. |
-| `SPC p e` | `(Prefix)` | `envrc` commands for managing environment variables. |
 | `SPC p f` | `gemacs--project-fd` | Find file in project using `fd`. |
 | `SPC p g` | `consult-grep` | Search project with `grep`. |
 | `SPC p m` | `magit-project-status` | Open Magit status for the project. |
 | `SPC p r` | `consult-ripgrep` | Search project with `ripgrep`. |
 | `SPC p s` | `gemacs--project-sync` | Sync known projects from `pom`. |
-| `SPC R` | `gemacs--revert-all-buffers` | Revert all file-visiting buffers. |
-| `SPC S` | `gemacs--save-all-buffers` | Save all modified buffers. |
-| `SPC t` | `(Prefix)` | Tabspaces (workspace) commands. |
+
+### `SPC E` - Environment
+
+Environment variable management commands.
+
+| Key | Command | Description |
+| :--- | :--- | :--- |
+| `SPC E` | `(Prefix)` | `envrc` commands for managing environment variables. |
 
 ### `'` - Terminal
 
