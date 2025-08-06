@@ -15,11 +15,6 @@
     (let ((default-directory org-directory))
       (call-interactively 'find-file)))
 
-  (defun gemacs--org-init-hook ()
-    "Initialize org by opening agenda and deleting other windows."
-    (org-agenda-list)
-    (delete-other-windows))
-
   (defun gemacs--org-agenda-mode-hook ()
     "Enable evil mode in org-agenda buffers and set to normal state."
     (with-eval-after-load 'evil
@@ -55,7 +50,6 @@
   (unless (file-directory-p org-directory)
     (make-directory org-directory t))
 
-  (add-hook 'gemacs-after-init-hook #'gemacs--org-init-hook)
   (add-hook 'org-agenda-mode-hook #'gemacs--org-agenda-mode-hook))
 
 
