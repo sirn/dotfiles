@@ -130,6 +130,7 @@ The default mode is `locked`, and most keybindings switch between modes.
 | `c` | Launch configuration plugin |
 | `d` | Detach session |
 | `p` | Launch plugin manager |
+| `q` | Quit Zellij |
 | `w` | Launch session manager |
 
 ## Normal Mode

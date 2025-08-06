@@ -146,6 +146,7 @@ in
           }
           SwitchToMode "locked"
         }
+        bind "q" { Quit; }
       }
       normal {
         bind "f" { ToggleFloatingPanes; SwitchToMode "locked"; }
