@@ -12,7 +12,7 @@
    "p" '(:keymap project-prefix-map))
 
   (:keymaps 'project-prefix-map
-    "'" #'gemacs--eat-project
+    "'" #'eat-project
     "b" #'consult-project-buffer
     "d" #'project-dired
     "f" #'gemacs--project-fd
@@ -37,7 +37,7 @@
     (declare-function consult-grep nil)
     (declare-function consult-ripgrep nil)
     (declare-function magit-project-status nil)
-    (declare-function gemacs--eat-project nil)
+    (declare-function eat-project nil)
     (declare-function project-dired nil)
     (declare-function project-read-project-name nil)
     (declare-function project-switch-project nil)
@@ -48,14 +48,24 @@
   :config
   (setq
     project-switch-commands
-    '((gemacs--project-fd "Find file (fd)" "f")
-      (consult-project-buffer "Project buffer" "b")
+    '((gemacs--project-fd "Fd" "f")
+      (project-find-file "Find file" "F")
+      (consult-project-buffer "Buffers" "b")
       (project-dired "Dired" "d")
       (consult-grep "Grep" "g")
       (consult-ripgrep "Ripgrep" "s")
-      (magit-project-status "Magit status" "m")
-      (gemacs--eat-project "Eat" "'")
+      (magit-project-status "Magit" "m")
+      (eat-project "Eat" "'")
       (gemacs--project-sync "Sync projects" "S")))
+
+  (defun gemacs--eat-project ()
+    "Start eat terminal in project root, or current directory if no project."
+    (interactive)
+    (let ((default-directory
+           (if-let ((project (project-current)))
+             (project-root project)
+             default-directory)))
+      (eat)))
 
   ;; project-find-file does not read gitignore for non-Git projects
   ;; instead of using project-find-file, we use consult-fd with
@@ -65,7 +75,6 @@
     (interactive)
     (when-let (proj (project-current t))
       (consult-fd (project-root proj))))
-
 
   ;; For custom projects without requiring .git
   ;; https://christiantietze.de/posts/2022/03/mark-local-project.el-directories/

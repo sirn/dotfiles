@@ -39,11 +39,7 @@
 (use-package eat
   :general
   (leader
-    "'v" #'eat
-    "''" #'gemacs--eat-project)
-
-  :custom
-  (eat-term-name "xterm-256color")
+    "''" #'eat)
 
   :preface
   (eval-when-compile
@@ -51,17 +47,10 @@
     (declare-function project-current nil)
     (declare-function project-root nil))
 
-  :init
-  (defun gemacs--eat-project ()
-    "Start eat terminal in project root, or current directory if no project."
-    (interactive)
-    (let ((default-directory
-           (if-let ((project (project-current)))
-             (project-root project)
-             default-directory)))
-      (eat)))
-
   :config
+  (setq eat-term-name "xterm-256color")
+  (setq eat-kill-buffer-on-exit t)
+
   (add-hook 'eat-mode-hook #'gemacs--term-setup)
 
   ;; Note: with-editor doesn't support eat just yet

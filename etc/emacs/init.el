@@ -72,7 +72,10 @@
 ;; --------------------------------------------------------------------------
 ;;; System
 
-(setenv "SHELL" (format "%s/.nix-profile/bin/fish" (getenv "HOME")))
+(let ((default-shell (format "%s/.nix-profile/bin/fish" (getenv "HOME"))))
+  (setenv "SHELL" default-shell)
+  (setq sh-shell-file default-shell)
+  (setq shell-file-name default-shell))
 
 
 ;; --------------------------------------------------------------------------

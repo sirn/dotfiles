@@ -67,7 +67,7 @@ Project-specific commands and operations.
 | :--- | :--- | :--- |
 | `SPC p` | `(Prefix)` | Project-specific commands. |
 | `SPC p p` | `project-switch-project` | Switch to another project. |
-| `SPC p '` | `gemacs--eat-project` | Open a terminal in the project root. |
+| `SPC p '` | `eat-project` | Open a terminal in the project root. |
 | `SPC p b` | `consult-project-buffer` | Find a buffer belonging to the current project. |
 | `SPC p d` | `project-dired` | Open project root in Dired. |
 | `SPC p f` | `gemacs--project-fd` | Find file in project using `fd`. |
@@ -88,9 +88,8 @@ Environment variable management commands.
 
 | Key | Command | Description |
 | :--- | :--- | :--- |
-| `' '` | `gemacs--eat-project` | Open a new `eat` terminal in project root. |
+| `' '` | `eat` | Open a new `eat` terminal. |
 | `' e` | `eshell` | Open `eshell`. |
-| `' v` | `eat` | Open a single `eat` terminal. |
 
 ### `a` - AI / LLM
 
