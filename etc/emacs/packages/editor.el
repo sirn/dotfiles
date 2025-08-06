@@ -306,14 +306,7 @@ Other buffers are left alone."
 
 
 (use-package with-editor
-  :demand t
-
-  :config
-  (remove-hook 'vterm-mode-hook 'with-editor-export-editor)
-  (add-hook 'vterm-mode-hook
-            (lambda ()
-              (unless (string-match-p "\\*claude-code\\[.*\\]\\*" (buffer-name))
-                (with-editor-export-editor)))))
+  :demand t)
 
 
 ;; --------------------------------------------------------------------------

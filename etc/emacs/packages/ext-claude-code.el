@@ -13,6 +13,5 @@
 
     :custom
     (claude-code-ide-window-side 'right)
-    (claude-code-ide-window-width 90)
     (claude-code-ide-focus-on-open t)
-    (claude-code-ide-terminal-backend 'vterm)))
+    (claude-code-ide-terminal-backend 'eat)))

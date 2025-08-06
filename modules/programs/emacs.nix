@@ -40,6 +40,7 @@ in
       ctrlf
       dired-sidebar
       dtrt-indent
+      eat
       editorconfig
       eldoc
       embark
@@ -64,7 +65,6 @@ in
       magit
       marginalia
       modus-themes
-      multi-vterm
       nix-ts-mode
       ob-restclient
       orderless
@@ -87,7 +87,6 @@ in
       vertico
       vertico-prescient
       visual-regexp
-      vterm
       w3m
       which-key
       yasnippet

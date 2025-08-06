@@ -12,7 +12,7 @@
    "p" '(:keymap project-prefix-map))
 
   (:keymaps 'project-prefix-map
-    "'" #'multi-vterm-project
+    "'" #'gemacs--eat-project
     "b" #'consult-project-buffer
     "d" #'project-dired
     "f" #'gemacs--project-fd
@@ -37,7 +37,7 @@
     (declare-function consult-grep nil)
     (declare-function consult-ripgrep nil)
     (declare-function magit-project-status nil)
-    (declare-function multi-vterm-project nil)
+    (declare-function gemacs--eat-project nil)
     (declare-function project-dired nil)
     (declare-function project-read-project-name nil)
     (declare-function project-switch-project nil)
@@ -54,7 +54,7 @@
       (consult-grep "Grep" "g")
       (consult-ripgrep "Ripgrep" "s")
       (magit-project-status "Magit status" "m")
-      (multi-vterm-project "VTerm" "'")
+      (gemacs--eat-project "Eat" "'")
       (gemacs--project-sync "Sync projects" "S")))
 
   ;; project-find-file does not read gitignore for non-Git projects
