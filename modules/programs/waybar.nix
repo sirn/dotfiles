@@ -71,6 +71,10 @@
     style = ./waybar.css;
   };
 
+  home.packages = with pkgs; [
+    font-awesome
+  ];
+
   wayland.windowManager.sway = {
     config = {
       bars = [ ];
