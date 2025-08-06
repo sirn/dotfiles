@@ -145,6 +145,12 @@ Environment variable management commands.
 | :--- | :--- | :--- |
 | `e u` | `undo-tree-visualize` | Open the undo-tree visualizer. |
 
+#### `e w` - Whitespace
+
+| Key | Command | Description |
+| :--- | :--- | :--- |
+| `e w` | `whitespace-cleanup` | Cleanup whitespace. |
+
 #### `e x` - eXpressions (Smartparens)
 
 | Key | Command | Description |

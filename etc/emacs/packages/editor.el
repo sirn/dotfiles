@@ -12,6 +12,7 @@
   :general
   (leader
     "b k" #'kill-buffer
+    "b r" #'revert-buffer
     "b S" #'gemacs--save-all-buffers
     "b R" #'gemacs--revert-all-buffers
     "f F" #'find-file
@@ -96,7 +97,8 @@ Other buffers are left alone."
 (use-package whitespace
   :general
   (leader
-    "tw" #'whitespace-mode)
+    "t w" #'whitespace-mode
+    "e w" #'whitespace-cleanup)
 
   :custom
   (whitespace-style '(face tabs tab-mark spaces space-mark trailing lines-tail))
