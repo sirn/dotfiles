@@ -6,16 +6,13 @@
 
 
 (defun gemacs--term-with-editor-setup ()
-  (unless (string-match-p "\\*claude-code\\[.*\\]\\*" (buffer-name))
-    (with-editor-export-editor)))
+  (with-eval-after-load 'with-editor
+    (unless (string-match-p "\\*claude-code\\[.*\\]\\*" (buffer-name))
+      (with-editor-export-editor))))
 
 
 ;; Builtin
 (use-package term
-  :init
-  (with-eval-after-load 'with-editor
-    (add-hook 'term-mode-hook #'with-editor-export-editor))
-
   :config
   (add-hook 'term-mode-hook #'gemacs--term-setup)
   (add-hook 'term-mode-hook #'gemacs--term-with-editor-setup))
@@ -26,10 +23,6 @@
   :general
   (leader
     "'e" #'eshell)
-
-  :init
-  (with-eval-after-load 'with-editor
-    (add-hook 'eshell-mode-hook #'with-editor-export-editor))
 
   :config
   (add-hook 'eshell-mode-hook #'gemacs--term-setup)
@@ -81,3 +74,13 @@
       (with-editor-export-editor-eat process)))
 
   (add-hook 'eat-exec-hook #'gemacs--eat-with-editor-setup))
+
+
+(use-package vterm
+  :general
+  (leader
+    "'v" #'vterm)
+
+  :config
+  (add-hook 'vterm-mode-hook #'gemacs--term-setup)
+  (add-hook 'vterm-mode-hook #'gemacs--term-with-editor-setup))

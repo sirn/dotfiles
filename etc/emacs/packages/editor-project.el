@@ -113,7 +113,7 @@
         (when-let ((project (project-current t)))
           (let ((default-directory (project-root project)))
             (require 'claude-code-ide)
-            (claude-code-ide--start-if-no-session)))
+            (claude-code-ide-continue)))
       (error "Claude Code is not enabled")))
 
   (defun gemacs--project-aidermacs-run ()

@@ -87,6 +87,7 @@ in
       vertico
       vertico-prescient
       visual-regexp
+      vterm
       w3m
       which-key
       yasnippet
