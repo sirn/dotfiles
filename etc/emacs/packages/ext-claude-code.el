@@ -9,6 +9,8 @@
       "a c" #'claude-code-ide-menu)
 
     :config
+    (when (fboundp 'gemacs--llm-env-from-auth-source)
+      (gemacs--llm-env-from-auth-source))
     (claude-code-ide-emacs-tools-setup)
 
     :custom

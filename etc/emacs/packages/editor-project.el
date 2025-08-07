@@ -13,10 +13,12 @@
 
   (:keymaps 'project-prefix-map
     "'" #'eat-project
+    "a" #'gemacs--project-aidermacs-run
     "b" #'consult-project-buffer
+    "c" #'gemacs--project-claude-code-ide-menu
     "d" #'project-dired
     "f" #'gemacs--project-fd
-    "g" #'consult-grep
+    "g" #'gemacs--project-gptel
     "m" #'magit-project-status
     "p" #'project-switch-project
     "s" #'consult-ripgrep
@@ -34,7 +36,6 @@
     (declare-function gemacs--project-sync nil)
     (declare-function gemacs--project-try-local nil)
     (declare-function consult-project-buffer nil)
-    (declare-function consult-grep nil)
     (declare-function consult-ripgrep nil)
     (declare-function magit-project-status nil)
     (declare-function eat-project nil)
@@ -43,29 +44,25 @@
     (declare-function project-switch-project nil)
     (declare-function gemacs--override-project-switch-project nil)
     (declare-function gemacs--project-switch-command nil)
-    (declare-function gemacs--project-switch-transient-menu nil))
+    (declare-function gemacs--project-switch-transient-menu nil)
+    (declare-function gemacs--project-claude-code-ide-menu nil)
+    (declare-function gemacs--project-aidermacs-run nil)
+    (declare-function gemacs--project-gptel nil))
 
   :config
   (setq
     project-switch-commands
-    '((gemacs--project-fd "Fd" "f")
-      (project-find-file "Find file" "F")
+    '((eat-project "Eat" "'")
+      (gemacs--project-aidermacs-run "Aidermacs" "a")
       (consult-project-buffer "Buffers" "b")
+      (gemacs--project-claude-code-ide-menu "Claude Code" "c")
       (project-dired "Dired" "d")
-      (consult-grep "Grep" "g")
-      (consult-ripgrep "Ripgrep" "s")
+      (gemacs--project-fd "Fd" "f")
+      (project-find-file "Find file" "F")
+      (gemacs--project-gptel "GPTel" "g")
       (magit-project-status "Magit" "m")
-      (eat-project "Eat" "'")
+      (consult-ripgrep "Ripgrep" "s")
       (gemacs--project-sync "Sync projects" "S")))
-
-  (defun gemacs--eat-project ()
-    "Start eat terminal in project root, or current directory if no project."
-    (interactive)
-    (let ((default-directory
-           (if-let ((project (project-current)))
-             (project-root project)
-             default-directory)))
-      (eat)))
 
   ;; project-find-file does not read gitignore for non-Git projects
   ;; instead of using project-find-file, we use consult-fd with
@@ -107,4 +104,32 @@
       (let* ((dir (abbreviate-file-name projdir))
              (pr (project-current nil dir)))
         (project-remember-project pr)))
-    (message "Projects successfully synced")))
+    (message "Projects successfully synced"))
+
+  (defun gemacs--project-claude-code-ide-menu ()
+    "Open claude-code-ide menu with project root as default directory."
+    (interactive)
+    (if (fboundp 'claude-code-ide-menu)
+        (when-let ((project (project-current t)))
+          (let ((default-directory (project-root project)))
+            (require 'claude-code-ide)
+            (claude-code-ide--start-if-no-session)))
+      (error "Claude Code is not enabled")))
+
+  (defun gemacs--project-aidermacs-run ()
+    "Run aidermacs-run with project root as default directory."
+    (interactive)
+    (if (fboundp 'aidermacs-run)
+        (when-let ((project (project-current t)))
+          (let ((default-directory (project-root project)))
+            (aidermacs-run)))
+      (error "Aidermacs is not enabled")))
+
+  (defun gemacs--project-gptel ()
+    "Open gptel with project root as default directory."
+    (interactive)
+    (if (fboundp 'gptel)
+        (when-let ((project (project-current t)))
+          (let ((default-directory (project-root project)))
+            (gptel)))
+      (error "GPTel is not enabled"))))

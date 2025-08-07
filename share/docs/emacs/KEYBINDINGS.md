@@ -68,13 +68,15 @@ Project-specific commands and operations.
 | `SPC p` | `(Prefix)` | Project-specific commands. |
 | `SPC p p` | `project-switch-project` | Switch to another project. |
 | `SPC p '` | `eat-project` | Open a terminal in the project root. |
+| `SPC p a` | `gemacs--project-aidermacs-run` | Run Aidermacs in the project root. |
 | `SPC p b` | `consult-project-buffer` | Find a buffer belonging to the current project. |
+| `SPC p c` | `gemacs--project-claude-code-ide-menu` | Open Claude Code IDE menu in the project root. |
 | `SPC p d` | `project-dired` | Open project root in Dired. |
 | `SPC p f` | `gemacs--project-fd` | Find file in project using `fd`. |
-| `SPC p g` | `consult-grep` | Search project with `grep`. |
+| `SPC p g` | `gemacs--project-gptel` | Open GPTel in the project root. |
 | `SPC p m` | `magit-project-status` | Open Magit status for the project. |
-| `SPC p r` | `consult-ripgrep` | Search project with `ripgrep`. |
-| `SPC p s` | `gemacs--project-sync` | Sync known projects from `pom`. |
+| `SPC p s` | `consult-ripgrep` | Search project with `ripgrep`. |
+| `SPC p S` | `gemacs--project-sync` | Sync known projects from `pom`. |
 
 ### `SPC E` - Environment
 
@@ -194,7 +196,6 @@ Environment variable management commands.
 | Key | Command | Description |
 | :--- | :--- | :--- |
 | `s s` | `consult-ripgrep` | Search project with `ripgrep` (main search). |
-| `s g` | `consult-grep` | Search project with `grep`. |
 | `s j` | `avy-goto-char` | Jump to a character on screen. |
 | `s J` | `avy-goto-char-2` | Jump to a 2-character sequence on screen. |
 | `s l` | `avy-goto-line` | Jump to a line on screen. |

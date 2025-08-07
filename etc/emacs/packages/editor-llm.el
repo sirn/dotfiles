@@ -1,5 +1,15 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
+
+(defun gemacs--llm-env-from-auth-source ()
+  (dolist (api-config '(("openrouter.ai" . "OPENROUTER_API_KEY")
+                        ("api.anthropic.com" . "ANTHROPIC_API_KEY")
+                        ("generativelanguage.googleapis.com" . "GEMINI_API_KEY")
+                        ("api.openai.com" . "OPENAI_API_KEY")))
+    (when-let ((key (auth-source-pick-first-password :host (car api-config) :user "apikey")))
+      (setenv (cdr api-config) key))))
+
+
 (use-package gptel
   :defer 1
 
@@ -108,7 +118,10 @@
 
   (add-hook 'gptel-mode-hook #'gemacs--gptel-initialize-buffer)
 
-  (setq gptel-backend gemacs--gptel-gemini-backend))
+  (setq gptel-backend gemacs--gptel-gemini-backend)
+
+  :config
+  (gemacs--llm-env-from-auth-source))
 
 
 (use-package aidermacs
@@ -133,12 +146,5 @@
   (advice-add 'aidermacs-run :around #'gemacs--aidermacs-run-around)
 
   :config
-  ;; Set environment variables for API keys if they exist in auth-source
-  (dolist (api-config '(("openrouter.ai" . "OPENROUTER_API_KEY")
-                        ("api.anthropic.com" . "ANTHROPIC_API_KEY")
-                        ("generativelanguage.googleapis.com" . "GEMINI_API_KEY")
-                        ("api.openai.com" . "OPENAI_API_KEY")))
-    (when-let ((key (auth-source-pick-first-password :host (car api-config) :user "apikey")))
-      (setenv (cdr api-config) key)))
-
+  (gemacs--llm-env-from-auth-source)
   (setq aidermacs-chat-completion-function 'aidermacs-chat-completion-with-gptel))

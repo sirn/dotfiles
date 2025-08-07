@@ -400,8 +400,7 @@ Other buffers are left alone."
     "b b" #'consult-buffer
     "w b" #'consult-buffer-other-window
     "w B" #'consult-buffer-other-frame
-    "s s" #'consult-ripgrep
-    "s g" #'consult-grep)
+    "s s" #'consult-ripgrep)
 
   :custom
   (consult-fd-args '((if (locate-dominating-file default-directory ".git")
