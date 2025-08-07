@@ -104,6 +104,9 @@ in
         # Don't auto commit.
         auto-commits = false;
         dirty-commits = false;
+
+        # Don't use Git root, use the directory I've given to you.
+        subtree-only = true;
       };
     };
 
