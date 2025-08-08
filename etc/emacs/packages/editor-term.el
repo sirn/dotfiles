@@ -1,13 +1,27 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
+
+(defun gemacs--term-is-with-editor-safe-p (buffer-name)
+  "Returns whether term is `with-editor'-safe."
+  (string-match-p
+   (rx "*"
+     (or
+       (seq "claude-code" "[" (zero-or-more nonl) "]")
+       (seq "aidermacs:" (zero-or-more nonl)))
+     "*")
+   buffer-name))
+
+
 (defun gemacs--term-setup ()
+  "Setup initial terminal state."
   (setq-local evil-insert-state-cursor 'box)
   (evil-insert-state))
 
 
 (defun gemacs--term-with-editor-setup ()
+  "Setup `with-editor' but only when it is safe to do so."
   (with-eval-after-load 'with-editor
-    (unless (string-match-p "\\*claude-code\\[.*\\]\\*" (buffer-name))
+    (unless (gemacs--term-is-with-editor-safe-p (buffer-name))
       (with-editor-export-editor))))
 
 
@@ -70,7 +84,7 @@
     (message "Successfully exported %s" envvar))
 
   (defun gemacs--eat-with-editor-setup (process)
-    (unless (string-match-p "\\*claude-code\\[.*\\]\\*" (buffer-name))
+    (unless (gemacs--term-is-with-editor-safe-p (buffer-name))
       (with-editor-export-editor-eat process)))
 
   (add-hook 'eat-exec-hook #'gemacs--eat-with-editor-setup))
