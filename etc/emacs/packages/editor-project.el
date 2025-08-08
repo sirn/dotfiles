@@ -15,7 +15,8 @@
     "'" #'eat-project
     "a" #'gemacs--project-aidermacs-run
     "b" #'consult-project-buffer
-    "c" #'gemacs--project-claude-code-ide-menu
+    "c" #'gemacs--project-claude-code-ide
+    "C" #'gemacs--project-claude-code-ide-continue
     "d" #'project-dired
     "f" #'gemacs--project-fd
     "g" #'gemacs--project-gptel
@@ -42,27 +43,63 @@
     (declare-function project-dired nil)
     (declare-function project-read-project-name nil)
     (declare-function project-switch-project nil)
-    (declare-function gemacs--override-project-switch-project nil)
     (declare-function gemacs--project-switch-command nil)
     (declare-function gemacs--project-switch-transient-menu nil)
-    (declare-function gemacs--project-claude-code-ide-menu nil)
+    (declare-function gemacs--project-switch-smuggle-chosen-project nil)
+    (declare-function gemacs--project-claude-code-ide nil)
+    (declare-function gemacs--project-claude-code-ide-continue nil)
     (declare-function gemacs--project-aidermacs-run nil)
     (declare-function gemacs--project-gptel nil))
 
   :config
-  (setq
-    project-switch-commands
-    '((eat-project "Eat" "'")
-      (gemacs--project-aidermacs-run "Aidermacs" "a")
-      (consult-project-buffer "Buffers" "b")
-      (gemacs--project-claude-code-ide-menu "Claude Code" "c")
-      (project-dired "Dired" "d")
-      (gemacs--project-fd "Fd" "f")
-      (project-find-file "Find file" "F")
-      (gemacs--project-gptel "GPTel" "g")
-      (magit-project-status "Magit" "m")
-      (consult-ripgrep "Ripgrep" "s")
-      (gemacs--project-sync "Sync projects" "S")))
+  (require 'transient)
+
+  ;; https://codeberg.org/woolsweater/.emacs.d/src/commit/f7d1adab1784627903a7c44e19c3bc91c877283b/startup/builtin.el
+  (defun gemacs--project-switch-smuggle-chosen-project (&rest _args)
+    "Ensure project-current-directory-override persists across transient invocations."
+    (when project-current-directory-override
+      (let ((pre (intern "gemacs--project-switch--pre-command-hook"))
+            (on-exit (intern "gemacs--project-switch--transient-exit-hook"))
+            (orig-buffer (current-buffer))
+            (proj project-current-directory-override))
+        (fset pre
+              (lambda ()
+                (with-current-buffer orig-buffer
+                  (setq-local project-current-directory-override proj))))
+        (fset on-exit
+              (lambda ()
+                (with-current-buffer orig-buffer
+                  (kill-local-variable 'project-current-directory-override))
+                (remove-hook 'transient-exit-hook on-exit)
+                (remove-hook 'pre-command-hook pre)))
+        (add-hook 'pre-command-hook pre)
+        (add-hook 'transient-exit-hook on-exit))))
+
+  (transient-define-prefix gemacs--project-switch-transient-menu ()
+    "Project commands"
+    ["Find & Search"
+     ("b" "Buffers" consult-project-buffer)
+     ("d" "Dired" project-dired)
+     ("f" "Find file (fd)" gemacs--project-fd)
+     ("F" "Find file" project-find-file)
+     ("s" "Ripgrep" consult-ripgrep)]
+    ["Coding Assistant"
+     ("a" "Aidermacs" gemacs--project-aidermacs-run)
+     ("c" "Claude Code" gemacs--project-claude-code-ide)
+     ("C" "Claude Code (continue)" gemacs--project-claude-code-ide-continue)
+     ("g" "GPTel" gemacs--project-gptel)]
+    ["Tools"
+     ("m" "Magit" magit-project-status)
+     ("'" "Terminal (Eat)" eat-project)]
+    ["Maintenance"
+     ("S" "Sync projects" gemacs--project-sync)])
+
+  (defun gemacs--project-switch-command ()
+    (interactive)
+    (gemacs--project-switch-smuggle-chosen-project)
+    (gemacs--project-switch-transient-menu))
+
+  (setq project-switch-commands #'gemacs--project-switch-command)
 
   ;; project-find-file does not read gitignore for non-Git projects
   ;; instead of using project-find-file, we use consult-fd with
@@ -106,15 +143,21 @@
         (project-remember-project pr)))
     (message "Projects successfully synced"))
 
-  (defun gemacs--project-claude-code-ide-menu ()
-    "Open claude-code-ide menu with project root as default directory."
+  (defun gemacs--project-claude-code-ide ()
+    "Open claude-code-ide with project root as default directory."
     (interactive)
-    (if (fboundp 'claude-code-ide-menu)
-        (when-let ((project (project-current t)))
-          (let ((default-directory (project-root project)))
-            (require 'claude-code-ide)
-            (claude-code-ide-continue)))
-      (error "Claude Code is not enabled")))
+    (require 'claude-code-ide)
+    (when-let ((project (project-current t)))
+      (let ((default-directory (project-root project)))
+        (claude-code-ide))))
+
+  (defun gemacs--project-claude-code-ide-continue ()
+    "Continue claude-code-ide with project root as default directory."
+    (interactive)
+    (require 'claude-code-ide)
+    (when-let ((project (project-current t)))
+      (let ((default-directory (project-root project)))
+        (claude-code-ide-continue))))
 
   (defun gemacs--project-aidermacs-run ()
     "Run aidermacs-run with project root as default directory."
