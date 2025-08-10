@@ -1,14 +1,16 @@
 { lib, pkgs, ... }:
 
+let
+  npxGemini = pkgs.writeScriptBin "gemini" ''
+    #!${pkgs.bash}/bin/bash
+    # Runs Gemini from Npx
+    export PATH=${pkgs.nodejs_20}/bin:${pkgs.local.wrapped-uv}/bin:$PATH
+    exec ${pkgs.nodejs_20}/bin/npx --yes @google/gemini-cli "$@"
+  '';
+in
 {
   home.packages = with pkgs; [
-    (pkgs.unstable.gemini-cli.overrideDerivation (attrs: {
-      postInstall = attrs.postInstall + ''
-        wrapProgram $out/bin/gemini \
-          --prefix PATH : ${pkgs.nodejs}/bin \
-          --prefix PATH : ${pkgs.local.wrapped-uv}/bin
-      '';
-    }))
+    npxGemini
   ];
 
   programs.git = {
