@@ -17,8 +17,6 @@
 (use-package evil-collection
   :after evil
 
-  :defer 1
-
   :preface
   (eval-when-compile
     (declare-function evil-collection-init nil))
@@ -29,8 +27,6 @@
 
 (use-package evil-commentary
   :after evil
-
-  :defer 1
 
   :preface
   (eval-when-compile
@@ -43,8 +39,6 @@
 (use-package evil-mc
   :after evil
 
-  :defer 1
-
   :preface
   (eval-when-compile
     (declare-function global-evil-mc-mode nil))
@@ -55,8 +49,6 @@
 
 (use-package evil-matchit
   :after evil
-
-  :defer 1
 
   :preface
   (eval-when-compile
@@ -69,8 +61,6 @@
 (use-package evil-surround
   :after evil
 
-  :defer 1
-
   :preface
   (eval-when-compile
     (declare-function global-evil-surround-mode nil))
@@ -81,8 +71,6 @@
 
 (use-package evil-org
   :after evil
-
-  :defer 1
 
   :preface
   (eval-when-compile

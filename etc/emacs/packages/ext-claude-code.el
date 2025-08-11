@@ -2,8 +2,6 @@
 
 (gemacs-when-compiletime (executable-find "claude")
   (use-package claude-code-ide
-    :defer t
-
     :general
     (leader
       "a c" #'claude-code-ide-menu)

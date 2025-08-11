@@ -1,4 +1,4 @@
-;; -*- lexical-binding: t; no-native-compile: t -*-
+ ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 
 (defun gemacs--llm-env-from-auth-source ()
@@ -11,8 +11,6 @@
 
 
 (use-package gptel
-  :defer 1
-
   :general
   (leader
     "a g" #'gemacs--gptel-transient-menu)
@@ -125,8 +123,6 @@
 
 
 (use-package aidermacs
-  :defer t
-
   :general
   (leader
     "a a" #'aidermacs-transient-menu)
