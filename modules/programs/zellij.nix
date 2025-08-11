@@ -261,7 +261,12 @@ in
       executable = true;
       text = ''
         #!/bin/sh -l
-        exec ${cfg.package}/bin/zellij attach main -c
+        SESSION=$1
+        if [ -z "$SESSION" ]; then
+          SESSION=main
+        fi
+
+        exec ${cfg.package}/bin/zellij attach "$SESSION" -c
       '';
     };
   };
