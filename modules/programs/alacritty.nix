@@ -2,19 +2,14 @@
 
 let
   cfg = config.programs.alacritty;
-
-  tomlFormat = pkgs.formats.toml { };
-
-  alacrittyBin =
-    if config.machine.isNixOS || pkgs.stdenv.isDarwin
-    then "${cfg.package}/bin/alacritty"
-    else "alacritty";
 in
 {
   programs.alacritty = {
-    # Alacritty depends on GL stuff, which means we can't use Nix packages
-    # on a non-NixOS or non-Darwin due to a library mismatch.
-    enable = config.machine.isNixOS || pkgs.stdenv.isDarwin;
+    enable = true;
+
+    # If NixGL is configured (i.e. non-NixOS), wrap with NixGL
+    # so OpenGL/Vulkan libraries are available.
+    package = config.lib.nixGL.wrap pkgs.alacritty;
 
     settings = {
       window =
@@ -70,31 +65,15 @@ in
     };
   };
 
-  # For non-NixOS and non-Darwin, only configure.
-  xdg.configFile = lib.mkIf
-    (!cfg.enable)
-    {
-      "alacritty/alacritty.toml" = lib.mkIf (cfg.settings != { }) {
-        source =
-          (tomlFormat.generate "alacritty.toml" cfg.settings).overrideAttrs
-            (finalAttrs: prevAttrs: {
-              buildCommand = lib.concatStringsSep "\n" [
-                prevAttrs.buildCommand
-                "substituteInPlace $out --replace '\\\\' '\\'"
-              ];
-            });
-      };
-    };
-
   wayland.windowManager.sway =
     let
       swaycfg = config.wayland.windowManager.sway.config;
     in
     {
       config = {
-        terminal = alacrittyBin;
+        terminal = lib.getExe cfg.package;
         keybindings = {
-          "${swaycfg.modifier}+Return" = "exec ${alacrittyBin}";
+          "${swaycfg.modifier}+Return" = "exec ${lib.getExe cfg.package}";
         };
       };
     };
@@ -102,7 +81,7 @@ in
   programs.fuzzel = {
     settings = {
       main = {
-        terminal = alacrittyBin;
+        terminal = lib.getExe cfg.package;
       };
     };
   };

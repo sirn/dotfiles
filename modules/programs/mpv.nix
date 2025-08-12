@@ -1,32 +1,12 @@
 { config, lib, pkgs, ... }:
 
-let
-  # Copied from home-manager/modules/programs/mpv.nix
-  renderOption = with lib; option:
-    rec {
-      int = toString option;
-      float = int;
-      bool = lib.hm.booleans.yesNo option;
-      string = option;
-    }.${builtins.typeOf option};
-
-  renderOptionValue = with lib; value:
-    let
-      rendered = renderOption value;
-      length = toString (builtins.stringLength rendered);
-    in
-    "%${length}%${rendered}";
-
-  renderOptions = with lib; generators.toKeyValue {
-    mkKeyValue = generators.mkKeyValueDefault { mkValueString = renderOptionValue; } "=";
-    listsAsDuplicateKeys = true;
-  };
-in
 {
   programs.mpv = {
-    # On a non-NixOS, enabling mpv via Home-Manager can cause mpv
-    # to fallback to vo=xv, which is bad.
-    enable = config.machine.isNixOS;
+    enable = true;
+
+    # If NixGL is configured (i.e. non-NixOS), wrap with NixGL
+    # so OpenGL/Vulkan libraries are available.
+    package = config.lib.nixGL.wrap pkgs.mpv;
 
     profiles = lib.mkIf pkgs.stdenv.isLinux {
       hdr = {
@@ -45,26 +25,5 @@ in
         gpu-api = "vulkan";
       })
     ];
-  };
-
-  # On a non-NixOS, we only configure MPV without installing
-  # the package (mpv should be installed via system's package
-  # manager).
-  xdg = lib.mkIf (!config.machine.isNixOS) {
-    configFile = {
-      "mpv/mpv.conf" = {
-        text = with lib;
-          let
-            cfg = config.programs.mpv;
-          in
-          ''
-            ${lib.optionalString
-              (cfg.defaultProfiles != [ ])
-              (renderOptions { profile = lib.concatStringsSep "," cfg.defaultProfiles; })}
-            ${lib.optionalString (cfg.config != { }) (renderOptions cfg.config)}
-            ${lib.optionalString (cfg.profiles != { }) (renderOptions cfg.profiles)}
-          '';
-      };
-    };
   };
 }

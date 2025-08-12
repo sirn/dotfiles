@@ -2,15 +2,14 @@
 
 let
   cfg = config.programs.looking-glass-client;
-  settingsFormat = pkgs.formats.ini { };
 in
 {
   programs.looking-glass-client = {
-    # Looking Glass requires EGL, which doesn't work when versions between
-    # Nix and the host mismatched. Only enable on NixOS.
-    enable = config.machine.isNixOS;
+    enable = true;
 
-    package = pkgs.looking-glass-client;
+    # If NixGL is configured (i.e. non-NixOS), wrap with NixGL
+    # so OpenGL/Vulkan libraries are available.
+    package = config.lib.nixGL.wrap pkgs.looking-glass-client;
 
     settings = {
       input = {
@@ -29,15 +28,6 @@ in
 
       egl = {
         scale = 2;
-      };
-    };
-  };
-
-  # Configure-only when included
-  xdg = lib.mkIf (!config.programs.looking-glass-client.enable) {
-    configFile = {
-      "looking-glass/client.ini" = lib.mkIf (cfg.settings != { }) {
-        source = settingsFormat.generate ("looking-glass-client.ini") cfg.settings;
       };
     };
   };

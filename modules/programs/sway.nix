@@ -10,12 +10,9 @@
       xdgAutostart = true;
     };
 
-    package =
-      # Sway requires matching the system libraries (GL and such)
-      # using NixOS package on non-NixOS can lead to surprises
-      if config.machine.isNixOS
-      then pkgs.sway
-      else null;
+    # If NixGL is configured (i.e. non-NixOS), wrap with NixGL
+    # so OpenGL/Vulkan libraries are available.
+    package = config.lib.nixGL.wrap pkgs.sway;
 
     config =
       let

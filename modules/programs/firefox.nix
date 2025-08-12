@@ -6,9 +6,13 @@ in
 {
   programs.firefox = {
     enable = true;
+
+    # If NixGL is configured (i.e. non-NixOS), wrap with NixGL
+    # so OpenGL/Vulkan libraries are available. On Darwin,
+    # we only configure Firefox.
     package = lib.mkDefault
-      (if config.machine.isNixOS
-      then pkgs.firefox
+      (if pkgs.stdenv.isLinux
+      then config.lib.nixGL.wrap pkgs.firefox
       else null);
 
     # By default, this is set to 2, which fails on non-NixOS Firefox

@@ -48,7 +48,7 @@ Create a file named `local.nix` to have a machine-specific configuration that is
   ];
 
   # Prevent installation of nix packages that are known to be problematic
-  # on a non-NixOS (e.g. depending on GL libraries).
+  # on a non-NixOS (e.g. require PAM).
   machine.isNixOS = false;
 }
 ```
