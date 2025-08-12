@@ -14,9 +14,14 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nixgl = {
+      url = "github:nix-community/nixGL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, nixpkgs-unstable, home-manager, nix-index-database, ... }@inputs:
+  outputs = { nixpkgs, nixpkgs-unstable, home-manager, nix-index-database, nixgl, ... }@inputs:
     let
       config = {
         allowUnfree = true;
@@ -26,6 +31,7 @@
       };
 
       overlays = [
+        nixgl.overlay
         (final: prev: {
           local = import ./pkgs {
             pkgs = final;
