@@ -1,6 +1,5 @@
  ;; -*- lexical-binding: t; no-native-compile: t -*-
 
-
 (defun gemacs--llm-env-from-auth-source ()
   (dolist (api-config '(("openrouter.ai" . "OPENROUTER_API_KEY")
                         ("api.anthropic.com" . "ANTHROPIC_API_KEY")
@@ -25,44 +24,6 @@
 
   :init
   (require 'transient)
-
-  (defvar gemacs--gptel-anthropic-backend
-    (gptel-make-anthropic "Anthropic"
-      :key #'gptel-api-key-from-auth-source
-      :stream t
-      :models
-      '(claude-opus-4-0
-        claude-sonnet-4-0
-        claude-3-7-sonnet-latest
-        claude-3-5-haiku-latest)))
-
-  (defvar gemacs--gptel-gemini-backend
-    (gptel-make-gemini "Gemini"
-      :key #'gptel-api-key-from-auth-source
-      :stream t
-      :models
-      '(gemini-2.5-pro
-        gemini-2.5-flash)))
-
-  (defvar gemacs--gptel-openai-backend
-    (gptel-make-openai "OpenAI"
-      :key #'gptel-api-key-from-auth-source
-      :stream t
-      :models
-      '(o3-pro
-        o3
-        o4-mini
-        gpt-4.1)))
-
-  (defvar gemacs--gptel-openrouter-backend
-    (gptel-make-openai "OpenRouter"
-      :host "openrouter.ai"
-      :endpoint "/api/v1/chat/completions"
-      :key #'gptel-api-key-from-auth-source
-      :stream t
-      :models
-      '(meta-llama/llama-4-maverick
-        meta-llama/llama-4-scout)))
 
   (defun gemacs--gptel-set-backend (backend &optional model)
     "Set the gptel backend to BACKEND and MODEL if provided."
@@ -116,9 +77,46 @@
 
   (add-hook 'gptel-mode-hook #'gemacs--gptel-initialize-buffer)
 
-  (setq gptel-backend gemacs--gptel-gemini-backend)
-
   :config
+  (defvar gemacs--gptel-anthropic-backend
+    (gptel-make-anthropic "Anthropic"
+      :key #'gptel-api-key-from-auth-source
+      :stream t
+      :models
+      '(claude-opus-4-0
+        claude-sonnet-4-0
+        claude-3-7-sonnet-latest
+        claude-3-5-haiku-latest)))
+
+  (defvar gemacs--gptel-gemini-backend
+    (gptel-make-gemini "Gemini"
+      :key #'gptel-api-key-from-auth-source
+      :stream t
+      :models
+      '(gemini-2.5-pro
+        gemini-2.5-flash)))
+
+  (defvar gemacs--gptel-openai-backend
+    (gptel-make-openai "OpenAI"
+      :key #'gptel-api-key-from-auth-source
+      :stream t
+      :models
+      '(o3-pro
+        o3
+        o4-mini
+        gpt-4.1)))
+
+  (defvar gemacs--gptel-openrouter-backend
+    (gptel-make-openai "OpenRouter"
+      :host "openrouter.ai"
+      :endpoint "/api/v1/chat/completions"
+      :key #'gptel-api-key-from-auth-source
+      :stream t
+      :models
+      '(meta-llama/llama-4-maverick
+        meta-llama/llama-4-scout)))
+
+  (setq gptel-backend gemacs--gptel-gemini-backend)
   (gemacs--llm-env-from-auth-source))
 
 
