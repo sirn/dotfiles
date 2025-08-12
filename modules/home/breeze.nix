@@ -59,11 +59,11 @@
             ${gsettingsBin} set org.gnome.desktop.interface color-scheme ${colorScheme}
             ${gsettingsBin} set org.gnome.desktop.interface cursor-size 24
             ${gsettingsBin} set org.gnome.desktop.interface cursor-theme "breeze_cursors"
-            ${gsettingsBin} set org.gnome.desktop.interface document-font-name "Noto Sans 10"
-            ${gsettingsBin} set org.gnome.desktop.interface font-name "Noto Sans 10"
+            ${gsettingsBin} set org.gnome.desktop.interface document-font-name "sans-serif 10"
+            ${gsettingsBin} set org.gnome.desktop.interface font-name "sans-serif 10"
             ${gsettingsBin} set org.gnome.desktop.interface gtk-theme "Breeze"
             ${gsettingsBin} set org.gnome.desktop.interface icon-theme "Breeze"
-            ${gsettingsBin} set org.gnome.desktop.interface monospace-font-name "Hack 10"
+            ${gsettingsBin} set org.gnome.desktop.interface monospace-font-name "monospace 10"
           }
 
           setupBreeze
