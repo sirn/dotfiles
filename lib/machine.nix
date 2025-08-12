@@ -15,6 +15,42 @@ in
         '';
       };
 
+      desktop = {
+        preferDark = mkOption {
+          type = types.bool;
+          default = false;
+          description = ''
+            Whether to prefer dark theme
+          '';
+        };
+
+        defaultFonts = {
+          sansSerif = mkOption {
+            type = types.str;
+            default = "Noto Sans";
+            description = ''
+              Default Sans Serif font.
+            '';
+          };
+
+          serif = mkOption {
+            type = types.str;
+            default = "Noto Serif";
+            description = ''
+              Default Serif font.
+            '';
+          };
+
+          monospace = mkOption {
+            type = types.str;
+            default = "Hack";
+            description = ''
+              Default Monospace font.
+            '';
+          };
+        };
+      };
+
       clipboard = {
         copy = {
           command = mkOption {

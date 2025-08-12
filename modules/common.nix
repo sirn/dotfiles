@@ -1,6 +1,7 @@
 {
   imports = [
     ./home/clipboard.nix
+    ./home/colors.nix
     ./home/email.nix
     ./home/llm-agent.nix
     ./home/shell.nix

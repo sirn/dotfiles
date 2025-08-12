@@ -13,40 +13,6 @@ in
     # On non-NixOS, this should be installed using OS package manager.
     package = pkgs.unstable.wezterm;
 
-    colorSchemes = {
-      foot = {
-        ansi = [
-          "#242424"
-          "#f62b5a"
-          "#47b413"
-          "#e3c401"
-          "#24acd4"
-          "#f2affd"
-          "#13c299"
-          "#e6e6e6"
-        ];
-        brights = [
-          "#616161"
-          "#ff4d51"
-          "#35d450"
-          "#e9e836"
-          "#5dc5f8"
-          "#feabf2"
-          "#24dfc4"
-          "#ffffff"
-        ];
-
-        background = "#242424";
-        cursor_bg = "#ffffff";
-        cursor_border = "#ffffff";
-        cursor_fg = "#242424";
-        foreground = "#ffffff";
-        scrollbar_thumb = "#d1d1d1";
-        selection_bg = "#d1d1d1";
-        selection_fg = "#242424";
-      };
-    };
-
     extraConfig = ''
       local config = wezterm.config_builder()
       local shell = "${config.programs.fish.package}/bin/fish"
@@ -55,7 +21,7 @@ in
         'Source Han Code JP',
       })
 
-      config.color_scheme = 'foot'
+      config.color_scheme = 'default'
       config.enable_scroll_bar = true
       config.font = font
 

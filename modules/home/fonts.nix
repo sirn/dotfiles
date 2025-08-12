@@ -1,8 +1,15 @@
 { config, lib, pkgs, ... }:
+
 {
   fonts = {
     fontconfig = {
       enable = true;
+
+      defaultFonts = {
+        sansSerif = [ config.machine.desktop.defaultFonts.sansSerif ];
+        serif = [ config.machine.desktop.defaultFonts.serif ];
+        monospace = [ config.machine.desktop.defaultFonts.monospace ];
+      };
     };
   };
 
@@ -194,32 +201,6 @@
         </fontconfig>
       '';
     };
-    ".config/fontconfig/conf.d/98-default.conf" = {
-      text = ''
-        <?xml version='1.0'?>
-        <!DOCTYPE fontconfig SYSTEM 'fonts.dtd'>
-        <fontconfig>
-          <alias binding="strong">
-            <family>sans-serif</family>
-            <prefer>
-              <family>Noto Sans</family>
-            </prefer>
-          </alias>
-          <alias binding="strong">
-            <family>serif</family>
-            <prefer>
-              <family>Noto Serif</family>
-            </prefer>
-          </alias>
-          <alias binding="strong">
-            <family>monospace</family>
-            <prefer>
-              <family>Hack</family>
-            </prefer>
-          </alias>
-        </fontconfig>
-      '';
-    };
     ".config/fontconfig/conf.d/20-emoji.conf" = {
       text = ''
         <?xml version='1.0'?>
@@ -232,7 +213,7 @@
               <family>Noto Color Emoji</family>
             </prefer>
           </alias>
-          
+
           <!-- Map emoji requests specifically -->
           <match target="pattern">
             <test name="family" compare="eq">

@@ -2,15 +2,16 @@
 
 {
   flatpak.enable = true;
+  machine.desktop.preferDark = true;
 
   imports = [
     ../common.nix
     ../common-linux.nix
 
     # profiles
+    ../home/breeze.nix
     ../home/flatpak.nix
     ../home/fonts.nix
-    ../home/sway-dark.nix
     ../home/sway.nix
 
     # programs

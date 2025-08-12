@@ -44,6 +44,12 @@
         up = "k";
         right = "l";
 
+        gaps = {
+          inner = 5;
+          smartGaps = true;
+          smartBorders = "on";
+        };
+
         fonts = {
           names = [ "monospace" ];
           size = 10.0;
