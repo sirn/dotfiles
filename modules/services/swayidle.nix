@@ -12,8 +12,6 @@ in
   services.swayidle = {
     enable = true;
 
-    systemdTarget = "sway-session.target";
-
     timeouts = [
       {
         timeout = 210;

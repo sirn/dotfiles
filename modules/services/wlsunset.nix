@@ -1,10 +1,10 @@
-{ lib, ... }:
+{ config, lib, ... }:
 
 {
   services.wlsunset = {
     enable = true;
 
-    systemdTarget = "sway-session.target";
+    systemdTarget = config.wayland.systemd.target;
 
     latitude = lib.mkDefault 35.67;
     longitude = lib.mkDefault 139.77;
