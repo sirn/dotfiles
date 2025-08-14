@@ -8,12 +8,20 @@ in
     enable = true;
 
     # If NixGL is configured (i.e. non-NixOS), wrap with NixGL
-    # so OpenGL/Vulkan libraries are available. On Darwin,
-    # we only configure Firefox.
+    # so OpenGL/Vulkan libraries are available. On Darwin and
+    # when we're using Firefox from Flatpak, only configure Firefox.
     package = lib.mkDefault
-      (if pkgs.stdenv.isLinux
+      (if pkgs.stdenv.isLinux && !config.flatpak.enable
       then config.lib.nixGL.wrap pkgs.firefox
       else null);
+
+    configPath = lib.mkDefault
+      (if pkgs.stdenv.isDarwin
+      then "Library/Application Support/Firefox"
+      else
+        if config.flatpak.enable
+        then ".var/app/org.mozilla.firefox/.mozilla/firefox"
+        else ".mozilla/firefox");
 
     # By default, this is set to 2, which fails on non-NixOS Firefox
     # https://github.com/nix-community/home-manager/issues/6170
