@@ -1,5 +1,10 @@
 { config, lib, pkgs, ... }:
 
+let
+  cfg = config.programs.fish;
+
+  jjcfg = config.programs.jujutsu;
+in
 {
   programs.fish = {
     enable = true;
@@ -70,7 +75,7 @@
 
       fish_vcs_prompt = {
         body = ''
-          ${if config.programs.jujutsu.enable then ''
+          ${if jjcfg.enable then ''
             fish_jj_prompt $argv
             or fish_git_prompt $argv
           '' else ''
@@ -82,7 +87,7 @@
     };
 
     interactiveShellInit = ''
-      set -gx SHELL "${config.programs.fish.package}/bin/fish"
+      set -gx SHELL "${cfg.package}/bin/fish"
       set -g sponge_successful_exit_codes 0
       set -g sponge_allow_previously_successful false
       set -g sponge_delay 10

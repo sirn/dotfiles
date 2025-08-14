@@ -1,5 +1,8 @@
 { config, pkgs, lib, ... }:
 
+let
+  gpgcfg = config.programs.gpg;
+in
 {
   home.packages = with pkgs; [
     gitAndTools.git-crypt
@@ -13,10 +16,10 @@
 
     lfs.enable = true;
 
-    signing = lib.mkIf config.programs.gpg.enable {
+    signing = lib.mkIf gpgcfg.enable {
       signByDefault = true;
-      signer = "${config.programs.gpg.package}/bin/gpg";
-      key = config.programs.gpg.settings.default-key;
+      signer = "${gpgcfg.package}/bin/gpg";
+      key = gpgcfg.settings.default-key;
     };
 
     extraConfig = {

@@ -2,6 +2,8 @@
 
 let
   pkg = pkgs.unstable.sway-audio-idle-inhibit;
+
+  waybarcfg = config.programs.waybar;
 in
 {
   systemd.user.services.sway-audio-idle-inhibit = {
@@ -13,7 +15,7 @@ in
     Install = { WantedBy = [ config.wayland.systemd.target ]; };
   };
 
-  programs.waybar = lib.mkIf config.programs.waybar.enable {
+  programs.waybar = lib.mkIf waybarcfg.enable {
     settings = {
       mainBar = {
         modules-right = [ "custom/audio_idle_inhibitor" ];

@@ -2,6 +2,8 @@
 
 let
   dotfilesDir = "${config.home.homeDirectory}/.dotfiles";
+
+  notmuchcfg = config.programs.notmuch;
 in
 {
   programs.emacs = {
@@ -169,7 +171,7 @@ in
       yaml-mode
       zencoding-mode
 
-    ] ++ (if config.programs.notmuch.enable then [
+    ] ++ (if notmuchcfg.enable then [
       # notmuch package also contains notmuch-mode so it needs to be here
       # instead of in emacs-bin-deps below
       notmuch

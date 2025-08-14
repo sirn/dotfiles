@@ -1,8 +1,11 @@
 { config, pkgs, lib, ... }:
 
+let
+  gpgcfg = config.programs.gpg;
+in
 {
   services.gpg-agent = {
-    enable = config.programs.gpg.enable;
+    enable = gpgcfg.enable;
     enableSshSupport = true;
 
     pinentry = {

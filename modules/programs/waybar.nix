@@ -1,6 +1,8 @@
 { config, lib, pkgs, ... }:
 
 let
+  cfg = config.programs.waybar;
+
   swaycfg = config.wayland.windowManager.sway;
 
   niricfg = config.programs.niri;
@@ -97,7 +99,7 @@ in
     font-awesome
   ];
 
-  wayland.windowManager.sway = lib.mkIf config.wayland.windowManager.sway.enable {
+  wayland.windowManager.sway = lib.mkIf swaycfg.enable {
     config = {
       bars = [ ];
     };

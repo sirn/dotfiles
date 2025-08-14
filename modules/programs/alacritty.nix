@@ -2,6 +2,10 @@
 
 let
   cfg = config.programs.alacritty;
+
+  fishcfg = config.programs.fish;
+
+  fuzzelcfg = config.programs.fuzzel;
 in
 {
   programs.alacritty = {
@@ -56,7 +60,7 @@ in
       };
 
       shell = {
-        program = "${config.programs.fish.package}/bin/fish";
+        program = "${fishcfg.package}/bin/fish";
         args =
           if pkgs.stdenv.isDarwin
           then [ "--login" ]
@@ -78,7 +82,7 @@ in
       };
     };
 
-  programs.fuzzel = lib.mkIf config.programs.fuzzel.enable {
+  programs.fuzzel = lib.mkIf fuzzelcfg.enable {
     settings = {
       main = {
         terminal = lib.getExe cfg.package;

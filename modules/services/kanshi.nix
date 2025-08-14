@@ -1,9 +1,11 @@
 { config, lib, pkgs, ... }:
 
 let
+  swaypkg = config.wayland.windowManager.sway;
+
   swaymsgBin =
-    if config.wayland.windowManager.sway.package != null
-    then "${config.wayland.windowManager.sway.package}/bin/swaymsg"
+    if swaypkg.package != null
+    then "${swaypkg.package}/bin/swaymsg"
     else "swaymsg";
 in
 {

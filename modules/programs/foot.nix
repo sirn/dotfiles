@@ -2,6 +2,10 @@
 
 let
   cfg = config.programs.foot;
+
+  fishcfg = config.programs.fish;
+
+  fuzzelcfg = config.programs.fuzzel;
 in
 {
   programs.foot = {
@@ -9,7 +13,7 @@ in
 
     settings = {
       main = {
-        shell = "${config.programs.fish.package}/bin/fish";
+        shell = "${fishcfg.package}/bin/fish";
         term = "xterm-256color";
         font = "PragmataPro Mono:size=12";
         bold-text-in-bright = "yes";
@@ -32,7 +36,7 @@ in
       };
     };
 
-  programs.fuzzel = lib.mkIf config.programs.fuzzel.enable {
+  programs.fuzzel = lib.mkIf fuzzelcfg.enable {
     settings = {
       main = {
         terminal = "${cfg.package}/bin/foot";

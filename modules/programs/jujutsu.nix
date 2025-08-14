@@ -2,6 +2,10 @@
 
 let
   cfg = config.programs.jujutsu;
+
+  gpgcfg = config.programs.gpg;
+
+  gitcfg = config.programs.git;
 in
 {
   programs.jujutsu = {
@@ -10,14 +14,14 @@ in
 
     settings = {
       user = {
-        email = config.programs.git.userEmail;
-        name = config.programs.git.userName;
+        email = gitcfg.userEmail;
+        name = gitcfg.userName;
       };
 
-      signing = lib.mkIf config.programs.gpg.enable {
+      signing = lib.mkIf gpgcfg.enable {
         behavior = "own";
         backend = "gpg";
-        "backend.gpg.program" = "${config.programs.gpg.package}/bin/gpg";
+        "backend.gpg.program" = "${gpgcfg.package}/bin/gpg";
       };
 
       ui = {
@@ -25,7 +29,7 @@ in
         diff-formatter = ":git";
         diff-editor = ":builtin";
         pager = "${pkgs.delta}/bin/delta";
-        "show-cryptographic-signatures" = config.programs.gpg.enable;
+        "show-cryptographic-signatures" = gpgcfg.enable;
       };
 
       aliases =

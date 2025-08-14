@@ -3,9 +3,15 @@
 let
   swaycfg = config.wayland.windowManager.sway.config;
 
+  swaypkg = config.wayland.windowManager.sway;
+
+  niricfg = config.programs.niri;
+
+  swayidlecfg = config.services.swayidle;
+
   swaymsgBin =
-    if config.wayland.windowManager.sway.package != null
-    then "${config.wayland.windowManager.sway.package}/bin/swaymsg"
+    if swaypkg.package != null
+    then "${swaypkg.package}/bin/swaymsg"
     else "/usr/bin/swaymsg";
 in
 {
@@ -21,22 +27,22 @@ in
     ];
   };
 
-  wayland.windowManager.sway = lib.mkIf config.wayland.windowManager.sway.enable {
+  wayland.windowManager.sway = lib.mkIf swaypkg.enable {
     config = {
       keybindings = {
-        "${swaycfg.modifier}+Ctrl+Shift+L" = "exec pkill -USR1 -f ${lib.getExe config.services.swayidle.package}";
+        "${swaycfg.modifier}+Ctrl+Shift+L" = "exec pkill -USR1 -f ${lib.getExe swayidlecfg.package}";
       };
     };
   };
 
-  programs.niri = lib.mkIf config.programs.niri.enable {
+  programs.niri = lib.mkIf niricfg.enable {
     settings = {
       binds = {
         "Mod+Alt+L".action.spawn = [
           "pkill"
           "-USR1"
           "-f"
-          "${lib.getExe config.services.swayidle.package}"
+          "${lib.getExe swayidlecfg.package}"
         ];
       };
     };

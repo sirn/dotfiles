@@ -3,9 +3,11 @@
 let
   swaycfg = config.wayland.windowManager.sway.config;
 
+  swaylockcfg = config.programs.swaylock;
+
   swaylockBin =
-    if config.programs.swaylock.enable
-    then "${lib.getExe config.programs.swaylock.package}"
+    if swaylockcfg.enable
+    then "${lib.getExe swaylockcfg.package}"
     else "/usr/bin/swaylock"; # no relative path here due to systemd unit setting PATH=
 in
 {
@@ -35,13 +37,13 @@ in
   };
 
   # Copied from home-manager/modules/programs/swaylock.nix
-  xdg.configFile = lib.mkIf (!config.programs.swaylock.enable) {
+  xdg.configFile = lib.mkIf (!swaylockcfg.enable) {
     "swaylock/config" = {
       text = lib.concatStrings (lib.mapAttrsToList
         (n: v:
           if v == false then ""
           else (if v == true then n else n + "=" + builtins.toString v) + "\n")
-        config.programs.swaylock.settings);
+        swaylockcfg.settings);
     };
   };
 }

@@ -2,6 +2,12 @@
 
 let
   cfg = config.programs.wezterm;
+
+  fishcfg = config.programs.fish;
+
+  niricfg = config.programs.niri;
+
+  fuzzelcfg = config.programs.fuzzel;
 in
 {
   programs.wezterm = {
@@ -13,7 +19,7 @@ in
 
     extraConfig = ''
       local config = wezterm.config_builder()
-      local shell = "${lib.getExe config.programs.fish.package}"
+      local shell = "${lib.getExe fishcfg.package}"
       local font = wezterm.font_with_fallback({
         'PragmataPro Mono Liga',
         'Source Han Code JP',
@@ -81,7 +87,7 @@ in
       };
     };
 
-  programs.niri = lib.mkIf config.programs.niri.enable {
+  programs.niri = lib.mkIf niricfg.enable {
     settings = {
       binds = {
         "Mod+T".action.spawn = [
@@ -91,7 +97,7 @@ in
     };
   };
 
-  programs.fuzzel = lib.mkIf config.programs.fuzzel.enable {
+  programs.fuzzel = lib.mkIf fuzzelcfg.enable {
     settings = {
       main = {
         terminal = lib.getExe cfg.package;
