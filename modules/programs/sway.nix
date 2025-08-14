@@ -37,7 +37,7 @@
         right = "l";
 
         gaps = {
-          inner = 5;
+          inner = 8;
           smartGaps = true;
           smartBorders = "on";
         };
@@ -219,6 +219,9 @@
 
         window = {
           titlebar = true;
+
+          border = 2; # border + gap should be 12
+
           commands = [
             {
               command = "inhibit_idle fullscreen";

@@ -26,7 +26,10 @@ in
       prefer-no-csd = true;
 
       layout = {
-        gaps = 5;
+        gaps = 8;
+        focus-ring = {
+          width = 4; # focus-ring + gap should be 12
+        };
       };
 
       cursor = {
@@ -193,6 +196,15 @@ in
       };
 
       window-rules = [
+        {
+          clip-to-geometry = true;
+          geometry-corner-radius = {
+            bottom-left = 4.0;
+            bottom-right = 4.0;
+            top-left = 4.0;
+            top-right = 4.0;
+          };
+        }
         {
           matches = [{ app-id = "mpv"; }];
           open-floating = true;
