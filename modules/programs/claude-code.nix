@@ -4,7 +4,7 @@ let
   npxClaudeCode = pkgs.writeScriptBin "claude" ''
     #!${pkgs.bash}/bin/bash
     # Runs Claude Code from Npx
-    export PATH=${pkgs.nodejs_20}/bin:${pkgs.local.wrapped-uv}/bin:$PATH
+    export PATH=${pkgs.nodejs_20}/bin:${pkgs.local.wrapped-uv}/bin:${pkgs.ripgrep}/bin:$PATH
     export DISABLE_AUTOUPDATER=1
     exec ${pkgs.nodejs_20}/bin/npx --yes @anthropic-ai/claude-code "$@"
   '';
