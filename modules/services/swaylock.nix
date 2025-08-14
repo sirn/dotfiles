@@ -5,7 +5,7 @@ let
 
   swaylockBin =
     if config.programs.swaylock.enable
-    then "${config.programs.swaylock.package}/bin/swaylock"
+    then "${lib.getExe config.programs.swaylock.package}"
     else "/usr/bin/swaylock"; # no relative path here due to systemd unit setting PATH=
 in
 {
@@ -13,18 +13,10 @@ in
     # swaylock needs to access PAM, so we must use the system package on non-NixOS
     enable = config.machine.isNixOS;
 
-    settings =
-      let
-        bgSplit =
-          builtins.match
-            "^(.+)[[:space:]]+(stretch|fill|fit|center|tile).*"
-            swaycfg.output."*".bg;
-      in
-      {
-        daemonize = true;
-        image = lib.elemAt bgSplit 0;
-        scaling = lib.elemAt bgSplit 1;
-      };
+    settings = {
+      color = "#000000";
+      daemonize = true;
+    };
   };
 
   services.swayidle = {
