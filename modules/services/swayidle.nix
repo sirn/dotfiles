@@ -1,18 +1,47 @@
 { config, lib, pkgs, ... }:
 
 let
-  swaycfg = config.wayland.windowManager.sway.config;
-
-  swaypkg = config.wayland.windowManager.sway;
+  swaycfg = config.wayland.windowManager.sway;
 
   niricfg = config.programs.niri;
 
   swayidlecfg = config.services.swayidle;
 
-  swaymsgBin =
-    if swaypkg.package != null
-    then "${swaypkg.package}/bin/swaymsg"
-    else "/usr/bin/swaymsg";
+  swaymsgBin = "${swaycfg.package}/bin/swaymsg";
+
+  niriBin = "${niricfg.package}/bin/niri";
+
+  displayControl = pkgs.writeScriptBin "display-control" ''
+    #!${pkgs.runtimeShell}
+
+    _run_sway() {
+      command=$1
+      if [ "$command" = "off" ]; then
+        ${swaymsgBin} "output * dpms off"
+      elif [ "$command" = "on" ]; then
+        ${swaymsgBin} "output * dpms on"
+      fi
+    }
+
+    _run_niri() {
+      command=$1
+      if [ "$command" = "off" ]; then
+        ${niriBin} msg action power-off-monitors
+      elif [ "$command" = "on" ]; then
+        ${niriBin} msg action power-on-monitors
+      fi
+    }
+
+    main() {
+      if [ "$XDG_CURRENT_DESKTOP" = "sway" ]; then
+        _run_sway "$@"
+      elif [ "$XDG_CURRENT_DESKTOP" = "niri" ]; then
+        _run_niri "$@"
+      fi
+    }
+
+    main "$@"
+  '';
 in
 {
   services.swayidle = {
@@ -21,16 +50,16 @@ in
     timeouts = [
       {
         timeout = 210;
-        command = "${swaymsgBin} \"output * dpms off\"";
-        resumeCommand = "${swaymsgBin} \"output * dpms on\"";
+        command = "${lib.getExe displayControl} off";
+        resumeCommand = "${lib.getExe displayControl} on";
       }
     ];
   };
 
-  wayland.windowManager.sway = lib.mkIf swaypkg.enable {
+  wayland.windowManager.sway = lib.mkIf swaycfg.enable {
     config = {
       keybindings = {
-        "${swaycfg.modifier}+Ctrl+Shift+L" = "exec pkill -USR1 -f ${lib.getExe swayidlecfg.package}";
+        "${swaycfg.config.modifier}+Ctrl+Shift+L" = "exec pkill -USR1 -f ${lib.getExe swayidlecfg.package}";
       };
     };
   };
