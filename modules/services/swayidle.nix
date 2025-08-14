@@ -24,7 +24,20 @@ in
   wayland.windowManager.sway = {
     config = {
       keybindings = {
-        "${swaycfg.modifier}+Ctrl+Shift+L" = "exec pkill -USR1 -f ${config.services.swayidle.package}/bin/swayidle";
+        "${swaycfg.modifier}+Ctrl+Shift+L" = "exec pkill -USR1 -f ${lib.getExe config.services.swayidle.package}";
+      };
+    };
+  };
+
+  programs.niri = {
+    settings = {
+      binds = {
+        "Mod+Alt+L".action.spawn = [
+          "pkill"
+          "-USR1"
+          "-f"
+          "${lib.getExe config.services.swayidle.package}"
+        ];
       };
     };
   };

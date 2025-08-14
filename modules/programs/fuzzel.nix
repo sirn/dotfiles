@@ -45,4 +45,19 @@ in
         };
       };
     };
+
+  programs.niri =
+    {
+      settings = {
+        binds = {
+          "Mod+d".action.spawn = [
+            "${lib.getExe cfg.package}"
+            "--match-workers"
+            "4"
+            "--render-workers"
+            "4"
+          ];
+        };
+      };
+    };
 }

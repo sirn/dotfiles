@@ -5,23 +5,20 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    home-manager.url = "github:nix-community/home-manager/release-25.05";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    nix-index-database = {
-      url = "github:nix-community/nix-index-database";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nix-index-database.url = "github:nix-community/nix-index-database";
+    nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
 
-    nixgl = {
-      url = "github:nix-community/nixGL";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nixgl.url = "github:nix-community/nixGL";
+    nixgl.inputs.nixpkgs.follows = "nixpkgs";
+
+    niri.url = "github:sodiboo/niri-flake";
+    niri.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { nixpkgs, nixpkgs-unstable, home-manager, nix-index-database, nixgl, ... }@inputs:
+  outputs = { nixpkgs, nixpkgs-unstable, home-manager, nix-index-database, nixgl, niri, ... }@inputs:
     let
       config = {
         allowUnfree = true;
@@ -32,6 +29,7 @@
 
       overlays = [
         nixgl.overlay
+        niri.overlays.niri
         (final: prev: {
           local = import ./pkgs {
             pkgs = final;
@@ -71,6 +69,7 @@
           pkgs = nixpkgs.legacyPackages.${system};
           modules = [
             defaultConfig
+            niri.homeModules.niri
             ./lib/flatpak.nix
             ./lib/machine.nix
             ./modules/machines/${hostname}.nix

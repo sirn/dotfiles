@@ -1,5 +1,10 @@
 { config, lib, pkgs, ... }:
 
+let
+  swaycfg = config.wayland.windowManager.sway;
+
+  niricfg = config.programs.niri;
+in
 {
   programs.waybar = {
     enable = true;
@@ -14,15 +19,34 @@
         spacing = 4;
         layer = "top";
 
-        modules-left = [ "sway/workspaces" "sway/mode" "sway/scratchpad" "custom/media" ];
-        modules-center = [ "sway/window" ];
-        modules-right = [ "idle_inhibitor" "pulseaudio" "tray" "clock" ];
+        modules-left = (if swaycfg.enable then [
+          "sway/workspaces"
+          "sway/mode"
+          "sway/scratchpad"
+        ] else [ ]) ++ (if niricfg.enable then [
+          "niri/workspaces"
+        ] else [ ]) ++ [
+          "custom/media"
+        ];
 
-        "sway/mode" = {
+        modules-center = (if swaycfg.enable then [
+          "sway/window"
+        ] else [ ]) ++ (if niricfg.enable then [
+          "niri/window"
+        ] else [ ]);
+
+        modules-right = [
+          "idle_inhibitor"
+          "pulseaudio"
+          "tray"
+          "clock"
+        ];
+
+        "sway/mode" = lib.mkIf swaycfg.enable {
           format = "<span style = \"italic\">{}</span>";
         };
 
-        "sway/scratchpad" = {
+        "sway/scratchpad" = lib.mkIf swaycfg.enable {
           format = "{icon} {count}";
           show-empty = false;
           format-icons = [ "" "" ];

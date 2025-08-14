@@ -81,6 +81,17 @@ in
       };
     };
 
+  programs.niri =
+    {
+      settings = {
+        binds = {
+          "Mod+T".action.spawn = [
+            "${lib.getExe cfg.package}"
+          ];
+        };
+      };
+    };
+
   programs.fuzzel = {
     settings = {
       main = {
