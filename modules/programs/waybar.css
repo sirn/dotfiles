@@ -1,78 +1,97 @@
+/* -------------------------------------------------------------------------
+ * Global & Bar
+ */
 * {
     font-family: FontAwesome, sans-serif;
-    font-size: 13px;
+    font-size: 14px;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
 }
 
 window#waybar {
-    background-color: rgba(30, 34, 37, 1);
-    color: #ffffff;
+    background: #282a36;
+    color: #f8f8f2;
+    transition-property: background-color;
+    transition-duration: 0.5s;
 }
 
 window#waybar.hidden {
-    opacity: 0.2;
+    opacity: 0.3;
 }
 
-button {
-    box-shadow: inset 0 -3px transparent;
-    border: none;
-    border-radius: 0;
+/* -------------------------------------------------------------------------
+ * Layout
+ */
+.modules-left > widget:not(:first-child),
+.modules-right > widget:not(:first-child) {
+    margin-left: 5px;
 }
 
-/* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
-button:hover {
-    background: inherit;
-    box-shadow: inset 0 -3px #ffffff;
-}
-
-#workspaces button {
-    padding: 0 5px;
-    background-color: transparent;
-    color: #ffffff;
-}
-
-#workspaces button:hover {
-    background: rgba(0, 0, 0, 0.2);
-}
-
-#workspaces button.focused {
-    background-color: #64727d;
-    box-shadow: inset 0 -3px #ffffff;
-}
-
-#workspaces button.urgent {
-    background-color: #eb4d4b;
-}
-
+/* -------------------------------------------------------------------------
+ * All modules
+ */
+#workspaces,
 #clock,
+#pulseaudio,
 #tray,
 #mode,
-#pulseaudio,
 #custom-audio_idle_inhibitor,
 #idle_inhibitor,
 #scratchpad {
-    padding: 0 10px;
-    background-color: rgba(100, 114, 125, 0.3);
-    color: #ffffff;
+    padding: 0 6px;
+    margin: 2px 0;
+    background-color: transparent;
 }
 
-#window,
-#workspaces {
-    margin: 0 4px;
+/* -------------------------------------------------------------------------
+ * Module: workspace
+ */
+#workspaces button {
+    padding: 0 8px;
+    color: #f8f8f2;
+    background-color: transparent;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease-in-out;
 }
 
-/* If workspaces is the leftmost module, omit left margin */
-.modules-left > widget:first-child > #workspaces {
-    margin-left: 0;
+#workspaces button:hover {
+    background: #3a3c4e;
+    border-bottom: 2px solid transparent;
 }
 
-/* If workspaces is the rightmost module, omit right margin */
-.modules-right > widget:last-child > #workspaces {
-    margin-right: 0;
+#workspaces button.focused {
+    background-color: #44475a;
+    border-bottom: 2px solid #8be9fd;
 }
 
+#workspaces button.urgent {
+    color: #282a36;
+    background-color: #ff5555;
+    border-bottom: 2px solid #ff5555;
+}
+
+/* -------------------------------------------------------------------------
+ * Module: clock
+ */
+#clock {
+    font-weight: bold;
+    padding-right: 12px;
+}
+
+/* -------------------------------------------------------------------------
+ * Module: pulseaudio
+ */
 #pulseaudio.muted {
-    background-color: #90b1b1;
-    color: #2a5c45;
+    color: #6272a4;
+}
+
+/* -------------------------------------------------------------------------
+ * Module: tray
+ */
+#tray {
+    background-color: #44475a;
+    border-radius: 5px;
 }
 
 #tray > .passive {
@@ -81,19 +100,27 @@ button:hover {
 
 #tray > .needs-attention {
     -gtk-icon-effect: highlight;
-    background-color: #eb4d4b;
+    background-color: #ff5555;
 }
 
-#custom-audio_idle_inhibitor,
-#idle_inhibitor.activated {
-    background-color: #ecf0f1;
-    color: #2d3436;
-}
-
-#clock {
+/* -------------------------------------------------------------------------
+ * Module: mode
+ */
+#mode {
     font-weight: bold;
 }
 
+/* -------------------------------------------------------------------------
+ * Module: idle_inhibitor
+ */
+#idle_inhibitor.activated {
+    color: #282a36;
+    background-color: #f1fa8c;
+}
+
+/* -------------------------------------------------------------------------
+ * Module: scratchpad
+ */
 #scratchpad {
     background: rgba(0, 0, 0, 0.2);
 }
