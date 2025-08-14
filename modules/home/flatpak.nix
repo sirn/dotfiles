@@ -1,5 +1,19 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 
+let
+  fontConfig = pkgs.writeTextFile {
+    name = "fonts.conf";
+    text = ''
+      <?xml version="1.0"?>
+      <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+      <fontconfig>
+        <description>Load per-user customization files</description>
+        <include ignore_missing="yes" prefix="xdg">fontconfig/conf.d</include>
+        <include ignore_missing="yes" prefix="xdg">fontconfig/fonts.conf</include>
+      </fontconfig>
+    '';
+  };
+in
 {
   flatpak = {
     enable = true;
@@ -14,10 +28,11 @@
         "~/.local/share/fonts:ro"
         "~/.local/share/icons:ro"
         "~/.nix-profile/share/icons:ro"
+        "${fontConfig}:ro"
       ];
 
       environment = {
-        FONTCONFIG_FILE = "${config.home.homeDirectory}/.config/fontconfig/fonts.conf";
+        FONTCONFIG_FILE = "${fontConfig}";
         XCURSOR_PATH = lib.concatStringsSep ":" [
           "${config.home.homeDirectory}/.local/share/icons"
           "${config.home.homeDirectory}/.nix-profile/share/icons"
