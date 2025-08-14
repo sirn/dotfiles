@@ -14,4 +14,7 @@
     ../services/swaylock.nix
     ../services/wlsunset.nix
   ];
+
+  # niri-flake is enabling gnome-keyring by default but gnome-keyring is gross.
+  services.gnome-keyring.enable = lib.mkForce false;
 }

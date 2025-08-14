@@ -25,6 +25,10 @@ in
 
       prefer-no-csd = true;
 
+      layout = {
+        gaps = 5;
+      };
+
       cursor = {
         hide-when-typing = true;
         theme = config.gtk.cursorTheme.name;
