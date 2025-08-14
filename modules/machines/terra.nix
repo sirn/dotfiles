@@ -12,6 +12,7 @@
     ../home/breeze.nix
     ../home/flatpak.nix
     ../home/fonts.nix
+    ../home/i18n.nix
     ../home/sway.nix
 
     # programs
