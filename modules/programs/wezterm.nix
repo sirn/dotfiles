@@ -8,6 +8,8 @@ let
   niricfg = config.programs.niri;
 
   fuzzelcfg = config.programs.fuzzel;
+
+  swaycfg = config.wayland.windowManager.sway;
 in
 {
   programs.wezterm = {
@@ -74,18 +76,14 @@ in
     '';
   };
 
-  wayland.windowManager.sway =
-    let
-      swaycfg = config.wayland.windowManager.sway.config;
-    in
-    lib.mkIf swaycfg.enable {
-      config = {
-        terminal = lib.getExe cfg.package;
-        keybindings = {
-          "${swaycfg.modifier}+Return" = "exec ${lib.getExe cfg.package}";
-        };
+  wayland.windowManager.sway = lib.mkIf swaycfg.enable {
+    config = {
+      terminal = lib.getExe cfg.package;
+      keybindings = {
+        "${swaycfg.config.modifier}+Return" = "exec ${lib.getExe cfg.package}";
       };
     };
+  };
 
   programs.niri = lib.mkIf niricfg.enable {
     settings = {
