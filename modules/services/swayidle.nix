@@ -21,7 +21,7 @@ in
     ];
   };
 
-  wayland.windowManager.sway = {
+  wayland.windowManager.sway = lib.mkIf config.wayland.windowManager.sway.enable {
     config = {
       keybindings = {
         "${swaycfg.modifier}+Ctrl+Shift+L" = "exec pkill -USR1 -f ${lib.getExe config.services.swayidle.package}";
@@ -29,7 +29,7 @@ in
     };
   };
 
-  programs.niri = {
+  programs.niri = lib.mkIf config.programs.niri.enable {
     settings = {
       binds = {
         "Mod+Alt+L".action.spawn = [

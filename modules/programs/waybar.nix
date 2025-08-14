@@ -97,7 +97,7 @@ in
     font-awesome
   ];
 
-  wayland.windowManager.sway = {
+  wayland.windowManager.sway = lib.mkIf config.wayland.windowManager.sway.enable {
     config = {
       bars = [ ];
     };

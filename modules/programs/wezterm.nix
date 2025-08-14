@@ -72,7 +72,7 @@ in
     let
       swaycfg = config.wayland.windowManager.sway.config;
     in
-    {
+    lib.mkIf swaycfg.enable {
       config = {
         terminal = lib.getExe cfg.package;
         keybindings = {
@@ -81,18 +81,17 @@ in
       };
     };
 
-  programs.niri =
-    {
-      settings = {
-        binds = {
-          "Mod+T".action.spawn = [
-            "${lib.getExe cfg.package}"
-          ];
-        };
+  programs.niri = lib.mkIf config.programs.niri.enable {
+    settings = {
+      binds = {
+        "Mod+T".action.spawn = [
+          "${lib.getExe cfg.package}"
+        ];
       };
     };
+  };
 
-  programs.fuzzel = {
+  programs.fuzzel = lib.mkIf config.programs.fuzzel.enable {
     settings = {
       main = {
         terminal = lib.getExe cfg.package;

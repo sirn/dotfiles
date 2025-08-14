@@ -23,7 +23,7 @@ in
       swaycfg = config.wayland.windowManager.sway.config;
       footBin = "${cfg.package}/bin/foot";
     in
-    {
+    lib.mkIf swaycfg.enable {
       config = {
         terminal = footBin;
         keybindings = {
@@ -32,7 +32,7 @@ in
       };
     };
 
-  programs.fuzzel = {
+  programs.fuzzel = lib.mkIf config.programs.fuzzel.enable {
     settings = {
       main = {
         terminal = "${cfg.package}/bin/foot";

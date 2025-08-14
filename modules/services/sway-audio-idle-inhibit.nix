@@ -13,7 +13,7 @@ in
     Install = { WantedBy = [ config.wayland.systemd.target ]; };
   };
 
-  programs.waybar = {
+  programs.waybar = lib.mkIf config.programs.waybar.enable {
     settings = {
       mainBar = {
         modules-right = [ "custom/audio_idle_inhibitor" ];

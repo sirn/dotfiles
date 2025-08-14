@@ -46,18 +46,17 @@ in
       };
     };
 
-  programs.niri =
-    {
-      settings = {
-        binds = {
-          "Mod+d".action.spawn = [
-            "${lib.getExe cfg.package}"
-            "--match-workers"
-            "4"
-            "--render-workers"
-            "4"
-          ];
-        };
+  programs.niri = lib.mkIf config.programs.niri.enable {
+    settings = {
+      binds = {
+        "Mod+d".action.spawn = [
+          "${lib.getExe cfg.package}"
+          "--match-workers"
+          "4"
+          "--render-workers"
+          "4"
+        ];
       };
     };
+  };
 }

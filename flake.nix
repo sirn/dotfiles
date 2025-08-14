@@ -58,7 +58,7 @@
             news.display = "silent";
           };
         in
-        home-manager.lib.homeManagerConfiguration {
+        home-manager.lib.homeManagerConfiguration rec {
           # home-manager will be responsible for evaluating the nixpkgs.overlays.
           # We're passing legacyPackages here to avoid nixpkgs from being
           # evaluated twice.

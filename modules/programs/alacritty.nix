@@ -69,7 +69,7 @@ in
     let
       swaycfg = config.wayland.windowManager.sway.config;
     in
-    {
+    lib.mkIf swaycfg.enable {
       config = {
         terminal = lib.getExe cfg.package;
         keybindings = {
@@ -78,7 +78,7 @@ in
       };
     };
 
-  programs.fuzzel = {
+  programs.fuzzel = lib.mkIf config.programs.fuzzel.enable {
     settings = {
       main = {
         terminal = lib.getExe cfg.package;
