@@ -1,29 +1,29 @@
 let
   colorScheme = {
-    background = "#242424";
+    background = "#000000";
     foreground = "#ffffff";
     selection = "#d1d1d1";
     scrollbar = "#d1d1d1";
 
     normal = {
-      black = "#242424";
-      red = "#f62b5a";
-      green = "#47b413";
-      yellow = "#e3c401";
-      blue = "#24acd4";
-      magenta = "#f2affd";
-      cyan = "#13c299";
-      white = "#e6e6e6";
+      black = "#000000";
+      red = "#ff5f59";
+      green = "#44bc44";
+      yellow = "#d0bc00";
+      blue = "#2fafff";
+      magenta = "#feacd0";
+      cyan = "#00d3d0";
+      white = "#d0d0d0";
     };
 
     bright = {
-      black = "#616161";
-      red = "#ff4d51";
-      green = "#35d450";
-      yellow = "#e9e836";
-      blue = "#5dc5f8";
-      magenta = "#feabf2";
-      cyan = "#24dfc4";
+      black = "#383838";
+      red = "#ff5f5f";
+      green = "#44df44";
+      yellow = "#efef00";
+      blue = "#338fff";
+      magenta = "#ff66ff";
+      cyan = "#00eff0";
       white = "#ffffff";
     };
   };
