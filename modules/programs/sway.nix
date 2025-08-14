@@ -28,11 +28,6 @@
           if swayPackage != null
           then "${swayPackage}/bin/swaynag"
           else "swaynag";
-
-        swayWallpaper =
-          if swayPackage != null
-          then "${swayPackage}/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png"
-          else "/usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png";
       in
       {
         modifier = "Mod4";
@@ -54,7 +49,7 @@
 
         output = {
           "*" = {
-            bg = lib.mkDefault "${swayWallpaper} fill";
+            bg = lib.mkDefault "bg #333333 solid_color";
             scale = lib.mkDefault "1";
           };
         };
