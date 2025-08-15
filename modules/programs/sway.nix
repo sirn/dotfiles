@@ -49,7 +49,6 @@
 
         output = {
           "*" = {
-            bg = lib.mkDefault "#333333 solid_color";
             scale = lib.mkDefault "1";
           };
         };

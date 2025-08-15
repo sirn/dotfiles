@@ -1,3 +1,5 @@
+{ config, lib, ... }:
+
 let
   colorScheme = {
     background = "#000000";
@@ -31,7 +33,7 @@ let
   stripHash = color: builtins.substring 1 6 color;
 in
 {
-  programs.alacritty = {
+  programs.alacritty = lib.mkIf config.programs.alacritty.enable {
     settings = {
       colors = {
         primary = {
@@ -45,7 +47,7 @@ in
     };
   };
 
-  programs.foot = {
+  programs.foot = lib.mkIf config.programs.foot.enable {
     settings = {
       colors = {
         background = stripHash colorScheme.background;
@@ -70,7 +72,7 @@ in
     };
   };
 
-  programs.wezterm = {
+  programs.wezterm = lib.mkIf config.programs.wezterm.enable {
     colorSchemes = {
       default = {
         ansi = [
@@ -104,5 +106,233 @@ in
         selection_fg = colorScheme.background;
       };
     };
+  };
+
+  wayland.windowManager.sway = lib.mkIf config.wayland.windowManager.sway.enable {
+    config = {
+      output = {
+        "*" = {
+          bg = lib.mkDefault "${colorScheme.background} solid_color";
+        };
+      };
+    };
+  };
+
+  programs.niri = lib.mkIf config.programs.niri.enable {
+    settings = {
+      layout = {
+        background-color = lib.mkDefault colorScheme.background;
+      };
+    };
+  };
+
+  programs.waybar = lib.mkIf config.programs.waybar.enable {
+    style = lib.mkDefault ''
+      @define-color default_bg ${colorScheme.background};
+      @define-color default_fg ${colorScheme.foreground};
+      @define-color highlight_bg ${colorScheme.normal.blue};
+      @define-color highlight_fg ${colorScheme.normal.black};
+      @define-color alert_bg ${colorScheme.normal.red};
+      @define-color alert_fg ${colorScheme.normal.white};
+      @define-color tinted_bg ${colorScheme.bright.black};
+
+      /* -------------------------------------------------------------------------
+       * Global & Bar
+       */
+
+      * {
+          border-radius: 0;
+          border: none;
+          font-family: FontAwesome, sans-serif;
+          font-size: 14px;
+          min-height: 0;
+          transition: background-color 0.3s ease-in-out;
+      }
+
+      window#waybar {
+          background-color: @default_bg;
+          color: @default_fg;
+      }
+
+      window#waybar.hidden {
+          opacity: 0.3;
+      }
+
+      /* -------------------------------------------------------------------------
+       * Layout
+       */
+
+      .module {
+          margin: 2px 0;
+      }
+
+      .modules-left {
+          padding-left: 8px;
+      }
+
+      .modules-right {
+          padding-right: 8px;
+      }
+
+      .modules-right > .module {
+          margin-right: 2px;
+      }
+
+      /* -------------------------------------------------------------------------
+       * Module: workspace
+       */
+
+      #workspaces {
+          margin: 0;
+      }
+
+      #workspaces button {
+          padding: 0 8px;
+          color: @default_fg;
+          background-color: transparent;
+          border-bottom: 2px solid transparent;
+      }
+
+      #workspaces button:hover {
+          background-color: @default_bg;
+          border-bottom: 2px solid transparent;
+      }
+
+      #workspaces button.focused {
+          background-color: @default_bg;
+          border-bottom: 2px solid @highlight_bg;
+      }
+
+      #workspaces button.urgent {
+          color: @alert_fg;
+          background-color: @alert_bg;
+          border-bottom: 2px solid @alert_bg;
+      }
+
+      /* -------------------------------------------------------------------------
+       * Module: clock
+       */
+
+      #clock {
+          font-weight: bold;
+          padding: 0 10px;
+      }
+
+      /* When clock is the rightmost item, adjust the right padding so that
+       * it aligns with our 12px boundary */
+      .modules-right > widget:last-child > #clock {
+          padding-right: 2px;
+      }
+
+      /* -------------------------------------------------------------------------
+       * Module: pulseaudio
+       */
+
+      #pulseaudio {
+          padding: 0 10px;
+      }
+
+      #pulseaudio.muted {
+          color: ${colorScheme.bright.black};
+      }
+
+      /* -------------------------------------------------------------------------
+       * Module: tray
+       */
+
+      #tray {
+          background-color: @tinted_bg;
+          border-radius: 5px;
+          color: @tinted_fg;
+          padding: 0 10px;
+      }
+
+      #tray > .passive {
+          -gtk-icon-effect: dim;
+      }
+
+      #tray > .needs-attention {
+          -gtk-icon-effect: highlight;
+          background-color: @alert_bg;
+          color: @alert_fg;
+      }
+
+      /* -------------------------------------------------------------------------
+       * Module: battery
+       */
+
+      #battery {
+          background-color: @tinted_bg;
+          border-radius: 5px;
+          color: @tinted_fg;
+          padding: 0 10px;
+      }
+
+      #battery.charging:not(.full) {
+          background-color: #1b5e20;
+          color: #a5d6a7;
+      }
+
+      #battery.discharging {
+          background-color: #e8f5e9;
+          color: #2e7d32;
+      }
+
+      #battery.warning {
+          background-color: #ff6f00;
+          color: #ffecb3;
+      }
+
+      #battery.critical {
+          background-color: #b71c1c;
+          color: #ffcdd2;
+      }
+
+      /* -------------------------------------------------------------------------
+       * Module: mode
+       */
+
+      #mode {
+          background-color: @highlight_bg;
+          border-radius: 5px;
+          color: @highlight_fg;
+          font-weight: bold;
+          padding: 0 10px;
+      }
+
+      /* -------------------------------------------------------------------------
+       * Module: idle_inhibitor
+       */
+
+      #idle_inhibitor {
+          border-radius: 5px;
+          padding: 0 10px;
+      }
+
+      #idle_inhibitor.activated {
+          color: @highlight_fg;
+          background-color: @highlight_bg;
+      }
+
+      /* -------------------------------------------------------------------------
+       * Module: scratchpad
+       */
+
+      #scratchpad {
+          background-color: rgba(0, 0, 0, 0.2);
+          padding: 0 10px;
+      }
+
+      /* -------------------------------------------------------------------------
+       * Module: custom/media
+       */
+
+      #custom-audio_idle_inhibitor {
+          background-color: @highlight_bg;
+          border-radius: 5px;
+          color: @highlight_fg;
+          padding: 0 10px;
+      }
+    '';
   };
 }

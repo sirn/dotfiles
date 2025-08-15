@@ -105,8 +105,6 @@ in
           };
       };
     };
-
-    style = ./waybar.css;
   };
 
   home.packages = with pkgs; [
