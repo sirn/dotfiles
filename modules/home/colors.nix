@@ -134,7 +134,6 @@ in
       @define-color highlight_fg ${colorScheme.normal.black};
       @define-color alert_bg ${colorScheme.normal.red};
       @define-color alert_fg ${colorScheme.normal.white};
-      @define-color tinted_bg ${colorScheme.bright.black};
 
       /* -------------------------------------------------------------------------
        * Global & Bar
@@ -241,9 +240,8 @@ in
        */
 
       #tray {
-          background-color: @tinted_bg;
+          background-color: rgba(255, 255, 255, 0.1);
           border-radius: 5px;
-          color: @tinted_fg;
           padding: 0 10px;
       }
 
@@ -262,9 +260,8 @@ in
        */
 
       #battery {
-          background-color: @tinted_bg;
+          background-color: rgba(255, 255, 255, 0.1);
           border-radius: 5px;
-          color: @tinted_fg;
           padding: 0 10px;
       }
 
