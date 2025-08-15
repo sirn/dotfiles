@@ -38,8 +38,8 @@
 
         gaps = {
           inner = 8;
-          smartGaps = true;
-          smartBorders = "on";
+          smartGaps = false;
+          smartBorders = "off";
         };
 
         fonts = {
@@ -49,7 +49,7 @@
 
         output = {
           "*" = {
-            bg = lib.mkDefault "bg #333333 solid_color";
+            bg = lib.mkDefault "#333333 solid_color";
             scale = lib.mkDefault "1";
           };
         };
@@ -220,7 +220,7 @@
         window = {
           titlebar = true;
 
-          border = 2; # border + gap should be 12
+          border = 4; # border + gap should be 12
 
           commands = [
             {

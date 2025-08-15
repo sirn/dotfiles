@@ -17,8 +17,8 @@ in
 
     settings = {
       mainBar = {
-        height = 30;
-        spacing = 4;
+        height = 32;
+        spacing = 2;
         layer = "top";
 
         modules-left = (if swaycfg.enable then [
@@ -41,6 +41,7 @@ in
           "idle_inhibitor"
           "pulseaudio"
           "tray"
+          "battery"
           "clock"
         ];
 
@@ -68,6 +69,18 @@ in
           spacing = 10;
         };
 
+        "battery" = {
+          interval = 60;
+          states = {
+            full = 100;
+            normal = 80;
+            warning = 30;
+            critical = 15;
+          };
+          format = "{capacity}% {icon}";
+          format-icons = [ "" "" "" "" "" ];
+        };
+
         "clock" = {
           format = "{:%b %d, %H:%M}";
           tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
@@ -75,9 +88,10 @@ in
 
         "pulseaudio" =
           {
-            format = "{icon}{format_source}";
-            format-source = " ";
-            format-source-muted = "";
+            format = "{icon}";
+            format-bluetooth = "";
+            format-muted = "";
+            format-source = "";
             format-icons = {
               headphone = "";
               hands-free = "";
@@ -85,7 +99,7 @@ in
               phone = "";
               portable = "";
               car = "";
-              default = [ "" "" "" ];
+              default = [ "" "" ];
             };
             on-click = "${pkgs.pavucontrol}/bin/pavucontrol";
           };
