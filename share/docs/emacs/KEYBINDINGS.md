@@ -98,6 +98,7 @@ Environment variable management commands.
 | Key | Command | Description |
 | :--- | :--- | :--- |
 | `a a` | `aidermacs-transient-menu` | Show the Aidermacs (Aider) menu. |
+| `a c` | `claude-code-ide-menu` | Show the Claude Code IDE menu. |
 | `a g` | `gemacs--gptel-transient-menu` | Show the GPTel menu. |
 
 ### `A` - Applications
