@@ -23,6 +23,8 @@ in
         DISPLAY = ":99";
       };
 
+      screenshot-path = "${config.home.homeDirectory}/Desktop/Screenshot from %Y-%m-%d %H-%M-%S.png";
+
       prefer-no-csd = true;
 
       layout = {
