@@ -1,12 +1,16 @@
 { config, lib, pkgs, ... }:
 
 let
-  swaypkg = config.wayland.windowManager.sway;
+  cfg = config.services.kanshi;
+
+  swaycfg = config.wayland.windowManager.sway;
 
   swaymsgBin =
-    if swaypkg.package != null
-    then "${swaypkg.package}/bin/swaymsg"
+    if swaycfg.package != null
+    then "${swaycfg.package}/bin/swaymsg"
     else "swaymsg";
+
+  niricfg = config.programs.niri;
 in
 {
   services.kanshi = {
@@ -65,5 +69,26 @@ in
           };
         }
       ];
+  };
+
+  wayland.windowManager.sway = lib.mkIf swaycfg.enable {
+    config = {
+      keybindings = {
+        "${swaycfg.config.modifier}+Ctrl+Shift+F10" = "exec pkill -INT -f ${lib.getExe cfg.package}";
+      };
+    };
+  };
+
+  programs.niri = lib.mkIf niricfg.enable {
+    settings = {
+      binds = {
+        "Mod+Alt+F10".action.spawn = [
+          "pkill"
+          "-INT"
+          "-f"
+          "${lib.getExe cfg.package}"
+        ];
+      };
+    };
   };
 }

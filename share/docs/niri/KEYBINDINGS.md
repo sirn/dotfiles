@@ -17,15 +17,17 @@ These keybindings are available in the default mode.
 
 ### System & Window Management
 
-| Keybinding              | Action                                           |
-| ----------------------- | ------------------------------------------------ |
-| `Mod+Shift+Slash`       | Show hotkey overlay                              |
-| `Mod+Q`                 | Close the focused window                         |
-| `Mod+O`                 | Toggle overview mode                             |
-| `Mod+Escape`            | Toggle keyboard shortcuts inhibit               |
-| `Mod+Shift+E`           | Quit Niri                                        |
-| `Ctrl+Alt+Delete`       | Quit Niri                                        |
-| `Mod+Shift+P`           | Power off monitors                               |
+| Keybinding              | Action                                                 |
+| ----------------------- | ------------------------------------------------------ |
+| `Mod+Shift+Slash`       | Show hotkey overlay                                    |
+| `Mod+Q`                 | Close the focused window                               |
+| `Mod+O`                 | Toggle overview mode                                   |
+| `Mod+Escape`            | Toggle keyboard shortcuts inhibit                      |
+| `Mod+Shift+E`           | Quit Niri                                              |
+| `Ctrl+Alt+Delete`       | Quit Niri                                              |
+| `Mod+Shift+P`           | Power off monitors                                     |
+| `Mod+Alt+L`             | Manually trigger `swayidle` (e.g., to lock screen)     |
+| `Mod+Alt+F10`           | Manually trigger `kanshi` (e.g., to rearrange display) |
 
 ### Window Focus Navigation
 
