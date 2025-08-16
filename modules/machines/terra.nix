@@ -13,6 +13,7 @@
     ../home/flatpak.nix
     ../home/fonts.nix
     ../home/i18n.nix
+    ../home/niri.nix
     ../home/sway.nix
 
     # programs
