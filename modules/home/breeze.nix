@@ -37,10 +37,19 @@
 
     style = {
       name = "breeze";
+
+      package = pkgs.kdePackages.breeze;
     };
   };
 
   home = {
+    packages = with pkgs; [
+      hicolor-icon-theme
+      kdePackages.breeze
+      kdePackages.breeze-gtk
+      kdePackages.breeze-icons
+    ];
+
     activation =
       let
         gsettingsBin =
@@ -52,18 +61,30 @@
           if config.machine.desktop.preferDark
           then "prefer-dark"
           else "prefer-light";
+
+        gsettingsDesktopSchemas = pkgs.gsettings-desktop-schemas;
+
+        setupGnomeDesktopInterface = pkgs.writeScriptBin "setup-gnome-desktop-interface" ''
+          #!${pkgs.runtimeShell}
+          _gsettings() {
+            XDG_DATA_DIRS="${gsettingsDesktopSchemas}/share/gsettings-schemas/${gsettingsDesktopSchemas.name}:$XDG_DATA_DIRS"
+            ${gsettingsBin} "$@" || true
+          }
+
+          _gsettings set org.gnome.desktop.interface color-scheme ${colorScheme}
+          _gsettings set org.gnome.desktop.interface cursor-size 24
+          _gsettings set org.gnome.desktop.interface cursor-theme "breeze_cursors"
+          _gsettings set org.gnome.desktop.interface document-font-name "sans-serif 10"
+          _gsettings set org.gnome.desktop.interface font-name "sans-serif 10"
+          _gsettings set org.gnome.desktop.interface gtk-theme "Breeze"
+          _gsettings set org.gnome.desktop.interface icon-theme "Breeze"
+          _gsettings set org.gnome.desktop.interface monospace-font-name "monospace 10"
+        '';
       in
       {
         setupBreeze = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           setupBreeze() {
-            ${gsettingsBin} set org.gnome.desktop.interface color-scheme ${colorScheme}
-            ${gsettingsBin} set org.gnome.desktop.interface cursor-size 24
-            ${gsettingsBin} set org.gnome.desktop.interface cursor-theme "breeze_cursors"
-            ${gsettingsBin} set org.gnome.desktop.interface document-font-name "sans-serif 10"
-            ${gsettingsBin} set org.gnome.desktop.interface font-name "sans-serif 10"
-            ${gsettingsBin} set org.gnome.desktop.interface gtk-theme "Breeze"
-            ${gsettingsBin} set org.gnome.desktop.interface icon-theme "Breeze"
-            ${gsettingsBin} set org.gnome.desktop.interface monospace-font-name "monospace 10"
+            ${lib.getExe setupGnomeDesktopInterface}
           }
 
           setupBreeze
