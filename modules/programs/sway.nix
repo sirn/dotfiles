@@ -7,7 +7,6 @@
 
     systemd = {
       enable = true;
-      xdgAutostart = true;
     };
 
     # If NixGL is configured (i.e. non-NixOS), wrap with NixGL
