@@ -16,6 +16,8 @@ in
         horizontal-pad = "8";
         vertical-pad = "4";
         layer = "overlay";
+        render-workers = 4;
+        match-workers = 4;
       };
 
       colors = {
@@ -41,7 +43,7 @@ in
     {
       config = {
         keybindings = {
-          "${swaycfg.modifier}+d" = "exec ${cfg.package}/bin/fuzzel --match-workers 4 --render-workers 4";
+          "${swaycfg.modifier}+d" = "exec ${cfg.package}/bin/fuzzel";
         };
       };
     };
@@ -49,13 +51,7 @@ in
   programs.niri = lib.mkIf config.programs.niri.enable {
     settings = {
       binds = {
-        "Mod+d".action.spawn = [
-          "${lib.getExe cfg.package}"
-          "--match-workers"
-          "4"
-          "--render-workers"
-          "4"
-        ];
+        "Mod+d".action.spawn = [ "${lib.getExe cfg.package}" ];
       };
     };
   };
