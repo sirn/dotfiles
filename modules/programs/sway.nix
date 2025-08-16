@@ -1,5 +1,8 @@
-{ config, lib, pkgs, ... }:
+{ options, config, lib, pkgs, ... }:
 
+let
+  swayopts = options.wayland.windowManager.sway;
+in
 {
   wayland.windowManager.sway = {
     enable = true;
@@ -11,7 +14,10 @@
 
     # If NixGL is configured (i.e. non-NixOS), wrap with NixGL
     # so OpenGL/Vulkan libraries are available.
-    package = config.lib.nixGL.wrap pkgs.sway;
+    #
+    # We have to use options.wayland.windowManager.sway here
+    # in order to get set the overrides.
+    package = config.lib.nixGL.wrap swayopts.package.default;
 
     config =
       let
