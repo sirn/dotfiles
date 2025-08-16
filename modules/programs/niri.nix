@@ -7,22 +7,9 @@ in
   programs.niri = {
     enable = true;
 
-    package = config.lib.nixGL.wrap pkgs.niri;
+    package = config.lib.nixGL.wrap pkgs.niri-stable;
 
     settings = {
-      spawn-at-startup = [
-        {
-          command = [
-            "${pkgs.xwayland-satellite}/bin/xwayland-satellite"
-            ":99"
-          ];
-        }
-      ];
-
-      environment = {
-        DISPLAY = ":99";
-      };
-
       screenshot-path = "${config.home.homeDirectory}/Desktop/Screenshot from %Y-%m-%d %H-%M-%S.png";
 
       prefer-no-csd = true;

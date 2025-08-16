@@ -13,6 +13,7 @@
     ../services/swayidle.nix
     ../services/swaylock.nix
     ../services/wlsunset.nix
+    ../services/xwayland-satellite.nix
   ];
 
   wayland.windowManager.sway = {
