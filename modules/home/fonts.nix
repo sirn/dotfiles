@@ -1,14 +1,17 @@
 { config, lib, pkgs, ... }:
 
+let
+  userFonts = config.machine.desktop.defaultFonts;
+in
 {
   fonts = {
     fontconfig = {
       enable = true;
 
       defaultFonts = {
-        sansSerif = [ config.machine.desktop.defaultFonts.sansSerif ];
-        serif = [ config.machine.desktop.defaultFonts.serif ];
-        monospace = [ config.machine.desktop.defaultFonts.monospace ];
+        sansSerif = [ userFonts.sansSerif ];
+        serif = [ userFonts.serif ];
+        monospace = [ userFonts.monospace ];
       };
     };
   };
@@ -60,7 +63,7 @@
               <string>Arial</string>
             </test>
             <edit name="family" mode="assign" binding="strong">
-              <string>sans-serif</string>
+              <string>${userFonts.sansSerif}</string>
             </edit>
           </match>
           <match target="pattern">
@@ -68,7 +71,7 @@
               <string>Courier New</string>
             </test>
             <edit name="family" mode="assign" binding="strong">
-              <string>monospace</string>
+              <string>${userFonts.monospace}</string>
             </edit>
           </match>
           <match target="pattern">
@@ -76,7 +79,7 @@
               <string>Helvetica Neue</string>
             </test>
             <edit name="family" mode="assign" binding="strong">
-              <string>sans-serif</string>
+              <string>${userFonts.sansSerif}</string>
             </edit>
           </match>
           <match target="pattern">
@@ -84,7 +87,7 @@
               <string>Helvetica</string>
             </test>
             <edit name="family" mode="assign" binding="strong">
-              <string>sans-serif</string>
+              <string>${userFonts.sansSerif}</string>
             </edit>
           </match>
           <match target="pattern">
@@ -92,7 +95,7 @@
               <string>Menlo</string>
             </test>
             <edit name="family" mode="assign" binding="strong">
-              <string>monospace</string>
+              <string>${userFonts.monospace}</string>
             </edit>
           </match>
           <match target="pattern">
@@ -100,7 +103,7 @@
               <string>Segoe UI</string>
             </test>
             <edit name="family" mode="assign" binding="strong">
-              <string>sans-serif</string>
+              <string>${userFonts.sansSerif}</string>
             </edit>
           </match>
           <match target="pattern">
@@ -108,7 +111,7 @@
               <string>Tahoma</string>
             </test>
             <edit name="family" mode="assign" binding="strong">
-              <string>sans-serif</string>
+              <string>${userFonts.sansSerif}</string>
             </edit>
           </match>
           <match target="pattern">
@@ -116,7 +119,7 @@
               <string>Times New Roman</string>
             </test>
             <edit name="family" mode="assign" binding="strong">
-              <string>serif</string>
+              <string>${userFonts.serif}</string>
             </edit>
           </match>
           <match target="pattern">
@@ -124,7 +127,7 @@
               <string>Times</string>
             </test>
             <edit name="family" mode="assign" binding="strong">
-              <string>serif</string>
+              <string>${userFonts.serif}</string>
             </edit>
           </match>
           <match target="pattern">
@@ -132,7 +135,7 @@
               <string>Verdana</string>
             </test>
             <edit name="family" mode="assign" binding="strong">
-              <string>sans-serif</string>
+              <string>${userFonts.sansSerif}</string>
             </edit>
           </match>
         </fontconfig>
