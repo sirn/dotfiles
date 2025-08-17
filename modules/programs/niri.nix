@@ -7,7 +7,7 @@ in
   programs.niri = {
     enable = true;
 
-    package = config.lib.nixGL.wrap pkgs.niri-stable;
+    package = config.lib.nixGL.wrap pkgs.niri;
 
     settings = {
       screenshot-path = "${config.home.homeDirectory}/Desktop/Screenshot from %Y-%m-%d %H-%M-%S.png";

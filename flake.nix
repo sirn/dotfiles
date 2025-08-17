@@ -29,7 +29,6 @@
 
       overlays = [
         nixgl.overlay
-        niri.overlays.niri
         (final: prev: {
           local = import ./pkgs {
             pkgs = final;

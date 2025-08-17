@@ -2,10 +2,12 @@
 
 let
   fuzzelcfg = config.programs.fuzzel;
+
+  xwaylandSatellitePkg = pkgs.xwayland-satellite;
 in
 {
   home.packages = with pkgs; [
-    xwayland-satellite-stable
+    xwaylandSatellitePkg
   ];
 
   systemd.user.services.xwayland-satellite = {
@@ -22,7 +24,7 @@ in
     Service = {
       Type = "notify";
       NotifyAccess = "all";
-      ExecStart = "${pkgs.xwayland-satellite-stable}/bin/xwayland-satellite :99";
+      ExecStart = "${xwaylandSatellitePkg}/bin/xwayland-satellite :99";
       StandardOutput = "journal";
     };
   };
