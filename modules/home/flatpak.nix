@@ -24,15 +24,14 @@ in
         "/usr/share/icons:ro"
         "xdg-config/fontconfig:ro"
         "xdg-config/gtk-3.0:ro"
-        "~/.dotfiles/etc/fontconfig:ro"
         "~/.local/share/fonts:ro"
         "~/.local/share/icons:ro"
         "~/.nix-profile/share/icons:ro"
-        "${fontConfig}:ro"
+        "~/.nix-profile/share/fonts:ro"
+        "/nix/store:ro" # :(
       ];
 
       environment = {
-        FONTCONFIG_FILE = "${fontConfig}";
         XCURSOR_PATH = lib.concatStringsSep ":" [
           "${config.home.homeDirectory}/.local/share/icons"
           "${config.home.homeDirectory}/.nix-profile/share/icons"
