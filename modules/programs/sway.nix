@@ -181,15 +181,27 @@ in
 
           # Special Keys
           "XF86AudioRaiseVolume" = ''
-            exec ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%
+            exec ${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+
           '';
 
           "XF86AudioLowerVolume" = ''
-            exec ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%
+            exec ${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-
           '';
 
           "XF86AudioMute" = ''
-            exec ${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle
+            exec ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+          '';
+
+          "XF86AudioMicMute" = ''
+            exec ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+          '';
+
+          "XF86MonBrightnessUp" = ''
+            exec ${lib.getExe pkgs.brightnessctl} --class=backlight set +10%
+          '';
+
+          "XF86MonBrightnessDown" = ''
+            exec ${lib.getExe pkgs.brightnessctl} --class=backlight set 10%-
           '';
         };
 

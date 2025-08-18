@@ -44,14 +44,14 @@ in
         "Mod+Shift+Slash".action.show-hotkey-overlay = { };
 
         # System volume controls
-        "XF86AudioRaiseVolume".action.spawn = [ "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1+" ];
-        "XF86AudioLowerVolume".action.spawn = [ "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1-" ];
-        "XF86AudioMute".action.spawn = [ "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle" ];
-        "XF86AudioMicMute".action.spawn = [ "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle" ];
+        "XF86AudioRaiseVolume".action.spawn = [ "${pkgs.wireplumber}/bin/wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1+" ];
+        "XF86AudioLowerVolume".action.spawn = [ "${pkgs.wireplumber}/bin/wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1-" ];
+        "XF86AudioMute".action.spawn = [ "${pkgs.wireplumber}/bin/wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle" ];
+        "XF86AudioMicMute".action.spawn = [ "${pkgs.wireplumber}/bin/wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle" ];
 
         # Brightness controls
-        "XF86MonBrightnessUp".action.spawn = [ "brightnessctl" "--class=backlight" "set" "+10%" ];
-        "XF86MonBrightnessDown".action.spawn = [ "brightnessctl" "--class=backlight" "set" "10%-" ];
+        "XF86MonBrightnessUp".action.spawn = [ "${lib.getExe pkgs.brightnessctl}" "--class=backlight" "set" "+10%" ];
+        "XF86MonBrightnessDown".action.spawn = [ "${lib.getExe pkgs.brightnessctl}" "--class=backlight" "set" "10%-" ];
 
         # Overview
         "Mod+O".action.toggle-overview = { };
