@@ -46,6 +46,11 @@ in
       config.mux_enable_ssh_agent = false
       config.warn_about_missing_glyphs = false
 
+      config.term = 'wezterm'
+      config.set_environment_variables = {
+        TERMINFO_DIRS = '${config.home.homeDirectory}/.nix-profile/share/terminfo'
+      }
+
       config.window_padding = {
         left = '0.2cell',
         right = '1cell',
