@@ -22,7 +22,6 @@
             "CheckHostIP" = "yes";
             "StrictHostKeyChecking" = "accept-new";
             "PreferredAuthentications" = "publickey";
-            "SetEnv" = "TERM=xterm-256color";
           };
         };
 
