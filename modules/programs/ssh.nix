@@ -21,7 +21,8 @@
           extraOptions = {
             "CheckHostIP" = "yes";
             "StrictHostKeyChecking" = "accept-new";
-            "PreferredAuthentications" = "publickey,keyboard-interactive,password";
+            "PreferredAuthentications" = "publickey";
+            "SetEnv" = "TERM=xterm-256color";
           };
         };
 
