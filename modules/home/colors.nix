@@ -122,6 +122,10 @@ in
     settings = {
       layout = {
         background-color = lib.mkDefault colorScheme.background;
+        focus-ring = {
+          active.color = colorScheme.normal.blue;
+          urgent.color = colorScheme.normal.red;
+        };
       };
     };
   };
