@@ -22,7 +22,7 @@
     "t t" #'treemacs-select-window
     "t p a" #'treemacs-add-project-to-workspace
     "t w c" #'treemacs-create-workspace
-    "t w e" #'treemacs-edit-workspace
+    "t w e" #'treemacs-edit-workspaces
     "t w r" #'treemacs-rename-workspace
     "t w w" #'treemacs-switch-workspace)
 
