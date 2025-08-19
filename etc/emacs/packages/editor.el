@@ -94,10 +94,7 @@ Other buffers are left alone."
 (use-package display-fill-column-indicator-mode
   :general
   (leader
-    "T f" #'display-fill-column-indicator-mode)
-
-  :init
-  (add-hook 'prog-mode-hook #'display-fill-column-indicator-mode))
+    "T f" #'display-fill-column-indicator-mode))
 
 
 ;; Builtin
@@ -111,7 +108,6 @@ Other buffers are left alone."
   (whitespace-style '(face tabs tab-mark spaces space-mark trailing lines-tail))
 
   :config
-  (add-hook 'prog-mode-hook #'whitespace-mode)
   (add-hook 'before-save-hook #'whitespace-cleanup))
 
 
