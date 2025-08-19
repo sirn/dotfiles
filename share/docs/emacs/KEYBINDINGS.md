@@ -219,6 +219,7 @@ Environment variable management commands.
 | `T f` | `display-fill-column-indicator-mode` | Toggle the fill-column indicator. |
 | `T l` | `display-line-numbers-mode` | Toggle line numbers. |
 | `T o` | `outline-indent-minor-mode` | Toggle Outline Indent code folding mode. |
+| `T w` | `whitespace-mode` | Toggle whitespace display. |
 
 ### `w` - Windows
 

@@ -104,14 +104,15 @@ Other buffers are left alone."
 (use-package whitespace
   :general
   (leader
-    "t w" #'whitespace-mode
+    "T w" #'whitespace-mode
     "e w" #'whitespace-cleanup)
 
   :custom
   (whitespace-style '(face tabs tab-mark spaces space-mark trailing lines-tail))
 
   :config
-  (add-hook 'before-save-hook 'whitespace-cleanup))
+  (add-hook 'prog-mode-hook #'whitespace-mode)
+  (add-hook 'before-save-hook #'whitespace-cleanup))
 
 
 (use-package undo-tree
