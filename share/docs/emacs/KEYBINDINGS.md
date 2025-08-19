@@ -14,9 +14,9 @@ These keybindings are generally available in most modes.
 | `C-x C-j` | `dired-jump` | Open directory of current buffer in Dired. |
 | `C-c C-d` | `helpful-at-point` | Show help for the symbol at point. |
 | `M-%` | `vr/query-replace` | `visual-regexp` query replace. |
+| `M-g I` | `consult-imenu-multi` | Search for definitions/sections across multiple buffers. |
 | `M-g g` | `consult-goto-line` | Go to a specific line number in the current buffer. |
 | `M-g i` | `consult-imenu` | Search for definitions/sections in the current buffer. |
-| `M-g I` | `consult-imenu-multi` | Search for definitions/sections across multiple buffers. |
 | `M-s r` | `consult-ripgrep` | Search the project with `ripgrep` (same as `leader s r`). |
 | `M-y` | `consult-yank-pop` | Select an item from the kill ring to yank. |
 
@@ -206,8 +206,8 @@ Environment variable management commands.
 
 | Key | Command | Description |
 | :--- | :--- | :--- |
-| `T t` | `treemacs` | Toggle Treemacs. |
-| `t t` | `treemacs-select-window` | Switch to Treemacs sidebar. |
+| `t t` | `treemacs` | Toggle Treemacs. |
+| `t T` | `treemacs-select-window` | Switch to Treemacs window. |
 | `t p a` | `treemacs-add-project-to-workspace` | Add project to Treemacs workspace |
 | `t w c` | `treemacs-create-workspace` | Create Treemacs workspace. |
 | `t w e` | `treemacs-edit-workspace` | Edit Treemacs workspace. |

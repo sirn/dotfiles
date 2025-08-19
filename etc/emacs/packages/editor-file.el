@@ -18,8 +18,8 @@
 (use-package treemacs
   :general
   (leader
-    "T t" #'treemacs
-    "t t" #'treemacs-select-window
+    "t t" #'treemacs
+    "t T" #'treemacs-select-window
     "t p a" #'treemacs-add-project-to-workspace
     "t w c" #'treemacs-create-workspace
     "t w e" #'treemacs-edit-workspaces
