@@ -23,6 +23,7 @@
     ./programs/htop.nix
     ./programs/jq.nix
     ./programs/jujutsu.nix
+    ./programs/lstr.nix
     ./programs/magit.nix
     ./programs/mercurial.nix
     ./programs/mosh.nix
