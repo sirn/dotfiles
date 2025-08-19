@@ -85,6 +85,7 @@ in
       telephone-line
       tree-sitter
       treemacs
+      treemacs-evil
       treemacs-nerd-icons
       treesit-grammars.with-all-grammars
       undo-tree

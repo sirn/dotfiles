@@ -84,7 +84,7 @@ Other buffers are left alone."
 (use-package display-line-numbers
   :general
   (leader
-    "t l" #'display-line-numbers-mode))
+    "T l" #'display-line-numbers-mode)
 
   :init
   (add-hook 'prog-mode-hook #'display-line-numbers-mode))
@@ -94,7 +94,7 @@ Other buffers are left alone."
 (use-package display-fill-column-indicator-mode
   :general
   (leader
-    "t f" #'display-fill-column-indicator-mode))
+    "T f" #'display-fill-column-indicator-mode)
 
   :init
   (add-hook 'prog-mode-hook #'display-fill-column-indicator-mode))
@@ -621,7 +621,7 @@ area."
 (use-package outline-indent
   :general
   (leader
-    "t o" #'outline-indent-minor-mode
+    "T o" #'outline-indent-minor-mode
     "z z" #'outline-toggle-children
     "z c" #'outline-hide-subtree
     "z o" #'outline-show-subtree

@@ -202,14 +202,23 @@ Environment variable management commands.
 | `s l` | `avy-goto-line` | Jump to a line on screen. |
 | `s L` | `ace-link` | Jump to a link, URL, or file path at point. |
 
-### `t` - Toggles
+### `t` - Treemacs
 
 | Key | Command | Description |
 | :--- | :--- | :--- |
-| `t f` | `display-fill-column-indicator-mode` | Toggle the fill-column indicator. |
-| `t l` | `display-line-numbers-mode` | Toggle line numbers. |
-| `t o` | `outline-indent-minor-mode` | Toggle Outline Indent code folding mode. |
-| `t t` | `treemacs` | Toggle Treemacs. |
+| `T t` | `treemacs` | Toggle Treemacs. |
+| `t t` | `treemacs-select-window` | Switch to Treemacs sidebar. |
+| `t p a` | `treemacs-add-project-to-workspace` | Add project to Treemacs workspace |
+| `t w c` | `treemacs-create-workspace` | Create Treemacs workspace. |
+| `t w e` | `treemacs-edit-workspace` | Edit Treemacs workspace. |
+| `t w r` | `treemacs-rename-workspace` | Rename Treemacs workspace. |
+| `t w w` | `treemacs-switch-workspace` | Switch Treemacs workspace. |
+
+### `T` - Toggles
+
+| `T f` | `display-fill-column-indicator-mode` | Toggle the fill-column indicator. |
+| `T l` | `display-line-numbers-mode` | Toggle line numbers. |
+| `T o` | `outline-indent-minor-mode` | Toggle Outline Indent code folding mode. |
 
 ### `w` - Windows
 

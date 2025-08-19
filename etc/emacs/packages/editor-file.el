@@ -18,12 +18,29 @@
 (use-package treemacs
   :general
   (leader
-    "t t" #'treemacs)
+    "T t" #'treemacs
+    "t t" #'treemacs-select-window
+    "t p a" #'treemacs-add-project-to-workspace
+    "t w c" #'treemacs-create-workspace
+    "t w e" #'treemacs-edit-workspace
+    "t w r" #'treemacs-rename-workspace
+    "t w w" #'treemacs-switch-workspace)
+
+  :custom
+  (treemacs-read-string-input 'from-minibuffer)
 
   :config
   ;; Deferred loading
+  (require 'treemacs-evil)
   (require 'treemacs-nerd-icons)
-  (treemacs-load-theme "nerd-icons"))
+  (treemacs-load-theme "nerd-icons")
+  (treemacs-hide-gitignored-files-mode +1))
+
+
+(use-package treemacs-nerd-icons)
+
+
+(use-package treemacs-evil)
 
 
 (use-package osx-trash
