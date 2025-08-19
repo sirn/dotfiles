@@ -40,7 +40,6 @@ in
       corfu-prescient
       corfu-terminal
       ctrlf
-      dired-sidebar
       dtrt-indent
       eat
       editorconfig
@@ -67,6 +66,8 @@ in
       magit
       marginalia
       modus-themes
+      nerd-icons
+      nerd-icons-dired
       nix-ts-mode
       ob-restclient
       orderless
@@ -83,6 +84,8 @@ in
       sql-indent
       telephone-line
       tree-sitter
+      treemacs
+      treemacs-nerd-icons
       treesit-grammars.with-all-grammars
       undo-tree
       unkillable-scratch

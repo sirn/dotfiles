@@ -52,6 +52,9 @@
   (telephone-line-mode +1))
 
 
+(use-package nerd-icons)
+
+
 (use-package modus-themes
   :custom
   (modus-themes-common-palette-overrides

@@ -10,18 +10,20 @@
      (setq dired-use-ls-dired nil))))
 
 
-(use-package dired-sidebar
-  :preface
-  (eval-when-compile
-    (declare-function gemacs--dired-sidebar-setup nil))
+(use-package nerd-icons-dired
+  :init
+  (add-hook 'dired-mode-hook #'nerd-icons-dired-mode))
 
+
+(use-package treemacs
   :general
   (leader
-    "t T" #'dired-sidebar-toggle-sidebar
-    "t t" #'dired-sidebar-toggle-with-current-directory)
+    "t t" #'treemacs)
 
   :config
-  (setq dired-sidebar-theme 'ascii))
+  ;; Deferred loading
+  (require 'treemacs-nerd-icons)
+  (treemacs-load-theme "nerd-icons"))
 
 
 (use-package osx-trash

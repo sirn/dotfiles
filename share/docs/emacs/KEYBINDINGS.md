@@ -208,9 +208,8 @@ Environment variable management commands.
 | :--- | :--- | :--- |
 | `t f` | `display-fill-column-indicator-mode` | Toggle the fill-column indicator. |
 | `t l` | `display-line-numbers-mode` | Toggle line numbers. |
-| `t o` | `origami-mode` | Toggle Origami code folding mode. |
-| `t t` | `dired-sidebar-toggle-with-current-directory` | Toggle Dired sidebar at current directory. |
-| `t T` | `dired-sidebar-toggle-sidebar` | Toggle Dired sidebar. |
+| `t o` | `outline-indent-minor-mode` | Toggle Outline Indent code folding mode. |
+| `t t` | `treemacs` | Toggle Treemacs. |
 
 ### `w` - Windows
 
