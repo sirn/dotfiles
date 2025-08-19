@@ -25,11 +25,12 @@ in
       };
 
       ui = {
+        conflict-marker-style = "git";
         default-command = "log";
-        diff-formatter = ":git";
         diff-editor = ":builtin";
+        diff-formatter = ":git";
         pager = "${pkgs.delta}/bin/delta";
-        "show-cryptographic-signatures" = gpgcfg.enable;
+        show-cryptographic-signatures = gpgcfg.enable;
       };
 
       aliases =

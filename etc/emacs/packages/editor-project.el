@@ -26,8 +26,7 @@
     "S" #'gemacs--project-sync)
 
   :custom
-  (project-vc-extra-root-markers '(".jj" "go.mod"))
-  (project-vc-ignores '(".jj"))
+  (project-vc-extra-root-markers '("go.mod"))
 
   :preface
   (eval-when-compile

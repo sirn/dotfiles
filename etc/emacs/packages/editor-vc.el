@@ -65,3 +65,7 @@
 
   :config
   (global-git-gutter-mode +1))
+
+
+(use-package vc-jj
+  :demand t)
