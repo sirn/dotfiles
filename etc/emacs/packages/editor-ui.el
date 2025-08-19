@@ -88,7 +88,7 @@
     (defvar mac-option-key-is-meta))
 
   :config
-  (defvar gemacs-font "PragmataPro Mono")
+  (defvar gemacs-font "PragmataPro Mono Liga")
   (defvar gemacs-font-size 11)
 
   (setq-default frame-title-format '("%f"))

@@ -15,7 +15,7 @@ in
       main = {
         shell = "${fishcfg.package}/bin/fish";
         term = "xterm-256color";
-        font = "PragmataPro Mono:size=12";
+        font = "PragmataPro Mono Liga:size=12";
         bold-text-in-bright = "yes";
         dpi-aware = "no";
       };

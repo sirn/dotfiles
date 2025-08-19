@@ -28,7 +28,7 @@ in
           else 12.0;
 
         normal = {
-          family = "PragmataPro Mono";
+          family = "PragmataPro Mono Liga";
         };
       };
 

@@ -9,7 +9,7 @@ let
   sublimeConfig = {
     theme = "Meetio Theme.sublime-theme";
     color_scheme = "Meetio Darker.sublime-color-scheme";
-    font_face = "PragmataPro Mono";
+    font_face = "PragmataPro Mono Liga";
     font_size = if pkgs.stdenv.isDarwin then 14 else 12;
     update_check = false;
   };
