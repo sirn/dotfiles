@@ -86,12 +86,19 @@ Other buffers are left alone."
   (leader
     "t l" #'display-line-numbers-mode))
 
+  :init
+  (add-hook 'prog-mode-hook #'display-line-numbers-mode))
+
 
 ;; Builtin
 (use-package display-fill-column-indicator-mode
   :general
   (leader
     "t f" #'display-fill-column-indicator-mode))
+
+  :init
+  (add-hook 'prog-mode-hook #'display-fill-column-indicator-mode))
+
 
 ;; Builtin
 (use-package whitespace
