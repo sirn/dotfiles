@@ -5,6 +5,9 @@
     Unit = {
       Description = "KWallet PAM Init";
       PartOf = [ config.wayland.systemd.target ];
+
+      # Avoid re-running kwallet-pam.
+      X-RestartIfChanged = false;
     };
 
     Service = {
