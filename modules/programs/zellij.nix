@@ -8,6 +8,8 @@ in
 {
   programs.zellij = {
     enable = true;
+
+    package = with pkgs; unstable.zellij;
   };
 
   xdg.configFile."zellij/config.kdl".text = ''
