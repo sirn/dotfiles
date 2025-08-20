@@ -1,5 +1,10 @@
 { config, lib, pkgs, ... }:
 
+let
+  swaycfg = config.wayland.windowManager.sway;
+
+  niricfg = config.programs.niri;
+in
 {
   home.packages = with pkgs; [
     kdePackages.xdg-desktop-portal-kde
@@ -12,11 +17,13 @@
     ".config/xdg-desktop-portal/portals.conf" = {
       text = lib.generators.toINI { } {
         preferred = {
-          default = "gtk";
+          default = "kde";
           "org.freedesktop.impl.portal.Inhibit" = "none";
+          "org.freedesktop.impl.portal.Settings" = "gtk";
+        } // (if (swaycfg.enable || niricfg.enable) then {
           "org.freedesktop.impl.portal.Screencast" = "wlr";
           "org.freedesktop.impl.portal.Screenshot" = "wlr";
-        };
+        } else { });
       };
     };
   };
