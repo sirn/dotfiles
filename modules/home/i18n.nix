@@ -1,8 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
-  # On non-NixOS, this should be installed using OS package manager.
-  i18n.inputMethod = lib.mkIf config.machine.isNixOS {
+  i18n.inputMethod = {
     enable = true;
     type = "fcitx5";
 
