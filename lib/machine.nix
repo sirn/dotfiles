@@ -84,7 +84,7 @@ in
   config = {
     systemd = mkIf config.systemd.user.enable {
       user = {
-        startServices = true;
+        startServices = "sd-switch";
       };
     };
   };
