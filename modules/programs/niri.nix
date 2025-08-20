@@ -245,9 +245,43 @@ in
   };
 
   # Nix don't install services if the package is installed through Home Manager due to
-  # lib/systemd/user vs config/systemd/user difference. This needs to be linked manually.
-  xdg.configFile = lib.mkIf cfg.enable {
-    "systemd/user/niri.service".source = "${cfg.package}/lib/systemd/user/niri.service";
-    "systemd/user/niri-shutdown.target".source = "${cfg.package}/lib/systemd/user/niri-shutdown.target";
+  # lib/systemd/user vs config/systemd/user difference. This needs to be created manually
+  # based on ${cfg.package}/lib/systemd/user/niri.service.
+  #
+  # Note: intentionally hard-coding graphical-session.target for consistency with
+  # graphical-session-pre.target.
+  systemd.user.services.niri = lib.mkIf cfg.enable {
+    Unit = {
+      Description = "A scrollable-tiling Wayland compositor";
+      BindsTo = [ "graphical-session.target" ];
+
+      Before =
+        [ "graphical-session.target" ] ++
+        lib.optional config.xdg.autostart.enable [ "xdg-desktop-autostart.target" ];
+
+      After = [ "graphical-session-pre.target" ];
+      Wants =
+        [ "graphical-session-pre.target" ] ++
+        lib.optional config.xdg.autostart.enable [ "xdg-desktop-autostart.target" ];
+
+      # Avoid killing Niri session.
+      X-RestartIfChanged = false;
+    };
+
+    Service = {
+      Slice = "session.slice";
+      Type = "notify";
+      ExecStart = "${cfg.package}/bin/niri --session";
+    };
+  };
+
+  systemd.user.targets.niri-shutdown = lib.mkIf cfg.enable {
+    Unit = {
+      Description = "Shutdown running niri session";
+      DefaultDependencies = false;
+      StopWhenUnneeded = true;
+      Conflicts = [ "graphical-session.target" "graphical-session-pre.target" ];
+      After = [ "graphical-session.target" "graphical-session-pre.target" ];
+    };
   };
 }
