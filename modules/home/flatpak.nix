@@ -23,7 +23,6 @@ in
         "/nix/store:ro"
         "/usr/share/icons:ro"
         "xdg-config/fontconfig:ro"
-        "xdg-config/gtk-3.0:ro"
         "~/.local/share/fonts:ro"
         "~/.local/share/icons:ro"
         "~/.nix-profile/share/icons:ro"
