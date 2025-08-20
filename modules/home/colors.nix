@@ -110,6 +110,43 @@ in
 
   wayland.windowManager.sway = lib.mkIf config.wayland.windowManager.sway.enable {
     config = {
+      colors = {
+        focused = {
+          background = colorScheme.normal.blue;
+          border = colorScheme.normal.black;
+          childBorder = colorScheme.normal.blue;
+          indicator = colorScheme.bright.blue;
+          text = colorScheme.normal.black;
+        };
+        focusedInactive = {
+          background = colorScheme.bright.blue;
+          border = colorScheme.normal.black;
+          childBorder = colorScheme.bright.blue;
+          indicator = colorScheme.bright.blue;
+          text = colorScheme.normal.black;
+        };
+        unfocused = {
+          background = colorScheme.bright.black;
+          border = colorScheme.bright.black;
+          childBorder = colorScheme.bright.black;
+          indicator = colorScheme.bright.black;
+          text = colorScheme.foreground;
+        };
+        placeholder = {
+          background = colorScheme.normal.yellow;
+          border = colorScheme.bright.black;
+          childBorder = colorScheme.normal.yellow;
+          indicator = colorScheme.normal.yellow;
+          text = colorScheme.foreground;
+        };
+        urgent = {
+          background = colorScheme.normal.red;
+          border = colorScheme.bright.black;
+          childBorder = colorScheme.normal.red;
+          indicator = colorScheme.normal.red;
+          text = colorScheme.normal.black;
+        };
+      };
       output = {
         "*" = {
           bg = lib.mkDefault "${colorScheme.background} solid_color";

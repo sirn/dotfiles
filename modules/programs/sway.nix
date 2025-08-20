@@ -223,7 +223,7 @@ in
         };
 
         floating = {
-          titlebar = true;
+          titlebar = false;
           modifier = "${cfg.modifier}";
         };
 
@@ -234,7 +234,7 @@ in
         };
 
         window = {
-          titlebar = true;
+          titlebar = false;
 
           border = 4; # border + gap should be 12
 
