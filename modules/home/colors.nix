@@ -113,35 +113,35 @@ in
       colors = {
         focused = {
           background = colorScheme.normal.blue;
-          border = colorScheme.normal.black;
+          border = colorScheme.normal.blue;
           childBorder = colorScheme.normal.blue;
           indicator = colorScheme.bright.blue;
           text = colorScheme.normal.black;
         };
         focusedInactive = {
-          background = colorScheme.bright.blue;
-          border = colorScheme.normal.black;
-          childBorder = colorScheme.bright.blue;
-          indicator = colorScheme.bright.blue;
-          text = colorScheme.normal.black;
-        };
-        unfocused = {
           background = colorScheme.bright.black;
           border = colorScheme.bright.black;
           childBorder = colorScheme.bright.black;
           indicator = colorScheme.bright.black;
           text = colorScheme.foreground;
         };
+        unfocused = {
+          background = "#222222";
+          border = "#222222";
+          childBorder = "#222222";
+          indicator = "#222222";
+          text = colorScheme.foreground;
+        };
         placeholder = {
           background = colorScheme.normal.yellow;
-          border = colorScheme.bright.black;
+          border = colorScheme.normal.yellow;
           childBorder = colorScheme.normal.yellow;
           indicator = colorScheme.normal.yellow;
           text = colorScheme.foreground;
         };
         urgent = {
           background = colorScheme.normal.red;
-          border = colorScheme.bright.black;
+          border = colorScheme.normal.red;
           childBorder = colorScheme.normal.red;
           indicator = colorScheme.normal.red;
           text = colorScheme.normal.black;
