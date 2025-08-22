@@ -4,6 +4,7 @@
   imports = [
     ../programs/aider-chat.nix
     ../programs/claude-code.nix
+    ../programs/codex.nix
     ../programs/gemini.nix
   ];
 
@@ -67,6 +68,10 @@
     };
 
     ".gemini/GEMINI.md" = lib.mkDefault {
+      source = config.home.file.".local/var/AGENTS.md".source;
+    };
+
+    ".codex/AGENTS.md" = lib.mkDefault {
       source = config.home.file.".local/var/AGENTS.md".source;
     };
   };
