@@ -1,7 +1,7 @@
 { lib, pkgs, ... }:
 
 let
-  fhsUvx = pkgs.buildFHSEnv {
+  fhsUv = pkgs.buildFHSEnv {
     name = "uvx-fhs-base";
     runScript = "uv";
     targetPkgs = pkgs': with pkgs'; [
@@ -12,9 +12,6 @@ let
       pkg-config
       stdenv.cc.cc
       zlib
-
-      # For dynamically linked binaries
-      nix-ld
     ];
   };
 
@@ -30,8 +27,8 @@ let
     installPhase = ''
       mkdir -p $out/bin
 
-      makeWrapper ${fhsUvx}/bin/${fhsUvx.name} $out/bin/uv
-      makeWrapper ${fhsUvx}/bin/${fhsUvx.name} $out/bin/uvx \
+      makeWrapper ${fhsUv}/bin/${fhsUv.name} $out/bin/uv
+      makeWrapper ${fhsUv}/bin/${fhsUv.name} $out/bin/uvx \
         --add-flags "tool uvx" \
     '';
   };
