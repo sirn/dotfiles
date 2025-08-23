@@ -7,6 +7,7 @@
     ../programs/waybar.nix
     ../programs/xdg-portal.nix
 
+    ../services/copyq.nix
     ../services/kanshi.nix
     ../services/kwallet.nix
     ../services/mako.nix
