@@ -17,10 +17,13 @@
 
         ## General guidelines
 
+        - You MUST NOT overengineering the changes
+        - You MUST keep implementation simple and concise, and iterate on it later
         - You MUST follow a URL when presented, e.g. after an error, to figure out what's wrong with the code
         - You SHOULD create temporary files in a directory name tmp/ and put .gitignore in it that ignores everything
         - You SHOULD ask the user to split the task if the task is deemed too long
         - You SHOULD ask the user if the instruction is unclear, need more context, or require any kind of user input
+        - You SHOULD ask for a follow-up after finishing a task
 
         ## Coding styles
 
