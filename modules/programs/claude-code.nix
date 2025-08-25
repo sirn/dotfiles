@@ -36,11 +36,14 @@ in
 
         ## General guidelines
 
+        - You MUST NOT overengineering the changes
+        - You MUST keep implementation simple and concise, and improve it in later iteration
         - You MUST first inspect an existing coding patterns
         - You MUST follow existing coding patterns
         - You MUST provide a detailed plan on how to implement
         - You MUST consider an alternative approach and weighs pros/cons of each approach
         - You MUST try countering complexity: make the system obvious, have no tolerance for complexity
+        - You MUST NOT made any actual code changes when asking to plan; only give me an outline how you're going to implement
         - You SHOULD ONLY try to break out code when it is necessary
         - You SHOULD provide a simple mockup code to illustrated the idea
         - You SHOULD provide a reasoning behind an architecture/organizational code decisions
