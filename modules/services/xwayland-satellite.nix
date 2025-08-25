@@ -1,6 +1,8 @@
 { config, lib, pkgs, ... }:
 
 let
+  copyqcfg = config.services.copyq;
+
   fuzzelcfg = config.programs.fuzzel;
 
   xwaylandSatellitePkg = pkgs.xwayland-satellite;
@@ -34,6 +36,14 @@ in
       main = {
         launch-prefix = "env DISPLAY=:99";
       };
+    };
+  };
+
+  systemd.user.services.copyq = lib.mkIf copyqcfg.enable {
+    Service = {
+      Environment = [
+        "DISPLAY=:99"
+      ];
     };
   };
 }
