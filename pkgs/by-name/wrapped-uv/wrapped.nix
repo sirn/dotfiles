@@ -28,8 +28,7 @@ let
       mkdir -p $out/bin
 
       makeWrapper ${fhsUv}/bin/${fhsUv.name} $out/bin/uv
-      makeWrapper ${fhsUv}/bin/${fhsUv.name} $out/bin/uvx \
-        --add-flags "tool uvx" \
+      makeWrapper ${fhsUv}/bin/${fhsUv.name} $out/bin/uvx --add-flags "tool uvx"
     '';
   };
 in

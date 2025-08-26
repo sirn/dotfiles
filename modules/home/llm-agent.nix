@@ -6,6 +6,7 @@
     ../programs/claude-code.nix
     ../programs/codex.nix
     ../programs/gemini.nix
+    ../programs/opencode.nix
   ];
 
   home.file = {
@@ -71,11 +72,15 @@
       source = config.home.file.".local/var/AGENTS.md".source;
     };
 
+    ".codex/AGENTS.md" = lib.mkDefault {
+      source = config.home.file.".local/var/AGENTS.md".source;
+    };
+
     ".gemini/GEMINI.md" = lib.mkDefault {
       source = config.home.file.".local/var/AGENTS.md".source;
     };
 
-    ".codex/AGENTS.md" = lib.mkDefault {
+    ".config/opencode/AGENTS.md" = lib.mkDefault {
       source = config.home.file.".local/var/AGENTS.md".source;
     };
   };
