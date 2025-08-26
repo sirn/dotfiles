@@ -1,15 +1,84 @@
 { config, lib, pkgs, ... }:
 
 let
-  uvxAiderChat = pkgs.writeScriptBin "aider" ''
-    #!${pkgs.bash}/bin/bash
-    # Runs Aider from uvx
-    exec ${pkgs.local.wrapped-uv}/bin/uvx --managed-python --python 3.12 --from aider-chat aider "$@"
-  '';
+  pythonPackages = pkgs.unstable.python312Packages;
+
+  google-genai = pythonPackages.buildPythonPackage rec {
+    pname = "google-genai";
+    version = "1.31.0";
+    pyproject = true;
+    pythonRelaxDeps = true;
+
+    src = pythonPackages.fetchPypi {
+      pname = "google_genai";
+      inherit version;
+      sha256 = "sha256-hXK0eqaENXw+XhDSkOx3LGVBQRSTnjrSlVID4nzS/Lw=";
+    };
+
+    build-system = with pythonPackages; [
+      setuptools
+    ];
+
+    nativeBuildInputs = with pythonPackages; [
+      pkginfo
+      twine
+    ];
+
+    propagatedBuildInputs = with pythonPackages; [
+      anyio
+      google-auth
+      httpx
+      pydantic
+      tenacity
+      websockets
+      typing-extensions
+    ];
+
+    doCheck = false;
+  };
+
+  google-cloud-aiplatform = pythonPackages.buildPythonPackage rec {
+    pname = "google-cloud-aiplatform";
+    version = "1.110.0";
+    pyproject = true;
+    pythonRelaxDeps = true;
+
+    src = pythonPackages.fetchPypi {
+      pname = "google_cloud_aiplatform";
+      inherit version;
+      sha256 = "sha256-53oNj7T1j0yuLmvqEuY+8nfszrojqzjSo6XCACLmprU=";
+    };
+
+    build-system = with pythonPackages; [
+      setuptools
+    ];
+
+    propagatedBuildInputs = with pythonPackages; [
+      google-api-core
+      google-auth
+      proto-plus
+      protobuf
+      packaging
+      google-cloud-storage
+      google-cloud-bigquery
+      google-cloud-resource-manager
+      shapely
+      pydantic
+      typing-extensions
+      docstring-parser
+      google-genai
+    ];
+
+    doCheck = false;
+  };
+
+  aider-chat-with-gcp = pkgs.unstable.aider-chat.overridePythonAttrs (oldAttrs: {
+    propagatedBuildInputs = (oldAttrs.propagatedBuildInputs or [ ]) ++ [ google-cloud-aiplatform ];
+  });
 in
 {
   home.packages = [
-    uvxAiderChat
+    aider-chat-with-gcp
   ];
 
   programs.git = {

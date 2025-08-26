@@ -1,25 +1,18 @@
 { lib, pkgs, ... }:
 
-let
-  npxClaudeCode = pkgs.writeScriptBin "claude" ''
-    #!${pkgs.bash}/bin/bash
-    # Runs Claude Code from Npx
-    export PATH=${pkgs.nodejs_20}/bin:${pkgs.local.wrapped-uv}/bin:${pkgs.ripgrep}/bin:$PATH
-    export DISABLE_AUTOUPDATER=1
-    exec ${pkgs.nodejs_20}/bin/npx --yes @anthropic-ai/claude-code "$@"
-  '';
-
-  npxCcUsage = pkgs.writeScriptBin "ccusage" ''
-    #!${pkgs.bash}/bin/bash
-    # Runs CCUsage from Npx
-    export PATH=${pkgs.nodejs_20}/bin:$PATH
-    exec ${pkgs.nodejs_20}/bin/npx --yes ccusage "$@"
-  '';
-in
 {
   home.packages = with pkgs; [
-    npxCcUsage
-    npxClaudeCode
+    (pkgs.unstable.claude-code.overrideDerivation (attrs: {
+      nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
+
+      postInstall = (attrs.postInstall or "") + ''
+        wrapProgram $out/bin/claude \
+          --prefix PATH : ${pkgs.bun}/bin \
+          --prefix PATH : ${pkgs.nodejs}/bin \
+          --prefix PATH : ${pkgs.ripgrep}/bin \
+          --prefix PATH : ${pkgs.local.wrapped-uv}/bin
+      '';
+    }))
   ];
 
   home.file = {
