@@ -229,6 +229,7 @@ in
           # wrap tenv to auto-install appropriate terraform version
           (tenv.overrideDerivation (attrs: {
             nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
+
             postInstall = ''
               for program in "$out"/bin/*; do
                 if [ -f "$program" ]; then
