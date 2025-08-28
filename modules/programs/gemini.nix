@@ -1,18 +1,29 @@
 { pkgs, ... }:
 
+let
+  package = pkgs.unstable.gemini-cli;
+in
 {
   home.packages = with pkgs; [
-    (pkgs.unstable.gemini-cli.overrideDerivation (attrs: {
-      nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
+    (pkgs.stdenv.mkDerivation {
+      pname = "wrapped-${package.name}";
+      src = ./.;
+      version = package.version;
 
-      postInstall = attrs.postInstall + ''
-        wrapProgram $out/bin/gemini \
+      nativeBuildInputs = [
+        pkgs.makeWrapper
+      ];
+
+      installPhase = ''
+        mkdir -p $out/bin
+
+        makeWrapper ${package}/bin/gemini $out/bin/gemini \
           --prefix PATH : ${pkgs.bun}/bin \
           --prefix PATH : ${pkgs.nodejs}/bin \
           --prefix PATH : ${pkgs.ripgrep}/bin \
           --prefix PATH : ${pkgs.local.wrapped-uv}/bin
       '';
-    }))
+    })
   ];
 
   programs.git = {

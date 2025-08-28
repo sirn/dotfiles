@@ -1,17 +1,28 @@
 { pkgs, ... }:
 
+let
+  package = pkgs.unstable.opencode;
+in
 {
   home.packages = with pkgs; [
-    (pkgs.unstable.opencode.overrideDerivation (attrs: {
-      nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
+    (pkgs.stdenv.mkDerivation {
+      pname = "wrapped-${package.name}";
+      src = ./.;
+      version = package.version;
 
-      postInstall = (attrs.postInstall or "") + ''
-        wrapProgram $out/bin/opencode \
+      nativeBuildInputs = [
+        pkgs.makeWrapper
+      ];
+
+      installPhase = ''
+        mkdir -p $out/bin
+
+        makeWrapper ${package}/bin/opencode $out/bin/opencode \
           --prefix PATH : ${pkgs.bun}/bin \
           --prefix PATH : ${pkgs.nodejs}/bin \
           --prefix PATH : ${pkgs.ripgrep}/bin \
           --prefix PATH : ${pkgs.local.wrapped-uv}/bin
       '';
-    }))
+    })
   ];
 }
