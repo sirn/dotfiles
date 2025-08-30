@@ -2,6 +2,41 @@
 
 let
   package = pkgs.unstable.claude-code;
+
+  jsonFormat = pkgs.formats.json { };
+
+  mcpServers = {
+    context7 =
+      let
+        context7McpWrapper = pkgs.writeScriptBin "context7-mcp-wrapper" ''
+          #!${pkgs.runtimeShell}
+          export PATH=${pkgs.nodejs}/bin:$PATH
+          exec ${pkgs.nodejs}/bin/npx -y @upstash/context7-mcp@latest
+        '';
+      in
+      {
+        type = "stdio";
+        command = lib.getExe context7McpWrapper;
+      };
+
+    brave-search =
+      let
+        braveMcpWrapper = pkgs.writeScriptBin "brave-mcp-wrapper" ''
+          #!${pkgs.runtimeShell}
+          export PATH=${pkgs.nodejs}/bin:$PATH
+          if [ -f $HOME/.config/llm-agent/env ]; then
+            set -a
+            source $HOME/.config/llm-agent/env
+            set +a
+          fi
+          exec ${pkgs.nodejs}/bin/npx -y @brave/brave-search-mcp-server --transport stdio
+        '';
+      in
+      {
+        type = "stdio";
+        command = lib.getExe braveMcpWrapper;
+      };
+  };
 in
 {
   home.packages = with pkgs; [
@@ -16,17 +51,24 @@ in
 
       installPhase = ''
         mkdir -p $out/bin
-
-        makeWrapper ${package}/bin/claude $out/bin/claude \
-          --prefix PATH : ${pkgs.bun}/bin \
-          --prefix PATH : ${pkgs.nodejs}/bin \
-          --prefix PATH : ${pkgs.ripgrep}/bin \
-          --prefix PATH : ${pkgs.local.wrapped-uv}/bin
+        makeWrapper ${package}/bin/claude $out/bin/claude ${lib.escapeShellArgs [
+          "--add-flags"
+          "--mcp-config ${jsonFormat.generate "mcp-config.json" { inherit mcpServers; }}"
+        ]}
       '';
     })
   ];
 
   home.file = {
+    ".claude/settings.json" = {
+      text = builtins.toJSON {
+        "$schema" = "https://json.schemastore.org/claude-code-settings.json";
+        model = "opusplan";
+        includeCoAuthoredBy = false;
+        cleanupPeriodDays = 7;
+      };
+    };
+
     ".claude/agents/system-architect.md" = {
       text = ''
         ---

@@ -10,7 +10,7 @@
   ];
 
   home.file = {
-    ".local/var/AGENTS.md" = {
+    ".config/llm-agent/AGENTS.md" = {
       text = ''
         - You are a helpful coding assistant
         - You values code quality
@@ -69,19 +69,19 @@
     };
 
     ".claude/CLAUDE.md" = lib.mkDefault {
-      source = config.home.file.".local/var/AGENTS.md".source;
+      source = config.home.file.".config/llm-agent/AGENTS.md".source;
     };
 
     ".codex/AGENTS.md" = lib.mkDefault {
-      source = config.home.file.".local/var/AGENTS.md".source;
+      source = config.home.file.".config/llm-agent/AGENTS.md".source;
     };
 
     ".gemini/GEMINI.md" = lib.mkDefault {
-      source = config.home.file.".local/var/AGENTS.md".source;
+      source = config.home.file.".config/llm-agent/AGENTS.md".source;
     };
 
     ".config/opencode/AGENTS.md" = lib.mkDefault {
-      source = config.home.file.".local/var/AGENTS.md".source;
+      source = config.home.file.".config/llm-agent/AGENTS.md".source;
     };
   };
 }

@@ -94,7 +94,7 @@ in
 
         # This file will require importing home/llm-agent.nix
         read = [
-          "${config.home.homeDirectory}/.local/var/AGENTS.md"
+          "${config.home.homeDirectory}/.config/llm-agent/AGENTS.md"
         ];
 
         # Disable Git unless explicitly enabled since Aider will nag
@@ -111,7 +111,7 @@ in
     };
 
     ".aider/oauth-keys.env" = {
-      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.env";
+      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/llm-agent/env";
     };
   };
 }
