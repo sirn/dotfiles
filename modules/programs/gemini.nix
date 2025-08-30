@@ -4,30 +4,19 @@ let
   package = pkgs.unstable.gemini-cli;
 
   mcpServers = {
-    context7 =
-      let
-        context7McpWrapper = pkgs.writeScriptBin "context7-mcp-wrapper" ''
-          #!${pkgs.runtimeShell}
-          export PATH=${pkgs.nodejs}/bin:$PATH
-          exec ${pkgs.nodejs}/bin/npx -y @upstash/context7-mcp@latest
-        '';
-      in
-      {
-        type = "stdio";
-        command = lib.getExe context7McpWrapper;
-      };
+    context7 = {
+      type = "stdio";
+      command = lib.getExe pkgs.local.mcpServers.context7;
+    };
   };
 in
 {
   home.packages = with pkgs; [
     (pkgs.writeScriptBin "gemini" ''
       #!${pkgs.runtimeShell}
-      if [ -f $HOME/.config/llm-agent/env ]; then
-        set -a
-        source $HOME/.config/llm-agent/env
-        set +a
-      fi
-      exec "${package}/bin/gemini" "$@"
+      exec "${lib.getExe pkgs.local.envWrapper}" \
+        -i ~/.config/llm-agent/env \
+        -- "${lib.getExe package}" "$@"
     '')
   ];
 

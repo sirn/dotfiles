@@ -4,33 +4,21 @@ let
   package = pkgs.unstable.opencode;
 
   mcpServers = {
-    context7 =
-      let
-        context7McpWrapper = pkgs.writeScriptBin "context7-mcp-wrapper" ''
-          #!${pkgs.runtimeShell}
-          export PATH=${pkgs.nodejs}/bin:$PATH
-          exec ${pkgs.nodejs}/bin/npx -y @upstash/context7-mcp@latest
-        '';
-      in
-      {
-        type = "local";
-        enabled = true;
-        command = [
-          (lib.getExe context7McpWrapper)
-        ];
-      };
+    context7 = {
+      type = "local";
+      enabled = true;
+      command = [
+        (lib.getExe pkgs.local.mcpServers.context7)
+      ];
+    };
 
     brave-search =
       let
         braveMcpWrapper = pkgs.writeScriptBin "brave-mcp-wrapper" ''
           #!${pkgs.runtimeShell}
-          export PATH=${pkgs.nodejs}/bin:$PATH
-          if [ -f $HOME/.config/llm-agent/env ]; then
-            set -a
-            source $HOME/.config/llm-agent/env
-            set +a
-          fi
-          exec ${pkgs.nodejs}/bin/npx -y @brave/brave-search-mcp-server --transport stdio
+          exec "${lib.getExe pkgs.local.envWrapper}" \
+            -i ~/.config/llm-agent/env \
+            -- ${lib.getExe pkgs.local.mcpServers.brave-search} --transport stdio
         '';
       in
       {
@@ -46,13 +34,10 @@ in
   home.packages = with pkgs; [
     (pkgs.writeScriptBin "opencode" ''
       #!${pkgs.runtimeShell}
-      if [ -f $HOME/.config/llm-agent/env ]; then
-        set -a
-        source $HOME/.config/llm-agent/env
-        set +a
-      fi
-      export GOOGLE_GENERATIVE_AI_API_KEY=$GEMINI_API_KEY
-      exec "${package}/bin/opencode" "$@"
+      exec "${lib.getExe pkgs.local.envWrapper}" \
+        -i ~/.config/llm-agent/env \
+        -a GOOGLE_GENERATIVE_AI_API_KEY=GEMINI_API_KEY \
+        -- "${package}/bin/opencode" "$@"
     '')
   ];
 
