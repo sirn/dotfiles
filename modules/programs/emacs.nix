@@ -74,7 +74,6 @@ in
       outline-indent
       parinfer-rust-mode
       pinentry
-      pkgs.unstable.emacsPackages.vc-jj
       prescient
       project
       psc-ide

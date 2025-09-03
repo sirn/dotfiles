@@ -65,12 +65,3 @@
 
   :config
   (global-git-gutter-mode +1))
-
-
-(use-package vc-jj
-  :demand t
-
-  :config
-  (with-eval-after-load 'pinentry
-    (dolist (func '(vc-jj--command-parseable vc-jj--command-dispatched))
-      (advice-add func :before #'gemacs--gpg-update-tty))))
