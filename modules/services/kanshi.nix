@@ -23,7 +23,7 @@ in
           criteria = "*";
           mode = "3840x2160";
           position = "0,0";
-          scale = 1.25;
+          scale = 2.0;
         };
 
         apple_pro_display_xdr = default // {
@@ -34,13 +34,13 @@ in
 
         dell_aw3225qf = default // {
           criteria = "Dell Inc. AW3225QF 13T4YZ3";
-          scale = 1.25;
+          scale = 1.5;
         };
 
         asus_pa148 = {
           criteria = "ASUSTek COMPUTER INC ASUS PA148 N9LMTF061468";
           mode = "1920x1080";
-          scale = 1.25;
+          scale = 1.5;
         };
       in
       [
