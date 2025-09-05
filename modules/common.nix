@@ -25,7 +25,6 @@
     ./programs/jujutsu.nix
     ./programs/lstr.nix
     ./programs/magit.nix
-    ./programs/mercurial.nix
     ./programs/mosh.nix
     ./programs/nix-index.nix
     ./programs/ripgrep.nix
@@ -33,7 +32,6 @@
     ./programs/sl.nix
     ./programs/ssh.nix
     ./programs/tree.nix
-    ./programs/unison.nix
     ./programs/zellij.nix
 
     # services
