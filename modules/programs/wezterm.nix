@@ -20,6 +20,7 @@ in
     package = config.lib.nixGL.wrap pkgs.unstable.wezterm;
 
     extraConfig = ''
+      local act = wezterm.action
       local config = wezterm.config_builder()
       local shell = "${lib.getExe fishcfg.package}"
       local font = wezterm.font_with_fallback({
@@ -51,6 +52,10 @@ in
         right = '1cell',
         top = '0',
         bottom = '0',
+      }
+
+      config.keys = {
+        { key = 'V', mods = 'CTRL', action = act.PasteFrom 'Clipboard' },
       }
 
       ${lib.optionalString pkgs.stdenv.isLinux ''
