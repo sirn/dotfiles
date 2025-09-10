@@ -25,7 +25,6 @@ in
       text = builtins.toJSON {
         selectedAuthType = "gemini-api-key";
         disableAutoUpdate = true;
-        theme = "ANSI";
         mcpServers = mcpServers;
       };
     };
