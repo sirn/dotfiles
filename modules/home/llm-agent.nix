@@ -7,6 +7,7 @@
     ../programs/codex.nix
     ../programs/gemini.nix
     ../programs/opencode.nix
+    ../programs/octofriend.nix
   ];
 
   home.file = {
@@ -81,6 +82,10 @@
     };
 
     ".config/opencode/AGENTS.md" = lib.mkDefault {
+      source = config.home.file.".config/llm-agent/AGENTS.md".source;
+    };
+
+    ".config/octofriend/OCTO.md" = lib.mkDefault {
       source = config.home.file.".config/llm-agent/AGENTS.md".source;
     };
   };
