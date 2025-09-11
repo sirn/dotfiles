@@ -25,26 +25,46 @@ let
         command = lib.getExe braveMcpWrapper;
       };
   };
+
+  wrappedClaude = pkgs.stdenv.mkDerivation {
+    pname = "wrapped-${package.name}";
+    src = ./.;
+    version = package.version;
+
+    nativeBuildInputs = [
+      pkgs.makeWrapper
+    ];
+
+    installPhase = ''
+      mkdir -p $out/bin
+      makeWrapper ${package}/bin/claude $out/bin/claude ${lib.escapeShellArgs [
+        "--add-flags"
+        "--mcp-config ${jsonFormat.generate "mcp-config.json" { inherit mcpServers; }}"
+      ]}
+    '';
+  };
+
+  wrappedClaudeSynthetic = pkgs.writeScriptBin "claude-synthetic" ''
+    #!${pkgs.runtimeShell}
+    # Run Claude Code with Synthetic
+    if [ -f "$XDG_CONFIG_HOME/llm-agent/env" ]; then
+        . "$XDG_CONFIG_HOME/llm-agent/env"
+    fi
+
+    export ANTHROPIC_BASE_URL=https://api.synthetic.new/anthropic
+    export ANTHROPIC_AUTH_TOKEN=$SYNTHETIC_API_KEY
+    export ANTHROPIC_MODEL=hf:zai-org/GLM-4.5
+    export ANTHROPIC_SMALL_FAST_MODEL=hf:zai-org/GLM-4.5
+    export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
+    export CLAUDE_CONFIG_DIR=$XDG_CONFIG_HOME/claude-synthetic
+
+    exec ${wrappedClaude}/bin/claude "$@"
+  '';
 in
 {
   home.packages = with pkgs; [
-    (pkgs.stdenv.mkDerivation {
-      pname = "wrapped-${package.name}";
-      src = ./.;
-      version = package.version;
-
-      nativeBuildInputs = [
-        pkgs.makeWrapper
-      ];
-
-      installPhase = ''
-        mkdir -p $out/bin
-        makeWrapper ${package}/bin/claude $out/bin/claude ${lib.escapeShellArgs [
-          "--add-flags"
-          "--mcp-config ${jsonFormat.generate "mcp-config.json" { inherit mcpServers; }}"
-        ]}
-      '';
-    })
+    wrappedClaude
+    wrappedClaudeSynthetic
   ];
 
   home.file = {
