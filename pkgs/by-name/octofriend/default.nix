@@ -2,14 +2,14 @@
 
 pkgs.buildNpmPackage rec {
   pname = "octofriend";
-  version = "0.0.36";
+  version = "0.0.37";
 
   src = pkgs.fetchzip {
     url = "https://registry.npmjs.org/${pname}/-/${pname}-${version}.tgz";
-    hash = "sha256-zFebHpdqYpzWNYW//k5hoU6CxWrb4E+Rp4T44sASiZ8=";
+    hash = "sha256-glI1OJS9VgDyDx1ZVLswNb4elhV7ahwOZKNWBBZvUWA=";
   };
 
-  npmDepsHash = "sha256-nC79+TDZ6RRmDuXi+3/zRl/JxddjbjogP6EVcDA6bxo=";
+  npmDepsHash = "sha256-XnYA/CBNW0KJoGpAEH/s48YZzSQv8yKcBqUCbI8Xiwc=";
 
   dontNpmBuild = true;
 
