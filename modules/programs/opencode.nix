@@ -28,6 +28,14 @@ let
           (lib.getExe braveMcpWrapper)
         ];
       };
+
+    fetch = {
+      type = "local";
+      enabled = true;
+      command = [
+        (lib.getExe pkgs.local.mcpServers.fetch)
+      ];
+    };
   };
 in
 {

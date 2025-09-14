@@ -27,7 +27,7 @@ rm package.json
 compute_nixpkgs_hash() {
     url=$1
     hash=$(nix-prefetch-url --unpack --type sha256 "$1" 2>/dev/null)
-    nix hash to-sri --type sha256 "$hash"
+    nix hash convert --hash-algo sha256 --from nix32 --to sri "$hash" 2>/dev/null
 }
 
 compute_npmdeps_hash() {

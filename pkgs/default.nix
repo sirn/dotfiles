@@ -25,6 +25,8 @@ in
     context7 = (callPackage ./by-name/mcp-servers/context7 { });
 
     brave-search = (callPackage ./by-name/mcp-servers/brave-search { });
+
+    fetch = (callPackage ./by-name/mcp-servers/fetch { });
   };
 
   wrapped-uv = (callPackage ./by-name/wrapped-uv/wrapped.nix { });
