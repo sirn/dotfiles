@@ -39,7 +39,7 @@ let
       mkdir -p $out/bin
       makeWrapper ${package}/bin/claude $out/bin/claude ${lib.escapeShellArgs [
         "--add-flags"
-        "--mcp-config ${jsonFormat.generate "mcp-config.json" { inherit mcpServers; }}"
+        "--mcp-config=${jsonFormat.generate "mcp-config.json" { inherit mcpServers; }}"
       ]}
     '';
   };
