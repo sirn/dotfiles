@@ -57,6 +57,8 @@ in
         mcp = mcpServers;
         permission = {
           bash = "ask";
+          edit = "ask";
+          webfetch = "allow";
         };
       };
     };
