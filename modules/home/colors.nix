@@ -6,8 +6,6 @@ let
     foreground = "#ffffff";
     selection = "#d1d1d1";
     scrollbar = "#d1d1d1";
-    active = "#383838";
-    inactive = "#222222";
 
     normal = {
       black = "#000000";
@@ -114,24 +112,24 @@ in
     config = {
       colors = {
         focused = {
-          background = colorScheme.active;
-          border = colorScheme.active;
-          childBorder = colorScheme.active;
-          indicator = colorScheme.active;
+          background = colorScheme.normal.blue;
+          border = colorScheme.normal.blue;
+          childBorder = colorScheme.bright.blue;
+          indicator = colorScheme.normal.blue;
           text = colorScheme.foreground;
         };
         focusedInactive = {
-          background = colorScheme.inactive;
-          border = colorScheme.inactive;
-          childBorder = colorScheme.inactive;
-          indicator = colorScheme.inactive;
+          background = colorScheme.normal.black;
+          border = colorScheme.normal.black;
+          childBorder = colorScheme.normal.black;
+          indicator = colorScheme.normal.black;
           text = colorScheme.foreground;
         };
         unfocused = {
-          background = colorScheme.inactive;
-          border = colorScheme.inactive;
-          childBorder = colorScheme.inactive;
-          indicator = colorScheme.inactive;
+          background = colorScheme.normal.black;
+          border = colorScheme.normal.black;
+          childBorder = colorScheme.normal.black;
+          indicator = colorScheme.normal.black;
           text = colorScheme.foreground;
         };
         placeholder = {
@@ -162,7 +160,7 @@ in
       layout = {
         background-color = lib.mkDefault colorScheme.background;
         focus-ring = {
-          active.color = colorScheme.active;
+          active.color = colorScheme.normal.blue;
           urgent.color = colorScheme.normal.red;
         };
       };
@@ -173,8 +171,8 @@ in
     style = lib.mkDefault ''
       @define-color default_bg ${colorScheme.background};
       @define-color default_fg ${colorScheme.foreground};
-      @define-color highlight_bg ${colorScheme.active};
-      @define-color highlight_fg ${colorScheme.normal.black};
+      @define-color highlight_bg ${colorScheme.normal.blue};
+      @define-color highlight_fg ${colorScheme.background};
       @define-color alert_bg ${colorScheme.normal.red};
       @define-color alert_fg ${colorScheme.normal.white};
 
