@@ -6,6 +6,8 @@ let
     foreground = "#ffffff";
     selection = "#d1d1d1";
     scrollbar = "#d1d1d1";
+    active = "#383838";
+    inactive = "#222222";
 
     normal = {
       black = "#000000";
@@ -112,24 +114,24 @@ in
     config = {
       colors = {
         focused = {
-          background = colorScheme.normal.blue;
-          border = colorScheme.normal.blue;
-          childBorder = colorScheme.normal.blue;
-          indicator = colorScheme.bright.blue;
-          text = colorScheme.normal.black;
+          background = colorScheme.active;
+          border = colorScheme.active;
+          childBorder = colorScheme.active;
+          indicator = colorScheme.active;
+          text = colorScheme.foreground;
         };
         focusedInactive = {
-          background = colorScheme.bright.black;
-          border = colorScheme.bright.black;
-          childBorder = colorScheme.bright.black;
-          indicator = colorScheme.bright.black;
+          background = colorScheme.inactive;
+          border = colorScheme.inactive;
+          childBorder = colorScheme.inactive;
+          indicator = colorScheme.inactive;
           text = colorScheme.foreground;
         };
         unfocused = {
-          background = "#222222";
-          border = "#222222";
-          childBorder = "#222222";
-          indicator = "#222222";
+          background = colorScheme.inactive;
+          border = colorScheme.inactive;
+          childBorder = colorScheme.inactive;
+          indicator = colorScheme.inactive;
           text = colorScheme.foreground;
         };
         placeholder = {
@@ -160,7 +162,7 @@ in
       layout = {
         background-color = lib.mkDefault colorScheme.background;
         focus-ring = {
-          active.color = colorScheme.normal.blue;
+          active.color = colorScheme.active;
           urgent.color = colorScheme.normal.red;
         };
       };
@@ -171,7 +173,7 @@ in
     style = lib.mkDefault ''
       @define-color default_bg ${colorScheme.background};
       @define-color default_fg ${colorScheme.foreground};
-      @define-color highlight_bg ${colorScheme.normal.blue};
+      @define-color highlight_bg ${colorScheme.active};
       @define-color highlight_fg ${colorScheme.normal.black};
       @define-color alert_bg ${colorScheme.normal.red};
       @define-color alert_fg ${colorScheme.normal.white};
@@ -307,11 +309,6 @@ in
       }
 
       #battery.charging:not(.full) {
-          background-color: #1b5e20;
-          color: #a5d6a7;
-      }
-
-      #battery.discharging {
           background-color: #e8f5e9;
           color: #2e7d32;
       }
