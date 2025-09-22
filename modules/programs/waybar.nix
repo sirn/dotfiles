@@ -74,8 +74,8 @@ in
           states = {
             full = 100;
             normal = 80;
-            warning = 30;
-            critical = 15;
+            warning = 20;
+            critical = 10;
           };
           format = "{capacity}% {icon}";
           format-icons = [ "" "" "" "" "" ];
