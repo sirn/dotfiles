@@ -28,6 +28,7 @@ These keybindings are available in the default mode.
 | `Mod+Shift+P`           | Power off monitors                                     |
 | `Mod+Alt+L`             | Manually trigger `swayidle` (e.g., to lock screen)     |
 | `Mod+Alt+F10`           | Manually trigger `kanshi` (e.g., to rearrange display) |
+| `Mod+Shift+B`           | Send SIGUSR1 signal to Waybar (hide/unhide)            |
 
 ### Window Focus Navigation
 

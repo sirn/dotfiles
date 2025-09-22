@@ -114,6 +114,17 @@ in
   wayland.windowManager.sway = lib.mkIf swaycfg.enable {
     config = {
       bars = [ ];
+      keybindings = lib.mkOptionDefault {
+        "${swaycfg.config.modifier}+Shift+b" = "exec pkill -SIGUSR1 waybar";
+      };
+    };
+  };
+
+  wayland.windowManager.niri = lib.mkIf niricfg.enable {
+    settings = {
+      binds = with config.lib.niri.actions; {
+        "Mod+Shift+B".action = spawn [ "sh" "-c" "pkill -SIGUSR1 waybar" ];
+      };
     };
   };
 }

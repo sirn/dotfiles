@@ -15,6 +15,7 @@ These keybindings are available in the default mode.
 | `Mod+Return`         | Launch terminal                                         |
 | `Mod+d`              | Launch application launcher (Fuzzel)                    |
 | `Mod+Shift+q`        | Kill the focused window/application                     |
+| `Mod+Shift+b`        | Send SIGUSR1 signal to Waybar (hide/unhide)             |
 | `Mod+Shift+c`        | Reload the Sway configuration file                      |
 | `Mod+Shift+e`        | Show a confirmation dialog to exit Sway                 |
 | `Mod+Ctrl+Shift+L`   | Manually trigger `swayidle` (e.g., to lock screen)      |
