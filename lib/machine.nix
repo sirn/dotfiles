@@ -15,6 +15,14 @@ in
         '';
       };
 
+      isLaptop = mkOption {
+        type = types.bool;
+        default = false;
+        description = ''
+          Indicates whether the machine is a laptop.
+        '';
+      };
+
       desktop = {
         preferDark = mkOption {
           type = types.bool;

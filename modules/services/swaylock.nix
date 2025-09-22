@@ -24,7 +24,7 @@ in
   services.swayidle = {
     timeouts = [
       {
-        timeout = 180;
+        timeout = 120;
         command = "${swaylockBin}";
       }
     ];

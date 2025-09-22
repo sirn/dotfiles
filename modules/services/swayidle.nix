@@ -49,11 +49,17 @@ in
 
     timeouts = [
       {
-        timeout = 210;
+        timeout = 180;
         command = "${lib.getExe displayControl} off";
         resumeCommand = "${lib.getExe displayControl} on";
       }
-    ];
+    ]
+    ++ (if config.machine.isLaptop then [
+      {
+        timeout = 300;
+        command = "${config.systemd.user.systemctlPath} suspend";
+      }
+    ] else [ ]);
   };
 
   wayland.windowManager.sway = lib.mkIf swaycfg.enable {
