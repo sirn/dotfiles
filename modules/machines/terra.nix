@@ -1,5 +1,3 @@
-{ pkgs, config, ... }:
-
 {
   flatpak.enable = true;
   machine.desktop.preferDark = true;
