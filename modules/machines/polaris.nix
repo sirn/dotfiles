@@ -1,5 +1,6 @@
 {
   flatpak.enable = true;
+  machine.isLaptop = true;
   machine.desktop.preferDark = true;
 
   imports = [
