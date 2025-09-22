@@ -120,11 +120,9 @@ in
     };
   };
 
-  wayland.windowManager.niri = lib.mkIf niricfg.enable {
-    settings = {
-      binds = with config.lib.niri.actions; {
-        "Mod+Shift+B".action = spawn [ "sh" "-c" "pkill -SIGUSR1 waybar" ];
-      };
+  programs.niri.settings = lib.mkIf niricfg.enable {
+    binds = {
+      "Mod+Shift+B".action.spawn = [ "sh" "-c" "pkill -SIGUSR1 waybar" ];
     };
   };
 }
