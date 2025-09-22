@@ -27,6 +27,6 @@ in
 
     # https://github.com/nix-community/home-manager/issues/855
     (lib.optionalString config.machine.isNixOS ''
-      ${pkgs.systemd.out}/bin/systemctl --user import-environment PATH
+      ${config.systemd.user.systemctlPath} --user import-environment PATH
     '');
 }
