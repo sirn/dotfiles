@@ -29,6 +29,11 @@ let
   '';
 
   swaylockcfg = config.programs.swaylock;
+
+  getSwwwImage = pkgs.writeScriptBin "get-swww-image" ''
+    #!${pkgs.runtimeShell}
+    ${lib.getExe swwwPkg} query | ${lib.getExe pkgs.gawk} -F 'image: ' '{ print $2 }'
+  '';
 in
 {
   home.packages = [ swwwPkg ];
@@ -89,6 +94,6 @@ in
   };
 
   programs.swaylock.settings = lib.mkIf swaylockcfg.enable {
-    image = "$(${lib.getExe swwwPkg} query | ${lib.getExe pkgs.gawk} -F 'image: ' '{ print $2 }')";
+    image = "$(${lib.getExe getSwwwImage})";
   };
 }
