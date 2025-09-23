@@ -147,18 +147,12 @@ in
           text = colorScheme.normal.black;
         };
       };
-      output = {
-        "*" = {
-          bg = lib.mkDefault "${colorScheme.background} solid_color";
-        };
-      };
     };
   };
 
   programs.niri = lib.mkIf config.programs.niri.enable {
     settings = {
       layout = {
-        background-color = lib.mkDefault colorScheme.background;
         focus-ring = {
           active.color = colorScheme.normal.blue;
           urgent.color = colorScheme.normal.red;

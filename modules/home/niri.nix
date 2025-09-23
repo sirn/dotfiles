@@ -13,6 +13,7 @@
     ../services/sway-audio-idle-inhibit.nix
     ../services/swayidle.nix
     ../services/swaylock.nix
+    ../services/swww.nix
     ../services/wlsunset.nix
     ../services/xwayland-satellite.nix
   ];
