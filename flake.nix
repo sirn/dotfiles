@@ -41,6 +41,22 @@
             config = config;
           };
         })
+        # Workaround crashes in Chromium with fractional scaling
+        # https://bugs.launchpad.net/ubuntu/+source/wlroots/+bug/2122790
+        # https://gitlab.freedesktop.org/wlroots/wlroots/-/issues/4015
+        # https://github.com/swaywm/sway/issues/8194
+        #
+        # TODO: remove >= 25.11 (or once NixOS sway switch to wlroots 0.19)
+        (final: prev: {
+          wlroots_0_18 = prev.wlroots_0_18.overrideAttrs (old: {
+            patches = (old.patches or [ ]) ++ [
+              (prev.fetchpatch {
+                url = "https://bugs.launchpad.net/bugs/2122790/+attachment/5909064/+files/render-pass-ensure-the-precision-is-consistent.patch";
+                sha256 = "sha256-MVBz1jMht5JFOWVaQi/7rSftdT/SkjAfF7AFlXJPDNo=";
+              })
+            ];
+          });
+        })
       ];
 
       mkConfig =
