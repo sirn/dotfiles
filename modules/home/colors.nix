@@ -116,21 +116,21 @@ in
         in
         {
           focused = {
-            background = clear;
-            border = colorScheme.normal.blue;
+            background = "${colorScheme.normal.blue}99"; # 60%
+            border = "${colorScheme.normal.blue}99"; # 60%
             childBorder = "${colorScheme.normal.blue}99"; # 60%
             indicator = colorScheme.normal.blue;
             text = colorScheme.foreground;
           };
           focusedInactive = {
-            background = clear;
-            border = clear;
-            childBorder = clear;
-            indicator = clear;
+            background = "${colorScheme.bright.black}99"; # 60%
+            border = "${colorScheme.bright.black}99";
+            childBorder = "${colorScheme.bright.black}99";
+            indicator = "${colorScheme.bright.black}99";
             text = colorScheme.foreground;
           };
           unfocused = {
-            background = clear;
+            background = "${colorScheme.bright.black}99"; # 60%
             border = clear;
             childBorder = clear;
             indicator = clear;
