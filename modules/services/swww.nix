@@ -27,6 +27,8 @@ let
         check=True,
     )
   '';
+
+  swaylockcfg = config.programs.swaylock;
 in
 {
   home.packages = [ swwwPkg ];
@@ -84,5 +86,9 @@ in
     };
 
     Install.WantedBy = [ config.wayland.systemd.target "timers.target" ];
+  };
+
+  programs.swaylock.settings = lib.mkIf swaylockcfg.enable {
+    image = "$(${lib.getExe swwwPkg} query | ${lib.getExe pkgs.gawk} '{ print $NF }')";
   };
 }
