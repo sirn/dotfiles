@@ -17,6 +17,7 @@
 
     # programs
     ../programs/1password.nix
+    ../programs/brightnessctl.nix
     ../programs/ffmpeg.nix
     ../programs/imagemagick.nix
     ../programs/intellij.nix
