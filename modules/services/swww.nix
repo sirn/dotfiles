@@ -37,7 +37,7 @@ in
   # to override xrgb value (due to Sway + integrated GPUs shenanigans).
   # See also: https://github.com/LGFae/swww/issues/233
   #
-  # Note: switch back to service.swww on home-manager >= 25.11 and use extraArgs
+  # TODO: switch back to service.swww on home-manager >= 25.11 and use extraArgs
   systemd.user.services.swww = {
     Unit = {
       Description = "A Solution to your Wayland Wallpaper Woes";
