@@ -44,7 +44,7 @@ in
         gaps = {
           inner = 8;
           smartGaps = false;
-          smartBorders = "off";
+          smartBorders = "on";
         };
 
         fonts = {
