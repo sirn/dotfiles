@@ -110,43 +110,47 @@ in
 
   wayland.windowManager.sway = lib.mkIf config.wayland.windowManager.sway.enable {
     config = {
-      colors = {
-        focused = {
-          background = colorScheme.normal.blue;
-          border = colorScheme.normal.blue;
-          childBorder = colorScheme.bright.blue;
-          indicator = colorScheme.normal.blue;
-          text = colorScheme.foreground;
+      colors =
+        let
+          clear = "#ffffff00";
+        in
+        {
+          focused = {
+            background = clear;
+            border = colorScheme.normal.blue;
+            childBorder = "${colorScheme.normal.blue}99"; # 60%
+            indicator = colorScheme.normal.blue;
+            text = colorScheme.foreground;
+          };
+          focusedInactive = {
+            background = clear;
+            border = clear;
+            childBorder = clear;
+            indicator = clear;
+            text = colorScheme.foreground;
+          };
+          unfocused = {
+            background = clear;
+            border = clear;
+            childBorder = clear;
+            indicator = clear;
+            text = colorScheme.foreground;
+          };
+          placeholder = {
+            background = colorScheme.normal.yellow;
+            border = colorScheme.normal.yellow;
+            childBorder = colorScheme.normal.yellow;
+            indicator = colorScheme.normal.yellow;
+            text = colorScheme.foreground;
+          };
+          urgent = {
+            background = colorScheme.normal.red;
+            border = colorScheme.normal.red;
+            childBorder = colorScheme.normal.red;
+            indicator = colorScheme.normal.red;
+            text = colorScheme.normal.black;
+          };
         };
-        focusedInactive = {
-          background = colorScheme.normal.black;
-          border = colorScheme.normal.black;
-          childBorder = colorScheme.normal.black;
-          indicator = colorScheme.normal.black;
-          text = colorScheme.foreground;
-        };
-        unfocused = {
-          background = colorScheme.normal.black;
-          border = colorScheme.normal.black;
-          childBorder = colorScheme.normal.black;
-          indicator = colorScheme.normal.black;
-          text = colorScheme.foreground;
-        };
-        placeholder = {
-          background = colorScheme.normal.yellow;
-          border = colorScheme.normal.yellow;
-          childBorder = colorScheme.normal.yellow;
-          indicator = colorScheme.normal.yellow;
-          text = colorScheme.foreground;
-        };
-        urgent = {
-          background = colorScheme.normal.red;
-          border = colorScheme.normal.red;
-          childBorder = colorScheme.normal.red;
-          indicator = colorScheme.normal.red;
-          text = colorScheme.normal.black;
-        };
-      };
     };
   };
 
@@ -154,7 +158,7 @@ in
     settings = {
       layout = {
         focus-ring = {
-          active.color = colorScheme.normal.blue;
+          active.color = "${colorScheme.normal.blue}99"; # 60%
           urgent.color = colorScheme.normal.red;
         };
       };
