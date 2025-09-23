@@ -52,7 +52,7 @@
             patches = (old.patches or [ ]) ++ [
               (prev.fetchpatch {
                 url = "https://bugs.launchpad.net/bugs/2122790/+attachment/5909064/+files/render-pass-ensure-the-precision-is-consistent.patch";
-                sha256 = "sha256-MVBz1jMht5JFOWVaQi/7rSftdT/SkjAfF7AFlXJPDNo=";
+                sha256 = "sha256-9dXZ7F+iv5JeAZBUnUp3CZSZ2QWvs0wGYGmcqHTqfJc=";
               })
             ];
           });
