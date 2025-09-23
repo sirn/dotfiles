@@ -89,6 +89,6 @@ in
   };
 
   programs.swaylock.settings = lib.mkIf swaylockcfg.enable {
-    image = "$(${lib.getExe swwwPkg} query | ${lib.getExe pkgs.gawk} '{ print $NF }')";
+    image = "$(${lib.getExe swwwPkg} query | ${lib.getExe pkgs.gawk} -F 'image: ' '{ print $2 }')";
   };
 }
