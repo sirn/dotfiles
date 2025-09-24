@@ -1,4 +1,4 @@
-{ lib, config, ... }:
+{ lib, config, pkgs, ... }:
 
 {
   imports = [
@@ -91,4 +91,23 @@
       source = config.home.file.".config/llm-agent/AGENTS.md".source;
     };
   };
+
+  home.packages = with pkgs; [
+    (pkgs.writeScriptBin "synthetic-quota" ''
+      #!${pkgs.runtimeShell}
+      ENV_FILE="$HOME/.config/llm-agent/env"
+      if [ -f "$ENV_FILE" ]; then
+          . "$ENV_FILE"
+      fi
+
+      if [ -z "$SYNTHETIC_API_KEY" ]; then
+          echo >&2 "SYNTHETIC_API_KEY is not set"
+          exit 1
+      fi
+
+      ${lib.getExe pkgs.curl} -s \
+          -H "Authorization: Bearer $SYNTHETIC_API_KEY" \
+          https://api.synthetic.new/v2/quotas | ${lib.getExe pkgs.jq}
+    '')
+  ];
 }
