@@ -32,7 +32,7 @@ let
 
   getSwwwImage = pkgs.writeScriptBin "get-swww-image" ''
     #!${pkgs.runtimeShell}
-    ${lib.getExe swwwPkg} query | ${lib.getExe pkgs.gawk} -F 'image: ' '{ print $2 }'
+    ${lib.getExe swwwPkg} query | ${lib.getExe pkgs.gawk} -F 'image: ' '{ print $2 }' | tail -n1
   '';
 in
 {
