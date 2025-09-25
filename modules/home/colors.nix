@@ -159,6 +159,7 @@ in
       layout = {
         focus-ring = {
           active.color = "${colorScheme.normal.blue}99"; # 60%
+          inactive.color = "${colorScheme.normal.black}99"; # 60%
           urgent.color = colorScheme.normal.red;
         };
       };
@@ -167,7 +168,7 @@ in
 
   programs.waybar = lib.mkIf config.programs.waybar.enable {
     style = lib.mkDefault ''
-      @define-color default_bg ${colorScheme.background};
+      @define-color default_bg rgba(0, 0, 0, 0.6);
       @define-color default_fg ${colorScheme.foreground};
       @define-color highlight_bg ${colorScheme.normal.blue};
       @define-color highlight_fg ${colorScheme.background};
@@ -232,18 +233,18 @@ in
       }
 
       #workspaces button:hover {
-          background-color: @default_bg;
+          background-color: transparent;
           border-bottom: 2px solid transparent;
       }
 
       #workspaces button.focused {
-          background-color: @default_bg;
+          background-color: transparent;
           border-bottom: 2px solid @highlight_bg;
       }
 
       #workspaces button.urgent {
           color: @alert_fg;
-          background-color: @alert_bg;
+          background-color: transparent;
           border-bottom: 2px solid @alert_bg;
       }
 
