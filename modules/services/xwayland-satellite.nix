@@ -27,6 +27,11 @@ in
       Type = "notify";
       NotifyAccess = "all";
       ExecStart = "${xwaylandSatellitePkg}/bin/xwayland-satellite :99";
+      Environment = [
+        "DISPLAY=:99"
+      ];
+      ExecStartPost = "${config.systemd.user.systemctlPath} --user set-environment DISPLAY=:99";
+      ExecStopPost = "${config.systemd.user.systemctlPath} --user unset-environment DISPLAY";
       StandardOutput = "journal";
     };
   };
@@ -36,14 +41,6 @@ in
       main = {
         launch-prefix = "env DISPLAY=:99";
       };
-    };
-  };
-
-  systemd.user.services.copyq = lib.mkIf copyqcfg.enable {
-    Service = {
-      Environment = [
-        "DISPLAY=:99"
-      ];
     };
   };
 }
