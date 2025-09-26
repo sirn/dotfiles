@@ -22,17 +22,12 @@ in
     config =
       let
         cfg = config.wayland.windowManager.sway.config;
+
         swayPackage = config.wayland.windowManager.sway.package;
 
-        swaymsgBin =
-          if swayPackage != null
-          then "${swayPackage}/bin/swaymsg"
-          else "swaymsg";
+        swaymsgBin = "${swayPackage}/bin/swaymsg";
 
-        swaynagBin =
-          if swayPackage != null
-          then "${swayPackage}/bin/swaynag"
-          else "swaynag";
+        swaynagBin = "${swayPackage}/bin/swaynag";
       in
       {
         modifier = "Mod4";
@@ -42,8 +37,8 @@ in
         right = "l";
 
         gaps = {
-          inner = 8;
-          smartGaps = false;
+          inner = 4; # Left + Right = 8
+          smartGaps = true;
           smartBorders = "on";
         };
 
@@ -229,8 +224,13 @@ in
 
         seat = {
           "*" = {
-            hide_cursor = "when-typing disable";
+            hide_cursor = "when-typing 5000";
           };
+        };
+
+        focus = {
+          followMouse = "always";
+          mouseWarping = "container";
         };
 
         window = {
@@ -336,6 +336,12 @@ in
           ];
         };
       };
+
+    extraConfig =
+      lib.optionalString config.machine.isLaptop ''
+        bindswitch --locked lid:on output eDP-1 disable
+        bindswitch --locked lid:off output eDP-1 enable
+      '';
   };
 
   home.sessionVariablesExtra = ''

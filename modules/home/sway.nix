@@ -17,14 +17,4 @@
     ../services/wlsunset.nix
     ../services/xwayland-satellite.nix
   ];
-
-  wayland.windowManager.sway = {
-    config = {
-      seat = {
-        "*" = {
-          xcursor_theme = "${config.gtk.cursorTheme.name} ${toString config.gtk.cursorTheme.size}";
-        };
-      };
-    };
-  };
 }
