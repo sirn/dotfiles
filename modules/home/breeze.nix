@@ -10,6 +10,8 @@ let
   breezeIconsPkg = pkgs.kdePackages.breeze-icons;
 
   gtkconf = config.gtk;
+
+  swaycfg = config.wayland.windowManager.sway;
 in
 {
   gtk = {
@@ -127,6 +129,16 @@ in
     sessionVariables = lib.mkIf (!config.machine.isNixOS) {
       QT_QPA_PLATFORMTHEME = config.qt.platformTheme.name;
       QT_STYLE_OVERRIDE = config.qt.style.name;
+    };
+  };
+
+  wayland.windowManager.sway = lib.mkIf swaycfg.enable {
+    config = {
+      seat = {
+        "*" = {
+          xcursor_theme = "${config.gtk.cursorTheme.name} ${toString config.gtk.cursorTheme.size}";
+        };
+      };
     };
   };
 
