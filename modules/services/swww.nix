@@ -52,6 +52,9 @@ in
     };
 
     Service = {
+      Environment = [
+        "PATH=${lib.makeBinPath [ swwwPkg ]}"
+      ];
       Restart = "always";
       RestartSec = 10;
       ExecStart = "${lib.getExe' swwwPkg "swww-daemon"} ${lib.escapeShellArgs [
@@ -62,11 +65,10 @@ in
     Install.WantedBy = [ config.wayland.systemd.target ];
   };
 
-
   systemd.user.services."swww-wallpaper" = {
     Unit = {
       Description = "Update wallpaper with swww";
-      After = [ config.wayland.systemd.target ];
+      After = [ config.wayland.systemd.target "swww.service" ];
       PartOf = [ config.wayland.systemd.target ];
       ConditionEnvironment = "WAYLAND_DISPLAY";
     };
