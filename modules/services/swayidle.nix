@@ -11,6 +11,33 @@ let
 
   niriBin = "${niricfg.package}/bin/niri";
 
+  # power-on-monitors sometimes turn on the display when the machine is
+  # waking up from s2idle while lid is closed for some reason; let's be
+  # extra sure to not turn on eDP-1 if lid is closed
+  displayControlNiriMaybeLaptopOn =
+    if config.machine.isLaptop
+    then
+      ''
+        LID_STATE=na
+
+        for f in /proc/acpi/button/lid/*/state; do
+          if [ -f "$f" ]; then
+            LID_STATE=$(${lib.getExe pkgs.gawk} '{ print $2 }' <"$f")
+            break
+          fi
+        done
+
+        ${niriBin} msg -j outputs | ${lib.getExe pkgs.jq} -r "keys[]" | while read -r n; do
+          if [ "$n" != "eDP-1" ] || [ "$LID_STATE" != "closed" ]; then
+            ${niriBin} msg output "$n" on
+          fi
+        done
+      ''
+    else
+      ''
+        ${niriBin} msg action power-on-monitors
+      '';
+
   displayControl = pkgs.writeScriptBin "display-control" ''
     #!${pkgs.runtimeShell}
 
@@ -28,7 +55,7 @@ let
       if [ "$command" = "off" ]; then
         ${niriBin} msg action power-off-monitors
       elif [ "$command" = "on" ]; then
-        ${niriBin} msg action power-on-monitors
+        ${displayControlNiriMaybeLaptopOn}
       fi
     }
 
