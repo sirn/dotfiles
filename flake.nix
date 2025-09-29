@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    sops-nix.url = "github:Mic92/sops-nix";
 
     home-manager.url = "github:nix-community/home-manager/release-25.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -18,7 +19,7 @@
     niri.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { nixpkgs, nixpkgs-unstable, home-manager, nix-index-database, nixgl, niri, ... }@inputs:
+  outputs = { nixpkgs, nixpkgs-unstable, sops-nix, home-manager, nix-index-database, nixgl, niri, ... }@inputs:
     let
       config = {
         allowUnfree = true;
@@ -84,6 +85,7 @@
           pkgs = nixpkgs.legacyPackages.${system};
           modules = [
             defaultConfig
+            sops-nix.homeManagerModules.sops
             niri.homeModules.niri
             ./lib/flatpak.nix
             ./lib/machine.nix
