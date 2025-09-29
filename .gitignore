@@ -17,7 +17,8 @@ Thumbs.db
 
 # Runtime
 .config
-nix.profile
-nix.generic
+.sops.yaml
 local.nix
+nix.generic
+nix.profile
 result
