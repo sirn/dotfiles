@@ -49,7 +49,7 @@ let
     '';
   };
 
-  wrappedClaudeSynthetic = pkgs.writeScriptBin "claude-synthetic" ''
+  wrappedClaudeSynthetic = pkgs.writeScriptBin "synclaude" ''
     #!${pkgs.runtimeShell}
     # Run Claude Code with Synthetic
     if [ -f "$XDG_CONFIG_HOME/llm-agent/env" ]; then
