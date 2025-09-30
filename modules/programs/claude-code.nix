@@ -58,10 +58,10 @@ let
 
     export ANTHROPIC_BASE_URL=https://api.synthetic.new/anthropic
     export ANTHROPIC_AUTH_TOKEN=$SYNTHETIC_API_KEY
-    export ANTHROPIC_DEFAULT_OPUS_MODEL=hf:zai-org/GLM-4.5
-    export ANTHROPIC_DEFAULT_SONNET_MODEL=hf:zai-org/GLM-4.5
-    export ANTHROPIC_DEFAULT_HAIKU_MODEL=hf:zai-org/GLM-4.5
-    export CLAUDE_CODE_SUBAGENT_MODEL=hf:zai-org/GLM-4.5
+    export ANTHROPIC_DEFAULT_OPUS_MODEL=''${ANTHROPIC_DEFAULT_OPUS_MODEL:-hf:zai-org/GLM-4.5}
+    export ANTHROPIC_DEFAULT_SONNET_MODEL=''${ANTHROPIC_DEFAULT_SONNET_MODEL:-hf:zai-org/GLM-4.5}
+    export ANTHROPIC_DEFAULT_HAIKU_MODEL=''${ANTHROPIC_DEFAULT_HAIKU_MODEL:-hf:zai-org/GLM-4.5}
+    export CLAUDE_CODE_SUBAGENT_MODEL=''${CLAUDE_CODE_SUBAGENT_MODEL:-hf:zai-org/GLM-4.5}
     export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
     export CLAUDE_CONFIG_DIR=$XDG_CONFIG_HOME/claude-synthetic
 
@@ -78,7 +78,6 @@ in
     ".claude/settings.json" = {
       text = builtins.toJSON {
         "$schema" = "https://json.schemastore.org/claude-code-settings.json";
-        model = "opusplan";
         includeCoAuthoredBy = false;
         cleanupPeriodDays = 7;
       };
