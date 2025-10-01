@@ -31,16 +31,13 @@
       overlays = [
         nixgl.overlay
         (final: prev: {
-          local = import ./pkgs {
-            pkgs = final;
-            lib = prev.lib;
-          };
-        })
-        (final: prev: {
           unstable = import nixpkgs-unstable {
             system = final.system;
             config = config;
           };
+        })
+        (final: prev: {
+          local = import ./pkgs final prev;
         })
         # Workaround crashes in Chromium with fractional scaling
         # https://bugs.launchpad.net/ubuntu/+source/wlroots/+bug/2122790

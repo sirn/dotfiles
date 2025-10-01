@@ -1,11 +1,7 @@
-{ lib, pkgs, ... }:
-
+final: prev:
 let
-  inherit (lib) callPackageWith recurseIntoAttrs;
-
-  callPackage = callPackageWith (pkgs);
-
-  callPackageUnstable = callPackageWith (pkgs.unstable);
+  inherit (prev) callPackage;
+  inherit (prev.lib) recurseIntoAttrs;
 in
 {
   inherit (recurseIntoAttrs (callPackage ./by-name/ia-fonts { }))
