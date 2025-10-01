@@ -1,7 +1,7 @@
 { lib, pkgs, ... }:
 
 let
-  package = pkgs.unstable.claude-code;
+  package = pkgs.local.claude-code;
 
   jsonFormat = pkgs.formats.json { };
 
