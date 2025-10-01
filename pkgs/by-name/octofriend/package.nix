@@ -19,6 +19,14 @@ pkgs.buildNpmPackage rec {
     cp ${./package-lock.json} package-lock.json
   '';
 
+  passthru.updateScript = pkgs.writeScript "update-claude-code" ''
+    #!/usr/bin/env nix-shell
+    #!nix-shell --pure -i bash --packages nodejs nix-update git
+    set -euo pipefail
+    version=$(npm view octofriend version)
+    nix-update local.octofriend --version="$version" --generate-lockfile
+  '';
+
   meta = {
     description = "An open-source coding helper. Very friendly!";
     homepage = "https://github.com/synthetic-lab/octofriend";

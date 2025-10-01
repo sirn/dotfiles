@@ -26,6 +26,8 @@ pkgs.python3Packages.buildPythonPackage rec {
 
   pythonRelaxDeps = true;
 
+  passthru.updateScript = pkgs.nix-update-script { };
+
   meta = {
     description = "MCP server for fetching web content";
     homepage = "https://github.com/modelcontextprotocol/servers";
