@@ -86,8 +86,7 @@ in
     };
 
     Timer = {
-      OnBootSec = "30s";
-      OnUnitActiveSec = "1h";
+      OnActiveSec = "1h";
       Unit = "swww-wallpaper.service";
       Persistent = true;
     };
