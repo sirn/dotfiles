@@ -86,7 +86,8 @@ in
     };
 
     Timer = {
-      OnActiveSec = "1h";
+      OnCalendar = "hourly";
+      RandomizedDelaySec = "5min";
       Unit = "swww-wallpaper.service";
       Persistent = true;
     };
