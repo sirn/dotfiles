@@ -1,6 +1,12 @@
 { pkgs, ... }:
 
 {
+  home.packages = with pkgs; [
+    _1password-cli
+  ] ++ lib.optional (!config.flatpak.enable) [
+    _1password-gui
+  ];
+
   programs.ssh.matchBlocks."*".extraOptions = {
     "IdentityAgent" =
       if pkgs.stdenv.isDarwin
