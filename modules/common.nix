@@ -5,6 +5,7 @@
     ./home/email.nix
     ./home/llm-agent.nix
     ./home/shell.nix
+    ./home/sops.nix
     ./home/xdg.nix
 
     # programs
