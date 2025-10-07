@@ -1,6 +1,12 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
+  home.packages = with pkgs; [
+    bitwarden-cli
+  ] ++ lib.optional (!config.flatpak.enable) [
+    bitwarden-desktop
+  ];
+
   programs.ssh.matchBlocks."*".extraOptions = {
     "IdentityAgent" =
       if pkgs.stdenv.isDarwin
