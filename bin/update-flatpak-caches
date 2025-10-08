@@ -1,0 +1,55 @@
+#!/usr/bin/env nix-shell
+#!nix-shell -i bash -p desktop-file-utils gtk3 shared-mime-info hicolor-icon-theme
+
+FLATPAK_DIR="${1:-/var/lib/flatpak}"
+
+for pkg in $buildInputs; do
+    if test -f "$pkg/share/icons/hicolor/index.theme"; then
+        hicolorPkg="$pkg"
+        echo 2>&1 "hicolor-icon-theme: $hicolorPkg"
+        break
+    fi
+done
+
+update_desktop_database() {
+    echo 2>&1 "Running update-desktop-database..."
+
+    if command -v update-desktop-database >/dev/null && test -d "$FLATPAK_DIR/exports/share/applications"; then
+        update-desktop-database -q "$FLATPAK_DIR/exports/share/applications"
+    fi
+}
+
+gtk_update_icon_cache() {
+    echo 2>&1 "Running gtk-update-icon-cache..."
+
+    if command -v gtk-update-icon-cache >/dev/null && test -d "$FLATPAK_DIR/exports/share/icons/hicolor"; then
+        if test -n "$hicolorPkg"; then
+            cp "$hicolorPkg/share/icons/hicolor/index.theme" "$FLATPAK_DIR/exports/share/icons/hicolor/"
+        fi
+
+        for dir in "$FLATPAK_DIR"/exports/share/icons/*; do
+            if test -f "$dir/index.theme"; then
+                if ! gtk-update-icon-cache --quiet "$dir"; then
+                    echo "Failed to run gtk-update-icon-cache for $dir"
+                    exit 1
+                fi
+            fi
+        done
+    fi
+}
+
+update_mime_database() {
+    echo 2>&1 "Running update-mime-database..."
+    if command -v update-mime-database >/dev/null && test -d "$FLATPAK_DIR/exports/share/mime/packages"; then
+        update-mime-database "$FLATPAK_DIR/exports/share/mime"
+    fi
+}
+
+main() {
+    update_desktop_database
+    gtk_update_icon_cache
+    update_mime_database
+    echo "Done"
+}
+
+main "$@"
