@@ -2,11 +2,11 @@
 
 pkgs.buildNpmPackage rec {
   pname = "brave-search-mcp-server";
-  version = "2.0.24";
+  version = "2.0.54";
 
   src = pkgs.fetchzip {
     url = "https://registry.npmjs.org/@brave/${pname}/-/${pname}-${version}.tgz";
-    hash = "sha256-prco9kgRiCfTpUZoCFivkWWRlUgv+htp1AVlNf4/bGc=";
+    hash = "sha256-HYFZLJxR7lwub1DvQvuJiYpppkumqMVYtybDgz1VYzY=";
   };
 
   npmDepsHash = "sha256-LdL2t/PF4JdXvX6ULt/68MijmlztiwDj+GO6zExRaJA=";

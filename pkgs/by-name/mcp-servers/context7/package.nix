@@ -2,11 +2,11 @@
 
 pkgs.buildNpmPackage rec {
   pname = "context7-mcp";
-  version = "1.0.20";
+  version = "1.0.16";
 
   src = pkgs.fetchzip {
     url = "https://registry.npmjs.org/@upstash/${pname}/-/${pname}-${version}.tgz";
-    hash = "sha256-lQn0HyUeWUdTQqxMyTYStcTwyrFLscoEhUcG0BVdxWg=";
+    hash = "sha256-9uo5JdH/us1HwOGz4B1db68NZYTIe6S0+Bn2R9iuQQ0=";
   };
 
   npmDepsHash = "sha256-UTK7l41nSKKzTW82rfIGkgzdmxPmwv1vH8Vs7peXxNA=";

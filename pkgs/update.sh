@@ -8,6 +8,7 @@ BASE_DIR=$(
 )
 
 cd "$BASE_DIR"
+DEBUG=${DEBUG:-0}
 
 c_blue=$(tput setaf 4 2>/dev/null || true)
 c_bold=$(tput bold 2>/dev/null || true)
@@ -15,14 +16,6 @@ c_yellow=$(tput setaf 3 2>/dev/null || true)
 c_red=$(tput setaf 1 2>/dev/null || true)
 c_reset=$(tput sgr0 2>/dev/null || true)
 c_white=$(tput setaf 7 2>/dev/null || true)
-
-for pkg in $buildInputs; do
-    if [ -f "$pkg"/etc/ssl/certs/ca-bundle.crt ]; then
-        SSL_CERT_FILE=${pkg}/etc/ssl/certs/ca-bundle.crt
-        NODE_EXTRA_CA_CERTS=${SSL_CERT_FILE}
-        break
-    fi
-done
 
 _log_error() {
     printf >&2 "%s[ERROR]%s %s\\n" \
@@ -32,10 +25,12 @@ _log_error() {
 }
 
 _log_debug() {
-    printf >&2 "%s[DEBUG]%s %s\\n" \
-        "$c_yellow" \
-        "$c_reset" \
-        "$*"
+    if [ "$DEBUG" = "1" ] || [ "$DEBUG" = "true" ]; then
+        printf >&2 "%s[DEBUG]%s %s\\n" \
+            "$c_yellow" \
+            "$c_reset" \
+            "$*"
+    fi
 }
 
 _log_info() {
@@ -44,6 +39,13 @@ _log_info() {
         "$c_reset" \
         "$*"
 }
+
+
+if [ -n "${NIX_SSL_CERT_FILE:-}" ] && [ -f "${NIX_SSL_CERT_FILE}" ]; then
+    export SSL_CERT_FILE="${NIX_SSL_CERT_FILE}"
+    export NPM_CONFIG_CAFILE="${NIX_SSL_CERT_FILE}"
+    _log_debug "Using CA bundle: ${NIX_SSL_CERT_FILE}"
+fi
 
 _cmd() {
     _log_debug "Running command: $*"
@@ -75,6 +77,7 @@ main() {
 
         _update --argstr skip-prompt true --argstr path local || exit 1
         _update --argstr skip-prompt true --argstr path local.mcpServers || exit 1
+        exit 0
     fi
 
     _update "$@"
