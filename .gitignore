@@ -11,8 +11,9 @@ Thumbs.db
 .svn
 
 # Runtime-generated files
-*.swp
 *.elc
+*.log
+*.swp
 *~
 
 # Runtime
