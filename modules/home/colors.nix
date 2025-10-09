@@ -123,8 +123,8 @@ in
             text = colorScheme.foreground;
           };
           focusedInactive = {
-            background = "${colorScheme.normal.blue}8c"; # 55%
-            border = "${colorScheme.normal.blue}99"; # 60%
+            background = "${colorScheme.bright.black}cc"; # 80%
+            border = "${colorScheme.bright.black}d8"; # 85%
             childBorder = "${colorScheme.bright.black}99"; # 60%
             indicator = colorScheme.normal.blue;
             text = colorScheme.foreground;
@@ -132,7 +132,7 @@ in
           unfocused = {
             background = "${colorScheme.bright.black}99"; # 60%
             border = "${colorScheme.bright.black}a5"; # 65%
-            childBorder = clear;
+            childBorder = "${colorScheme.bright.black}66"; # 40%
             indicator = clear;
             text = colorScheme.foreground;
           };
