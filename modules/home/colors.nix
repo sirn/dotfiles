@@ -133,7 +133,7 @@ in
             background = "${colorScheme.bright.black}99"; # 60%
             border = "${colorScheme.bright.black}a5"; # 65%
             childBorder = "${colorScheme.bright.black}66"; # 40%
-            indicator = clear;
+            indicator = colorScheme.bright.black;
             text = colorScheme.foreground;
           };
           placeholder = {
