@@ -19,6 +19,7 @@ c_white=$(tput setaf 7 2>/dev/null || true)
 for pkg in $buildInputs; do
     if [ -f "$pkg"/etc/ssl/certs/ca-bundle.crt ]; then
         SSL_CERT_FILE=${pkg}/etc/ssl/certs/ca-bundle.crt
+        NODE_EXTRA_CA_CERTS=${SSL_CERT_FILE}
         break
     fi
 done
