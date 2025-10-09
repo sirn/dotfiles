@@ -38,8 +38,8 @@ in
 
         gaps = {
           inner = 4; # Left + Right = 8
-          smartGaps = true;
-          smartBorders = "on";
+          smartGaps = false;
+          smartBorders = "off";
         };
 
         fonts = {
