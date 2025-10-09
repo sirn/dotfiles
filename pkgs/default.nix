@@ -9,8 +9,6 @@ in
     ia-writer-mono-static
     ia-writer-quattro-static;
 
-  claude-code = (callPackage ./by-name/claude-code/package.nix { });
-
   emacsPackages = {
     sqlite3 = (callPackage ./by-name/emacs/elisp-packages/sqlite3/package.nix { });
   };
