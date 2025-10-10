@@ -9,7 +9,7 @@ pkgs.buildNpmPackage rec {
     hash = "sha256-HYFZLJxR7lwub1DvQvuJiYpppkumqMVYtybDgz1VYzY=";
   };
 
-  npmDepsHash = "sha256-LdL2t/PF4JdXvX6ULt/68MijmlztiwDj+GO6zExRaJA=";
+  npmDepsHash = "sha256-A+/B1GKBa9kMDGaak/uH1o/FbwMyIaXuz+Nq2qCZvCk=";
 
   postPatch = ''
     ${lib.getExe pkgs.jq} 'del(.devDependencies)' package.json | ${pkgs.moreutils}/bin/sponge package.json
