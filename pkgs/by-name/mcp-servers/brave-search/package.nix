@@ -19,9 +19,9 @@ pkgs.buildNpmPackage rec {
 
   dontNpmBuild = true;
 
-  passthru.updateScript = pkgs.writeScript "update-claude-code" ''
+  passthru.updateScript = pkgs.writeScript "update-brave-search" ''
     #!/usr/bin/env nix-shell
-    #!nix-shell --pure -i bash --packages nodejs nix-update git
+    #!nix-shell -i bash --packages nodejs nix-update git
     set -euo pipefail
     version=$(npm view @brave/brave-search-mcp-server version)
     nix-update local.mcpServers.brave-search --version="$version" --generate-lockfile

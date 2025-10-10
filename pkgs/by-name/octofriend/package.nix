@@ -19,9 +19,9 @@ pkgs.buildNpmPackage rec {
     cp ${./package-lock.json} package-lock.json
   '';
 
-  passthru.updateScript = pkgs.writeScript "update-claude-code" ''
+  passthru.updateScript = pkgs.writeScript "update-octofriend" ''
     #!/usr/bin/env nix-shell
-    #!nix-shell --pure -i bash --packages nodejs nix-update git
+    #!nix-shell -i bash --packages nodejs nix-update git
     set -euo pipefail
     version=$(npm view octofriend version)
     nix-update local.octofriend --version="$version" --generate-lockfile

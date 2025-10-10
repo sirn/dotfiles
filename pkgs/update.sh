@@ -40,7 +40,6 @@ _log_info() {
         "$*"
 }
 
-
 if [ -n "${NIX_SSL_CERT_FILE:-}" ] && [ -f "${NIX_SSL_CERT_FILE}" ]; then
     export SSL_CERT_FILE="${NIX_SSL_CERT_FILE}"
     export NPM_CONFIG_CAFILE="${NIX_SSL_CERT_FILE}"
@@ -53,7 +52,8 @@ _cmd() {
 }
 
 _update() {
-    _cmd nix-shell "$(nix-instantiate --eval --expr '<nixpkgs>')/maintainers/scripts/update.nix" \
+    _cmd nix-shell "$(nix-instantiate --find-file nixpkgs)/maintainers/scripts/update.nix" \
+        --impure \
         --arg include-overlays '(import ./. { }).overlays' \
         "$@"
 }

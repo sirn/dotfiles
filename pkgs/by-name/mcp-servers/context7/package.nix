@@ -2,14 +2,14 @@
 
 pkgs.buildNpmPackage rec {
   pname = "context7-mcp";
-  version = "1.0.16";
+  version = "1.0.21";
 
   src = pkgs.fetchzip {
     url = "https://registry.npmjs.org/@upstash/${pname}/-/${pname}-${version}.tgz";
-    hash = "sha256-9uo5JdH/us1HwOGz4B1db68NZYTIe6S0+Bn2R9iuQQ0=";
+    hash = "sha256-ousyG04vRrpTo0K3YNViLyYN9NFKkSYpZIg4V1UEgE8=";
   };
 
-  npmDepsHash = "sha256-UTK7l41nSKKzTW82rfIGkgzdmxPmwv1vH8Vs7peXxNA=";
+  npmDepsHash = "sha256-Xqc27EF0ti45whfUMBEOYZzSFQfKrtD/TAxlvZ2sSp8=";
 
   postPatch = ''
     ${lib.getExe pkgs.jq} 'del(.devDependencies)' package.json | ${pkgs.moreutils}/bin/sponge package.json
@@ -18,9 +18,9 @@ pkgs.buildNpmPackage rec {
 
   dontNpmBuild = true;
 
-  passthru.updateScript = pkgs.writeScript "update-claude-code" ''
+  passthru.updateScript = pkgs.writeScript "update-context7" ''
     #!/usr/bin/env nix-shell
-    #!nix-shell --pure -i bash --packages nodejs nix-update git
+    #!nix-shell -i bash --packages nodejs nix-update git
     set -euo pipefail
     version=$(npm view @upstash/context7-mcp version)
     nix-update local.mcpServers.context7 --version="$version" --generate-lockfile
