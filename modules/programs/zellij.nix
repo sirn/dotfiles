@@ -2,8 +2,6 @@
 
 let
   cfg = config.programs.zellij;
-
-  fishcfg = config.programs.fish;
 in
 {
   programs.zellij = {
@@ -253,7 +251,7 @@ in
     }
 
     default_mode "locked"
-    default_shell "${fishcfg.package}/bin/fish"
+    default_shell = "${config.machine.interactiveShell}"
     show_startup_tips false
     show_release_notes false
 

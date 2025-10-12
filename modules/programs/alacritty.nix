@@ -3,8 +3,6 @@
 let
   cfg = config.programs.alacritty;
 
-  fishcfg = config.programs.fish;
-
   fuzzelcfg = config.programs.fuzzel;
 in
 {
@@ -60,7 +58,7 @@ in
       };
 
       shell = {
-        program = "${fishcfg.package}/bin/fish";
+        program = config.machine.interactiveShell;
         args =
           if pkgs.stdenv.isDarwin
           then [ "--login" ]

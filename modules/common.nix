@@ -1,4 +1,8 @@
+{ config, lib, ... }:
+
 {
+  config.machine.interactiveShell = "${lib.getExe config.programs.zsh.package}";
+
   imports = [
     ./home/clipboard.nix
     ./home/colors.nix
@@ -17,7 +21,6 @@
     ./programs/emacs.nix
     ./programs/emacsc.nix
     ./programs/fd.nix
-    ./programs/fish.nix
     ./programs/fzy.nix
     ./programs/git.nix
     ./programs/gpg.nix
@@ -35,6 +38,7 @@
     ./programs/ssh.nix
     ./programs/tree.nix
     ./programs/zellij.nix
+    ./programs/zsh.nix
 
     # services
     ./services/emacs.nix

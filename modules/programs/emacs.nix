@@ -190,6 +190,9 @@ in
     ".emacs.d/init.el" = {
       source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/etc/emacs/init.el";
     };
+    ".emacs.d/bin/shell" = {
+      source = config.machine.interactiveShell;
+    };
     ".emacs.d/var/parinfer-rust" = {
       source = pkgs.parinfer-rust-emacs;
     };

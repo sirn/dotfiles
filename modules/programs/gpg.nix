@@ -18,8 +18,8 @@ in
     end
   '';
 
-  programs.zsh.initExtra = ''
-    __gpg_updatestartuptty {
+  programs.zsh.initContent = ''
+    __gpg_updatestartuptty() {
       ${cfg.package}/bin/gpg-connect-agent --no-autostart updatestartuptty /bye >/dev/null 2>&1
     }
 

@@ -22,7 +22,7 @@ in
     extraConfig = ''
       local act = wezterm.action
       local config = wezterm.config_builder()
-      local shell = "${lib.getExe fishcfg.package}"
+      local shell = "${config.machine.interactiveShell}"
       local font = wezterm.font_with_fallback({
         'PragmataPro Mono Liga',
         'Source Han Code JP',

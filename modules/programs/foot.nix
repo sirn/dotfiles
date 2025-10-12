@@ -3,8 +3,6 @@
 let
   cfg = config.programs.foot;
 
-  fishcfg = config.programs.fish;
-
   fuzzelcfg = config.programs.fuzzel;
 in
 {
@@ -13,7 +11,7 @@ in
 
     settings = {
       main = {
-        shell = "${fishcfg.package}/bin/fish";
+        shell = config.machine.interactiveShell;
         term = "xterm-256color";
         font = "PragmataPro Mono Liga:size=12";
         bold-text-in-bright = "yes";

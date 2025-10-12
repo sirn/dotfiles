@@ -59,6 +59,14 @@ in
         };
       };
 
+      interactiveShell = mkOption {
+        type = types.str;
+        default = lib.getExe pkgs.bash;
+        description = ''
+          Default interactive shell.
+        '';
+      };
+
       clipboard = {
         copy = {
           command = mkOption {

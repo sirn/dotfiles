@@ -2,14 +2,12 @@
 
 let
   cfg = config.programs.tmux;
-
-  fishcfg = config.programs.fish;
 in
 {
   programs.tmux = {
     enable = true;
     escapeTime = 0;
-    shell = "${fishcfg.package}/bin/fish"; # Keep this referencing fish package
+    shell = config.machine.interactiveShell;
     terminal = "screen-256color";
     mouse = true;
 

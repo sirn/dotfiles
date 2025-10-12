@@ -56,7 +56,7 @@ in
   };
 
   programs.zsh = {
-    initExtra = ''
+    initContent = ''
       autoload -U compinit
       compinit
       source <(${cfg.package}/bin/jj util completion zsh)
