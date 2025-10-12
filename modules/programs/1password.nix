@@ -3,7 +3,7 @@
 {
   home.packages = with pkgs; [
     _1password-cli
-  ] ++ lib.optional (!config.flatpak.enable) [
+  ] ++ lib.optional (!pkgs.stdenv.isDarwin && !config.flatpak.enable) [
     _1password-gui
   ];
 
