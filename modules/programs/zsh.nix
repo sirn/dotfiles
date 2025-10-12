@@ -128,7 +128,7 @@ in
 
             gitCmd = lib.getExe config.programs.git.package;
 
-            hostnameCmd = lib.getExe' pkgs.hostname-debian "hostname";
+            hostnameCmd = lib.getExe pkgs.hostname;
 
             jjCmd = lib.getExe config.programs.jujutsu.package;
 
