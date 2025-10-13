@@ -74,6 +74,7 @@ in
           "browser.urlbar.suggest.searches" = true;
           "browser.urlbar.userMadeSearchSuggestionsChoice" = true;
           "dom.security.https_only_mode" = true;
+          "extensions.update.autoUpdateDefault" = false;
           "extensions.autoDisableScopes" = 0;
           "extensions.pocket.enabled" = false;
           "font.cjk_pref_fallback_order" = "ja,zh-cn,zh-hk,zh-tw,ko";
