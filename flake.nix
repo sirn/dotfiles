@@ -17,9 +17,12 @@
 
     niri.url = "github:sodiboo/niri-flake";
     niri.inputs.nixpkgs.follows = "nixpkgs";
+
+    nur.url = "github:nix-community/NUR";
+    nur.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { nixpkgs, nixpkgs-unstable, sops-nix, home-manager, nix-index-database, nixgl, niri, ... }@inputs:
+  outputs = { nixpkgs, home-manager, ... }@inputs:
     let
       config = {
         allowUnfree = true;
@@ -29,14 +32,18 @@
       };
 
       overlays = [
-        nixgl.overlay
+        inputs.nixgl.overlay
         (final: prev: {
-          unstable = import nixpkgs-unstable {
+          unstable = import inputs.nixpkgs-unstable {
             system = final.system;
             config = config;
           };
-        })
-        (final: prev: {
+
+          nur = import inputs.nur {
+            nurpkgs = final;
+            pkgs = final;
+          };
+
           local = import ./pkgs final prev;
         })
         # Workaround crashes in Chromium with fractional scaling
@@ -82,13 +89,13 @@
           pkgs = nixpkgs.legacyPackages.${system};
           modules = [
             defaultConfig
-            sops-nix.homeManagerModules.sops
-            niri.homeModules.niri
+            inputs.sops-nix.homeManagerModules.sops
+            inputs.niri.homeModules.niri
             ./lib/flatpak.nix
             ./lib/machine.nix
             ./modules/machines/${hostname}.nix
             (if builtins.pathExists ./local.nix then ./local.nix else { })
-            nix-index-database.homeModules.nix-index
+            inputs.nix-index-database.homeModules.nix-index
           ];
         };
 

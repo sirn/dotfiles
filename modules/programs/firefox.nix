@@ -29,35 +29,64 @@ in
 
     profiles = {
       main = {
-        extraConfig = ''
-          // Behaviors & UI
-          user_pref("browser.compactmode.show", true);
-          user_pref("browser.ctrlTab.recentlyUsedOrder", false);
-          user_pref("browser.download.open_pdf_attachments_inline", true);
-          user_pref("browser.newtabpage.activity-stream.feeds.section.highlights", false);
-          user_pref("browser.newtabpage.activity-stream.feeds.topsites", false);
-          user_pref("browser.search.separatePrivateDefault.ui.enabled", false);
-          user_pref("browser.sessionstore.warnOnQuit", true);
-          user_pref("browser.startup.page", 3);
-          user_pref("browser.urlbar.oneOffSearches", true);
-          user_pref("browser.urlbar.suggest.searches", true);
-          user_pref("browser.urlbar.userMadeSearchSuggestionsChoice", true);
-          user_pref("extensions.pocket.enabled", false);
-          user_pref("font.cjk_pref_fallback_order", "ja,zh-cn,zh-hk,zh-tw,ko");
-          user_pref("services.sync.addons.ignoreUserEnabledChanges", true);
-          user_pref("signon.prefillForms", false);
-          user_pref("signon.rememberSignons", false);
-          user_pref("svg.context-properties.content.enabled", true);
-          user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
+        # color: blue, turquoise, green, yellow, orange, red, pink, purple, toolbar
+        # icon: briefcase, cart, circle, dollar, fence, fingerprint, gift, vacation, food, fruit, pet, tree, chill
+        containers = {
+          personal = {
+            id = 1;
+            color = "green";
+            icon = "fingerprint";
+          };
+          social = {
+            id = 2;
+            color = "pink";
+            icon = "chill";
+          };
+        };
 
-          // Privacy protection
-          user_pref("browser.contentblocking.category", "strict");
-          user_pref("network.cookie.cookieBehavior", 1);
-          user_pref("privacy.trackingprotection.cryptomining.enabled", true);
-          user_pref("privacy.trackingprotection.enabled", true);
-          user_pref("privacy.trackingprotection.fingerprinting.enabled", true);
-          user_pref("dom.security.https_only_mode", true);
-        '';
+        containersForce = true;
+
+        extensions = {
+          packages = with pkgs.nur.repos.rycee.firefox-addons; [
+            dearrow
+            kagi-search
+            languagetool
+            multi-account-containers
+            simple-tab-groups
+            sponsorblock
+            ublock-origin
+          ];
+        };
+
+        settings = {
+          "browser.aboutwelcome.enabled" = false;
+          "browser.compactmode.show" = true;
+          "browser.contentblocking.category" = "strict";
+          "browser.ctrlTab.recentlyUsedOrder" = false;
+          "browser.ml.chat.enabled" = false;
+          "browser.newtabpage.activity-stream.feeds.section.highlights" = false;
+          "browser.newtabpage.activity-stream.feeds.topsites" = false;
+          "browser.search.separatePrivateDefault.ui.enabled" = false;
+          "browser.sessionstore.warnOnQuit" = true;
+          "browser.startup.page" = 3;
+          "browser.translations.automaticallyPopup" = false;
+          "browser.urlbar.oneOffSearches" = true;
+          "browser.urlbar.suggest.searches" = true;
+          "browser.urlbar.userMadeSearchSuggestionsChoice" = true;
+          "dom.security.https_only_mode" = true;
+          "extensions.autoDisableScopes" = 0;
+          "extensions.pocket.enabled" = false;
+          "font.cjk_pref_fallback_order" = "ja,zh-cn,zh-hk,zh-tw,ko";
+          "identity.fxaccounts.enabled" = false;
+          "network.cookie.cookieBehavior" = 1;
+          "privacy.trackingprotection.cryptomining.enabled" = true;
+          "privacy.trackingprotection.enabled" = true;
+          "privacy.trackingprotection.fingerprinting.enabled" = true;
+          "signon.prefillForms" = false;
+          "signon.rememberSignons" = false;
+          "svg.context-properties.content.enabled" = true;
+          "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+        };
       };
     };
   };

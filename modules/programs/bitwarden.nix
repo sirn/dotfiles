@@ -26,4 +26,10 @@
       };
     };
   };
+
+  programs.firefox = lib.mkIf config.programs.firefox.enable {
+    profiles.main.extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
+      bitwarden
+    ];
+  };
 }
