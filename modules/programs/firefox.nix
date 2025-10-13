@@ -49,6 +49,7 @@ in
         extensions = {
           packages = with pkgs.nur.repos.rycee.firefox-addons; [
             dearrow
+            decentraleyes
             kagi-search
             languagetool
             multi-account-containers
