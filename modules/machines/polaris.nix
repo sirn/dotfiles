@@ -19,6 +19,7 @@
     ../programs/1password.nix
     ../programs/brightnessctl.nix
     ../programs/ffmpeg.nix
+    ../programs/firefox.nix
     ../programs/imagemagick.nix
     ../programs/intellij.nix
     ../programs/mpv.nix
