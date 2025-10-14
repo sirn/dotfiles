@@ -61,10 +61,12 @@ in
 
         settings = {
           "browser.aboutwelcome.enabled" = false;
+          "browser.bookmarks.addedImportButton" = true;
           "browser.compactmode.show" = true;
           "browser.contentblocking.category" = "strict";
           "browser.ctrlTab.recentlyUsedOrder" = false;
           "browser.ml.chat.enabled" = false;
+          "browser.ml.chat.menu" = false;
           "browser.newtabpage.activity-stream.feeds.section.highlights" = false;
           "browser.newtabpage.activity-stream.feeds.topsites" = false;
           "browser.search.separatePrivateDefault.ui.enabled" = false;
@@ -75,9 +77,9 @@ in
           "browser.urlbar.suggest.searches" = true;
           "browser.urlbar.userMadeSearchSuggestionsChoice" = true;
           "dom.security.https_only_mode" = true;
-          "extensions.update.autoUpdateDefault" = false;
           "extensions.autoDisableScopes" = 0;
           "extensions.pocket.enabled" = false;
+          "extensions.update.autoUpdateDefault" = false;
           "font.cjk_pref_fallback_order" = "ja,zh-cn,zh-hk,zh-tw,ko";
           "identity.fxaccounts.enabled" = false;
           "network.cookie.cookieBehavior" = 1;
