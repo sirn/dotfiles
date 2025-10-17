@@ -23,34 +23,6 @@ in
         '';
       };
 
-      desktop = {
-        defaultFonts = {
-          sansSerif = mkOption {
-            type = types.str;
-            default = "Noto Sans";
-            description = ''
-              Default Sans Serif font.
-            '';
-          };
-
-          serif = mkOption {
-            type = types.str;
-            default = "Noto Serif";
-            description = ''
-              Default Serif font.
-            '';
-          };
-
-          monospace = mkOption {
-            type = types.str;
-            default = "Hack";
-            description = ''
-              Default Monospace font.
-            '';
-          };
-        };
-      };
-
       interactiveShell = mkOption {
         type = types.str;
         default = lib.getExe pkgs.bash;
