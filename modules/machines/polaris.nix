@@ -1,3 +1,5 @@
+{ lib, config, pkgs, ... }:
+
 {
   flatpak.enable = true;
   machine.isLaptop = true;
@@ -30,4 +32,21 @@
     # services
     ../services/dropbox-symlinks.nix
   ];
+
+  services.kanshi = lib.mkIf config.services.kanshi.enable {
+    settings = [
+      {
+        profile = {
+          name = "only_thinkpad";
+          outputs = [
+            {
+              criteria = "Samsung Display Corp. ATNA40HQ02-0  Unknown";
+              mode = "2880x1800@120Hz";
+              scale = 1.75;
+            }
+          ];
+        };
+      }
+    ];
+  };
 }
