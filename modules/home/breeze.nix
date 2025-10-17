@@ -81,6 +81,9 @@ in
       breezeIconsPkg
       breezePkg
       hicolor-icon-theme
+
+      # TODO: remove >= 25.11 when home-manager finally deprecates Qt5
+      (lib.meta.hiPrio kdePackages.plasma-integration)
     ];
 
     activation =
