@@ -75,7 +75,7 @@ in
 
     Service = {
       Type = "oneshot";
-      ExecStart = "${wallpaperScript}/bin/swww-wallpaper";
+      ExecStart = "-${wallpaperScript}/bin/swww-wallpaper";
     };
   };
 
