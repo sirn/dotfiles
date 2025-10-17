@@ -24,14 +24,6 @@ in
       };
 
       desktop = {
-        preferDark = mkOption {
-          type = types.bool;
-          default = false;
-          description = ''
-            Whether to prefer dark theme
-          '';
-        };
-
         defaultFonts = {
           sansSerif = mkOption {
             type = types.str;

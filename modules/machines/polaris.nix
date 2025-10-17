@@ -3,7 +3,6 @@
 {
   flatpak.enable = true;
   machine.isLaptop = true;
-  machine.desktop.preferDark = true;
 
   imports = [
     ../common.nix
@@ -11,6 +10,7 @@
 
     # profiles
     ../home/breeze.nix
+    ../home/breeze-dark.nix
     ../home/flatpak.nix
     ../home/fonts.nix
     ../home/i18n.nix

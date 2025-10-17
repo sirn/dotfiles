@@ -1,8 +1,6 @@
 { pkgs, config, lib, ... }:
 
 let
-  preferDark = config.machine.desktop.preferDark;
-
   breezePkg = pkgs.kdePackages.breeze;
 
   breezeGtkPkg = pkgs.kdePackages.breeze-gtk;
@@ -29,18 +27,12 @@ in
     };
 
     theme = {
-      name =
-        if preferDark
-        then "Breeze-Dark"
-        else "Breeze";
+      name = lib.mkDefault "Breeze";
       package = breezeGtkPkg;
     };
 
     iconTheme = {
-      name =
-        if preferDark
-        then "breeze-dark"
-        else "breeze";
+      name = lib.mkDefault "breeze";
       package = breezeIconsPkg;
     };
 
@@ -94,7 +86,7 @@ in
           else "/usr/bin/gsettings";
 
         colorScheme =
-          if preferDark
+          if gtkconf.theme.name == "Breeze-Dark"
           then "prefer-dark"
           else "prefer-light";
 
@@ -102,6 +94,7 @@ in
 
         setupGnomeDesktopInterface = pkgs.writeScriptBin "setup-gnome-desktop-interface" ''
           #!${pkgs.runtimeShell}
+
           _gsettings() {
             XDG_DATA_DIRS="${gsettingsDesktopSchemas}/share/gsettings-schemas/${gsettingsDesktopSchemas.name}:$XDG_DATA_DIRS"
             ${gsettingsBin} "$@" || true
@@ -142,12 +135,6 @@ in
           xcursor_theme = "${config.gtk.cursorTheme.name} ${toString config.gtk.cursorTheme.size}";
         };
       };
-    };
-  };
-
-  xdg.configFile = {
-    "kdeglobals" = lib.mkIf preferDark {
-      source = "${breezePkg}/share/color-schemes/BreezeDark.colors";
     };
   };
 }
