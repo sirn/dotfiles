@@ -18,13 +18,7 @@ pkgs.buildNpmPackage rec {
 
   dontNpmBuild = true;
 
-  passthru.updateScript = pkgs.writeScript "update-context7" ''
-    #!/usr/bin/env nix-shell
-    #!nix-shell -i bash --packages nodejs nix-update git
-    set -euo pipefail
-    version=$(npm view @upstash/context7-mcp version)
-    nix-update local.mcpServers.context7 --version="$version" --generate-lockfile
-  '';
+  passthru.updateScript = ./update.sh;
 
   meta = {
     description = "Up-to-date code documentation for LLMs and AI code editors";

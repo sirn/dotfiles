@@ -19,13 +19,7 @@ pkgs.buildNpmPackage rec {
 
   dontNpmBuild = true;
 
-  passthru.updateScript = pkgs.writeScript "update-brave-search" ''
-    #!/usr/bin/env nix-shell
-    #!nix-shell -i bash --packages nodejs nix-update git
-    set -euo pipefail
-    version=$(npm view @brave/brave-search-mcp-server version)
-    nix-update local.mcpServers.brave-search --version="$version" --generate-lockfile
-  '';
+  passthru.updateScript = ./update.sh;
 
   meta = {
     description = "An MCP server implementation that integrates the Brave Search API";
