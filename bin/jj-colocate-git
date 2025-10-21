@@ -162,8 +162,8 @@ _relocate() {
 
     if [ -f "${repo}/.jj/repo/store/git_target" ]; then
         msg_info "Rewriting git store"
-        _write_git_target
-        _sync_jj_git
+        _write_git_target "${repo}"
+        _sync_jj_git "${repo}"
     fi
 
     return 0
