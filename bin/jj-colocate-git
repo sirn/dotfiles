@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env nix-shell
+#!nix-shell -i bash -p coreutils
 set -o pipefail
 
 PROG=$(basename "$0")
@@ -128,7 +129,8 @@ _relocate() {
     fi
 
     if [ -d "${repo}/.git" ]; then
-        if [ -f "${repo}/.jj/repo/store/git_target" ] && [ "$(cat "${repo}/.jj/repo/store/git_target")" = "git" ]; then
+        if [ -f "${repo}/.jj/repo/store/git_target" ] &&
+             [ "$(cat "${repo}/.jj/repo/store/git_target")" != "../../../.git" ]; then
             msg_info "Already relocated but invalid git_target, fixing"
             _write_git_target "${repo}"
             _sync_jj_git "${repo}"
