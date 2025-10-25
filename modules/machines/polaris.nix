@@ -36,13 +36,29 @@
   services.kanshi = lib.mkIf config.services.kanshi.enable {
     settings = [
       {
+        output = {
+          alias = "internal";
+          criteria = "Samsung Display Corp. ATNA40HQ02-0  Unknown";
+          mode = "2880x1800@120Hz";
+          scale = 1.75;
+        };
+      }
+      {
         profile = {
-          name = "only_thinkpad";
+          name = "only_internal";
           outputs = [
+            { criteria = "$internal"; }
+          ];
+        };
+      }
+      {
+        profile = {
+          name = "dual_aw3225qf_internal";
+          outputs = [
+            { criteria = "$aw3225qf"; }
             {
-              criteria = "Samsung Display Corp. ATNA40HQ02-0  Unknown";
-              mode = "2880x1800@120Hz";
-              scale = 1.75;
+              criteria = "$internal";
+              position = "457,1440";
             }
           ];
         };
