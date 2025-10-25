@@ -18,15 +18,28 @@ in
 
     settings = [
       {
+        output = {
+          alias = "aw3225qf";
+          adaptiveSync = true;
+          criteria = "Dell Inc. AW3225QF 13T4YZ3";
+          mode = "3840x2160@240Hz";
+          position = "0,0";
+          scale = 1.5;
+        };
+      }
+      {
+        output = {
+          alias = "pa148";
+          criteria = "ASUSTek COMPUTER INC ASUS PA148 N9LMTF061468";
+          mode = "1920x1080@60Hz";
+          scale = 1.5;
+        };
+      }
+      {
         profile = {
-          name = "only_3225qf";
+          name = "only_aw3225qf";
           outputs = [
-            {
-              criteria = "Dell Inc. AW3225QF 13T4YZ3";
-              mode = "3840x2160";
-              position = "0,0";
-              scale = 1.5;
-            }
+            { criteria = "$aw3225qf"; }
           ];
         };
       }
@@ -34,11 +47,7 @@ in
         profile = {
           name = "only_pa148";
           outputs = [
-            {
-              criteria = "ASUSTek COMPUTER INC ASUS PA148 N9LMTF061468";
-              mode = "1920x1080";
-              scale = 1.5;
-            }
+            { criteria = "$pa148"; }
           ];
         };
       }
