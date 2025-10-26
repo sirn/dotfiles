@@ -7,10 +7,13 @@ let
 in
 {
   systemd.user.services.sway-audio-idle-inhibit = {
-    Service = {
-      ExecStart = "${pkg}/bin/sway-audio-idle-inhibit";
+    Unit = {
       After = [ config.wayland.systemd.target ];
       PartOf = [ config.wayland.systemd.target ];
+    };
+
+    Service = {
+      ExecStart = "${pkg}/bin/sway-audio-idle-inhibit";
       Restart = "on-failure";
     };
 
