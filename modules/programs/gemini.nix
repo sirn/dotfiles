@@ -32,6 +32,9 @@ in
         disableAutoUpdate = true;
         mcpServers = mcpServers;
       };
+
+      # Gemini overrides settings.json whenever it is launched.
+      force = true;
     };
   };
 
