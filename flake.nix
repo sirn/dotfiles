@@ -128,7 +128,6 @@
         polaris = mkLinuxConfig { hostname = "polaris"; };
         terra = mkLinuxConfig { hostname = "terra"; };
         theia = mkDarwinConfig { hostname = "theia"; };
-        vega = mkLinuxConfig { hostname = "vega"; };
         ws = mkLinuxConfig { hostname = "ws"; };
       };
     };
