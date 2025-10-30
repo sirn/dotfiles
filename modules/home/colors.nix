@@ -85,6 +85,7 @@ in
           colorScheme.normal.cyan
           colorScheme.normal.white
         ];
+
         brights = [
           colorScheme.bright.black
           colorScheme.bright.red
@@ -106,6 +107,35 @@ in
         selection_fg = colorScheme.background;
       };
     };
+  };
+
+  xdg.configFile."wezterm/colors.lua" = lib.mkIf config.programs.wezterm.enable {
+    text = ''
+      return {
+        tab_bar = {
+          background = '${colorScheme.background}',
+          new_tab = {
+            bg_color = '${colorScheme.background}',
+            fg_color = '${colorScheme.foreground}',
+          },
+          new_tab_hover = {
+            bg_color = '${colorScheme.background}',
+            fg_color = '${colorScheme.normal.cyan}',
+          },
+        },
+        tab_colors = {
+          index_bg = '${colorScheme.bright.cyan}',
+          index_fg = '${colorScheme.background}',
+          active_bg = '${colorScheme.normal.cyan}',
+          active_fg = '${colorScheme.normal.black}',
+          border_bg = '${colorScheme.background}',
+          inactive_bg = '${colorScheme.bright.black}',
+          inactive_fg = '${colorScheme.normal.white}',
+          inactive_index_bg = '${colorScheme.scrollbar}',
+          inactive_index_fg = '${colorScheme.normal.white}',
+        },
+      }
+    '';
   };
 
   wayland.windowManager.sway = lib.mkIf config.wayland.windowManager.sway.enable {

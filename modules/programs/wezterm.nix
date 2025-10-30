@@ -81,6 +81,92 @@ in
       end
 
       config.use_fancy_tab_bar = false
+      config.tab_max_width = 22
+
+      local solid_right_arrow = wezterm.nerdfonts.pl_left_hard_divider
+      local tab_colors = {
+        index_bg = 'black',
+        index_fg = 'white',
+        active_bg = 'black',
+        active_fg = 'white',
+        border_bg = 'black',
+        inactive_bg = 'black',
+        inactive_fg = 'white',
+        inactive_index_bg = 'black',
+        inactive_index_fg = 'white',
+      }
+
+      local colors_ok, colors = pcall(require, 'colors')
+      if colors_ok then
+        config.colors = {
+          tab_bar = colors.tab_bar,
+        }
+        for k, v in pairs(colors.tab_colors) do
+          tab_colors[k] = v
+        end
+      end
+
+      function tab_title(tab_info)
+        local title = tab_info.tab_title
+        if title and #title > 0 then
+          return title
+        end
+        return tab_info.active_pane.title
+      end
+
+      wezterm.on(
+        'format-tab-title',
+        function(tab, tabs, panes, config, hover, max_width)
+          -- Get the current active tab index to style the wedge prior to active
+          local active_tab_index = -1
+          for i, t in ipairs(tabs) do
+            if t.is_active then
+              active_tab_index = t.tab_index
+              break
+            end
+          end
+
+          local current_bg = tab_colors.inactive_bg
+          local current_fg = tab_colors.inactive_fg
+          local current_hl_bg = tab_colors.inactive_index_bg
+          local current_hl_fg = tab_colors.inactive_index_fg
+          if tab.is_active then
+            current_bg = tab_colors.active_bg
+            current_fg = tab_colors.active_fg
+            current_hl_bg = tab_colors.index_bg
+            current_hl_fg = tab_colors.index_fg
+          end
+
+          local parts = {}
+          local trunc_right = 7
+
+          table.insert(parts, { Background = { Color = current_hl_bg } })
+          table.insert(parts, { Foreground = { Color = tab_colors.border_bg } })
+          if tab.tab_index > 0 then
+            table.insert(parts, { Text = solid_right_arrow })
+            trunc_right = trunc_right + 1
+          end
+
+          table.insert(parts, { Foreground = { Color = current_hl_fg } })
+          table.insert(parts, { Background = { Color = current_hl_bg } })
+          table.insert(parts, { Text = ' ' .. (tab.tab_index + 1) .. ' ' })
+          table.insert(parts, { Background = { Color = current_bg } })
+          table.insert(parts, { Foreground = { Color = current_hl_bg } })
+          table.insert(parts, { Text = solid_right_arrow })
+
+          local title = tab_title(tab)
+          title = wezterm.truncate_right(title, max_width - trunc_right)
+
+          table.insert(parts, { Background = { Color = current_bg } })
+          table.insert(parts, { Foreground = { Color = current_fg } })
+          table.insert(parts, { Text = ' ' .. title .. ' ' })
+          table.insert(parts, { Background = { Color = tab_colors.border_bg } })
+          table.insert(parts, { Foreground = { Color = current_bg } })
+          table.insert(parts, { Text = solid_right_arrow })
+
+          return parts
+        end
+      )
 
       return config
     '';
