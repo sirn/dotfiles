@@ -22,6 +22,9 @@ in
     extraConfig = ''
       local act = wezterm.action
       local config = wezterm.config_builder()
+      local is_darwin <const> = wezterm.target_triple:find("darwin") ~= nil
+      local is_linux <const> = wezterm.target_triple:find("linux") ~= nil
+
       local shell = "${config.machine.interactiveShell}"
       local font = wezterm.font_with_fallback({
         'PragmataPro Mono Liga',
@@ -31,14 +34,9 @@ in
       config.color_scheme = 'default'
       config.enable_scroll_bar = true
       config.font = font
-
-      local version_prefix = string.sub(wezterm.version, 1, 6)
-      local version_num = tonumber(version_prefix) or 0
-      if version_num >= 202505 then
-        config.command_palette_font = font
-        config.pane_select_font = font
-        config.char_select_font = font
-      end
+      config.command_palette_font = font
+      config.pane_select_font = font
+      config.char_select_font = font
 
       config.freetype_load_target = 'Light'
       config.freetype_load_flags = 'NO_HINTING'
@@ -47,33 +45,40 @@ in
       config.mux_enable_ssh_agent = false
       config.warn_about_missing_glyphs = false
 
-      config.window_decorations = "RESIZE"
-      config.window_padding = {
-        left = '1cell',
-        right = '0.5cell',
-        top = '0.5cell',
-        bottom = '0',
-      }
-
       config.keys = {
         { key = 'V', mods = 'CTRL', action = act.PasteFrom 'Clipboard' },
       }
 
-      ${lib.optionalString pkgs.stdenv.isLinux ''
+      if is_linux then
+        config.window_padding = {
+          left = '0.5cell',
+          right = '1cell',
+          top = '0',
+          bottom = '0',
+        }
+
         config.default_prog = { shell };
         config.font_size = 12.0
         config.command_palette_font_size = 12.0
         config.pane_select_font_size = 12.0
         config.char_select_font_size = 12.0
-      ''}
+      end
 
-      ${lib.optionalString pkgs.stdenv.isDarwin ''
+      if is_darwin then
+        config.window_decorations = "RESIZE"
+        config.window_padding = {
+          left = '1cell',
+          right = '0.5cell',
+          top = '0.5cell',
+          bottom = '0',
+        }
+
         config.default_prog = { shell, "--login" }
         config.font_size = 14.0;
         config.command_palette_font_size = 14.0
         config.pane_select_font_size = 14.0
         config.char_select_font_size = 14.0
-      ''}
+      end
 
       config.use_fancy_tab_bar = false
 

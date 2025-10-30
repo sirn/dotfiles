@@ -5,7 +5,7 @@ let
     background = "#000000";
     foreground = "#ffffff";
     selection = "#d1d1d1";
-    scrollbar = "#d1d1d1";
+    scrollbar = "#404040";
 
     normal = {
       black = "#000000";
