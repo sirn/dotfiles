@@ -138,6 +138,8 @@
             (scroll-up 3)))
 
         (xterm-mouse-mode t)
+        (bind-key "<wheel-down>" #'gemacs-scroll-down)
+        (bind-key "<wheel-up>" #'gemacs-scroll-up)
         (bind-key "<mouse-4>" #'gemacs-scroll-down)
         (bind-key "<mouse-5>" #'gemacs-scroll-up))))
 
