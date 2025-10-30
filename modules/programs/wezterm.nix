@@ -47,10 +47,11 @@ in
       config.mux_enable_ssh_agent = false
       config.warn_about_missing_glyphs = false
 
+      config.window_decorations = "RESIZE"
       config.window_padding = {
-        left = '0.2cell',
-        right = '1cell',
-        top = '0',
+        left = '1cell',
+        right = '0.5cell',
+        top = '0.5cell',
         bottom = '0',
       }
 
@@ -73,6 +74,8 @@ in
         config.pane_select_font_size = 14.0
         config.char_select_font_size = 14.0
       ''}
+
+      config.use_fancy_tab_bar = false
 
       return config
     '';
