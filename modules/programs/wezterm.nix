@@ -84,16 +84,16 @@ in
       config.tab_max_width = 22
 
       local solid_right_arrow = wezterm.nerdfonts.pl_left_hard_divider
+      local solid_left_arrow = wezterm.nerdfonts.pl_right_hard_divider
+
       local tab_colors = {
-        index_bg = 'black',
-        index_fg = 'white',
         active_bg = 'black',
         active_fg = 'white',
         border_bg = 'black',
         inactive_bg = 'black',
         inactive_fg = 'white',
-        inactive_index_bg = 'black',
-        inactive_index_fg = 'white',
+        dimmed_bg = 'black',
+        dimmed_fg = 'white',
       }
 
       local colors_ok, colors = pcall(require, 'colors')
@@ -126,16 +126,15 @@ in
             end
           end
 
-          local current_bg = tab_colors.inactive_bg
-          local current_fg = tab_colors.inactive_fg
-          local current_hl_bg = tab_colors.inactive_index_bg
-          local current_hl_fg = tab_colors.inactive_index_fg
+          local current_bg = wezterm.color.parse(tab_colors.inactive_bg)
+          local current_fg = wezterm.color.parse(tab_colors.inactive_fg)
           if tab.is_active then
-            current_bg = tab_colors.active_bg
-            current_fg = tab_colors.active_fg
-            current_hl_bg = tab_colors.index_bg
-            current_hl_fg = tab_colors.index_fg
+            current_bg = wezterm.color.parse(tab_colors.active_bg)
+            current_fg = wezterm.color.parse(tab_colors.active_fg)
           end
+
+          local current_hl_bg = current_bg:lighten(0.1)
+          local current_hl_fg = current_fg
 
           local parts = {}
           local trunc_right = 7
@@ -165,6 +164,32 @@ in
           table.insert(parts, { Text = solid_right_arrow })
 
           return parts
+        end
+      )
+
+      wezterm.on(
+        'update-status',
+        function(window)
+          local parts = {}
+
+          table.insert(parts, { Background = { Color = tab_colors.border_bg } })
+          table.insert(parts, { Foreground = { Color = tab_colors.dimmed_bg } })
+          table.insert(parts, { Text = solid_left_arrow })
+          table.insert(parts, { Background = { Color = tab_colors.dimmed_bg } })
+          table.insert(parts, { Foreground = { Color = tab_colors.dimmed_fg } })
+          table.insert(parts, { Text = ' ' .. wezterm.hostname() .. ' ' })
+          table.insert(parts, { Background = { Color = tab_colors.dimmed_bg } })
+          table.insert(parts, { Foreground = { Color = tab_colors.border_bg } })
+          table.insert(parts, { Text = solid_left_arrow })
+
+          table.insert(parts, { Background = { Color = tab_colors.border_bg } })
+          table.insert(parts, { Foreground = { Color = tab_colors.dimmed_bg } })
+          table.insert(parts, { Text = solid_left_arrow })
+          table.insert(parts, { Background = { Color = tab_colors.dimmed_bg } })
+          table.insert(parts, { Foreground = { Color = tab_colors.dimmed_fg } })
+          table.insert(parts, { Text = ' ' .. wezterm.strftime("%H:%M") .. ' ' })
+
+          window:set_right_status(wezterm.format(parts))
         end
       )
 
