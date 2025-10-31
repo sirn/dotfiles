@@ -246,7 +246,7 @@ in
                 printf \
                   "%s[%s]%s " \
                   "%{$t_highlight$t_bold%}" \
-                  "nix-shell" \
+                  "nix-shell:$IN_NIX_SHELL" \
                   "%{$t_reset%}"
               fi
             }
