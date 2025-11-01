@@ -1,5 +1,16 @@
 { config, lib, pkgs, ... }:
 
+let
+  inherit (config.home) homeDirectory;
+
+  agentSocketPath =
+    if pkgs.stdenv.isDarwin
+    then "${homeDirectory}/.bitwarden-ssh-agent.sock"
+    else
+      if config.flatpak.enable
+      then "${homeDirectory}/.var/app/com.bitwarden.desktop/data/.bitwarden-ssh-agent.sock"
+      else "${homeDirectory}/.bitwarden-ssh-agent.sock";
+in
 {
   home.packages = with pkgs; [
     bitwarden-cli
@@ -8,13 +19,15 @@
   ];
 
   programs.ssh.matchBlocks."*".extraOptions = {
-    "IdentityAgent" =
-      if pkgs.stdenv.isDarwin
-      then "~/.bitwarden-ssh-agent.sock"
-      else
-        if config.flatpak.enable
-        then "~/.var/app/com.bitwarden.desktop/data/.bitwarden-ssh-agent.sock"
-        else "~/.bitwarden-ssh-agent.sock";
+    "IdentityAgent" = agentSocketPath;
+  };
+
+  xdg.configFile."wezterm/hm_ssh.lua" = lib.mkIf config.programs.wezterm.enable {
+    text = ''
+      return {
+        ssh_auth_sock = '${agentSocketPath}',
+      }
+    '';
   };
 
   flatpak.applications = {

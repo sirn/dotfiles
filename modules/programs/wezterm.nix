@@ -42,7 +42,7 @@ in
       config.freetype_load_flags = 'NO_HINTING'
       config.hide_tab_bar_if_only_one_tab = true
       config.use_ime = true
-      config.mux_enable_ssh_agent = false
+      config.mux_enable_ssh_agent = true
       config.warn_about_missing_glyphs = false
 
       config.keys = {
@@ -95,6 +95,11 @@ in
         dimmed_bg = 'black',
         dimmed_fg = 'white',
       }
+
+      local hm_ssh_ok, hm_ssh = pcall(require, 'hm_ssh')
+      if hm_ssh_ok then
+        config.default_ssh_auth_sock = hm_ssh.ssh_auth_sock
+      end
 
       local hm_colors_ok, hm_colors = pcall(require, 'hm_colors')
       if hm_colors_ok then
