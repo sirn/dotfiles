@@ -96,12 +96,12 @@ in
         dimmed_fg = 'white',
       }
 
-      local colors_ok, colors = pcall(require, 'colors')
-      if colors_ok then
+      local hm_colors_ok, hm_colors = pcall(require, 'hm_colors')
+      if hm_colors_ok then
         config.colors = {
-          tab_bar = colors.tab_bar,
+          tab_bar = hm_colors.tab_bar,
         }
-        for k, v in pairs(colors.tab_colors) do
+        for k, v in pairs(hm_colors.tab_colors) do
           tab_colors[k] = v
         end
       end

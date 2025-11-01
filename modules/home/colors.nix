@@ -109,7 +109,7 @@ in
     };
   };
 
-  xdg.configFile."wezterm/colors.lua" = lib.mkIf config.programs.wezterm.enable {
+  xdg.configFile."wezterm/hm_colors.lua" = lib.mkIf config.programs.wezterm.enable {
     text = ''
       return {
         tab_bar = {
