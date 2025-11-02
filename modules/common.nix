@@ -37,6 +37,7 @@
     ./programs/sl.nix
     ./programs/ssh.nix
     ./programs/tree.nix
+    ./programs/wezterm.nix
     ./programs/zellij.nix
     ./programs/zsh.nix
 
