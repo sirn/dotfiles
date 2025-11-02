@@ -140,7 +140,13 @@ in
           if title and #title > 0 then
             return title
           end
-          return tab_info.active_pane.title or "shell"
+
+          title = tab_info.active_pane.title
+          if title and #title > 0 then
+            return title
+          end
+
+          return "shell"
         end
 
         wezterm.on(
@@ -202,7 +208,7 @@ in
 
           table.insert(parts, { Background = { Color = tab_colors.border_bg } })
 
-          if extra_text then
+          if extra_text and #extra_text > 0 then
             local hl_bg = bg:lighten(0.15)
             local hl_fg = fg
 
@@ -240,19 +246,27 @@ in
               right_status(parts, wezterm.hostname())
             else
               local meta = pane:get_metadata() or {}
+              local last_response_text = "";
 
-              local last_response = meta.since_last_response_ms or 0
-              local last_response_text = last_response .. 'ms'
-              if last_response > 60000 then
-                last_response_text = string.format("%.1fm", last_response / 60000)
-              elseif last_response and last_response > 1000 then
-                last_response_text = string.format("%.1fs", last_response / 1000)
+              if meta.is_tardy then
+                local last_response = meta.since_last_response_ms or 0
+
+                last_response_text = last_response .. 'ms'
+                if last_response > 60000 then
+                  last_response_text = string.format("%.1fm", last_response / 60000)
+                elseif last_response and last_response > 1000 then
+                  last_response_text = string.format("%.1fs", last_response / 1000)
+                end
+              end
+
+              if last_response_text and #last_response_text > 0 then
+                last_response_text = ' ' .. last_response_text
               end
 
               right_status(
                 parts,
                 domain,
-                ' ' .. last_response_text,
+                last_response_text,
                 false,
                 tab_colors.remote_bg,
                 tab_colors.remote_fg
