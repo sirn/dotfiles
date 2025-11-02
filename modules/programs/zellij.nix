@@ -254,8 +254,6 @@ in
     default_shell "${config.machine.interactiveShell}"
     show_startup_tips false
     show_release_notes false
-
-    copy_command "${config.machine.clipboard.copy.command}"
   '';
 
   home.file = {
