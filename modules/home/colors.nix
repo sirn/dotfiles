@@ -109,28 +109,37 @@ in
     };
   };
 
+  xdg.configFile."wezterm/modules/colors.lua" = lib.mkIf config.programs.wezterm.enable {
+    text = ''
+      return {
+        colors = {
+          tab_bar = {
+            background = '${colorScheme.background}',
+            new_tab = {
+              bg_color = '${colorScheme.background}',
+              fg_color = '${colorScheme.foreground}',
+            },
+            new_tab_hover = {
+              bg_color = '${colorScheme.background}',
+              fg_color = '${colorScheme.normal.cyan}',
+            },
+          },
+        },
+      }
+    '';
+  };
+
   xdg.configFile."wezterm/hm_colors.lua" = lib.mkIf config.programs.wezterm.enable {
     text = ''
       return {
-        tab_bar = {
-          background = '${colorScheme.background}',
-          new_tab = {
-            bg_color = '${colorScheme.background}',
-            fg_color = '${colorScheme.foreground}',
-          },
-          new_tab_hover = {
-            bg_color = '${colorScheme.background}',
-            fg_color = '${colorScheme.normal.cyan}',
-          },
-        },
         tab_colors = {
           active_bg = '${colorScheme.normal.cyan}',
           active_fg = '${colorScheme.normal.black}',
           border_bg = '${colorScheme.background}',
           inactive_bg = '${colorScheme.bright.black}',
           inactive_fg = '${colorScheme.normal.white}',
-          dimmed_bg = '${colorScheme.bright.black}',
-          dimmed_fg = '${colorScheme.normal.white}',
+          remote_bg = '${colorScheme.normal.blue}',
+          remote_fg = '${colorScheme.normal.black}',
         },
       }
     '';

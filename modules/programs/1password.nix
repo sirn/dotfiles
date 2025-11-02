@@ -16,17 +16,13 @@ in
   ];
 
   programs.ssh.matchBlocks."*".extraOptions = {
-    "IdentityAgent" =
-      lib.strings.replaceStrings
-        [ " " ]
-        [ "\\ " ]
-        agentSocketPath;
+    "IdentityAgent" = "\"${agentSocketPath}\"";
   };
 
-  xdg.configFile."wezterm/hm_ssh.lua" = lib.mkIf config.programs.wezterm.enable {
+  xdg.configFile."wezterm/modules/1password.lua" = lib.mkIf config.programs.wezterm.enable {
     text = ''
       return {
-        ssh_auth_sock = '${agentSocketPath}',
+        default_ssh_auth_sock = '${agentSocketPath}',
       }
     '';
   };

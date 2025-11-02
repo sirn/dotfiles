@@ -22,10 +22,10 @@ in
     "IdentityAgent" = agentSocketPath;
   };
 
-  xdg.configFile."wezterm/hm_ssh.lua" = lib.mkIf config.programs.wezterm.enable {
+  xdg.configFile."wezterm/modules/bitwarden.lua" = lib.mkIf config.programs.wezterm.enable {
     text = ''
       return {
-        ssh_auth_sock = '${agentSocketPath}',
+        default_ssh_auth_sock = '${agentSocketPath}',
       }
     '';
   };
