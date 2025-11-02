@@ -31,4 +31,8 @@ in
       allow-loopback-pinentry
     '';
   };
+
+  programs.ssh.matchBlocks."*".extraOptions = {
+    IdentityAgent = lib.mkOverride 500 "$\{XDG_RUNTIME_DIR\}/gnupg/S.gpg-agent.ssh";
+  };
 }

@@ -16,7 +16,7 @@ in
   ];
 
   programs.ssh.matchBlocks."*".extraOptions = {
-    "IdentityAgent" = "\"${agentSocketPath}\"";
+    "IdentityAgent" = lib.mkOverride 250 "\"${agentSocketPath}\"";
   };
 
   xdg.configFile."wezterm/modules/1password.lua" = lib.mkIf config.programs.wezterm.enable {

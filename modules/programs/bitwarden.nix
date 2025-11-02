@@ -19,7 +19,7 @@ in
   ];
 
   programs.ssh.matchBlocks."*".extraOptions = {
-    "IdentityAgent" = agentSocketPath;
+    "IdentityAgent" = lib.mkOverride 250 agentSocketPath;
   };
 
   xdg.configFile."wezterm/modules/bitwarden.lua" = lib.mkIf config.programs.wezterm.enable {
