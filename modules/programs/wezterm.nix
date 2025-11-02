@@ -140,7 +140,7 @@ in
           if title and #title > 0 then
             return title
           end
-          return tab_info.active_pane.title
+          return tab_info.active_pane.title or "shell"
         end
 
         wezterm.on(
