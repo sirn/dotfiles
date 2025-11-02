@@ -10,10 +10,12 @@ in
     enable = true;
     package =
       lib.mkDefault
-        (if pkgs.stdenv.isLinux then
-          pkgs.emacs-pgtk
+        (if pkgs.stdenv.isLinux
+        then pkgs.emacs-pgtk
         else
-          pkgs.emacs-nox);
+          if pkgs.stdenv.isDarwin
+          then pkgs.emacs-macport
+          else pkgs.emacs-nox);
 
     extraPackages = epkgs: with epkgs; [
       # Early packages
