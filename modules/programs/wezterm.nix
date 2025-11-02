@@ -172,28 +172,32 @@ in
         end
       )
 
-      wezterm.on(
-        'update-status',
-        function(window)
-          local parts = {}
+      function status_section(parts, text, omit_right)
+        table.insert(parts, { Background = { Color = tab_colors.border_bg } })
+        table.insert(parts, { Foreground = { Color = tab_colors.dimmed_bg } })
+        table.insert(parts, { Text = solid_left_arrow })
+        table.insert(parts, { Background = { Color = tab_colors.dimmed_bg } })
+        table.insert(parts, { Foreground = { Color = tab_colors.dimmed_fg } })
+        table.insert(parts, { Text = ' ' .. text .. ' ' })
 
-          table.insert(parts, { Background = { Color = tab_colors.border_bg } })
-          table.insert(parts, { Foreground = { Color = tab_colors.dimmed_bg } })
-          table.insert(parts, { Text = solid_left_arrow })
-          table.insert(parts, { Background = { Color = tab_colors.dimmed_bg } })
-          table.insert(parts, { Foreground = { Color = tab_colors.dimmed_fg } })
-          table.insert(parts, { Text = ' ' .. wezterm.hostname() .. ' ' })
+        if omit_right == nil or not omit_right then
           table.insert(parts, { Background = { Color = tab_colors.dimmed_bg } })
           table.insert(parts, { Foreground = { Color = tab_colors.border_bg } })
           table.insert(parts, { Text = solid_left_arrow })
+        end
+      end
 
-          table.insert(parts, { Background = { Color = tab_colors.border_bg } })
-          table.insert(parts, { Foreground = { Color = tab_colors.dimmed_bg } })
-          table.insert(parts, { Text = solid_left_arrow })
-          table.insert(parts, { Background = { Color = tab_colors.dimmed_bg } })
-          table.insert(parts, { Foreground = { Color = tab_colors.dimmed_fg } })
-          table.insert(parts, { Text = ' ' .. wezterm.strftime("%H:%M") .. ' ' })
+      wezterm.on(
+        'update-status',
+        function(window, pane)
+          local parts = {}
+          local domain = pane:get_domain_name()
 
+          if domain == 'local' or domain == 'default' then
+            status_section(parts, wezterm.hostname())
+          end
+
+          status_section(parts, wezterm.strftime("%H:%M"), true)
           window:set_right_status(wezterm.format(parts))
         end
       )
