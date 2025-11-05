@@ -74,7 +74,7 @@ in
 
   programs.wezterm = lib.mkIf config.programs.wezterm.enable {
     colorSchemes = {
-      default = {
+      modus-vivendi = {
         ansi = [
           colorScheme.normal.black
           colorScheme.normal.red
@@ -112,6 +112,7 @@ in
   xdg.configFile."wezterm/modules/colors.lua" = lib.mkIf config.programs.wezterm.enable {
     text = ''
       return {
+        color_scheme = 'modus-vivendi',
         colors = {
           tab_bar = {
             background = '${colorScheme.background}',

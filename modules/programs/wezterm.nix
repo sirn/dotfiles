@@ -291,7 +291,6 @@ in
     "wezterm/modules/window.lua" = {
       text = ''
         return {
-          color_scheme = 'default',
           enable_scroll_bar = true,
           ${if pkgs.stdenv.isDarwin then ''
             window_decorations = "RESIZE",
