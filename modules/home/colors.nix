@@ -4,8 +4,8 @@ let
   colorScheme = {
     background = "#000000";
     foreground = "#ffffff";
-    selection = "#d1d1d1";
-    scrollbar = "#404040";
+    selection = "#535353";
+    scrollbar = "#646464";
 
     normal = {
       black = "#000000";
@@ -344,17 +344,17 @@ in
       }
 
       #battery.charging:not(.full) {
-          background-color: #e8f5e9;
-          color: #2e7d32;
+          background-color: #44bc44;
+          color: #000000;
       }
 
       #battery.warning {
-          background-color: #ff6f00;
-          color: #ffecb3;
+          background-color: #fec43f;
+          color: #000000;
       }
 
       #battery.critical {
-          background-color: #b71c1c;
+          background-color: #ff5f5f;
           color: #ffcdd2;
       }
 
