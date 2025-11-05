@@ -146,6 +146,39 @@ in
     '';
   };
 
+  programs.ghostty = lib.mkIf config.programs.ghostty.enable {
+    settings = {
+      theme = "modus-vivendi";
+    };
+    themes = {
+      modus-vivendi = {
+        background = stripHash colorScheme.background;
+        cursor-color = stripHash colorScheme.foreground;
+        foreground = stripHash colorScheme.foreground;
+        palette = [
+          "0=${stripHash colorScheme.normal.black}"
+          "1=${stripHash colorScheme.normal.red}"
+          "2=${stripHash colorScheme.normal.green}"
+          "3=${stripHash colorScheme.normal.yellow}"
+          "4=${stripHash colorScheme.normal.blue}"
+          "5=${stripHash colorScheme.normal.magenta}"
+          "6=${stripHash colorScheme.normal.cyan}"
+          "7=${stripHash colorScheme.normal.white}"
+          "8=${stripHash colorScheme.bright.black}"
+          "9=${stripHash colorScheme.bright.red}"
+          "10=${stripHash colorScheme.bright.green}"
+          "11=${stripHash colorScheme.bright.yellow}"
+          "12=${stripHash colorScheme.bright.blue}"
+          "13=${stripHash colorScheme.bright.magenta}"
+          "14=${stripHash colorScheme.bright.cyan}"
+          "15=${stripHash colorScheme.bright.white}"
+        ];
+        selection-background = stripHash colorScheme.selection;
+        selection-foreground = stripHash colorScheme.background;
+      };
+    };
+  };
+
   wayland.windowManager.sway = lib.mkIf config.wayland.windowManager.sway.enable {
     config = {
       colors =
