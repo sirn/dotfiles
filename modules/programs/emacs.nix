@@ -1,6 +1,8 @@
 { config, lib, pkgs, ... }:
 
 let
+  cfg = config.programs.emacs;
+
   dotfilesDir = "${config.home.homeDirectory}/.dotfiles";
 
   notmuchcfg = config.programs.notmuch;
@@ -22,9 +24,9 @@ in
       el-patch
       general
       no-littering
+      pkgs.local.emacsPackages.sqlite3
       s
       use-package
-      pkgs.local.emacsPackages.sqlite3
 
       # Org packages
       org
@@ -121,7 +123,7 @@ in
       }))
 
       # Claude Code
-      (pkgs.emacsPackages.trivialBuild {
+      (trivialBuild {
         pname = "claude-code-ide";
         version = "20250807";
         src = pkgs.fetchFromGitHub {
@@ -130,7 +132,7 @@ in
           rev = "a53f2385e4da3d2d712ac67fb25633cc9c3d7d47";
           sha256 = "sha256-fDZpjTUy4H7OSyWI47NNuqKnTlSdWZphQZ6p6Jjg5+c=";
         };
-        packageRequires = with pkgs.emacsPackages; [ websocket transient web-server ];
+        packageRequires = [ websocket transient web-server ];
         buildPhase = ''
           runHook preBuild
           emacs -L . --batch -f batch-byte-compile *.el
@@ -199,7 +201,7 @@ in
       source = pkgs.parinfer-rust-emacs;
     };
     ".emacs.d/var/treesit-grammars" = {
-      source = pkgs.emacsPackages.treesit-grammars.with-all-grammars;
+      source = (pkgs.emacsPackagesFor cfg.package).treesit-grammars.with-all-grammars;
     };
     ".emacs.d/var/scowl" = {
       source = pkgs.scowl;

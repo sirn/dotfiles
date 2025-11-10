@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  emacsPackage = pkgs.emacsPackagesFor pkgs.emacs;
+  emacsPackage = pkgs.emacsPackagesFor config.programs.emacs.package;
 
   emacsWithPackages = emacsPackage.emacsWithPackages (epkgs: with epkgs; [
     evil

@@ -3,7 +3,9 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+
     sops-nix.url = "github:Mic92/sops-nix";
 
     home-manager.url = "github:nix-community/home-manager/release-25.05";
@@ -13,13 +15,13 @@
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
 
     nixgl.url = "github:nix-community/nixGL";
-    nixgl.inputs.nixpkgs.follows = "nixpkgs";
 
     niri.url = "github:sodiboo/niri-flake";
-    niri.inputs.nixpkgs.follows = "nixpkgs";
 
     nur.url = "github:nix-community/NUR";
     nur.inputs.nixpkgs.follows = "nixpkgs";
+
+    emacs-overlay.url = "github:nix-community/emacs-overlay";
   };
 
   outputs = { nixpkgs, home-manager, ... }@inputs:
@@ -33,6 +35,7 @@
 
       overlays = [
         inputs.nixgl.overlay
+        inputs.emacs-overlay.overlay
         (final: prev: {
           unstable = import inputs.nixpkgs-unstable {
             system = final.system;
