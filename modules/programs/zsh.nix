@@ -277,6 +277,8 @@ in
         source "${historySetup}"
 
         source "${promptSetup}"
+
+        bindkey -e
       '';
   };
 }
