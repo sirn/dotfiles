@@ -22,6 +22,7 @@
     ../programs/intellij.nix
     ../programs/mpv.nix
     ../programs/sublime-text.nix
+    ../programs/virt-manager.nix
     ../programs/yt-dlp.nix
 
     # services
