@@ -16,7 +16,7 @@ in
         then pkgs.emacs-pgtk
         else
           if pkgs.stdenv.isDarwin
-          then pkgs.emacs-macport
+          then pkgs.emacs
           else pkgs.emacs-nox);
 
     extraPackages = epkgs: with epkgs; [
