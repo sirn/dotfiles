@@ -16,6 +16,7 @@ in
 
       layout = {
         gaps = 8;
+        always-center-single-column = true;
         focus-ring = {
           width = 4; # focus-ring + gap should be 12
         };
