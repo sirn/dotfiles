@@ -125,12 +125,12 @@ in
       # Claude Code
       (trivialBuild {
         pname = "claude-code-ide";
-        version = "20250807";
+        version = "20250916";
         src = pkgs.fetchFromGitHub {
           owner = "manzaltu";
           repo = "claude-code-ide.el";
-          rev = "a53f2385e4da3d2d712ac67fb25633cc9c3d7d47";
-          sha256 = "sha256-fDZpjTUy4H7OSyWI47NNuqKnTlSdWZphQZ6p6Jjg5+c=";
+          rev = "32d853e20b9d245a6ee89c4a153a4e568250c62c";
+          sha256 = "sha256-OrcnUZXqRijJCgf1QE5kkPKKdWSJ4oMYt47Sn/EdQy0=";
         };
         packageRequires = [ websocket transient web-server ];
         buildPhase = ''

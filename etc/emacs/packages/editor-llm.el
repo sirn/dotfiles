@@ -142,4 +142,5 @@
   :config
   (gemacs--llm-env-from-auth-source)
   (setq aidermacs-chat-completion-function 'aidermacs-chat-completion-with-gptel)
+  (setq aidermacs-program "aider")
   (setq aidermacs-backend 'vterm))
