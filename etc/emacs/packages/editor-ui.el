@@ -110,16 +110,22 @@
         (cond
           ((or (eq w 'x) (eq w 'pgtk))
            (scroll-bar-mode -1)
-           (set-face-attribute 'default nil
-               :font (format "%s %s" gemacs-font gemacs-font-size)))
-          ((eq w 'mac)
+           (set-frame-font
+            (format
+             "-*-%s-regular-normal-normal-*-%s-*-*-*-p-0-iso10646-1"
+             gemacs-font
+             gemacs-font-size)))
+          ((eq w 'ns)
            ;; macOS will "float" Emacs window if menu-bar-mode is disabled.
            ;; (e.g. not sticky to Spaces and no fullscreen support)
            (menu-bar-mode 1)
            (scroll-bar-mode -1)
            ;; macOS display font size about x1.2 smaller than other Unices.
-           (set-face-attribute 'default nil
-              :font (format "%s %s" gemacs-font (round (* gemacs-font-size 1.2))))
+           (set-frame-font
+            (format
+             "-*-%s-regular-normal-normal-*-%s-*-*-*-p-0-iso10646-1"
+             gemacs-font
+             (round (* gemacs-font-size 1.2))))
            (when (boundp 'mac-auto-operator-composition-mode)
              (mac-auto-operator-composition-mode)))))
 
