@@ -38,6 +38,11 @@ in
             options = "ctrl:nocaps";
           };
         };
+
+        touchpad = {
+          tap = false;
+          natural-scroll = true;
+        };
       };
 
       binds = {
