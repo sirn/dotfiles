@@ -89,45 +89,31 @@
 
   :config
   (defvar gemacs-font "PragmataPro Mono Liga")
-  (defvar gemacs-font-size 11)
+  (defvar gemacs-font-size 16)
 
   (setq-default frame-title-format '("%f"))
   (add-to-list 'default-frame-alist '(height . 60))
   (add-to-list 'default-frame-alist '(width . 120))
 
-  (tool-bar-mode -1)
-  (menu-bar-mode -1)
-
   ;; Setup a minimalist frame without toolbar and menu bar, but also taking
   ;; OS behavior quirks into consideration. This is done via `make-frame-func'
   ;; to allow GUI `emacsclient' connecting to `emacs-server' to have different
   ;; frame settings independent of CLI ones.
-
   (defun gemacs--after-make-frame-func (frame)
     "Setup frame attributes after a FRAME is created."
+    (tool-bar-mode -1)
+    (menu-bar-mode -1)
     (if (display-graphic-p frame)
       (let ((w (window-system frame)))
-        (cond
-          ((or (eq w 'x) (eq w 'pgtk))
-           (scroll-bar-mode -1)
-           (set-frame-font
-            (format
-             "-*-%s-regular-normal-normal-*-%s-*-*-*-p-0-iso10646-1"
-             gemacs-font
-             gemacs-font-size)))
-          ((eq w 'ns)
-           ;; macOS will "float" Emacs window if menu-bar-mode is disabled.
-           ;; (e.g. not sticky to Spaces and no fullscreen support)
-           (menu-bar-mode 1)
-           (scroll-bar-mode -1)
-           ;; macOS display font size about x1.2 smaller than other Unices.
-           (set-frame-font
-            (format
-             "-*-%s-regular-normal-normal-*-%s-*-*-*-p-0-iso10646-1"
-             gemacs-font
-             (round (* gemacs-font-size 1.2))))
-           (when (boundp 'mac-auto-operator-composition-mode)
-             (mac-auto-operator-composition-mode)))))
+        (scroll-bar-mode -1)
+        (set-frame-font
+         (format
+          "-*-%s-regular-normal-normal-*-%s-*-*-*-p-0-iso10646-1"
+          gemacs-font gemacs-font-size))
+        (when (eq w 'ns)
+          ;; macOS will "float" Emacs window if menu-bar-mode is disabled.
+          ;; (e.g. not sticky to Spaces and no fullscreen support)
+          (menu-bar-mode 1)))
 
       ;; Mouse goodies
 
