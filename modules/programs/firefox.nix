@@ -48,8 +48,10 @@ in
 
         extensions = {
           packages = with pkgs.nur.repos.rycee.firefox-addons; [
+            auto-tab-discard
             dearrow
             decentraleyes
+            history-cleaner
             kagi-search
             languagetool
             multi-account-containers
