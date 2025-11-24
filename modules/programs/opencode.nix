@@ -38,7 +38,8 @@ let
     };
   };
 in
-{
+# https://github.com/oven-sh/bun/issues/24645
+lib.mkIf (!pkgs.stdenv.isDarwin) {
   home.packages = with pkgs; [
     (pkgs.writeScriptBin "opencode" ''
       #!${pkgs.runtimeShell}
