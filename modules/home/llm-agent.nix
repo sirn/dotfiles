@@ -2,7 +2,6 @@
 
 {
   imports = [
-    ../programs/aider-chat.nix
     ../programs/claude-code.nix
     ../programs/codex.nix
     ../programs/gemini.nix

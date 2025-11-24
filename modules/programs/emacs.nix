@@ -37,7 +37,6 @@ in
       # Packages
       ace-link
       ace-window
-      aidermacs
       avy
       consult
       corfu

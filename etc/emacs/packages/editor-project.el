@@ -13,7 +13,6 @@
 
   (:keymaps 'project-prefix-map
     "'" #'eat-project
-    "a" #'gemacs--project-aidermacs-run
     "b" #'consult-project-buffer
     "c" #'gemacs--project-claude-code-ide
     "C" #'gemacs--project-claude-code-ide-continue
@@ -47,7 +46,6 @@
     (declare-function gemacs--project-switch-smuggle-chosen-project nil)
     (declare-function gemacs--project-claude-code-ide nil)
     (declare-function gemacs--project-claude-code-ide-continue nil)
-    (declare-function gemacs--project-aidermacs-run nil)
     (declare-function gemacs--project-gptel nil))
 
   :config
@@ -83,7 +81,6 @@
      ("F" "Find file" project-find-file)
      ("s" "Ripgrep" consult-ripgrep)]
     ["Coding Assistant"
-     ("a" "Aidermacs" gemacs--project-aidermacs-run)
      ("c" "Claude Code" gemacs--project-claude-code-ide)
      ("C" "Claude Code (continue)" gemacs--project-claude-code-ide-continue)
      ("g" "GPTel" gemacs--project-gptel)]
@@ -157,15 +154,6 @@
     (when-let ((project (project-current t)))
       (let ((default-directory (project-root project)))
         (claude-code-ide-continue))))
-
-  (defun gemacs--project-aidermacs-run ()
-    "Run aidermacs-run with project root as default directory."
-    (interactive)
-    (if (fboundp 'aidermacs-run)
-        (when-let ((project (project-current t)))
-          (let ((default-directory (project-root project)))
-            (aidermacs-run)))
-      (error "Aidermacs is not enabled")))
 
   (defun gemacs--project-gptel ()
     "Open gptel with project root as default directory."

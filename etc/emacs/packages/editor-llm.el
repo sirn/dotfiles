@@ -118,29 +118,3 @@
 
   (setq gptel-backend gemacs--gptel-gemini-backend)
   (gemacs--llm-env-from-auth-source))
-
-
-(use-package aidermacs
-  :general
-  (leader
-    "a a" #'aidermacs-transient-menu)
-
-  :preface
-  (defun gemacs--aidermacs-project-root ()
-    "Return the project root if in a project, otherwise `default-directory'."
-    (if (project-current)
-        (project-root (project-current))
-      default-directory))
-  (advice-add 'aidermacs-project-root :override #'gemacs--aidermacs-project-root)
-
-  (defun gemacs--aidermacs-run-around (orig-fun &rest args)
-    "Run `aidermacs-run' with `default-directory' set to project root."
-    (let ((default-directory (gemacs--aidermacs-project-root)))
-      (apply orig-fun args)))
-  (advice-add 'aidermacs-run :around #'gemacs--aidermacs-run-around)
-
-  :config
-  (gemacs--llm-env-from-auth-source)
-  (setq aidermacs-chat-completion-function 'aidermacs-chat-completion-with-gptel)
-  (setq aidermacs-program "aider")
-  (setq aidermacs-backend 'vterm))

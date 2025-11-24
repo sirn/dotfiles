@@ -6,8 +6,7 @@
   (string-match-p
    (rx "*"
      (or
-       (seq "claude-code" "[" (zero-or-more nonl) "]")
-       (seq "aidermacs:" (zero-or-more nonl)))
+       (seq "claude-code" "[" (zero-or-more nonl) "]"))
      "*")
    buffer-name))
 

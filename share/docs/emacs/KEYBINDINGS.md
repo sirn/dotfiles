@@ -68,7 +68,6 @@ Project-specific commands and operations.
 | `SPC p` | `(Prefix)` | Project-specific commands. |
 | `SPC p p` | `project-switch-project` | Switch to another project. |
 | `SPC p '` | `eat-project` | Open a terminal in the project root. |
-| `SPC p a` | `gemacs--project-aidermacs-run` | Run Aidermacs in the project root. |
 | `SPC p b` | `consult-project-buffer` | Find a buffer belonging to the current project. |
 | `SPC p c` | `gemacs--project-claude-code-ide-menu` | Open Claude Code IDE menu in the project root. |
 | `SPC p d` | `project-dired` | Open project root in Dired. |
@@ -97,7 +96,6 @@ Environment variable management commands.
 
 | Key | Command | Description |
 | :--- | :--- | :--- |
-| `a a` | `aidermacs-transient-menu` | Show the Aidermacs (Aider) menu. |
 | `a c` | `claude-code-ide-menu` | Show the Claude Code IDE menu. |
 | `a g` | `gemacs--gptel-transient-menu` | Show the GPTel menu. |
 
