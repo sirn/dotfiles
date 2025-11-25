@@ -49,6 +49,7 @@ in
         extensions = {
           packages = with pkgs.nur.repos.rycee.firefox-addons; [
             auto-tab-discard
+            containerise
             dearrow
             decentraleyes
             history-cleaner
