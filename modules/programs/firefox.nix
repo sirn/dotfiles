@@ -32,11 +32,6 @@ in
         # color: blue, turquoise, green, yellow, orange, red, pink, purple, toolbar
         # icon: briefcase, cart, circle, dollar, fence, fingerprint, gift, vacation, food, fruit, pet, tree, chill
         containers = {
-          personal = {
-            id = 1;
-            color = "green";
-            icon = "fingerprint";
-          };
           social = {
             id = 2;
             color = "pink";
