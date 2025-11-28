@@ -108,7 +108,7 @@
         (scroll-bar-mode -1)
         (set-frame-font
          (format
-          "-*-%s-regular-normal-normal-*-%s-*-*-*-p-0-iso10646-1"
+          "-*-%s-regular-normal-normal-*-%s-*-*-*-*-0-iso10646-1"
           gemacs-font gemacs-font-size))
         (when (eq w 'ns)
           ;; macOS will "float" Emacs window if menu-bar-mode is disabled.
