@@ -2,14 +2,14 @@
 
 pkgs.buildNpmPackage rec {
   pname = "context7-mcp";
-  version = "1.0.29";
+  version = "1.0.31";
 
   src = pkgs.fetchzip {
     url = "https://registry.npmjs.org/@upstash/${pname}/-/${pname}-${version}.tgz";
-    hash = "sha256-DdDjbvQ52+kJ7MxHYwq/hvRPawaguvDYZv1G8v5ev9k=";
+    hash = "sha256-TUgdlQy0MxjDsVLdwY83UnRt4PSXGDBAkgO1HFOtpNY=";
   };
 
-  npmDepsHash = "sha256-vWABaj7atuONCBNJ9ztC8gGQCXqrdoU/e7DnbO5UgRc=";
+  npmDepsHash = "sha256-+f71/8u4wB5YFqZmi5+4winS9P4fymS++ZvPv/A6QxQ=";
 
   postPatch = ''
     ${lib.getExe pkgs.jq} 'del(.devDependencies)' package.json | ${pkgs.moreutils}/bin/sponge package.json
