@@ -12,6 +12,7 @@
 
   :custom
   (eglot-autoshutdown t)
+  (eglot-code-action-indicator "*")
 
   :preface
   (eval-when-compile
