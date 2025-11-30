@@ -89,7 +89,7 @@
 
   :config
   (defvar gemacs-font "PragmataPro Mono Liga")
-  (defvar gemacs-font-size 16)
+  (defvar gemacs-font-size 14)
 
   (setq-default frame-title-format '("%f"))
   (add-to-list 'default-frame-alist '(height . 60))
