@@ -28,9 +28,11 @@ in
   home.file = {
     ".gemini/settings.json" = {
       text = builtins.toJSON {
-        selectedAuthType = "gemini-api-key";
         disableAutoUpdate = true;
+        enablePromptCompletion = true;
         mcpServers = mcpServers;
+        previewFeatures = true;
+        selectedAuthType = "gemini-api-key";
       };
 
       # Gemini overrides settings.json whenever it is launched.
