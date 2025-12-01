@@ -12,7 +12,7 @@
     mime = {
       # Having shared-mime-info on non-NixOS can cause havoc for some apps
       # that don't ignore invalid entries e.g. xdg-desktop-portal-kde
-      enable = !config.targets.genericLinux.enable;
+      enable = pkgs.stdenv.isLinux && !config.targets.genericLinux.enable;
     };
   };
 
