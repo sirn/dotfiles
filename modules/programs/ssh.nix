@@ -4,16 +4,18 @@
   programs.ssh = {
     enable = true;
     package = pkgs.openssh;
-
-    compression = true;
-    controlMaster = "auto";
-    controlPath = "${config.home.homeDirectory}/.ssh/ssh-%r@%h:%p";
-    controlPersist = "10m";
-    serverAliveCountMax = 3;
-    serverAliveInterval = 30;
+    enableDefaultConfig = false;
 
     matchBlocks = {
       "*" = {
+        compression = true;
+        controlMaster = "auto";
+        controlPath = "${config.home.homeDirectory}/.ssh/ssh-%r@%h:%p";
+        controlPersist = "10m";
+        serverAliveCountMax = 3;
+        serverAliveInterval = 30;
+        userKnownHostsFile = "${config.home.homeDirectory}/.ssh/known_hosts";
+
         extraOptions = {
           "CheckHostIP" = "yes";
           "StrictHostKeyChecking" = "accept-new";
@@ -21,8 +23,6 @@
         };
       };
     };
-
-    userKnownHostsFile = "${config.home.homeDirectory}/.ssh/known_hosts";
 
     includes = [
       "${config.home.homeDirectory}/.ssh/config.d/*"

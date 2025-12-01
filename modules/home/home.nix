@@ -6,7 +6,7 @@
     options = "--delete-older-than 7d";
   };
 
-  nixGL.packages =
+  targets.genericLinux.nixGL.packages =
     if pkgs.stdenv.isLinux && !config.machine.isNixOS
     then pkgs.nixgl
     else null;

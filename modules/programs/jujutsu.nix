@@ -14,8 +14,8 @@ in
 
     settings = {
       user = {
-        email = gitcfg.userEmail;
-        name = gitcfg.userName;
+        email = gitcfg.settings.user.email;
+        name = gitcfg.settings.user.name;
       };
 
       signing = lib.mkIf gpgcfg.enable {

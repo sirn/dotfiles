@@ -5,14 +5,11 @@ let
 in
 {
   home.packages = with pkgs; [
-    gitAndTools.git-crypt
+    git-crypt
   ];
 
   programs.git = {
     enable = true;
-
-    userName = lib.mkDefault "Sirn Thanabulpong";
-    userEmail = lib.mkDefault "sirn@ogsite.net";
 
     lfs.enable = true;
 
@@ -22,18 +19,20 @@ in
       key = gpgcfg.settings.default-key;
     };
 
-    extraConfig = {
+    settings = {
       branch.autoSetupMerge = true;
       color.ui = "auto";
       core.quotepath = false;
       init.defaultBranch = "main";
+      protocol.file.allow = "always";
       pull.rebase = true;
       push.default = "nothing";
       push.gpgSign = "if-asked";
       status.branch = true;
       status.short = true;
       submodule.fetchJobs = 8;
-      protocol.file.allow = "always";
+      user.email = lib.mkDefault "sirn@ogsite.net";
+      user.name = lib.mkDefault "Sirn Thanabulpong";
 
       pom.root = [
         "${config.home.homeDirectory}/Dev/src"

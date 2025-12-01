@@ -36,33 +36,12 @@ let
   '';
 in
 {
-  home.packages = [ swwwPkg ];
-
-  # Defining systemd unit directly instead of using service.swww since we need
-  # to override xrgb value (due to Sway + integrated GPUs shenanigans).
-  # See also: https://github.com/LGFae/swww/issues/233
-  #
-  # TODO: switch back to service.swww on home-manager >= 25.11 and use extraArgs
-  systemd.user.services.swww = {
-    Unit = {
-      Description = "A Solution to your Wayland Wallpaper Woes";
-      After = [ config.wayland.systemd.target ];
-      PartOf = [ config.wayland.systemd.target ];
-      ConditionEnvironment = "WAYLAND_DISPLAY";
-    };
-
-    Service = {
-      Environment = [
-        "PATH=${lib.makeBinPath [ swwwPkg ]}"
-      ];
-      Restart = "always";
-      RestartSec = 10;
-      ExecStart = "${lib.getExe' swwwPkg "swww-daemon"} ${lib.escapeShellArgs [
-        "--format" "xrgb"
-      ]}";
-    };
-
-    Install.WantedBy = [ config.wayland.systemd.target ];
+  services.swww = {
+    enable = true;
+    extraArgs = [
+      "--format"
+      "xrgb"
+    ];
   };
 
   systemd.user.services."swww-wallpaper" = {

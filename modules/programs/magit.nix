@@ -18,8 +18,8 @@ let
     vertico-prescient
 
     pkgs.git
-    pkgs.gitAndTools.git-lfs
-    pkgs.gitAndTools.git-crypt
+    pkgs.git-lfs
+    pkgs.git-crypt
   ]);
 
   magitInit = pkgs.writeTextDir "share/emacs/site-lisp/magit-init.el" ''

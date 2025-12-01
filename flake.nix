@@ -2,13 +2,13 @@
   description = "Home Manager configuration";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
 
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     sops-nix.url = "github:Mic92/sops-nix";
 
-    home-manager.url = "github:nix-community/home-manager/release-25.05";
+    home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     nix-index-database.url = "github:nix-community/nix-index-database";
@@ -38,7 +38,7 @@
         inputs.emacs-overlay.overlay
         (final: prev: {
           unstable = import inputs.nixpkgs-unstable {
-            system = final.system;
+            system = final.stdenv.hostPlatform.system;
             config = config;
           };
 

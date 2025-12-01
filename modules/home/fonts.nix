@@ -35,7 +35,6 @@ in
     noto-fonts-cjk-sans
     noto-fonts-cjk-serif
     noto-fonts-color-emoji
-    noto-fonts-extra
     source-code-pro
     source-han-code-jp
     source-han-mono
@@ -44,7 +43,7 @@ in
     source-sans-pro
     source-serif-pro
     tlwg
-    ubuntu_font_family
+    ubuntu-classic
 
     local.ia-writer-duo-static
     local.ia-writer-mono-static
