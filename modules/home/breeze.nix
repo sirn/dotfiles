@@ -55,7 +55,7 @@ in
   qt = {
     # Setting qt platformTheme and style via Home Manager on non-NixOS
     # can cause SEGFAULT due to dependency mismatch.
-    enable = config.machine.isNixOS;
+    enable = !config.targets.genericLinux.enable;
 
     platformTheme = {
       name = "kde";
@@ -78,7 +78,7 @@ in
     activation =
       let
         gsettingsBin =
-          if config.machine.isNixOS
+          if !config.targets.genericLinux.enable
           then "${pkgs.glib.bin}/bin/gsettings"
           else "/usr/bin/gsettings";
 
@@ -119,7 +119,7 @@ in
 
     # On a non-NixOS, we just provide the proper environment variables
     # for it to pick up the correct themes installed with the system
-    sessionVariables = lib.mkIf (!config.machine.isNixOS) {
+    sessionVariables = lib.mkIf config.targets.genericLinux.enable {
       QT_QPA_PLATFORMTHEME = config.qt.platformTheme.name;
       QT_STYLE_OVERRIDE = config.qt.style.name;
     };

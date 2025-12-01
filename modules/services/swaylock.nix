@@ -13,7 +13,7 @@ in
 {
   programs.swaylock = {
     # swaylock needs to access PAM, so we must use the system package on non-NixOS
-    enable = config.machine.isNixOS;
+    enable = !config.targets.genericLinux.enable;
 
     settings = {
       color = "#000000";

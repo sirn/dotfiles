@@ -7,14 +7,6 @@ in
 {
   options = {
     machine = {
-      isNixOS = mkOption {
-        type = types.bool;
-        default = isLinux;
-        description = ''
-          Indicates whether the machine is a NixOS system.
-        '';
-      };
-
       isLaptop = mkOption {
         type = types.bool;
         default = false;

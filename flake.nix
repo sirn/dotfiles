@@ -58,7 +58,6 @@
             nixpkgs.overlays = overlays;
             nixpkgs.config = config;
             programs.home-manager.enable = true;
-            targets.genericLinux.enable = pkgs.stdenv.isLinux;
             home.username = username;
             home.homeDirectory = homeDirectory;
             home.stateVersion = "25.05";

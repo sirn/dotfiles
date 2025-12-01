@@ -47,8 +47,7 @@ Create a file named `local.nix` to have a machine-specific configuration that is
     ./modules/services/languagetool.nix
   ];
 
-  # Prevent installation of nix packages that are known to be problematic
-  # on a non-NixOS (e.g. require PAM).
-  machine.isNixOS = false;
+  # When running on a non-NixOS
+  targets.genericLinux.enable = true;
 }
 ```

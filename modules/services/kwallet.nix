@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
-  systemd.user.services.kwallet-pam = lib.mkIf config.machine.isNixOS {
+  systemd.user.services.kwallet-pam = lib.mkIf (!config.targets.genericLinux.enable) {
     Unit = {
       Description = "KWallet PAM Init";
       PartOf = [ config.wayland.systemd.target ];

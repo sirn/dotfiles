@@ -26,7 +26,7 @@ in
     '') +
 
     # https://github.com/nix-community/home-manager/issues/855
-    (lib.optionalString config.machine.isNixOS ''
+    (lib.optionalString (!config.targets.genericLinux.enable) ''
       ${config.systemd.user.systemctlPath} --user import-environment PATH
     '');
 }
