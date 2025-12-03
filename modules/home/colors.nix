@@ -377,17 +377,17 @@ in
       }
 
       #battery.charging:not(.full) {
-          background-color: #44bc44;
-          color: #000000;
+          background-color: #e8f5e9;
+          color: #2e7d32;
       }
 
       #battery.warning {
-          background-color: #fec43f;
-          color: #000000;
+          background-color: #ff6f00;
+          color: #ffecb3;
       }
 
       #battery.critical {
-          background-color: #ff5f5f;
+          background-color: #b71c1c;
           color: #ffcdd2;
       }
 
