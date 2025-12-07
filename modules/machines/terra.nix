@@ -28,4 +28,19 @@
     # services
     ../services/dropbox-symlinks.nix
   ];
+
+  services.kanshi.settings = [
+    {
+      profile = {
+        name = "aw3225qf_ipmi";
+        outputs = [
+          { criteria = "$aw3225qf"; }
+          {
+            criteria = "Unknown Unknown Unknown";
+            status = "disable";
+          }
+        ];
+      };
+    }
+  ];
 }
