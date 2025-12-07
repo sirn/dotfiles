@@ -37,7 +37,7 @@ in
       }
       {
         profile = {
-          name = "only_aw3225qf";
+          name = "aw3225qf";
           outputs = [
             { criteria = "$aw3225qf"; }
           ];
@@ -45,7 +45,7 @@ in
       }
       {
         profile = {
-          name = "only_pa148";
+          name = "pa148";
           outputs = [
             { criteria = "$pa148"; }
           ];
