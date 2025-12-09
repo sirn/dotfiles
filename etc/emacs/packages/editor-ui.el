@@ -89,7 +89,8 @@
 
   :config
   (defvar gemacs-font "PragmataPro Mono Liga")
-  (defvar gemacs-font-size 14)
+  (defvar gemacs-font-size 16)
+  (defvar gemacs-font-size-ns 14)
 
   (setq-default frame-title-format '("%f"))
   (add-to-list 'default-frame-alist '(height . 60))
@@ -106,14 +107,19 @@
     (if (display-graphic-p frame)
       (let ((w (window-system frame)))
         (scroll-bar-mode -1)
-        (set-frame-font
-         (format
-          "-*-%s-regular-normal-normal-*-%s-*-*-*-*-0-iso10646-1"
-          gemacs-font gemacs-font-size))
+        (when (not (eq w 'ns))
+          (set-frame-font
+           (format
+            "-*-%s-regular-normal-normal-*-%s-*-*-*-*-0-iso10646-1"
+            gemacs-font gemacs-font-size)))
         (when (eq w 'ns)
           ;; macOS will "float" Emacs window if menu-bar-mode is disabled.
           ;; (e.g. not sticky to Spaces and no fullscreen support)
-          (menu-bar-mode 1)))
+          (menu-bar-mode 1)
+          (set-frame-font
+           (format
+            "-*-%s-regular-normal-normal-*-%s-*-*-*-*-0-iso10646-1"
+            gemacs-font gemacs-font-size-ns))))
 
       ;; Mouse goodies
 
