@@ -343,12 +343,4 @@ in
         bindswitch --locked lid:off output eDP-1 enable
       '';
   };
-
-  home.sessionVariablesExtra = ''
-    export XDG_CURRENT_DESKTOP=sway
-
-    # https://github.com/swaywm/sway/issues/3814
-    # https://github.com/swaywm/wlroots/issues/3189
-    export WLR_NO_HARDWARE_CURSORS=1
-  '';
 }
