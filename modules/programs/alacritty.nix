@@ -3,7 +3,19 @@
 let
   cfg = config.programs.alacritty;
 
+  swaycfg = config.wayland.windowManager.sway.config;
+
+  niricfg = config.programs.niri;
+
   fuzzelcfg = config.programs.fuzzel;
+
+  alacrittyMaybeUwsm = pkgs.writeShellScript "alacritty" ''
+    if command -v uwsm >/dev/null; then
+      exec uwsm app -- ${lib.getExe cfg.package}
+    else
+      exec ${lib.getExe cfg.package}
+    fi
+  '';
 in
 {
   programs.alacritty = {
@@ -67,18 +79,24 @@ in
     };
   };
 
-  wayland.windowManager.sway =
-    let
-      swaycfg = config.wayland.windowManager.sway.config;
-    in
-    lib.mkIf swaycfg.enable {
-      config = {
-        terminal = lib.getExe cfg.package;
-        keybindings = {
-          "${swaycfg.modifier}+Return" = "exec ${lib.getExe cfg.package}";
-        };
+  wayland.windowManager.sway = lib.mkIf swaycfg.enable {
+    config = {
+      terminal = alacrittyMaybeUwsm;
+      keybindings = {
+        "${swaycfg.modifier}+Return" = "exec ${alacrittyMaybeUwsm}";
       };
     };
+  };
+
+  programs.niri = lib.mkIf niricfg.enable {
+    settings = {
+      binds = {
+        "Mod+T".action.spawn = [
+          "${alacrittyMaybeUwsm}"
+        ];
+      };
+    };
+  };
 
   programs.fuzzel = lib.mkIf fuzzelcfg.enable {
     settings = {

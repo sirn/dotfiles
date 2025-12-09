@@ -10,6 +10,14 @@ let
   fuzzelcfg = config.programs.fuzzel;
 
   swaycfg = config.wayland.windowManager.sway;
+
+  weztermMaybeUwsm = pkgs.writeShellScript "wezterm" ''
+    if command -v uwsm >/dev/null; then
+      exec uwsm app -- ${lib.getExe cfg.package}
+    else
+      exec ${lib.getExe cfg.package}
+    fi
+  '';
 in
 {
   programs.wezterm = {
@@ -333,9 +341,9 @@ in
 
   wayland.windowManager.sway = lib.mkIf swaycfg.enable {
     config = {
-      terminal = lib.getExe cfg.package;
+      terminal = "${weztermMaybeUwsm}";
       keybindings = {
-        "${swaycfg.config.modifier}+Return" = "exec ${lib.getExe cfg.package}";
+        "${swaycfg.config.modifier}+Return" = "exec ${weztermMaybeUwsm}";
       };
     };
   };
@@ -344,7 +352,7 @@ in
     settings = {
       binds = {
         "Mod+T".action.spawn = [
-          "${lib.getExe cfg.package}"
+          "${weztermMaybeUwsm}"
         ];
       };
     };

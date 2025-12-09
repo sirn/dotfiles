@@ -65,7 +65,7 @@ in
         defaultWorkspace = "workspace number 1";
 
         keybindings = {
-          "${cfg.modifier}+Return" = "exec ${cfg.terminal}";
+          "${cfg.modifier}+Return" = lib.mkDefault "exec ${cfg.terminal}";
           "${cfg.modifier}+Shift+q" = "kill";
           "${cfg.modifier}+Shift+c" = "reload";
           "${cfg.modifier}+Shift+e" = "exec ${swaynagBin} -t warning -m 'Really exit?' -B 'Yes, exit sway' '${swaymsgBin} exit'";

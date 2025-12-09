@@ -13,6 +13,7 @@
     ../home/i18n.nix
     ../home/niri.nix
     ../home/sway.nix
+    ../home/uwsm.nix
 
     # programs
     ../programs/1password.nix

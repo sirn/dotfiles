@@ -23,10 +23,5 @@ in
   home.sessionVariablesExtra =
     (lib.optionalString pkgs.stdenv.isDarwin ''
       . "${pkgs.nix}/etc/profile.d/nix-daemon.sh"
-    '') +
-
-    # https://github.com/nix-community/home-manager/issues/855
-    (lib.optionalString (pkgs.stdenv.isLinux && !config.targets.genericLinux.enable) ''
-      ${config.systemd.user.systemctlPath} --user import-environment PATH
     '');
 }
