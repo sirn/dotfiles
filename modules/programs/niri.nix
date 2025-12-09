@@ -28,6 +28,11 @@ in
         size = config.gtk.cursorTheme.size;
       };
 
+      xwayland-satellite = {
+        enable = true;
+        path = lib.getExe pkgs.xwayland-satellite;
+      };
+
       input = {
         focus-follows-mouse = {
           enable = true;

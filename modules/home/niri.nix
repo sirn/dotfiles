@@ -15,7 +15,6 @@
     ../services/swaylock.nix
     ../services/swww.nix
     ../services/wlsunset.nix
-    ../services/xwayland-satellite.nix
   ];
 
   # niri-flake is enabling gnome-keyring by default but gnome-keyring is gross.

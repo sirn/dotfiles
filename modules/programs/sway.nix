@@ -6,7 +6,7 @@ in
 {
   wayland.windowManager.sway = {
     enable = true;
-    xwayland = false;
+    xwayland = true;
 
     systemd = {
       enable = true;

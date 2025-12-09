@@ -15,6 +15,5 @@
     ../services/swaylock.nix
     ../services/swww.nix
     ../services/wlsunset.nix
-    ../services/xwayland-satellite.nix
   ];
 }
