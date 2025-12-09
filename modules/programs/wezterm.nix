@@ -113,7 +113,6 @@ in
         local solid_left_arrow = wezterm.nerdfonts.pl_right_hard_divider
 
         config.use_fancy_tab_bar = false
-        config.hide_tab_bar_if_only_one_tab = false
         config.tab_max_width = 22
 
         local tab_colors = {
@@ -241,6 +240,7 @@ in
           function(window, pane)
             local parts = {}
             local domain = pane:get_domain_name()
+            local overrides = window:get_config_overrides() or {}
 
             if domain == 'local' or domain == 'default' then
               right_status(parts, wezterm.hostname())
@@ -283,6 +283,24 @@ in
     };
     "wezterm/modules/mux.lua" = {
       text = ''
+        local wezterm = require 'wezterm'
+
+        wezterm.on(
+          'update-status',
+          function(window, pane)
+            local domain = pane:get_domain_name()
+            local overrides = window:get_config_overrides() or {}
+
+            if domain == 'local' or domain == 'default' then
+              overrides.hide_tab_bar_if_only_one_tab = true
+            else
+              overrides.hide_tab_bar_if_only_one_tab = false
+            end
+
+            window:set_config_overrides(overrides)
+          end
+        )
+
         return {
           mux_enable_ssh_agent = true,
         }
