@@ -9,13 +9,7 @@ let
 
   fuzzelcfg = config.programs.fuzzel;
 
-  alacrittyMaybeUwsm = pkgs.writeShellScript "alacritty" ''
-    if command -v uwsm >/dev/null; then
-      exec uwsm app -- ${lib.getExe cfg.package}
-    else
-      exec ${lib.getExe cfg.package}
-    fi
-  '';
+  alacrittyLauncher = config.lib.machine.wrapLauncher cfg.package;
 in
 {
   programs.alacritty = {
@@ -81,9 +75,9 @@ in
 
   wayland.windowManager.sway = lib.mkIf swaycfg.enable {
     config = {
-      terminal = alacrittyMaybeUwsm;
+      terminal = alacrittyLauncher;
       keybindings = {
-        "${swaycfg.modifier}+Return" = "exec ${alacrittyMaybeUwsm}";
+        "${swaycfg.modifier}+Return" = "exec ${alacrittyLauncher}";
       };
     };
   };
@@ -92,7 +86,7 @@ in
     settings = {
       binds = {
         "Mod+T".action.spawn = [
-          "${alacrittyMaybeUwsm}"
+          "${alacrittyLauncher}"
         ];
       };
     };

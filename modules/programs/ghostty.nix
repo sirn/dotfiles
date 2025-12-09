@@ -9,13 +9,7 @@ let
 
   fuzzelcfg = config.programs.fuzzel;
 
-  ghosttyMaybeUwsm = pkgs.writeShellScript "ghostty" ''
-    if command -v uwsm >/dev/null; then
-      exec uwsm app -- ${lib.getExe cfg.package}
-    else
-      exec ${lib.getExe cfg.package}
-    fi
-  '';
+  ghosttyLauncher = config.lib.machine.wrapLauncher cfg.package;
 in
 {
   programs.ghostty = {
@@ -40,9 +34,9 @@ in
 
   wayland.windowManager.sway = lib.mkIf swaycfg.enable {
     config = {
-      terminal = ghosttyMaybeUwsm;
+      terminal = ghosttyLauncher;
       keybindings = {
-        "${swaycfg.modifier}+Return" = "exec ${ghosttyMaybeUwsm}";
+        "${swaycfg.modifier}+Return" = "exec ${ghosttyLauncher}";
       };
     };
   };
@@ -51,7 +45,7 @@ in
     settings = {
       binds = {
         "Mod+T".action.spawn = [
-          "${ghosttyMaybeUwsm}"
+          "${ghosttyLauncher}"
         ];
       };
     };

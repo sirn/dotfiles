@@ -17,8 +17,24 @@ let
       exec uwsm finalize
     fi
   '';
+
+  wrapLauncher = x:
+    let
+      cmd =
+        if lib.isDerivation x
+        then lib.getExe x
+        else x;
+    in
+    pkgs.writeShellScript "launcher" ''
+      if command -v uwsm >/dev/null; then
+        exec uwsm app -- ${cmd}
+      else
+        exec ${cmd}
+      fi
+    '';
 in
 {
+  machine.wrapLauncher = wrapLauncher;
   wayland.windowManager.sway.config = lib.mkIf swaycfg.enable {
     startup = [
       { command = "${uwsmFinalize}"; }

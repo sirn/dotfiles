@@ -9,13 +9,7 @@ let
 
   fuzzelcfg = config.programs.fuzzel;
 
-  footMaybeUwsm = pkgs.writeShellScript "foot" ''
-    if command -v uwsm >/dev/null; then
-      exec uwsm app -- ${lib.getExe cfg.package}
-    else
-      exec ${lib.getExe cfg.package}
-    fi
-  '';
+  footLauncher = config.lib.machine.wrapLauncher cfg.package;
 in
 {
   programs.foot = {
@@ -34,9 +28,9 @@ in
 
   wayland.windowManager.sway = lib.mkIf swaycfg.enable {
     config = {
-      terminal = footMaybeUwsm;
+      terminal = footLauncher;
       keybindings = {
-        "${swaycfg.modifier}+Return" = "exec ${footMaybeUwsm}";
+        "${swaycfg.modifier}+Return" = "exec ${footLauncher}";
       };
     };
   };
@@ -45,7 +39,7 @@ in
     settings = {
       binds = {
         "Mod+T".action.spawn = [
-          "${footMaybeUwsm}"
+          "${footLauncher}"
         ];
       };
     };
