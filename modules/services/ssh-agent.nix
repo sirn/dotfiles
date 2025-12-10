@@ -14,6 +14,7 @@
 
     Service = {
       ExecStart = "${pkgs.openssh}/bin/ssh-agent -D -a %t/ssh-agent";
+      Slice = lib.mkDefault "session.slice";
     };
   };
 

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   systemd.user.services.languagetool = {
@@ -11,6 +11,7 @@
 
     Service = {
       ExecStart = "${pkgs.languagetool}/bin/languagetool-http-server";
+      Slice = lib.mkDefault "app.slice";
     };
   };
 }

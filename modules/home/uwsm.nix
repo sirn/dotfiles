@@ -12,6 +12,8 @@ let
 
   backgroundGraphicalSlice = "background-graphical.slice";
 
+  sessionGraphicalSlice = "session-graphical.slice";
+
   uwsmFinalize = pkgs.writeShellScript "uwsm-finalize" ''
     exec uwsm finalize
   '';
@@ -51,36 +53,32 @@ in
       Slice = appGraphicalSlice;
     };
 
-    emacs.Service = lib.mkIf (config.systemd.user.services ? emacs) {
-      Slice = appGraphicalSlice;
-    };
-
-    languagetool.Service = lib.mkIf (config.systemd.user.services ? languagetool) {
-      Slice = backgroundGraphicalSlice;
-    };
-
     swww.Service = lib.mkIf config.services.swww.enable {
-      Slice = backgroundGraphicalSlice;
+      Slice = sessionGraphicalSlice;
     };
 
     "swww-wallpaper".Service = lib.mkIf config.services.swww.enable {
-      Slice = backgroundGraphicalSlice;
+      Slice = sessionGraphicalSlice;
+    };
+
+    copyq.Service = lib.mkIf config.services.copyq.enable {
+      Slice = sessionGraphicalSlice;
     };
 
     wlsunset.Service = lib.mkIf config.services.wlsunset.enable {
-      Slice = backgroundGraphicalSlice;
+      Slice = sessionGraphicalSlice;
     };
 
     kanshi.Service = lib.mkIf config.services.kanshi.enable {
-      Slice = backgroundGraphicalSlice;
+      Slice = sessionGraphicalSlice;
     };
 
     swayidle.Service = lib.mkIf config.services.swayidle.enable {
-      Slice = backgroundGraphicalSlice;
+      Slice = sessionGraphicalSlice;
     };
 
     sway-audio-idle-inhibit.Service = lib.mkIf (config.systemd.user.services ? sway-audio-idle-inhibit) {
-      Slice = backgroundGraphicalSlice;
+      Slice = sessionGraphicalSlice;
     };
   };
 }

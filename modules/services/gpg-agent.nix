@@ -35,4 +35,8 @@ in
   programs.ssh.matchBlocks."*".extraOptions = {
     IdentityAgent = lib.mkOverride 500 "$\{XDG_RUNTIME_DIR\}/gnupg/S.gpg-agent.ssh";
   };
+
+  systemd.user.services.gpg-agent.Service = {
+    Slice = lib.mkDefault "session.slice";
+  };
 }

@@ -9,6 +9,10 @@
     };
   };
 
+  systemd.user.services.emacs.Service = {
+    Slice = lib.mkDefault "session.slice";
+  };
+
   launchd.agents.emacs = {
     enable = true;
     config = {

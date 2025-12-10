@@ -54,6 +54,7 @@ in
 
     Service = {
       Type = "oneshot";
+      Slice = lib.mkDefault "session.slice";
       ExecStart = "-${wallpaperScript}/bin/swww-wallpaper";
     };
   };

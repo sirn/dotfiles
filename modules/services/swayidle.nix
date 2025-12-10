@@ -62,6 +62,10 @@ in
     ] else [ ]);
   };
 
+  systemd.user.services.swayidle.Service = {
+    Slice = lib.mkDefault "session.slice";
+  };
+
   wayland.windowManager.sway = lib.mkIf swaycfg.enable {
     config = {
       keybindings = {

@@ -15,6 +15,7 @@
 
     Service = {
       ExecStart = "${pkgs.ollama}/bin/ollama serve";
+      Slice = lib.mkDefault "app.slice";
       Environment = "HOME=%h";
       Restart = "on-failure";
     };

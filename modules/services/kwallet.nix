@@ -13,6 +13,7 @@
     Service = {
       Type = "oneshot";
       ExecStart = with pkgs; "-${kdePackages.kwallet-pam}/libexec/pam_kwallet_init";
+      Slice = lib.mkDefault "session.slice";
     };
 
     Install = {

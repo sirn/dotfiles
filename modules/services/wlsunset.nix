@@ -13,4 +13,8 @@
       night = 4500;
     };
   };
+
+  systemd.user.services.wlsunset.Service = {
+    Slice = lib.mkDefault "session.slice";
+  };
 }

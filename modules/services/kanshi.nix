@@ -54,6 +54,10 @@ in
     ];
   };
 
+  systemd.user.services.kanshi.Service = {
+    Slice = lib.mkDefault "session.slice";
+  };
+
   wayland.windowManager.sway = lib.mkIf swaycfg.enable {
     config = {
       keybindings = {
