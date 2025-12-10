@@ -13,9 +13,7 @@ let
   backgroundGraphicalSlice = "background-graphical.slice";
 
   uwsmFinalize = pkgs.writeShellScript "uwsm-finalize" ''
-    if command -v uwsm >/dev/null; then
-      exec uwsm finalize
-    fi
+    exec uwsm finalize
   '';
 
   wrapLauncher = x:
@@ -26,11 +24,7 @@ let
         else x;
     in
     pkgs.writeShellScript "launcher" ''
-      if command -v uwsm >/dev/null; then
-        exec uwsm app -- ${cmd}
-      else
-        exec ${cmd}
-      fi
+      exec uwsm app -- ${cmd}
     '';
 in
 {
