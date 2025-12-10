@@ -18,12 +18,17 @@ let
 
   wrapLauncher = x:
     let
+      name =
+        if lib.isDerivation x
+        then x.pname or x.name
+        else baseNameOf x;
+
       cmd =
         if lib.isDerivation x
         then lib.getExe x
         else x;
     in
-    pkgs.writeShellScript "launcher" ''
+    pkgs.writeShellScript "uwsm-${name}" ''
       exec uwsm app -- ${cmd}
     '';
 in
