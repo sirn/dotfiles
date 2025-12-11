@@ -14,7 +14,7 @@ in
 
     Service = {
       ExecStart = "${pkg}/bin/sway-audio-idle-inhibit";
-      Slice = lib.mkDefault "session.slice";
+      Slice = lib.mkDefault "app.slice";
       Restart = "on-failure";
     };
 

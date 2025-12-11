@@ -15,6 +15,6 @@
   };
 
   systemd.user.services.wlsunset.Service = {
-    Slice = lib.mkDefault "session.slice";
+    Slice = lib.mkDefault "app.slice";
   };
 }

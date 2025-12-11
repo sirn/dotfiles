@@ -63,7 +63,7 @@ in
   };
 
   systemd.user.services.swayidle.Service = {
-    Slice = lib.mkDefault "session.slice";
+    Slice = lib.mkDefault "app.slice";
   };
 
   wayland.windowManager.sway = lib.mkIf swaycfg.enable {

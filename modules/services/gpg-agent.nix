@@ -37,6 +37,6 @@ in
   };
 
   systemd.user.services.gpg-agent.Service = {
-    Slice = lib.mkDefault "session.slice";
+    Slice = lib.mkDefault "app.slice";
   };
 }

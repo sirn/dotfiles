@@ -6,6 +6,6 @@
   };
 
   systemd.user.services.copyq.Service = {
-    Slice = lib.mkDefault "session.slice";
+    Slice = lib.mkDefault "app.slice";
   };
 }

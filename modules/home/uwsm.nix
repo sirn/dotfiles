@@ -54,31 +54,31 @@ in
     };
 
     swww.Service = lib.mkIf config.services.swww.enable {
-      Slice = sessionGraphicalSlice;
+      Slice = appGraphicalSlice;
     };
 
     "swww-wallpaper".Service = lib.mkIf config.services.swww.enable {
-      Slice = sessionGraphicalSlice;
+      Slice = appGraphicalSlice;
     };
 
     copyq.Service = lib.mkIf config.services.copyq.enable {
-      Slice = sessionGraphicalSlice;
+      Slice = appGraphicalSlice;
     };
 
     wlsunset.Service = lib.mkIf config.services.wlsunset.enable {
-      Slice = sessionGraphicalSlice;
+      Slice = appGraphicalSlice;
     };
 
     kanshi.Service = lib.mkIf config.services.kanshi.enable {
-      Slice = sessionGraphicalSlice;
+      Slice = appGraphicalSlice;
     };
 
     swayidle.Service = lib.mkIf config.services.swayidle.enable {
-      Slice = sessionGraphicalSlice;
+      Slice = appGraphicalSlice;
     };
 
     sway-audio-idle-inhibit.Service = lib.mkIf (config.systemd.user.services ? sway-audio-idle-inhibit) {
-      Slice = sessionGraphicalSlice;
+      Slice = appGraphicalSlice;
     };
   };
 }

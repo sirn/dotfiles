@@ -10,7 +10,7 @@
   };
 
   systemd.user.services.emacs.Service = {
-    Slice = lib.mkDefault "session.slice";
+    Slice = lib.mkDefault "app.slice";
   };
 
   launchd.agents.emacs = {
