@@ -259,14 +259,24 @@ in
   home.file = {
     ".zellij_init" = {
       executable = true;
+
       text = ''
         #!/bin/sh -l
         SESSION=$1
+
         if [ -z "$SESSION" ]; then
           SESSION=main
         fi
 
+        ${if pkgs.stdenv.isLinux then ''
+        exec systemd-run \
+          --user \
+          --scope \
+          --slice=app.slice \
+          ${cfg.package}/bin/zellij attach "$SESSION" -c
+        '' else ''
         exec ${cfg.package}/bin/zellij attach "$SESSION" -c
+        ''}
       '';
     };
   };
