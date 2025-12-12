@@ -1,6 +1,6 @@
 { lib, pkgs }:
 
-pkgs.python3Packages.buildPythonPackage rec {
+pkgs.python312Packages.buildPythonPackage rec {
   pname = "mcp-server-fetch";
   version = "2025.4.7";
 
@@ -12,11 +12,11 @@ pkgs.python3Packages.buildPythonPackage rec {
 
   format = "pyproject";
 
-  nativeBuildInputs = with pkgs.python3Packages; [
+  nativeBuildInputs = with pkgs.python312Packages; [
     hatchling
   ];
 
-  propagatedBuildInputs = with pkgs.python3Packages; [
+  propagatedBuildInputs = with pkgs.python312Packages; [
     mcp
     httpx
     markdownify
