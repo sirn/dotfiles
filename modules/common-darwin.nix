@@ -12,8 +12,5 @@
     ./programs/mpv.nix
     ./programs/sublime-text.nix
     ./programs/yt-dlp.nix
-
-    # services
-    ./services/dropbox-symlinks.nix
   ];
 }

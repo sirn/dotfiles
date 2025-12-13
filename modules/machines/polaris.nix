@@ -29,9 +29,6 @@
     ../programs/sublime-text.nix
     ../programs/virt-manager.nix
     ../programs/yt-dlp.nix
-
-    # services
-    ../services/dropbox-symlinks.nix
   ];
 
   services.kanshi = lib.mkIf config.services.kanshi.enable {
