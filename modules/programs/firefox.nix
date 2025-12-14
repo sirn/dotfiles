@@ -45,7 +45,6 @@ in
           packages = with pkgs.nur.repos.rycee.firefox-addons; [
             auto-tab-discard
             containerise
-            cookie-autodelete
             cookie-quick-manager
             dearrow
             decentraleyes
