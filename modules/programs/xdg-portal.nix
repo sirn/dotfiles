@@ -19,9 +19,10 @@ in
         preferred = {
           default = "kde";
           "org.freedesktop.impl.portal.Inhibit" = "none";
+          "org.freedesktop.impl.portal.AppChooser" = "gtk";
           "org.freedesktop.impl.portal.Settings" = "gtk;kde";
         } // (if (swaycfg.enable || niricfg.enable) then {
-          "org.freedesktop.impl.portal.Screencast" = "wlr";
+          "org.freedesktop.impl.portal.ScreenCast" = "wlr";
           "org.freedesktop.impl.portal.Screenshot" = "wlr";
         } else { });
       };
