@@ -53,13 +53,7 @@ in
         command = "${lib.getExe displayControl} off";
         resumeCommand = "${lib.getExe displayControl} on";
       }
-    ]
-    ++ (if config.machine.isLaptop then [
-      {
-        timeout = 300;
-        command = "${config.systemd.user.systemctlPath} suspend";
-      }
-    ] else [ ]);
+    ];
   };
 
   systemd.user.services.swayidle.Service = {

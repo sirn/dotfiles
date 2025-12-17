@@ -336,11 +336,5 @@ in
           ];
         };
       };
-
-    extraConfig =
-      lib.optionalString config.machine.isLaptop ''
-        bindswitch --locked lid:on output eDP-1 disable
-        bindswitch --locked lid:off output eDP-1 enable
-      '';
   };
 }

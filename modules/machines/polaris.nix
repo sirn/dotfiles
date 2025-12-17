@@ -2,7 +2,6 @@
 
 {
   flatpak.enable = true;
-  machine.isLaptop = true;
 
   imports = [
     ../common.nix
@@ -14,6 +13,7 @@
     ../home/flatpak.nix
     ../home/fonts.nix
     ../home/i18n.nix
+    ../home/laptop.nix
     ../home/niri.nix
     ../home/sway.nix
     ../home/uwsm.nix

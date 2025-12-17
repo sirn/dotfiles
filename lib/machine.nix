@@ -18,13 +18,6 @@ in
           (will use lib.getExe) or a path string.
         '';
       };
-      isLaptop = mkOption {
-        type = types.bool;
-        default = false;
-        description = ''
-          Indicates whether the machine is a laptop.
-        '';
-      };
 
       interactiveShell = mkOption {
         type = types.str;

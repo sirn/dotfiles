@@ -209,11 +209,6 @@ in
           "Mod+Shift+P".action.power-off-monitors = { };
         };
 
-        switch-events = lib.mkIf config.machine.isLaptop {
-          "lid-open".action.spawn = [ "${lib.getExe cfg.package}" "msg" "output" "eDP-1" "on" ];
-          "lid-close".action.spawn = [ "${lib.getExe cfg.package}" "msg" "output" "eDP-1" "off" ];
-        };
-
         window-rules = [
           {
             clip-to-geometry = true;
