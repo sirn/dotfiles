@@ -33,11 +33,15 @@ let
         else x;
     in
     pkgs.writeShellScript "uwsm-${name}" ''
-      exec uwsm app -- ${cmd}
+      exec ${lib.getExe pkgs.app2unit} -- ${cmd}
     '';
 in
 {
   machine.wrapLauncher = wrapLauncher;
+
+  home.packages = with pkgs; [
+    app2unit
+  ];
 
   wayland.windowManager.sway = lib.mkIf swaycfg.enable {
     systemd = {
@@ -59,7 +63,7 @@ in
 
   programs.fuzzel.settings = lib.mkIf fuzzelcfg.enable {
     main = {
-      launch-prefix = "uwsm app --";
+      launch-prefix = "${lib.getExe pkgs.app2unit} --fuzzel-compat --";
     };
   };
 
