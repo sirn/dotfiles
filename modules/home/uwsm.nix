@@ -3,6 +3,8 @@
 let
   swaycfg = config.wayland.windowManager.sway;
 
+  niricfg = config.programs.niri;
+
   fuzzelcfg = config.programs.fuzzel;
 
   # Slice assignment based on:
@@ -36,10 +38,23 @@ let
 in
 {
   machine.wrapLauncher = wrapLauncher;
-  wayland.windowManager.sway.config = lib.mkIf swaycfg.enable {
-    startup = [
-      { command = "${uwsmFinalize}"; }
-    ];
+
+  wayland.windowManager.sway = lib.mkIf swaycfg.enable {
+    systemd = {
+      enable = lib.mkForce false;
+    };
+
+    config = {
+      startup = [
+        { command = "${uwsmFinalize}"; }
+      ];
+    };
+  };
+
+  programs.niri = lib.mkIf niricfg.enable {
+    systemd = {
+      enable = lib.mkForce false;
+    };
   };
 
   programs.fuzzel.settings = lib.mkIf fuzzelcfg.enable {
