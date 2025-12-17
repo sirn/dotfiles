@@ -43,6 +43,14 @@ in
     app2unit
   ];
 
+  home.sessionVariables = {
+    APP2UNIT_SLICES = builtins.concatStringsSep " " [
+      "a=${appGraphicalSlice}"
+      "b=${backgroundGraphicalSlice}"
+      "s=${sessionGraphicalSlice}"
+    ];
+  };
+
   wayland.windowManager.sway = lib.mkIf swaycfg.enable {
     systemd = {
       enable = lib.mkForce false;
