@@ -103,6 +103,7 @@
   (defun gemacs--after-make-frame-func (frame)
     "Setup frame attributes after a FRAME is created."
     (tool-bar-mode -1)
+    (menu-bar-mode -1)
     (if (display-graphic-p frame)
       (let ((w (window-system frame)))
         (scroll-bar-mode -1)
@@ -117,7 +118,6 @@
                 gemacs-font gemacs-font-size-ns)
                nil (list frame)))
           (progn
-            (menu-bar-mode -1)
             (set-frame-font
              (format
               "-*-%s-regular-*-*-*-%s-*-*-*-*-0-iso10646-1"
