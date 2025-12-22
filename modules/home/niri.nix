@@ -14,6 +14,7 @@
     ../services/swayidle.nix
     ../services/swaylock.nix
     ../services/swww.nix
+    ../services/udiskie.nix
     ../services/wlsunset.nix
   ];
 
