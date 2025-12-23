@@ -34,6 +34,54 @@ in
     '';
   };
 
+  # Home Manager default launchd agent uses --supervised which depends on systemd sockets
+  # holding a socket and passing fds via `LISTEN_FDS`. This obviously doesn't work on Darwin
+  # since `Sockets` requires explicit `launch_activate_socket` call in the code.
+  launchd.agents =
+    let
+      sockets = {
+        std = "${gpgcfg.homedir}/S.gpg-agent";
+        browser = "${gpgcfg.homedir}/S.gpg-agent.browser";
+        extra = "${gpgcfg.homedir}/S.gpg-agent.extra";
+        ssh = "${gpgcfg.homedir}/S.gpg-agent.ssh";
+      };
+
+      socket_fdnames = lib.concatStringsSep ":" (lib.attrNames sockets);
+
+      socket_args = lib.flatten (lib.mapAttrsToList
+        (key: val: [
+          "-s"
+          "unix::${val}"
+        ])
+        sockets);
+    in
+    lib.mkIf (cfg.enable && pkgs.stdenv.isDarwin) {
+      gpg-agent = lib.mkForce {
+        enable = true;
+        config = {
+          RunAtLoad = true;
+          KeepAlive = true;
+
+          # We're using systemfd to pass socket fd so that --supervise works.
+          # This is in combination with LISTEN_FDNAMES set in EnvironmentVariables.
+          # Why must launching gpg-agent be this painful? I don't know.
+          ProgramArguments = [
+            "${pkgs.systemfd}/bin/systemfd"
+            "--no-pid"
+          ] ++ socket_args ++ [
+            "--"
+            "${gpgcfg.package}/bin/gpg-agent"
+            "--supervise"
+          ] ++ lib.optional cfg.verbose "--verbose";
+
+          EnvironmentVariables = {
+            GNUPGHOME = gpgcfg.homedir;
+            LISTEN_FDNAMES = socket_fdnames;
+          };
+        };
+      };
+    };
+
   programs.ssh.matchBlocks."*".extraOptions = lib.mkIf cfg.enable {
     IdentityAgent = lib.mkOverride 500 "$\{XDG_RUNTIME_DIR\}/gnupg/S.gpg-agent.ssh";
   };
