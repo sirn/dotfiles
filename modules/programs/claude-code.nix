@@ -56,7 +56,7 @@ let
         . "$XDG_CONFIG_HOME/llm-agent/env"
     fi
 
-    export SYNTHETIC_MODEL=''${SYNTHETIC_MODEL:-hf:zai-org/GLM-4.6}
+    export SYNTHETIC_MODEL=''${SYNTHETIC_MODEL:-hf:zai-org/GLM-4.7}
     export ANTHROPIC_BASE_URL=https://api.synthetic.new/anthropic
     export ANTHROPIC_AUTH_TOKEN=$SYNTHETIC_API_KEY
     export ANTHROPIC_DEFAULT_OPUS_MODEL=''${ANTHROPIC_DEFAULT_OPUS_MODEL:-$SYNTHETIC_MODEL}
