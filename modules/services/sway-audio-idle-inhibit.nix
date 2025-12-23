@@ -6,7 +6,7 @@ let
   waybarcfg = config.programs.waybar;
 in
 {
-  systemd.user.services.sway-audio-idle-inhibit = {
+  systemd.user.services.sway-audio-idle-inhibit = lib.mkIf pkgs.stdenv.isLinux {
     Unit = {
       After = [ config.wayland.systemd.target ];
       PartOf = [ config.wayland.systemd.target ];

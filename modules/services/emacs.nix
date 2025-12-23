@@ -1,5 +1,8 @@
 { config, pkgs, lib, ... }:
 
+let
+  cfg = config.services.emacs;
+in
 {
   services.emacs = {
     enable = pkgs.stdenv.isLinux;
@@ -9,11 +12,11 @@
     };
   };
 
-  systemd.user.services.emacs.Service = {
+  systemd.user.services.emacs.Service = lib.mkIf cfg.enable {
     Slice = lib.mkDefault "app.slice";
   };
 
-  launchd.agents.emacs = {
+  launchd.agents.emacs = lib.mkIf pkgs.stdenv.isDarwin {
     enable = true;
     config = {
       RunAtLoad = true;

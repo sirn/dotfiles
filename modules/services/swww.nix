@@ -1,6 +1,8 @@
 { config, lib, pkgs, ... }:
 
 let
+  cfg = config.services.swww;
+
   swwwPkg = pkgs.swww;
 
   wallpaperScript = pkgs.writeScriptBin "swww-wallpaper" ''
@@ -44,7 +46,7 @@ in
     ];
   };
 
-  systemd.user.services."swww-wallpaper" = {
+  systemd.user.services."swww-wallpaper" = lib.mkIf cfg.enable {
     Unit = {
       Description = "Update wallpaper with swww";
       After = [ config.wayland.systemd.target "swww.service" ];
@@ -59,7 +61,7 @@ in
     };
   };
 
-  systemd.user.timers."swww-wallpaper" = {
+  systemd.user.timers."swww-wallpaper" = lib.mkIf cfg.enable {
     Unit = {
       Description = "Rotate wallpaper hourly";
       PartOf = [ config.wayland.systemd.target ];

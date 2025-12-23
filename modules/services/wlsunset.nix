@@ -1,5 +1,8 @@
 { config, lib, ... }:
 
+let
+  cfg = config.services.wlsunset;
+in
 {
   services.wlsunset = {
     enable = true;
@@ -14,7 +17,7 @@
     };
   };
 
-  systemd.user.services.wlsunset.Service = {
+  systemd.user.services.wlsunset.Service = lib.mkIf cfg.enable {
     Slice = lib.mkDefault "app.slice";
   };
 }

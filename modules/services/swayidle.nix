@@ -1,11 +1,11 @@
 { config, lib, pkgs, ... }:
 
 let
+  cfg = config.services.swayidle;
+
   swaycfg = config.wayland.windowManager.sway;
 
   niricfg = config.programs.niri;
-
-  swayidlecfg = config.services.swayidle;
 
   swaymsgBin = "${swaycfg.package}/bin/swaymsg";
 
@@ -56,26 +56,26 @@ in
     ];
   };
 
-  systemd.user.services.swayidle.Service = {
+  systemd.user.services.swayidle.Service = lib.mkIf cfg.enable {
     Slice = lib.mkDefault "app.slice";
   };
 
-  wayland.windowManager.sway = lib.mkIf swaycfg.enable {
+  wayland.windowManager.sway = lib.mkIf (cfg.enable && swaycfg.enable) {
     config = {
       keybindings = {
-        "${swaycfg.config.modifier}+Ctrl+Shift+L" = "exec pkill -USR1 -f ${lib.getExe swayidlecfg.package}";
+        "${swaycfg.config.modifier}+Ctrl+Shift+L" = "exec pkill -USR1 -f ${lib.getExe cfg.package}";
       };
     };
   };
 
-  programs.niri = lib.mkIf niricfg.enable {
+  programs.niri = lib.mkIf (cfg.enable && niricfg.enable) {
     settings = {
       binds = {
         "Mod+Alt+L".action.spawn = [
           "pkill"
           "-USR1"
           "-f"
-          "${lib.getExe swayidlecfg.package}"
+          "${lib.getExe cfg.package}"
         ];
       };
     };

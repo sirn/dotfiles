@@ -1,6 +1,8 @@
 { config, pkgs, lib, ... }:
 
 let
+  cfg = config.services.gpg-agent;
+
   gpgcfg = config.programs.gpg;
 in
 {
@@ -32,11 +34,11 @@ in
     '';
   };
 
-  programs.ssh.matchBlocks."*".extraOptions = {
+  programs.ssh.matchBlocks."*".extraOptions = lib.mkIf cfg.enable {
     IdentityAgent = lib.mkOverride 500 "$\{XDG_RUNTIME_DIR\}/gnupg/S.gpg-agent.ssh";
   };
 
-  systemd.user.services.gpg-agent.Service = {
+  systemd.user.services.gpg-agent.Service = lib.mkIf cfg.enable {
     Slice = lib.mkDefault "app.slice";
   };
 }

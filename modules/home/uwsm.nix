@@ -76,23 +76,7 @@ in
   };
 
   systemd.user.services = {
-    waybar.Service = lib.mkIf config.programs.waybar.enable {
-      Slice = appGraphicalSlice;
-    };
-
-    swww.Service = lib.mkIf config.services.swww.enable {
-      Slice = appGraphicalSlice;
-    };
-
-    "swww-wallpaper".Service = lib.mkIf config.services.swww.enable {
-      Slice = appGraphicalSlice;
-    };
-
     copyq.Service = lib.mkIf config.services.copyq.enable {
-      Slice = appGraphicalSlice;
-    };
-
-    wlsunset.Service = lib.mkIf config.services.wlsunset.enable {
       Slice = appGraphicalSlice;
     };
 
@@ -105,6 +89,26 @@ in
     };
 
     sway-audio-idle-inhibit.Service = lib.mkIf (config.systemd.user.services ? sway-audio-idle-inhibit) {
+      Slice = appGraphicalSlice;
+    };
+
+    swww.Service = lib.mkIf config.services.swww.enable {
+      Slice = appGraphicalSlice;
+    };
+
+    "swww-wallpaper".Service = lib.mkIf config.services.swww.enable {
+      Slice = appGraphicalSlice;
+    };
+
+    waybar.Service = lib.mkIf config.programs.waybar.enable {
+      Slice = appGraphicalSlice;
+    };
+
+    vicinae.Service = lib.mkIf config.programs.vicinae.enable {
+      Slice = appGraphicalSlice;
+    };
+
+    wlsunset.Service = lib.mkIf config.services.wlsunset.enable {
       Slice = appGraphicalSlice;
     };
   };

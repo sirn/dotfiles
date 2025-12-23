@@ -1,7 +1,7 @@
 { lib, pkgs, ... }:
 
 {
-  systemd.user.services.languagetool = {
+  systemd.user.services.languagetool = lib.mkIf pkgs.stdenv.isLinux {
     Install.WantedBy = [ "default.target" ];
 
     Unit = {

@@ -3,7 +3,7 @@
 let
   cfg = config.programs.alacritty;
 
-  swaycfg = config.wayland.windowManager.sway.config;
+  swaycfg = config.wayland.windowManager.sway;
 
   niricfg = config.programs.niri;
 
@@ -73,16 +73,16 @@ in
     };
   };
 
-  wayland.windowManager.sway = lib.mkIf swaycfg.enable {
+  wayland.windowManager.sway = lib.mkIf (cfg.enable && swaycfg.enable) {
     config = {
       terminal = alacrittyLauncher;
       keybindings = {
-        "${swaycfg.modifier}+Return" = "exec ${alacrittyLauncher}";
+        "${swaycfg.config.modifier}+Return" = "exec ${alacrittyLauncher}";
       };
     };
   };
 
-  programs.niri = lib.mkIf niricfg.enable {
+  programs.niri = lib.mkIf (cfg.enable && niricfg.enable) {
     settings = {
       binds = {
         "Mod+T".action.spawn = [
@@ -92,7 +92,7 @@ in
     };
   };
 
-  programs.fuzzel = lib.mkIf fuzzelcfg.enable {
+  programs.fuzzel = lib.mkIf (cfg.enable && fuzzelcfg.enable) {
     settings = {
       main = {
         terminal = lib.getExe cfg.package;

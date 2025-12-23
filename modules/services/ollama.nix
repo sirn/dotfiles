@@ -5,7 +5,7 @@
     pkgs.ollama
   ];
 
-  systemd.user.services.ollama = {
+  systemd.user.services.ollama = lib.mkIf pkgs.stdenv.isLinux {
     Install.WantedBy = [ "default.target" ];
 
     Unit = {
@@ -21,7 +21,7 @@
     };
   };
 
-  launchd.agents.ollama = {
+  launchd.agents.ollama = lib.mkIf pkgs.stdenv.isDarwin {
     enable = true;
     config = {
       Label = "org.nix-community.home.ollama";

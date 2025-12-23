@@ -2,6 +2,10 @@
 
 let
   cfg = config.programs.fuzzel;
+
+  swaycfg = config.wayland.windowManager.sway;
+
+  niricfg = config.programs.niri;
 in
 {
   programs.fuzzel = {
@@ -36,19 +40,15 @@ in
     };
   };
 
-  wayland.windowManager.sway =
-    let
-      swaycfg = config.wayland.windowManager.sway.config;
-    in
-    {
-      config = {
-        keybindings = {
-          "${swaycfg.modifier}+d" = "exec ${cfg.package}/bin/fuzzel";
-        };
+  wayland.windowManager.sway = lib.mkIf (cfg.enable && swaycfg.enable) {
+    config = {
+      keybindings = {
+        "${swaycfg.config.modifier}+d" = "exec ${cfg.package}/bin/fuzzel";
       };
     };
+  };
 
-  programs.niri = lib.mkIf config.programs.niri.enable {
+  programs.niri = lib.mkIf (cfg.enable && niricfg.enable) {
     settings = {
       binds = {
         "Mod+d".action.spawn = [ "${lib.getExe cfg.package}" ];

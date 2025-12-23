@@ -111,7 +111,7 @@ in
     font-awesome
   ];
 
-  wayland.windowManager.sway = lib.mkIf swaycfg.enable {
+  wayland.windowManager.sway = lib.mkIf (cfg.enable && swaycfg.enable) {
     config = {
       bars = [ ];
       keybindings = lib.mkOptionDefault {
@@ -120,7 +120,7 @@ in
     };
   };
 
-  programs.niri.settings = lib.mkIf niricfg.enable {
+  programs.niri.settings = lib.mkIf (cfg.enable && niricfg.enable) {
     binds = {
       "Mod+Shift+B".action.spawn = [ "sh" "-c" "pkill -SIGUSR1 waybar" ];
     };

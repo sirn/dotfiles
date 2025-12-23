@@ -54,11 +54,11 @@ in
     ];
   };
 
-  systemd.user.services.kanshi.Service = {
+  systemd.user.services.kanshi.Service = lib.mkIf cfg.enable {
     Slice = lib.mkDefault "app.slice";
   };
 
-  wayland.windowManager.sway = lib.mkIf swaycfg.enable {
+  wayland.windowManager.sway = lib.mkIf (cfg.enable && swaycfg.enable) {
     config = {
       keybindings = {
         "${swaycfg.config.modifier}+Ctrl+Shift+F10" = "exec pkill -INT -f ${lib.getExe cfg.package}";
@@ -66,7 +66,7 @@ in
     };
   };
 
-  programs.niri = lib.mkIf niricfg.enable {
+  programs.niri = lib.mkIf (cfg.enable && niricfg.enable) {
     settings = {
       binds = {
         "Mod+Alt+F10".action.spawn = [

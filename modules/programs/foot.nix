@@ -3,7 +3,7 @@
 let
   cfg = config.programs.foot;
 
-  swaycfg = config.wayland.windowManager.sway.config;
+  swaycfg = config.wayland.windowManager.sway;
 
   niricfg = config.programs.niri;
 
@@ -26,16 +26,16 @@ in
     };
   };
 
-  wayland.windowManager.sway = lib.mkIf swaycfg.enable {
+  wayland.windowManager.sway = lib.mkIf (cfg.enable && swaycfg.enable) {
     config = {
       terminal = footLauncher;
       keybindings = {
-        "${swaycfg.modifier}+Return" = "exec ${footLauncher}";
+        "${swaycfg.config.modifier}+Return" = "exec ${footLauncher}";
       };
     };
   };
 
-  programs.niri = lib.mkIf niricfg.enable {
+  programs.niri = lib.mkIf (cfg.enable && niricfg.enable) {
     settings = {
       binds = {
         "Mod+T".action.spawn = [
@@ -45,7 +45,7 @@ in
     };
   };
 
-  programs.fuzzel = lib.mkIf fuzzelcfg.enable {
+  programs.fuzzel = lib.mkIf (cfg.enable && fuzzelcfg.enable) {
     settings = {
       main = {
         terminal = lib.getExe cfg.package;
