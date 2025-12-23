@@ -18,18 +18,16 @@
     };
   };
 
-  launchd.agents.ssh-agent = {
+  launchd.agents.ssh-agent = lib.mkIf pkgs.stdenv.isDarwin {
     enable = true;
     config = {
       RunAtLoad = true;
       KeepAlive = true;
       ProgramArguments = [
-        "/bin/sh"
-        "-l"
-        "-c"
-        ''
-          ${pkgs.openssh}/bin/ssh-agent -D -a ''${XDG_RUNTIME_DIR:-$XDG_CACHE_HOME}/ssh-agent
-        ''
+        "${pkgs.openssh}/bin/ssh-agent"
+        "-D"
+        "-a"
+        "${config.home.homeDirectory}/.cache/ssh-agent"
       ];
     };
   };

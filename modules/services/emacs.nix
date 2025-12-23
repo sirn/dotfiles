@@ -22,10 +22,9 @@ in
       RunAtLoad = true;
       KeepAlive = true;
       ProgramArguments = [
-        "/bin/sh"
-        "-l"
-        "-c"
-        "${config.programs.emacs.finalPackage}/bin/emacs --fg-daemon --chdir=$HOME"
+        "${config.programs.emacs.finalPackage}/bin/emacs"
+        "--fg-daemon"
+        "--chdir=${config.home.homeDirectory}"
       ];
     };
   };
