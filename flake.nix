@@ -60,7 +60,7 @@
             programs.home-manager.enable = true;
             home.username = username;
             home.homeDirectory = homeDirectory;
-            home.stateVersion = "25.05";
+            home.stateVersion = "25.11";
             news.display = "silent";
           };
         in
