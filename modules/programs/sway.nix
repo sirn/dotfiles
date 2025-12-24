@@ -150,7 +150,7 @@ in
           "Shift+Print" = ''
             exec \
                 ${pkgs.grim}/bin/grim - | \
-                    ${config.machine.clipboard.copy.command} && \
+                    ${pkgs.wl-clipboard}/bin/wl-copy && \
                 ${pkgs.libnotify}/bin/notify-send \
                     "Screenshot captured" \
                     "Screenshot saved to clipboard"
@@ -168,7 +168,7 @@ in
           "Alt+Shift+Print" = ''
             exec \
                 ${pkgs.grim}/bin/grim -g "$(${pkgs.slurp}/bin/slurp)" - | \
-                    ${config.machine.clipboard.copy.command} && \
+                    ${pkgs.wl-clipboard}/bin/wl-copy && \
                 ${pkgs.libnotify}/bin/notify-send \
                     "Screenshot captured" \
                     "Screenshot saved to clipboard"

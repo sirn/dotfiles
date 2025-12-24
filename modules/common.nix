@@ -4,7 +4,6 @@
   config.machine.interactiveShell = "${lib.getExe config.programs.zsh.package}";
 
   imports = [
-    ./home/clipboard.nix
     ./home/colors.nix
     ./home/email.nix
     ./home/llm-agent.nix

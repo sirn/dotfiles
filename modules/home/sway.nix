@@ -5,6 +5,7 @@
     ../programs/fuzzel.nix
     ../programs/sway.nix
     ../programs/waybar.nix
+    ../programs/wl-clipboard.nix
     ../programs/xdg-portal.nix
 
     ../services/kanshi.nix
