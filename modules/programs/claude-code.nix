@@ -1,86 +1,31 @@
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 let
-  package = pkgs.unstable.claude-code;
-
-  jsonFormat = pkgs.formats.json { };
-
-  mcpServers = {
-    context7 = {
-      type = "stdio";
-      command = lib.getExe pkgs.local.mcpServers.context7;
-    };
-
-    brave-search =
-      let
-        braveMcpWrapper = pkgs.writeScriptBin "brave-mcp-wrapper" ''
-          #!${pkgs.runtimeShell}
-          exec "${lib.getExe pkgs.local.envWrapper}" \
-            -i ~/.config/llm-agent/env \
-            -- ${lib.getExe pkgs.local.mcpServers.brave-search} --transport stdio
-        '';
-      in
-      {
-        type = "stdio";
-        command = lib.getExe braveMcpWrapper;
-      };
-  };
-
-  wrappedClaude = pkgs.stdenv.mkDerivation {
-    pname = "wrapped-${package.name}";
-    src = ./.;
-    version = package.version;
-
-    nativeBuildInputs = [
-      pkgs.makeWrapper
-    ];
-
-    installPhase = ''
-      mkdir -p $out/bin
-      makeWrapper ${package}/bin/claude $out/bin/claude ${lib.escapeShellArgs [
-        "--add-flags"
-        "--mcp-config=${jsonFormat.generate "mcp-config.json" { inherit mcpServers; }}"
-      ]}
-    '';
-  };
-
-  wrappedClaudeSynthetic = pkgs.writeScriptBin "synclaude" ''
-    #!${pkgs.runtimeShell}
-    # Run Claude Code with Synthetic
-    if [ -f "$XDG_CONFIG_HOME/llm-agent/env" ]; then
-        . "$XDG_CONFIG_HOME/llm-agent/env"
-    fi
-
-    export SYNTHETIC_MODEL=''${SYNTHETIC_MODEL:-hf:zai-org/GLM-4.7}
-    export ANTHROPIC_BASE_URL=https://api.synthetic.new/anthropic
-    export ANTHROPIC_AUTH_TOKEN=$SYNTHETIC_API_KEY
-    export ANTHROPIC_DEFAULT_OPUS_MODEL=''${ANTHROPIC_DEFAULT_OPUS_MODEL:-$SYNTHETIC_MODEL}
-    export ANTHROPIC_DEFAULT_SONNET_MODEL=''${ANTHROPIC_DEFAULT_SONNET_MODEL:-$SYNTHETIC_MODEL}
-    export ANTHROPIC_DEFAULT_HAIKU_MODEL=''${ANTHROPIC_DEFAULT_HAIKU_MODEL:-$SYNTHETIC_MODEL}
-    export CLAUDE_CODE_SUBAGENT_MODEL=''${CLAUDE_CODE_SUBAGENT_MODEL:-$SYNTHETIC_MODEL}
-    export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
-    export CLAUDE_CONFIG_DIR=$XDG_CONFIG_HOME/claude-synthetic
-
-    exec ${wrappedClaude}/bin/claude "$@"
-  '';
+  cfg = config.programs.claude-code;
 in
 {
-  home.packages = with pkgs; [
-    wrappedClaude
-    wrappedClaudeSynthetic
-  ];
+  programs.claude-code = {
+    enable = true;
 
-  home.file = {
-    ".claude/settings.json" = {
-      text = builtins.toJSON {
-        "$schema" = "https://json.schemastore.org/claude-code-settings.json";
-        includeCoAuthoredBy = false;
-        cleanupPeriodDays = 7;
+    package = pkgs.unstable.claude-code;
+
+    settings = {
+      includeCoAuthoredBy = false;
+      cleanupPeriodDays = 7;
+      permissions = {
+        allow = [
+          "Bash(jj diff:*)"
+          "Bash(jj status:*)"
+          "Bash(jj log:*)"
+        ];
+        deny = [
+          "Bash(jj git:*)"
+        ];
       };
     };
   };
 
-  programs.git = {
+  programs.git = lib.mkIf cfg.enable {
     ignores = [
       ".claude/"
     ];

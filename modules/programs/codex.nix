@@ -1,31 +1,16 @@
-{ pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 let
-  package = pkgs.unstable.codex;
+  cfg = config.programs.codex;
 in
 {
-  home.packages = with pkgs; [
-    (pkgs.stdenv.mkDerivation {
-      pname = "wrapped-${package.name}";
-      src = ./.;
-      version = package.version;
+  programs.codex = {
+    enable = true;
 
-      nativeBuildInputs = [
-        pkgs.makeWrapper
-      ];
+    package = pkgs.unstable.codex;
+  };
 
-      installPhase = ''
-        mkdir -p $out/bin
-
-        makeWrapper ${package}/bin/codex $out/bin/codex \
-          --prefix PATH : ${pkgs.bun}/bin \
-          --prefix PATH : ${pkgs.nodejs}/bin \
-          --prefix PATH : ${pkgs.ripgrep}/bin
-      '';
-    })
-  ];
-
-  programs.git = {
+  programs.git = lib.mkIf cfg.enable {
     ignores = [
       ".codex/"
     ];

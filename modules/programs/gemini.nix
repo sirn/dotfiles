@@ -1,47 +1,33 @@
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 let
-  package = pkgs.unstable.gemini-cli;
-
-  mcpServers = {
-    context7 = {
-      type = "stdio";
-      command = lib.getExe pkgs.local.mcpServers.context7;
-    };
-  };
+  cfg = config.programs.gemini-cli;
 in
 {
-  home.packages = with pkgs; [
-    (pkgs.writeScriptBin "gemini" ''
+  programs.gemini-cli = {
+    enable = true;
+
+    package = (pkgs.writeScriptBin "gemini" ''
       #!${pkgs.runtimeShell}
       exec "${lib.getExe pkgs.local.envWrapper}" \
         -i ~/.config/llm-agent/env \
-        -- "${lib.getExe package}" "$@"
-    '')
-  ];
+        -- "${lib.getExe pkgs.unstable.gemini-cli}" "$@"
+    '');
 
-  home.file = {
-    ".gemini/settings.json" = {
-      text = builtins.toJSON {
-        mcpServers = mcpServers;
-        general = {
-          disableAutoUpdate = true;
-          enablePromptCompletion = true;
-          previewFeatures = true;
-        };
-        security = {
-          auth = {
-            selectedType = "gemini-api-key";
-          };
+    settings = {
+      general = {
+        enablePromptCompletion = true;
+        previewFeatures = true;
+      };
+      security = {
+        auth = {
+          selectedType = "gemini-api-key";
         };
       };
-
-      # Gemini overrides settings.json whenever it is launched.
-      force = true;
     };
   };
 
-  programs.git = {
+  programs.git = lib.mkIf cfg.enable {
     ignores = [
       ".gemini/"
     ];
