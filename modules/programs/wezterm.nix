@@ -331,6 +331,20 @@ in
         }
       '';
     };
+    "wezterm/modules/keybindings.lua" = {
+      text = ''
+        local wezterm = require 'wezterm'
+        return {
+          keys = {
+            {
+              key = 'Enter',
+              mods = 'SHIFT',
+              action = wezterm.action({SendString="\x1b\r"})
+            }
+          }
+        }
+      '';
+    };
   };
 
   wayland.windowManager.sway = lib.mkIf (cfg.enable && swaycfg.enable) {
