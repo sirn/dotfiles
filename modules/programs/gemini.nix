@@ -14,6 +14,12 @@ in
         -- "${lib.getExe pkgs.unstable.gemini-cli}" "$@"
     '');
 
+    # In 25.11, defaultModel only accepts string and default to gemini-2.5-pro
+    # We want to use the best Auto model; so this needs to be set to an empty string.
+    #
+    # TODO: switch to null, >25.11
+    defaultModel = "";
+
     settings = {
       general = {
         enablePromptCompletion = true;
