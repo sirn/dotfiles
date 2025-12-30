@@ -20,8 +20,7 @@ in
         makeWrapper ${package}/bin/codex $out/bin/codex \
           --prefix PATH : ${pkgs.bun}/bin \
           --prefix PATH : ${pkgs.nodejs}/bin \
-          --prefix PATH : ${pkgs.ripgrep}/bin \
-          --prefix PATH : ${pkgs.local.wrapped-uv}/bin
+          --prefix PATH : ${pkgs.ripgrep}/bin
       '';
     })
   ];
