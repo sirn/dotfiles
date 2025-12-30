@@ -1,40 +1,29 @@
-{ lib, pkgs }:
+{ lib, pkgs, uv2nix, pyproject-nix, pyproject-build-systems }:
 
-pkgs.python312Packages.buildPythonPackage rec {
-  pname = "mcp-server-fetch";
-  version = "2025.4.7";
+let
+  python = pkgs.python312;
 
-  src = pkgs.fetchPypi {
-    pname = "mcp_server_fetch";
-    inherit version;
-    sha256 = "sha256-VieePFXLHlBrlYypuyPtRBOUSm8jC8oh4ESu5Rc0/kc=";
+  workspace = uv2nix.lib.workspace.loadWorkspace {
+    workspaceRoot = ./uv2nix;
   };
 
-  format = "pyproject";
+  overlay = workspace.mkPyprojectOverlay {
+    sourcePreference = "wheel";
+  };
 
-  nativeBuildInputs = with pkgs.python312Packages; [
-    hatchling
-  ];
+  pythonSet = (pkgs.callPackage pyproject-nix.build.packages { inherit python; }).overrideScope (
+    lib.composeManyExtensions [
+      pyproject-build-systems.overlays.wheel
+      overlay
+    ]
+  );
 
-  propagatedBuildInputs = with pkgs.python312Packages; [
-    mcp
-    httpx
-    markdownify
-    protego
-    readabilipy
-    requests
-  ];
-
-  pythonRelaxDeps = true;
-
-  passthru.updateScript = pkgs.nix-update-script { };
-
-  meta = {
-    description = "MCP server for fetching web content";
-    homepage = "https://github.com/modelcontextprotocol/servers";
-    downloadPage = "https://pypi.org/project/mcp-server-fetch/";
-    license = lib.licenses.mit;
-    maintainers = [ ];
+  venv = pythonSet.mkVirtualEnv "mcp-server-fetch" workspace.deps.default;
+in
+venv.overrideAttrs (old: {
+  name = "mcp-server-fetch-2025.4.7";
+  meta = (old.meta or { }) // {
     mainProgram = "mcp-server-fetch";
   };
-}
+  passthru.updateScript = ./update.sh;
+})

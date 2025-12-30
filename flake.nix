@@ -22,6 +22,13 @@
     nur.inputs.nixpkgs.follows = "nixpkgs";
 
     emacs-overlay.url = "github:nix-community/emacs-overlay";
+
+    pyproject-nix.url = "github:pyproject-nix/pyproject.nix";
+    pyproject-build-systems.url = "github:pyproject-nix/build-system-pkgs";
+    uv2nix = {
+      url = "github:pyproject-nix/uv2nix";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+    };
   };
 
   outputs = { nixpkgs, home-manager, ... }@inputs:
@@ -47,7 +54,7 @@
             pkgs = final;
           };
 
-          local = import ./pkgs final prev;
+          local = import ./pkgs final prev inputs;
         })
       ];
 
