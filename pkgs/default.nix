@@ -21,10 +21,6 @@ in
     context7 = (callPackage ./by-name/mcp-servers/context7/package.nix { });
 
     brave-search = (callPackage ./by-name/mcp-servers/brave-search/package.nix { });
-
-    fetch = (callPackage ./by-name/mcp-servers/fetch/package.nix {
-      inherit (inputs) uv2nix pyproject-nix pyproject-build-systems;
-    });
   };
 
   wrapped-uv = (callPackage ./by-name/wrapped-uv/wrapped.nix { });

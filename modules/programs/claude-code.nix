@@ -24,11 +24,6 @@ let
         type = "stdio";
         command = lib.getExe braveMcpWrapper;
       };
-
-    fetch = {
-      type = "stdio";
-      command = lib.getExe pkgs.local.mcpServers.fetch;
-    };
   };
 
   wrappedClaude = pkgs.stdenv.mkDerivation {

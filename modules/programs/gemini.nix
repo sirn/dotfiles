@@ -8,11 +8,6 @@ let
       type = "stdio";
       command = lib.getExe pkgs.local.mcpServers.context7;
     };
-
-    fetch = {
-      type = "stdio";
-      command = lib.getExe pkgs.local.mcpServers.fetch;
-    };
   };
 in
 {
