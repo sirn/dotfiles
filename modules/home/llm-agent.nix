@@ -109,7 +109,6 @@ in
       inherit (mcpServers) context7;
       inherit (mcpServers) brave-search;
     };
-
   };
 
   programs.codex = lib.mkIf codexCfg.enable {
