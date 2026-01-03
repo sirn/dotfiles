@@ -35,6 +35,7 @@
     ./programs/rsync.nix
     ./programs/sl.nix
     ./programs/ssh.nix
+    ./programs/starship.nix
     ./programs/tree.nix
     ./programs/wezterm.nix
     ./programs/zellij.nix

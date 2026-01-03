@@ -2,8 +2,6 @@
 
 let
   cfg = config.programs.fish;
-
-  jjcfg = config.programs.jujutsu;
 in
 {
   programs.fish = {
@@ -71,18 +69,6 @@ in
 
       fish_greeting = {
         body = "";
-      };
-
-      fish_vcs_prompt = {
-        body = ''
-          ${if jjcfg.enable then ''
-            fish_jj_prompt $argv
-            or fish_git_prompt $argv
-          '' else ''
-            fish_git_prompt $argv
-          ''} or fish_hg_prompt $argv
-          or fish_fossil_prompt $argv
-        '';
       };
     };
 
