@@ -15,7 +15,10 @@ in
   programs.ghostty = {
     enable = true;
 
-    package = config.lib.nixGL.wrap pkgs.ghostty;
+    package =
+      if pkgs.stdenv.isLinux
+      then config.lib.nixGL.wrap pkgs.ghostty
+      else pkgs.ghostty-bin;
 
     settings = {
       font-family = "PragmataPro Mono Liga";
