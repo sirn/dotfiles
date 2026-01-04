@@ -5,7 +5,7 @@ let
 in
 {
   home.packages = with pkgs; [
-    unstable.zed-editor
+    zed-editor
   ];
 
   xdg.configFile = {

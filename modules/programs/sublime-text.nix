@@ -17,7 +17,7 @@ in
 {
   home.packages =
     if pkgs.stdenv.isLinux
-    then with pkgs; [ unstable.sublime4 ]
+    then with pkgs; [ sublime4 ]
     else [ ];
 
   home.file = {
