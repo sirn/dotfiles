@@ -19,7 +19,7 @@ in
 
     # If NixGL is configured (i.e. non-NixOS), wrap with NixGL
     # so OpenGL/Vulkan libraries are available.
-    package = config.lib.nixGL.wrap pkgs.unstable.wezterm;
+    package = config.lib.nixGL.wrap pkgs.wezterm;
 
     extraConfig = ''
       local wezterm = require 'wezterm'

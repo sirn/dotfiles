@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 
 let
-  pkg = pkgs.unstable.sway-audio-idle-inhibit;
+  pkg = pkgs.sway-audio-idle-inhibit;
 
   waybarcfg = config.programs.waybar;
 in

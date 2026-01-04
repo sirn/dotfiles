@@ -6,7 +6,6 @@ in
 {
   programs.fish = {
     enable = true;
-    package = pkgs.unstable.fish;
 
     plugins = [
       { name = "autopair"; src = pkgs.fishPlugins.autopair.src; }
