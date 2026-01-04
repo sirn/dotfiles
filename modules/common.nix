@@ -13,6 +13,7 @@
 
     # programs
     ./programs/aria2.nix
+    ./programs/atuin.nix
     ./programs/bash.nix
     ./programs/coreutils.nix
     ./programs/curl.nix

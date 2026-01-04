@@ -9,7 +9,6 @@ in
     package = pkgs.unstable.fish;
 
     plugins = [
-      { name = "sponge"; src = pkgs.fishPlugins.sponge.src; }
       { name = "autopair"; src = pkgs.fishPlugins.autopair.src; }
     ];
 
@@ -74,9 +73,6 @@ in
 
     interactiveShellInit = ''
       set -gx SHELL "${cfg.package}/bin/fish"
-      set -g sponge_successful_exit_codes 0
-      set -g sponge_allow_previously_successful false
-      set -g sponge_delay 10
     '';
   };
 }

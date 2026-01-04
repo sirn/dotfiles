@@ -14,15 +14,6 @@ in
 
     autocd = true;
 
-    history = {
-      append = true;
-      expireDuplicatesFirst = true;
-      ignoreAllDups = true;
-      ignoreDups = true;
-      save = 10000;
-      size = 10000;
-    };
-
     initContent =
       let
         dirJumpCmd =
@@ -96,31 +87,6 @@ in
               builtin cd "$dir" || return 1
             }
           '';
-
-        historySetup =
-          let
-            awkCmd = lib.getExe pkgs.gawk;
-
-            cutCmd = lib.getExe' pkgs.coreutils "cut";
-
-            fzyCmd = lib.getExe pkgs.fzy;
-          in
-          pkgs.writeScript "history-setup" ''
-            __fzy_history() {
-              local _selection
-
-              _selection=$(fc -ln -1 0 | "${cutCmd}" -f3- | ${awkCmd} '!seen[$0]++' | ${fzyCmd} -q "$*")
-              if [ "$?" = "0" ] || [ -n "$_selection" ]; then
-                BUFFER=''${_selection}
-                CURSOR=''${#BUFFER}
-              fi
-
-              zle redisplay
-            }
-
-            zle -N __fzy_history
-            bindkey '^R' __fzy_history
-          '';
       in
       ''
         export WORDCHARS="''${WORDCHARS/\//}"
@@ -129,8 +95,6 @@ in
         fi
 
         source "${dirJumpCmd}"
-
-        source "${historySetup}"
 
         bindkey -e
       '';
