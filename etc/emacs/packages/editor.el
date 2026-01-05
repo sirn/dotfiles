@@ -74,10 +74,7 @@ Other buffers are left alone."
 
 ;; Builtin
 (use-package delsel
-  :demand t
-
-  :config
-  (delete-selection-mode +1))
+  :hook (after-init . delete-selection-mode))
 
 
 ;; Builtin
@@ -119,10 +116,7 @@ Other buffers are left alone."
 
 ;; Builtin
 (use-package subword
-  :demand t
-
-  :config
-  (global-subword-mode +1))
+  :hook (after-init . global-subword-mode))
 
 
 (use-package visual-regexp
@@ -179,10 +173,7 @@ Other buffers are left alone."
 
 ;; Builtin
 (use-package paren
-  :demand t
-
-  :config
-  (show-paren-mode +1))
+  :hook (after-init . show-paren-mode))
 
 
 (use-package parinfer-rust-mode
@@ -292,38 +283,26 @@ Other buffers are left alone."
     (advice-add 'envrc--apply :after #'gemacs--envrc-inject-emacs-bin-deps)))
 
 
-(use-package with-editor
-  :demand t)
+(use-package with-editor)
 
 
 ;; --------------------------------------------------------------------------
 ;;; Minibuffers
 
 (use-package prescient
-  :demand t
-
   :custom
   (prescient-history-length 1000)
 
-  :config
-  (prescient-persist-mode +1))
+  :hook (after-init . prescient-persist-mode))
 
 
 (use-package orderless
-  :demand t
-
   :custom
   (completion-styles '(orderless basic))
   (orderless-matching-styles '(orderless-initialism orderless-literal orderless-regexp)))
 
 
 (use-package marginalia
-  :demand t
-
-  :preface
-  (eval-when-compile
-    (declare-function marginalia-mode nil))
-
   :custom
   (marginalia-max-relative-age (* 60 60 24 7))
   (marginalia-field-width 80)
@@ -333,35 +312,19 @@ Other buffers are left alone."
   (:keymaps 'minibuffer-local-map
    "M-A" #'marginalia-cycle)
 
-  :config
-  (marginalia-mode +1))
+  :hook (after-init . marginalia-mode))
 
 
 (use-package vertico
-  :demand t
-
-  :preface
-  (eval-when-compile
-    (declare-function vertico-mode nil))
-
   :custom
   (vertico-cycle t)
 
-  :config
-  (vertico-mode +1))
+  :hook (after-init . vertico-mode))
 
 
 (use-package vertico-prescient
   :after (vertico prescient)
-
-  :demand t
-
-  :preface
-  (eval-when-compile
-    (declare-function vertico-prescient-mode nil))
-
-  :config
-  (vertico-prescient-mode +1))
+  :hook (after-init . vertico-prescient-mode))
 
 
 (use-package consult
@@ -394,8 +357,6 @@ Other buffers are left alone."
 
 
 (use-package embark
-  :demand t
-
   :general
   (leader
    "c e a" #'embark-act
@@ -408,7 +369,6 @@ Other buffers are left alone."
 
 (use-package embark-consult
   :after (embark consult)
-  :demand t
   :hook (embark-collect-mode . consult-preview-at-point-mode))
 
 
@@ -423,21 +383,12 @@ Other buffers are left alone."
 ;;; Autocompletion
 
 (use-package corfu
-  :demand t
-
-  :preface
-  (eval-when-compile
-    (declare-function global-corfu-mode nil))
-
   :custom
   (corfu-auto t)
+  (completion-cycle-threshold 3)
+  (tab-always-indent 'complete)
 
-  :init
-  (global-corfu-mode +1)
-
-  (with-eval-after-load 'emacs
-    (setq completion-cycle-threshold 3)
-    (setq tab-always-indent 'complete)))
+  :hook (after-init . global-corfu-mode))
 
 
 ;; Part of corfu
@@ -462,15 +413,7 @@ Other buffers are left alone."
 
 (use-package corfu-prescient
   :after (corfu prescient)
-
-  :demand t
-
-  :preface
-  (eval-when-compile
-    (declare-function corfu-prescient-mode nil))
-
-  :config
-  (corfu-prescient-mode +1))
+  :hook (after-init . corfu-prescient-mode))
 
 
 (use-package corfu-terminal
@@ -511,8 +454,6 @@ Other buffers are left alone."
 
 ;; Builtin
 (use-package eldoc
-  :demand t
-
   :custom
   (eldoc-echo-area-use-multiline-p nil))
 

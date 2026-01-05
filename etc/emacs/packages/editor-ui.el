@@ -1,32 +1,25 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package ace-window
-  :demand t
-
   :general
   ("C-x o" #'ace-window)
   (leader
    "ww" #'ace-window)
 
-  :config
-  (setq aw-scope 'frame)
-  (setq aw-dispatch-always t))
+  :custom
+  (aw-scope 'frame)
+  (aw-dispatch-always t))
 
 
 (use-package which-key
-  :demand t
-
-  :config
-  (which-key-mode +1))
+  :hook (after-init . which-key-mode))
 
 
 ;; Builtin
 (use-package tab-bar
-  :demand t
-
-  :init
-  (setq tab-bar-new-tab-choice "*scratch*")
-  (setq tab-bar-close-button-show nil))
+  :custom
+  (tab-bar-new-tab-choice "*scratch*")
+  (tab-bar-close-button-show nil))
 
 
 (use-package doom-modeline

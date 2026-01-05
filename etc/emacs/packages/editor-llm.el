@@ -42,13 +42,13 @@
         (interactive)
         (gemacs--gptel-set-backend
          gemacs--gptel-anthropic-backend
-         'claude-sonnet-4-0)))
+         'claude-opus-4-5)))
      ("g" "Gemini"
       (lambda ()
         (interactive)
         (gemacs--gptel-set-backend
          gemacs--gptel-gemini-backend
-         'gemini-2.5-flash)))
+         'gemini-3-pro-preview)))
      ("o" "OpenAI"
       (lambda ()
         (interactive)
@@ -84,28 +84,23 @@
       :key #'gptel-api-key-from-auth-source
       :stream t
       :models
-      '(claude-opus-4-0
-        claude-sonnet-4-0
-        claude-3-7-sonnet-latest
-        claude-3-5-haiku-latest)))
+      '(claude-opus-4-5
+        claude-sonnet-4-5)))
 
   (defvar gemacs--gptel-gemini-backend
     (gptel-make-gemini "Gemini"
       :key #'gptel-api-key-from-auth-source
       :stream t
       :models
-      '(gemini-2.5-pro
-        gemini-2.5-flash)))
+      '(gemini-3-pro-preview
+        gemini-3-flash-preview)))
 
   (defvar gemacs--gptel-openai-backend
     (gptel-make-openai "OpenAI"
       :key #'gptel-api-key-from-auth-source
       :stream t
       :models
-      '(o3-pro
-        o3
-        o4-mini
-        gpt-4.1)))
+      '(gpt-5.2)))
 
   (defvar gemacs--gptel-openrouter-backend
     (gptel-make-openai "OpenRouter"

@@ -54,12 +54,10 @@
   (org-agenda-mode . gemacs--org-agenda-mode-hook))
 
 
-(use-package org-archive
-  :demand t)
+(use-package org-archive)
 
 
 (use-package org-modern
-  :demand t
   :after org
 
   :hook
@@ -76,17 +74,18 @@
 
 
 (use-package org-ql
-  :demand t
   :after org)
 
 
 (use-package org-super-agenda
-  :demand t
   :after org
 
+  :custom
+  (org-super-agenda-header-map nil)
+
+  :hook (after-init . org-super-agenda-mode)
+
   :config
-  (org-super-agenda-mode 1)
-  (setq org-super-agenda-header-map nil)
   (with-eval-after-load 'modus-themes
     (modus-themes-with-colors
       (setq org-super-agenda-groups

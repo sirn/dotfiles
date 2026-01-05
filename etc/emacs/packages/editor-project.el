@@ -30,7 +30,6 @@
   :preface
   (eval-when-compile
     (require 'transient)
-    (declare-function gemacs--project-ag nil)
     (declare-function gemacs--project-fd nil)
     (declare-function gemacs--project-sync nil)
     (declare-function gemacs--project-try-local nil)

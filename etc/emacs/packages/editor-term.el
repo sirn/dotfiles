@@ -76,7 +76,7 @@
               (eat-term-send-string eat-terminal (format " export %s=%S" envvar v))
               (eat-self-input 1 'return))
             (when-let ((v (getenv "EMACS_SERVER_FILE")))
-              (eat-term-send-string eat-terminnal (format " export EMACS_SERVER_FILE=%S" v))
+              (eat-term-send-string eat-terminal (format " export EMACS_SERVER_FILE=%S" v))
               (eat-self-input 1 'return))
             (eat-term-send-string eat-terminal "clear")
             (eat-self-input 1 'return))

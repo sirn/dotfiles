@@ -5,7 +5,7 @@
   (add-to-list 'major-mode-remap-alist '(json-mode . json-ts-mode)))
 
 
-;; Bulitin; tree-sitter
+;; Builtin; tree-sitter
 (use-package json-ts-mode
   :preface
   (eval-when-compile
