@@ -24,7 +24,7 @@ in
           criteria = "Dell Inc. AW3225QF 13T4YZ3";
           mode = "3840x2160@240Hz";
           position = "0,0";
-          scale = 1.5;
+          scale = 1.25;
         };
       }
       {
@@ -32,7 +32,7 @@ in
           alias = "pa148";
           criteria = "ASUSTek COMPUTER INC ASUS PA148 N9LMTF061468";
           mode = "1920x1080@60Hz";
-          scale = 1.5;
+          scale = 1.0;
         };
       }
       {
