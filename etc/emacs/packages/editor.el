@@ -45,12 +45,12 @@ Other buffers are left alone."
       (message "Reverted %d buffer(s)" count))))
 
 
-;; Builtin
+;; Builtin: undo/redo window layouts with C-c left/right
 (use-package winner
   :hook (after-init . winner-mode))
 
 
-;; Builtin
+;; Builtin: repeat last command with single key after initial prefix
 (use-package repeat
   :hook (after-init . repeat-mode))
 
@@ -68,19 +68,19 @@ Other buffers are left alone."
   (put 'downcase-region 'disabled nil))
 
 
-;; Builtin
+;; Builtin: persist minibuffer history across sessions
 (use-package savehist
   :custom
   (savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
   :hook (after-init . savehist-mode))
 
 
-;; Builtin
+;; Builtin: restore cursor position when reopening files
 (use-package saveplace
   :hook (after-init . save-place-mode))
 
 
-;; Builtin
+;; Builtin: auto-refresh buffers when files change on disk
 (use-package autorevert
   :custom
   (global-auto-revert-non-file-buffers t)
@@ -88,13 +88,14 @@ Other buffers are left alone."
   :hook (after-init . global-auto-revert-mode))
 
 
-;; Builtin
+;; Builtin: track recently opened files
 (use-package recentf
   :custom
   (recentf-max-saved-items 200)
   :hook (after-init . recentf-mode))
 
 
+;; Jump to visible text using character-based decision tree
 (use-package avy
   :general
   (leader
@@ -103,18 +104,19 @@ Other buffers are left alone."
    "s l" #'avy-goto-line))
 
 
+;; Jump to links in help/info buffers
 (use-package ace-link
   :general
   (leader
    "s L" #'ace-link))
 
 
-;; Builtin
+;; Builtin: replace selection when typing
 (use-package delsel
   :hook (after-init . delete-selection-mode))
 
 
-;; Builtin
+;; Builtin: show line numbers in margin
 (use-package display-line-numbers
   :general
   (leader
@@ -124,14 +126,14 @@ Other buffers are left alone."
   (prog-mode . display-line-numbers-mode))
 
 
-;; Builtin
+;; Builtin: show column ruler at fill-column
 (use-package display-fill-column-indicator-mode
   :general
   (leader
     "T f" #'display-fill-column-indicator-mode))
 
 
-;; Builtin
+;; Builtin: visualize and cleanup whitespace
 (use-package whitespace
   :general
   (leader
@@ -145,17 +147,19 @@ Other buffers are left alone."
   (before-save . whitespace-cleanup))
 
 
+;; Visual undo tree browser
 (use-package vundo
   :general
   (leader
    "e u" #'vundo))
 
 
-;; Builtin
+;; Builtin: navigate camelCase and snake_case words
 (use-package subword
   :hook (after-init . global-subword-mode))
 
 
+;; Regexp replace with visual feedback
 (use-package visual-regexp
   :general
   ("M-%"   #'vr/query-replace
@@ -168,9 +172,11 @@ Other buffers are left alone."
   (require 'visual-regexp-steroids))
 
 
+;; Python/PCRE regex backend for visual-regexp
 (use-package visual-regexp-steroids)
 
 
+;; Automatic bracket pairing and navigation
 (use-package smartparens
   :general
   (leader
@@ -208,11 +214,12 @@ Other buffers are left alone."
   (sp-cancel-autoskip-on-backward-movement nil))
 
 
-;; Builtin
+;; Builtin: highlight matching parentheses
 (use-package paren
   :hook (after-init . show-paren-mode))
 
 
+;; Automatic Lisp indentation and parentheses management
 (use-package parinfer-rust-mode
   :diminish parinfer-rust-mode
 
@@ -245,6 +252,7 @@ Other buffers are left alone."
     (add-hook 'parinfer-rust-mode-hook #'turn-off-smartparens-mode)))
 
 
+;; Colorize nested parentheses by depth
 (use-package rainbow-delimiters
   :preface
   (eval-when-compile
@@ -254,6 +262,7 @@ Other buffers are left alone."
   (prog-mode . rainbow-delimiters-mode))
 
 
+;; Colorize color codes in buffer (e.g. #ff0000)
 (use-package rainbow-mode
   :preface
   (eval-when-compile
@@ -263,9 +272,11 @@ Other buffers are left alone."
   (prog-mode . rainbow-mode))
 
 
+;; Auto-detect indentation style from file content
 (use-package dtrt-indent)
 
 
+;; Apply .editorconfig settings
 (use-package editorconfig
   :hook (after-init . editorconfig-mode))
 
@@ -292,6 +303,7 @@ Other buffers are left alone."
       (dtrt-indent-mode))))
 
 
+;; Prevent *scratch* buffer from being killed
 (use-package unkillable-scratch
   :demand t
 
@@ -299,8 +311,8 @@ Other buffers are left alone."
   (unkillable-scratch +1))
 
 
+;; Direnv integration for per-project environments
 (use-package envrc
-  ;; envrc needs to run as late as humanly possible
   :commands envrc-global-mode
 
   :general
@@ -320,18 +332,20 @@ Other buffers are left alone."
     (advice-add 'envrc--apply :after #'gemacs--envrc-inject-emacs-bin-deps)))
 
 
+;; Use Emacs as $EDITOR for git commits, etc.
 (use-package with-editor)
 
 
 ;; --------------------------------------------------------------------------
 ;;; Minibuffers
 
-;; Builtin
+;; Builtin: allow minibuffer commands within minibuffer
 (use-package emacs
   :custom
   (enable-recursive-minibuffers t))
 
 
+;; Frequency/recency sorting for completion candidates
 (use-package prescient
   :custom
   (prescient-history-length 1000)
@@ -339,12 +353,14 @@ Other buffers are left alone."
   :hook (after-init . prescient-persist-mode))
 
 
+;; Space-separated pattern matching for completion
 (use-package orderless
   :custom
   (completion-styles '(orderless basic))
   (orderless-matching-styles '(orderless-initialism orderless-literal orderless-regexp)))
 
 
+;; Rich annotations for completion candidates
 (use-package marginalia
   :custom
   (marginalia-max-relative-age (* 60 60 24 7))
@@ -358,6 +374,7 @@ Other buffers are left alone."
   :hook (after-init . marginalia-mode))
 
 
+;; Vertical completion UI in minibuffer
 (use-package vertico
   :custom
   (vertico-cycle t)
@@ -365,11 +382,13 @@ Other buffers are left alone."
   :hook (after-init . vertico-mode))
 
 
+;; Prescient integration for vertico
 (use-package vertico-prescient
   :after (vertico prescient)
   :hook (after-init . vertico-prescient-mode))
 
 
+;; Enhanced search and navigation commands
 (use-package consult
   :general
   ("C-x C-b" #'consult-buffer
@@ -399,6 +418,7 @@ Other buffers are left alone."
                        '("fd" "--full-path" "--color=never" "--no-require-git")))))
 
 
+;; Contextual actions on completion candidates
 (use-package embark
   :general
   (leader
@@ -410,6 +430,7 @@ Other buffers are left alone."
    "C-," #'embark-export))
 
 
+;; Embark integration for consult
 (use-package embark-consult
   :after (embark consult)
   :hook (embark-collect-mode . consult-preview-at-point-mode))
@@ -418,13 +439,14 @@ Other buffers are left alone."
 ;; --------------------------------------------------------------------------
 ;;; Snippets
 
-;; Builtin
+;; Builtin: abbreviation expansion
 (use-package abbrev)
 
 
 ;; --------------------------------------------------------------------------
 ;;; Autocompletion
 
+;; Completion popup at point
 (use-package corfu
   :custom
   (corfu-auto t)
@@ -454,11 +476,13 @@ Other buffers are left alone."
    "C-q" #'corfu-quick-insert))
 
 
+;; Prescient integration for corfu
 (use-package corfu-prescient
   :after (corfu prescient)
   :hook (after-init . corfu-prescient-mode))
 
 
+;; Corfu support in terminal
 (use-package corfu-terminal
   :after corfu
 
@@ -467,7 +491,6 @@ Other buffers are left alone."
     (declare-function corfu-terminal-mode nil))
 
   :init
-  ;; No :demand, only load when running in terminal.
   (unless (display-graphic-p)
     (corfu-terminal-mode +1)))
 
@@ -475,13 +498,14 @@ Other buffers are left alone."
 ;; --------------------------------------------------------------------------
 ;;; Autoformatting
 
+;; Run code formatters asynchronously on save
 (use-package apheleia)
 
 
 ;; --------------------------------------------------------------------------
 ;;; Errors and documentation
 
-;; Builtin
+;; Builtin: on-the-fly syntax checking
 (use-package flymake
   :general
   (leader
@@ -491,11 +515,12 @@ Other buffers are left alone."
     "c f N" #'flymake-goto-prev-error))
 
 
+;; Additional flymake backends for various languages
 (use-package flymake-collection
   :hook (after-init . flymake-collection-hook-setup))
 
 
-;; Builtin
+;; Builtin: show documentation in echo area
 (use-package eldoc
   :custom
   (eldoc-echo-area-use-multiline-p nil))
@@ -514,6 +539,7 @@ Other buffers are left alone."
 ;; --------------------------------------------------------------------------
 ;;; Code folding
 
+;; Fold code by indentation level
 (use-package outline-indent
   :general
   (leader

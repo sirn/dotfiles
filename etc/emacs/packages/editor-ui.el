@@ -1,5 +1,6 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
+;; Select windows by number
 (use-package ace-window
   :general
   ("C-x o" #'ace-window)
@@ -11,17 +12,19 @@
   (aw-dispatch-always t))
 
 
+;; Display available keybindings in popup
 (use-package which-key
   :hook (after-init . which-key-mode))
 
 
-;; Builtin
+;; Builtin: browser-like tabs for window configurations
 (use-package tab-bar
   :custom
   (tab-bar-new-tab-choice "*scratch*")
   (tab-bar-close-button-show nil))
 
 
+;; Fancy modeline from Doom Emacs
 (use-package doom-modeline
   :custom
   (doom-modeline-height 25)
@@ -44,9 +47,11 @@
   (doom-modeline-mode +1))
 
 
+;; Icon fonts for various UI elements
 (use-package nerd-icons)
 
 
+;; Accessible and customizable color themes
 (use-package modus-themes
   :custom
   (modus-themes-common-palette-overrides
@@ -57,6 +62,7 @@
   (load-theme 'modus-vivendi t))
 
 
+;; macOS clipboard integration
 (use-package pbcopy
   :when (eq system-type 'darwin)
 
@@ -68,12 +74,13 @@
   (turn-on-pbcopy))
 
 
+;; OSC 52 clipboard for terminal (works over SSH)
 (use-package clipetty
   :unless (display-graphic-p)
   :hook (after-init . global-clipetty-mode))
 
 
-;; Builtin
+;; Builtin: frame, font, and GUI configuration
 (use-package emacs
   :preface
   (eval-when-compile

@@ -9,6 +9,7 @@
       (setenv (cdr api-config) key))))
 
 
+;; LLM chat client for multiple providers
 (use-package gptel
   :general
   (leader

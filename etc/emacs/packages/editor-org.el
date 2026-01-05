@@ -1,5 +1,6 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
+;; Builtin: outliner, note-taking, and task management
 (use-package org
   :demand t
   :general
@@ -54,9 +55,11 @@
   (org-agenda-mode . gemacs--org-agenda-mode-hook))
 
 
+;; Part of org: archive completed tasks
 (use-package org-archive)
 
 
+;; Modern styling for org-mode
 (use-package org-modern
   :after org
 
@@ -73,10 +76,12 @@
           ("ONHOLD" . (:inherit org-modern-todo :foreground ,fg-dim)))))))
 
 
+;; Query language for org-mode
 (use-package org-ql
   :after org)
 
 
+;; Group agenda items by custom categories
 (use-package org-super-agenda
   :after org
 

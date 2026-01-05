@@ -1,5 +1,6 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
+;; Builtin: Language Server Protocol client
 (use-package eglot
   :general
   (leader
@@ -54,6 +55,7 @@
     (advice-add 'project-kill-buffers :around #'gemacs--advice-eglot-shutdown-project)))
 
 
+;; Builtin: cross-reference navigation
 (use-package xref
   :general
   (leader

@@ -115,31 +115,6 @@ in
         '';
       }))
 
-      # Claude Code
-      (trivialBuild {
-        pname = "claude-code-ide";
-        version = "20250916";
-        src = pkgs.fetchFromGitHub {
-          owner = "manzaltu";
-          repo = "claude-code-ide.el";
-          rev = "32d853e20b9d245a6ee89c4a153a4e568250c62c";
-          sha256 = "sha256-OrcnUZXqRijJCgf1QE5kkPKKdWSJ4oMYt47Sn/EdQy0=";
-        };
-        packageRequires = [ websocket transient web-server ];
-        buildPhase = ''
-          runHook preBuild
-          emacs -L . --batch -f batch-byte-compile *.el
-          runHook postBuild
-        '';
-        installPhase = ''
-          runHook preInstall
-          LISPDIR=$out/share/emacs/site-lisp
-          install -d $LISPDIR
-          install *.el *.elc $LISPDIR
-          runHook postInstall
-        '';
-      })
-
       # Languages
       ansible
       ansible-doc

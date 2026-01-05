@@ -1,16 +1,6 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 
-(defun gemacs--term-is-with-editor-safe-p (buffer-name)
-  "Returns whether term is `with-editor'-safe."
-  (string-match-p
-   (rx "*"
-     (or
-       (seq "claude-code" "[" (zero-or-more nonl) "]"))
-     "*")
-   buffer-name))
-
-
 (defun gemacs--term-setup ()
   "Setup initial terminal state."
   (setq-local evil-insert-state-cursor 'box)
@@ -18,20 +8,19 @@
 
 
 (defun gemacs--term-with-editor-setup ()
-  "Setup `with-editor' but only when it is safe to do so."
+  "Setup `with-editor' for terminal buffers."
   (with-eval-after-load 'with-editor
-    (unless (gemacs--term-is-with-editor-safe-p (buffer-name))
-      (with-editor-export-editor))))
+    (with-editor-export-editor)))
 
 
-;; Builtin
+;; Builtin: basic terminal emulator
 (use-package term
   :hook
   ((term-mode . gemacs--term-setup)
    (term-mode . gemacs--term-with-editor-setup)))
 
 
-;; Builtin
+;; Builtin: Emacs Lisp shell
 (use-package eshell
   :general
   (leader
@@ -42,6 +31,7 @@
    (eshell-mode . gemacs--term-with-editor-setup)))
 
 
+;; Fast terminal emulator using Emacs Lisp
 (use-package eat
   :general
   (leader
@@ -85,10 +75,10 @@
     (message "Successfully exported %s" envvar))
 
   (defun gemacs--eat-with-editor-setup (process)
-    (unless (gemacs--term-is-with-editor-safe-p (buffer-name))
-      (with-editor-export-editor-eat process))))
+    (with-editor-export-editor-eat process)))
 
 
+;; Fast terminal emulator using libvterm
 (use-package vterm
   :general
   (leader

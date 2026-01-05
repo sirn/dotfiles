@@ -1,5 +1,6 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
+;; Git interface
 (use-package magit
   :general
   (leader
@@ -19,26 +20,27 @@
   (require 'forge))
 
 
+;; Part of magit: commit message editing
 (use-package git-commit
   :custom
-  ;; Max length for commit message summary is 50 characters as per
-  ;; https://chris.beams.io/posts/git-commit/.
   (git-commit-summary-max-length 50))
 
 
+;; GitHub/GitLab/etc. API client
 (use-package ghub)
 
 
+;; GitHub/GitLab issues and PRs in magit
 (use-package forge
   :preface
   (eval-when-compile
     (defvar forge-add-default-bindings))
 
   :init
-  ;; Disable default bindings as evil-collection provides its own.
   (setq forge-add-default-bindings nil))
 
 
+;; Show git diff in the gutter
 (use-package git-gutter
   :custom
   (git-gutter:disabled-modes '(fundamental-mode org-mode))

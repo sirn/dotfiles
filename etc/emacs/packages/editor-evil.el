@@ -1,5 +1,6 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
+;; Vim emulation layer
 (use-package evil
   :demand t
 
@@ -14,6 +15,7 @@
   (evil-mode +1))
 
 
+;; Evil keybindings for many modes
 (use-package evil-collection
   :after evil
 
@@ -25,6 +27,7 @@
   (evil-collection-init))
 
 
+;; Comment/uncomment with gc
 (use-package evil-commentary
   :after evil
 
@@ -36,6 +39,7 @@
   (evil-commentary-mode +1))
 
 
+;; Multiple cursors for evil
 (use-package evil-mc
   :after evil
 
@@ -47,6 +51,7 @@
   (global-evil-mc-mode +1))
 
 
+;; Jump between matching tags with %
 (use-package evil-matchit
   :after evil
 
@@ -58,6 +63,7 @@
   (global-evil-matchit-mode +1))
 
 
+;; Surround text with quotes, brackets, etc.
 (use-package evil-surround
   :after evil
 
@@ -69,6 +75,7 @@
   (global-evil-surround-mode +1))
 
 
+;; Evil keybindings for org-mode
 (use-package evil-org
   :after evil
 

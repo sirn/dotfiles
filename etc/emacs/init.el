@@ -172,24 +172,20 @@ This is an `:around' advice for many different functions."
 ;; --------------------------------------------------------------------------
 ;;; Early packages
 
-;; SQLite3 is a shared module and must be loaded early.
-
+;; SQLite3 dynamic module bindings
 (use-package sqlite3
   :demand t)
 
-;; Key bindings are handled by general.el, which replaces both bind-key
-;; and evil-leader; this is loaded early to allow use-package macro
-;; to work correctly.
-
+;; Keybinding framework (replaces bind-key and evil-leader)
 (eval-when-compile
   (use-package general
     :demand t)
 
   (general-create-definer leader
-      :keymaps 'override
-      :states '(normal visual motion insert)
-      :prefix "SPC"
-      :non-normal-prefix "M-SPC"))
+    :keymaps 'override
+    :states '(normal visual motion insert)
+    :prefix "SPC"
+    :non-normal-prefix "M-SPC"))
 
 
 ;; --------------------------------------------------------------------------
@@ -202,6 +198,7 @@ This is an `:around' advice for many different functions."
 (setq initial-scratch-message nil)
 (defalias 'yes-or-no-p 'y-or-n-p)
 
+;; Keep ~/.emacs.d clean by relocating files to etc/ and var/
 (use-package no-littering
   :demand t
   :config

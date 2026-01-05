@@ -1,8 +1,6 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
-;; --------------------------------------------------------------------------
-;;; Project
-
+;; Builtin: project-based file and buffer management
 (use-package project
   :demand t
 
@@ -14,8 +12,6 @@
   (:keymaps 'project-prefix-map
     "'" #'eat-project
     "b" #'consult-project-buffer
-    "c" #'gemacs--project-claude-code-ide
-    "C" #'gemacs--project-claude-code-ide-continue
     "d" #'project-dired
     "f" #'gemacs--project-fd
     "g" #'gemacs--project-gptel
@@ -43,8 +39,6 @@
     (declare-function gemacs--project-switch-command nil)
     (declare-function gemacs--project-switch-transient-menu nil)
     (declare-function gemacs--project-switch-smuggle-chosen-project nil)
-    (declare-function gemacs--project-claude-code-ide nil)
-    (declare-function gemacs--project-claude-code-ide-continue nil)
     (declare-function gemacs--project-gptel nil))
 
   :config
@@ -79,11 +73,8 @@
      ("f" "Find file (fd)" gemacs--project-fd)
      ("F" "Find file" project-find-file)
      ("s" "Ripgrep" consult-ripgrep)]
-    ["Coding Assistant"
-     ("c" "Claude Code" gemacs--project-claude-code-ide)
-     ("C" "Claude Code (continue)" gemacs--project-claude-code-ide-continue)
-     ("g" "GPTel" gemacs--project-gptel)]
     ["Tools"
+     ("g" "GPTel" gemacs--project-gptel)
      ("m" "Magit" magit-project-status)
      ("'" "Terminal (Eat)" eat-project)]
     ["Maintenance"
@@ -137,22 +128,6 @@
              (pr (project-current nil dir)))
         (project-remember-project pr)))
     (message "Projects successfully synced"))
-
-  (defun gemacs--project-claude-code-ide ()
-    "Open claude-code-ide with project root as default directory."
-    (interactive)
-    (require 'claude-code-ide)
-    (when-let ((project (project-current t)))
-      (let ((default-directory (project-root project)))
-        (claude-code-ide))))
-
-  (defun gemacs--project-claude-code-ide-continue ()
-    "Continue claude-code-ide with project root as default directory."
-    (interactive)
-    (require 'claude-code-ide)
-    (when-let ((project (project-current t)))
-      (let ((default-directory (project-root project)))
-        (claude-code-ide-continue))))
 
   (defun gemacs--project-gptel ()
     "Open gptel with project root as default directory."

@@ -3,7 +3,7 @@
 ;; --------------------------------------------------------------------------
 ;;; Spell checking
 
-;; Builtin
+;; Builtin: spell checking interface
 (use-package ispell
   :custom
   (ispell-program-name (expand-file-name "~/.emacs.d/var/emacs-bin-deps/hunspell"))
