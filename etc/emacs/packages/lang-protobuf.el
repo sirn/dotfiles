@@ -9,7 +9,7 @@
     (declare-function eglot-ensure nil))
 
   :init
-  (add-hook 'protobuf-mode-hook #'flycheck-mode)
+  (add-hook 'protobuf-mode-hook #'flymake-mode)
   (add-hook 'protobuf-mode-hook #'apheleia-mode)
   (add-hook 'protobuf-mode-hook #'eglot-ensure)
 

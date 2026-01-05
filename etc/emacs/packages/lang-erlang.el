@@ -11,7 +11,7 @@
     (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
 
   (add-hook 'erlang-mode-hook #'eglot-ensure)
-  (add-hook 'erlang-mode-hook #'flycheck-mode)
+  (add-hook 'erlang-mode-hook #'flymake-mode)
   (add-hook 'erlang-mode-hook #'gemacs--erlang-auto-format)
 
   (with-eval-after-load 'eglot

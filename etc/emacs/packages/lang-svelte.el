@@ -7,7 +7,7 @@
 
   :init
   (add-hook 'svelte-mode-hook #'eglot-ensure)
-  (add-hook 'svelte-mode-hook #'flycheck-mode)
+  (add-hook 'svelte-mode-hook #'flymake-mode)
 
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '(svelte-mode . ("svelteserver" "--stdio")))))

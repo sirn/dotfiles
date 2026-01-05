@@ -13,12 +13,12 @@
     (declare-function gemacs--yaml-maybe-ansible nil)
     (declare-function apheleia-mode nil)
     (declare-function eglot-ensure nil)
-    (declare-function flycheck-mode nil)
+    (declare-function flymake-mode nil)
     (declare-function ansible nil))
 
   :init
   (add-hook 'yaml-ts-mode-hook #'eglot-ensure)
-  (add-hook 'yaml-ts-mode-hook #'flycheck-mode)
+  (add-hook 'yaml-ts-mode-hook #'flymake-mode)
 
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '(yaml-ts-mode . ("yaml-language-server" "--stdio"))))

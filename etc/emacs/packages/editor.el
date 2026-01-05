@@ -502,70 +502,26 @@ Other buffers are left alone."
 ;; --------------------------------------------------------------------------
 ;;; Errors and documentation
 
-(use-package flycheck
+;; Builtin
+(use-package flymake
   :general
   (leader
-    "c f" '(:keymap flycheck-command-map))
-
-  (:keymaps 'flycheck-command-map
-   "f" #'flycheck-list-errors)
-
-  :preface
-  (eval-when-compile
-    (declare-function flycheck-previous-error nil)
-    (declare-function flycheck-next-error nil)
-    (declare-function flycheck-list-errors nil)
-    (declare-function flycheck-overlay-errors-at nil)
-    (declare-function flycheck-error-line-region nil))
-
-  :init
-  (defun gemacs--flycheck-disable-checkers (&rest checkers)
-    "Disable the given Flycheck syntax CHECKERS, symbols.
-This function affects only the current buffer, and neither causes
-nor requires Flycheck to be loaded."
-    (unless (boundp 'flycheck-disabled-checkers)
-      (setq flycheck-disabled-checkers nil))
-    (make-local-variable 'flycheck-disabled-checkers)
-    (dolist (checker checkers)
-      (cl-pushnew checker flycheck-disabled-checkers)))
-
-  :config
-  ;; Run a syntax check when changing buffers, just in case you
-  ;; modified some other files that impact the current one. See
-  ;; https://github.com/flycheck/flycheck/pull/1308.
-  (add-to-list 'flycheck-check-syntax-automatically 'idle-buffer-switch)
-
-  ;; For the above functionality, check syntax in a buffer that you
-  ;; switched to only briefly. This allows "refreshing" the syntax
-  ;; check state for several buffers quickly after e.g. changing a
-  ;; config file.
-  (setq flycheck-buffer-switch-check-intermediate-buffers t)
-  (setq flycheck-display-errors-delay 0.2))
+    "c f f" #'flymake-show-buffer-diagnostics
+    "c f p" #'flymake-show-project-diagnostics
+    "c f n" #'flymake-goto-next-error
+    "c f N" #'flymake-goto-prev-error))
 
 
+(use-package flymake-collection
+  :hook (after-init . flymake-collection-hook-setup))
 
 
+;; Builtin
 (use-package eldoc
   :demand t
 
-  :preface
-  (eval-when-compile
-    (declare-function gemacs--advice-disable-eldoc-on-flycheck nil))
-
   :custom
-  (eldoc-echo-area-use-multiline-p nil)
-
-  :config
-  (defun gemacs--advice-disable-eldoc-on-flycheck
-    (&rest _)
-    "Disable ElDoc when point is on a Flycheck overlay.
-This prevents ElDoc and Flycheck from fighting over the echo
-area."
-    (not (flycheck-overlay-errors-at (point))))
-
-  (with-eval-after-load 'flycheck
-    (advice-add 'eldoc-display-message-no-interference-p :after-while
-      #'gemacs--advice-disable-eldoc-on-flycheck)))
+  (eldoc-echo-area-use-multiline-p nil))
 
 
 ;; --------------------------------------------------------------------------

@@ -21,7 +21,7 @@
     (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
 
   (add-hook 'typescript-ts-mode-hook #'eglot-ensure)
-  (add-hook 'typescript-ts-mode-hook #'flycheck-mode)
+  (add-hook 'typescript-ts-mode-hook #'flymake-mode)
   (add-hook 'typescript-ts-mode-hook #'gemacs--typescript-auto-format)
 
   (with-eval-after-load 'eglot

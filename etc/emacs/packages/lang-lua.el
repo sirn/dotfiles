@@ -7,4 +7,4 @@
 
   :init
   (add-hook 'lua-mode-hook #'apheleia-mode)
-  (add-hook 'lua-mode-hook #'flycheck-mode))
+  (add-hook 'lua-mode-hook #'flymake-mode))

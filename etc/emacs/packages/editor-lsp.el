@@ -1,10 +1,5 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
-(use-package flycheck-eglot
-  :config
-  (global-flycheck-eglot-mode t))
-
-
 (use-package eglot
   :general
   (leader
@@ -56,10 +51,7 @@
           (ignore-errors (eglot-shutdown server)))
         (apply orig-fun args)))
 
-    (advice-add 'project-kill-buffers :around #'gemacs--advice-eglot-shutdown-project))
-
-  (use-package flycheck-eglot
-    :demand t))
+    (advice-add 'project-kill-buffers :around #'gemacs--advice-eglot-shutdown-project)))
 
 
 (use-package xref

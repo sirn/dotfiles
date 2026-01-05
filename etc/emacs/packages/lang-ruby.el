@@ -8,16 +8,16 @@
 (use-package ruby-ts-mode
   :preface
   (eval-when-compile
-    (declare-function apheleia-mode nil))
+    (declare-function apheleia-mode nil)
+    (declare-function eglot-ensure nil))
 
   :init
-  (defun gemacs--ruby-flycheck ()
-    (setq-local flycheck-checker 'ruby-standard)
-    (setq-local flycheck-disabled-checkers '(ruby-rubocop)))
-
-  (add-hook 'ruby-ts-mode-hook #'flycheck-mode)
   (add-hook 'ruby-ts-mode-hook #'apheleia-mode)
-  (add-hook 'ruby-ts-mode-hook #'gemacs--ruby-flycheck)
+  (add-hook 'ruby-ts-mode-hook #'eglot-ensure)
+  (add-hook 'ruby-ts-mode-hook #'flymake-mode)
+
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs '(ruby-ts-mode . ("ruby-lsp"))))
 
   :config
   (with-eval-after-load 'apheleia

@@ -41,13 +41,13 @@
   (eval-when-compile
     (declare-function apheleia-mode nil)
     (declare-function eglot-ensure nil)
-    (declare-function flycheck-mode nil)
+    (declare-function flymake-mode nil)
     (defvar web-mode-fontification-off))
 
   :init
   (add-hook 'web-mode-hook #'apheleia-mode)
   (add-hook 'web-mode-hook #'eglot-ensure)
-  (add-hook 'web-mode-hook #'flycheck-mode)
+  (add-hook 'web-mode-hook #'flymake-mode)
 
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '(web-mode . ("vscode-html-language-server" "--stdio"))))

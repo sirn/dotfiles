@@ -7,7 +7,7 @@
     (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
 
   (add-hook 'terraform-mode-hook #'eglot-ensure)
-  (add-hook 'terraform-mode-hook #'flycheck-mode)
+  (add-hook 'terraform-mode-hook #'flymake-mode)
   (add-hook 'terraform-mode-hook #'gemacs--terraform-auto-format)
 
   (with-eval-after-load 'eglot

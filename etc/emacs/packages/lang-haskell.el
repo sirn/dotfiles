@@ -7,4 +7,4 @@
 
   :init
   (add-hook 'haskell-mode-hook #'apheleia-mode)
-  (add-hook 'haskell-mode-hook #'flycheck-mode))
+  (add-hook 'haskell-mode-hook #'flymake-mode))

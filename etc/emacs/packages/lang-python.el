@@ -7,14 +7,10 @@
 
   :preface
   (eval-when-compile
-    (declare-function apheleia-mode nil)
-    (defvar flycheck-python-pycompile-executable))
+    (declare-function apheleia-mode nil))
 
   :init
   (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
-  (dolist (name '("python" "python2" "python3"))
-    (add-to-list 'safe-local-variable-values
-                 `(flycheck-python-pycompile-executable . ,name)))
 
   (cond
     ((executable-find "python3") (setq python-shell-interpreter "python3"))
@@ -22,7 +18,7 @@
     (t (setq python-shell-interpreter "python")))
 
   (add-hook 'python-ts-mode-hook #'eglot-ensure)
-  (add-hook 'python-ts-mode-hook #'flycheck-mode)
+  (add-hook 'python-ts-mode-hook #'flymake-mode)
   (add-hook 'python-ts-mode-hook #'apheleia-mode)
 
   (with-eval-after-load 'eglot

@@ -30,7 +30,7 @@
     (add-to-list 'apheleia-mode-alist '(nim-mode . nimpretty)))
 
   (add-hook 'nim-mode-hook #'eglot-ensure)
-  (add-hook 'nim-mode-hook #'flycheck-mode)
+  (add-hook 'nim-mode-hook #'flymake-mode)
 
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '(nim-mode . ("nimlsp")))))

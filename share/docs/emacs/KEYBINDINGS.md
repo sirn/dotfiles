@@ -126,8 +126,11 @@ Environment variable management commands.
 | `c e a` | `embark-act` | Show contextual actions for the item at point. |
 | `c e e` | `embark-dwim` | Execute the default action for the item at point. |
 | `c e b` | `embark-bindings` | Show all possible Embark actions for the current context. |
-| `c f` | `(Prefix)` | Flycheck error-checking commands. |
-| `c f f` | `flycheck-list-errors` | List all flycheck errors (main flycheck action). |
+| `c f` | `(Prefix)` | Flymake error-checking commands. |
+| `c f f` | `flymake-show-buffer-diagnostics` | Show buffer diagnostics. |
+| `c f p` | `flymake-show-project-diagnostics` | Show project diagnostics. |
+| `c f n` | `flymake-goto-next-error` | Go to next error. |
+| `c f N` | `flymake-goto-prev-error` | Go to previous error. |
 | `c l` | `(Prefix)` | Eglot (LSP) commands. |
 | `c x` | `(Prefix)` | Xref (cross-reference) commands. |
 

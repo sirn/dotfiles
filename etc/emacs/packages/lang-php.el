@@ -3,7 +3,7 @@
 (use-package php-mode
   :init
   (add-hook 'php-mode-hook #'eglot-ensure)
-  (add-hook 'php-mode-hook #'flycheck-mode)
+  (add-hook 'php-mode-hook #'flymake-mode)
 
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs

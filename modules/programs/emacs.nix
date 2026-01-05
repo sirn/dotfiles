@@ -57,10 +57,7 @@ in
       evil-mc
       evil-org
       evil-surround
-      flycheck
-      flycheck-eglot
-      flycheck-golangci-lint
-      flycheck-rust
+      flymake-collection
       forge
       ghub
       git-gutter
@@ -146,6 +143,7 @@ in
       ansible
       ansible-doc
       clojure-mode
+      clojure-ts-mode
       dockerfile-mode
       elixir-mode
       erlang
@@ -218,9 +216,15 @@ in
           buf
 
           # LSPs
+          clang-tools
+          clojure-lsp
           gopls
           intelephense
+          nil
           pyright
+          rubyPackages.ruby-lsp
+          nodePackages.bash-language-server
+          dockerfile-language-server
           nodePackages.svelte-language-server
           vscode-langservers-extracted
           typescript-language-server
