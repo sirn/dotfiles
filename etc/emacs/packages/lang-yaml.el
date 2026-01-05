@@ -16,10 +16,13 @@
     (declare-function flymake-mode nil)
     (declare-function ansible nil))
 
-  :init
-  (add-hook 'yaml-ts-mode-hook #'eglot-ensure)
-  (add-hook 'yaml-ts-mode-hook #'flymake-mode)
+  :hook
+  ((yaml-ts-mode . eglot-ensure)
+   (yaml-ts-mode . flymake-mode)
+   (yaml-ts-mode . gemacs--yaml-maybe-ansible)
+   (yaml-ts-mode . gemacs--yaml-maybe-apheleia))
 
+  :init
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '(yaml-ts-mode . ("yaml-language-server" "--stdio"))))
 
@@ -45,10 +48,7 @@
         (goto-char (point-min))
         (if (re-search-forward "^apiVersion:" nil t)
           (apheleia-mode -1)
-          (apheleia-mode +1)))))
-
-  (add-hook 'yaml-ts-mode-hook 'gemacs--yaml-maybe-ansible)
-  (add-hook 'yaml-ts-mode-hook 'gemacs--yaml-maybe-apheleia))
+          (apheleia-mode +1))))))
 
 
 (use-package ansible)

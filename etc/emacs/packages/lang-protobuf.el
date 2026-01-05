@@ -2,16 +2,16 @@
 
 (use-package protobuf-mode
   :mode "\\.proto\\'"
-  
+
   :preface
   (eval-when-compile
     (declare-function apheleia-mode nil)
     (declare-function eglot-ensure nil))
 
-  :init
-  (add-hook 'protobuf-mode-hook #'flymake-mode)
-  (add-hook 'protobuf-mode-hook #'apheleia-mode)
-  (add-hook 'protobuf-mode-hook #'eglot-ensure)
+  :hook
+  ((protobuf-mode . flymake-mode)
+   (protobuf-mode . apheleia-mode)
+   (protobuf-mode . eglot-ensure))
 
   :config
   (with-eval-after-load 'eglot

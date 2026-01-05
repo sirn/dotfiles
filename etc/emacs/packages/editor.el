@@ -86,8 +86,8 @@ Other buffers are left alone."
   (leader
     "T l" #'display-line-numbers-mode)
 
-  :init
-  (add-hook 'prog-mode-hook #'display-line-numbers-mode))
+  :hook
+  (prog-mode . display-line-numbers-mode))
 
 
 ;; Builtin
@@ -107,8 +107,8 @@ Other buffers are left alone."
   :custom
   (whitespace-style '(face tabs tab-mark spaces space-mark trailing lines-tail))
 
-  :config
-  (add-hook 'before-save-hook #'whitespace-cleanup))
+  :hook
+  (before-save . whitespace-cleanup))
 
 
 (use-package vundo
@@ -157,13 +157,15 @@ Other buffers are left alone."
     (declare-function show-smartparens-global-mode nil)
     (declare-function smartparens-global-mode nil))
 
+  :hook
+  (prog-mode . gemacs--smartparens-load)
+
   :init
   (defun gemacs--smartparens-load ()
     (require 'smartparens-config)
     (smartparens-global-mode +1)
     (show-smartparens-global-mode +1)
-    (sp-use-paredit-bindings))
-  (add-hook 'prog-mode-hook #'gemacs--smartparens-load))
+    (sp-use-paredit-bindings)))
 
 
 ;; Part of smartparens
@@ -194,6 +196,13 @@ Other buffers are left alone."
   :custom
   (parinfer-rust-auto-download -1)
 
+  :hook
+  ((clojure-mode . parinfer-rust-mode)
+   (emacs-lisp-mode . parinfer-rust-mode)
+   (common-lisp-mode . parinfer-rust-mode)
+   (scheme-mode . parinfer-rust-mode)
+   (lisp-mode . parinfer-rust-mode))
+
   :init
   (setq parinfer-rust-library
     (no-littering-expand-var-file-name
@@ -202,12 +211,6 @@ Other buffers are left alone."
       (cond
        ((eq system-type 'darwin) "libparinfer_rust.dylib")
        ((eq system-type 'gnu/linux) "libparinfer_rust.so")))))
-
-  (add-hook 'clojure-mode-hook #'parinfer-rust-mode)
-  (add-hook 'emacs-lisp-mode-hook #'parinfer-rust-mode)
-  (add-hook 'common-lisp-mode-hook #'parinfer-rust-mode)
-  (add-hook 'scheme-mode-hook #'parinfer-rust-mode)
-  (add-hook 'lisp-mode-hook #'parinfer-rust-mode)
 
   :config
   (with-eval-after-load 'smartparens
@@ -219,8 +222,8 @@ Other buffers are left alone."
   (eval-when-compile
     (declare-function rainbow-delimiters-mode nil))
 
-  :init
-  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+  :hook
+  (prog-mode . rainbow-delimiters-mode))
 
 
 (use-package rainbow-mode
@@ -228,27 +231,15 @@ Other buffers are left alone."
   (eval-when-compile
     (declare-function rainbow-mode nil))
 
-  :init
-  (add-hook 'prog-mode-hook #'rainbow-mode))
+  :hook
+  (prog-mode . rainbow-mode))
 
 
 (use-package dtrt-indent)
 
 
 (use-package editorconfig
-  :preface
-  (eval-when-compile
-    (declare-function editorconfig-mode nil))
-
-  :init
-  (defun gemacs--editorconfig-load ()
-    "Load `editorconfig' when initially finding a file."
-    (require 'editorconfig)
-    (remove-hook 'find-file-hook #'gemacs--editorconfig-load))
-  (add-hook 'find-file-hook #'gemacs--editorconfig-load)
-
-  :config
-  (editorconfig-mode +1))
+  :hook (after-init . editorconfig-mode))
 
 
 ;; Part of editorconfig
@@ -259,17 +250,18 @@ Other buffers are left alone."
   (eval-when-compile
     (declare-function dtrt-indent-mode nil))
 
+  :hook
+  ((conf-mode . gemacs--dtrt-maybe-enable)
+   (text-mode . gemacs--dtrt-maybe-enable)
+   (prog-mode . gemacs--dtrt-maybe-enable))
+
   :init
   (defun gemacs--dtrt-maybe-enable ()
     "Enable `dtrt-indent-mode' if `.editorconfig' is not present"
     (when (not (and (stringp buffer-file-name)
                  (editorconfig-core-get-nearest-editorconfig
                    (file-name-directory buffer-file-name))))
-      (dtrt-indent-mode)))
-
-  (add-hook 'conf-mode-hook #'gemacs--dtrt-maybe-enable)
-  (add-hook 'text-mode-hook #'gemacs--dtrt-maybe-enable)
-  (add-hook 'prog-mode-hook #'gemacs--dtrt-maybe-enable))
+      (dtrt-indent-mode))))
 
 
 (use-package unkillable-scratch
@@ -287,12 +279,13 @@ Other buffers are left alone."
   (leader
     "E" '(:keymap envrc-command-map))
 
+  :hook
+  (gemacs-after-init . envrc-global-mode)
+
   :init
   (defun gemacs--envrc-inject-emacs-bin-deps (&rest _)
     "Injects local emacs-bin-deps"
     (add-to-list 'exec-path (expand-file-name "~/.emacs.d/var/emacs-bin-deps") t))
-
-  (add-hook 'gemacs-after-init-hook 'envrc-global-mode)
 
   :config
   (with-eval-after-load 'envrc
@@ -553,5 +546,5 @@ Other buffers are left alone."
   (eval-when-compile
     (declare-function outline-indent-minor-mode nil))
 
-  :init
-  (add-hook 'prog-mode-hook #'outline-indent-minor-mode))
+  :hook
+  (prog-mode . outline-indent-minor-mode))

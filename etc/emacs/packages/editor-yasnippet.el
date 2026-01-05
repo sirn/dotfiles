@@ -13,12 +13,13 @@
   (tempel-path
    (expand-file-name "~/.dotfiles/etc/emacs/templates/*.eld"))
 
+  :hook
+  ((conf-mode . tempel-setup-capf)
+   (prog-mode . tempel-setup-capf)
+   (text-mode . tempel-setup-capf))
+
   :init
   (defun tempel-setup-capf ()
     (setq-local completion-at-point-functions
                 (cons #'tempel-expand
-                      completion-at-point-functions)))
-
-  (add-hook 'conf-mode-hook 'tempel-setup-capf)
-  (add-hook 'prog-mode-hook 'tempel-setup-capf)
-  (add-hook 'text-mode-hook 'tempel-setup-capf))
+                      completion-at-point-functions))))

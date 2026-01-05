@@ -11,11 +11,12 @@
     (declare-function apheleia-mode nil)
     (declare-function eglot-ensure nil))
 
-  :init
-  (add-hook 'nix-ts-mode-hook #'eglot-ensure)
-  (add-hook 'nix-ts-mode-hook #'apheleia-mode)
-  (add-hook 'nix-ts-mode-hook #'flymake-mode)
+  :hook
+  ((nix-ts-mode . eglot-ensure)
+   (nix-ts-mode . apheleia-mode)
+   (nix-ts-mode . flymake-mode))
 
+  :init
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '(nix-ts-mode . ("nil"))))
 

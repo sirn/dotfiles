@@ -50,7 +50,8 @@
   (unless (file-directory-p org-directory)
     (make-directory org-directory t))
 
-  (add-hook 'org-agenda-mode-hook #'gemacs--org-agenda-mode-hook))
+  :hook
+  (org-agenda-mode . gemacs--org-agenda-mode-hook))
 
 
 (use-package org-archive
@@ -60,9 +61,10 @@
 (use-package org-modern
   :demand t
   :after org
-  :init
-  (add-hook 'org-mode-hook #'org-modern-mode)
-  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
+
+  :hook
+  ((org-mode . org-modern-mode)
+   (org-agenda-finalize . org-modern-agenda))
 
   :config
   (with-eval-after-load 'modus-themes

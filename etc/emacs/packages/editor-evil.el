@@ -10,7 +10,7 @@
   (evil-undo-system 'undo-redo)
 
   :config
-  (fset 'evil-visual-update-x-selection 'ignore)
+  (defalias 'evil-visual-update-x-selection #'ignore)
   (evil-mode +1))
 
 

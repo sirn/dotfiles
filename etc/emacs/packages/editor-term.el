@@ -26,9 +26,9 @@
 
 ;; Builtin
 (use-package term
-  :config
-  (add-hook 'term-mode-hook #'gemacs--term-setup)
-  (add-hook 'term-mode-hook #'gemacs--term-with-editor-setup))
+  :hook
+  ((term-mode . gemacs--term-setup)
+   (term-mode . gemacs--term-with-editor-setup)))
 
 
 ;; Builtin
@@ -37,9 +37,9 @@
   (leader
     "'e" #'eshell)
 
-  :config
-  (add-hook 'eshell-mode-hook #'gemacs--term-setup)
-  (add-hook 'eshell-mode-hook #'gemacs--term-with-editor-setup))
+  :hook
+  ((eshell-mode . gemacs--term-setup)
+   (eshell-mode . gemacs--term-with-editor-setup)))
 
 
 (use-package eat
@@ -53,11 +53,13 @@
     (declare-function project-current nil)
     (declare-function project-root nil))
 
+  :hook
+  ((eat-mode . gemacs--term-setup)
+   (eat-exec . gemacs--eat-with-editor-setup))
+
   :config
   (setq eat-term-name "xterm-256color")
   (setq eat-kill-buffer-on-exit t)
-
-  (add-hook 'eat-mode-hook #'gemacs--term-setup)
 
   ;; Note: with-editor doesn't support eat just yet
   ;; See also https://github.com/magit/with-editor/discussions/128
@@ -84,9 +86,7 @@
 
   (defun gemacs--eat-with-editor-setup (process)
     (unless (gemacs--term-is-with-editor-safe-p (buffer-name))
-      (with-editor-export-editor-eat process)))
-
-  (add-hook 'eat-exec-hook #'gemacs--eat-with-editor-setup))
+      (with-editor-export-editor-eat process))))
 
 
 (use-package vterm
@@ -94,6 +94,6 @@
   (leader
     "'v" #'vterm)
 
-  :config
-  (add-hook 'vterm-mode-hook #'gemacs--term-setup)
-  (add-hook 'vterm-mode-hook #'gemacs--term-with-editor-setup))
+  :hook
+  ((vterm-mode . gemacs--term-setup)
+   (vterm-mode . gemacs--term-with-editor-setup)))

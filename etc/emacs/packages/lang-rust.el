@@ -11,14 +11,15 @@
   (eval-when-compile
     (declare-function gemacs--rust-auto-format nil))
 
+  :hook
+  ((rust-ts-mode . eglot-ensure)
+   (rust-ts-mode . flymake-mode)
+   (rust-ts-mode . gemacs--rust-auto-format))
+
   :init
   (defun gemacs--rust-auto-format ()
     (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
     (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
-
-  (add-hook 'rust-ts-mode-hook #'eglot-ensure)
-  (add-hook 'rust-ts-mode-hook #'flymake-mode)
-  (add-hook 'rust-ts-mode-hook #'gemacs--rust-auto-format)
 
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '(rust-ts-mode . ("rust-analyzer")))))

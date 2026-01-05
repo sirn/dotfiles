@@ -13,11 +13,12 @@
     (declare-function eglot-ensure nil)
     (declare-function flymake-mode nil))
 
+  :hook
+  ((json-ts-mode . apheleia-mode)
+   (json-ts-mode . eglot-ensure)
+   (json-ts-mode . flymake-mode))
+
   :init
-  (add-hook 'json-ts-mode-hook #'apheleia-mode)
-  (add-hook 'json-ts-mode-hook #'eglot-ensure)
-  (add-hook 'json-ts-mode-hook #'flymake-mode)
-  
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '(json-ts-mode . ("vscode-json-language-server" "--stdio")))))
 

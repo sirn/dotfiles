@@ -11,11 +11,12 @@
     (declare-function apheleia-mode nil)
     (declare-function eglot-ensure nil))
 
-  :init
-  (add-hook 'ruby-ts-mode-hook #'apheleia-mode)
-  (add-hook 'ruby-ts-mode-hook #'eglot-ensure)
-  (add-hook 'ruby-ts-mode-hook #'flymake-mode)
+  :hook
+  ((ruby-ts-mode . apheleia-mode)
+   (ruby-ts-mode . eglot-ensure)
+   (ruby-ts-mode . flymake-mode))
 
+  :init
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '(ruby-ts-mode . ("ruby-lsp"))))
 

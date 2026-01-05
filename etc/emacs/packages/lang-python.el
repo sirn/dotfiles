@@ -9,6 +9,11 @@
   (eval-when-compile
     (declare-function apheleia-mode nil))
 
+  :hook
+  ((python-ts-mode . eglot-ensure)
+   (python-ts-mode . flymake-mode)
+   (python-ts-mode . apheleia-mode))
+
   :init
   (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
 
@@ -16,10 +21,6 @@
     ((executable-find "python3") (setq python-shell-interpreter "python3"))
     ((executable-find "python2") (setq python-shell-interpreter "python2"))
     (t (setq python-shell-interpreter "python")))
-
-  (add-hook 'python-ts-mode-hook #'eglot-ensure)
-  (add-hook 'python-ts-mode-hook #'flymake-mode)
-  (add-hook 'python-ts-mode-hook #'apheleia-mode)
 
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs

@@ -12,14 +12,15 @@
     (declare-function gemacs--go-auto-format nil)
     (declare-function go--backward-irrelevant nil))
 
+  :hook
+  ((go-ts-mode . eglot-ensure)
+   (go-ts-mode . flymake-mode)
+   (go-ts-mode . gemacs--go-auto-format))
+
   :init
   (defun gemacs--go-auto-format ()
     (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
     (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
-
-  (add-hook 'go-ts-mode-hook #'eglot-ensure)
-  (add-hook 'go-ts-mode-hook #'flymake-mode)
-  (add-hook 'go-ts-mode-hook #'gemacs--go-auto-format)
 
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '(go-ts-mode . ("gopls")))))

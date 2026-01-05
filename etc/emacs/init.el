@@ -52,8 +52,6 @@
 
   (setq gnutls-verify-error t)
   (setq gnutls-min-prime-bits 3072)
-  (when (< emacs-major-version 27)
-    (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"))
 
   (let ((cert "/usr/local/etc/libressl/cert.pem"))
     (when (file-exists-p cert)

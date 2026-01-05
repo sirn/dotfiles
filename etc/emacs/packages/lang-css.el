@@ -13,10 +13,11 @@
     (declare-function eglot-ensure nil)
     (declare-function flymake-mode nil))
 
+  :hook
+  ((css-ts-mode . apheleia-mode)
+   (css-ts-mode . eglot-ensure)
+   (css-ts-mode . flymake-mode))
+
   :init
-  (add-hook 'css-ts-mode-hook #'apheleia-mode)
-  (add-hook 'css-ts-mode-hook #'eglot-ensure)
-  (add-hook 'css-ts-mode-hook #'flymake-mode)
-  
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '(css-ts-mode . ("vscode-css-language-server" "--stdio")))))

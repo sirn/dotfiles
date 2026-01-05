@@ -11,8 +11,8 @@
 
 
 (use-package nerd-icons-dired
-  :init
-  (add-hook 'dired-mode-hook #'nerd-icons-dired-mode))
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
 
 
 (use-package treemacs

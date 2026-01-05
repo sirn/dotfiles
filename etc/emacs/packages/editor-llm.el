@@ -75,7 +75,8 @@
   (defun gemacs--gptel-initialize-buffer ()
     (visual-line-mode t))
 
-  (add-hook 'gptel-mode-hook #'gemacs--gptel-initialize-buffer)
+  :hook
+  (gptel-mode . gemacs--gptel-initialize-buffer)
 
   :config
   (defvar gemacs--gptel-anthropic-backend

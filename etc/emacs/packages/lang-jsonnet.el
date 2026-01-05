@@ -1,12 +1,12 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package jsonnet-mode
-  :init
-  (add-hook 'jsonnet-mode-hook #'apheleia-mode)
-
   :preface
   (eval-when-compile
     (declare-function apheleia-mode nil))
+
+  :hook
+  (jsonnet-mode . apheleia-mode)
 
   :config
   (with-eval-after-load 'apheleia

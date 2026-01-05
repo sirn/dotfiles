@@ -5,9 +5,10 @@
   (eval-when-compile
     (declare-function gemacs--svelte-auto-format nil))
 
-  :init
-  (add-hook 'svelte-mode-hook #'eglot-ensure)
-  (add-hook 'svelte-mode-hook #'flymake-mode)
+  :hook
+  ((svelte-mode . eglot-ensure)
+   (svelte-mode . flymake-mode))
 
+  :init
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '(svelte-mode . ("svelteserver" "--stdio")))))

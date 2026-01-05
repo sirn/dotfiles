@@ -12,13 +12,14 @@
     (declare-function apheleia-mode nil)
     (declare-function eglot-ensure nil))
 
-  :init
-  (add-hook 'c-ts-mode-hook #'apheleia-mode)
-  (add-hook 'c-ts-mode-hook #'eglot-ensure)
-  (add-hook 'c-ts-mode-hook #'flymake-mode)
-  (add-hook 'c++-ts-mode-hook #'apheleia-mode)
-  (add-hook 'c++-ts-mode-hook #'eglot-ensure)
-  (add-hook 'c++-ts-mode-hook #'flymake-mode)
+  :hook
+  ((c-ts-mode . apheleia-mode)
+   (c-ts-mode . eglot-ensure)
+   (c-ts-mode . flymake-mode)
+   (c++-ts-mode . apheleia-mode)
+   (c++-ts-mode . eglot-ensure)
+   (c++-ts-mode . flymake-mode))
 
+  :init
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '((c-ts-mode c++-ts-mode) . ("clangd")))))

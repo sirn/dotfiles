@@ -5,6 +5,6 @@
   (eval-when-compile
     (declare-function apheleia-mode nil))
 
-  :init
-  (add-hook 'haskell-mode-hook #'apheleia-mode)
-  (add-hook 'haskell-mode-hook #'flymake-mode))
+  :hook
+  ((haskell-mode . apheleia-mode)
+   (haskell-mode . flymake-mode)))

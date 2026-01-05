@@ -7,6 +7,9 @@
     (declare-function gemacs--makefile-disable-editorconfig nil)
     (declare-function gemacs--makefile-disable-dtrt-indent nil))
 
+  :hook
+  (makefile-mode . gemacs--makefile-force-tabs)
+
   :config
   (with-eval-after-load 'editorconfig
     (defun gemacs--makefile-disable-editorconfig ()
@@ -22,5 +25,4 @@
 
   (defun gemacs--makefile-force-tabs ()
     "Force Makefile to always use tabs."
-    (setq indent-tabs-mode t))
-  (add-hook 'makefile-mode-hook #'gemacs--makefile-force-tabs))
+    (setq indent-tabs-mode t)))

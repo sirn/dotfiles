@@ -6,12 +6,17 @@
     (declare-function apheleia-mode nil)
     (declare-function smie-default-forward-token nil))
 
-  :init
-  (add-hook 'nim-mode-hook #'apheleia-mode)
+  :hook
+  ((nim-mode . apheleia-mode)
+   (nim-mode . eglot-ensure)
+   (nim-mode . flymake-mode))
 
   :config
+  ;; Upstream nim-mode doesn't guard against nil nim-smie--line-info,
+  ;; causing errors when (< nil integer) is evaluated. This patch adds
+  ;; a fallback value of -1 when the alist lookup returns nil.
+  ;; TODO: Submit fix upstream to nim-lang/nim-mode.
   (el-patch-defun nim-mode-forward-token ()
-    "Handle cases where `nim-smie--line-info' is `nil'."
     (when (line-number-at-pos)
       (let ((_pos (point)))
         (skip-chars-forward " \t")
@@ -28,9 +33,6 @@
   (with-eval-after-load 'apheleia
     (add-to-list 'apheleia-formatters '(nimpretty . ("nimpretty" "--out:/dev/stdout" filepath)))
     (add-to-list 'apheleia-mode-alist '(nim-mode . nimpretty)))
-
-  (add-hook 'nim-mode-hook #'eglot-ensure)
-  (add-hook 'nim-mode-hook #'flymake-mode)
 
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '(nim-mode . ("nimlsp")))))

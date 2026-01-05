@@ -10,9 +10,10 @@
   (eval-when-compile
     (declare-function eglot-ensure nil))
 
-  :init
-  (add-hook 'clojure-ts-mode-hook #'eglot-ensure)
-  (add-hook 'clojure-ts-mode-hook #'flymake-mode)
+  :hook
+  ((clojure-ts-mode . eglot-ensure)
+   (clojure-ts-mode . flymake-mode))
 
+  :init
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '(clojure-ts-mode . ("clojure-lsp")))))

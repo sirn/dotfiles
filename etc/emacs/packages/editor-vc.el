@@ -35,33 +35,12 @@
     (defvar forge-add-default-bindings))
 
   :init
-  ;; BUG: https://github.com/emacs-evil/evil-collection/issues/543
-  (setq forge-add-default-bindings nil)
-
-  :config
-  (with-eval-after-load 'ghub
-    ;; BUG: https://github.com/magit/ghub/issues/81
-    (setq ghub-use-workaround-for-emacs-bug 'force)))
+  ;; Disable default bindings as evil-collection provides its own.
+  (setq forge-add-default-bindings nil))
 
 
 (use-package git-gutter
   :custom
-  ;; BUG: https://github.com/syohex/emacs-git-gutter/issues/24
   (git-gutter:disabled-modes '(fundamental-mode org-mode))
 
-  :preface
-  (eval-when-compile
-    (declare-function global-git-gutter-mode nil))
-
-  ;; Since our magit is defer-loaded, git-gutter need to wait for magit
-  ;; to prevent `ad-handle-definition' warning due to `vc-revert' being
-  ;; redefined.
-  :init
-  (defun gemacs--git-gutter-load ()
-    "Load `git-gutter' when initially finding a file."
-    (require 'git-gutter)
-    (remove-hook 'find-file-hook #'gemacs--git-gutter-load))
-  (add-hook 'find-file-hook #'gemacs--git-gutter-load)
-
-  :config
-  (global-git-gutter-mode +1))
+  :hook (after-init . global-git-gutter-mode))

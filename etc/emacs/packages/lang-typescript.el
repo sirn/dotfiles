@@ -15,14 +15,15 @@
   (eval-when-compile
     (declare-function gemacs--typescript-auto-format nil))
 
+  :hook
+  ((typescript-ts-mode . eglot-ensure)
+   (typescript-ts-mode . flymake-mode)
+   (typescript-ts-mode . gemacs--typescript-auto-format))
+
   :init
   (defun gemacs--typescript-auto-format ()
     (add-hook 'before-save-hook #'gemacs--eglot-format-buffer -10 t)
     (add-hook 'before-save-hook #'gemacs--eglot-organize-imports nil t))
-
-  (add-hook 'typescript-ts-mode-hook #'eglot-ensure)
-  (add-hook 'typescript-ts-mode-hook #'flymake-mode)
-  (add-hook 'typescript-ts-mode-hook #'gemacs--typescript-auto-format)
 
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '(typescript-ts-mode . ("typescript-language-server" "--stdio")))))

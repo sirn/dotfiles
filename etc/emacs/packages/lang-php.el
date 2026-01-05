@@ -1,10 +1,11 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
 (use-package php-mode
-  :init
-  (add-hook 'php-mode-hook #'eglot-ensure)
-  (add-hook 'php-mode-hook #'flymake-mode)
+  :hook
+  ((php-mode . eglot-ensure)
+   (php-mode . flymake-mode))
 
+  :init
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs
       `(php-mode . ,(eglot-alternatives

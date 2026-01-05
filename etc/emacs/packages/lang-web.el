@@ -44,11 +44,12 @@
     (declare-function flymake-mode nil)
     (defvar web-mode-fontification-off))
 
-  :init
-  (add-hook 'web-mode-hook #'apheleia-mode)
-  (add-hook 'web-mode-hook #'eglot-ensure)
-  (add-hook 'web-mode-hook #'flymake-mode)
+  :hook
+  ((web-mode . apheleia-mode)
+   (web-mode . eglot-ensure)
+   (web-mode . flymake-mode))
 
+  :init
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '(web-mode . ("vscode-html-language-server" "--stdio"))))
 
@@ -63,6 +64,6 @@
   :custom
   (zencoding-preview-default nil)
 
-  :init
-  (add-hook 'web-mode-hook 'zencoding-mode)
-  (add-hook 'css-mode-hook 'zencoding-mode))
+  :hook
+  ((web-mode . zencoding-mode)
+   (css-mode . zencoding-mode)))
