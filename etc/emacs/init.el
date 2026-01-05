@@ -3,6 +3,8 @@
 ;; This file wraps over an actual configuration for automatic loading
 ;; and byte-compilation.
 
+(setq gc-cons-threshold most-positive-fixnum)
+
 ;; --------------------------------------------------------------------------
 ;;; Early configurations
 
@@ -233,6 +235,9 @@ This is an `:around' advice for many different functions."
 ;;; Finalizing
 
 (run-hooks 'gemacs-after-init-hook)
+
+(add-hook 'emacs-startup-hook
+  (lambda () (setq gc-cons-threshold (* 16 1024 1024))))
 
 
 (provide 'init)

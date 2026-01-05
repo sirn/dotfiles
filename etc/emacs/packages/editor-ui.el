@@ -68,6 +68,11 @@
   (turn-on-pbcopy))
 
 
+(use-package clipetty
+  :unless (display-graphic-p)
+  :hook (after-init . global-clipetty-mode))
+
+
 ;; Builtin
 (use-package emacs
   :preface

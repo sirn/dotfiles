@@ -38,6 +38,7 @@ in
       ace-link
       ace-window
       avy
+      clipetty
       consult
       corfu
       corfu-prescient

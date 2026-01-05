@@ -45,6 +45,16 @@ Other buffers are left alone."
       (message "Reverted %d buffer(s)" count))))
 
 
+;; Builtin
+(use-package winner
+  :hook (after-init . winner-mode))
+
+
+;; Builtin
+(use-package repeat
+  :hook (after-init . repeat-mode))
+
+
 ;; --------------------------------------------------------------------------
 ;;; Editing behaviors
 
@@ -56,6 +66,33 @@ Other buffers are left alone."
 
   :config
   (put 'downcase-region 'disabled nil))
+
+
+;; Builtin
+(use-package savehist
+  :custom
+  (savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
+  :hook (after-init . savehist-mode))
+
+
+;; Builtin
+(use-package saveplace
+  :hook (after-init . save-place-mode))
+
+
+;; Builtin
+(use-package autorevert
+  :custom
+  (global-auto-revert-non-file-buffers t)
+  (auto-revert-verbose nil)
+  :hook (after-init . global-auto-revert-mode))
+
+
+;; Builtin
+(use-package recentf
+  :custom
+  (recentf-max-saved-items 200)
+  :hook (after-init . recentf-mode))
 
 
 (use-package avy
@@ -288,6 +325,12 @@ Other buffers are left alone."
 
 ;; --------------------------------------------------------------------------
 ;;; Minibuffers
+
+;; Builtin
+(use-package emacs
+  :custom
+  (enable-recursive-minibuffers t))
+
 
 (use-package prescient
   :custom
