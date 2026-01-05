@@ -42,7 +42,7 @@ in
       corfu
       corfu-prescient
       corfu-terminal
-      ctrlf
+      doom-modeline
       dtrt-indent
       eat
       editorconfig
@@ -85,8 +85,7 @@ in
       restclient
       smartparens
       sql-indent
-      telephone-line
-      tree-sitter
+      tempel
       treemacs
       treemacs-evil
       treemacs-nerd-icons
@@ -97,10 +96,7 @@ in
       vertico-prescient
       visual-regexp
       vterm
-      w3m
       which-key
-      yasnippet
-      yasnippet-snippets
 
       (apheleia.overrideDerivation
         (attrs: {

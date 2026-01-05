@@ -29,27 +29,26 @@
   (setq tab-bar-close-button-show nil))
 
 
-(use-package telephone-line
+(use-package doom-modeline
   :custom
-  (telephone-line-height 18)
-  (telephone-line-primary-right-separator 'telephone-line-utf-abs-right)
-  (telephone-line-secondary-right-separator 'telephone-line-utf-abs-hollow-right)
-  (telephone-line-primary-left-separator 'telephone-line-utf-abs-left)
-  (telephone-line-secondary-left-separator 'telephone-line-utf-abs-hollow-left)
-  (telephone-line-lhs
-    '((evil   . (telephone-line-evil-tag-segment))
-      (nil    . (telephone-line-vc-segment))
-      (nil    . (telephone-line-project-segment))
-      (nil    . (telephone-line-process-segment
-                 telephone-line-buffer-segment))))
-  (telephone-line-rhs
-    '((nil    . (telephone-line-flycheck-segment))
-      (nil    . (telephone-line-misc-info-segment))
-      (nil    . (telephone-line-major-mode-segment))
-      (evil   . (telephone-line-airline-position-segment))))
+  (doom-modeline-height 25)
+  (doom-modeline-bar-width 4)
+  (doom-modeline-icon nil)
+  (doom-modeline-modal-icon nil)
+  (doom-modeline-major-mode-icon nil)
+  (doom-modeline-buffer-state-icon nil)
+  (doom-modeline-buffer-modification-icon nil)
+  (doom-modeline-minor-modes nil)
+  (doom-modeline-enable-word-count nil)
+  (doom-modeline-buffer-encoding nil)
+  (doom-modeline-indent-info nil)
+  (doom-modeline-checker-simple-format t)
+  (doom-modeline-vcs-max-length 20)
+  (doom-modeline-env-version nil)
+  (doom-modeline-project-detection 'project)
 
   :config
-  (telephone-line-mode +1))
+  (doom-modeline-mode +1))
 
 
 (use-package nerd-icons)
@@ -186,5 +185,5 @@
 
   (add-hook 'gemacs-after-init-hook
     `(lambda ()
-       (require 'telephone-line)
+       (require 'doom-modeline)
        (require 'modus-themes))))

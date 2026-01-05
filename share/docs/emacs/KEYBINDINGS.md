@@ -19,6 +19,8 @@ These keybindings are generally available in most modes.
 | `M-g i` | `consult-imenu` | Search for definitions/sections in the current buffer. |
 | `M-s r` | `consult-ripgrep` | Search the project with `ripgrep` (same as `leader s r`). |
 | `M-y` | `consult-yank-pop` | Select an item from the kill ring to yank. |
+| `M-+` | `tempel-complete` | Complete template at point. |
+| `M-*` | `tempel-insert` | Insert a template. |
 
 ### macOS Specific Global Keybindings
 
@@ -108,13 +110,13 @@ Environment variable management commands.
 | `A m c` | `notmuch-mua-new-mail` | Compose a new email. |
 | `A m m` | `notmuch` | Open the Notmuch email client. |
 
-#### `A w` - Web (w3m)
+#### `A w` - Web (eww)
 
 | Key | Command | Description |
 | :--- | :--- | :--- |
-| `A w W` | `w3m` | Open the `w3m` browser. |
-| `A w w` | `w3m-goto-url` | Go to a URL in `w3m`. |
-| `A w s` | `w3m-search` | Search the web with `w3m`. |
+| `A w w` | `eww` | Open URL in `eww` browser. |
+| `A w s` | `eww-search-words` | Search the web with `eww`. |
+| `A w b` | `eww-list-bookmarks` | List `eww` bookmarks. |
 
 ### `c` - Code
 
@@ -163,13 +165,12 @@ Environment variable management commands.
 | `e x d` | `sp-splice-sexp` | Unwrap expression (splice). |
 | `e x k` | `sp-kill-whole-line` | Kill the current line. |
 
-#### `e y` - Yasnippet
+#### `e y` - Tempel (Snippets)
 
 | Key | Command | Description |
 | :--- | :--- | :--- |
-| `e y n` | `yas-new-snippet` | Create a new snippet. |
-| `e y s` | `yas-insert-snippet` | Insert a snippet. |
-| `e y v` | `yas-visit-snippet-file` | Visit the file for the current snippet. |
+| `e y s` | `tempel-insert` | Insert a template. |
+| `e y c` | `tempel-complete` | Complete template at point. |
 
 ### `g` - Git
 

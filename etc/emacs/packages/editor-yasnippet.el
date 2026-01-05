@@ -1,28 +1,24 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
-(use-package yasnippet
-  :demand t
-
+(use-package tempel
   :general
-  (leader
-   "e y s" #'yas-insert-snippet
-   "e y n" #'yas-new-snippet
-   "e y v" #'yas-visit-snippet-file)
+  ("M-+" #'tempel-complete)
+  ("M-*" #'tempel-insert)
 
-  :preface
-  (eval-when-compile
-    (declare-function yas-global-mode nil)
-    (declare-function yas-reload-all nil))
+  (leader
+   "e y s" #'tempel-insert
+   "e y c" #'tempel-complete)
 
   :custom
-  (yas-snippet-dirs
-   `(,(expand-file-name "~/.dotfiles/etc/emacs/snippets")))
+  (tempel-path
+   (expand-file-name "~/.dotfiles/etc/emacs/templates/*.eld"))
 
-  :config
-  (yas-reload-all)
-  (yas-global-mode +1))
+  :init
+  (defun tempel-setup-capf ()
+    (setq-local completion-at-point-functions
+                (cons #'tempel-expand
+                      completion-at-point-functions)))
 
-
-(use-package yasnippet-snippets
-  :after yasnippet
-  :demand t)
+  (add-hook 'conf-mode-hook 'tempel-setup-capf)
+  (add-hook 'prog-mode-hook 'tempel-setup-capf)
+  (add-hook 'text-mode-hook 'tempel-setup-capf))

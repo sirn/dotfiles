@@ -419,17 +419,6 @@ Other buffers are left alone."
   :hook (embark-collect-mode . consult-preview-at-point-mode))
 
 
-(use-package ctrlf
-  :demand t
-
-  :custom
-  (ctrlf-default-search-style 'fuzzy)
-
-  :config
-  (ctrlf-mode +1))
-
-
-
 ;; --------------------------------------------------------------------------
 ;;; Snippets
 
@@ -580,24 +569,13 @@ area."
 
 
 ;; --------------------------------------------------------------------------
-;;; Tree Sitter
+;;; Tree Sitter (builtin treesit)
 
-(use-package tree-sitter
-  :defer 2
-
-  :preface
-  (eval-when-compile
-    (declare-function global-tree-sitter-mode nil)
-    (declare-function tree-sitter-hl-mode nil))
-
+(use-package emacs
   :init
   (add-to-list
    'treesit-extra-load-path
-   (no-littering-expand-var-file-name "treesit-grammars/lib"))
-
-  :config
-  (global-tree-sitter-mode +1)
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+   (no-littering-expand-var-file-name "treesit-grammars/lib")))
 
 
 ;; --------------------------------------------------------------------------
