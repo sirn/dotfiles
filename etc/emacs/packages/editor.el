@@ -111,22 +111,10 @@ Other buffers are left alone."
   (add-hook 'before-save-hook #'whitespace-cleanup))
 
 
-(use-package undo-tree
-  :demand t
-
+(use-package vundo
   :general
   (leader
-   "e u" #'undo-tree-visualize)
-
-  :custom
-  (undo-tree-enable-undo-in-region nil)
-  (undo-tree-auto-save-history t)
-
-  :config
-  (dolist (func '(undo-tree-load-history undo-tree-save-history))
-    (advice-add func :around #'gemacs--advice-inhibit-message))
-
-  (global-undo-tree-mode +1))
+   "e u" #'vundo))
 
 
 ;; Builtin

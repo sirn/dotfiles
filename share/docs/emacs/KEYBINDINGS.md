@@ -144,7 +144,7 @@ Environment variable management commands.
 
 | Key | Command | Description |
 | :--- | :--- | :--- |
-| `e u` | `undo-tree-visualize` | Open the undo-tree visualizer. |
+| `e u` | `vundo` | Open the vundo undo tree visualizer. |
 
 #### `e w` - Whitespace
 

@@ -7,7 +7,7 @@
   (evil-want-integration +1)
   (evil-want-keybinding nil)
   (evil-mode-line-format nil)
-  (evil-undo-system 'undo-tree)
+  (evil-undo-system 'undo-redo)
 
   :config
   (fset 'evil-visual-update-x-selection 'ignore)

@@ -91,7 +91,7 @@ in
       treemacs-evil
       treemacs-nerd-icons
       treesit-grammars.with-all-grammars
-      undo-tree
+      vundo
       unkillable-scratch
       vertico
       vertico-prescient
