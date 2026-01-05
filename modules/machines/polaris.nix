@@ -53,10 +53,13 @@
         profile = {
           name = "dual_aw3225qf_internal";
           outputs = [
-            { criteria = "$aw3225qf"; }
+            {
+              criteria = "$aw3225qf";
+              mode = "3840x2160@60Hz";
+            }
             {
               criteria = "$internal";
-              position = "457,1440";
+              status = "disable";
             }
           ];
         };
