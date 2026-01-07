@@ -77,6 +77,13 @@
   (setq sh-shell-file default-shell)
   (setq shell-file-name default-shell))
 
+;; Inherit environment variables from shell on macOS
+(use-package exec-path-from-shell
+  :if (eq system-type 'darwin)
+  :demand t
+  :config
+  (exec-path-from-shell-initialize))
+
 
 ;; --------------------------------------------------------------------------
 ;;; Package management

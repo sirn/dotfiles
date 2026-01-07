@@ -153,6 +153,7 @@ in
       # instead of in emacs-bin-deps below
       notmuch
     ] else [ ]) ++ (if pkgs.stdenv.isDarwin then [
+      exec-path-from-shell
       osx-trash
       pbcopy
     ] else [ ]);
