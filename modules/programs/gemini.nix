@@ -29,6 +29,39 @@ in
         auth = {
           selectedType = "gemini-api-key";
         };
+        disableYoloMode = true;
+      };
+      tools = {
+        autoAccept = true;
+        allowed = [
+          "ReadFileTool(*)"
+          "GlobTool(*)"
+          "GrepTool(*)"
+          "ShellTool(cat)"
+          "ShellTool(ls)"
+          "ShellTool(find)"
+          "ShellTool(grep)"
+          "ShellTool(rg)"
+          "ShellTool(fd)"
+          "ShellTool(curl)"
+          "ShellTool(wget)"
+          "ShellTool(git status)"
+          "ShellTool(git diff)"
+          "ShellTool(git log)"
+          "ShellTool(git branch)"
+          "ShellTool(jj status)"
+          "ShellTool(jj diff)"
+          "ShellTool(jj log)"
+        ];
+        exclude = [
+          "ShellTool(sudo)"
+          "ShellTool(kill)"
+          "ShellTool(systemctl)"
+          "ShellTool(chmod)"
+          "ShellTool(chown)"
+          "ShellTool(rm)"
+          "ShellTool(sops)"
+        ];
       };
     };
   };

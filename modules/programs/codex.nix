@@ -22,6 +22,8 @@ in
           };
         })
       ];
+      sandbox = "workspace-write";
+      ask_for_approval = "on-failure";
     };
   };
 

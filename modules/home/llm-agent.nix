@@ -140,12 +140,12 @@ in
     settings = {
       mcp = {
         context7 = {
-          inherit (mcpServers.context7) command;
+          command = [ mcpServers.context7.command ];
           type = "local";
           enabled = true;
         };
         brave-search = {
-          inherit (mcpServers.brave-search) command;
+          command = [ mcpServers.brave-search.command ];
           type = "local";
           enabled = true;
         };
