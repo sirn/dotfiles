@@ -6,7 +6,6 @@ in
 {
   programs.claude-code = {
     enable = true;
-
     package = pkgs.unstable.claude-code;
 
     settings = {
@@ -32,6 +31,12 @@ in
           "Bash(jj status:*)"
           "Bash(jj diff:*)"
           "Bash(jj log:*)"
+          "Bash(tree:*)"
+          "Bash(lstr:*)"
+          "Read(**/*.env.example)"
+          "Read(**/*.env.sample)"
+          "Write(**/*.env.example)"
+          "Write(**/*.env.sample)"
         ];
         deny = [
           "Bash(sudo:*)"
@@ -40,10 +45,17 @@ in
           "Bash(chmod:*)"
           "Bash(chown:*)"
           "Bash(sops:*)"
+          "Bash(git push:*)"
+          "Bash(jj git push:*)"
+          "Read(**/.env*)"
+          "Read(**/*.env)"
+          "Read(**/*.env.*)"
+          "Write(**/.env*)"
+          "Write(**/*.env)"
+          "Write(**/*.env.*)"
         ];
         ask = [
           "Bash(rm:*)"
-          "Bash(git push:*)"
           "Bash(git commit:*)"
           "Bash(jj git:*)"
         ];

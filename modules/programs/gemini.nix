@@ -61,6 +61,8 @@ in
           "ShellTool(chown)"
           "ShellTool(rm)"
           "ShellTool(sops)"
+          "ShellTool(git push)"
+          "ShellTool(jj git push)"
         ];
       };
     };
