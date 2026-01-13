@@ -37,12 +37,13 @@ in
           "Read(**/*.env.sample)"
           "Write(**/*.env.example)"
           "Write(**/*.env.sample)"
+          "WebSearch"
+          "WebFetch(domain:*)"
         ];
         deny = [
           "Bash(sudo:*)"
           "Bash(kill:*)"
           "Bash(systemctl:*)"
-          "Bash(chmod:*)"
           "Bash(chown:*)"
           "Bash(sops:*)"
           "Bash(git push:*)"
@@ -55,6 +56,7 @@ in
           "Write(**/*.env.*)"
         ];
         ask = [
+          "Bash(chmod:*)"
           "Bash(rm:*)"
           "Bash(git commit:*)"
           "Bash(jj git:*)"

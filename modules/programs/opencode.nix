@@ -7,7 +7,7 @@
     package = (pkgs.writeScriptBin "opencode" ''
       #!${pkgs.runtimeShell}
       exec "${lib.getExe pkgs.local.envWrapper}" \
-        -i ~/.config/llm-agent/env \
+        -i "''${XDG_CONFIG_HOME:-$HOME/.config}/llm-agent/env" \
         -a GOOGLE_GENERATIVE_AI_API_KEY=GEMINI_API_KEY \
         -- "${lib.getExe pkgs.unstable.opencode}" "$@"
     '');
@@ -47,7 +47,7 @@
           "sudo *" = "deny";
           "kill *" = "deny";
           "systemctl *" = "deny";
-          "chmod *" = "deny";
+          "chmod *" = "ask";
           "chown *" = "deny";
           "git push *" = "deny";
           "jj git push *" = "deny";

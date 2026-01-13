@@ -57,7 +57,6 @@ in
           "ShellTool(sudo)"
           "ShellTool(kill)"
           "ShellTool(systemctl)"
-          "ShellTool(chmod)"
           "ShellTool(chown)"
           "ShellTool(rm)"
           "ShellTool(sops)"
