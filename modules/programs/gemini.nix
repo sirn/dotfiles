@@ -33,6 +33,7 @@ in
       };
       tools = {
         autoAccept = true;
+        sandbox = pkgs.stdenv.isDarwin;
         allowed = [
           "ReadFileTool(*)"
           "GlobTool(*)"

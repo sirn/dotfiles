@@ -651,7 +651,7 @@ in
 
     settings = {
       mcpServers = {
-        inherit (mcpServers) context7;
+        context7 = { inherit (mcpServers.context7) command; };
       };
     };
   };
