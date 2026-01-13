@@ -37,6 +37,8 @@ in
           "ReadFileTool(*)"
           "GlobTool(*)"
           "GrepTool(*)"
+          "Edit"
+          "WriteFile"
           "ShellTool(cat)"
           "ShellTool(ls)"
           "ShellTool(find)"

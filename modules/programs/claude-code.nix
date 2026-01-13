@@ -16,6 +16,7 @@ in
           "Read(*)"
           "Glob(*)"
           "Grep(*)"
+          "Write(*)"
           "Bash(cat:*)"
           "Bash(find:*)"
           "Bash(fd:*)"
