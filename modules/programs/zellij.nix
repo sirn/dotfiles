@@ -266,11 +266,15 @@ in
           SESSION=main
         fi
 
+        # Update SSH_TTY for new panes
+        export SSH_TTY=$(tty)
+
         ${if pkgs.stdenv.isLinux then ''
         exec systemd-run \
           --user \
           --scope \
           --slice=app.slice \
+          --setenv=SSH_TTY="$SSH_TTY" \
           ${cfg.package}/bin/zellij attach "$SESSION" -c
         '' else ''
         exec ${cfg.package}/bin/zellij attach "$SESSION" -c

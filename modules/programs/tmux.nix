@@ -12,6 +12,7 @@ in
     mouse = true;
 
     extraConfig = ''
+      set -ga update-environment " SSH_TTY"
       set -g default-command "exec ${cfg.shell}"
       set -g set-clipboard on
       set -g set-titles on
