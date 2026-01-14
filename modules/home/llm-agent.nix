@@ -758,7 +758,7 @@ let
     ${agent.prompt}
   '';
 
-  mkClaudeCodeCommand = name: cmd:
+  mkClaudeCodeCommand = _name: cmd:
     let
       argHint = if cmd ? argumentHint then "\nargument-hint: ${cmd.argumentHint}" else "";
       allowedTools = lib.concatStringsSep ", " cmd.claude-code.allowedTools;
@@ -771,7 +771,7 @@ let
       ${cmd.prompt}
     '';
 
-  mkOpencodeCommand = name: cmd:
+  mkOpencodeCommand = _name: cmd:
     let
       argHint = if cmd ? argumentHint then "\nargument-hint: ${cmd.argumentHint}" else "";
     in
@@ -863,7 +863,7 @@ let
         braveMcpWrapper = pkgs.writeScriptBin "brave-mcp-wrapper" ''
           #!${pkgs.runtimeShell}
           exec "${lib.getExe pkgs.local.envWrapper}" \
-            -i "''${XDG_CONFIG_HOME:-$HOME/.config}/llm-agent/env" \
+            -i "''${XDG_CONFIG_HOME:-''${HOME}/.config}/llm-agent/env" \
             -- ${lib.getExe pkgs.local.mcpServers.brave-search} --transport stdio
         '';
       in
@@ -892,46 +892,38 @@ in
     ../programs/octofriend.nix
   ];
 
-  programs.claude-code = lib.mkIf claudeCodeCfg.enable {
-    memory.text = instructionText;
-    commands = lib.mapAttrs mkClaudeCodeCommand sharedCommands;
-    agents = lib.mapAttrs mkClaudeCodeAgent sharedAgents;
+  programs = {
+    git.ignores = [ ".my/" ];
 
-    mcpServers = {
-      inherit (mcpServers) context7 brave-search;
+    claude-code = lib.mkIf claudeCodeCfg.enable {
+      memory.text = instructionText;
+      commands = lib.mapAttrs mkClaudeCodeCommand sharedCommands;
+      agents = lib.mapAttrs mkClaudeCodeAgent sharedAgents;
+      mcpServers = {
+        inherit (mcpServers) context7 brave-search;
+      };
     };
-  };
 
-  programs.codex = lib.mkIf codexCfg.enable {
-    custom-instructions = instructionText;
-
-    settings = {
-      mcp_servers = {
+    codex = lib.mkIf codexCfg.enable {
+      custom-instructions = instructionText;
+      settings.mcp_servers = {
         context7 = { inherit (mcpServers.context7) command; };
         brave-search = { inherit (mcpServers.brave-search) command; };
       };
     };
-  };
 
-  programs.gemini-cli = lib.mkIf geminiCliCfg.enable {
-    context = {
-      GEMINI = instructionText;
-    };
-
-    settings = {
-      mcpServers = {
+    gemini-cli = lib.mkIf geminiCliCfg.enable {
+      context.GEMINI = instructionText;
+      settings.mcpServers = {
         context7 = { inherit (mcpServers.context7) command; };
       };
     };
-  };
 
-  programs.opencode = lib.mkIf opencodeCfg.enable {
-    rules = instructionText;
-    commands = lib.mapAttrs mkOpencodeCommand sharedCommands;
-    agents = lib.mapAttrs mkOpencodeAgent sharedAgents;
-
-    settings = {
-      mcp = {
+    opencode = lib.mkIf opencodeCfg.enable {
+      rules = instructionText;
+      commands = lib.mapAttrs mkOpencodeCommand sharedCommands;
+      agents = lib.mapAttrs mkOpencodeAgent sharedAgents;
+      settings.mcp = {
         context7 = {
           command = [ mcpServers.context7.command ];
           type = "local";
@@ -944,48 +936,57 @@ in
         };
       };
     };
-  };
 
-  programs.octofriend = lib.mkIf octofriendCfg.enable {
-    instruction = instructionText;
+    octofriend = lib.mkIf octofriendCfg.enable {
+      instruction = instructionText;
+    };
   };
 
   home.packages = lib.optionals claudeCodeCfg.enable [
     (pkgs.writeScriptBin "synclaude" ''
       #!${pkgs.runtimeShell}
-      ENV_FILE="''${XDG_CONFIG_HOME:-$HOME/.config}/llm-agent/env"
+      set -euo pipefail
+      ENV_FILE="''${XDG_CONFIG_HOME:-''${HOME}/.config}/llm-agent/env"
       if [ -f "$ENV_FILE" ]; then
+          # shellcheck disable=SC1090
           . "$ENV_FILE"
       fi
 
-      export SYNTHETIC_MODEL=''${SYNTHETIC_MODEL:-hf:zai-org/GLM-4.7}
+      export SYNTHETIC_MODEL="''${SYNTHETIC_MODEL:-hf:zai-org/GLM-4.7}"
       export ANTHROPIC_BASE_URL=https://api.synthetic.new/anthropic
-      export ANTHROPIC_AUTH_TOKEN=$SYNTHETIC_API_KEY
-      export ANTHROPIC_DEFAULT_OPUS_MODEL=''${ANTHROPIC_DEFAULT_OPUS_MODEL:-$SYNTHETIC_MODEL}
-      export ANTHROPIC_DEFAULT_SONNET_MODEL=''${ANTHROPIC_DEFAULT_SONNET_MODEL:-$SYNTHETIC_MODEL}
-      export ANTHROPIC_DEFAULT_HAIKU_MODEL=''${ANTHROPIC_DEFAULT_HAIKU_MODEL:-$SYNTHETIC_MODEL}
-      export CLAUDE_CODE_SUBAGENT_MODEL=''${CLAUDE_CODE_SUBAGENT_MODEL:-$SYNTHETIC_MODEL}
+      export ANTHROPIC_AUTH_TOKEN="$SYNTHETIC_API_KEY"
+      export ANTHROPIC_DEFAULT_OPUS_MODEL="''${ANTHROPIC_DEFAULT_OPUS_MODEL:-$SYNTHETIC_MODEL}"
+      export ANTHROPIC_DEFAULT_SONNET_MODEL="''${ANTHROPIC_DEFAULT_SONNET_MODEL:-$SYNTHETIC_MODEL}"
+      export ANTHROPIC_DEFAULT_HAIKU_MODEL="''${ANTHROPIC_DEFAULT_HAIKU_MODEL:-$SYNTHETIC_MODEL}"
+      export CLAUDE_CODE_SUBAGENT_MODEL="''${CLAUDE_CODE_SUBAGENT_MODEL:-$SYNTHETIC_MODEL}"
       export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
-      export CLAUDE_CONFIG_DIR=$XDG_CONFIG_HOME/claude-synthetic
+      export CLAUDE_CONFIG_DIR="''${XDG_CONFIG_HOME}/claude-synthetic"
 
       exec ${lib.getExe config.programs.claude-code.finalPackage} "$@"
     '')
 
     (pkgs.writeScriptBin "synthetic-quota" ''
       #!${pkgs.runtimeShell}
-      ENV_FILE="''${XDG_CONFIG_HOME:-$HOME/.config}/llm-agent/env"
+      set -euo pipefail
+      ENV_FILE="''${XDG_CONFIG_HOME:-''${HOME}/.config}/llm-agent/env"
       if [ -f "$ENV_FILE" ]; then
+          # shellcheck disable=SC1090
           . "$ENV_FILE"
       fi
 
-      if [ -z "$SYNTHETIC_API_KEY" ]; then
+      if [ -z "''${SYNTHETIC_API_KEY:-}" ]; then
           echo >&2 "SYNTHETIC_API_KEY is not set"
           exit 1
       fi
 
-      ${lib.getExe pkgs.curl} -s \
+      response=$(${lib.getExe pkgs.curl} -sf --max-time 10 \
           -H "Authorization: Bearer $SYNTHETIC_API_KEY" \
-          https://api.synthetic.new/v2/quotas | ${lib.getExe pkgs.jq}
+          https://api.synthetic.new/v2/quotas) || {
+          echo >&2 "Failed to fetch quota information"
+          exit 1
+      }
+
+      echo "$response" | ${lib.getExe pkgs.jq}
     '')
   ];
 }
