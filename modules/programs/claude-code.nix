@@ -68,7 +68,8 @@ in
 
   programs.git = lib.mkIf cfg.enable {
     ignores = [
-      ".claude/"
+      ".claude/*.local.json"
+      ".claude/*.local.md"
     ];
   };
 }
