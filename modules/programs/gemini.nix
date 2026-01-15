@@ -55,6 +55,9 @@ in
           "ShellTool(jj status)"
           "ShellTool(jj diff)"
           "ShellTool(jj log)"
+          "ShellTool(jj show)"
+          "ShellTool(go test)"
+          "ShellTool(go build)"
         ];
         exclude = [
           "ShellTool(sudo)"

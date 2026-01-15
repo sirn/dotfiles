@@ -54,6 +54,10 @@
           "jj log" = "allow";
           "jj show *" = "allow";
           "jj show" = "allow";
+          "go test *" = "allow";
+          "go test" = "allow";
+          "go build *" = "allow";
+          "go build" = "allow";
           "curl *" = "allow";
           "curl" = "allow";
           "wget *" = "allow";
