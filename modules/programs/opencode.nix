@@ -13,6 +13,10 @@
     '');
 
     settings = {
+      mode = {
+        plan.model = "synthetic/hf:zai-org/GLM-4.7";
+        build.model = "synthetic/hf:MiniMaxAI/MiniMax-M2.1";
+      };
       permission = {
         read = {
           "*" = "allow";
