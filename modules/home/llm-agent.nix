@@ -12,11 +12,14 @@ let
         1. Identify context:
            - Run `jj diff -s` to see changed files
            - If $ARGUMENTS provided, focus on those specific files/paths
-        2. Run all three commands in parallel using the Task tool:
-           - Execute `/my-review` prompt logic (spawn 4 parallel agents)
-           - Execute `/my-optimize` prompt logic (spawn 1 agent)
-           - Execute `/my-lint` prompt logic (run linting tools directly)
-        3. Wait for all three tasks to complete
+
+        2. Run all four commands in parallel using the Task tool:
+           - Run the /my-review command (spawns 5 parallel reviewer agents)
+           - Run the /my-optimize command (analyzes performance)
+           - Run the /my-test command (runs tests)
+           - Run the /my-lint command (runs linting tools)
+
+        3. Wait for all four tasks to complete
         4. Consolidate findings into a single report
         </process>
 
@@ -25,11 +28,12 @@ let
         2. **Review Findings** - From /my-review (Critical, Quality, Convention, Best Practices)
         3. **Security Findings** - From /my-review (Vulnerabilities, threat modeling)
         4. **Performance Issues** - From /my-optimize (Problem descriptions and optimized solutions)
-        5. **Lint Results** - From /my-lint (Auto-fixed summary and manual fix requirements)
-        6. **Action items** - Prioritize list of fixes (Critical > High > Low)
+        5. **Test Results** - From /my-test (Test coverage, failures, and fixes)
+        6. **Lint Results** - From /my-lint (Auto-fixed summary and manual fix requirements)
+        7. **Action items** - Prioritize list of fixes (Critical > High > Low)
         </output>
 
-        Use the Task tool to spawn three concurrent tasks for review, optimization, and linting.
+        Use the Task tool to spawn four concurrent tasks for review, optimization, testing, and linting.
       '';
     };
     my-review = {
@@ -503,7 +507,7 @@ let
     code-analyst = {
       description = "Analyzes code for patterns, architecture, and structural insights";
       claude-code = {
-        allowedTools = [ "Read" "Grep" "Glob" "Bash" ];
+        allowedTools = [ "Read" "Grep" "Glob" ];
         color = "yellow";
         model = "sonnet";
       };
@@ -648,7 +652,14 @@ let
   sharedSkills = {
     commit-message-advisor = {
       description = "Analyzes changes and suggests commit messages following repository conventions";
-      claude-code.allowedTools = [ "Bash" ];
+      claude-code.allowedTools = [
+        "Bash(jj status:*)"
+        "Bash(jj diff:*)"
+        "Bash(jj log:*)"
+        "Bash(git status:*)"
+        "Bash(git diff:*)"
+        "Bash(git log:*)"
+      ];
       prompt = ''
         # Commit Message Advisor
 
@@ -690,7 +701,30 @@ let
 
     project-setup = {
       description = "Sets up project development environment (wrapper scripts and/or Nix flake)";
-      claude-code.allowedTools = [ "Read" "Grep" "Glob" "Task" "Write" "Bash" ];
+      claude-code.allowedTools = [
+        "Read"
+        "Grep"
+        "Glob"
+        "Task"
+        "Write"
+        "Bash(chmod:*)"
+        "Bash(mkdir:*)"
+        "Bash(ls:*)"
+        "Bash(nix:*)"
+        "Bash(npm:*)"
+        "Bash(pnpm:*)"
+        "Bash(yarn:*)"
+        "Bash(cargo:*)"
+        "Bash(go:*)"
+        "Bash(python:*)"
+        "Bash(pip:*)"
+        "Bash(poetry:*)"
+        "Bash(uv:*)"
+        "Bash(bundle:*)"
+        "Bash(make:*)"
+        "Bash(task:*)"
+        "Bash(just:*)"
+      ];
       prompt = ''
         # Project Setup
 
@@ -771,20 +805,16 @@ let
   };
 
   # Claude Code uses tools from agent.tools; opencode doesn't support tool restrictions, colors, or model
-  mkClaudeCodeAgent = name: agent:
-    let
-      tools = lib.concatStringsSep ", " agent.claude-code.allowedTools;
-    in
-    ''
-      ---
-      name: ${name}
-      description: ${agent.description}
-      tools: ${tools}
-      color: ${agent.claude-code.color}
-      model: ${agent.claude-code.model}
-      ---
-      ${agent.prompt}
-    '';
+  mkClaudeCodeAgent = name: agent: ''
+    ---
+    name: ${name}
+    description: ${agent.description}
+    tools: ${lib.concatStringsSep ", " agent.claude-code.allowedTools}
+    color: ${agent.claude-code.color}
+    model: ${agent.claude-code.model}
+    ---
+    ${agent.prompt}
+  '';
 
   mkOpencodeAgent = name: agent: ''
     ---
@@ -796,44 +826,30 @@ let
     ${agent.prompt}
   '';
 
-  mkClaudeCodeCommand = _name: cmd:
-    let
-      argHint = if cmd ? argumentHint then "\nargument-hint: ${cmd.argumentHint}" else "";
-      allowedTools = lib.concatStringsSep ", " cmd.claude-code.allowedTools;
-    in
-    ''
-      ---
-      allowed-tools: ${allowedTools}
-      description: ${cmd.description}${argHint}
-      ---
-      ${cmd.prompt}
-    '';
+  mkClaudeCodeCommand = _name: cmd: ''
+    ---
+    allowed-tools: ${lib.concatStringsSep ", " cmd.claude-code.allowedTools}
+    description: ${cmd.description}${lib.optionalString (cmd ? argumentHint) "\nargument-hint: ${cmd.argumentHint}"}
+    ---
+    ${cmd.prompt}
+  '';
 
-  mkOpencodeCommand = _name: cmd:
-    let
-      argHint = if cmd ? argumentHint then "\nargument-hint: ${cmd.argumentHint}" else "";
-    in
-    ''
-      ---
-      description: ${cmd.description}${argHint}
-      ---
-      ${cmd.prompt}
-    '';
+  mkOpencodeCommand = _name: cmd: ''
+    ---
+    description: ${cmd.description}${lib.optionalString (cmd ? argumentHint) "\nargument-hint: ${cmd.argumentHint}"}
+    ---
+    ${cmd.prompt}
+  '';
 
-  mkClaudeCodeSkill = name: skill:
-    let
-      allowedTools = lib.concatStringsSep ", " (skill.claude-code.allowedTools or [ ]);
-      userInvocable = if skill.claude-code.userInvocable or true then "user-invocable: true" else "user-invocable: false";
-    in
-    ''
-      ---
-      name: ${name}
-      description: ${skill.description}
-      allowed-tools: [ ${allowedTools} ]
-      ${userInvocable}
-      ---
-      ${skill.prompt}
-    '';
+  mkClaudeCodeSkill = name: skill: ''
+    ---
+    name: ${name}
+    description: ${skill.description}
+    allowed-tools: [ ${lib.concatStringsSep ", " (skill.claude-code.allowedTools or [ ])} ]
+    user-invocable: ${if skill.claude-code.userInvocable or true then "true" else "false"}
+    ---
+    ${skill.prompt}
+  '';
 
   mkOpencodeSkill = name: skill:
     ''

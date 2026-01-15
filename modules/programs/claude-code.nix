@@ -14,10 +14,11 @@ in
       cleanupPeriodDays = 7;
       permissions = {
         allow = [
-          "Read(*)"
+          "Read(**)"
           "Glob(*)"
           "Grep(*)"
-          "Write(*)"
+          "Edit(**)"
+          "Write(**)"
           "Bash(cat:*)"
           "Bash(find:*)"
           "Bash(fd:*)"
@@ -50,12 +51,15 @@ in
           "Bash(sops:*)"
           "Bash(git push:*)"
           "Bash(jj git push:*)"
-          "Read(**/.env*)"
+          "Read(**/.env)"
+          "Read(**/.env.*)"
           "Read(**/*.env)"
-          "Read(**/*.env.*)"
-          "Write(**/.env*)"
+          "Edit(**/.env)"
+          "Edit(**/.env.*)"
+          "Edit(**/*.env)"
+          "Write(**/.env)"
+          "Write(**/.env.*)"
           "Write(**/*.env)"
-          "Write(**/*.env.*)"
         ];
         ask = [
           "Bash(chmod:*)"

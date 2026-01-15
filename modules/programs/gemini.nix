@@ -35,7 +35,7 @@ in
         autoAccept = true;
         sandbox = pkgs.stdenv.isDarwin;
         allowed = [
-          "ReadFileTool(*)"
+          "ReadFileTool(**)"
           "GlobTool(*)"
           "GrepTool(*)"
           "Edit"
@@ -65,6 +65,15 @@ in
           "ShellTool(sops)"
           "ShellTool(git push)"
           "ShellTool(jj git push)"
+          "ReadFileTool(**/.env)"
+          "ReadFileTool(**/.env.*)"
+          "ReadFileTool(**/*.env)"
+          "Edit(**/.env)"
+          "Edit(**/.env.*)"
+          "Edit(**/*.env)"
+          "WriteFile(**/.env)"
+          "WriteFile(**/.env.*)"
+          "WriteFile(**/*.env)"
         ];
       };
     };
