@@ -350,7 +350,7 @@ let
           "mcp__context7__resolve-library-id"
           "mcp__context7__query-docs"
         ];
-        color = "magenta";
+        color = "yellow";
         model = "opus";
       };
       opencode = {
@@ -645,7 +645,7 @@ let
     };
   };
 
-sharedSkills = {
+  sharedSkills = {
     commit-message-advisor = {
       description = "Analyzes changes and suggests commit messages following repository conventions";
       claude-code.allowedTools = [ "Bash" ];
@@ -1011,10 +1011,12 @@ in
       opencodeSkills = lib.mapAttrs mkOpencodeSkill sharedSkills;
     in
     builtins.listToAttrs (
-      map (name: {
-        name = "opencode/skill/${name}/SKILL.md";
-        value = { text = opencodeSkills.${name}; };
-      }) (builtins.attrNames sharedSkills)
+      map
+        (name: {
+          name = "opencode/skill/${name}/SKILL.md";
+          value = { text = opencodeSkills.${name}; };
+        })
+        (builtins.attrNames sharedSkills)
     )
   );
 }
