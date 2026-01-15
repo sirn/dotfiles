@@ -272,6 +272,7 @@ let
     my-commit-message = {
       description = "Analyze changes and suggest commit message(s)";
       claude-code.allowedTools = [
+        "Skill"
         "Bash(jj status:*)"
         "Bash(jj diff:*)"
         "Bash(jj log:*)"
@@ -280,165 +281,28 @@ let
         "Bash(git log:*)"
       ];
       prompt = ''
-        <instruction>
-        **IMPORTANT**: Always use `jj` (Jujutsu) commands. Only fall back to `git` if jj is not available.
-        </instruction>
+        Invoke the `commit-message-advisor` skill to analyze changes and suggest commit message(s).
 
-        <process>
-        1. Identify context:
-           - Run `jj diff -s` to see changed files
-           - Analyze existing commit message patterns in the repository
-
-        2. Analyze the nature of the changes
-        3. Suggest appropriate commit message(s)
-        </process>
-
-        <step-1>
-        Analyze commit message patterns:
-        - Run: `jj log -r ::@ -n 20 --no-graph -T 'description ++ "\n---\n"'`
-        - Note the style: conventional commits, imperative mood, length, etc.
-        </step-1>
-
-        <step-2>
-        Analyze the changes:
-        - Use `jj diff` for full diff view if needed
-        - Are changes logically related or distinct?
-        - Do they touch different subsystems/features?
-        - Are there mixed concerns (refactor + feature, fix + cleanup)?
-        </step-2>
-
-        <output>
-        Provide:
-        1. **Suggested commit message** following the repo's existing style
-
-        2. **Should split?** Yes/No with reasoning
-
-        3. If split recommended:
-           - How to split (which files/hunks in each commit)
-           - Suggested message for each commit
-           - Commands to execute the split (use `jj` commands)
-        </output>
+        Target: **$ARGUMENTS** (defaults to all changes)
       '';
     };
     my-project-setup = {
-      description = "Analyze project and set up development environment";
-      claude-code.allowedTools = [ "Skill" "AskUserQuestion" ];
+      description = "Set up project development environment";
+      claude-code.allowedTools = [
+        "Skill"
+        "AskUserQuestion"
+      ];
       prompt = ''
-        Set up project development environment by orchestrating sub-commands.
+        Set up project development environment.
 
         <process>
-        1. Ask user what they want to set up:
-           - Wrapper scripts only
-           - Nix flake only
-           - Both (default)
-        2. Based on selection, invoke via Skill tool:
-           - `/my-project-setup-wrapper` for wrapper scripts
-           - `/my-project-setup-flake` for Nix flake
+        1. Ask user:
+           - Location: **machine-local** (.my/) or **project-local** (bin/ or flake.nix)?
+           - Setup types: **wrapper scripts**, **Nix flake**, or **both**?
+
+        2. Invoke `project-setup` skill with the selections
         3. Summarize what was set up
         </process>
-      '';
-    };
-    my-project-setup-wrapper = {
-      description = "Create wrapper scripts for project commands";
-      claude-code.allowedTools = [ "Read" "Grep" "Glob" "Task" "Write" "Bash(ls:*)" "Bash(mkdir:*)" ];
-      prompt = ''
-        Create wrapper scripts for the project.
-
-        <process>
-        1. Ask user where to create wrappers:
-           - **Machine-local** (`.my/bin/`): Ignored via `.my/.gitignore`, not committed
-           - **Project-local** (`bin/`): Committed to repository
-        2. If project-local, ask about naming convention:
-           - **Generic**: `test`, `lint`, `fmt`, `build`, `dev`
-           - **Prefixed** (default): `<project-name>-test`, etc. (project name in lowercase)
-           - Note: Machine-local always uses `my-` prefix
-        3. Spawn `project-setup-analyzer` agent to analyze the project
-        4. Present recommended wrappers and ask user to confirm which ones to create
-        5. Based on analysis and user choices:
-           a. Create wrapper directory
-           b. If machine-local: Create `.my/.gitignore` with content `*`
-           c. Create only the confirmed wrapper scripts
-           d. Make scripts executable: `chmod +x <dir>/*`
-        </process>
-
-        <template>
-        ```bash
-        #!/usr/bin/env bash
-        set -euo pipefail
-        <command>
-        ```
-        </template>
-
-        <output>
-        - Project type detected
-        - Wrapper directory created
-        - Scripts created (with descriptions)
-        - How to use
-        </output>
-      '';
-    };
-    my-project-setup-flake = {
-      description = "Create or update a Nix flake for the project";
-      argumentHint = "[path]";
-      claude-code.allowedTools = [ "Read" "Write" "Task" "Bash(ls:*)" "Bash(cat:*)" "Bash(grep:*)" "Bash(find:*)" "Bash(nix:*)" ];
-      prompt = ''
-        <process>
-        Create or update a Nix flake ($ARGUMENTS defaults to flake.nix):
-        1. Determine flake location (machine-local or project-local)
-        2. Detect project type and dependencies
-        3. Research nix patterns for the project type
-        4. Generate or update the flake
-        5. Verify the flake works correctly
-        </process>
-
-        <step-1>
-        If no $ARGUMENTS provided, ask user where to create flake:
-        - **Machine-local** (`.my/flake.nix`): Ignored via `.my/.gitignore`, not committed
-        - **Project-local** (`flake.nix`): Committed to repository
-        </step-1>
-
-        <step-2>
-        Detect project type:
-        - Node.js: package.json (check for npm/pnpm/yarn)
-        - Python: pyproject.toml, setup.py, requirements.txt, poetry.lock
-        - Go: go.mod
-        - Rust: Cargo.toml
-        - Ruby: Gemfile
-        - Other: check for Makefile, CMakeLists.txt, etc.
-        </step-2>
-
-        <step-3>
-        Check for existing flake:
-        - If $ARGUMENTS is provided, read that file
-        - Otherwise, check `.my/flake.nix` and `flake.nix`
-        </step-3>
-
-        <step-4>
-        Research patterns and generate:
-        - Spawn `code-researcher` agent to research nix patterns for this project type (e.g., "nix flake python poetry", "nix flake nodejs pnpm")
-        - Generate appropriate inputs (nixpkgs, flake-utils, etc.)
-        - Add project-specific packages based on detected dependencies
-        - Configure devShell with necessary tools
-        - If updating existing flake, merge changes intelligently
-        - If machine-local: Create `.my/.gitignore` with content `*` if not exists
-        </step-4>
-
-        <verification>
-        After creating/updating the flake, verify it:
-        <example>
-        nix flake check path:.
-        </example>
-        If verification fails, fix the issues and re-verify.
-        </verification>
-
-        <output>
-        Provide:
-        1. Detected project type and dependencies
-        2. Research findings (with source links)
-        3. Generated flake.nix content
-        4. Explanation of the flake structure
-        5. Verification result
-        </output>
       '';
     };
   };
@@ -781,6 +645,131 @@ let
     };
   };
 
+sharedSkills = {
+    commit-message-advisor = {
+      description = "Analyzes changes and suggests commit messages following repository conventions";
+      claude-code.allowedTools = [ "Bash" ];
+      prompt = ''
+        # Commit Message Advisor
+
+        Use this skill when the user asks about commits, commit messages, or wants to commit changes.
+
+        <important>
+        **IMPORTANT**: Always use `jj` (Jujutsu) commands. Only fall back to `git` if jj is not available.
+        </important>
+
+        ## Process
+
+        1. Identify context:
+           - Run `jj diff -s` to see changed files
+           - If $ARGUMENTS provided, focus on those specific files/paths
+
+        2. Analyze commit message patterns:
+           - Run: `jj log -r ::@ -n 20 --no-graph -T 'description ++ "\n---\n"'`
+           - Note the style: conventional commits, imperative mood, length, etc.
+
+        3. Analyze the changes:
+           - Use `jj diff` for full diff view if needed
+           - Are changes logically related or distinct?
+           - Do they touch different subsystems/features?
+           - Are there mixed concerns (refactor + feature, fix + cleanup)?
+
+        4. Suggest appropriate commit message(s)
+
+        ## Output
+
+        Provide:
+        1. **Suggested commit message** following the repo's existing style
+        2. **Should split?** Yes/No with reasoning
+        3. If split recommended:
+           - How to split (which files/hunks in each commit)
+           - Suggested message for each commit
+           - Commands to execute the split (use `jj` commands)
+      '';
+    };
+
+    project-setup = {
+      description = "Sets up project development environment (wrapper scripts and/or Nix flake)";
+      claude-code.allowedTools = [ "Read" "Grep" "Glob" "Task" "Write" "Bash" ];
+      prompt = ''
+        # Project Setup
+
+        Use this skill when the user wants to set up a development environment, create wrapper scripts, or add a Nix flake.
+
+        The command should have provided:
+        - **location**: "machine-local" (.my/) or "project-local" (bin/ or flake.nix)
+        - **setup_types**: "wrapper", "flake", or "both"
+
+        ## Process
+
+        For each setup type selected:
+
+        ### Wrapper Scripts
+
+        1. Determine paths based on location:
+           - Machine-local: `.my/bin/` with `my-` prefix
+           - Project-local: `bin/`, ask about naming:
+             - Generic: `test`, `lint`, `fmt`, `build`, `dev`
+             - Prefixed (default): `<project-name>-test`, etc.
+
+        2. Spawn `project-setup-analyzer` agent to:
+           - Detect project type
+           - Recommend wrappers (test, lint, fmt, build, dev commands)
+
+        3. Present recommended wrappers and ask which to create
+
+        4. Create wrapper directory if needed
+
+        5. If machine-local: Create `.my/.gitignore` with content `*`
+
+        6. Create wrapper scripts with template:
+        ```bash
+        #!/usr/bin/env bash
+        set -euo pipefail
+        <command>
+        ```
+
+        7. Make executable: `chmod +x <dir>/*`
+
+        ### Nix Flake
+
+        1. Determine path based on location:
+           - Machine-local: `.my/flake.nix`
+           - Project-local: `flake.nix`
+
+        2. Check for existing flake at the determined path
+
+        3. Detect project type:
+           - Node.js: package.json (check for npm/pnpm/yarn)
+           - Python: pyproject.toml, setup.py, requirements.txt, poetry.lock
+           - Go: go.mod
+           - Rust: Cargo.toml
+           - Ruby: Gemfile
+           - Other: check for Makefile, CMakeLists.txt, etc.
+
+        4. Spawn `code-researcher` agent to research nix patterns for this project type
+
+        5. Generate appropriate flake:
+           - Inputs (nixpkgs, flake-utils, etc.)
+           - Project-specific packages based on detected dependencies
+           - devShell with necessary tools
+           - Intelligently merge if updating existing flake
+
+        6. If machine-local: Create `.my/.gitignore` with content `*` if not exists
+
+        7. Verify the flake: `nix flake check path:.`
+        - If verification fails, fix issues and re-verify
+
+        ## Output
+
+        - Project type detected
+        - Wrapper/flake location created
+        - Scripts/flake created (with descriptions)
+        - How to use
+      '';
+    };
+  };
+
   # Claude Code uses tools from agent.tools; opencode doesn't support tool restrictions, colors, or model
   mkClaudeCodeAgent = name: agent:
     let
@@ -829,6 +818,30 @@ let
       description: ${cmd.description}${argHint}
       ---
       ${cmd.prompt}
+    '';
+
+  mkClaudeCodeSkill = name: skill:
+    let
+      allowedTools = lib.concatStringsSep ", " (skill.claude-code.allowedTools or [ ]);
+      userInvocable = if skill.claude-code.userInvocable or true then "user-invocable: true" else "user-invocable: false";
+    in
+    ''
+      ---
+      name: ${name}
+      description: ${skill.description}
+      allowed-tools: [ ${allowedTools} ]
+      ${userInvocable}
+      ---
+      ${skill.prompt}
+    '';
+
+  mkOpencodeSkill = name: skill:
+    ''
+      ---
+      name: ${name}
+      description: ${skill.description}
+      ---
+      ${skill.prompt}
     '';
 
   instructionText = ''
@@ -949,6 +962,7 @@ in
       memory.text = instructionText;
       commands = lib.mapAttrs mkClaudeCodeCommand sharedCommands;
       agents = lib.mapAttrs mkClaudeCodeAgent sharedAgents;
+      skills = lib.mapAttrs mkClaudeCodeSkill sharedSkills;
       mcpServers = {
         inherit (mcpServers) context7 brave-search;
       };
@@ -991,4 +1005,16 @@ in
       instruction = instructionText;
     };
   };
+
+  xdg.configFile = lib.mkIf opencodeCfg.enable (
+    let
+      opencodeSkills = lib.mapAttrs mkOpencodeSkill sharedSkills;
+    in
+    builtins.listToAttrs (
+      map (name: {
+        name = "opencode/skill/${name}/SKILL.md";
+        value = { text = opencodeSkills.${name}; };
+      }) (builtins.attrNames sharedSkills)
+    )
+  );
 }
