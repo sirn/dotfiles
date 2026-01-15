@@ -9,6 +9,7 @@ in
     package = pkgs.unstable.claude-code;
 
     settings = {
+      model = "opusplan";
       includeCoAuthoredBy = false;
       cleanupPeriodDays = 7;
       permissions = {
