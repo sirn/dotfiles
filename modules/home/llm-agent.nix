@@ -23,9 +23,10 @@ let
         <output>
         1. **Summary** - Overall code health assessment (including issue counts)
         2. **Review Findings** - From /my-review (Critical, Quality, Convention, Best Practices)
-        3. **Performance Issues** - From /my-optimize (Problem descriptions and optimized solutions)
-        4. **Lint Results** - From /my-lint (Auto-fixed summary and manual fix requirements)
-        5. **Action items** - Prioritize list of fixes (Critical > High > Low)
+        3. **Security Findings** - From /my-review (Vulnerabilities, threat modeling)
+        4. **Performance Issues** - From /my-optimize (Problem descriptions and optimized solutions)
+        5. **Lint Results** - From /my-lint (Auto-fixed summary and manual fix requirements)
+        6. **Action items** - Prioritize list of fixes (Critical > High > Low)
         </output>
 
         Use the Task tool to spawn three concurrent tasks for review, optimization, and linting.
@@ -42,8 +43,9 @@ let
            - Run `jj diff -s` to see changed files
            - If $ARGUMENTS provided, focus on those specific files/paths
 
-        2. Spawn all four reviewer agents in parallel using the Task tool:
-            - `code-quality`: Focuses on bugs, security, and correctness
+        2. Spawn all five reviewer agents in parallel using the Task tool:
+            - `code-quality`: Focuses on bugs and logic errors
+            - `security-researcher`: Conducts deep security analysis and threat modeling
             - `code-convention`: Checks naming, organization, and consistency
             - `code-simplifier`: Identifies over-engineering and complexity
             - `code-researcher`: Researches best practices for patterns/libraries used
@@ -57,11 +59,12 @@ let
         Present a consolidated review with:
         1. **Executive Summary** (3-5 bullet points of most important findings)
         2. **Critical Issues** (must fix before merge)
-        3. **Quality Issues** (from code-quality)
-        4. **Convention Issues** (from code-convention)
-        5. **Simplification Opportunities** (from code-simplifier)
-        6. **Best Practices** (from code-researcher, with source links)
-        7. **Quick Wins** (easy fixes with high impact)
+        3. **Security Analysis** (from security-researcher)
+        4. **Quality Issues** (from code-quality)
+        5. **Convention Issues** (from code-convention)
+        6. **Simplification Opportunities** (from code-simplifier)
+        7. **Best Practices** (from code-researcher, with source links)
+        8. **Quick Wins** (easy fixes with high impact)
 
         Deduplicate overlapping findings and prioritize by severity.
         </output>
@@ -104,8 +107,9 @@ let
            - If $ARGUMENTS provided, focus on those specific files/paths
            - Understand the user's task/request
 
-        2. Spawn all four agents in parallel using the Task tool:
+        2. Spawn all five agents in parallel using the Task tool:
            - `code-analyst`: Analyze affected code areas and existing patterns
+           - `security-researcher`: Identify security risks and recommend secure patterns
            - `code-researcher`: Research best practices for the task
            - `code-simplifier`: Identify over-engineering risks and pragmatic constraints
            - `code-architect`: Provide architectural and design guidance
@@ -118,22 +122,28 @@ let
            - Existing architectural decisions
            - Integration points with current codebase
 
-        2. **Best Practices** (from code-researcher)
+        2. **Security Considerations** (from security-researcher)
+           - Threat modeling and potential attack vectors
+           - Authentication and authorization requirements
+           - Data protection and privacy considerations
+           - Secure implementation patterns
+
+        3. **Best Practices** (from code-researcher)
            - Industry standards with authoritative sources
            - Recommended libraries/tools with rationale
            - Common pitfalls to avoid
 
-        3. **Simplicity Constraint** (from code-simplifier)
+        4. **Simplicity Constraint** (from code-simplifier)
            - "Keep it simple" guidelines
            - Over-engineering risk to avoid
            - Pragmatic vs ideal tradeoffs
 
-        4. **Architectural Guidance** (from code-architect)
+        5. **Architectural Guidance** (from code-architect)
            - High-level design approach
            - Module boundaries and interfaces
            - Design tradeoffs considered
 
-        5. **Implementation Plan** (synthesize)
+        6. **Implementation Plan** (synthesize)
            - Numbered, concrete steps
            - File to modify with specific locations
            - Dependencies to add (research-backed)
@@ -435,7 +445,7 @@ let
 
   sharedAgents = {
     code-quality = {
-      description = "Expert code quality reviewer focusing on bugs and issues";
+      description = "Expert code quality reviewer focusing on bugs and logic";
       claude-code = {
         allowedTools = [ "Read" "Grep" "Glob" ];
         color = "red";
@@ -445,10 +455,9 @@ let
         model = "google/gemini-3-pro-preview";
       };
       prompt = ''
-        You are a senior software engineer specializing in code quality reviews.
+        You are a senior software engineer specializing in code quality and correctness.
 
         <focus-areas>
-        - **Security vulnerabilities**: SQL injection, XSS, command injection, path traversal, etc.
         - **Bugs and logic errors**: Off-by-one, null pointer, race conditions, resource leaks
         - **Error handling**: Missing error checks, swallowed exceptions, improper cleanup
         - **Edge cases**: Boundary conditions, empty inputs, concurrent access
@@ -461,6 +470,46 @@ let
         - Explain WHY something is a problem, not just WHAT
         - Suggest concrete fixes, not vague recommendations
         - Focus on real issues, not style preferences
+        </review-guidelines>
+      '';
+    };
+
+    security-researcher = {
+      description = "Specialist in threat modeling, vulnerability research, and secure design";
+      claude-code = {
+        allowedTools = [
+          "Read"
+          "Grep"
+          "Glob"
+          "WebSearch"
+          "WebFetch"
+          "mcp__context7__resolve-library-id"
+          "mcp__context7__query-docs"
+        ];
+        color = "magenta";
+        model = "opus";
+      };
+      opencode = {
+        model = "google/gemini-3-pro-preview";
+      };
+      prompt = ''
+        You are a security researcher and ethical hacker specializing in secure software design.
+
+        <focus-areas>
+        - **Vulnerabilities**: OWASP Top 10 (SQLi, XSS, CSRF, etc.), command injection, path traversal
+        - **Authentication & Authorization**: Weak credentials, improper session management, broken access control
+        - **Cryptography**: Weak algorithms, improper key management, lack of encryption at rest/transit
+        - **Dependency Risks**: Known CVEs in third-party libraries, supply chain attacks
+        - **Data Privacy**: Exposure of PII, insecure storage, improper logging of sensitive data
+        - **Threat Modeling**: Identifying potential attack vectors in new designs
+        </focus-areas>
+
+        <review-guidelines>
+        - Conduct deep analysis of security-sensitive code paths
+        - Use WebSearch to verify known vulnerabilities or research secure implementation patterns
+        - Distinguish between theoretical risks and exploitable vulnerabilities
+        - Provide clear remediation steps with secure code examples
+        - Reference official security standards (OWASP, NIST, CWE) where applicable
         </review-guidelines>
       '';
     };
