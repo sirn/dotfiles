@@ -68,6 +68,7 @@ in
           "browser.ml.chat.menu" = false;
           "browser.newtabpage.activity-stream.feeds.section.highlights" = false;
           "browser.newtabpage.activity-stream.feeds.topsites" = false;
+          "browser.profiles.enabled" = false;
           "browser.search.separatePrivateDefault.ui.enabled" = false;
           "browser.sessionstore.warnOnQuit" = true;
           "browser.startup.page" = 3;
@@ -81,7 +82,7 @@ in
           "extensions.update.autoUpdateDefault" = false;
           "font.cjk_pref_fallback_order" = "ja,zh-cn,zh-hk,zh-tw,ko";
           "identity.fxaccounts.enabled" = false;
-          "network.cookie.cookieBehavior" = 1;
+          "network.cookie.cookieBehavior" = 5;
           "privacy.trackingprotection.cryptomining.enabled" = true;
           "privacy.trackingprotection.enabled" = true;
           "privacy.trackingprotection.fingerprinting.enabled" = true;
