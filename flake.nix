@@ -37,6 +37,22 @@
         inputs.nixgl.overlay
         inputs.emacs-overlay.overlay
         (final: prev: {
+          # darwin is known to be crashy when doing fork+exec
+          # something changed in nix that cause these two tests to fail
+          # https://github.com/dvarrazzo/py-setproctitle/issues/113
+          # TODO: revisit after https://github.com/NixOS/nixpkgs/issues/479313
+          pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+            (py-final: py-prev: {
+              setproctitle = py-prev.setproctitle.overrideAttrs (oldAttrs: {
+                disabledTests = oldAttrs.disabledTests ++
+                  (py-prev.lib.optionals py-prev.stdenv.hostPlatform.isDarwin [
+                    "test_fork_segfault"
+                    "test_thread_fork_segfault"
+                  ]);
+              });
+            })
+          ];
+
           unstable = import inputs.nixpkgs-unstable {
             system = final.stdenv.hostPlatform.system;
             config = config;
