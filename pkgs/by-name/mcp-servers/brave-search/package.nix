@@ -2,14 +2,14 @@
 
 pkgs.buildNpmPackage rec {
   pname = "brave-search-mcp-server";
-  version = "2.0.63";
+  version = "2.0.67";
 
   src = pkgs.fetchzip {
     url = "https://registry.npmjs.org/@brave/${pname}/-/${pname}-${version}.tgz";
-    hash = "sha256-SUB9LEZQfQlhihb5bKKxN4GutAC3We7pcXKuAIlshV4=";
+    hash = "sha256-phWUkE/j1n/cEyxMWTV1FlRCux9pSscx9bmYD3VZpUs=";
   };
 
-  npmDepsHash = "sha256-iSOmW4KfDBoBOMux54eSvYHAf8dZI/cRhZbULxaQcIA=";
+  npmDepsHash = "sha256-7jx+E2sWwHDZlP08FldrDt+tTNmMOfWxmzMFGtKE9gk=";
 
   postPatch = ''
     ${lib.getExe pkgs.jq} 'del(.devDependencies)' package.json | ${pkgs.moreutils}/bin/sponge package.json
