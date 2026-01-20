@@ -319,13 +319,10 @@ let
 
   sharedSkills = {
     code-quality = {
-      description = "Run comprehensive code quality checks by orchestrating review, optimization, testing, and linting skills";
+      description = "Run comprehensive code quality checks by orchestrating review, optimization, testing, and linting skills. Use when user asks to check code quality, run quality checks, or wants comprehensive code analysis.";
       claude-code.allowedTools = [ "Skill" ];
       prompt = ''
         Run comprehensive code quality checks by orchestrating sub-skills.
-
-        ## When to Use
-        Activate when user asks to "check code quality", "run quality checks", or similar phrases.
 
         ## Process
         1. Identify context:
@@ -353,13 +350,10 @@ let
     };
 
     code-review = {
-      description = "Review code for issues and improvements using specialized agents";
+      description = "Review code for issues and improvements using specialized agents. Use when user asks to review code, mentions code review, or wants feedback on changes.";
       claude-code.allowedTools = [ "Read" "Grep" "Glob" "Task" "Bash(jj diff:*)" "Bash(jj status:*)" ];
       prompt = ''
         Run a comprehensive code review using specialized reviewer agents.
-
-        ## When to Use
-        Activate when user asks to "review code", "code review", or mentions reviewing changes.
 
         ## Process
         1. Identify context:
@@ -403,13 +397,10 @@ let
     };
 
     code-explain = {
-      description = "Explain code in simple terms";
+      description = "Explain code in simple terms. Use when user asks to explain code, what does this do, or wants code explanation.";
       claude-code.allowedTools = [ "Read" "Grep" "Glob" "Task" ];
       prompt = ''
-        Explaining the code at $ARGUMENTS (or currently selected).
-
-        ## When to Use
-        Activate when user asks to "explain code", "what does this do", or similar explanation requests.
+        Explain the code at $ARGUMENTS (or currently selected).
 
         ## Process
         1. Read and analyze the code
@@ -430,13 +421,10 @@ let
     };
 
     implementation-plan = {
-      description = "Generate comprehensive implementation plan based on analysis";
+      description = "Generate comprehensive implementation plan based on analysis. Use when user asks to plan this, create a plan, how should I implement, or wants implementation guidance.";
       claude-code.allowedTools = [ "Read" "Grep" "Glob" "Task" "Bash(jj status:*)" "Bash(jj diff:*)" ];
       prompt = ''
         Generate a comprehensive implementation plan based on task analysis and research.
-
-        ## When to Use
-        Activate when user asks to "plan this", "create a plan", or "how should I implement".
 
         ## Process
         1. Identify context:
@@ -490,13 +478,10 @@ let
     };
 
     code-optimize = {
-      description = "Analyze and optimize code for performance";
+      description = "Analyze and optimize code for performance. Use when user asks to optimize, improve performance, make this faster, or wants performance improvements.";
       claude-code.allowedTools = [ "Read" "Grep" "Glob" "Task" ];
       prompt = ''
         Analyze the code for performance issues and suggest optimizations.
-
-        ## When to Use
-        Activate when user asks to "optimize", "improve performance", or "make this faster".
 
         ## Process
         1. Identify performance-critical code paths
@@ -520,7 +505,7 @@ let
     };
 
     code-test = {
-      description = "Detect project config, run tests, and fix failures";
+      description = "Detect project config, run tests, and fix failures. Use when user asks to run tests, test this, or mentions testing functionality.";
       claude-code.allowedTools = [
         "Bash(grep:*)"
         "Bash(cat:*)"
@@ -540,9 +525,6 @@ let
       ];
       prompt = ''
         Run project tests by detecting the environment and fixing failures.
-
-        ## When to Use
-        Activate when user asks to "run tests", "test this", or mentions testing functionality.
 
         ## Process
         1. Identify context:
@@ -569,7 +551,7 @@ let
     };
 
     code-lint = {
-      description = "Detect project config, run linting, and fix issues";
+      description = "Detect project config, run linting, and fix issues. Use when user asks to run lint, lint this, check code style, or wants linting.";
       claude-code.allowedTools = [
         "Bash(grep:*)"
         "Bash(cat:*)"
@@ -592,9 +574,6 @@ let
       ];
       prompt = ''
         Run project linting by detecting the environment and fixing issues.
-
-        ## When to Use
-        Activate when user asks to "run lint", "lint this", "check code style", or similar linting requests.
 
         ## Process
         1. Identify context:
@@ -621,7 +600,7 @@ let
     };
 
     commit-message = {
-      description = "Analyzes changes and suggests commit messages following repository conventions";
+      description = "Analyzes changes and suggests commit messages following repository conventions. Use when user asks about commits, commit messages, or wants to commit changes.";
       claude-code.allowedTools = [
         "Bash(jj status:*)"
         "Bash(jj diff:*)"
@@ -631,7 +610,7 @@ let
         "Bash(git log:*)"
       ];
       prompt = ''
-        Use this skill when the user asks about commits, commit messages, or wants to commit changes.
+        Analyze changes and suggest commit messages following repository conventions.
 
         ## Important
         **IMPORTANT**: Always use `jj` (Jujutsu) commands. Only fall back to `git` if jj is not available.
@@ -667,7 +646,7 @@ let
     };
 
     project-setup = {
-      description = "Sets up project development environment (wrapper scripts and/or Nix flake)";
+      description = "Sets up project development environment (wrapper scripts and/or Nix flake). Use when user wants to set up a development environment, create wrapper scripts, or add a Nix flake.";
       claude-code.allowedTools = [
         "Read"
         "Grep"
@@ -693,7 +672,7 @@ let
         "Bash(just:*)"
       ];
       prompt = ''
-        Use this skill when the user wants to set up a development environment, create wrapper scripts, or add a Nix flake.
+        Set up a project development environment with wrapper scripts and/or a Nix flake.
 
         The command should have provided:
         - **location**: "machine-local" (.my/) or "project-local" (bin/ or flake.nix)
