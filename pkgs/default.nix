@@ -24,6 +24,4 @@ in
   };
 
   wrapped-uv = (callPackage ./by-name/wrapped-uv/wrapped.nix { });
-
-  octofriend = (callPackage ./by-name/octofriend/package.nix { });
 }

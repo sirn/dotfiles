@@ -887,8 +887,6 @@ let
   geminiCliCfg = config.programs.gemini-cli;
 
   opencodeCfg = config.programs.opencode;
-
-  octofriendCfg = config.programs.octofriend;
 in
 {
   imports = [
@@ -896,7 +894,6 @@ in
     ../programs/codex.nix
     ../programs/gemini.nix
     ../programs/opencode.nix
-    ../programs/octofriend.nix
   ];
 
   programs = {
@@ -940,10 +937,6 @@ in
           enabled = true;
         };
       };
-    };
-
-    octofriend = lib.mkIf octofriendCfg.enable {
-      instruction = instructionText;
     };
   };
 
