@@ -24,8 +24,8 @@ in
     "${configHome}/Packages/Meetio Theme".source = pkgs.fetchFromGitHub {
       owner = "meetio-theme";
       repo = "sublime-meetio-theme";
-      rev = "4070-7.5.0";
-      sha256 = "sha256-cyfihghCrCj0ctCATFlo4A2RVLy7Rs6cxPGueSSKURQ=";
+      rev = "4070-7.6.1";
+      sha256 = "sha256-UzyoEy1ahcJqlhUDNI47tYfsVzRo4PluPv36lDAYSVU=";
     };
 
     "${configHome}/Packages/Nix".source = pkgs.fetchFromGitHub {
@@ -38,8 +38,8 @@ in
     "${configHome}/Packages/LSP".source = pkgs.fetchFromGitHub {
       owner = "sublimelsp";
       repo = "LSP";
-      rev = "4070-2.3.0";
-      sha256 = "sha256-tVG5Qlvtfyh+GKvXusIO0ysCjSSo9Udp+3Ej1qR1cDA=";
+      rev = "4070-2.7.0";
+      sha256 = "sha256-JQBzpaoqj5TxCxRpGtuac4PsOefYOO8wGA2FXoeTnQE=";
     };
 
     "${configHome}/Packages/Home/Preferences.sublime-settings" = {
