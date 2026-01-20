@@ -893,7 +893,6 @@ in
 {
   imports = [
     ../programs/claude-code.nix
-    ../programs/claude-code-synthetic.nix
     ../programs/codex.nix
     ../programs/gemini.nix
     ../programs/opencode.nix
