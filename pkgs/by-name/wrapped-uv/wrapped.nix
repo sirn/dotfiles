@@ -1,7 +1,7 @@
-{ lib, pkgs, ... }:
+{ lib, buildFHSEnv, stdenv, uv, makeWrapper }:
 
 let
-  fhsUv = pkgs.buildFHSEnv {
+  fhsUv = buildFHSEnv {
     name = "uvx-fhs-base";
     runScript = "uv";
     targetPkgs = pkgs': with pkgs'; [
@@ -18,17 +18,17 @@ let
   };
 
   actualUv =
-    if pkgs.stdenv.isLinux
+    if stdenv.isLinux
     then fhsUv
-    else pkgs.uv;
+    else uv;
 in
-pkgs.stdenv.mkDerivation {
+stdenv.mkDerivation {
   pname = "wrapped-uv";
   src = ./.;
-  version = pkgs.uv.version;
+  version = uv.version;
 
   nativeBuildInputs = [
-    pkgs.makeWrapper
+    makeWrapper
   ];
 
   installPhase = ''

@@ -1,9 +1,9 @@
-{ lib, pkgs, ... }:
+{ lib, python3, writeScriptBin, runtimeShell }:
 
 let
-  python3 = pkgs.python3.withPackages (p: [ p.python-dotenv ]);
+  python = python3.withPackages (p: [ p.python-dotenv ]);
 in
-pkgs.writeScriptBin "envWrapper" ''
-  #!${pkgs.runtimeShell}
-  exec ${lib.getExe python3} ${./envwrap.py} "$@"
+writeScriptBin "envWrapper" ''
+  #!${runtimeShell}
+  exec ${lib.getExe python} ${./envwrap.py} "$@"
 ''

@@ -1,10 +1,10 @@
-{ lib, pkgs }:
+{ lib, buildNpmPackage, fetchzip, jq, moreutils }:
 
-pkgs.buildNpmPackage rec {
+buildNpmPackage rec {
   pname = "context7-mcp";
   version = "2.1.0";
 
-  src = pkgs.fetchzip {
+  src = fetchzip {
     url = "https://registry.npmjs.org/@upstash/${pname}/-/${pname}-${version}.tgz";
     hash = "sha256-Fdpx2g+mTYpKeojx/UUnKvrDUHlgF5kcmAji9/xlGMY=";
   };
@@ -12,7 +12,7 @@ pkgs.buildNpmPackage rec {
   npmDepsHash = "sha256-S5MpnIo6CeAaLbnCXK/irlgierWt1tT9IC56IRfb6NM=";
 
   postPatch = ''
-    ${lib.getExe pkgs.jq} 'del(.devDependencies)' package.json | ${pkgs.moreutils}/bin/sponge package.json
+    ${lib.getExe jq} 'del(.devDependencies)' package.json | ${moreutils}/bin/sponge package.json
     cp ${./package-lock.json} package-lock.json
   '';
 

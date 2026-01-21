@@ -1,4 +1,4 @@
-{ lib, pkgs, buildGoModule, fetchgit, stdenv, lsof }:
+{ lib, buildGoModule, fetchgit, stdenv, lsof }:
 
 buildGoModule rec {
   pname = "tincan";

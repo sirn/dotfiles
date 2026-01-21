@@ -1,10 +1,10 @@
-{ lib, pkgs }:
+{ lib, buildNpmPackage, fetchzip, jq, moreutils }:
 
-pkgs.buildNpmPackage rec {
+buildNpmPackage rec {
   pname = "brave-search-mcp-server";
   version = "2.0.67";
 
-  src = pkgs.fetchzip {
+  src = fetchzip {
     url = "https://registry.npmjs.org/@brave/${pname}/-/${pname}-${version}.tgz";
     hash = "sha256-phWUkE/j1n/cEyxMWTV1FlRCux9pSscx9bmYD3VZpUs=";
   };
@@ -12,7 +12,7 @@ pkgs.buildNpmPackage rec {
   npmDepsHash = "sha256-7jx+E2sWwHDZlP08FldrDt+tTNmMOfWxmzMFGtKE9gk=";
 
   postPatch = ''
-    ${lib.getExe pkgs.jq} 'del(.devDependencies)' package.json | ${pkgs.moreutils}/bin/sponge package.json
+    ${lib.getExe jq} 'del(.devDependencies)' package.json | ${moreutils}/bin/sponge package.json
     sed -i '/"prepare"/d' package.json
     cp ${./package-lock.json} package-lock.json
   '';
