@@ -1,4 +1,4 @@
-{ lib, pkgs, buildGoModule, fetchgit }:
+{ lib, pkgs, buildGoModule, fetchgit, stdenv, lsof }:
 
 buildGoModule rec {
   pname = "tincan";
@@ -11,6 +11,8 @@ buildGoModule rec {
   };
 
   vendorHash = "sha256-A7ePGlDtqds0T4uDGXgCX/Pv1q0VRMQczeGWtb/b3ps=";
+
+  nativeCheckInputs = lib.optionals stdenv.hostPlatform.isDarwin [ lsof ];
 
   meta = with lib; {
     description = "Automatic SSH port forwarding";
