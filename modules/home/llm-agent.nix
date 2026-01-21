@@ -780,6 +780,24 @@ let
     ${skill.prompt}
   '';
 
+  mkCodexSkill = name: skill: ''
+    ---
+    name: ${name}
+    description: ${skill.description}
+    metadata:
+      short-description: ${skill.description}
+    ---
+    ${skill.prompt}
+  '';
+
+  mkGeminiSkill = name: skill: ''
+    ---
+    name: ${name}
+    description: ${skill.description}
+    ---
+    ${skill.prompt}
+  '';
+
   mkOpencodeSkill = name: skill:
     ''
       ---
@@ -943,29 +961,65 @@ in
   xdg.configFile = lib.mkIf opencodeCfg.enable (
     let
       opencodeSkills = lib.mapAttrs mkOpencodeSkill sharedSkills;
+      opencodeSkillRoot = pkgs.runCommand "opencode-skills" { } ''
+        mkdir -p "$out"
+        ${lib.concatStringsSep "\n" (map
+          (name: ''
+            mkdir -p "$out/${name}"
+            printf %s ${lib.escapeShellArg opencodeSkills.${name}} > "$out/${name}/SKILL.md"
+          '')
+          (builtins.attrNames sharedSkills))}
+      '';
     in
-    builtins.listToAttrs (
-      map
-        (name: {
-          name = "opencode/skill/${name}/SKILL.md";
-          value = { text = opencodeSkills.${name}; };
-        })
-        (builtins.attrNames sharedSkills)
-    )
+    {
+      "opencode/skill/home-manager".source = opencodeSkillRoot;
+    }
   );
 
-  home.file = lib.mkIf claudeCodeCfg.enable (
-    # TODO: hm create skills as <name>.md, revisit >25.11
-    let
-      claudeCodeSkills = lib.mapAttrs mkClaudeCodeSkill sharedSkills;
-    in
-    builtins.listToAttrs (
-      map
-        (name: {
-          name = ".claude/skills/${name}/SKILL.md";
-          value = { text = claudeCodeSkills.${name}; };
-        })
-        (builtins.attrNames sharedSkills)
-    )
-  );
+  home.file = lib.mkMerge [
+    (lib.mkIf claudeCodeCfg.enable (
+      # TODO: hm create skills as <name>.md, revisit >25.11
+      let
+        claudeCodeSkills = lib.mapAttrs mkClaudeCodeSkill sharedSkills;
+      in
+      builtins.listToAttrs (
+        map
+          (name: {
+            name = ".claude/skills/${name}/SKILL.md";
+            value = { text = claudeCodeSkills.${name}; };
+          })
+          (builtins.attrNames sharedSkills)
+      )
+    ))
+    (lib.mkIf codexCfg.enable (
+      let
+        codexSkills = lib.mapAttrs mkCodexSkill sharedSkills;
+        codexSkillRoot = pkgs.runCommand "codex-skills" { } ''
+          mkdir -p "$out"
+          ${lib.concatStringsSep "\n" (map
+            (name: ''
+              mkdir -p "$out/${name}"
+              printf %s ${lib.escapeShellArg codexSkills.${name}} > "$out/${name}/SKILL.md"
+            '')
+            (builtins.attrNames sharedSkills))}
+        '';
+      in
+      {
+        ".codex/skills/home-manager".source = codexSkillRoot;
+      }
+    ))
+    (lib.mkIf geminiCliCfg.enable (
+      let
+        geminiSkills = lib.mapAttrs mkGeminiSkill sharedSkills;
+      in
+      builtins.listToAttrs (
+        map
+          (name: {
+            name = ".gemini/skills/${name}/SKILL.md";
+            value = { text = geminiSkills.${name}; };
+          })
+          (builtins.attrNames sharedSkills)
+      )
+    ))
+  ];
 }
