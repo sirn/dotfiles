@@ -55,7 +55,6 @@
           outputs = [
             {
               criteria = "$aw3225qf";
-              mode = "3840x2160@60Hz";
             }
             {
               criteria = "$internal";
