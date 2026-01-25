@@ -1081,6 +1081,9 @@ let
     - **Temporary Files**: Use the `tmp/` directory. Create a `.gitignore` ignoring everything inside it. Clean up when done.
     - **Anti-Loop**: If a fix fails twice, STOP. Re-evaluate the cause, explain the blockage, and ask for guidance.
 
+    ## Task Management
+    - **MCP Retrieval**: When retrieving tasks from project management tools (Asana, Linear, ClickUp, etc.) via MCP, default to listing only incomplete ("not done") tasks unless the user explicitly requests completed tasks.
+
     ## Security & Safety
     - **Secrets**: NEVER hardcode API keys, tokens, or passwords. Use environment variables or config files.
     - **Destructive Actions**: ALWAYS ask for confirmation before deleting files or folders.
@@ -1130,26 +1133,68 @@ let
     - Prefer minimal, idiomatic changes.
   '';
 
-  mcpServers = {
-    context7 = {
-      type = "stdio";
-      command = lib.getExe pkgs.local.mcpServers.context7;
-    };
+  # Check if server uses stdio transport (has command or package, not url)
+  isStdioServer = server: server ? command || server ? package;
 
-    brave-search =
-      let
-        braveMcpWrapper = pkgs.writeScriptBin "brave-mcp-wrapper" ''
-          #!${pkgs.runtimeShell}
-          exec "${lib.getExe pkgs.local.envWrapper}" \
-            -i "''${XDG_CONFIG_HOME:-''${HOME}/.config}/llm-agent/env" \
-            -- ${lib.getExe pkgs.local.mcpServers.brave-search} --transport stdio
-        '';
-      in
-      {
-        type = "stdio";
-        command = lib.getExe braveMcpWrapper;
-      };
-  };
+  # Check if server uses remote transport (has url)
+  isRemoteServer = server: server ? url;
+
+  # Transform programs.mcp.servers to Claude Code format
+  # Claude Code supports both stdio and SSE natively
+  toClaudeCodeMcpServers = servers:
+    lib.mapAttrs
+      (name: server:
+        if isStdioServer server then {
+          type = "stdio";
+          command = server.command or (lib.getExe server.package);
+        } else {
+          type = server.transport or "sse";
+          url = server.url;
+        })
+      servers;
+
+  # Transform programs.mcp.servers to Codex format
+  # Codex only supports stdio - wrap remote servers with mcp-remote
+  toCodexMcpServers = servers:
+    lib.mapAttrs
+      (name: server:
+        if isStdioServer server then {
+          command = server.command or (lib.getExe server.package);
+        } else {
+          command = lib.getExe pkgs.local.mcpServers.mcp-remote;
+          args = [ server.url "--transport" "sse-only" ];
+        })
+      servers;
+
+  # Transform programs.mcp.servers to Gemini format
+  # Gemini's OAuth flow has issues with URL path mismatches for remote servers
+  # (google-gemini/gemini-cli#10994), so we use mcp-remote as a workaround
+  toGeminiMcpServers = servers:
+    lib.mapAttrs
+      (name: server:
+        if isStdioServer server then {
+          command = server.command or (lib.getExe server.package);
+        } else {
+          command = lib.getExe pkgs.local.mcpServers.mcp-remote;
+          args = [ server.url ];
+        })
+      servers;
+
+  # Transform programs.mcp.servers to OpenCode format
+  # OpenCode supports both stdio (type: local) and remote natively
+  toOpencodeMcpServers = servers:
+    lib.mapAttrs
+      (name: server:
+        if isStdioServer server then {
+          command = [ (server.command or (lib.getExe server.package)) ];
+          type = "local";
+          enabled = true;
+        } else {
+          url = server.url;
+          type = "remote";
+          enabled = true;
+        })
+      servers;
 
   claudeCodeCfg = config.programs.claude-code;
 
@@ -1164,6 +1209,7 @@ in
     ../programs/claude-code.nix
     ../programs/codex.nix
     ../programs/gemini.nix
+    ../programs/mcp.nix
     ../programs/opencode.nix
   ];
 
@@ -1173,41 +1219,23 @@ in
     claude-code = lib.mkIf claudeCodeCfg.enable {
       memory.text = instructionText;
       agents = lib.mapAttrs mkClaudeCodeAgent sharedAgents;
-      mcpServers = {
-        inherit (mcpServers) context7 brave-search;
-      };
+      mcpServers = toClaudeCodeMcpServers config.programs.mcp.servers;
     };
 
     codex = lib.mkIf codexCfg.enable {
       custom-instructions = instructionText;
-      settings.mcp_servers = {
-        context7 = { inherit (mcpServers.context7) command; };
-        brave-search = { inherit (mcpServers.brave-search) command; };
-      };
+      settings.mcp_servers = toCodexMcpServers config.programs.mcp.servers;
     };
 
     gemini-cli = lib.mkIf geminiCliCfg.enable {
       context.GEMINI = instructionText;
-      settings.mcpServers = {
-        context7 = { inherit (mcpServers.context7) command; };
-      };
+      settings.mcpServers = toGeminiMcpServers config.programs.mcp.servers;
     };
 
     opencode = lib.mkIf opencodeCfg.enable {
       rules = instructionText;
       agents = lib.mapAttrs mkOpencodeAgent sharedAgents;
-      settings.mcp = {
-        context7 = {
-          command = [ mcpServers.context7.command ];
-          type = "local";
-          enabled = true;
-        };
-        brave-search = {
-          command = [ mcpServers.brave-search.command ];
-          type = "local";
-          enabled = true;
-        };
-      };
+      settings.mcp = toOpencodeMcpServers config.programs.mcp.servers;
     };
   };
 
