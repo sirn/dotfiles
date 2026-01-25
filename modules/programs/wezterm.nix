@@ -345,6 +345,25 @@ in
         }
       '';
     };
+    # Workaround for https://github.com/wezterm/wezterm/issues/6685
+    # Clipboard not working between terminals on Wayland
+    "wezterm/modules/workaround-6685.lua" = lib.mkIf (swaycfg.enable || niricfg.enable) {
+      text = ''
+        local wezterm = require 'wezterm'
+
+        wezterm.on(
+          'window-focus-changed',
+          function(window, pane)
+            wezterm.run_child_process {
+              'sh', '-c',
+              '${pkgs.wl-clipboard}/bin/wl-paste -n | ${pkgs.wl-clipboard}/bin/wl-copy'
+            }
+          end
+        )
+
+        return {}
+      '';
+    };
   };
 
   wayland.windowManager.sway = lib.mkIf (cfg.enable && swaycfg.enable) {
