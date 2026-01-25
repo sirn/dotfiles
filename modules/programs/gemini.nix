@@ -27,7 +27,14 @@ in
       };
       security = {
         auth = {
-          selectedType = "gemini-api-key";
+          # Valid Types:
+          # oauth-personal: Login with Google
+          # gemini-api-key: Gemini API key
+          # vertex-ai: Vertex AI API key
+          # compute-default-credentials: Google Cloud default credentials
+          #
+          # We set this to oauth-personal by default to use our Google subscription.
+          selectedType = lib.mkDefault "oauth-personal";
         };
         disableYoloMode = true;
       };
