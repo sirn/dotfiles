@@ -25,14 +25,17 @@ let
   geminiMcpPermissions = lib.mapAttrs (server: tools:
     if tools == null
     then { trust = true; }
-    else { includeTools = tools; }
+    else { } # Do not restrict tools (allow write), but do not trust (ask for everything)
   ) allowedTools;
 
   # Generate OpenCode permissions from allowedTools
   opencodePermissions = lib.listToAttrs (lib.flatten (lib.mapAttrsToList (server: tools:
     if tools == null
     then [{ name = "${server}_*"; value = true; }]
-    else map (tool: { name = "${server}_${tool}"; value = true; }) tools
+    else
+      # Allow read-only tools, ask for everything else (wildcard)
+      [{ name = "${server}_*"; value = false; }] ++
+      (map (tool: { name = "${server}_${tool}"; value = true; }) tools)
   ) allowedTools));
 in
 {
