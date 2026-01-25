@@ -1,11 +1,32 @@
 { config, lib, pkgs, ... }:
 
 let
+  reviewerOutputRules = ''
+    ## Output Rules
+    - Every finding must include a file path and line number or a quoted snippet
+    - If you cannot cite evidence, mark it as "speculative" and lower severity
+
+    ## Output
+    - **Critical**: ...
+    - **High**: ...
+    - **Medium**: ...
+    - **Low**: ...
+    - **Notes**: ...
+  '';
+
   sharedAgents = {
     quality-reviewer = {
       description = "Expert code quality reviewer focusing on bugs and logic";
       claude-code = {
-        allowedTools = [ "Read" "Grep" "Glob" ];
+        allowedTools = [
+          "Read"
+          "Grep"
+          "Glob"
+          "WebSearch"
+          "WebFetch"
+          "mcp__context7__resolve-library-id"
+          "mcp__context7__query-docs"
+        ];
         color = "red";
         model = "sonnet";
       };
@@ -35,16 +56,7 @@ let
         - **Medium**: Incorrect behavior in edge cases or degraded UX
         - **Low**: Minor issues, clarity, or maintainability concerns
 
-        ## Output Rules
-        - Every finding must include a file path and line number or a quoted snippet
-        - If you cannot cite evidence, mark it as "speculative" and lower severity
-
-        ## Output
-        - **Critical**: ...
-        - **High**: ...
-        - **Medium**: ...
-        - **Low**: ...
-        - **Notes**: ...
+        ${reviewerOutputRules}
       '';
     };
 
@@ -91,16 +103,7 @@ let
         - **Medium**: Requires specific conditions or low impact
         - **Low**: Best-practice gaps or defense-in-depth suggestions
 
-        ## Output Rules
-        - Every finding must include a file path and line number or a quoted snippet
-        - If you cannot cite evidence, mark it as "speculative" and lower severity
-
-        ## Output
-        - **Critical**: ...
-        - **High**: ...
-        - **Medium**: ...
-        - **Low**: ...
-        - **Notes**: ...
+        ${reviewerOutputRules}
       '';
     };
 
@@ -138,16 +141,7 @@ let
         - **Medium**: Local inconsistencies that slow understanding
         - **Low**: Minor style or formatting deviations
 
-        ## Output Rules
-        - Every finding must include a file path and line number or a quoted snippet
-        - If you cannot cite evidence, mark it as "speculative" and lower severity
-
-        ## Output
-        - **Critical**: ...
-        - **High**: ...
-        - **Medium**: ...
-        - **Low**: ...
-        - **Notes**: ...
+        ${reviewerOutputRules}
       '';
     };
 
@@ -192,16 +186,7 @@ let
         - **Medium**: Unnecessary indirection or abstraction
         - **Low**: Minor simplification opportunities
 
-        ## Output Rules
-        - Every finding must include a file path and line number or a quoted snippet
-        - If you cannot cite evidence, mark it as "speculative" and lower severity
-
-        ## Output
-        - **Critical**: ...
-        - **High**: ...
-        - **Medium**: ...
-        - **Low**: ...
-        - **Notes**: ...
+        ${reviewerOutputRules}
       '';
     };
 
@@ -322,14 +307,18 @@ let
         ## Available Tools
         - **Context7**: Use `mcp__context7__resolve-library-id` then `mcp__context7__query-docs` for library documentation
         - **WebSearch**: Find authoritative explanations and solutions
-        - **WebFetch**: Fetch and analyze specific documentation pages
+        - **WebFetch**: Fetch and analyze specific documentation pages OR external logs (e.g., CI logs, pastebins) referenced in the error
 
         ## Process
         1. Extract the exact error message or failure symptom
-        2. If reproduction steps are missing, ask for them before proposing fixes
-        3. Identify likely root causes
-        4. Validate with documentation or reputable sources
-        5. Propose the minimal fix and verify steps
+        2. If the error contains a URL to a full log or report, use `WebFetch` to retrieve it
+        3. If reproduction steps are missing, ask for them before proposing fixes
+        4. Identify likely root causes
+        5. Validate with documentation or reputable sources
+        6. Propose the minimal fix and verify steps
+
+        ## Stop Condition
+        - If a proposed fix fails to resolve the issue twice, STOP. Re-evaluate and ask for human guidance.
 
         ## Output
         - **Likely cause**: Short explanation
@@ -403,9 +392,15 @@ let
         - **Module structure:** How to organize components
         - **Key interfaces:** Important boundaries to define
         - **Data flow:** How data moves through the system
-        - **Technology choices:** Recommended tools/libraries with rationale and sources
-        - **Tradeoffs:** Why this design over alternatives
-        - **Extension points:** How design accommodates future changes
+
+        ### Decision Records (for key technology/architectural choices)
+        For each major decision, provide:
+        - **Context**: The problem being solved and constraints
+        - **Decision**: The chosen option (library, pattern, etc.)
+        - **Consequences**: Positive and negative implications (trade-offs)
+        - **Alternatives**: What was rejected and why
+
+        - **Extension points**: How design accommodates future changes
       '';
     };
   };
@@ -929,9 +924,13 @@ let
       prompt = ''
         Set up a project development environment with wrapper scripts and/or a Nix flake.
 
-        The command should have provided:
-        - **location**: "machine-local" (.my/) or "project-local" (bin/ or flake.nix)
-        - **setup_types**: "wrapper", "flake", or "both"
+        ## Parameters
+        - **location**: Desired location for setup artifacts.
+          - "machine-local": Inside `.my/` (ignored by git, good for personal tools).
+          - "project-local": Root level (e.g., `bin/`, `flake.nix`).
+        - **setup_types**: What to set up ("wrapper", "flake", or "both").
+
+        If these parameters are not explicitly provided in the request, infer them from context or ask the user for clarification before proceeding.
 
         ## Process
 
