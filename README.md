@@ -31,7 +31,7 @@ $ $(nix path-info .#homeConfigurations.$HM_PROFILE.activationPackage)/activate
 On subsequent updates, use:
 
 ```shell
-$ home-manager switch --flake .#$HM_PROFILE
+$ home-manager switch --flake path:.#$HM_PROFILE
 ```
 
 ## Configuration
