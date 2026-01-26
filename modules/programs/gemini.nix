@@ -2,6 +2,27 @@
 
 let
   cfg = config.programs.gemini-cli;
+
+  skillsDir = ../../var/agents/skills;
+  instructionText = builtins.readFile ../../var/agents/instruction.md;
+
+  isStdioServer = server: server ? command || server ? package;
+
+  toMcpRemoteTransport = transport:
+    if transport == "http" then "http-only"
+    else if transport == "sse" then "sse-only"
+    else transport;
+
+  toGeminiMcpServers = servers:
+    lib.mapAttrs
+      (name: server:
+        if isStdioServer server then {
+          command = server.command or (lib.getExe server.package);
+        } else {
+          command = lib.getExe pkgs.local.mcpServers.mcp-remote;
+          args = [ server.url "--transport" (toMcpRemoteTransport (server.transport or "sse")) ];
+        })
+      servers;
 in
 {
   programs.gemini-cli = {
@@ -10,7 +31,7 @@ in
     package = (pkgs.writeScriptBin "gemini" ''
       #!${pkgs.runtimeShell}
       exec "${lib.getExe pkgs.local.envWrapper}" \
-        -i ~/.config/llm-agent/env \
+        -i ~/.config/agents/env \
         -- "${lib.getExe pkgs.unstable.gemini-cli}" "$@"
     '');
 
@@ -20,7 +41,10 @@ in
     # TODO: switch to null, >25.11
     defaultModel = "";
 
+    context.GEMINI = instructionText;
+
     settings = {
+      mcpServers = toGeminiMcpServers config.programs.mcp.servers;
       general = {
         enablePromptCompletion = true;
         previewFeatures = true;
@@ -94,4 +118,6 @@ in
       ".gemini/"
     ];
   };
+
+  home.file.".gemini/skills".source = lib.mkIf cfg.enable skillsDir;
 }

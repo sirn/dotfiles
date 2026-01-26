@@ -1,5 +1,25 @@
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
+let
+  skillsDir = ../../var/agents/skills;
+  instructionText = builtins.readFile ../../var/agents/instruction.md;
+
+  isStdioServer = server: server ? command || server ? package;
+
+  toOpencodeMcpServers = servers:
+    lib.mapAttrs
+      (name: server:
+        if isStdioServer server then {
+          command = [ (server.command or (lib.getExe server.package)) ];
+          type = "local";
+          enabled = true;
+        } else {
+          url = server.url;
+          type = "remote";
+          enabled = true;
+        })
+      servers;
+in
 {
   programs.opencode = {
     enable = true;
@@ -7,12 +27,15 @@
     package = (pkgs.writeScriptBin "opencode" ''
       #!${pkgs.runtimeShell}
       exec "${lib.getExe pkgs.local.envWrapper}" \
-        -i "''${XDG_CONFIG_HOME:-$HOME/.config}/llm-agent/env" \
+        -i "''${XDG_CONFIG_HOME:-$HOME/.config}/agents/env" \
         -a GOOGLE_GENERATIVE_AI_API_KEY=GEMINI_API_KEY \
         -- "${lib.getExe pkgs.unstable.opencode}" "$@"
     '');
 
+    rules = instructionText;
+
     settings = {
+      mcp = toOpencodeMcpServers config.programs.mcp.servers;
       mode = {
         plan.model = "synthetic/hf:zai-org/GLM-4.7";
         build.model = "synthetic/hf:MiniMaxAI/MiniMax-M2.1";
@@ -85,4 +108,6 @@
       };
     };
   };
+
+  xdg.configFile."opencode/skill/home-manager".source = skillsDir;
 }

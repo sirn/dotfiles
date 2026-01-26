@@ -2,11 +2,31 @@
 
 let
   cfg = config.programs.claude-code;
+
+  skillsDir = ../../var/agents/skills;
+  instructionText = builtins.readFile ../../var/agents/instruction.md;
+
+  isStdioServer = server: server ? command || server ? package;
+
+  toClaudeCodeMcpServers = servers:
+    lib.mapAttrs
+      (name: server:
+        if isStdioServer server then {
+          type = "stdio";
+          command = server.command or (lib.getExe server.package);
+        } else {
+          type = server.transport or "sse";
+          url = server.url;
+        })
+      servers;
 in
 {
   programs.claude-code = {
     enable = true;
     package = pkgs.unstable.claude-code;
+
+    memory.text = instructionText;
+    mcpServers = toClaudeCodeMcpServers config.programs.mcp.servers;
 
     settings = {
       model = "opusplan";
@@ -80,4 +100,6 @@ in
       ".claude/*.local.md"
     ];
   };
+
+  home.file.".claude/skills".source = lib.mkIf cfg.enable skillsDir;
 }
