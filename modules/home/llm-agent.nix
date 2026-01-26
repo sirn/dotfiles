@@ -455,8 +455,8 @@ let
         Triage the changes to identify review priorities.
 
         ## Process
-        - If code changes are involved, start with `jj diff -s`; use `jj diff` only if needed.
-        1. Run `jj diff -s` to see changed files
+        1. Identify context:
+           - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
         2. Skim relevant diffs as needed
         3. Identify risk hotspots and review order
 
@@ -496,9 +496,8 @@ let
         Run a fast review using two focused reviewer agents.
 
         ## Process
-        - If code changes are involved, start with `jj diff -s`; use `jj diff` only if needed.
         1. Identify context:
-           - Run `jj diff -s` to see changed files
+           - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
            - If $ARGUMENTS provided, focus on those specific files/paths
 
         2. Spawn both reviewer agents in parallel using the Task tool:
@@ -548,9 +547,8 @@ let
         Run comprehensive quality checks by orchestrating sub-skills.
 
         ## Process
-        - If code changes are involved, start with `jj diff -s`; use `jj diff` only if needed.
         1. Identify context:
-           - Run `jj diff -s` to see changed files
+           - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
            - If $ARGUMENTS provided, focus on those specific files/paths
 
         2. Run all four skills in parallel using the Skill tool:
@@ -580,9 +578,8 @@ let
         Run a comprehensive review using specialized reviewer agents.
 
         ## Process
-        - If code changes are involved, start with `jj diff -s`; use `jj diff` only if needed.
         1. Identify context:
-           - Run `jj diff -s` to see changed files
+           - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
            - If $ARGUMENTS provided, focus on those specific files/paths
 
         2. Spawn all five reviewer agents in parallel using the Task tool:
@@ -652,9 +649,8 @@ let
         Generate a comprehensive implementation plan based on task analysis and research.
 
         ## Process
-        - If code changes are involved, start with `jj diff -s`; use `jj diff` only if needed.
         1. Identify context:
-           - Run `jj diff -s` to see changed files
+           - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
            - If $ARGUMENTS provided, focus on those specific files/paths
            - Understand the user's task/request
 
@@ -704,6 +700,55 @@ let
            - Testing strategy aligned with project patterns
 
         Prioritize actionable, specific guidance over abstract advice.
+      '';
+    };
+
+    refactor = {
+      description = "Execute safe, targeted refactoring with step-by-step guidance. Use when user asks to refactor, extract, rename, or restructure code.";
+      claude-code.allowedTools = [ "Read" "Grep" "Glob" "Task" "Bash(jj diff:*)" "Bash(jj status:*)" ];
+      prompt = ''
+        Execute safe, targeted refactoring by analyzing code and providing actionable steps.
+
+        ## Process
+        1. Identify context:
+           - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
+           - If $ARGUMENTS provided, focus on those specific files/paths
+           - Understand the refactoring goal (extract function, rename, simplify, etc.)
+
+        2. Spawn all three agents in parallel using the Task tool:
+           - Use `code-architect` agent: Identify safe refactoring transformations and structural changes
+           - Use `simplicity-reviewer` agent: Identify over-engineered areas to simplify, dead code to remove
+           - Use `best-practices-researcher` agent: Research idiomatic refactoring patterns for the language
+
+        3. Synthesize findings into concrete refactoring steps
+
+        ## Output
+        Present a refactoring plan with:
+        1. **Identified Refactorings** - Each refactoring opportunity with rationale
+           - Function extraction
+           - Variable renaming
+           - Dead code removal
+           - Complexity reduction
+
+        2. **Complexity Analysis** (from simplicity-reviewer)
+           - Over-engineered areas
+           - Unnecessary abstractions
+           - Dead code identified
+
+        3. **Best Practices Alignment** (from best-practices-researcher)
+           - Idiomatic patterns to apply
+           - Language-specific refactorings
+           - Modern alternatives to legacy code
+
+        4. **Step-by-Step Plan** - Numbered, file:line specific
+           - Each step with purpose and expected outcome
+           - Safe ordering (dependencies first)
+
+        5. **Verification Steps** - How to confirm each refactoring works
+           - Run tests after each major refactoring
+           - Commands to validate behavior
+
+        IMPORTANT: Only provide the plan. Do NOT auto-apply changes.
       '';
     };
 
@@ -757,9 +802,8 @@ let
         Run project tests by detecting the environment and fixing failures.
 
         ## Process
-        - If code changes are involved, start with `jj diff -s`; use `jj diff` only if needed.
         1. Identify context:
-           - Run `jj diff -s` to see changed files
+           - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
            - If $ARGUMENTS provided, focus on those specific files/paths
 
         2. Detect the preferred way to run tests:
@@ -789,6 +833,59 @@ let
       '';
     };
 
+    generate-tests = {
+      description = "Generate tests for untested functions and edge cases, then run them. Use when user asks to generate tests, add tests, or create test coverage.";
+      claude-code.allowedTools = [ "Skill" "Read" "Grep" "Glob" "Task" "Write" "Bash(jj diff:*)" ];
+      prompt = ''
+        Generate tests for untested functions and edge cases, then verify they pass.
+
+        ## Process
+        1. Identify context:
+           - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
+           - If $ARGUMENTS provided, focus on those specific files/paths
+           - Understand which functions/modules need test coverage
+
+        2. Detect test framework:
+           - Invoke `project-analyzer` skill to detect test framework and testing patterns
+           - Check for existing test files and naming conventions
+           - Identify test helper functions and fixtures in use
+
+        3. Identify untested code paths:
+           - Use Grep to find functions without corresponding tests
+           - Check for edge cases, error paths, boundary conditions
+           - Identify critical paths that lack coverage
+
+        4. Spawn research agents in parallel:
+           - Use `best-practices-researcher` agent: Research testing best practices for the language/framework
+           - Use `code-architect` agent: Identify critical paths, edge cases, and error handling scenarios
+
+        5. Generate test code:
+           - Match existing test conventions (naming, structure, fixtures)
+           - Cover happy path, edge cases, and error scenarios
+           - Include proper assertions and test organization
+
+        6. Run the generated tests:
+           - Invoke `test` skill to run the new tests
+           - Analyze any failures
+
+        7. Fix test failures:
+           - Identify root cause of failures
+           - Fix test code or generated code as appropriate
+           - Re-run tests to verify
+
+        ## Stop Condition
+        - If test generation or fixing fails twice, stop and ask for guidance.
+
+        ## Output
+        1. **Test Framework Detected**
+        2. **Untested Functions/Paths Identified**
+        3. **Generated Tests** (with file locations and coverage summary)
+        4. **Test Results** (from running tests)
+        5. **Failures Fixed** (if any, with explanations)
+        6. **Verification** - All new tests pass
+      '';
+    };
+
     lint = {
       description = "Detect project config, run linting, and fix issues. Use when user asks to lint or check style.";
       claude-code.allowedTools = [
@@ -815,9 +912,8 @@ let
         Run project linting by detecting the environment and fixing issues.
 
         ## Process
-        - If code changes are involved, start with `jj diff -s`; use `jj diff` only if needed.
         1. Identify context:
-           - Run `jj diff -s` to see changed files
+           - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
            - If $ARGUMENTS provided, focus on those specific files/paths
 
         2. Detect the preferred way to run linting:
@@ -847,6 +943,96 @@ let
       '';
     };
 
+    upgrade = {
+      description = "Safely upgrade dependencies or migrate framework versions. Use when user asks to upgrade, update dependencies, or migrate to a new version.";
+      claude-code.allowedTools = [
+        "Skill"
+        "Read"
+        "Grep"
+        "Glob"
+        "Task"
+        "WebSearch"
+        "WebFetch"
+        "Bash(npm:*)"
+        "Bash(pnpm:*)"
+        "Bash(yarn:*)"
+        "Bash(cargo:*)"
+        "Bash(go:*)"
+        "Bash(pip:*)"
+        "Bash(poetry:*)"
+        "Bash(uv:*)"
+        "Bash(bundle:*)"
+        "Bash(jj diff:*)"
+      ];
+      prompt = ''
+        Safely upgrade dependencies or migrate framework versions.
+
+        ## Process
+        - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
+
+        ### Step 1 - Identify Upgrade Type
+        Ask the user to clarify what they want to upgrade:
+        - **Single dependency**: Upgrade one package (e.g., `react 18 -> 19`)
+        - **All dependencies**: Update all packages to latest compatible versions
+        - **Framework migration**: Major version upgrade with breaking changes (e.g., `Next.js 13 -> 15`)
+        - **Language version**: Update runtime version (e.g., `Python 3.11 -> 3.12`)
+
+        ### Step 2 - Analyze Current State
+        1. Invoke `project-analyzer` skill to detect package manager and project type
+        2. Read the dependency file (package.json, pyproject.toml, Cargo.toml, go.mod, Gemfile, etc.)
+        3. Identify current versions of packages to be upgraded
+
+        ### Step 3 - Research Changes
+        Spawn `best-practices-researcher` agent to research:
+        - Breaking changes in the target version
+        - Official migration guides
+        - Deprecated APIs that need updates
+        - Common pitfalls and solutions
+
+        Use WebSearch/WebFetch to find:
+        - Official changelogs
+        - Migration documentation
+        - Community experiences with the upgrade
+
+        ### Step 4 - Generate Plan
+        Create an upgrade plan with:
+        - Deprecated API replacements needed
+        - Breaking changes to address
+        - Test updates required
+        - Migration commands to run
+
+        Present the plan to the user for approval before proceeding.
+
+        ### Step 5 - Execute Upgrades
+        After user approval:
+        1. Update dependency file with new versions
+        2. Install new dependencies
+        3. Fix breaking changes in code
+        4. Invoke `test` skill to verify changes
+        5. Fix any test failures
+
+        ### Step 6 - Fix Failures
+        For any test failures:
+        1. Identify root cause (breaking change or test issue)
+        2. Fix code or tests as appropriate
+        3. Re-run tests to verify
+
+        ## Stop Condition
+        - If a fix fails twice, stop and ask for guidance.
+
+        ## Output
+        1. **Upgrading** - What's being upgraded (package, version range, or all)
+        2. **Current Versions** - Before upgrade
+        3. **Target Versions** - After upgrade
+        4. **Breaking Changes** - From research (with migration steps)
+        5. **Migration Plan** - Step-by-step (presented before execution)
+        6. **Updates Applied** - Files changed, commands run
+        7. **Test Results** - From verification
+        8. **Failures Fixed** - If any (with explanations)
+        9. **Remaining Issues** - Requires manual intervention
+      '';
+    };
+
     commit-message = {
       description = "Analyzes changes and suggests commit messages following repository conventions. Use when user asks about commits, commit messages, or wants to commit changes.";
       claude-code.allowedTools = [
@@ -862,12 +1048,11 @@ let
 
         ## Important
         **IMPORTANT**: Always use `jj` (Jujutsu) commands. Only fall back to `git` if jj is not available.
+        Refer to the `jujutsu-reference` skill for command syntax if needed.
 
         ## Process
-        - If code changes are involved, start with `jj diff -s`; use `jj diff` only if needed.
-
         1. Identify context:
-           - Run `jj diff -s` to see changed files
+           - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
            - If $ARGUMENTS provided, focus on those specific files/paths
 
         2. Analyze commit message patterns:
@@ -939,6 +1124,7 @@ let
         ### Wrapper Scripts
 
         1. Determine paths based on location:
+           - Workspace-local: `bin/` if running in workspace location (~/Dev/workspace)
            - Machine-local: `.my/bin/` with `my-` prefix
            - Project-local: `bin/`, ask about naming:
              - Generic: `test`, `lint`, `fmt`, `build`, `dev`
@@ -998,6 +1184,274 @@ let
         - Wrapper/flake location created
         - Scripts/flake created (with descriptions)
         - How to use
+      '';
+    };
+
+    nix-reference = {
+      description = "Reference for Nix commands, flake patterns, and best practices";
+      claude-code = {
+        allowedTools = [ ];
+        userInvocable = false;
+      };
+      prompt = ''
+        ## Nix Command Reference
+
+        ### Flake Commands
+        - `nix build .#<package>` - Build a package
+        - `nix run .#<package>` - Run a package
+        - `nix develop` - Enter dev shell
+        - `nix flake check` - Validate flake
+        - `nix flake update` - Update flake.lock
+
+        ### Interactive nix-shell
+
+        ```bash
+        # Ad-hoc shell with packages
+        nix-shell -p curl jq --run "curl -s https://api.example.com | jq ."
+
+        # Enter interactive shell with packages
+        nix-shell -p python3 python3Packages.requests
+
+        # Pure shell (no host environment leakage)
+        nix-shell -p nodejs --pure
+
+        # Pin to specific nixpkgs version
+        nix-shell -p go -I nixpkgs=https://nixos.org/channels/nixos-25.11/nixexprs.tar.xz
+        ```
+
+        ### nix-shell Shebang Patterns
+
+        #### Bash script
+        ```bash
+        #!/usr/bin/env nix-shell
+        #! nix-shell -i bash --pure
+        #! nix-shell -p bash curl jq
+        #! nix-shell -I nixpkgs=https://nixos.org/channels/nixos-25.11/nixexprs.tar.xz
+
+        curl -s https://api.example.com | jq .
+        ```
+
+        #### Python script
+        ```python
+        #!/usr/bin/env nix-shell
+        #! nix-shell -i python3 --pure
+        #! nix-shell -p python3 python3Packages.requests
+        #! nix-shell -I nixpkgs=https://nixos.org/channels/nixos-25.11/nixexprs.tar.xz
+
+        import requests
+        print(requests.get("https://api.example.com").json())
+        ```
+
+        ### devShell Patterns
+
+        #### mkShell vs mkShellNoCC
+        - `mkShell` - When you need C compiler (native extensions)
+        - `mkShellNoCC` - Pure scripting (Python, Node.js, Go)
+
+        #### Basic flake with devShell
+        ```nix
+        {
+          inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+
+          outputs = { self, nixpkgs }:
+            let
+              system = "x86_64-linux";
+              pkgs = nixpkgs.legacyPackages.''${system};
+            in {
+              devShells.''${system}.default = pkgs.mkShell {
+                packages = with pkgs; [ nodejs pnpm ];
+                env.NODE_ENV = "development";
+                shellHook = '''
+                  export PATH="$PWD/node_modules/.bin:$PATH"
+                ''';
+              };
+            };
+        }
+        ```
+
+        #### Multi-system with flake-utils
+        ```nix
+        {
+          inputs = {
+            nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+            flake-utils.url = "github:numtide/flake-utils";
+          };
+
+          outputs = { self, nixpkgs, flake-utils }:
+            flake-utils.lib.eachDefaultSystem (system:
+              let pkgs = nixpkgs.legacyPackages.''${system}; in {
+                devShells.default = pkgs.mkShell {
+                  packages = with pkgs; [ go gopls ];
+                };
+              });
+        }
+        ```
+
+        #### Python with uv (recommended)
+        ```nix
+        # Use wrapped-uv for FHS compatibility on Linux
+        pkgs.mkShell {
+          packages = [ pkgs.wrapped-uv ];  # or pkgs.uv on non-Linux
+          shellHook = '''
+            [ -d .venv ] || uv venv
+            source .venv/bin/activate
+          ''';
+        }
+        ```
+
+        #### wrapped-uv pattern (for FHS compatibility)
+        ```nix
+        # pkgs/wrapped-uv.nix - wraps uv in FHS env for manylinux wheels
+        { buildFHSEnv, stdenv, uv, makeWrapper }:
+        let
+          fhsUv = buildFHSEnv {
+            name = "uv-fhs";
+            runScript = "uv";
+            targetPkgs = pkgs': with pkgs'; [
+              uv openssl pkg-config stdenv.cc.cc zlib
+            ];
+          };
+          actualUv = if stdenv.isLinux then fhsUv else uv;
+        in stdenv.mkDerivation {
+          pname = "wrapped-uv";
+          version = uv.version;
+          nativeBuildInputs = [ makeWrapper ];
+          dontUnpack = true;
+          installPhase = '''
+            mkdir -p $out/bin
+            makeWrapper ''${actualUv}/bin/uv $out/bin/uv
+            makeWrapper ''${actualUv}/bin/uv $out/bin/uvx --add-flags "tool run"
+          ''';
+        }
+        ```
+
+        ### Overlay Pattern
+        ```nix
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [
+              (final: prev: {
+                nodejs = prev.nodejs_22;
+              })
+            ];
+          };
+        in { ... }
+        ```
+
+        ### Never Use
+        - `nix-env -i` (use flakes or declarative config)
+      '';
+    };
+
+    jujutsu-reference = {
+      description = "Reference for Jujutsu (jj) version control commands";
+      claude-code = {
+        allowedTools = [ ];
+        userInvocable = false;
+      };
+      prompt = ''
+        ## Jujutsu Command Reference
+
+        Working copy is always a commit. Changes are first-class with stable IDs across rewrites.
+
+        ### Key Concepts
+        - `@` = working copy commit
+        - `@-` = parent, `@--` = grandparent
+        - Revsets: `::@` (ancestors), `main..@` (commits since main)
+
+        ### Day-to-Day Commands
+
+        | Task | Command |
+        |------|---------|
+        | Status | `jj status` |
+        | Diff | `jj diff` / `jj diff -s` |
+        | Log | `jj log` / `jj log -r <revset>` |
+        | New commit | `jj new` / `jj new -m "msg"` |
+        | Describe | `jj describe -m "msg"` |
+        | Commit + new | `jj commit -m "msg"` |
+        | Navigate | `jj prev` / `jj next` |
+        | Edit commit | `jj edit <id>` |
+        | Squash to parent | `jj squash` |
+        | Split commit | `jj split` |
+        | Rebase | `jj rebase -d <dest>` |
+        | Abandon | `jj abandon` |
+        | Show file | `jj file show <path> -r <rev>` |
+        | Blame | `jj file annotate <path>` |
+        | Undo | `jj undo` |
+
+        ### Revset Syntax
+
+        ```
+        # Operators
+        x-          # Parents
+        x+          # Children
+        ::x         # Ancestors (inclusive)
+        x::         # Descendants
+        x..y        # y ancestors excluding x ancestors
+        x & y       # Intersection
+        x | y       # Union
+
+        # Functions
+        mine()                  # Your commits
+        bookmarks()             # All bookmarks
+        remote_bookmarks()      # Remote bookmarks
+        author("pattern")       # By author
+        description("text")     # By message
+        files("path/**")        # Touching files
+        empty()                 # Empty commits
+        heads(x)                # Heads in set
+        ```
+
+        ### Bookmarks (like git branches)
+
+        ```bash
+        jj bookmark create feature -r @    # Create
+        jj bookmark set feature -r @       # Set/update
+        jj bookmark move feature -r @      # Move existing
+        jj bookmark delete feature         # Delete
+        jj bookmark track feature@origin   # Track remote
+        ```
+
+        ### Working with Remotes
+
+        ```bash
+        jj git fetch                          # Fetch all
+        jj git push --bookmark feature        # Push bookmark
+        jj git push --bookmark new --allow-new  # Push new bookmark
+        ```
+
+        ### Common Workflows
+
+        #### Squash workflow (recommended)
+        ```bash
+        jj new                 # Start new commit
+        # ... make changes ...
+        jj squash              # Merge into parent
+        ```
+
+        #### Feature branch
+        ```bash
+        jj new main
+        jj commit -m "feat: add feature"
+        jj bookmark create my-feature -r @-
+        jj git push --bookmark my-feature --allow-new
+        ```
+
+        #### Resolve conflicts
+        ```bash
+        jj resolve --list           # List conflicts
+        jj resolve                  # Use merge tool
+        jj resolve --tool=:ours     # Accept current
+        jj resolve --tool=:theirs   # Accept incoming
+        ```
+
+        #### Recovery
+        ```bash
+        jj undo                     # Undo last operation
+        jj op log                   # View operation history
+        jj op restore <op-id>       # Restore to state
+        ```
       '';
     };
   };
@@ -1074,12 +1528,18 @@ let
       - **Comments**: Focus on "why", not "what". Never leave "change log" style comments (e.g., "# Removed...").
 
     ## Operational Rules
+    - **Project Knowledge**: Read from README.md if exist.
     - **Instruction Priority**: System > Developer > User > Repo instructions; when in doubt, ask.
-    - **Planning**: Do NOT make code changes when asked to plan. Provide an outline first.
+    - **Planning**: Do NOT make code changes when asked to plan. Provide an outline first. For plan files: always include sufficient context on what the project does, tooling to use, and what we're implementing; always clear the plan file when moving on to the next task.
     - **Clarification**: Ask when requirements, success criteria, or target files are unclear.
     - **URLs**: You MUST follow any URL presented to you (especially in error messages).
     - **Temporary Files**: Use the `tmp/` directory. Create a `.gitignore` ignoring everything inside it. Clean up when done.
     - **Anti-Loop**: If a fix fails twice, STOP. Re-evaluate the cause, explain the blockage, and ask for guidance.
+
+    ## Project Directories
+    - `~/Dev/src/<hosting-provider>/<repo>/` - Cloned source repositories (e.g., `~/Dev/src/github.com/sirn/sirn`)
+    - `~/Dev/adhoc/<YYMMDD>_<name>/` - Ad-hoc source code (PoCs, one-off scripts, etc.)
+    - `~/Dev/workspace/<name>/<repo>/` - Jujutsu/Git workspaces
 
     ## Task Management
     - **MCP Retrieval**: When retrieving tasks from project management tools (Asana, Linear, ClickUp, etc.) via MCP, default to listing only incomplete ("not done") tasks unless the user explicitly requests completed tasks.
@@ -1094,6 +1554,7 @@ let
     - **Verify Operations**: After modifying code, run a syntax check or linter if available to verify correctness.
     - **Error Handling**: Analyze error messages fully before applying fixes. Do not guess.
     - **Dependencies**: Check for existing libraries/packages before introducing new ones.
+    - **Editing**: Do not use `sed` to edit files. Use the Edit tool for single-file changes. Only use `sed` for replacements across multiple files.
 
     ## Hygiene & Formatting
     - Ensure no trailing whitespace or blank lines containing only spaces.
@@ -1102,11 +1563,8 @@ let
     - **Tests**: Write tests for public interfaces only, unless internal behavior is observable.
 
     ## Environment & Tooling
-    - **Nix Environment**:
-      - You are in a Nix-enabled environment.
-      - Use `nix` commands. Do NOT use `nix-env -i`.
-      - Use `comma` (`, <command>`) for missing commands.
-      - Use `#!/usr/bin/env nix-shell` or `#!nix-shell` for temporary scripts.
+    - **Nix**: You are in a Nix-enabled environment. Use `nix` commands (never `nix-env -i`). Use nix-shell shebangs for scripts needing specific dependencies. Refer to nix-reference skill for detailed commands and patterns.
+    - **Nix Packages**: When adding a Nix package, use `nix-locate`, `WebFetch`, or `WebSearch` to verify the exact package name instead of guessing.
     - **Command Execution**:
       - **Long-running Processes**: Use the tool's native backgrounding functionality if available. Avoid manually appending `&` to shell commands. If no tool-provided backgrounding exists or you are unsure, ask the user to run the process.
       - **Timeouts**: Ensure proper timeouts for commands that are expected to eventually terminate.
@@ -1117,15 +1575,7 @@ let
     ## Version Control
     - **Policy**: NEVER attempt to manipulate Jujutsu or Git commits on your own.
     - **Commit Messages**: When asked to commit, keep messages concise, consistent, and following existing patterns.
-    - **Jujutsu (`jj`) Usage (ALWAYS prefer over `git`)**:
-      - Use `jj` for ALL version control operations. Only fall back to `git` if `jj` is unavailable.
-      - **References**: `@` = working copy, `@-` = parent commit.
-      - **Diff**: `jj diff` (not `git diff`), `jj diff -s` for summary.
-      - **Log**: `jj log` (not `git log`), `jj log -r ::@` for ancestors.
-      - **Status**: `jj status` (not `git status`).
-      - **Blame**: `jj file annotate <path>` (not `git blame`).
-      - **Show commit**: `jj show -r <rev>` (not `git show`).
-      - **Revert File**: `jj restore -r <commit> -- <path>`.
+    - **Jujutsu**: ALWAYS prefer `jj` over `git`. Refer to jujutsu-reference skill for commands.
 
     ## Policy Footer
     - Ask when unsure; do not guess.
