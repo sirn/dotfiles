@@ -1124,7 +1124,6 @@ let
         ### Wrapper Scripts
 
         1. Determine paths based on location:
-           - Workspace-local: `bin/` if running in workspace location (~/Dev/workspace)
            - Machine-local: `.my/bin/` with `my-` prefix
            - Project-local: `bin/`, ask about naming:
              - Generic: `test`, `lint`, `fmt`, `build`, `dev`
@@ -1157,25 +1156,48 @@ let
 
         2. Check for existing flake at the determined path
 
-        3. Detect project type:
-           - Node.js: package.json (check for npm/pnpm/yarn)
-           - Python: pyproject.toml, setup.py, requirements.txt, poetry.lock
-           - Go: go.mod
-           - Rust: Cargo.toml
-           - Ruby: Gemfile
+        3. Detect project type and required packages:
+           - Node.js: package.json → nodejs, npm/pnpm/yarn
+           - Python: pyproject.toml, setup.py → python3, pip/poetry/uv
+           - Go: go.mod → go, gopls
+           - Rust: Cargo.toml → cargo, rustc
+           - Ruby: Gemfile → ruby, bundler
            - Other: check for Makefile, CMakeLists.txt, etc.
 
-        4. Spawn `best-practices-researcher` agent to research nix patterns for this project type
+        4. Generate flake using this simple template:
+        ```nix
+        {
+          inputs = {
+            nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+            flake-utils.url = "github:numtide/flake-utils";
+          };
 
-        5. Generate appropriate flake:
-           - Inputs (nixpkgs, flake-utils, etc.)
-           - Project-specific packages based on detected dependencies
-           - devShell with necessary tools
-           - Intelligently merge if updating existing flake
+          outputs = { self, nixpkgs, flake-utils }:
+            flake-utils.lib.eachDefaultSystem (system:
+              let
+                pkgs = import nixpkgs {
+                  inherit system;
+                  config.allowUnfree = true;
+                };
+              in
+              {
+                devShells.default = pkgs.mkShell {
+                  buildInputs = with pkgs; [
+                    # Project-specific packages
+                  ];
+                };
+              }
+            );
+        }
+        ```
+           - Use `buildInputs` (not `packages`) for dependencies
+           - No shellHook unless absolutely necessary
+           - Keep it simple and minimal
+           - If updating existing flake, preserve custom inputs/outputs but simplify structure
 
-        6. If machine-local: Create `.my/.gitignore` with content `*` if not exists
+        5. If machine-local: Create `.my/.gitignore` with content `*` if not exists
 
-        7. Verify the flake: `nix flake check path:.`
+        6. Verify the flake: `nix flake check path:.`
         - If verification fails, fix issues and re-verify
 
         ## Output
@@ -1248,28 +1270,7 @@ let
         - `mkShell` - When you need C compiler (native extensions)
         - `mkShellNoCC` - Pure scripting (Python, Node.js, Go)
 
-        #### Basic flake with devShell
-        ```nix
-        {
-          inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
-
-          outputs = { self, nixpkgs }:
-            let
-              system = "x86_64-linux";
-              pkgs = nixpkgs.legacyPackages.''${system};
-            in {
-              devShells.''${system}.default = pkgs.mkShell {
-                packages = with pkgs; [ nodejs pnpm ];
-                env.NODE_ENV = "development";
-                shellHook = '''
-                  export PATH="$PWD/node_modules/.bin:$PATH"
-                ''';
-              };
-            };
-        }
-        ```
-
-        #### Multi-system with flake-utils
+        #### Basic flake template (recommended)
         ```nix
         {
           inputs = {
@@ -1279,49 +1280,71 @@ let
 
           outputs = { self, nixpkgs, flake-utils }:
             flake-utils.lib.eachDefaultSystem (system:
-              let pkgs = nixpkgs.legacyPackages.''${system}; in {
-                devShells.default = pkgs.mkShell {
-                  packages = with pkgs; [ go gopls ];
+              let
+                pkgs = import nixpkgs {
+                  inherit system;
+                  config.allowUnfree = true;
                 };
-              });
+              in
+              {
+                devShells.default = pkgs.mkShell {
+                  buildInputs = with pkgs; [
+                    # Add packages here
+                  ];
+                };
+              }
+            );
         }
         ```
 
         #### Python with uv (recommended)
         ```nix
-        # Use wrapped-uv for FHS compatibility on Linux
-        pkgs.mkShell {
-          packages = [ pkgs.wrapped-uv ];  # or pkgs.uv on non-Linux
-          shellHook = '''
-            [ -d .venv ] || uv venv
-            source .venv/bin/activate
-          ''';
-        }
-        ```
-
-        #### wrapped-uv pattern (for FHS compatibility)
-        ```nix
-        # pkgs/wrapped-uv.nix - wraps uv in FHS env for manylinux wheels
-        { buildFHSEnv, stdenv, uv, makeWrapper }:
-        let
-          fhsUv = buildFHSEnv {
-            name = "uv-fhs";
-            runScript = "uv";
-            targetPkgs = pkgs': with pkgs'; [
-              uv openssl pkg-config stdenv.cc.cc zlib
-            ];
+        {
+          inputs = {
+            nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+            flake-utils.url = "github:numtide/flake-utils";
           };
-          actualUv = if stdenv.isLinux then fhsUv else uv;
-        in stdenv.mkDerivation {
-          pname = "wrapped-uv";
-          version = uv.version;
-          nativeBuildInputs = [ makeWrapper ];
-          dontUnpack = true;
-          installPhase = '''
-            mkdir -p $out/bin
-            makeWrapper ''${actualUv}/bin/uv $out/bin/uv
-            makeWrapper ''${actualUv}/bin/uv $out/bin/uvx --add-flags "tool run"
-          ''';
+
+          outputs = { self, nixpkgs, flake-utils }:
+            flake-utils.lib.eachDefaultSystem (system:
+              let
+                pkgs = import nixpkgs {
+                  inherit system;
+                  config.allowUnfree = true;
+                  overlays = [
+                    (final: prev: {
+                      wrapped-uv = prev.stdenv.mkDerivation {
+                        pname = "wrapped-uv";
+                        version = prev.uv.version;
+                        nativeBuildInputs = [ prev.makeWrapper ];
+                        dontUnpack = true;
+                        installPhase =
+                          let
+                            fhsUv = prev.buildFHSEnv {
+                              name = "uv-fhs";
+                              runScript = "uv";
+                              targetPkgs = pkgs': with pkgs'; [
+                                prev.uv openssl pkg-config prev.stdenv.cc.cc zlib
+                              ];
+                            };
+                            actualUv = if prev.stdenv.isLinux then fhsUv else prev.uv;
+                          in
+                          '''
+                            mkdir -p $out/bin
+                            makeWrapper ''${actualUv}/bin/uv $out/bin/uv
+                            makeWrapper ''${actualUv}/bin/uv $out/bin/uvx --add-flags "tool run"
+                          ''';
+                      };
+                    })
+                  ];
+                };
+              in
+              {
+                devShells.default = pkgs.mkShell {
+                  buildInputs = [ pkgs.wrapped-uv ];
+                };
+              }
+            );
         }
         ```
 
