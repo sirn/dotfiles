@@ -1136,8 +1136,11 @@ let
   # Check if server uses stdio transport (has command or package, not url)
   isStdioServer = server: server ? command || server ? package;
 
-  # Check if server uses remote transport (has url)
-  isRemoteServer = server: server ? url;
+  # Convert standard transport values to mcp-remote format
+  toMcpRemoteTransport = transport:
+    if transport == "http" then "http-only"
+    else if transport == "sse" then "sse-only"
+    else transport; # Pass through http-first, sse-first, http-only, sse-only
 
   # Transform programs.mcp.servers to Claude Code format
   # Claude Code supports both stdio and SSE natively
@@ -1162,7 +1165,7 @@ let
           command = server.command or (lib.getExe server.package);
         } else {
           command = lib.getExe pkgs.local.mcpServers.mcp-remote;
-          args = [ server.url "--transport" "sse-only" ];
+          args = [ server.url "--transport" (toMcpRemoteTransport (server.transport or "sse")) ];
         })
       servers;
 
@@ -1176,7 +1179,7 @@ let
           command = server.command or (lib.getExe server.package);
         } else {
           command = lib.getExe pkgs.local.mcpServers.mcp-remote;
-          args = [ server.url ];
+          args = [ server.url "--transport" (toMcpRemoteTransport (server.transport or "sse")) ];
         })
       servers;
 
