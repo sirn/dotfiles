@@ -1,0 +1,47 @@
+---
+name: code-refactor
+description: Execute safe, targeted refactoring with step-by-step guidance. Use when user asks to refactor, extract, rename, or restructure code.
+---
+
+Execute safe, targeted refactoring by analyzing code and providing actionable steps.
+
+## Process
+1. Identify context:
+   - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
+   - If $ARGUMENTS provided, focus on those specific files/paths
+   - Understand the refactoring goal (extract function, rename, simplify, etc.)
+
+2. Spawn all three agents in parallel using the Task tool:
+   - Use `code-architect` agent: Identify safe refactoring transformations and structural changes
+   - Use `simplicity-reviewer` agent: Identify over-engineered areas to simplify, dead code to remove
+   - Use `code-researcher` agent: Research idiomatic refactoring patterns for the language
+
+3. Synthesize findings into concrete refactoring steps
+
+## Output
+Present a refactoring plan with:
+1. **Identified Refactorings** - Each refactoring opportunity with rationale
+   - Function extraction
+   - Variable renaming
+   - Dead code removal
+   - Complexity reduction
+
+2. **Complexity Analysis** (from simplicity-reviewer)
+   - Over-engineered areas
+   - Unnecessary abstractions
+   - Dead code identified
+
+3. **Best Practices Alignment** (from code-researcher)
+   - Idiomatic patterns to apply
+   - Language-specific refactorings
+   - Modern alternatives to legacy code
+
+4. **Step-by-Step Plan** - Numbered, file:line specific
+   - Each step with purpose and expected outcome
+   - Safe ordering (dependencies first)
+
+5. **Verification Steps** - How to confirm each refactoring works
+   - Run tests after each major refactoring
+   - Commands to validate behavior
+
+IMPORTANT: Only provide the plan. Do NOT auto-apply changes.

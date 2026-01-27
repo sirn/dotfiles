@@ -1,9 +1,0 @@
-description = "Expert at researching best practices and patterns via web search"
-
-[claude-code]
-allowedTools = ["Read", "Grep", "Glob", "WebSearch", "WebFetch", "mcp__context7__resolve-library-id", "mcp__context7__query-docs"]
-color = "purple"
-model = "sonnet"
-
-[opencode]
-model = "google/gemini-3-flash-preview"
