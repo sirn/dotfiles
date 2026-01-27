@@ -3,8 +3,39 @@
 let
   cfg = config.programs.claude-code;
 
-  skillsDir = ../../var/agents/skills;
   instructionText = builtins.readFile ../../var/agents/instruction.md;
+
+  skillsDir = ../../var/agents/skills;
+
+  agentsDir = ../../var/agents/agents;
+
+  agentFiles = builtins.filter
+    (name: lib.hasSuffix ".toml" name)
+    (builtins.attrNames (builtins.readDir agentsDir));
+
+  loadAgent = tomlFile:
+    let
+      name = lib.removeSuffix ".toml" tomlFile;
+      agentConfig = builtins.fromTOML (builtins.readFile (agentsDir + "/${tomlFile}"));
+      prompt = builtins.readFile (agentsDir + "/${name}.md");
+    in
+    {
+      inherit name;
+      value = agentConfig // { inherit prompt; };
+    };
+
+  agents = builtins.listToAttrs (map loadAgent agentFiles);
+
+  mkClaudeCodeAgent = name: agent: ''
+    ---
+    name: ${name}
+    description: ${agent.description}
+    tools: ${lib.concatStringsSep ", " agent.claude-code.allowedTools}
+    color: ${agent.claude-code.color}
+    model: ${agent.claude-code.model}
+    ---
+    ${agent.prompt}
+  '';
 
   isStdioServer = server: server ? command || server ? package;
 
@@ -25,6 +56,7 @@ in
     enable = true;
     package = pkgs.unstable.claude-code;
 
+    agents = lib.mapAttrs mkClaudeCodeAgent agents;
     memory.text = instructionText;
     mcpServers = toClaudeCodeMcpServers config.programs.mcp.servers;
 

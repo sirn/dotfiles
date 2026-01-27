@@ -3,8 +3,9 @@
 let
   cfg = config.programs.codex;
 
-  skillsDir = ../../var/agents/skills;
   instructionText = builtins.readFile ../../var/agents/instruction.md;
+
+  skillsDir = ../../var/agents/skills;
 
   isStdioServer = server: server ? command || server ? package;
 

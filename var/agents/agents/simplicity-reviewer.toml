@@ -1,0 +1,9 @@
+description = "Pragmatic reviewer prioritizing simplicity over abstraction"
+
+[claude-code]
+allowedTools = ["Read", "Grep", "Glob"]
+color = "green"
+model = "sonnet"
+
+[opencode]
+model = "google/gemini-3-flash-preview"

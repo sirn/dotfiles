@@ -1,8 +1,38 @@
 { config, lib, pkgs, ... }:
 
 let
-  skillsDir = ../../var/agents/skills;
   instructionText = builtins.readFile ../../var/agents/instruction.md;
+
+  skillsDir = ../../var/agents/skills;
+
+  agentsDir = ../../var/agents/agents;
+
+  agentFiles = builtins.filter
+    (name: lib.hasSuffix ".toml" name)
+    (builtins.attrNames (builtins.readDir agentsDir));
+
+  loadAgent = tomlFile:
+    let
+      name = lib.removeSuffix ".toml" tomlFile;
+      agentConfig = builtins.fromTOML (builtins.readFile (agentsDir + "/${tomlFile}"));
+      prompt = builtins.readFile (agentsDir + "/${name}.md");
+    in
+    {
+      inherit name;
+      value = agentConfig // { inherit prompt; };
+    };
+
+  agents = builtins.listToAttrs (map loadAgent agentFiles);
+
+  mkOpencodeAgent = name: agent: ''
+    ---
+    name: ${name}
+    description: ${agent.description}
+    model: ${agent.opencode.model}
+    mode: subagent
+    ---
+    ${agent.prompt}
+  '';
 
   isStdioServer = server: server ? command || server ? package;
 
@@ -32,6 +62,7 @@ in
         -- "${lib.getExe pkgs.unstable.opencode}" "$@"
     '');
 
+    agents = lib.mapAttrs mkOpencodeAgent agents;
     rules = instructionText;
 
     settings = {

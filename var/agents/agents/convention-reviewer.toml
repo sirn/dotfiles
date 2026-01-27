@@ -1,0 +1,9 @@
+description = "Meticulous reviewer for coding conventions and consistency"
+
+[claude-code]
+allowedTools = ["Read", "Grep", "Glob"]
+color = "blue"
+model = "sonnet"
+
+[opencode]
+model = "google/gemini-3-flash-preview"
