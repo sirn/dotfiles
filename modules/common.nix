@@ -33,6 +33,7 @@
     ./programs/nix-index.nix
     ./programs/qalculate.nix
     ./programs/ripgrep.nix
+    ./programs/repoman.nix
     ./programs/rsync.nix
     ./programs/sl.nix
     ./programs/ssh.nix

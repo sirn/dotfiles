@@ -24,7 +24,7 @@ in
 
       ggd = {
         body = ''
-          set -l dir ($HOME/.dotfiles/bin/pom list | ${pkgs.fzy}/bin/fzy -q "$argv")
+          set -l dir (repoman list | ${pkgs.fzy}/bin/fzy -q "$argv")
           if test -z "$dir"
             return
           end

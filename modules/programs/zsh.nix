@@ -39,7 +39,7 @@ in
             ggd() {
               local dir
 
-              dir=$($HOME/.dotfiles/bin/pom list | "${fzyCmd}" -q "$*")
+              dir=$(repoman list | "${fzyCmd}" -q "$*")
               if [ -z "$dir" ]; then
                   return
               fi

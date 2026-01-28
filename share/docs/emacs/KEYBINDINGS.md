@@ -77,7 +77,7 @@ Project-specific commands and operations.
 | `SPC p g` | `gemacs--project-gptel` | Open GPTel in the project root. |
 | `SPC p m` | `magit-project-status` | Open Magit status for the project. |
 | `SPC p s` | `consult-ripgrep` | Search project with `ripgrep`. |
-| `SPC p S` | `gemacs--project-sync` | Sync known projects from `pom`. |
+| `SPC p S` | `gemacs--project-sync` | Sync known projects from `repoman`. |
 
 ### `SPC E` - Environment
 

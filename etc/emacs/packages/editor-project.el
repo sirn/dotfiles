@@ -116,7 +116,7 @@
     (split-string
      (s-trim
       (shell-command-to-string
-       (concat (getenv "HOME") "/.dotfiles/bin/pom list -u")))
+       "repoman list -u"))
      "\n"))
 
   (defun gemacs--project-sync ()

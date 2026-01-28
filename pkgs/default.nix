@@ -28,4 +28,6 @@ in
   wrapped-uv = (callPackage ./by-name/wrapped-uv/wrapped.nix { });
 
   tincan = (callPackage ./by-name/tincan/package.nix { });
+
+  repoman = (callPackage ./by-name/repoman/package.nix { });
 }
