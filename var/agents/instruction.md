@@ -46,7 +46,7 @@
 - **Tests**: Write tests for public interfaces only, unless internal behavior is observable.
 
 ## Environment & Tooling
-- **Nix**: You are in a Nix-enabled environment. Use `nix` commands (never `nix-env -i`). Use nix-shell shebangs for scripts needing specific dependencies. Refer to nix-reference skill for detailed commands and patterns.
+- **Nix**: You are in a Nix-enabled environment. Use `nix` commands (never `nix-env -i`). Use nix-shell shebangs for scripts needing specific dependencies. During development with flakes in a dirty workspace, ALWAYS use `path:.` or `path:/path/to/flake/dir` (the `path:` prefix is mandatory) to ensure untracked files are recognized, instead of using `git add`. Refer to nix-reference skill for detailed commands and patterns.
 - **Nix Packages**: When adding a Nix package, use `nix-locate`, `WebFetch`, or `WebSearch` to verify the exact package name instead of guessing.
 - **Command Execution**:
   - **Long-running Processes**: Use the tool's native backgrounding functionality if available. Avoid manually appending `&` to shell commands. If no tool-provided backgrounding exists or you are unsure, ask the user to run the process.
