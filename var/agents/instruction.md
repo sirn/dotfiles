@@ -56,10 +56,11 @@
   - If a command fails, try `--help` to debug.
 
 ## Version Control
-- **Policy**: NEVER create, modify, or squash Jujutsu or Git commits on your own unless explicitly instructed by the user. You are NOT authorized to manage version control history autonomously.
+- **Policy**: ALWAYS use `jj` (Jujutsu) for all version control operations. Do NOT use `git` unless explicitly requested by the user or if `jj` is functionally unavailable.
+- **Policy**: NEVER create, modify, or squash commits on your own unless explicitly instructed by the user. You are NOT authorized to manage version control history autonomously.
 - **Policy**: Should never commit and never ask if I want to commit, if I want you do to it, I would have said myself.
 - **Commit Messages**: When asked to commit, keep messages concise, consistent, and following existing patterns.
-- **Jujutsu**: Must use `jj` over `git`, and only fallback to `git` when `jj` fails. Refer to jj-reference skill for commands.
+- **Jujutsu**: Refer to jj-reference skill for commands.
 
 ## Policy Footer
 - Ask when unsure; do not guess.
