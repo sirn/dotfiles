@@ -17,25 +17,34 @@ Invoke the Claude Code agent for sub-tasks using structured JSON output.
 
 ### 1. Start a New Task
 ```bash
-claude -p "Your specific prompt here" --output-format json
+mkdir -p .my/claude-code-sessions
+echo "*" > .my/.gitignore
+echo "Your specific prompt here" > .my/claude-code-sessions/task.md
+claude -p "Read .my/claude-code-sessions/task.md" --output-format json
+rm .my/claude-code-sessions/task.md
 ```
 *   **Output:** Returns a JSON object containing `session_id` and the response.
 
 ### 2. Resume a Task
 To continue a specific session:
 ```bash
-claude -p "Follow-up prompt" --session-id <SESSION_UUID> --output-format json
+echo "Follow-up prompt" > .my/claude-code-sessions/followup.md
+claude -p "Read .my/claude-code-sessions/followup.md" --session-id <SESSION_UUID> --output-format json
+rm .my/claude-code-sessions/followup.md
 ```
 *   **Note:** Always use the `session_id` from the previous response instead of `--continue`.
 
 ### 3. Review Changes
-To request a code review, provide the diff in the prompt:
+To request a code review, ask the agent to run the diff command:
 ```bash
-claude -p "Review the following changes:\n\n$(jj diff -s -r @-)\n\n$(jj diff -r @-)" --output-format json
+mkdir -p .my/claude-code-sessions
+echo "Run 'jj diff -s -r @-' and 'jj diff -r @-' and review the output." > .my/claude-code-sessions/review.md
+claude -p "Read .my/claude-code-sessions/review.md" --output-format json
+rm .my/claude-code-sessions/review.md
 ```
 *   **Workflow**:
-    1.  If no diff is provided, assume `jj diff -s -r @-` then `jj diff -r @-`.
-    2.  If specific files are targeted, use `jj diff -r @- -- <file>`.
+    1.  If no diff is provided, instruct agent to run `jj diff -s -r @-` then `jj diff -r @-`.
+    2.  If specific files are targeted, instruct agent to run `jj diff -r @- -- <file>`.
     3.  **Do not make changes** during a review.
 
 ### Prompting Instructions

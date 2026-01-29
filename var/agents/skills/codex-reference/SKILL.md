@@ -16,7 +16,11 @@ Invoke the Codex agent for sub-tasks using structured JSONL output and explicit 
 
 ### 1. Start a New Task
 ```bash
-codex exec --json "Your specific prompt here"
+mkdir -p .my/codex-sessions
+echo "*" > .my/.gitignore
+echo "Your specific prompt here" > .my/codex-sessions/task.md
+codex exec --json "Read .my/codex-sessions/task.md"
+rm .my/codex-sessions/task.md
 ```
 *   **Output:** Returns newline-delimited JSON (JSONL) events.
 *   **Session ID:** The first line is typically `{"type":"thread.started","thread_id":"<UUID>"}`. Extract `thread_id` to use as the Session ID.
@@ -24,17 +28,22 @@ codex exec --json "Your specific prompt here"
 ### 2. Resume a Task
 To continue a specific session:
 ```bash
-codex exec resume --json <SESSION_UUID> "Follow-up prompt"
+echo "Follow-up prompt" > .my/codex-sessions/followup.md
+codex exec resume --json <SESSION_UUID> "Read .my/codex-sessions/followup.md"
+rm .my/codex-sessions/followup.md
 ```
 
 ### 3. Review Changes
-To request a code review, provide the diff in the prompt:
+To request a code review, ask the agent to run the diff command:
 ```bash
-codex exec --json "Review the following changes:\n\n$(jj diff -s -r @-)\n\n$(jj diff -r @-)"
+mkdir -p .my/codex-sessions
+echo "Run 'jj diff -s -r @-' and 'jj diff -r @-' and review the output." > .my/codex-sessions/review.md
+codex exec --json "Read .my/codex-sessions/review.md"
+rm .my/codex-sessions/review.md
 ```
 *   **Workflow**:
-    1.  If no diff is provided, assume `jj diff -s -r @-` then `jj diff -r @-`.
-    2.  If specific files are targeted, use `jj diff -r @- -- <file>`.
+    1.  If no diff is provided, instruct agent to run `jj diff -s -r @-` then `jj diff -r @-`.
+    2.  If specific files are targeted, instruct agent to run `jj diff -r @- -- <file>`.
     3.  **Do not make changes** during a review.
 
 ### Prompting Instructions

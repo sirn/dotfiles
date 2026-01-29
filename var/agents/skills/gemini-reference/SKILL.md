@@ -16,24 +16,33 @@ Invoke the Gemini agent for sub-tasks using structured JSON output and explicit 
 
 ### 1. Start a New Task
 ```bash
-gemini "Your specific prompt here" --output-format json
+mkdir -p .my/gemini-sessions
+echo "*" > .my/.gitignore
+echo "Your specific prompt here" > .my/gemini-sessions/task.md
+gemini "Read .my/gemini-sessions/task.md" --output-format json
+rm .my/gemini-sessions/task.md
 ```
 *   **Output:** Returns a JSON object. Capture the `session_id` field for future turns.
 
 ### 2. Resume a Task
 To continue a specific session (preferred):
 ```bash
-gemini "Follow-up prompt" --resume <SESSION_UUID> --output-format json
+echo "Follow-up prompt" > .my/gemini-sessions/followup.md
+gemini "Read .my/gemini-sessions/followup.md" --resume <SESSION_UUID> --output-format json
+rm .my/gemini-sessions/followup.md
 ```
 *   **Note:** Use the UUID obtained from the `session_id` field of the previous response.
 
 ### 3. Review Changes
-To request a code review, provide the diff in the prompt:
+To request a code review, ask the agent to run the diff command:
 ```bash
-gemini "Review the following changes:\n\n$(jj diff -s -r @-)\n\n$(jj diff -r @-)" --output-format json
+mkdir -p .my/gemini-sessions
+echo "Run 'jj diff -s -r @-' and 'jj diff -r @-' and review the output." > .my/gemini-sessions/review.md
+gemini "Read .my/gemini-sessions/review.md" --output-format json
+rm .my/gemini-sessions/review.md
 ```
 *   **Workflow**:
-    1.  If no diff is provided, assume `jj diff -s -r @-` then `jj diff -r @-`.
+    1.  If no diff is provided, instruct agent to run `jj diff -s -r @-` then `jj diff -r @-`.
     2.  If specific files are targeted, use `jj diff -r @- -- <file>`.
     3.  **Do not make changes** during a review.
 
