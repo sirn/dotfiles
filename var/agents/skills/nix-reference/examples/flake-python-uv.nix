@@ -23,15 +23,19 @@
                       name = "uv-fhs";
                       runScript = "uv";
                       targetPkgs = pkgs': with pkgs'; [
-                        prev.uv openssl pkg-config prev.stdenv.cc.cc zlib
+                        prev.uv
+                        openssl
+                        pkg-config
+                        prev.stdenv.cc.cc
+                        zlib
                       ];
                     };
                     actualUv = if prev.stdenv.isLinux then fhsUv else prev.uv;
                   in
                   ''
                     mkdir -p $out/bin
-                    makeWrapper ''${actualUv}/bin/uv $out/bin/uv
-                    makeWrapper ''${actualUv}/bin/uv $out/bin/uvx --add-flags "tool run"
+                    makeWrapper ${actualUv}/bin/uv $out/bin/uv
+                    makeWrapper ${actualUv}/bin/uv $out/bin/uvx --add-flags "tool run"
                   '';
               };
             })
