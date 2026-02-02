@@ -3,7 +3,10 @@
 let
   configHome =
     if pkgs.stdenv.isLinux
-    then ".config/sublime-text"
+    then
+      if config.flatpak.enable
+      then ".var/app/com.sublimehq.SublimeText/config/sublime-text"
+      else ".config/sublime-text"
     else "Library/Application Support/Sublime Text";
 
   sublimeConfig = {
@@ -17,7 +20,10 @@ in
 {
   home.packages =
     if pkgs.stdenv.isLinux
-    then with pkgs; [ sublime4 ]
+    then
+      if config.flatpak.enable
+      then [ ]
+      else with pkgs; [ sublime4 ]
     else [ ];
 
   home.file = {
