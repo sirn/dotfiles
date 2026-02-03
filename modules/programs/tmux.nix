@@ -18,18 +18,18 @@ in
       set -g set-titles on
       set -g set-titles-string "#W via tmux: #S"
       set -ga terminal-overrides ",xterm*:Tc"
-      set -wg automatic-rename on
-      set -wg automatic-rename-format "#{pane_current_path} — #{pane_current_command}"
+      set -wg automatic-rename off
 
-      set -g status-left "#[fg=colour6,bg=colour8,bold] #S@#h #[default,fg=colour8] "
-      set -g status-left-style ""
-      set -g status-left-length 32
-      set -g status-right "#[fg=white,bg=black]#[fg=black,bg=white] %H:%M "
+      set -g status-left ""
+
+      set -g status-left-length 24
+      set -g status-right "#[fg=colour6,bg=colour235]┃ #S@#h #[fg=colour250,bg=colour238] %H:%M "
       set -g status-right-style ""
       set -g status-style bg=default
-      set -wg window-status-current-format "#[fg=white,bold]‹#I› #{pane_current_command}"
+      set -wg window-status-current-format "#[fg=colour6]┃#[fg=black,bg=colour6] #I #[fg=colour255,bg=colour240] #{window_name} "
       set -wg window-status-current-style ""
-      set -wg window-status-format "#[fg=colour8]‹#I› #{pane_current_command}"
+      set -g window-status-separator ""
+      set -wg window-status-format " #[fg=colour245,bg=colour238] #I #[fg=colour250,bg=colour235] #{window_name} "
       set -wg window-status-style ""
 
       bind -T prefix r source-file "${config.home.homeDirectory}/.config/tmux/tmux.conf"
