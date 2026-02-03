@@ -141,4 +141,20 @@ in
   };
 
   xdg.configFile."opencode/skill/home-manager".source = skillsDir;
+
+  xdg.configFile."opencode/plugins/notify-turn-complete.ts".source =
+    lib.mkIf config.programs.opencode.enable
+      (pkgs.writeText "notify-turn-complete.ts" ''
+        import type { Plugin } from "@opencode-ai/plugin"
+
+        export const NotifyTurnComplete: Plugin = async ({ project, client, $, directory, worktree }) => {
+          return {
+            event: async ({ event }) => {
+              if (event.type === "session.idle") {
+                await $`${lib.getExe pkgs.toastify} send "OpenCode" "OpenCode finished their turn"`
+              }
+            },
+          }
+        }
+      '');
 }
