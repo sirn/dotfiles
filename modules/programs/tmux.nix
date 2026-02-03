@@ -50,7 +50,25 @@ in
       executable = true;
       text = ''
         #!/bin/sh -l
-        exec ${cfg.package}/bin/tmux new-session -A -s main
+        SESSION=$1
+
+        if [ -z "$SESSION" ]; then
+          SESSION=main
+        fi
+
+        # Update SSH_TTY for new panes
+        export SSH_TTY=$(tty)
+
+        ${if pkgs.stdenv.isLinux then ''
+        exec systemd-run \
+          --user \
+          --scope \
+          --slice=app.slice \
+          --setenv=SSH_TTY="$SSH_TTY" \
+          ${cfg.package}/bin/tmux new-session -A -s "$SESSION"
+        '' else ''
+        exec ${cfg.package}/bin/tmux new-session -A -s "$SESSION"
+        ''}
       '';
     };
   };

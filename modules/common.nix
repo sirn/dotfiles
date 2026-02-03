@@ -32,16 +32,16 @@
     ./programs/mosh.nix
     ./programs/nix-index.nix
     ./programs/qalculate.nix
-    ./programs/ripgrep.nix
     ./programs/repoman.nix
+    ./programs/ripgrep.nix
     ./programs/rsync.nix
     ./programs/sl.nix
     ./programs/ssh.nix
     ./programs/starship.nix
     ./programs/tincan.nix
+    ./programs/tmux.nix
     ./programs/tree.nix
     ./programs/wezterm.nix
-    ./programs/zellij.nix
     ./programs/zsh.nix
 
     # services
