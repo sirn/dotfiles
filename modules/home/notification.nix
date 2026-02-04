@@ -2,7 +2,14 @@
 
 let
   mkNotify = title: body:
-    "${lib.getExe pkgs.toastify} send ${lib.escapeShellArg title} ${lib.escapeShellArg body}";
+    lib.concatStringsSep " " [
+      (lib.getExe pkgs.toastify)
+      "send"
+      "--expire-time"
+      "10000"
+      (lib.escapeShellArg title)
+      (lib.escapeShellArg body)
+    ];
 in
 {
   programs.claude-code = lib.mkIf config.programs.claude-code.enable {
