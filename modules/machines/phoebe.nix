@@ -9,6 +9,7 @@
     ../home/flatpak.nix
     ../home/fonts.nix
     ../home/plasma.nix
+    ../home/notification.nix
 
     # programs
     ../programs/1password.nix

@@ -111,15 +111,6 @@ in
           "WriteFile(**/*.env)"
         ];
       };
-      hooks = {
-        AfterAgent = [
-          {
-            type = "command";
-            name = "notify-turn-complete";
-            command = "${lib.getExe pkgs.toastify} send ${lib.escapeShellArg "Gemini CLI"} ${lib.escapeShellArg "Gemini finished their turn"}";
-          }
-        ];
-      };
     };
   };
 

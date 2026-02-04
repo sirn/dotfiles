@@ -50,9 +50,6 @@ let
           url = server.url;
         })
       servers;
-
-  mkNotify = title: body:
-    "${lib.getExe pkgs.toastify} send ${lib.escapeShellArg title} ${lib.escapeShellArg body}";
 in
 {
   programs.claude-code = {
@@ -67,18 +64,6 @@ in
       model = "opusplan";
       includeCoAuthoredBy = false;
       cleanupPeriodDays = 7;
-      hooks = {
-        Stop = [
-          {
-            hooks = [
-              {
-                type = "command";
-                command = mkNotify "Claude Code" "Claude Code finished their turn";
-              }
-            ];
-          }
-        ];
-      };
       permissions = {
         allow = [
           "Read(**)"

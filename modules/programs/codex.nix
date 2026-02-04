@@ -24,15 +24,6 @@ let
           args = [ server.url "--transport" (toMcpRemoteTransport (server.transport or "sse")) ];
         })
       servers;
-
-  notifyScript = pkgs.writeShellScript "codex-notify" ''
-    INPUT="$1"
-    TYPE=$(echo "$INPUT" | ${lib.getExe pkgs.jq} -r '.type // empty')
-
-    if [ "$TYPE" = "agent-turn-complete" ]; then
-      ${lib.getExe pkgs.toastify} send "Codex" "Codex finished their turn"
-    fi
-  '';
 in
 {
   programs.codex = {
@@ -58,11 +49,6 @@ in
       sandbox = "workspace-write";
       ask_for_approval = "on-failure";
       mcp_servers = toCodexMcpServers config.programs.mcp.servers;
-      notify = [
-        "${pkgs.runtimeShell}"
-        notifyScript
-        "{}"
-      ];
     };
   };
 
