@@ -20,19 +20,28 @@ in
       then config.lib.nixGL.wrap pkgs.ghostty
       else pkgs.ghostty-bin;
 
-    settings = {
-      font-family = "PragmataPro Mono Liga";
+    settings = lib.mkMerge [
+      {
+        font-family = "PragmataPro Mono Liga";
 
-      command = builtins.concatStringsSep " " (
-        [ config.machine.interactiveShell ]
-        ++ lib.optional pkgs.stdenv.isDarwin "--login"
-      );
+        command = builtins.concatStringsSep " " (
+          [ config.machine.interactiveShell ]
+          ++ lib.optional pkgs.stdenv.isDarwin "--login"
+        );
+      }
+      (lib.mkIf pkgs.stdenv.isLinux {
+        font-size = 12;
 
-      font-size =
-        if pkgs.stdenv.isDarwin
-        then 14
-        else 12;
-    };
+        window-theme = "ghostty";
+      })
+      (lib.mkIf pkgs.stdenv.isDarwin {
+        font-size = 14;
+
+        window-theme = "auto";
+
+        macos-titlebar-style = "tabs";
+      })
+    ];
   };
 
   wayland.windowManager.sway = lib.mkIf (cfg.enable && swaycfg.enable) {
