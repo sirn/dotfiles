@@ -12,7 +12,7 @@
         controlMaster = "auto";
         controlPath = "${config.home.homeDirectory}/.ssh/ssh-%r@%h:%p";
         controlPersist = "10m";
-        serverAliveCountMax = 30;
+        serverAliveCountMax = 480;
         serverAliveInterval = 60;
         userKnownHostsFile = "${config.home.homeDirectory}/.ssh/known_hosts";
 
