@@ -14,9 +14,11 @@ in
     extraConfig = ''
       set -ga update-environment " SSH_TTY"
       set -g default-command "exec ${cfg.shell}"
+      set -g allow-passthrough on
       set -g set-clipboard on
       set -g set-titles on
       set -g set-titles-string "#W via tmux: #S"
+      set -ga terminal-features ",xterm*:clipboard"
       set -ga terminal-overrides ",xterm*:Tc"
       set -wg automatic-rename off
 
