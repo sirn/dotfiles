@@ -40,7 +40,6 @@
     ./programs/tincan.nix
     ./programs/tmux.nix
     ./programs/tree.nix
-    ./programs/wezterm.nix
     ./programs/zsh.nix
 
     # services
