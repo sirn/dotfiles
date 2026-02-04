@@ -134,13 +134,20 @@ in
     text = ''
       return {
         tab_colors = {
-          active_bg = '${colorScheme.normal.cyan}',
-          active_fg = '${colorScheme.normal.black}',
-          border_bg = '${colorScheme.background}',
-          inactive_bg = '${colorScheme.bright.black}',
-          inactive_fg = '${colorScheme.normal.white}',
-          remote_bg = '${colorScheme.normal.blue}',
-          remote_fg = '${colorScheme.normal.black}',
+          active_index_bg = '${colorScheme.normal.blue}',
+          active_index_fg = '${colorScheme.normal.black}',
+          active_title_bg = '${colorScheme.selection}',
+          active_title_fg = '${colorScheme.bright.white}',
+
+          inactive_index_bg = '${colorScheme.bright.black}',
+          inactive_index_fg = '${colorScheme.normal.white}',
+          inactive_title_bg = '${colorScheme.background}',
+          inactive_title_fg = '${colorScheme.normal.white}',
+
+          status_bg = '${colorScheme.bright.black}',
+          status_fg = '${colorScheme.normal.white}',
+          status_icon_bg = '${colorScheme.background}',
+          status_icon_fg = '${colorScheme.normal.blue}',
         },
       }
     '';

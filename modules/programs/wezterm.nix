@@ -111,28 +111,29 @@ in
         local wezterm = require 'wezterm'
         local config = wezterm.config_builder()
 
-        local solid_right_arrow = wezterm.nerdfonts.pl_left_hard_divider
-        local solid_left_arrow = wezterm.nerdfonts.pl_right_hard_divider
-
         config.use_fancy_tab_bar = false
-        config.tab_max_width = 22
+        config.tab_max_width = 32
+        config.show_new_tab_button_in_tab_bar = false
 
-        local tab_colors = {
-          active_bg = 'black',
-          active_fg = 'white',
-          border_bg = 'black',
-          inactive_bg = 'black',
-          inactive_fg = 'white',
-          dimmed_bg = 'black',
-          dimmed_fg = 'white',
-          remote_bg = 'black',
-          remote_fg = 'white',
+        local colors = {
+          active_index_bg = 'blue',
+          active_index_fg = 'black',
+          active_title_bg = 'grey',
+          active_title_fg = 'white',
+          inactive_index_bg = 'grey',
+          inactive_index_fg = 'white',
+          inactive_title_bg = 'black',
+          inactive_title_fg = 'white',
+          status_bg = 'grey',
+          status_fg = 'white',
+          status_icon_bg = 'black',
+          status_icon_fg = 'blue',
         }
 
         local hm_colors_ok, hm_colors = pcall(require, '../hm_colors')
-        if hm_colors_ok then
+        if hm_colors_ok and hm_colors.tab_colors then
           for k, v in pairs(hm_colors.tab_colors) do
-            tab_colors[k] = v
+            colors[k] = v
           end
         end
 
@@ -141,141 +142,83 @@ in
           if title and #title > 0 then
             return title
           end
-
-          title = tab_info.active_pane.title
-          if title and #title > 0 then
-            return title
-          end
-
-          return "shell"
+          return tab_info.active_pane.title
         end
 
         wezterm.on(
           'format-tab-title',
           function(tab, tabs, panes, config, hover, max_width)
-            -- Get the current active tab index to style the wedge prior to active
-            local active_tab_index = -1
-            for i, t in ipairs(tabs) do
-              if t.is_active then
-                active_tab_index = t.tab_index
-                break
-              end
-            end
-
-            local current_bg = wezterm.color.parse(tab_colors.inactive_bg)
-            local current_fg = wezterm.color.parse(tab_colors.inactive_fg)
-            if tab.is_active then
-              current_bg = wezterm.color.parse(tab_colors.active_bg)
-              current_fg = wezterm.color.parse(tab_colors.active_fg)
-            end
-
-            local current_hl_bg = current_bg:lighten(0.15)
-            local current_hl_fg = current_fg
+            local index = tab.tab_index + 1
+            local title = tab_title(tab)
+            title = wezterm.truncate_right(title, max_width - 6)
 
             local parts = {}
-            local trunc_right = 7
 
-            table.insert(parts, { Background = { Color = current_hl_bg } })
-            table.insert(parts, { Foreground = { Color = tab_colors.border_bg } })
-            if tab.tab_index > 0 then
-              table.insert(parts, { Text = solid_right_arrow })
-              trunc_right = trunc_right + 1
+            if tab.is_active then
+              table.insert(parts, { Foreground = { Color = colors.active_index_bg } })
+              table.insert(parts, { Background = { Color = colors.inactive_title_bg } })
+              table.insert(parts, { Text = "┃" })
+
+              table.insert(parts, { Background = { Color = colors.active_index_bg } })
+              table.insert(parts, { Foreground = { Color = colors.active_index_fg } })
+              table.insert(parts, { Text = " " .. index .. " " })
+
+              table.insert(parts, { Background = { Color = colors.active_title_bg } })
+              table.insert(parts, { Foreground = { Color = colors.active_title_fg } })
+              table.insert(parts, { Text = " " .. title .. " " })
+            else
+              table.insert(parts, { Background = { Color = colors.inactive_title_bg } })
+              table.insert(parts, { Text = " " })
+
+              table.insert(parts, { Background = { Color = colors.inactive_index_bg } })
+              table.insert(parts, { Foreground = { Color = colors.inactive_index_fg } })
+              table.insert(parts, { Text = " " .. index .. " " })
+
+              table.insert(parts, { Background = { Color = colors.inactive_title_bg } })
+              table.insert(parts, { Foreground = { Color = colors.inactive_title_fg } })
+              table.insert(parts, { Text = " " .. title .. " " })
             end
-
-            table.insert(parts, { Foreground = { Color = current_hl_fg } })
-            table.insert(parts, { Background = { Color = current_hl_bg } })
-            table.insert(parts, { Text = ' ' .. (tab.tab_index + 1) .. ' ' })
-            table.insert(parts, { Background = { Color = current_bg } })
-            table.insert(parts, { Foreground = { Color = current_hl_bg } })
-            table.insert(parts, { Text = solid_right_arrow })
-
-            local title = tab_title(tab)
-            title = wezterm.truncate_right(title, max_width - trunc_right)
-
-            table.insert(parts, { Background = { Color = current_bg } })
-            table.insert(parts, { Foreground = { Color = current_fg } })
-            table.insert(parts, { Text = ' ' .. title .. ' ' })
-            table.insert(parts, { Background = { Color = tab_colors.border_bg } })
-            table.insert(parts, { Foreground = { Color = current_bg } })
-            table.insert(parts, { Text = solid_right_arrow })
 
             return parts
           end
         )
 
-        local function right_status(parts, text, extra_text, omit_right, bg, fg)
-          bg = wezterm.color.parse(bg or tab_colors.inactive_bg)
-          fg = wezterm.color.parse(fg or tab_colors.inactive_fg)
-
-          table.insert(parts, { Background = { Color = tab_colors.border_bg } })
-
-          if extra_text and #extra_text > 0 then
-            local hl_bg = bg:lighten(0.15)
-            local hl_fg = fg
-
-            table.insert(parts, { Foreground = { Color = hl_bg } })
-            table.insert(parts, { Text = solid_left_arrow })
-            table.insert(parts, { Background = { Color = hl_bg } })
-            table.insert(parts, { Foreground = { Color = hl_fg } })
-            table.insert(parts, { Text = ' ' .. extra_text .. ' ' })
-            table.insert(parts, { Background = { Color = hl_bg } })
-            table.insert(parts, { Foreground = { Color = bg } })
-            table.insert(parts, { Text = solid_left_arrow })
-          else
-            table.insert(parts, { Foreground = { Color = bg } })
-            table.insert(parts, { Text = solid_left_arrow })
-          end
-
-          table.insert(parts, { Background = { Color = bg } })
-          table.insert(parts, { Foreground = { Color = fg } })
-          table.insert(parts, { Text = ' ' .. text .. ' ' })
-
-          if omit_right == nil or not omit_right then
-            table.insert(parts, { Background = { Color = bg } })
-            table.insert(parts, { Foreground = { Color = tab_colors.border_bg } })
-            table.insert(parts, { Text = solid_left_arrow })
-          end
-        end
-
         wezterm.on(
           'update-status',
           function(window, pane)
-            local parts = {}
             local domain = pane:get_domain_name()
-            local overrides = window:get_config_overrides() or {}
+            local hostname = wezterm.hostname()
+            -- Strip domain from hostname for cleaner look
+            hostname = hostname:match("^([^%.]+)") or hostname
 
+            local text = ""
             if domain == 'local' or domain == 'default' then
-              right_status(parts, wezterm.hostname())
+               -- Try to get workspace, fallback to domain
+               local workspace = window:active_workspace()
+               text = workspace .. "@" .. hostname
             else
-              local meta = pane:get_metadata() or {}
-              local last_response_text = "";
-
-              if meta.is_tardy then
-                local last_response = meta.since_last_response_ms or 0
-
-                last_response_text = last_response .. 'ms'
-                if last_response > 60000 then
-                  last_response_text = string.format("%.1fm", last_response / 60000)
-                elseif last_response and last_response > 1000 then
-                  last_response_text = string.format("%.1fs", last_response / 1000)
-                end
-              end
-
-              if last_response_text and #last_response_text > 0 then
-                last_response_text = ' ' .. last_response_text
-              end
-
-              right_status(
-                parts,
-                domain,
-                last_response_text,
-                false,
-                tab_colors.remote_bg,
-                tab_colors.remote_fg
-              )
+               text = domain .. "@" .. hostname
             end
 
-            right_status(parts, wezterm.strftime("%H:%M"), nil, true)
+            local time = wezterm.strftime("%H:%M")
+
+            local parts = {}
+
+            -- Divider
+            table.insert(parts, { Foreground = { Color = colors.status_icon_fg } })
+            table.insert(parts, { Background = { Color = colors.status_icon_bg } })
+            table.insert(parts, { Text = "┃" })
+
+            -- Session@Host
+            table.insert(parts, { Foreground = { Color = colors.status_icon_fg } })
+            table.insert(parts, { Background = { Color = colors.status_icon_bg } })
+            table.insert(parts, { Text = " " .. text .. " " })
+
+            -- Time
+            table.insert(parts, { Foreground = { Color = colors.status_fg } })
+            table.insert(parts, { Background = { Color = colors.status_bg } })
+            table.insert(parts, { Text = " " .. time .. " " })
+
             window:set_right_status(wezterm.format(parts))
           end
         )
