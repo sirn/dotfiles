@@ -122,7 +122,6 @@
     in
     {
       homeConfigurations = {
-        helios = mkLinuxConfig { hostname = "helios"; };
         phoebe = mkLinuxConfig { hostname = "phoebe"; };
         polaris = mkLinuxConfig { hostname = "polaris"; };
         terra = mkLinuxConfig { hostname = "terra"; };
