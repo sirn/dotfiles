@@ -28,7 +28,6 @@
     ./programs/jq.nix
     ./programs/jujutsu.nix
     ./programs/lstr.nix
-    ./programs/magit.nix
     ./programs/mosh.nix
     ./programs/nix-index.nix
     ./programs/qalculate.nix
