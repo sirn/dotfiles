@@ -12,14 +12,15 @@
         controlMaster = "auto";
         controlPath = "${config.home.homeDirectory}/.ssh/ssh-%r@%h:%p";
         controlPersist = "10m";
-        serverAliveCountMax = 3;
-        serverAliveInterval = 30;
+        serverAliveCountMax = 30;
+        serverAliveInterval = 60;
         userKnownHostsFile = "${config.home.homeDirectory}/.ssh/known_hosts";
 
         extraOptions = {
           "CheckHostIP" = "yes";
-          "StrictHostKeyChecking" = "accept-new";
           "PreferredAuthentications" = "publickey";
+          "StrictHostKeyChecking" = "accept-new";
+          "TCPKeepAlive" = "yes";
         };
       };
     };
