@@ -34,12 +34,6 @@ in
       user.email = lib.mkDefault "sirn@ogsite.net";
       user.name = lib.mkDefault "Sirn Thanabulpong";
 
-      repoman.root = [
-        "${config.home.homeDirectory}/Dev/src"
-        "${config.home.homeDirectory}/Dev/workspace"
-        "${config.home.homeDirectory}/Dev/go/gopath/src"
-      ];
-
       url = {
         "ssh://git@github.com/".insteadOf = "https://github.com/";
         "ssh://git@gitlab.com/".insteadOf = "https://gitlab.com/";

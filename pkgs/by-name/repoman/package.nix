@@ -2,12 +2,12 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "repoman";
-  version = "0.1.2";
+  version = "0.2.0";
 
   src = fetchgit {
     url = "https://git.sr.ht/~sirn/repoman";
     rev = "refs/tags/v${version}";
-    hash = "sha256-X6LUigayjBLpxyoexRO/UPJs2PVxjYhTGiMhykRzlDo=";
+    hash = "sha256-rAiTmE2KtGDzLDLtR1KbnV1DSPbw9awUFEf8Tnjze+8=";
   };
 
   cargoHash = "sha256-iKH1hHQwnkkqfHo+uVYYUTqla6Gm6H0YWVaFVOIgJkQ=";
