@@ -7,6 +7,10 @@ let
 
   skillsDir = ../../var/agents/skills;
 
+  projectsFile = ../../var/projects.txt;
+  projectPaths = lib.optionals (builtins.pathExists projectsFile)
+    (lib.filter (s: s != "") (lib.splitString "\n" (builtins.readFile projectsFile)));
+
   isStdioServer = server: server ? command || server ? package;
 
   toMcpRemoteTransport = transport:
@@ -34,20 +38,23 @@ in
     custom-instructions = instructionText;
 
     settings = {
+      approval_policy = "on-request";
+      sandbox_mode = "workspace-write";
+
       projects = lib.mkMerge [
+        (lib.genAttrs projectPaths (_: { trust_level = "trusted"; }))
         {
           "${config.home.homeDirectory}/.dotfiles" = {
-            trust_level = "untrusted";
+            trust_level = "trusted";
           };
         }
         (lib.mkIf (pkgs.stdenv.isLinux && !config.targets.genericLinux.enable) {
           "/etc/nixos" = {
-            trust_level = "untrusted";
+            trust_level = "trusted";
           };
         })
       ];
-      sandbox = "workspace-write";
-      ask_for_approval = "on-failure";
+
       mcp_servers = toCodexMcpServers config.programs.mcp.servers;
     };
   };

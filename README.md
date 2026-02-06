@@ -54,6 +54,14 @@ Create a file named `local.nix` to have a machine-specific configuration that is
 
 ## Application-specific Notes
 
+### Codex Projects
+
+To automatically configure trusted projects for Codex CLI, populate `var/projects.txt` with repository paths (one per line):
+
+```shell
+$ repoman list > var/projects.txt
+```
+
 ### Firefox
 
 Application launchers are automatically generated for each Firefox profile defined in `programs.firefox.profiles`.
