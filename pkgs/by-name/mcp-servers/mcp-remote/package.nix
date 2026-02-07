@@ -2,14 +2,14 @@
 
 buildNpmPackage rec {
   pname = "mcp-remote";
-  version = "0.1.37";
+  version = "0.1.38";
 
   src = fetchzip {
     url = "https://registry.npmjs.org/${pname}/-/${pname}-${version}.tgz";
-    hash = "sha256-ApX7lwEF5zE5CyDNfnttCLpcpTVrLMkNfA3msxYtH8w=";
+    hash = "sha256-axR1CvQSk69/hl2F3XT1rwvLQCysAPt+EaYU/ftN6Ho=";
   };
 
-  npmDepsHash = "sha256-RqJvrIAqZYsG1uobNVRBmOaZzXVifY4OFASLjjblKSk=";
+  npmDepsHash = "sha256-FhS6GynN+edPlcx45qTOllDSZBhelzEll63CY1a/19c=";
 
   postPatch = ''
     ${lib.getExe jq} 'del(.devDependencies)' package.json | ${moreutils}/bin/sponge package.json
