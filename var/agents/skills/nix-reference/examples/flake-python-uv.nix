@@ -20,31 +20,42 @@
                 installPhase =
                   let
                     fhsUv = prev.buildFHSEnv {
-                      name = "uv-fhs";
+                      name = "uv";
                       runScript = "uv";
                       targetPkgs = pkgs': with pkgs'; [
-                        prev.uv
+                        uv
                         openssl
                         pkg-config
-                        prev.stdenv.cc.cc
+                        gcc
                         zlib
                       ];
+
+                      meta.mainProgram = "uv";
                     };
+
                     actualUv = if prev.stdenv.isLinux then fhsUv else prev.uv;
                   in
                   ''
                     mkdir -p $out/bin
-                    makeWrapper ${actualUv}/bin/uv $out/bin/uv
-                    makeWrapper ${actualUv}/bin/uv $out/bin/uvx --add-flags "tool run"
+                    makeWrapper ${actualUv}/bin/${actualUv.meta.mainProgram} $out/bin/uv
+                    makeWrapper ${actualUv}/bin/${actualUv.meta.mainProgram} $out/bin/uvx --add-flags "tool run"
                   '';
               };
+
+              # For compatibility if Poetry is needed
+              wrapped-uv-poetry = prev.writeShellScriptBin "poetry" ''
+                exec ${final.wrapped-uv}/bin/uvx poetry "$@"
+              '';
             })
           ];
         };
       in
       {
         devShells.default = pkgs.mkShell {
-          buildInputs = [ pkgs.wrapped-uv ];
+          buildInputs = [
+            pkgs.wrapped-uv
+            pkgs.wrapped-uv-poetry
+          ];
         };
       }
     );
