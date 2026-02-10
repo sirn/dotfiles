@@ -23,6 +23,7 @@
 - `~/Dev/src/<hosting-provider>/<repo>/` - Cloned source repositories (e.g., `~/Dev/src/github.com/sirn/sirn`)
 - `~/Dev/adhoc/<YYMMDD>_<name>/` - Ad-hoc source code (PoCs, one-off scripts, etc.)
 - `~/Dev/workspace/<name>/<repo>/` - Jujutsu/Git workspaces
+  - **Restriction**: When in `~/Dev/workspace/`, do NOT access files outside of that directory unless explicitly instructed. Use files in `~/Dev/workspace/` first. If a required file is missing, ask the user to add it.
 
 ## Task Management
 - **MCP Retrieval**: When retrieving tasks from project management tools (Asana, Linear, ClickUp, etc.) via MCP, default to listing only incomplete ("not done") tasks unless the user explicitly requests completed tasks.
