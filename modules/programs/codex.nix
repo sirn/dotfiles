@@ -13,11 +13,6 @@ let
 
   isStdioServer = server: server ? command || server ? package;
 
-  toMcpRemoteTransport = transport:
-    if transport == "http" then "http-only"
-    else if transport == "sse" then "sse-only"
-    else transport;
-
   toCodexMcpServers = servers:
     lib.mapAttrs
       (name: server:
@@ -25,7 +20,7 @@ let
           command = server.command or (lib.getExe server.package);
         } else {
           command = lib.getExe pkgs.local.mcpServers.mcp-remote;
-          args = [ server.url "--transport" (toMcpRemoteTransport (server.transport or "sse")) ];
+          args = [ server.url ];
         })
       servers;
 in
