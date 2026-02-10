@@ -11,6 +11,13 @@ let
     import random
     import subprocess
     import sys
+    import time
+
+    # Supported formats: jpeg, png, gif, pnm, tga, tiff, webp, bmp, farbfeld, avif, svg
+    VALID_EXTS = {
+        ".jpg", ".jpeg", ".png", ".gif", ".pnm", ".tga", ".tiff", ".webp",
+        ".bmp", ".farbfeld", ".avif", ".svg"
+    }
 
     wallpapers = os.path.expanduser("~/.local/wallpapers")
     if not os.path.isdir(wallpapers):
@@ -20,14 +27,29 @@ let
         os.path.join(root, name)
         for root, _, files in os.walk(wallpapers)
         for name in files
+        if os.path.splitext(name)[1].lower() in VALID_EXTS
     ]
+
     if not candidates:
         sys.exit(0)
 
-    subprocess.run(
-        ["${lib.getExe swwwPkg}", "img", random.choice(candidates)],
-        check=True,
-    )
+    # Try up to 5 times
+    for _ in range(5):
+        choice = random.choice(candidates)
+        try:
+            subprocess.run(
+                ["${lib.getExe swwwPkg}", "img", choice],
+                check=True,
+            )
+            sys.exit(0)
+        except subprocess.CalledProcessError:
+            print(f"Failed to set wallpaper: {choice}", file=sys.stderr)
+            candidates.remove(choice)
+            if not candidates:
+                break
+            time.sleep(1)
+
+    sys.exit(1)
   '';
 
   swaylockcfg = config.programs.swaylock;
