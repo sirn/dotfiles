@@ -20,7 +20,7 @@
           "CheckHostIP" = "yes";
           "PreferredAuthentications" = "publickey";
           "StrictHostKeyChecking" = "accept-new";
-          "TCPKeepAlive" = "yes";
+          "TCPKeepAlive" = "no";
         };
       };
     };
