@@ -50,6 +50,80 @@ let
           url = server.url;
         })
       servers;
+
+  statusLineScript = pkgs.writeShellScript "claude-statusline" ''
+    input=$(cat)
+    cwd=$(echo "$input" | ${lib.getExe pkgs.jq} -r '.workspace.current_dir')
+
+    # Git/Jujutsu info
+    vcs_info=""
+
+    # Check for jj
+    if command -v ${lib.getExe config.programs.jujutsu.package} &>/dev/null && ${lib.getExe config.programs.jujutsu.package} root --quiet 2>/dev/null; then
+        jj_change=$(${lib.getExe config.programs.jujutsu.package} log --ignore-working-copy --no-graph -r @ -T 'separate("", change_id.shortest(), if(!empty, "*"))' 2>/dev/null)
+        vcs_info=$(printf '\033[35mjj:%s\033[0m ' "$jj_change")
+    fi
+
+    # Check for git
+    if [ -d "$cwd/.git" ] || ${lib.getExe pkgs.git} -C "$cwd" rev-parse --git-dir &>/dev/null; then
+        branch=$(${lib.getExe pkgs.git} -C "$cwd" --no-optional-locks symbolic-ref --short HEAD 2>/dev/null || echo "detached")
+        status=""
+        if ! ${lib.getExe pkgs.git} -C "$cwd" --no-optional-locks diff-index --quiet HEAD -- 2>/dev/null; then
+            status="*"
+        fi
+        vcs_info="''${vcs_info}$(printf '\033[35mgit:%s%s\033[0m ' "$branch" "$status")"
+    fi
+
+    # Model info
+    model=$(echo "$input" | ${lib.getExe pkgs.jq} -r '.model.id // .model.name // empty')
+    model_info=""
+    if [ -n "$model" ]; then
+        model_info=$(printf '\033[34mmodel:%s\033[0m ' "$model")
+    fi
+
+    # Cost info (only if cost > 0)
+    total_cost=$(echo "$input" | ${lib.getExe pkgs.jq} -r '.cost.total_cost_usd // empty')
+    cost_info=""
+    if [ -n "$total_cost" ] && [ "$total_cost" != "0" ] && [ "$total_cost" != "0.0" ]; then
+        # Round to 2 decimal places
+        rounded_cost=$(printf "%.2f" "$total_cost")
+        cost_info=$(printf '\033[31mcost:$%s\033[0m ' "$rounded_cost")
+    fi
+
+    # Session time (convert from milliseconds to days/hours/minutes/seconds)
+    session_duration_ms=$(echo "$input" | ${lib.getExe pkgs.jq} -r '.cost.total_duration_ms // empty')
+    session_info=""
+    if [ -n "$session_duration_ms" ]; then
+        session_duration=$((session_duration_ms / 1000))
+        days=$((session_duration / 86400))
+        hours=$(((session_duration % 86400) / 3600))
+        minutes=$(((session_duration % 3600) / 60))
+        seconds=$((session_duration % 60))
+
+        # Build time string with only relevant units
+        time_str=""
+        [ "$days" -gt 0 ] && time_str="''${days}d "
+        [ "$hours" -gt 0 ] && time_str="''${time_str}''${hours}h "
+        time_str="''${time_str}''${minutes}m"
+
+        session_info=$(printf '\033[36msession:%s\033[0m ' "$time_str")
+    fi
+
+    # Context window info
+    used_pct=$(echo "$input" | ${lib.getExe pkgs.jq} -r '.context_window.used_percentage // empty')
+    context_info=""
+    if [ -n "$used_pct" ]; then
+        context_info=$(printf '\033[33mctx:%s%%\033[0m ' "$used_pct")
+    fi
+
+    # Build status line
+    printf '%s%s%s%s%s' \
+        "$vcs_info" \
+        "$model_info" \
+        "$cost_info" \
+        "$session_info" \
+        "$context_info"
+  '';
 in
 {
   programs.claude-code = {
@@ -64,6 +138,10 @@ in
       model = "opusplan";
       includeCoAuthoredBy = false;
       cleanupPeriodDays = 7;
+      statusLine = {
+        type = "command";
+        command = toString statusLineScript;
+      };
       permissions = {
         allow = [
           "Read(**)"
