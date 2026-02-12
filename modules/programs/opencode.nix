@@ -68,8 +68,8 @@ in
     settings = {
       mcp = toOpencodeMcpServers config.programs.mcp.servers;
       mode = {
-        plan.model = "synthetic/hf:zai-org/GLM-4.7";
-        build.model = "synthetic/hf:MiniMaxAI/MiniMax-M2.1";
+        plan.model = "synthetic/hf:moonshotai/Kimi-K2.5";
+        build.model = "synthetic/hf:zai-org/GLM-4.7";
       };
       permission = {
         read = {
