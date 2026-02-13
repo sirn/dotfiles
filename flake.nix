@@ -34,6 +34,15 @@
         inputs.nixgl.overlay
         inputs.emacs-overlay.overlay
         (final: prev: {
+          # inetutils 2.7 has a format string bug that fails with strict compiler flags
+          # See: https://github.com/NixOS/nixpkgs/issues/488689
+          inetutils = if prev.stdenv.hostPlatform.isDarwin then
+            prev.inetutils.overrideAttrs (oldAttrs: {
+              hardeningDisable = (oldAttrs.hardeningDisable or []) ++ [ "format" ];
+            })
+          else
+            prev.inetutils;
+
           # darwin is known to be crashy when doing fork+exec
           # something changed in nix that cause these two tests to fail
           # https://github.com/dvarrazzo/py-setproctitle/issues/113
