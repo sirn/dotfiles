@@ -50,10 +50,38 @@ in
             #!${pkgs.bash}/bin/bash
             ${cfg.package}/bin/jj commit -m  "snapshot: $(${pkgs.coreutils}/bin/date +%s)"
           '';
+          jjWorkspaceSync = pkgs.writeScriptBin "jj-workspace-sync" ''
+            #!${pkgs.bash}/bin/bash
+            set -euo pipefail
+
+            jj_bin="${cfg.package}/bin/jj"
+            coreutils_bin="${pkgs.coreutils}/bin"
+
+            workspace_root="$("$jj_bin" root --color=never)"
+            repo_link="$workspace_root/.jj/repo"
+
+            if [ -L "$repo_link" ]; then
+              repo_dir="$("$coreutils_bin/readlink" -f "$repo_link")"
+            elif [ -f "$repo_link" ]; then
+              repo_dir="$("$coreutils_bin/cat" "$repo_link")"
+            else
+              echo "jj: could not resolve repo link at $repo_link" >&2
+              exit 1
+            fi
+
+            if [ -z "$repo_dir" ]; then
+              echo "jj: repo link at $repo_link is empty" >&2
+              exit 1
+            fi
+
+            canonical_root="$("$coreutils_bin/dirname" "$("$coreutils_bin/dirname" "$repo_dir")")"
+            exec "$jj_bin" -R "$canonical_root" workspace update-stale
+          '';
         in
         {
           snapshot = [ "util" "exec" "--" "${jjSnapshot}/bin/jj-snapshot" ];
           diff-ls = [ "diff" "--summary" ];
+          workspace-sync = [ "util" "exec" "--" "${jjWorkspaceSync}/bin/jj-workspace-sync" ];
         };
     };
   };
