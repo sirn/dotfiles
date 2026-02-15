@@ -33,6 +33,10 @@ in
         show-cryptographic-signatures = gpgcfg.enable;
       };
 
+      snapshot = {
+        auto-update-stale = true;
+      };
+
       fsmonitor = {
         backend = "watchman";
         watchman = {
