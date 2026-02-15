@@ -39,6 +39,7 @@
     ./programs/tincan.nix
     ./programs/tmux.nix
     ./programs/tree.nix
+    ./programs/watchman.nix
     ./programs/zsh.nix
 
     # services
