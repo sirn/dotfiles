@@ -25,11 +25,11 @@
     ../programs/ffmpeg.nix
     ../programs/firefox.nix
     ../programs/imagemagick.nix
+    ../programs/ghostty.nix
     ../programs/intellij.nix
     ../programs/mpv.nix
     ../programs/sublime-text.nix
     ../programs/virt-manager.nix
-    ../programs/wezterm.nix
     ../programs/yt-dlp.nix
   ];
 
