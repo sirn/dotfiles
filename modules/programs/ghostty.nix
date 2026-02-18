@@ -33,6 +33,14 @@ in
         font-size = 12;
 
         window-theme = "ghostty";
+
+        # Disable FreeType hinting so glyphs land at correct subpixel positions
+        # under fractional scaling (e.g. 1.25x, 1.5x), preventing jerky rendering.
+        freetype-load-flags = "no-hinting";
+
+        # Use compositor server-side decorations to avoid libadwaita CSD artifacts
+        # at fractional scales on Wayland.
+        window-decoration = "server";
       })
       (lib.mkIf pkgs.stdenv.isDarwin {
         font-size = 14;
