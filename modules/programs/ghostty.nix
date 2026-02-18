@@ -24,6 +24,10 @@ in
       {
         font-family = "PragmataPro Mono Liga";
 
+        # Ctrl+[ traditionally sends ESC; fixterm disambiguates it,
+        # breaking Evil insert-mode escape in Emacs.
+        keybind = [ "ctrl+bracket_left=text:\\x1b" ];
+
         command = builtins.concatStringsSep " " (
           [ config.machine.interactiveShell ]
           ++ lib.optional pkgs.stdenv.isDarwin "--login"
