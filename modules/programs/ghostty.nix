@@ -32,7 +32,7 @@ in
       (lib.mkIf pkgs.stdenv.isLinux {
         font-size = 12;
 
-        window-theme = "ghostty";
+        window-theme = "auto";
 
         # Disable FreeType hinting so glyphs land at correct subpixel positions
         # under fractional scaling (e.g. 1.25x, 1.5x), preventing jerky rendering.
