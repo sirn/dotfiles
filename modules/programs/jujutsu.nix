@@ -37,13 +37,6 @@ in
         auto-update-stale = true;
       };
 
-      fsmonitor = {
-        backend = "watchman";
-        watchman = {
-          register-snapshot-trigger = true;
-        };
-      };
-
       aliases =
         let
           jjSnapshot = pkgs.writeScriptBin "jj-snapshot" ''
