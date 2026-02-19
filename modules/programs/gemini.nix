@@ -37,10 +37,11 @@ in
     # TODO: switch to null, >25.11
     defaultModel = "";
 
-    context.GEMINI = instructionText;
+    context.AGENTS = instructionText;
 
     settings = {
       mcpServers = toGeminiMcpServers config.programs.mcp.servers;
+      context.fileName = [ "AGENTS.md" "GEMINI.md" ];
       general = {
         enablePromptCompletion = true;
         previewFeatures = true;
