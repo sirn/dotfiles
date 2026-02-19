@@ -66,6 +66,7 @@ in
     rules = instructionText;
 
     settings = {
+      theme = "system";
       mcp = toOpencodeMcpServers config.programs.mcp.servers;
       mode = {
         plan.model = "synthetic/hf:moonshotai/Kimi-K2.5";

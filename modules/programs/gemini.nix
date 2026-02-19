@@ -45,6 +45,10 @@ in
         enablePromptCompletion = true;
         previewFeatures = true;
       };
+      ui = {
+        theme = "ANSI";
+        autoThemeSwitching = true;
+      };
       security = {
         auth = {
           # Valid Types:
