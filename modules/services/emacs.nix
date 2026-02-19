@@ -26,6 +26,7 @@ in
         "--fg-daemon"
         "--chdir=${config.home.homeDirectory}"
       ];
+      EnvironmentVariables.TERMINFO_DIRS = "${config.home.homeDirectory}/.nix-profile/share/terminfo";
     };
   };
 }
