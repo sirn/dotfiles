@@ -1,7 +1,8 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 let
-  colorScheme = {
+  # Base 16-color palette (modus-vivendi theme)
+  base16Colors = {
     background = "#000000";
     foreground = "#ffffff";
     selection = "#535353";
@@ -30,7 +31,78 @@ let
     };
   };
 
+  # Color utility functions
   stripHash = color: builtins.substring 1 6 color;
+
+  # Legacy color scheme for backward compatibility
+  colorScheme = base16Colors;
+
+  # Generate 256-color palette at build time using Python script
+  # This uses CIELAB interpolation for perceptually uniform colors
+  palette256Generator = pkgs.runCommand "generate-palette-256" {
+    nativeBuildInputs = [ pkgs.python3 ];
+  } ''
+    cat > input.json <<'EOF'
+    {
+      "bg": "${base16Colors.background}",
+      "fg": "${base16Colors.foreground}",
+      "normal": [
+        "${base16Colors.normal.black}",
+        "${base16Colors.normal.red}",
+        "${base16Colors.normal.green}",
+        "${base16Colors.normal.yellow}",
+        "${base16Colors.normal.blue}",
+        "${base16Colors.normal.magenta}",
+        "${base16Colors.normal.cyan}",
+        "${base16Colors.normal.white}"
+      ]
+    }
+    EOF
+
+    python3 ${../../lib/generate-palette.py} < input.json > $out
+  '';
+
+  # Read generated palette (IFD - Import From Derivation)
+  palette240 = builtins.fromJSON (builtins.readFile palette256Generator);
+
+  # Base 16 colors as list
+  base16List = [
+    base16Colors.normal.black
+    base16Colors.normal.red
+    base16Colors.normal.green
+    base16Colors.normal.yellow
+    base16Colors.normal.blue
+    base16Colors.normal.magenta
+    base16Colors.normal.cyan
+    base16Colors.normal.white
+    base16Colors.bright.black
+    base16Colors.bright.red
+    base16Colors.bright.green
+    base16Colors.bright.yellow
+    base16Colors.bright.blue
+    base16Colors.bright.magenta
+    base16Colors.bright.cyan
+    base16Colors.bright.white
+  ];
+
+  # Full 256-color palette (0-255)
+  palette256 = base16List ++ palette240;
+
+  # Helper to get color by index
+  getColor = idx: builtins.elemAt palette256 idx;
+
+  # 256-color palette structure:
+  # 0-15:   Base 16 colors (8 normal + 8 bright)
+  # 16-231: 6x6x6 RGB cube (216 colors) using CIELAB interpolation
+  # 232-255: 24 grayscale ramp from background to foreground
+  #
+  # CIELAB provides perceptually uniform color interpolation.
+  #
+  # Common color indices for reference:
+  # 0=black, 1=red, 2=green, 3=yellow, 4=blue, 5=magenta, 6=cyan, 7=white
+  # 8=bright black, 9=bright red, ..., 15=bright white
+  # 16-231: Use getColor(idx) where idx = 16 + 36*r + 6*g + b, r,g,b in 0-5
+  # 232-255: Grayscale from dark to light
 in
 {
   programs.alacritty = lib.mkIf config.programs.alacritty.enable {
@@ -52,23 +124,10 @@ in
       colors = {
         background = stripHash colorScheme.background;
         foreground = stripHash colorScheme.foreground;
-        regular0 = stripHash colorScheme.normal.black;
-        regular1 = stripHash colorScheme.normal.red;
-        regular2 = stripHash colorScheme.normal.green;
-        regular3 = stripHash colorScheme.normal.yellow;
-        regular4 = stripHash colorScheme.normal.blue;
-        regular5 = stripHash colorScheme.normal.magenta;
-        regular6 = stripHash colorScheme.normal.cyan;
-        regular7 = stripHash colorScheme.normal.white;
-        bright0 = stripHash colorScheme.bright.black;
-        bright1 = stripHash colorScheme.bright.red;
-        bright2 = stripHash colorScheme.bright.green;
-        bright3 = stripHash colorScheme.bright.yellow;
-        bright4 = stripHash colorScheme.bright.blue;
-        bright5 = stripHash colorScheme.bright.magenta;
-        bright6 = stripHash colorScheme.bright.cyan;
-        bright7 = stripHash colorScheme.bright.white;
-      };
+      } // lib.listToAttrs (lib.imap0 (i: c: {
+        name = toString i;
+        value = stripHash c;
+      }) palette256);
     };
   };
 
@@ -96,6 +155,11 @@ in
           colorScheme.bright.cyan
           colorScheme.bright.white
         ];
+
+        indexed = lib.listToAttrs (lib.imap0 (i: c: {
+          name = toString i;
+          value = c;
+        }) palette256);
 
         background = colorScheme.background;
         cursor_bg = colorScheme.foreground;
@@ -153,6 +217,8 @@ in
     '';
   };
 
+  # Note: Ghostty will auto-generate the 256-color palette after version 1.2.3.
+  # For now, we provide all 256 colors explicitly.
   programs.ghostty = lib.mkIf config.programs.ghostty.enable {
     settings = {
       theme = "modus-vivendi";
@@ -162,24 +228,7 @@ in
         background = stripHash colorScheme.background;
         cursor-color = stripHash colorScheme.foreground;
         foreground = stripHash colorScheme.foreground;
-        palette = [
-          "0=${stripHash colorScheme.normal.black}"
-          "1=${stripHash colorScheme.normal.red}"
-          "2=${stripHash colorScheme.normal.green}"
-          "3=${stripHash colorScheme.normal.yellow}"
-          "4=${stripHash colorScheme.normal.blue}"
-          "5=${stripHash colorScheme.normal.magenta}"
-          "6=${stripHash colorScheme.normal.cyan}"
-          "7=${stripHash colorScheme.normal.white}"
-          "8=${stripHash colorScheme.bright.black}"
-          "9=${stripHash colorScheme.bright.red}"
-          "10=${stripHash colorScheme.bright.green}"
-          "11=${stripHash colorScheme.bright.yellow}"
-          "12=${stripHash colorScheme.bright.blue}"
-          "13=${stripHash colorScheme.bright.magenta}"
-          "14=${stripHash colorScheme.bright.cyan}"
-          "15=${stripHash colorScheme.bright.white}"
-        ];
+        palette = lib.imap0 (i: c: "${toString i}=${stripHash c}") palette256;
         selection-background = stripHash colorScheme.selection;
         selection-foreground = stripHash colorScheme.background;
       };
@@ -246,12 +295,19 @@ in
 
   programs.waybar = lib.mkIf config.programs.waybar.enable {
     style = lib.mkDefault ''
-      @define-color default_bg rgba(0, 0, 0, 0.6);
+      @define-color default_bg_solid ${colorScheme.background};
+      @define-color default_bg alpha(@default_bg_solid, 0.6);
       @define-color default_fg ${colorScheme.foreground};
       @define-color highlight_bg ${colorScheme.normal.blue};
       @define-color highlight_fg ${colorScheme.background};
       @define-color alert_bg ${colorScheme.normal.red};
       @define-color alert_fg ${colorScheme.normal.white};
+      @define-color battery_charging_bg ${getColor 195};
+      @define-color battery_charging_fg ${getColor 40};
+      @define-color battery_warning_bg ${getColor 208};
+      @define-color battery_warning_fg ${getColor 229};
+      @define-color battery_critical_bg ${getColor 1};
+      @define-color battery_critical_fg ${getColor 218};
 
       /* -------------------------------------------------------------------------
        * Global & Bar
@@ -358,7 +414,7 @@ in
        */
 
       #tray {
-          background-color: rgba(255, 255, 255, 0.1);
+          background-color: alpha(@default_fg, 0.1);
           border-radius: 5px;
           padding: 0 10px;
       }
@@ -378,24 +434,24 @@ in
        */
 
       #battery {
-          background-color: rgba(255, 255, 255, 0.1);
+          background-color: alpha(@default_fg, 0.1);
           border-radius: 5px;
           padding: 0 10px;
       }
 
       #battery.charging:not(.full) {
-          background-color: #e8f5e9;
-          color: #2e7d32;
+          background-color: @battery_charging_bg;
+          color: @battery_charging_fg;
       }
 
       #battery.warning {
-          background-color: #ff6f00;
-          color: #ffecb3;
+          background-color: @battery_warning_bg;
+          color: @battery_warning_fg;
       }
 
       #battery.critical {
-          background-color: #b71c1c;
-          color: #ffcdd2;
+          background-color: @battery_critical_bg;
+          color: @battery_critical_fg;
       }
 
       /* -------------------------------------------------------------------------
@@ -429,7 +485,7 @@ in
        */
 
       #scratchpad {
-          background-color: rgba(0, 0, 0, 0.2);
+          background-color: alpha(@default_bg_solid, 0.2);
           padding: 0 10px;
       }
 
