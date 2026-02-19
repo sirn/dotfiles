@@ -1,7 +1,9 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
-  home.packages = with pkgs; [
-    ghostty.terminfo
+  home.packages = [
+    (if pkgs.stdenv.isDarwin
+    then pkgs.ghostty-bin.terminfo
+    else pkgs.ghostty.terminfo)
   ];
 }
