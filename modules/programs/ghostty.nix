@@ -52,6 +52,8 @@ in
         window-theme = "auto";
 
         macos-titlebar-style = "tabs";
+
+        macos-option-as-alt = true;
       })
     ];
   };
