@@ -17,8 +17,8 @@ in
       set -g set-clipboard on
       set -g set-titles on
       set -g set-titles-string "#W via tmux: #S"
-      set -ga terminal-features ",xterm*:RGB"
       set -ga terminal-features ",xterm*:clipboard"
+      set -g allow-passthrough on
       set -wg automatic-rename off
 
       set -g status-left ""
