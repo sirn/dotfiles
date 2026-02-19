@@ -70,7 +70,7 @@ in
       mcp = toOpencodeMcpServers config.programs.mcp.servers;
       mode = {
         plan.model = "synthetic/hf:moonshotai/Kimi-K2.5";
-        build.model = "synthetic/hf:zai-org/GLM-4.7";
+        build.model = "synthetic/hf:moonshotai/Kimi-K2.5";
       };
       permission = {
         read = {
