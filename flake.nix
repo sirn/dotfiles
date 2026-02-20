@@ -2,26 +2,53 @@
   description = "Home Manager configuration";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs = {
+      url = "github:nixos/nixpkgs/nixos-25.11";
+    };
 
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-unstable = {
+      url = "github:nixos/nixpkgs/nixos-unstable";
+    };
 
-    sops-nix.url = "github:Mic92/sops-nix";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-25.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    home-manager.url = "github:nix-community/home-manager/release-25.11";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    ## Nix quality of life
+    ##
 
-    nix-index-database.url = "github:nix-community/nix-index-database";
-    nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
+    # So we don't have to reindex nix-locate by ourselves.
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    nixgl.url = "github:nix-community/nixGL";
+    # Storing secrets using SOPS.
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+    };
 
-    niri.url = "github:sodiboo/niri-flake";
+    # For GL application compatibility on non-Nix.
+    nixgl = {
+      url = "github:nix-community/nixGL";
+    };
 
-    nur.url = "github:nix-community/NUR";
-    nur.inputs.nixpkgs.follows = "nixpkgs";
+    ## Package overlays
+    ##
 
-    emacs-overlay.url = "github:nix-community/emacs-overlay";
+    nur = {
+      url = "github:nix-community/NUR";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    niri = {
+      url = "github:sodiboo/niri-flake";
+    };
+
+    emacs-overlay = {
+      url = "github:nix-community/emacs-overlay";
+    };
   };
 
   outputs = { nixpkgs, home-manager, ... }@inputs:
@@ -33,15 +60,35 @@
       overlays = [
         inputs.nixgl.overlay
         inputs.emacs-overlay.overlay
+
+        (final: prev: {
+          unstable = import inputs.nixpkgs-unstable {
+            system = final.stdenv.hostPlatform.system;
+            config = config;
+          };
+
+          nur = import inputs.nur {
+            nurpkgs = final;
+            pkgs = final;
+          };
+
+          local = import ./pkgs final prev inputs;
+        })
+
+        ## Compatibility fixes
+        ##
+
         (final: prev: {
           # inetutils 2.7 has a format string bug that fails with strict compiler flags
           # See: https://github.com/NixOS/nixpkgs/issues/488689
-          inetutils = if prev.stdenv.hostPlatform.isDarwin then
-            prev.inetutils.overrideAttrs (oldAttrs: {
-              hardeningDisable = (oldAttrs.hardeningDisable or []) ++ [ "format" ];
-            })
-          else
-            prev.inetutils;
+          inetutils =
+            if prev.stdenv.hostPlatform.isDarwin then
+              prev.inetutils.overrideAttrs
+                (oldAttrs: {
+                  hardeningDisable = (oldAttrs.hardeningDisable or [ ]) ++ [ "format" ];
+                })
+            else
+              prev.inetutils;
 
           # darwin is known to be crashy when doing fork+exec
           # something changed in nix that cause these two tests to fail
@@ -58,18 +105,6 @@
               });
             })
           ];
-
-          unstable = import inputs.nixpkgs-unstable {
-            system = final.stdenv.hostPlatform.system;
-            config = config;
-          };
-
-          nur = import inputs.nur {
-            nurpkgs = final;
-            pkgs = final;
-          };
-
-          local = import ./pkgs final prev inputs;
         })
       ];
 
