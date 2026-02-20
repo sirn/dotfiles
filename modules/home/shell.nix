@@ -14,10 +14,6 @@ in
   home.sessionPath = [
     "${dotfilesDir}/bin"
     "${config.home.homeDirectory}/.local/bin"
-    "/usr/local/bin"
-    "/usr/local/sbin"
-    "/opt/local/sbin"
-    "/opt/local/bin"
   ];
 
   home.sessionVariablesExtra =

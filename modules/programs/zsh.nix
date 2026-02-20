@@ -16,6 +16,13 @@ in
 
     initContent =
       let
+        # Ensure sessionPath takes precedence over system paths on macOS
+        darwinPathFix = lib.optionalString pkgs.stdenv.isDarwin ''
+          # On macOS, system paths often get prepended after zshenv runs.
+          # Re-ensure our preferred PATH order here in .zshrc
+          export PATH="${config.home.profileDirectory}/bin:$PATH"
+        '';
+
         dirJumpCmd =
           let
             fzyCmd = lib.getExe pkgs.fzy;
@@ -89,6 +96,8 @@ in
           '';
       in
       ''
+        ${darwinPathFix}
+
         export WORDCHARS="''${WORDCHARS/\//}"
         if [[ $- == *"i"* ]]; then
           export SHELL=${cfg.package}/bin/zsh
