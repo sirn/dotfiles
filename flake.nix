@@ -161,7 +161,7 @@
         , homeDirectory ? "/home/${username}"
         }:
         {
-          home-manager.useGlobalPkgs = true;
+          home-manager.useGlobalPkgs = false;
           home-manager.useUserPackages = true;
           home-manager.users.${username} = {
             imports = [
