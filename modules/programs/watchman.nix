@@ -4,11 +4,11 @@ let
   jjcfg = config.programs.jujutsu;
 in
 {
-  home.packages = lib.optionals pkgs.stdenv.isLinux [
+  home.packages = [
     pkgs.watchman
   ];
 
-  programs.jujutsu = lib.mkIf (jjcfg.enable && pkgs.stdenv.isLinux) {
+  programs.jujutsu = lib.mkIf jjcfg.enable {
     settings = {
       fsmonitor = {
         backend = "watchman";
