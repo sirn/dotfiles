@@ -43,7 +43,7 @@ in
   };
 
   programs.codex = lib.mkIf config.programs.codex.enable {
-    settings.notify =
+    settingsOverride.notify =
       let
         notifyScript = pkgs.writeShellScript "codex-notify" ''
           INPUT="$1"

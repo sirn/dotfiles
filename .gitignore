@@ -23,4 +23,3 @@ local.nix
 nix.generic
 nix.profile
 result
-var/projects.txt

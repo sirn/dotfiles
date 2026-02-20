@@ -11,7 +11,7 @@
 
   :custom
   (tempel-path
-   (expand-file-name "~/.dotfiles/etc/emacs/templates/*.eld"))
+   (expand-file-name "~/.emacs.d/var/templates/*.eld"))
 
   :hook
   ((conf-mode . tempel-setup-capf)

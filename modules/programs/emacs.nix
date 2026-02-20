@@ -3,8 +3,6 @@
 let
   cfg = config.programs.emacs;
 
-  dotfilesDir = "${config.home.homeDirectory}/.dotfiles";
-
   notmuchcfg = config.programs.notmuch;
 in
 {
@@ -161,10 +159,14 @@ in
 
   home.file = {
     ".emacs.d/init.el" = {
-      source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/etc/emacs/init.el";
+      source = config.lib.file.mkOutOfStoreSymlink "${../../etc/emacs/init.el}";
     };
     ".emacs.d/bin/shell" = {
       source = config.machine.interactiveShell;
+    };
+    ".emacs.d/packages" = {
+      source = ../../etc/emacs/packages;
+      recursive = true;
     };
     ".emacs.d/var/parinfer-rust" = {
       source = pkgs.parinfer-rust-emacs;
@@ -174,6 +176,10 @@ in
     };
     ".emacs.d/var/scowl" = {
       source = pkgs.scowl;
+    };
+    ".emacs.d/var/templates" = {
+      source = ../../etc/emacs/templates;
+      recursive = true;
     };
     ".emacs.d/var/emacs-bin-deps" = {
       source = (pkgs.stdenv.mkDerivation {

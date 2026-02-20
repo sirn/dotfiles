@@ -224,7 +224,7 @@ This is an `:around' advice for many different functions."
                 #'file-name-sans-extension
                 (delq nil (mapcar #'car load-history)))))
   (dolist (file (directory-files
-                  "~/.dotfiles/etc/emacs/packages"
+                  "~/.emacs.d/packages"
                   t ".+\\.elc?$"))
     (let ((library (file-name-sans-extension file)))
       (unless (member library loaded)

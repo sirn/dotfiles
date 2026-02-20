@@ -122,7 +122,6 @@
   (defun gemacs--project-sync ()
     (interactive)
     (project-forget-zombie-projects)
-    (project-remember-project (project-current nil "~/.dotfiles"))
     (seq-doseq (projdir (gemacs--project-sync--projdirs))
       (let* ((dir (abbreviate-file-name projdir))
              (pr (project-current nil dir)))

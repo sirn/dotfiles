@@ -7,10 +7,6 @@ let
 
   skillsDir = ../../var/agents/skills;
 
-  projectsFile = ../../var/projects.txt;
-  projectPaths = lib.optionals (builtins.pathExists projectsFile)
-    (lib.filter (s: s != "") (lib.splitString "\n" (builtins.readFile projectsFile)));
-
   isStdioServer = server: server ? command || server ? package;
 
   toCodexMcpServers = servers:
@@ -23,42 +19,60 @@ let
           args = [ server.url ];
         })
       servers;
+
+  tomlFormat = pkgs.formats.toml { };
+
+  baseSettings = {
+    approval_policy = "on-request";
+    sandbox_mode = "workspace-write";
+    mcp_servers = toCodexMcpServers config.programs.mcp.servers;
+  } // cfg.settingsOverride;
+
+  nixConfig = tomlFormat.generate "codex-config-nix" baseSettings;
 in
 {
-  programs.codex = {
-    enable = true;
+  options.programs.codex.settingsOverride = lib.mkOption {
+    type = lib.types.attrs;
+    default = { };
+    description = ''
+      Settings to write to the Codex configuration file.
+      These will be merged with the local config on activation.
+    '';
+  };
 
-    package = pkgs.unstable.codex;
-
-    custom-instructions = instructionText;
-
-    settings = {
-      approval_policy = "on-request";
-      sandbox_mode = "workspace-write";
-
-      projects = lib.mkMerge [
-        (lib.genAttrs projectPaths (_: { trust_level = "trusted"; }))
-        {
-          "${config.home.homeDirectory}/.dotfiles" = {
-            trust_level = "trusted";
-          };
-        }
-        (lib.mkIf (pkgs.stdenv.isLinux && !config.targets.genericLinux.enable) {
-          "/etc/nixos" = {
-            trust_level = "trusted";
-          };
-        })
-      ];
-
-      mcp_servers = toCodexMcpServers config.programs.mcp.servers;
+  config = lib.mkIf cfg.enable {
+    programs.codex = {
+      package = pkgs.unstable.codex;
+      custom-instructions = instructionText;
     };
-  };
 
-  programs.git = lib.mkIf cfg.enable {
-    ignores = [
-      ".codex/"
-    ];
-  };
+    programs.git = {
+      ignores = [
+        ".codex/"
+      ];
+    };
 
-  home.file.".codex/skills/home-manager".source = lib.mkIf cfg.enable skillsDir;
+    home.file.".codex/skills/home-manager".source = skillsDir;
+
+    # Codex rewrites config.toml every time it's run in a new directory,
+    # so we need to merge the local config with Nix-generated config on activation.
+    # https://github.com/openai/codex/issues/5160
+    home.activation.mergeCodexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      mergeCodexConfig() {
+        localConfig="$HOME/.codex/config.toml"
+        nixConfig="${nixConfig}"
+
+        if [[ -f "$localConfig" ]]; then
+          echo "Merging local ~/.codex/config.toml with Nix-generated config..."
+          ${lib.getExe' pkgs.tomlplusplus "toml_merger"} "$localConfig" "$nixConfig" > "$localConfig.tmp"
+          mv "$localConfig.tmp" "$localConfig"
+        else
+          echo "Creating ~/.codex/config.toml from Nix-generated config..."
+          cp "$nixConfig" "$localConfig"
+        fi
+      }
+
+      mergeCodexConfig
+    '';
+  };
 }

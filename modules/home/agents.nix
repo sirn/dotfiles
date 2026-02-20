@@ -7,5 +7,7 @@
     ../programs/opencode.nix
   ];
 
+  programs.codex.enable = true;
+
   programs.git.ignores = [ ".my/" ];
 }
