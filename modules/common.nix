@@ -24,7 +24,6 @@
     ./programs/fd.nix
     ./programs/fzy.nix
     ./programs/git.nix
-    ./programs/ghostty-terminfo.nix
     ./programs/gpg.nix
     ./programs/htop.nix
     ./programs/jq.nix
