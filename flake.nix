@@ -108,20 +108,40 @@
         })
       ];
 
-      mkConfig =
-        { hostname, username, system, homeDirectory, ... }:
-        let
-          defaultConfig = { pkgs, ... }: {
-            nixpkgs.overlays = overlays;
-            nixpkgs.config = config;
-            programs.home-manager.enable = true;
-            home.username = username;
-            home.homeDirectory = homeDirectory;
-            home.stateVersion = "25.11";
-            news.display = "silent";
-          };
-        in
-        home-manager.lib.homeManagerConfiguration rec {
+      mkModules =
+        { hostname }:
+        [
+          inputs.sops-nix.homeManagerModules.sops
+          inputs.niri.homeModules.niri
+          ./lib/claude-code.nix
+          ./lib/flatpak.nix
+          ./lib/machine.nix
+          ./modules/machines/${hostname}.nix
+          (if builtins.pathExists ./local.nix then ./local.nix else { })
+          inputs.nix-index-database.homeModules.nix-index
+        ];
+
+      mkDefaultConfig =
+        { username
+        , homeDirectory
+        }:
+        { pkgs, ... }: {
+          nixpkgs.overlays = overlays;
+          nixpkgs.config = config;
+          programs.home-manager.enable = true;
+          home.username = username;
+          home.homeDirectory = homeDirectory;
+          home.stateVersion = "25.11";
+          news.display = "silent";
+        };
+
+      mkHomeConfig =
+        { hostname
+        , username
+        , system
+        , homeDirectory
+        }:
+        home-manager.lib.homeManagerConfiguration {
           # home-manager will be responsible for evaluating the nixpkgs.overlays.
           # We're passing legacyPackages here to avoid nixpkgs from being
           # evaluated twice.
@@ -131,16 +151,23 @@
           # home-manager/modules/misc/nixpkgs.nix (`import pkgPath ...;')
           pkgs = nixpkgs.legacyPackages.${system};
           modules = [
-            defaultConfig
-            inputs.sops-nix.homeManagerModules.sops
-            inputs.niri.homeModules.niri
-            ./lib/claude-code.nix
-            ./lib/flatpak.nix
-            ./lib/machine.nix
-            ./modules/machines/${hostname}.nix
-            (if builtins.pathExists ./local.nix then ./local.nix else { })
-            inputs.nix-index-database.homeModules.nix-index
-          ];
+            (mkDefaultConfig { inherit username homeDirectory; })
+          ] ++ (mkModules { inherit hostname; });
+        };
+
+      mkNixOSConfig =
+        { hostname
+        , username ? "sirn"
+        , homeDirectory ? "/home/${username}"
+        }:
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.users.${username} = {
+            imports = [
+              (mkDefaultConfig { inherit username homeDirectory; })
+            ] ++ (mkModules { inherit hostname; });
+          };
         };
 
       mkLinuxConfig =
@@ -150,7 +177,7 @@
         , homeDirectory ? "/home/${username}"
         , ...
         }:
-        mkConfig {
+        mkHomeConfig {
           inherit hostname username system homeDirectory;
         };
 
@@ -161,7 +188,7 @@
         , homeDirectory ? "/Users/${username}"
         , ...
         }:
-        mkConfig {
+        mkHomeConfig {
           inherit hostname username system homeDirectory;
         };
     in
@@ -172,6 +199,10 @@
         terra = mkLinuxConfig { hostname = "terra"; };
         theia = mkDarwinConfig { hostname = "theia"; };
         ws = mkLinuxConfig { hostname = "ws"; };
+      };
+
+      nixosModules = {
+        ws = mkNixOSConfig { hostname = "ws"; };
       };
     };
 }
