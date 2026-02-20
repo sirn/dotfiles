@@ -14,6 +14,9 @@ in
 
   systemd.user.services.emacs.Service = lib.mkIf cfg.enable {
     Slice = lib.mkDefault "app.slice";
+    Environment = [
+      "COLORTERM=truecolor"
+    ];
   };
 
   launchd.agents.emacs = lib.mkIf pkgs.stdenv.isDarwin {
@@ -26,7 +29,10 @@ in
         "--fg-daemon"
         "--chdir=${config.home.homeDirectory}"
       ];
-      EnvironmentVariables.TERMINFO_DIRS = "${config.home.homeDirectory}/.nix-profile/share/terminfo";
+      EnvironmentVariables = {
+        COLORTERM = "truecolor";
+        TERMINFO_DIRS = "${config.home.homeDirectory}/.nix-profile/share/terminfo";
+      };
     };
   };
 }

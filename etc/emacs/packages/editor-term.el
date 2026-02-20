@@ -1,6 +1,5 @@
 ;; -*- lexical-binding: t; no-native-compile: t -*-
 
-
 (defun gemacs--term-setup ()
   "Setup initial terminal state."
   (setq-local evil-insert-state-cursor 'box)
