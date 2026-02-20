@@ -202,6 +202,9 @@
       };
 
       nixosModules = {
+        phoebe = mkNixOSConfig { hostname = "phoebe"; };
+        polaris = mkNixOSConfig { hostname = "polaris"; };
+        terra = mkNixOSConfig { hostname = "terra"; };
         ws = mkNixOSConfig { hostname = "ws"; };
       };
     };
