@@ -18,6 +18,19 @@ in
       set -g set-titles on
       set -g set-titles-string "#W via tmux: #S"
       set -ga terminal-features ",xterm*:clipboard"
+
+      # Wezterm terminal feature overrides
+      set -ga terminal-features ",wezterm:RGB"
+      set -ga terminal-features ",wezterm:usstyle"
+      set -ga terminal-features ",wezterm:cstyle"
+      set -ga terminal-features ",wezterm:clipboard"
+      set -ga terminal-features ",wezterm:sync"
+      set -ga terminal-features ",wezterm:strikethrough"
+      set -ga terminal-features ",wezterm:overline"
+      set -ga terminal-features ",wezterm:hyperlinks"
+      set -ga terminal-features ",wezterm:focus"
+      set -ga terminal-features ",wezterm:title"
+      set -ga terminal-features ",wezterm:ccolour"
       set -g allow-passthrough on
       set -wg automatic-rename off
 
