@@ -94,6 +94,13 @@ in
         return config
       '';
     };
+    "wezterm/modules/term.lua" = {
+      text = ''
+        return {
+          term = "wezterm",
+        }
+      '';
+    };
     "wezterm/modules/shell.lua" = {
       text = ''
         return {
