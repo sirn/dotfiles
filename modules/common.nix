@@ -29,6 +29,7 @@
     ./programs/jq.nix
     ./programs/jujutsu.nix
     ./programs/lstr.nix
+    ./programs/less.nix
     ./programs/nix-index.nix
     ./programs/qalculate.nix
     ./programs/repoman.nix
