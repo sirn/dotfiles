@@ -72,10 +72,9 @@
 ;; --------------------------------------------------------------------------
 ;;; System
 
-(let ((default-shell (expand-file-name "bin/shell" gemacs-nix-config-directory)))
-  (setenv "SHELL" default-shell)
-  (setq sh-shell-file default-shell)
-  (setq shell-file-name default-shell))
+(setenv "SHELL" gemacs-default-shell)
+(setq sh-shell-file gemacs-default-shell)
+(setq shell-file-name gemacs-default-shell)
 
 ;; Inherit environment variables from shell on macOS
 (use-package exec-path-from-shell
@@ -201,7 +200,6 @@ This is an `:around' advice for many different functions."
 (setq make-backup-files nil)
 (setq auto-save-default nil)
 (setq create-lockfiles nil)
-(setq inhibit-startup-screen t)
 (setq initial-scratch-message nil)
 (defalias 'yes-or-no-p 'y-or-n-p)
 

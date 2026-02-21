@@ -18,6 +18,11 @@ let
     '';
   });
 
+  baseEmacs =
+    if pkgs.stdenv.isLinux then pkgs.emacs-pgtk
+    else if pkgs.stdenv.isDarwin then pkgs.emacs
+    else pkgs.emacs-nox;
+
   emacsBinDeps = pkgs.stdenv.mkDerivation {
     name = "emacs-bin-deps";
     buildInputs = with pkgs; [ makeWrapper ];
@@ -80,35 +85,56 @@ let
     '';
   };
 
-  emacsConfigDir = pkgs.runCommand "emacs-config" {} ''
-    mkdir -p $out/{bin,packages,var}
+  earlyInitEl = pkgs.writeText "early-init.el" ''
+    (setq inhibit-startup-screen t)
+    (defvar gemacs-nix-config-directory user-emacs-directory)
+    (defvar gemacs-default-shell "${config.machine.interactiveShell}")
 
+    ;; Redirect writable state to ~/.emacs.d/ since user-emacs-directory
+    ;; points to the read-only Nix store
+    (defvar no-littering-etc-directory (expand-file-name "etc/" "~/.emacs.d/"))
+    (defvar no-littering-var-directory (expand-file-name "var/" "~/.emacs.d/"))
+  '';
+
+  emacsConfigDir = pkgs.runCommand "emacs-config" {} ''
+    mkdir -p $out/{packages,var}
+
+    cp ${earlyInitEl} $out/early-init.el
     cp ${../../etc/emacs/init.el} $out/init.el
 
     for f in ${../../etc/emacs/packages}/*.el; do
       cp "$f" $out/packages/
     done
 
-    ln -s ${config.machine.interactiveShell} $out/bin/shell
     ln -s ${pkgs.parinfer-rust-emacs} $out/var/parinfer-rust
-    ln -s ${(pkgs.emacsPackagesFor cfg.package).treesit-grammars.with-all-grammars} $out/var/treesit-grammars
+    ln -s ${(pkgs.emacsPackagesFor baseEmacs).treesit-grammars.with-all-grammars} $out/var/treesit-grammars
     ln -s ${pkgs.scowl} $out/var/scowl
     ln -s ${emacsBinDeps} $out/var/emacs-bin-deps
 
     cp -r ${../../etc/emacs/templates} $out/var/templates
   '';
+
+  wrappedEmacs = pkgs.symlinkJoin {
+    name = "emacs-wrapped";
+    paths = [ baseEmacs ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/emacs \
+        --add-flags "--init-directory=${emacsConfigDir}"
+    '';
+    inherit (baseEmacs) meta;
+    passthru = (baseEmacs.passthru or {}) // {
+      inherit (baseEmacs) src;
+    } // lib.optionalAttrs (baseEmacs ? LIBRARY_PATH) {
+      inherit (baseEmacs) LIBRARY_PATH;
+    };
+  };
+
 in
 {
   programs.emacs = {
     enable = true;
-    package =
-      lib.mkDefault
-        (if pkgs.stdenv.isLinux
-        then pkgs.emacs-pgtk
-        else
-          if pkgs.stdenv.isDarwin
-          then pkgs.emacs
-          else pkgs.emacs-nox);
+    package = lib.mkDefault wrappedEmacs;
 
     extraPackages = epkgs: with epkgs; [
       # Early packages
@@ -248,11 +274,5 @@ in
       osx-trash
       pbcopy
     ] else [ ]);
-
-    extraConfig = ''
-      (defvar gemacs-nix-config-directory "${emacsConfigDir}/")
-      (load (expand-file-name "init" gemacs-nix-config-directory) nil t)
-    '';
   };
-
 }
