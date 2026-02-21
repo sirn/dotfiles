@@ -34,6 +34,24 @@ On subsequent updates, use:
 $ home-manager switch --flake path:.#$HM_PROFILE
 ```
 
+## NixOS Module
+
+This repository also provides a module to be used with Home Manager NixOS Module:
+
+```nix
+modules = [
+  inputs.home-manager.nixosModules.home-manager
+  inputs.dotfiles.nixosModules.${hostname}
+];
+```
+
+To test building locally, use:
+
+```shell
+$ HM_PROFILE=$(hostname -s)
+$ nix build ".#homeConfigurations.$HM_PROFILE.activationPackage"
+```
+
 ## Configuration
 
 ### Local Configuration
@@ -49,6 +67,21 @@ Create a file named `local.nix` to have a machine-specific configuration that is
 
   # When running on a non-NixOS
   targets.genericLinux.enable = true;
+}
+```
+
+For NixOS, this needs to be done as part of NixOS `configuration.nix`:
+
+```nix
+{
+  # ...
+
+  home-manager.users.sirn = {
+    imports = [
+      "${dotfiles}/modules/programs/bitwarden.nix"
+      "${dotfiles}/modules/programs/languagetool.nix"
+    ];
+  };
 }
 ```
 
