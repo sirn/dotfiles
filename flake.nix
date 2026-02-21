@@ -163,6 +163,7 @@
         {
           home-manager.useGlobalPkgs = false;
           home-manager.useUserPackages = true;
+          home-manager.backupFileExtension = "backup";
           home-manager.users.${username} = {
             imports = [
               (mkDefaultConfig { inherit username homeDirectory; })
