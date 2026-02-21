@@ -72,7 +72,7 @@
 ;; --------------------------------------------------------------------------
 ;;; System
 
-(let ((default-shell (expand-file-name "~/.emacs.d/bin/shell")))
+(let ((default-shell (expand-file-name "bin/shell" gemacs-nix-config-directory)))
   (setenv "SHELL" default-shell)
   (setq sh-shell-file default-shell)
   (setq shell-file-name default-shell))
@@ -216,7 +216,7 @@ This is an `:around' advice for many different functions."
 ;; --------------------------------------------------------------------------
 ;;; Packages
 
-(let ((emacs-bin-deps-dir "~/.emacs.d/var/emacs-bin-deps"))
+(let ((emacs-bin-deps-dir (expand-file-name "var/emacs-bin-deps" gemacs-nix-config-directory)))
   (if (file-directory-p emacs-bin-deps-dir)
     (add-to-list 'exec-path (expand-file-name emacs-bin-deps-dir) t)))
 
@@ -224,7 +224,7 @@ This is an `:around' advice for many different functions."
                 #'file-name-sans-extension
                 (delq nil (mapcar #'car load-history)))))
   (dolist (file (directory-files
-                  "~/.emacs.d/packages"
+                  (expand-file-name "packages" gemacs-nix-config-directory)
                   t ".+\\.elc?$"))
     (let ((library (file-name-sans-extension file)))
       (unless (member library loaded)

@@ -4,6 +4,99 @@ let
   cfg = config.programs.emacs;
 
   notmuchcfg = config.programs.notmuch;
+
+  # Wrap tenv to auto-install appropriate terraform version
+  tenvWrapped = pkgs.tenv.overrideDerivation (attrs: {
+    nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
+
+    postInstall = ''
+      for program in "$out"/bin/*; do
+        if [ -f "$program" ]; then
+          wrapProgram "$program" --set TENV_AUTO_INSTALL true
+        fi
+      done
+    '';
+  });
+
+  emacsBinDeps = pkgs.stdenv.mkDerivation {
+    name = "emacs-bin-deps";
+    buildInputs = with pkgs; [ makeWrapper ];
+    nativeBuildInputs = with pkgs; [
+      fd
+      jq
+      nixpkgs-fmt
+      nodejs
+      pandoc
+      ripgrep
+      shellcheck
+      shfmt
+      hunspell.bin
+      buf
+
+      # LSPs
+      clang-tools
+      clojure-lsp
+      gopls
+      intelephense
+      nil
+      pyright
+      rubyPackages.ruby-lsp
+      nodePackages.bash-language-server
+      dockerfile-language-server
+      nodePackages.svelte-language-server
+      vscode-langservers-extracted
+      typescript-language-server
+      yaml-language-server
+      protols
+
+      tenvWrapped
+
+      # terraform-ls looks up `terraform` binary via $PATH but bin deps
+      # is injected via exec-path only, so we need to inject bin deps path
+      # explicitly here
+      (terraform-ls.overrideDerivation (attrs: {
+        nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
+        postInstall = ''
+          wrapProgram $out/bin/terraform-ls \
+            --prefix PATH : ${tenvWrapped}/bin
+        '';
+      }))
+    ];
+
+    phases = [ "installPhase" ];
+
+    installPhase = ''
+      mkdir -p "$out"
+
+      for pkg in $nativeBuildInputs; do
+        if [ -d "$pkg"/bin ]; then
+          for bin in "$pkg/bin/"*; do
+            if [ -x "$bin" ]; then
+              ln -s "$bin" "$out"/"$(basename "$bin")"
+            fi
+          done
+        fi
+      done
+    '';
+  };
+
+  emacsConfigDir = pkgs.runCommand "emacs-config" {} ''
+    mkdir -p $out/{bin,packages,var}
+
+    cp ${../../etc/emacs/init.el} $out/init.el
+
+    for f in ${../../etc/emacs/packages}/*.el; do
+      cp "$f" $out/packages/
+    done
+
+    ln -s ${config.machine.interactiveShell} $out/bin/shell
+    ln -s ${pkgs.parinfer-rust-emacs} $out/var/parinfer-rust
+    ln -s ${(pkgs.emacsPackagesFor cfg.package).treesit-grammars.with-all-grammars} $out/var/treesit-grammars
+    ln -s ${pkgs.scowl} $out/var/scowl
+    ln -s ${emacsBinDeps} $out/var/emacs-bin-deps
+
+    cp -r ${../../etc/emacs/templates} $out/var/templates
+  '';
 in
 {
   programs.emacs = {
@@ -155,105 +248,11 @@ in
       osx-trash
       pbcopy
     ] else [ ]);
+
+    extraConfig = ''
+      (defvar gemacs-nix-config-directory "${emacsConfigDir}/")
+      (load (expand-file-name "init" gemacs-nix-config-directory) nil t)
+    '';
   };
 
-  home.file = {
-    ".emacs.d/init.el" = {
-      source = config.lib.file.mkOutOfStoreSymlink "${../../etc/emacs/init.el}";
-    };
-    ".emacs.d/bin/shell" = {
-      source = config.machine.interactiveShell;
-    };
-    ".emacs.d/packages" = {
-      source = ../../etc/emacs/packages;
-      recursive = true;
-    };
-    ".emacs.d/var/parinfer-rust" = {
-      source = pkgs.parinfer-rust-emacs;
-    };
-    ".emacs.d/var/treesit-grammars" = {
-      source = (pkgs.emacsPackagesFor cfg.package).treesit-grammars.with-all-grammars;
-    };
-    ".emacs.d/var/scowl" = {
-      source = pkgs.scowl;
-    };
-    ".emacs.d/var/templates" = {
-      source = ../../etc/emacs/templates;
-      recursive = true;
-    };
-    ".emacs.d/var/emacs-bin-deps" = {
-      source = (pkgs.stdenv.mkDerivation {
-        name = "emacs-bin-deps";
-        buildInputs = with pkgs; [ makeWrapper ];
-        nativeBuildInputs = with pkgs; [
-          fd
-          jq
-          nixpkgs-fmt
-          nodejs
-          pandoc
-          ripgrep
-          shellcheck
-          shfmt
-          hunspell.bin
-          buf
-
-          # LSPs
-          clang-tools
-          clojure-lsp
-          gopls
-          intelephense
-          nil
-          pyright
-          rubyPackages.ruby-lsp
-          nodePackages.bash-language-server
-          dockerfile-language-server
-          nodePackages.svelte-language-server
-          vscode-langservers-extracted
-          typescript-language-server
-          yaml-language-server
-          protols
-
-          # wrap tenv to auto-install appropriate terraform version
-          (tenv.overrideDerivation (attrs: {
-            nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
-
-            postInstall = ''
-              for program in "$out"/bin/*; do
-                if [ -f "$program" ]; then
-                  wrapProgram "$program" --set TENV_AUTO_INSTALL true
-                fi
-              done
-            '';
-          }))
-
-          # terraform-ls looks up `terraform` binary via $PATH but bin deps
-          # is injected via exec-path only, so we need to inject bin deps path
-          # explicitly here
-          (terraform-ls.overrideDerivation (attrs: {
-            nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
-            postInstall = ''
-              wrapProgram $out/bin/terraform-ls \
-                --prefix PATH : ${config.home.homeDirectory}/.emacs.d/var/emacs-bin-deps
-            '';
-          }))
-        ];
-
-        phases = [ "installPhase" ];
-
-        installPhase = ''
-          mkdir -p "$out"
-
-          for pkg in $nativeBuildInputs; do
-            if [ -d "$pkg"/bin ]; then
-              for bin in "$pkg/bin/"*; do
-                if [ -x "$bin" ]; then
-                  ln -s "$bin" "$out"/"$(basename "$bin")"
-                fi
-              done
-            fi
-          done
-        '';
-      });
-    };
-  };
 }

@@ -11,7 +11,7 @@
 
   :custom
   (tempel-path
-   (expand-file-name "~/.emacs.d/var/templates/*.eld"))
+   (expand-file-name "var/templates/*.eld" gemacs-nix-config-directory))
 
   :hook
   ((conf-mode . tempel-setup-capf)

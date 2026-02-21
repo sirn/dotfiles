@@ -240,12 +240,13 @@ Other buffers are left alone."
 
   :init
   (setq parinfer-rust-library
-    (no-littering-expand-var-file-name
+    (expand-file-name
      (concat
-      (file-name-as-directory "parinfer-rust/lib")
+      (file-name-as-directory "var/parinfer-rust/lib")
       (cond
        ((eq system-type 'darwin) "libparinfer_rust.dylib")
-       ((eq system-type 'gnu/linux) "libparinfer_rust.so")))))
+       ((eq system-type 'gnu/linux) "libparinfer_rust.so")))
+     gemacs-nix-config-directory))
 
   :config
   (with-eval-after-load 'smartparens
@@ -325,7 +326,7 @@ Other buffers are left alone."
   :init
   (defun gemacs--envrc-inject-emacs-bin-deps (&rest _)
     "Injects local emacs-bin-deps"
-    (add-to-list 'exec-path (expand-file-name "~/.emacs.d/var/emacs-bin-deps") t))
+    (add-to-list 'exec-path (expand-file-name "var/emacs-bin-deps" gemacs-nix-config-directory) t))
 
   :config
   (with-eval-after-load 'envrc
@@ -533,7 +534,7 @@ Other buffers are left alone."
   :init
   (add-to-list
    'treesit-extra-load-path
-   (no-littering-expand-var-file-name "treesit-grammars/lib")))
+   (expand-file-name "var/treesit-grammars/lib" gemacs-nix-config-directory)))
 
 
 ;; --------------------------------------------------------------------------

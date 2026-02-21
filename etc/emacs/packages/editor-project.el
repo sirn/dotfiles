@@ -125,7 +125,8 @@
     (seq-doseq (projdir (gemacs--project-sync--projdirs))
       (let* ((dir (abbreviate-file-name projdir))
              (pr (project-current nil dir)))
-        (project-remember-project pr)))
+        (when pr
+          (project-remember-project pr))))
     (message "Projects successfully synced"))
 
   (defun gemacs--project-gptel ()
