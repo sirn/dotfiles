@@ -10,10 +10,9 @@ Design API contracts, schemas, and specifications before implementation.
    - Protocol: REST, GraphQL, gRPC, TRPC
    - Format: OpenAPI/Swagger, Protocol Buffers, Zod/TypeBox schemas
 
-2. Research and design:
-   - Lookup best practices for the protocol (use WebSearch/WebFetch)
-   - Design the API resources, endpoints, and data shapes
-   - Consider versioning, pagination, error handling patterns
+2. Spawn agents:
+   - `code-architect`: "Design the API resources, endpoints, and data shapes for {requirements}"
+   - `code-researcher`: "Lookup best practices for {protocol} API design (versioning, pagination, errors)"
 
 3. Output the design:
    - **Endpoints/Operations**: Method, Path, Name

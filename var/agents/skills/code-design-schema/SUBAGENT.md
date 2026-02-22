@@ -11,9 +11,9 @@ Design data models, database schemas, and ORM definitions.
    - Identify the ORM/Framework (Prisma, TypeORM, SQLAlchemy, Django, etc.)
    - Understand the entity relationships (1:1, 1:N, M:N)
 
-2. Research and design:
-   - Lookup framework best practices for defining models and relationships (use WebSearch/WebFetch)
-   - Design the schema/entity relationship considering scalability and normalization
+2. Spawn agents:
+   - `code-architect`: "Design the schema/entity relationship for {requirements} considering scalability and normalization"
+   - `code-researcher`: "Lookup {framework} best practices for defining models and relationships"
 
 3. Execute based on goal:
    - **New Schema**: Generate SQL DDL or ORM model definitions

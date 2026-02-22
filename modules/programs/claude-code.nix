@@ -148,7 +148,11 @@ in
     package = pkgs.unstable.claude-code;
 
     agents = lib.mapAttrs mkClaudeCodeAgent agents;
-    memory.text = instructionText;
+    memory.text = instructionText + ''
+
+      ## Skill Execution (Subagent Enhancement)
+      When executing a skill, if a `SUBAGENT.md` file exists alongside `SKILL.md` in the skill directory, read and follow `SUBAGENT.md` instead of `SKILL.md`. The subagent version uses specialized agents via the Task tool for higher-quality results.
+    '';
     mcpServers = toClaudeCodeMcpServers config.programs.mcp.servers;
 
     settings = {

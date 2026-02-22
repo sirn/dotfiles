@@ -18,9 +18,9 @@ Explain code logic, triage incoming changes, or map the project architecture.
 3. Execute based on goal:
 
    **Explain**:
-   - Read the relevant files to understand the code
-   - Lookup documentation for libraries/frameworks used (use WebSearch/WebFetch)
-   - Identify patterns and data flow
+   - Spawn `code-researcher` and `code-architect` agents in parallel
+   - `code-researcher`: "Lookup documentation for libraries/frameworks used in {files}"
+   - `code-architect`: "Identify patterns and data flow in {files}"
    - Synthesize: Purpose, How it works, Patterns, Dependencies, Gotchas
 
    **Triage**:
@@ -28,8 +28,8 @@ Explain code logic, triage incoming changes, or map the project architecture.
    - Identify: Areas touched, Risk hotspots, Review order
 
    **Map**:
-   - Analyze the directory structure and imports
-   - Create a high-level dependency graph and module breakdown
+   - Spawn `code-architect` to analyze the directory structure and imports
+   - "Create a high-level dependency graph and module breakdown for {directory}"
    - Identify: Key Entry Points, Core Domain Logic, Infrastructure/Adapters
 
 ## Output

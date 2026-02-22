@@ -8,7 +8,7 @@ Search for and add Nix packages to the environment.
 ## Process
 1. **Identify Package**:
    - Get the common name from user (e.g., "ripgrep", "python requests")
-   - Use `nix-locate` (via Bash) or WebSearch to find the **exact attribute path** in `nixpkgs` (e.g., `pkgs.ripgrep`, `pkgs.python3Packages.requests`)
+   - Spawn `code-researcher` (or use `nix-locate`/`web-search`) to find the **exact attribute path** in `nixpkgs` (e.g., `pkgs.ripgrep`, `pkgs.python3Packages.requests`)
    - *Crucial*: Verify the package exists in the current nixpkgs channel/version
 
 2. **Detect Configuration**:

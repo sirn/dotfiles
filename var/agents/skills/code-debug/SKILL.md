@@ -3,15 +3,16 @@ name: code-debug
 description: Debug issues by researching errors and proposing minimal fixes. Use when user asks to troubleshoot or debug a failure.
 ---
 
-Troubleshoot a problem by delegating research to the code-debug-researcher agent.
+Troubleshoot a problem by researching the error and proposing a minimal fix.
 
 ## Process
 1. Identify the error message, log, or failure symptom from $ARGUMENTS or context
-2. Spawn the `code-debug-researcher` agent using the Task tool
-3. Synthesize findings into actionable steps
-
-## Agent Invocation
-- `code-debug-researcher`: "Investigate the error or failure in {context} and propose a minimal fix with sources"
+2. Research the error:
+   - Search the codebase for related code paths and error handling
+   - Check documentation for the libraries/frameworks involved (use WebSearch/WebFetch)
+   - Search the web for known issues, fixes, or similar error reports
+3. Analyze the root cause based on research findings
+4. Propose a minimal fix
 
 ## Output
 1. **Likely cause**

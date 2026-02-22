@@ -3,12 +3,12 @@ name: code-review
 description: Comprehensive code review with support for fast, full, or performance-focused modes.
 ---
 
-Run a code review using specialized agents.
+Run a code review.
 
 ## Modes
-- **Full** (default): Uses all 5 agents (Quality, Security, Convention, Simplicity, Tech Researcher)
-- **Fast**: Uses 2 agents (Quality, Simplicity) for quick feedback
-- **Performance**: Uses Tech Researcher to focus specifically on performance optimization
+- **Full** (default): Review for quality, security, conventions, simplicity, and best practices
+- **Fast**: Review for quality and simplicity only
+- **Performance**: Focus on performance optimization
 
 ## Process
 1. Identify context:
@@ -17,21 +17,22 @@ Run a code review using specialized agents.
 
 2. Determine mode based on user request (default to **Full**)
 
-3. Spawn agents in parallel using the Task tool:
+3. Review the code:
 
-   **Full Mode**:
-   - `quality-reviewer`: "Review {files} for bugs, logic errors, and error handling issues"
-   - `security-researcher`: "Review {files} for security vulnerabilities and OWASP risks"
-   - `convention-reviewer`: "Review {files} for naming and code organization consistency"
-   - `simplicity-reviewer`: "Review {files} for over-engineering and unnecessary complexity"
-   - `code-researcher`: "Research best practices and patterns for libraries used in {files}"
+   **Full Mode** — analyze each aspect:
+   - **Quality**: Check for bugs, logic errors, error handling issues, and edge cases
+   - **Security**: Check for OWASP risks, injection vulnerabilities, auth issues, data exposure
+   - **Conventions**: Check naming consistency, code organization, and style adherence
+   - **Simplicity**: Check for over-engineering, unnecessary abstractions, and dead code
+   - **Best practices**: Research patterns and idioms for the libraries/frameworks in use (use WebSearch/WebFetch as needed)
 
    **Fast Mode**:
-   - `quality-reviewer`: "Review {files} for bugs, logic errors, and error handling issues"
-   - `simplicity-reviewer`: "Review {files} for over-engineering and unnecessary complexity"
+   - **Quality**: Check for bugs, logic errors, and error handling issues
+   - **Simplicity**: Check for over-engineering and unnecessary complexity
 
    **Performance Mode**:
-   - `code-researcher`: "Analyze {files} for performance bottlenecks, algorithmic complexity, and memory usage. Suggest concrete optimizations."
+   - Analyze for performance bottlenecks, algorithmic complexity, and memory usage
+   - Suggest concrete optimizations with benchmarks where possible
 
 4. Synthesize findings into a unified report
 

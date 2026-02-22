@@ -11,10 +11,10 @@ Execute safe, targeted refactoring by analyzing code and providing actionable st
    - If $ARGUMENTS provided, focus on those specific files/paths
    - Understand the refactoring goal (extract function, rename, simplify, etc.)
 
-2. Analyze the code:
-   - Identify safe refactoring transformations and structural changes
-   - Identify over-engineered areas to simplify, dead code to remove
-   - Research idiomatic refactoring patterns for the language (use WebSearch/WebFetch)
+2. Spawn all three agents in parallel using the Task tool:
+   - Use `code-architect` agent: Identify safe refactoring transformations and structural changes
+   - Use `simplicity-reviewer` agent: Identify over-engineered areas to simplify, dead code to remove
+   - Use `code-researcher` agent: Research idiomatic refactoring patterns for the language
 
 3. Synthesize findings into concrete refactoring steps
 
@@ -26,12 +26,12 @@ Present a refactoring plan with:
    - Dead code removal
    - Complexity reduction
 
-2. **Complexity Analysis**
+2. **Complexity Analysis** (from simplicity-reviewer)
    - Over-engineered areas
    - Unnecessary abstractions
    - Dead code identified
 
-3. **Best Practices Alignment**
+3. **Best Practices Alignment** (from code-researcher)
    - Idiomatic patterns to apply
    - Language-specific refactorings
    - Modern alternatives to legacy code

@@ -7,12 +7,11 @@ Audit API usage against authoritative documentation.
 
 ## Process
 1. Identify the APIs, versions, or libraries in use from $ARGUMENTS or context
-2. Research the official documentation:
-   - Fetch official documentation for the libraries/APIs (use WebSearch/WebFetch)
-   - Check for version-specific changes or deprecations
-   - Verify parameter names, types, and expected behavior
-3. Compare code usage against documentation
-4. Summarize mismatches, deprecated usage, or required configuration
+2. Spawn the `code-researcher` agent using the Task tool
+3. Summarize mismatches, deprecated usage, or required configuration
+
+## Agent Invocation
+- `code-researcher`: "Verify API usage in {context} against official documentation and note discrepancies"
 
 ## Output
 1. **Confirmed Correct Usage**

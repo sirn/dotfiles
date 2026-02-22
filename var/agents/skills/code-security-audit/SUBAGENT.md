@@ -9,12 +9,12 @@ Perform a focused security audit on specific components.
 1. Identify context:
    - Target specific files, modules, or API endpoints provided in $ARGUMENTS
 
-2. Analyze for security vulnerabilities:
-   - Check for OWASP Top 10 vulnerabilities
-   - Check for injection flaws (SQLi, Command Injection, XSS)
-   - Verify authentication and authorization logic
-   - Identify sensitive data exposure risks
-   - Check for insecure dependencies (use WebSearch/WebFetch for known CVEs)
+2. Spawn `security-researcher` agent with deep-dive instructions:
+   - "Analyze {files} for OWASP Top 10 vulnerabilities"
+   - "Check for injection flaws (SQLi, Command Injection)"
+   - "Verify authentication and authorization logic"
+   - "Identify sensitive data exposure risks"
+   - "Check for insecure dependencies"
 
 3. Synthesize findings into a Security Report
 
