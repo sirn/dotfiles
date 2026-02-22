@@ -2,12 +2,14 @@
 
 let
   cfg = config.services.emacs;
+
+  emacscfg = config.programs.emacs;
 in
 {
   services.emacs = {
     enable = pkgs.stdenv.isLinux;
 
-    package = cfg.package.finalPackage;
+    package = emacscfg.package.finalPackage;
 
     socketActivation = {
       enable = true;
