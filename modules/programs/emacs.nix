@@ -140,6 +140,7 @@ in
 {
   programs.emacs = {
     enable = true;
+
     package = lib.mkDefault wrappedEmacs;
 
     extraPackages = epkgs: with epkgs; [

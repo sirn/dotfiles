@@ -7,6 +7,8 @@ in
   services.emacs = {
     enable = pkgs.stdenv.isLinux;
 
+    package = cfg.package.finalPackage;
+
     socketActivation = {
       enable = true;
     };
