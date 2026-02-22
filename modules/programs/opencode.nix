@@ -109,6 +109,16 @@ in
           "jj log" = "allow";
           "jj show *" = "allow";
           "jj show" = "allow";
+          "jj describe *" = "ask";
+          "jj describe" = "ask";
+          "jj new *" = "ask";
+          "jj new" = "ask";
+          "jj commit *" = "ask";
+          "jj commit" = "ask";
+          "jj squash *" = "ask";
+          "jj squash" = "ask";
+          "jj split *" = "ask";
+          "jj split" = "ask";
           "go test *" = "allow";
           "go test" = "allow";
           "go build *" = "allow";

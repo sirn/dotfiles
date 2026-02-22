@@ -24,6 +24,7 @@
 - `~/Dev/adhoc/<YYMMDD>_<name>/` - Ad-hoc source code (PoCs, one-off scripts, etc.)
 - `~/Dev/workspace/<name>/<repo>/` - Jujutsu/Git workspaces
   - **Restriction**: When in `~/Dev/workspace/`, do NOT access files outside of that directory unless explicitly instructed. Use files in `~/Dev/workspace/` first. If a required file is missing, ask the user to add it.
+- **General Restriction**: Do NOT access files or directories outside the current project directory. If you absolutely need to, ask for permission first. Use `tmp/` (with `.gitignore`) in the project directory if you need a temporary directory.
 
 ## Task Management
 - **MCP Retrieval**: When retrieving tasks from project management tools (Asana, Linear, ClickUp, etc.) via MCP, default to listing only incomplete ("not done") tasks unless the user explicitly requests completed tasks.
@@ -58,8 +59,7 @@
 
 ## Version Control
 - **Policy**: ALWAYS use `jj` (Jujutsu) for all version control operations. Do NOT use `git` unless explicitly requested by the user or if `jj` is functionally unavailable.
-- **Policy**: NEVER create, modify, or squash commits on your own unless explicitly instructed by the user. You are NOT authorized to manage version control history autonomously.
-- **Policy**: Should never commit and never ask if I want to commit, if I want you do to it, I would have said myself.
+- **Policy**: Do NOT create, modify, or squash commits on your own unless explicitly instructed by the user. You are NOT authorized to manage version control history autonomously.
 - **Commit Messages**: When asked to commit, keep messages concise, consistent, and following existing patterns.
 - **Jujutsu**: Refer to jj-reference skill for commands.
 

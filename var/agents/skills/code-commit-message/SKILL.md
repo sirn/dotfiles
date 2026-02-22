@@ -1,6 +1,6 @@
 ---
-name: code-suggest-commit
-description: Analyzes changes and suggests commit messages following repository conventions. Use when user asks about commits, commit messages, or wants to commit changes.
+name: code-commit-message
+description: Analyzes changes and suggests commit messages following repository conventions. Use when user asks about commit messages or wants to review what to commit.
 ---
 
 Analyze changes and suggest commit messages following repository conventions.

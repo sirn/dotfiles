@@ -216,6 +216,13 @@ in
           "Bash(rm:*)"
           "Bash(git commit:*)"
           "Bash(jj git:*)"
+          "Bash(jj describe:*)"
+          "Bash(jj new:*)"
+          "Bash(jj commit:*)"
+          "Bash(jj squash:*)"
+          "Bash(jj split:*)"
+          "Bash(jj abandon:*)"
+          "Bash(jj undo:*)"
         ];
       };
     };
