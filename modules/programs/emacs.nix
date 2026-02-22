@@ -5,6 +5,10 @@ let
 
   notmuchcfg = config.programs.notmuch;
 
+  swaycfg = config.wayland.windowManager.sway;
+
+  niricfg = config.programs.niri;
+
   # Wrap tenv to auto-install appropriate terraform version
   tenvWrapped = pkgs.tenv.overrideDerivation (attrs: {
     nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
@@ -18,8 +22,10 @@ let
     '';
   });
 
+  hasGui = swaycfg.enable || niricfg.enable;
+
   baseEmacs =
-    if pkgs.stdenv.isLinux then pkgs.emacs-pgtk
+    if (pkgs.stdenv.isLinux && hasGui) then pkgs.emacs-pgtk
     else if pkgs.stdenv.isDarwin then pkgs.emacs
     else pkgs.emacs-nox;
 
@@ -96,7 +102,7 @@ let
     (defvar no-littering-var-directory (expand-file-name "var/" "~/.emacs.d/"))
   '';
 
-  emacsConfigDir = pkgs.runCommand "emacs-config" {} ''
+  emacsConfigDir = pkgs.runCommand "emacs-config" { } ''
     mkdir -p $out/{packages,var}
 
     cp ${earlyInitEl} $out/early-init.el
@@ -123,7 +129,7 @@ let
         --add-flags "--init-directory=${emacsConfigDir}"
     '';
     inherit (baseEmacs) meta;
-    passthru = (baseEmacs.passthru or {}) // {
+    passthru = (baseEmacs.passthru or { }) // {
       inherit (baseEmacs) src;
     } // lib.optionalAttrs (baseEmacs ? LIBRARY_PATH) {
       inherit (baseEmacs) LIBRARY_PATH;
