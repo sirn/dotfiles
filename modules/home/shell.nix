@@ -3,6 +3,7 @@
 {
   home.sessionVariables = {
     LANG = "en_US.UTF-8";
+    COLORTERM = "truecolor";
 
     # Unless this is set in .profile, Go will loiter go/ in home directory.
     GOPATH = "${config.home.homeDirectory}/Dev/go/gopath:${config.home.homeDirectory}/Dev";
