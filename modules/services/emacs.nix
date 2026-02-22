@@ -9,7 +9,7 @@ in
   services.emacs = {
     enable = pkgs.stdenv.isLinux;
 
-    package = emacscfg.package.finalPackage;
+    package = emacscfg.finalPackage;
 
     socketActivation = {
       enable = true;
