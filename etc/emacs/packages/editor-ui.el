@@ -151,6 +151,12 @@
                 (setq found t)))
             found))
 
+        (defun gemacs--disable-tty-mouse-for-terminal (terminal)
+          "Disable xterm mouse reporting for TERMINAL."
+          (send-string-to-terminal
+           "\e[?1000l\e[?1002l\e[?1003l\e[?1006l"
+           terminal))
+
         (defun gemacs--maybe-disable-tty-mouse (frame)
           "Disable terminal mouse mode when the last tty FRAME closes.
 This avoids leaving xterm mouse reporting enabled after emacsclient exits."
@@ -159,12 +165,11 @@ This avoids leaving xterm mouse reporting enabled after emacsclient exits."
             (let ((terminal (frame-terminal frame)))
               (when (not (gemacs--tty-terminal-has-other-frames terminal frame))
                 (xterm-mouse-mode -1)
-                (send-string-to-terminal
-                 "\e[?1000l\e[?1002l\e[?1003l\e[?1006l"
-                 terminal)))))
+                (gemacs--disable-tty-mouse-for-terminal terminal)))))
 
         (xterm-mouse-mode t)
         (add-hook 'delete-frame-functions #'gemacs--maybe-disable-tty-mouse)
+        (add-hook 'delete-terminal-functions #'gemacs--disable-tty-mouse-for-terminal)
         (bind-key "<wheel-down>" #'gemacs-scroll-down)
         (bind-key "<wheel-up>" #'gemacs-scroll-up)
         (bind-key "<mouse-4>" #'gemacs-scroll-down)
