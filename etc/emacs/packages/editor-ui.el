@@ -142,7 +142,29 @@
             (interactive)
             (scroll-up 3)))
 
+        (defun gemacs--tty-terminal-has-other-frames (terminal frame)
+          "Return t when TERMINAL has frames other than FRAME."
+          (let ((found nil))
+            (dolist (f (frame-list))
+              (when (and (not (eq f frame))
+                         (eq (frame-terminal f) terminal))
+                (setq found t)))
+            found))
+
+        (defun gemacs--maybe-disable-tty-mouse (frame)
+          "Disable terminal mouse mode when the last tty FRAME closes.
+This avoids leaving xterm mouse reporting enabled after emacsclient exits."
+          (when (and (frame-live-p frame)
+                     (not (display-graphic-p frame)))
+            (let ((terminal (frame-terminal frame)))
+              (when (not (gemacs--tty-terminal-has-other-frames terminal frame))
+                (xterm-mouse-mode -1)
+                (send-string-to-terminal
+                 "\e[?1000l\e[?1002l\e[?1003l\e[?1006l"
+                 terminal)))))
+
         (xterm-mouse-mode t)
+        (add-hook 'delete-frame-functions #'gemacs--maybe-disable-tty-mouse)
         (bind-key "<wheel-down>" #'gemacs-scroll-down)
         (bind-key "<wheel-up>" #'gemacs-scroll-up)
         (bind-key "<mouse-4>" #'gemacs-scroll-down)
