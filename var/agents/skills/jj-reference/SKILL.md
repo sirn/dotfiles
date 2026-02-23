@@ -7,6 +7,13 @@ description: Reference for Jujutsu (jj) version control commands
 
 Working copy is always a commit. Changes are first-class with stable IDs across rewrites.
 
+### Best Practices
+- **Logical Commits**: Group changes into logical steps; try to make each commit "usable" on its own.
+- **Explicit Operations**: Always use explicit change IDs for all operations (e.g., `abandon`, `describe`, `edit`, `new`, `squash`, `split`, `rebase`, `bookmark`).
+- **Splitting**: Use `jj split -r <change-id> -m "<commit-message>" -- <file>`; do not use interactive `jj split`.
+- **Squashing**: Use `jj squash --from <from-id> --to <to-id>` instead of implicit `jj squash`.
+- **Direct Referencing**: Reference change-id directly (or unique prefix) instead of using `@-` or `@` to avoid ambiguity.
+
 ### Key Concepts
 - `@` = working copy commit
 - `@-` = parent, `@--` = grandparent
@@ -16,20 +23,20 @@ Working copy is always a commit. Changes are first-class with stable IDs across 
 
 | Task | Command |
 |------|---------|
-| Status | `jj status` |
-| Diff | `jj diff` / `jj diff -s` |
-| Log | `jj log` / `jj log -r <revset>` |
-| New commit | `jj new` / `jj new -m "msg"` |
-| Describe | `jj describe -m "msg"` |
+| Status | `jj status` (Repo status) / `jj show <id>` (Change summary) |
+| Diff | `jj diff -r <id>` |
+| Log | `jj log -r <revset>` |
+| New commit | `jj new <parent-id> -m "msg"` |
+| Describe | `jj describe <id> -m "msg"` |
 | Commit + new | `jj commit -m "msg"` |
-| Navigate | `jj prev` / `jj next` |
-| Edit commit | `jj edit <id>` |
-| Squash to parent | `jj squash` |
-| Split commit | `jj split` |
-| Rebase | `jj rebase -d <dest>` |
-| Abandon | `jj abandon` |
-| Show file | `jj file show <path> -r <rev>` |
-| Blame | `jj file annotate <path>` |
+| Navigate | `jj edit <id>` |
+| Abandon | `jj abandon <id>` |
+| Squash | `jj squash --from <from-id> --to <target-id>` |
+| Split commit | `jj split -r <id> -m "msg" -- <path>` |
+| Rebase | `jj rebase -r <id> -d <dest>` |
+| Show file | `jj file show <path> -r <id>` |
+| Blame | `jj file annotate <path> -r <id>` |
+| Resolve | `jj resolve -r <id>` |
 | Undo | `jj undo` |
 
 ### Revset Syntax
@@ -58,11 +65,11 @@ heads(x)                # Heads in set
 ### Bookmarks (like git branches)
 
 ```bash
-jj bookmark create feature -r @    # Create
-jj bookmark set feature -r @       # Set/update
-jj bookmark move feature -r @      # Move existing
-jj bookmark delete feature         # Delete
-jj bookmark track feature@origin   # Track remote
+jj bookmark create <name> -r <id>    # Create
+jj bookmark set <name> -r <id>       # Set/update
+jj bookmark move <name> --to <id>    # Move existing
+jj bookmark delete <name>            # Delete
+jj bookmark track <name>@origin      # Track remote
 ```
 
 ### Working with Remotes
@@ -77,25 +84,25 @@ jj git push --bookmark new --allow-new  # Push new bookmark
 
 #### Squash workflow (recommended)
 ```bash
-jj new                 # Start new commit
+jj new <parent-id>
 # ... make changes ...
-jj squash              # Merge into parent
+jj squash --from <change-id> --to <target-id>
 ```
 
 #### Feature branch
 ```bash
-jj new main
-jj commit -m "feat: add feature"
-jj bookmark create my-feature -r @-
-jj git push --bookmark my-feature --allow-new
+jj new <main-id>
+jj describe <id> -m "feat: add feature"
+jj bookmark create <name> -r <id>
+jj git push --bookmark <name> --allow-new
 ```
 
 #### Resolve conflicts
 ```bash
-jj resolve --list           # List conflicts
-jj resolve                  # Use merge tool
-jj resolve --tool=:ours     # Accept current
-jj resolve --tool=:theirs   # Accept incoming
+jj resolve --list -r <id>          # List conflicts
+jj resolve -r <id>                 # Use merge tool
+jj resolve --tool=:ours -r <id>    # Accept current
+jj resolve --tool=:theirs -r <id>  # Accept incoming
 ```
 
 #### Recovery

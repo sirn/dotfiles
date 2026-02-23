@@ -7,7 +7,7 @@ Commit current changes using Jujutsu (jj).
 
 ## Important
 **IMPORTANT**: Always use `jj` (Jujutsu) commands. Only fall back to `git` if jj is not available.
-Refer to the `jj-reference` skill for command syntax if needed.
+Refer to the `jj-reference` skill for command syntax and **Best Practices** (explicit change IDs, logical grouping, etc.).
 
 ## Process
 
@@ -22,6 +22,7 @@ Refer to the `jj-reference` skill for command syntax if needed.
    - Present the plan (messages, which files in each commit) to the user for approval before executing
 
 3. **Execute the commit**:
-   - For a single commit: `jj describe -m "<message>"`
-   - For splits: use `jj` split workflow (see jj-reference skill)
+   - For a single commit: `jj describe <id> -m "<message>"`
+   - For splits: use `jj split -r <id> -m "<commit-message>" -- <file>` for each commit; do not use interactive `jj split`
+   - After the last commit is described/split, create a new empty commit with `jj new` so the working copy (`@`) is ready for new changes.
    - After committing, run `jj log -r @` to confirm

@@ -7,7 +7,7 @@ Analyze changes and suggest commit messages following repository conventions.
 
 ## Important
 **IMPORTANT**: Always use `jj` (Jujutsu) commands. Only fall back to `git` if jj is not available.
-Refer to the `jj-reference` skill for command syntax if needed.
+Refer to the `jj-reference` skill for command syntax and **Best Practices** (explicit change IDs, logical grouping, etc.).
 
 ## Process
 1. Identify context:
