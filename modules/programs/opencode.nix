@@ -73,8 +73,8 @@ in
       theme = "system";
       mcp = toOpencodeMcpServers config.programs.mcp.servers;
       mode = {
-        plan.model = "synthetic/hf:moonshotai/Kimi-K2.5";
-        build.model = "synthetic/hf:moonshotai/Kimi-K2.5";
+        plan.model = "fireworks-ai/accounts/fireworks/models/kimi-k2p5";
+        build.model = "fireworks-ai/accounts/fireworks/models/kimi-k2p5";
       };
       permission = {
         read = {
