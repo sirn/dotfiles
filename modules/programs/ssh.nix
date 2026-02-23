@@ -12,8 +12,8 @@
         controlMaster = "auto";
         controlPath = "${config.home.homeDirectory}/.ssh/ssh-%r@%h:%p";
         controlPersist = "10m";
-        serverAliveCountMax = 120;
-        serverAliveInterval = 15;
+        serverAliveCountMax = 3;
+        serverAliveInterval = 60;
         userKnownHostsFile = "${config.home.homeDirectory}/.ssh/known_hosts";
 
         extraOptions = {
