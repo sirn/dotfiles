@@ -202,6 +202,7 @@
       homeConfigurations = {
         phoebe = mkLinuxConfig { hostname = "phoebe"; };
         polaris = mkLinuxConfig { hostname = "polaris"; };
+        system76 = mkLinuxConfig { hostname = "system76"; };
         terra = mkLinuxConfig { hostname = "terra"; };
         theia = mkDarwinConfig { hostname = "theia"; };
         ws = mkLinuxConfig { hostname = "ws"; };
@@ -210,6 +211,7 @@
       nixosModules = {
         phoebe = mkNixOSConfig { hostname = "phoebe"; };
         polaris = mkNixOSConfig { hostname = "polaris"; };
+        system76 = mkNixOSConfig { hostname = "system76"; };
         terra = mkNixOSConfig { hostname = "terra"; };
         ws = mkNixOSConfig { hostname = "ws"; };
       };
