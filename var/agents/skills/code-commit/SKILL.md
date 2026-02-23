@@ -24,5 +24,6 @@ Refer to the `jj-reference` skill for command syntax and **Best Practices** (exp
 3. **Execute the commit**:
    - For a single commit: `jj describe <id> -m "<message>"`
    - For splits: use `jj split -r <id> -m "<commit-message>" -- <file>` for each commit; do not use interactive `jj split`
+   - Try to include a short summary of the change in the commit description.
    - After the last commit is described/split, create a new empty commit with `jj new` so the working copy (`@`) is ready for new changes.
    - After committing, run `jj log -r @` to confirm
