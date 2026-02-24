@@ -4,7 +4,7 @@ let
   braveMcpWrapper = pkgs.writeScriptBin "brave-mcp-wrapper" ''
     #!${pkgs.runtimeShell}
     exec "${lib.getExe pkgs.local.envWrapper}" \
-      -i "''${XDG_CONFIG_HOME:-''${HOME}/.config}/agents/env" \
+      -i "''${XDG_CONFIG_HOME:-''${HOME}/.config}/sops-nix/secrets/agents/env" \
       -- ${lib.getExe pkgs.local.mcpServers.brave-search} --transport stdio
   '';
 

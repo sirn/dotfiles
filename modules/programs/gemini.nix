@@ -27,7 +27,7 @@ in
     package = (pkgs.writeScriptBin "gemini" ''
       #!${pkgs.runtimeShell}
       exec "${lib.getExe pkgs.local.envWrapper}" \
-        -i ~/.config/agents/env \
+        -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
         -- "${lib.getExe pkgs.unstable.gemini-cli}" "$@"
     '');
 

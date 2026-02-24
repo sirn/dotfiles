@@ -57,7 +57,7 @@ in
     package = (pkgs.writeScriptBin "opencode" ''
       #!${pkgs.runtimeShell}
       exec "${lib.getExe pkgs.local.envWrapper}" \
-        -i "''${XDG_CONFIG_HOME:-$HOME/.config}/agents/env" \
+        -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
         -a GOOGLE_GENERATIVE_AI_API_KEY=GEMINI_API_KEY \
         -- "${lib.getExe pkgs.unstable.opencode}" "$@"
     '');
