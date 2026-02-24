@@ -28,7 +28,6 @@
     ../programs/wezterm.nix
 
     # services
-    ../services/languagetool.nix
     ../services/swww.nix
   ];
 
