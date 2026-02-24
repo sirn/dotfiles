@@ -26,6 +26,21 @@ let
 
   agents = builtins.listToAttrs (map loadAgent agentFiles);
 
+  # Filter agents that have claude-code configuration
+  claudeCodeAgents = lib.filterAttrs (name: agent: agent ? claude-code) agents;
+
+  validateClaudeCodeAgent = name: agent:
+    let
+      valid =
+        if !(agent ? description) then throw "Agent ${name}: missing 'description'"
+        else if !(agent.claude-code ? allowedTools) then throw "Agent ${name}: missing 'claude-code.allowedTools'"
+        else if !(agent.claude-code ? color) then throw "Agent ${name}: missing 'claude-code.color'"
+        else if !(agent.claude-code ? model) then throw "Agent ${name}: missing 'claude-code.model'"
+        else agent;
+    in valid;
+
+  validClaudeCodeAgents = lib.mapAttrs validateClaudeCodeAgent claudeCodeAgents;
+
   mkClaudeCodeAgent = name: agent: ''
     ---
     name: ${name}
@@ -147,7 +162,7 @@ in
     enable = true;
     package = pkgs.unstable.claude-code;
 
-    agents = lib.mapAttrs mkClaudeCodeAgent agents;
+    agents = lib.mapAttrs mkClaudeCodeAgent validClaudeCodeAgents;
     memory.text = instructionText + ''
 
       ## Skill Execution (Subagent Enhancement)
@@ -199,6 +214,7 @@ in
         ];
         deny = [
           "Bash(sudo:*)"
+          "Bash(doas:*)"
           "Bash(kill:*)"
           "Bash(systemctl:*)"
           "Bash(chown:*)"

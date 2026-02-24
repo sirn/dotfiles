@@ -24,15 +24,32 @@ let
 
   agents = builtins.listToAttrs (map loadAgent agentFiles);
 
-  mkOpencodeAgent = name: agent: ''
-    ---
-    name: ${name}
-    description: ${agent.description}
-    model: ${agent.opencode.model}
-    mode: subagent
-    ---
-    ${agent.prompt}
-  '';
+  # Filter agents that have opencode configuration
+  opencodeAgents = lib.filterAttrs (name: agent: agent ? opencode) agents;
+
+  validateOpencodeAgent = name: agent:
+    let
+      valid =
+        if !(agent ? description) then throw "Agent ${name}: missing 'description'"
+        else agent;
+    in valid;
+
+  validOpencodeAgents = lib.mapAttrs validateOpencodeAgent opencodeAgents;
+
+  mkOpencodeAgent = name: agent:
+    let
+      isPrimary = (agent.opencode.primary or false);
+      modelLine = lib.optionalString (isPrimary && agent.opencode ? model) "model: ${agent.opencode.model}\n";
+      modeVal = if !isPrimary then "subagent" else (agent.opencode.mode or "primary");
+      modeLine = lib.optionalString (modeVal != "") "mode: ${modeVal}\n";
+      permissionLine = lib.optionalString (agent.opencode ? permission) "permission: ${builtins.toJSON agent.opencode.permission}\n";
+    in
+    ''
+      ---
+      description: ${agent.description}
+      ${modelLine}${modeLine}${permissionLine}---
+      ${agent.prompt}
+    '';
 
   isStdioServer = server: server ? command || server ? package;
 
@@ -62,7 +79,7 @@ in
         -- "${lib.getExe pkgs.unstable.opencode}" "$@"
     '');
 
-    agents = lib.mapAttrs mkOpencodeAgent agents;
+    agents = lib.mapAttrs mkOpencodeAgent validOpencodeAgents;
     rules = instructionText + ''
 
       ## Skill Execution (Subagent Enhancement)
@@ -75,6 +92,14 @@ in
       mode = {
         plan.model = "fireworks-ai/accounts/fireworks/models/kimi-k2p5";
         build.model = "fireworks-ai/accounts/fireworks/models/kimi-k2p5";
+      };
+      agent = {
+        plan = {
+          permission = {
+            write = { "*" = "deny"; };
+            edit = { "*" = "deny"; };
+          };
+        };
       };
       permission = {
         read = {
@@ -134,6 +159,7 @@ in
           "tree" = "allow";
           "lstr *" = "allow";
           "sudo *" = "deny";
+          "doas *" = "deny";
           "kill *" = "deny";
           "systemctl *" = "deny";
           "chmod *" = "ask";

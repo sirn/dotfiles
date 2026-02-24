@@ -1,0 +1,15 @@
+description = "Plan mode using GPT-5.3 Codex"
+
+[opencode]
+model = "openai/gpt-5.3-codex"
+primary = true
+mode = "primary"
+
+[opencode.permission.edit]
+"*" = "deny"
+
+[opencode.permission.write]
+"*" = "deny"
+
+[opencode.permission.bash]
+"*" = "ask"

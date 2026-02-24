@@ -1,0 +1,15 @@
+description = "Plan mode using Gemini 3.1 Pro"
+
+[opencode]
+model = "google/gemini-3.1-pro-preview"
+primary = true
+mode = "primary"
+
+[opencode.permission.edit]
+"*" = "deny"
+
+[opencode.permission.write]
+"*" = "deny"
+
+[opencode.permission.bash]
+"*" = "ask"
