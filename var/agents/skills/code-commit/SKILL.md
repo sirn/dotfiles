@@ -1,6 +1,6 @@
 ---
 name: code-commit
-description: Commit current changes using jj. Analyzes changes, suggests split if needed, and creates commits with conventional messages.
+description: Commit current changes using jj. Analyzes changes, suggests commit messages following repository conventions, proposes splits if needed, and creates commits.
 ---
 
 Commit current changes using Jujutsu (jj).
@@ -11,11 +11,12 @@ Refer to the `jj-reference` skill for command syntax and **Best Practices** (exp
 
 ## Process
 
-1. **Analyze changes** by running the `code-commit-message` skill process:
+1. **Analyze changes**:
    - Run `jj diff -s` to see changed files
    - If the user specified specific files or paths, focus on those
    - Run `jj log -r ::@ -n 20 --no-graph -T 'description ++ "\n---\n"'` for message style
-   - Analyze the diff for logical grouping and mixed concerns
+   - Use `jj diff` for full diff view if needed
+   - Analyze: Are changes logically related or distinct? Different subsystems/features? Mixed concerns (refactor + feature, fix + cleanup)?
 
 2. **Determine if split is needed**:
    - If changes are logically distinct, propose splitting
@@ -27,3 +28,10 @@ Refer to the `jj-reference` skill for command syntax and **Best Practices** (exp
    - Try to include a short summary of the change in the commit description, including "why" if available.
    - After the last commit is described/split, create a new empty commit with `jj new` so the working copy (`@`) is ready for new changes.
    - After committing, run `jj log -r @` to confirm
+
+## Output Format
+
+When analyzing, provide:
+1. **Suggested commit message** following repo's existing style
+2. **Should split?** Yes/No with reasoning
+3. If split recommended: how to split (files/hunks per commit), message for each, `jj` commands
