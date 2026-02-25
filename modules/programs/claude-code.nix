@@ -172,7 +172,7 @@ in
 
     settings = {
       model = "opusplan";
-      includeCoAuthoredBy = false;
+      includeCoAuthoredBy = true;
       cleanupPeriodDays = 7;
       statusLine = {
         type = "command";
