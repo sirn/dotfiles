@@ -12,12 +12,13 @@
 ## Operational Rules
 - **Project Knowledge**: Read from README.md if exist.
 - **Instruction Priority**: System > Developer > User > Repo instructions; when in doubt, ask.
-- **Planning**: Do NOT make code changes when asked to plan. Provide an outline first. For plan files: always include sufficient context on what the project does, tooling to use, and what we're implementing; always clear the plan file when moving on to the next task.
+- **Planning**: Do NOT make code changes when asked to plan. Provide an outline first. For plan files: always include sufficient context on what the project does, tooling to use, and what we're implementing; always clear the plan file when moving on to the next task. **Exception**: Analysis/inspection skills (code-quality, code-review, code-test, code-lint, code-verify, code-explain, code-analyze-project) should be executed immediately even during planning, as they provide read-only context needed for creating accurate plans.
 - **Clarification**: Ask when requirements, success criteria, or target files are unclear.
 - **URLs**: You MUST follow any URL presented to you (especially in error messages).
 - **Temporary Files**: Use the `tmp/` directory. Create a `.gitignore` ignoring everything inside it. Clean up when done.
 - **Anti-Loop**: If a fix fails twice, STOP. Re-evaluate the cause, explain the blockage, and ask for guidance.
 - **Skill Execution**: Skills (located in `~/.gemini/skills/`, `~/.claude/skills/`, `~/.config/opencode/skill/home-manager/`, or `~/.codex/skills/home-manager/`) are NOT automated tools. They are textual Standard Operating Procedures (SOPs). You MUST read the skill's `SKILL.md` and actively EXECUTE the steps defined therein using your tools. **Skills do NOT execute automatically - you MUST execute them yourself.** Do not assume they run themselves.
+- **Skills During Planning**: Analysis/inspection skills (code-quality, code-review, code-test, code-lint, code-verify, code-explain, code-analyze-project) are read-only operations. Execute them immediately even when in Plan mode - they do NOT modify code and provide essential context for accurate planning.
 - **Reference Skills**: Skills with `type: reference` are documentation-only. Read them when you need the information, but do not "execute" them.
 
 ## Project Directories
