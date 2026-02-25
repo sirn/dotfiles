@@ -9,6 +9,59 @@ let
 
   agentsDir = ../../var/agents/agents;
 
+  permissionsPolicy = builtins.fromTOML (builtins.readFile ../../var/agents/permissions.toml);
+
+  effectivePolicy = mode:
+    let
+      default = permissionsPolicy.default or { };
+      modePolicy = permissionsPolicy.mode.${mode} or { };
+      mergeLists = lists: lib.unique (lib.concatLists (lib.filter (l: l != null) lists));
+      mergeCmds = section:
+        let
+          defaultShell = (default.commands.${section} or { }).shell or [ ];
+          modeShell = ((modePolicy.commands or { }).${section} or { }).shell or [ ];
+        in
+        { shell = mergeLists [ defaultShell modeShell ]; };
+    in
+    {
+      tools = default.tools // (modePolicy.tools or { });
+      commands = {
+        allow = mergeCmds "allow";
+        ask = mergeCmds "ask";
+        deny = mergeCmds "deny";
+      };
+      paths = default.paths;
+    };
+
+  toClaudePermissions = mode:
+    let
+      policy = effectivePolicy mode;
+      inherit (policy) tools commands paths;
+
+      baseTools = [ "Glob(*)" "Grep(*)" "Read(**)" ]
+        ++ lib.optional tools.edit "Edit(**)"
+        ++ lib.optional tools.write "Write(**)"
+        ++ [ "WebSearch" "WebFetch(domain:*)" ];
+
+      pathAllows = map (p: "Read(${p})") (paths.allow.read or [ ])
+        ++ lib.optionals tools.edit (map (p: "Edit(${p})") (paths.allow.edit or [ ]))
+        ++ lib.optionals tools.write (map (p: "Write(${p})") (paths.allow.write or [ ]));
+
+      mkBashPatterns = cmds: lib.concatMap (cmd: [ "Bash(${cmd})" "Bash(${cmd} *)" ]) cmds;
+      bashAllows = mkBashPatterns (commands.allow.shell or [ ]);
+      allow = baseTools ++ pathAllows ++ bashAllows;
+
+      ask = mkBashPatterns (commands.ask.shell or [ ]);
+
+      pathDenies = map (p: "Read(${p})") (paths.deny.read or [ ])
+        ++ lib.optionals tools.edit (map (p: "Edit(${p})") (paths.deny.edit or [ ]))
+        ++ lib.optionals tools.write (map (p: "Write(${p})") (paths.deny.write or [ ]));
+
+      bashDenies = mkBashPatterns (commands.deny.shell or [ ]);
+      deny = pathDenies ++ bashDenies;
+    in
+    { inherit allow ask deny; };
+
   agentFiles = builtins.filter
     (name: lib.hasSuffix ".toml" name)
     (builtins.attrNames (builtins.readDir agentsDir));
@@ -18,10 +71,11 @@ let
       name = lib.removeSuffix ".toml" tomlFile;
       agentConfig = builtins.fromTOML (builtins.readFile (agentsDir + "/${tomlFile}"));
       prompt = builtins.readFile (agentsDir + "/${name}.md");
+      mode = agentConfig.mode or "plan";
     in
     {
       inherit name;
-      value = agentConfig // { inherit prompt; };
+      value = agentConfig // { inherit prompt mode; };
     };
 
   agents = builtins.listToAttrs (map loadAgent agentFiles);
@@ -178,73 +232,7 @@ in
         type = "command";
         command = toString statusLineScript;
       };
-      permissions = {
-        allow = [
-          "Read(**)"
-          "Glob(*)"
-          "Grep(*)"
-          "Edit(**)"
-          "Write(**)"
-          "Bash(cat:*)"
-          "Bash(find:*)"
-          "Bash(fd:*)"
-          "Bash(grep:*)"
-          "Bash(rg:*)"
-          "Bash(ls:*)"
-          "Bash(curl:*)"
-          "Bash(wget:*)"
-          "Bash(git status:*)"
-          "Bash(git diff:*)"
-          "Bash(git log:*)"
-          "Bash(git branch:*)"
-          "Bash(jj status:*)"
-          "Bash(jj diff:*)"
-          "Bash(jj log:*)"
-          "Bash(jj show:*)"
-          "Bash(go test:*)"
-          "Bash(go build:*)"
-          "Bash(tree:*)"
-          "Bash(lstr:*)"
-          "Read(**/*.env.example)"
-          "Read(**/*.env.sample)"
-          "Write(**/*.env.example)"
-          "Write(**/*.env.sample)"
-          "WebSearch"
-          "WebFetch(domain:*)"
-        ];
-        deny = [
-          "Bash(sudo:*)"
-          "Bash(doas:*)"
-          "Bash(kill:*)"
-          "Bash(systemctl:*)"
-          "Bash(chown:*)"
-          "Bash(sops:*)"
-          "Bash(git push:*)"
-          "Bash(jj git push:*)"
-          "Read(**/.env)"
-          "Read(**/.env.*)"
-          "Read(**/*.env)"
-          "Edit(**/.env)"
-          "Edit(**/.env.*)"
-          "Edit(**/*.env)"
-          "Write(**/.env)"
-          "Write(**/.env.*)"
-          "Write(**/*.env)"
-        ];
-        ask = [
-          "Bash(chmod:*)"
-          "Bash(rm:*)"
-          "Bash(git commit:*)"
-          "Bash(jj git:*)"
-          "Bash(jj describe:*)"
-          "Bash(jj new:*)"
-          "Bash(jj commit:*)"
-          "Bash(jj squash:*)"
-          "Bash(jj split:*)"
-          "Bash(jj abandon:*)"
-          "Bash(jj undo:*)"
-        ];
-      };
+      permissions = toClaudePermissions "build";
     };
   };
 

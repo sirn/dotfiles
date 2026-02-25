@@ -1,4 +1,5 @@
 description = "Debugs issues by researching errors, logs, and known fixes"
+mode = "plan"
 
 [claude-code]
 allowedTools = ["Read", "Grep", "Glob", "WebSearch", "WebFetch", "mcp__context7__resolve-library-id", "mcp__context7__query-docs"]

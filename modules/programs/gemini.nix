@@ -7,6 +7,78 @@ let
 
   skillsDir = ../../var/agents/skills;
 
+  permissionsPolicy = builtins.fromTOML (builtins.readFile ../../var/agents/permissions.toml);
+
+  effectivePolicy = mode:
+    let
+      default = permissionsPolicy.default or { };
+      modePolicy = permissionsPolicy.mode.${mode} or { };
+      mergeLists = lists: lib.unique (lib.concatLists (lib.filter (l: l != null) lists));
+      mergeCmds = section:
+        let
+          defaultShell = (default.commands.${section} or { }).shell or [ ];
+          modeShell = ((modePolicy.commands or { }).${section} or { }).shell or [ ];
+        in
+        { shell = mergeLists [ defaultShell modeShell ]; };
+    in
+    {
+      tools = default.tools // (modePolicy.tools or { });
+      commands = {
+        allow = mergeCmds "allow";
+        ask = mergeCmds "ask";
+        deny = mergeCmds "deny";
+      };
+      paths = default.paths;
+    };
+
+  toGeminiPermissions = mode:
+    let
+      policy = effectivePolicy mode;
+      inherit (policy) tools commands paths;
+
+      baseAllowed = [
+        "ReadFileTool(**)"
+        "GlobTool(*)"
+        "GrepTool(*)"
+        "ShellTool(ls)"
+        "ShellTool(fd)"
+        "ShellTool(find)"
+        "ShellTool(rg)"
+        "ShellTool(grep)"
+        "ShellTool(curl)"
+        "ShellTool(wget)"
+        "ShellTool(git status)"
+        "ShellTool(git diff)"
+        "ShellTool(git log)"
+        "ShellTool(git branch)"
+        "ShellTool(jj status)"
+        "ShellTool(jj diff)"
+        "ShellTool(jj log)"
+        "ShellTool(jj show)"
+        "ShellTool(go test)"
+        "ShellTool(go build)"
+      ];
+
+      buildExtras = lib.optionals tools.edit [
+        "Edit"
+        "WriteFile"
+        "ShellTool(tree)"
+        "ShellTool(lstr)"
+      ];
+
+      allowed = baseAllowed ++ buildExtras;
+
+      shellExcludes = map (cmd: "ShellTool(${cmd})") (commands.deny.shell ++ commands.ask.shell);
+
+      pathExcludes =
+        map (p: "ReadFileTool(${p})") (paths.deny.read or [ ])
+        ++ lib.optionals tools.edit (map (p: "Edit(${p})") (paths.deny.edit or [ ]))
+        ++ lib.optionals tools.write (map (p: "WriteFile(${p})") (paths.deny.write or [ ]));
+
+      exclude = shellExcludes ++ pathExcludes;
+    in
+    { inherit allowed exclude; };
+
   isStdioServer = server: server ? command || server ? package;
 
   toGeminiMcpServers = servers:
@@ -66,50 +138,7 @@ in
       tools = {
         autoAccept = true;
         sandbox = pkgs.stdenv.isDarwin;
-        allowed = [
-          "ReadFileTool(**)"
-          "GlobTool(*)"
-          "GrepTool(*)"
-          "Edit"
-          "WriteFile"
-          "ShellTool(cat)"
-          "ShellTool(ls)"
-          "ShellTool(find)"
-          "ShellTool(grep)"
-          "ShellTool(rg)"
-          "ShellTool(fd)"
-          "ShellTool(curl)"
-          "ShellTool(wget)"
-          "ShellTool(git status)"
-          "ShellTool(git diff)"
-          "ShellTool(git log)"
-          "ShellTool(git branch)"
-          "ShellTool(jj status)"
-          "ShellTool(jj diff)"
-          "ShellTool(jj log)"
-          "ShellTool(jj show)"
-          "ShellTool(go test)"
-          "ShellTool(go build)"
-        ];
-        exclude = [
-          "ShellTool(sudo)"
-          "ShellTool(kill)"
-          "ShellTool(systemctl)"
-          "ShellTool(chown)"
-          "ShellTool(rm)"
-          "ShellTool(sops)"
-          "ShellTool(git push)"
-          "ShellTool(jj git push)"
-          "ReadFileTool(**/.env)"
-          "ReadFileTool(**/.env.*)"
-          "ReadFileTool(**/*.env)"
-          "Edit(**/.env)"
-          "Edit(**/.env.*)"
-          "Edit(**/*.env)"
-          "WriteFile(**/.env)"
-          "WriteFile(**/.env.*)"
-          "WriteFile(**/*.env)"
-        ];
+        inherit (toGeminiPermissions "build") allowed exclude;
       };
     };
   };

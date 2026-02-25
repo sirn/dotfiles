@@ -1,4 +1,5 @@
 description = "Meticulous reviewer for coding conventions and consistency"
+mode = "plan"
 
 [claude-code]
 allowedTools = ["Read", "Grep", "Glob"]

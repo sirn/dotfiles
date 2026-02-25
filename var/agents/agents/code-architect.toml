@@ -1,4 +1,5 @@
 description = "Analyzes architecture and provides design guidance"
+mode = "plan"
 
 [claude-code]
 allowedTools = ["Read", "Grep", "Glob", "WebSearch", "WebFetch", "mcp__context7__resolve-library-id", "mcp__context7__query-docs"]

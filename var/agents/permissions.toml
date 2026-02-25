@@ -1,0 +1,169 @@
+[default.tools]
+read = true
+glob = true
+grep = true
+list = true
+webfetch = true
+websearch = true
+
+[default.commands.allow]
+shell = [
+  "ls",
+  "fd",
+  "find",
+  "rg",
+  "grep",
+  "git status",
+  "git diff",
+  "git log",
+  "git branch",
+  "jj status",
+  "jj diff",
+  "jj log",
+  "jj show",
+  "go test",
+  "go build",
+  "curl",
+  "wget",
+  "tree",
+  "lstr",
+]
+
+[default.commands.ask]
+shell = [
+  "rm",
+  "chmod",
+  "git commit",
+  "jj describe",
+  "jj new",
+  "jj commit",
+  "jj squash",
+  "jj split",
+  "jj abandon",
+  "jj undo",
+]
+
+[default.commands.deny]
+shell = [
+  "sudo",
+  "kill",
+  "systemctl",
+  "chown",
+  "sops",
+  "git push",
+  "jj git push",
+]
+
+[default.paths.allow]
+read = [
+  "**/*.env.example",
+  "**/*.env.sample",
+  "**/.env.example",
+  "**/.env.sample",
+]
+edit = [
+  "**/*.env.example",
+  "**/*.env.sample",
+  "**/.env.example",
+  "**/.env.sample",
+]
+write = [
+  "**/*.env.example",
+  "**/*.env.sample",
+  "**/.env.example",
+  "**/.env.sample",
+]
+
+[default.paths.deny]
+read = [
+  "**/.env",
+  "**/.env.*",
+  "**/*.env",
+  "**/*.pem",
+  "**/*.key",
+  "**/*.p12",
+  "**/*.pfx",
+  "**/*.jks",
+  "**/*.keystore",
+  "**/id_rsa",
+  "**/id_ed25519",
+  "**/*credential*.json",
+  "**/*credentials*.json",
+  "**/*secret*",
+  "**/*secrets*",
+  "**/*token*",
+  "**/*apikey*",
+  "**/*api_key*",
+  "**/.aws/credentials",
+  "**/.npmrc",
+  "**/.pypirc",
+  "**/.netrc",
+  "**/.docker/config.json",
+  "**/sops*.yml",
+  "**/sops*.yaml",
+  "**/*.agekey",
+]
+edit = [
+  "**/.env",
+  "**/.env.*",
+  "**/*.env",
+  "**/*.pem",
+  "**/*.key",
+  "**/*.p12",
+  "**/*.pfx",
+  "**/*.jks",
+  "**/*.keystore",
+  "**/id_rsa",
+  "**/id_ed25519",
+  "**/*credential*.json",
+  "**/*credentials*.json",
+  "**/*secret*",
+  "**/*secrets*",
+  "**/*token*",
+  "**/*apikey*",
+  "**/*api_key*",
+  "**/.aws/credentials",
+  "**/.npmrc",
+  "**/.pypirc",
+  "**/.netrc",
+  "**/.docker/config.json",
+  "**/sops*.yml",
+  "**/sops*.yaml",
+  "**/*.agekey",
+]
+write = [
+  "**/.env",
+  "**/.env.*",
+  "**/*.env",
+  "**/*.pem",
+  "**/*.key",
+  "**/*.p12",
+  "**/*.pfx",
+  "**/*.jks",
+  "**/*.keystore",
+  "**/id_rsa",
+  "**/id_ed25519",
+  "**/*credential*.json",
+  "**/*credentials*.json",
+  "**/*secret*",
+  "**/*secrets*",
+  "**/*token*",
+  "**/*apikey*",
+  "**/*api_key*",
+  "**/.aws/credentials",
+  "**/.npmrc",
+  "**/.pypirc",
+  "**/.netrc",
+  "**/.docker/config.json",
+  "**/sops*.yml",
+  "**/sops*.yaml",
+  "**/*.agekey",
+]
+
+[mode.plan.tools]
+edit = false
+write = false
+
+[mode.build.tools]
+edit = true
+write = true

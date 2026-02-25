@@ -1,4 +1,5 @@
 description = "Expert code quality reviewer focusing on bugs and logic"
+mode = "plan"
 
 [claude-code]
 allowedTools = ["Read", "Grep", "Glob", "WebSearch", "WebFetch", "mcp__context7__resolve-library-id", "mcp__context7__query-docs"]
