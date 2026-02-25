@@ -17,7 +17,7 @@ let
   sessionGraphicalSlice = "session-graphical.slice";
 
   uwsmFinalize = pkgs.writeShellScript "uwsm-finalize" ''
-    exec uwsm finalize
+    exec uwsm finalize SWAYSOCK I3SOCK XCURSOR_SIZE XCURSOR_THEME
   '';
 
   wrapLauncher = x:
