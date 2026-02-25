@@ -10,6 +10,7 @@ let
   agentsDir = ../../var/agents/agents;
 
   permissionsPolicy = builtins.fromTOML (builtins.readFile ../../var/agents/permissions.toml);
+  domainsPolicy = builtins.fromTOML (builtins.readFile ../../var/agents/domains.toml);
 
   effectivePolicy = mode:
     let
@@ -38,10 +39,11 @@ let
       policy = effectivePolicy mode;
       inherit (policy) tools commands paths;
 
-      baseTools = [ "Glob(*)" "Grep(*)" "Read(**)" ]
+      webFetchRules = map (d: "WebFetch(domain:${d})") (domainsPolicy.allowed or [ ]);
+      baseTools = [ "Glob(*)" "Grep(*)" "Read(**)" "WebSearch" ]
         ++ lib.optional tools.edit "Edit(**)"
         ++ lib.optional tools.write "Write(**)"
-        ++ [ "WebSearch" "WebFetch(domain:*)" ];
+        ++ webFetchRules;
 
       pathAllows = map (p: "Read(${p})") (paths.allow.read or [ ])
         ++ lib.optionals tools.edit (map (p: "Edit(${p})") (paths.allow.edit or [ ]))
