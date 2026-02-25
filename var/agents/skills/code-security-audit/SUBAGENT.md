@@ -1,13 +1,13 @@
 ---
 name: code-security-audit
-description: specific deep-dive security analysis. Use when asked to audit security or check for vulnerabilities.
+description: Specific deep-dive security analysis. Use when asked to audit security or check for vulnerabilities.
 ---
 
 Perform a focused security audit on specific components.
 
 ## Process
 1. Identify context:
-   - Target specific files, modules, or API endpoints provided in $ARGUMENTS
+   - Target specific files, modules, or API endpoints mentioned by the user
 
 2. Spawn `security-researcher` agent with deep-dive instructions:
    - "Analyze {files} for OWASP Top 10 vulnerabilities"

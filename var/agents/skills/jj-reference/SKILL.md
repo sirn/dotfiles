@@ -1,5 +1,6 @@
 ---
 name: jj-reference
+type: reference
 description: Reference for Jujutsu (jj) version control commands
 ---
 

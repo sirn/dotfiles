@@ -17,7 +17,8 @@
 - **URLs**: You MUST follow any URL presented to you (especially in error messages).
 - **Temporary Files**: Use the `tmp/` directory. Create a `.gitignore` ignoring everything inside it. Clean up when done.
 - **Anti-Loop**: If a fix fails twice, STOP. Re-evaluate the cause, explain the blockage, and ask for guidance.
-- **Skill Execution**: Skills (located in `~/.gemini/skills/` or `var/agents/skills/`) are NOT automated tools. They are textual Standard Operating Procedures (SOPs). You MUST read the skill's `SKILL.md` and actively EXECUTE the steps defined therein using your tools (e.g., `run_shell_command`). **Skills do NOT execute automatically - you MUST execute them yourself.** Do not assume they run themselves.
+- **Skill Execution**: Skills (located in `~/.gemini/skills/`, `~/.claude/skills/`, `~/.config/opencode/skill/home-manager/`, or `~/.codex/skills/home-manager/`) are NOT automated tools. They are textual Standard Operating Procedures (SOPs). You MUST read the skill's `SKILL.md` and actively EXECUTE the steps defined therein using your tools. **Skills do NOT execute automatically - you MUST execute them yourself.** Do not assume they run themselves.
+- **Reference Skills**: Skills with `type: reference` are documentation-only. Read them when you need the information, but do not "execute" them.
 
 ## Project Directories
 - `~/Dev/src/<hosting-provider>/<repo>/` - Cloned source repositories (e.g., `~/Dev/src/github.com/sirn/sirn`)
@@ -40,11 +41,17 @@
 - **Error Handling**: Analyze error messages fully before applying fixes. Do not guess.
 - **Dependencies**: Check for existing libraries/packages before introducing new ones.
 - **Editing**: Do not use `sed` to edit files. Use the Edit tool for single-file changes. Only use `sed` for replacements across multiple files.
+- **Lockfiles**: Never manually edit lockfiles (flake.lock, package-lock.json, Cargo.lock, etc.). Use the appropriate package manager command instead.
 
 ## Hygiene & Formatting
 - Ensure no trailing whitespace or blank lines containing only spaces.
 - **Go**: Always run `gofmt`.
 - **Python**: Run `black` and `isort`. If `pyproject.toml` mentions Ruff, use `ruff format`.
+- **Rust**: Run `cargo fmt`.
+- **Nix**: Run `nixfmt` (or `alejandra` if configured).
+- **JavaScript/TypeScript**: Use project-configured formatter (prettier, eslint --fix, biome).
+- **Shell**: Use `shfmt` if available.
+- **Other languages**: Check for project-configured formatters before formatting.
 - **Tests**: Write tests for public interfaces only, unless internal behavior is observable.
 
 ## Environment & Tooling

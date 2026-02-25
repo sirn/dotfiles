@@ -8,7 +8,7 @@ Explain code logic, triage incoming changes, or map the project architecture.
 ## Process
 1. Identify context:
    - If code changes are involved: run `jj diff -s` first to see changed files
-   - If $ARGUMENTS provided, focus on those specific files/paths
+   - If the user specified specific files or paths, focus on those
 
 2. Determine goal:
    - **Explain**: User wants to understand existing code

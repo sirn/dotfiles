@@ -1,5 +1,6 @@
 ---
 name: claude-code-reference
+type: reference
 description: Reference for calling the Claude Code agent from other agents.
 ---
 

@@ -8,7 +8,7 @@ Generate tests for untested functions and edge cases, then verify they pass.
 ## Process
 1. Identify context:
    - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
-   - If $ARGUMENTS provided, focus on those specific files/paths
+   - If the user specified specific files or paths, focus on those
    - Understand which functions/modules need test coverage
 
 2. Detect test framework:

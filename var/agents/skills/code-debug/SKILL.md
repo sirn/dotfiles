@@ -6,7 +6,7 @@ description: Debug issues by researching errors and proposing minimal fixes. Use
 Troubleshoot a problem by researching the error and proposing a minimal fix.
 
 ## Process
-1. Identify the error message, log, or failure symptom from $ARGUMENTS or context
+1. Identify the error message, log, or failure symptom from the user's request or context
 2. Research the error:
    - Search the codebase for related code paths and error handling
    - Check documentation for the libraries/frameworks involved (use WebSearch/WebFetch)

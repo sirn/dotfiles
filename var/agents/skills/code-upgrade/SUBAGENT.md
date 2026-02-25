@@ -3,7 +3,7 @@ name: code-upgrade
 description: Safely upgrade dependencies or migrate framework versions. Use when user asks to upgrade, update dependencies, or migrate to a new version.
 ---
 
-Safely upgrade dependencies or migrate framework versions.
+Safely upgrade dependencies or migrate framework versions using sub-agents for research.
 
 ## Process
 - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
@@ -21,16 +21,15 @@ Ask the user to clarify what they want to upgrade:
 3. Identify current versions of packages to be upgraded
 
 ### Step 3 - Research Changes
-Research using WebSearch/WebFetch:
-- Official changelogs for the target version
-- Breaking changes and deprecated APIs
-- Migration guides and best practices
-- Community migration experiences
+Spawn `code-researcher` agent with detailed instructions:
+- "Research breaking changes for upgrading {package} from {current_version} to {target_version}"
+- "Find official migration guides and deprecated API replacements"
+- "Identify common pitfalls and solutions for this upgrade"
 
-Also invoke `code-researcher` skill if available to get additional research insights.
+Wait for the research agent to complete and synthesize findings.
 
 ### Step 4 - Generate Plan
-Create an upgrade plan with:
+Create an upgrade plan incorporating the research findings:
 - Deprecated API replacements needed
 - Breaking changes to address
 - Test updates required

@@ -13,7 +13,7 @@ Refer to the `jj-reference` skill for command syntax and **Best Practices** (exp
 
 1. **Analyze changes** by running the `code-commit-message` skill process:
    - Run `jj diff -s` to see changed files
-   - If $ARGUMENTS provided, focus on those specific files/paths
+   - If the user specified specific files or paths, focus on those
    - Run `jj log -r ::@ -n 20 --no-graph -T 'description ++ "\n---\n"'` for message style
    - Analyze the diff for logical grouping and mixed concerns
 

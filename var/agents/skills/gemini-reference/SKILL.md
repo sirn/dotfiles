@@ -1,5 +1,6 @@
 ---
 name: gemini-reference
+type: reference
 description: Reference for calling the Gemini CLI agent from other agents.
 ---
 

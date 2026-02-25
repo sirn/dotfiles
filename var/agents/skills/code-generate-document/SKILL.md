@@ -8,7 +8,7 @@ Generate missing documentation or architectural decision records (ADRs).
 ## Process
 1. Identify context:
    - If code changes are involved: run `jj diff -s` first to see changed files
-   - If $ARGUMENTS provided, focus on those specific files/paths
+   - If the user specified specific files or paths, focus on those
 
 2. Determine Documentation Type:
    - **Inline Docs**: Docstrings, comments for functions/classes

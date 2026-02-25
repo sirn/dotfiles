@@ -8,15 +8,15 @@ Run comprehensive quality checks by orchestrating sub-skills.
 ## Process
 1. Identify context:
    - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
-   - If $ARGUMENTS provided, focus on those specific files/paths
+   - If the user specified specific files or paths, focus on those
 
-2. Run all four skills in parallel using the Skill tool:
+2. Run each of the following skills sequentially:
    - Invoke 'code-review' skill (Full mode)
    - Invoke 'code-verify' skill (Verify API usage against docs)
    - Invoke 'code-test' skill (Run tests)
    - Invoke 'code-lint' skill (Run linting)
 
-3. Wait for all tasks to complete
+3. Collect all findings
 4. Consolidate findings into a single report
 
 ## Output

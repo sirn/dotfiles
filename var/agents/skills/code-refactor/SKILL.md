@@ -8,7 +8,7 @@ Execute safe, targeted refactoring by analyzing code and providing actionable st
 ## Process
 1. Identify context:
    - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
-   - If $ARGUMENTS provided, focus on those specific files/paths
+   - If the user specified specific files or paths, focus on those
    - Understand the refactoring goal (extract function, rename, simplify, etc.)
 
 2. Analyze the code:

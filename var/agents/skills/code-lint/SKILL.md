@@ -8,10 +8,10 @@ Run project linting by detecting the environment and fixing issues.
 ## Process
 1. Identify context:
    - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
-   - If $ARGUMENTS provided, focus on those specific files/paths
+   - If the user specified specific files or paths, focus on those
 
 2. Detect the preferred way to run linting:
-   a. Check existing instructions: `CLAUDE.md`, `README.md`, `CONTRIBUTING.md`
+   a. Check existing instructions: `README.md`, `CONTRIBUTING.md`, `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, `CODEX.md`
    b. Check task runners: `Makefile`, `justfile`, `Taskfile.yml` for lint target
    c. Check for scripts in `bin/`, `.my/bin/` (lint, check, *-lint, etc.)
    d. Check package manager scripts (`package.json` lint/check scripts, etc.)

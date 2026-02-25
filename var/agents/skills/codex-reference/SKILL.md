@@ -1,5 +1,6 @@
 ---
 name: codex-reference
+type: reference
 description: Reference for calling the Codex CLI agent from other agents.
 ---
 

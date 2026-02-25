@@ -8,10 +8,10 @@ Run project tests by detecting the environment and fixing failures.
 ## Process
 1. Identify context:
    - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
-   - If $ARGUMENTS provided, focus on those specific files/paths
+   - If the user specified specific files or paths, focus on those
 
 2. Detect the preferred way to run tests:
-   a. Check existing instructions: `CLAUDE.md`, `README.md`, `CONTRIBUTING.md`
+   a. Check existing instructions: `README.md`, `CONTRIBUTING.md`, `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, `CODEX.md`
    b. Check task runners: `Makefile`, `justfile`, `Taskfile.yml` for test target
    c. Check for scripts in `bin/`, `.my/bin/` (test, *-test, etc.)
    d. Check package manager scripts (`package.json` scripts, etc.)

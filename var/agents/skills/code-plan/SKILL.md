@@ -8,7 +8,7 @@ Generate a comprehensive implementation plan based on task analysis.
 ## Process
 1. Identify context:
    - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
-   - If $ARGUMENTS provided, focus on those specific files/paths
+   - If the user specified specific files or paths, focus on those
    - Understand the user's task/request
 
 2. Analyze the codebase:

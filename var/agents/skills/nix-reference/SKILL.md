@@ -1,5 +1,6 @@
 ---
 name: nix-reference
+type: reference
 description: Reference for Nix commands, flake patterns, and best practices
 ---
 
@@ -17,6 +18,14 @@ description: Reference for Nix commands, flake patterns, and best practices
 See [examples/interactive-shell.bash](examples/interactive-shell.bash)
 
 ### nix-shell Shebang Patterns
+
+> **Note**: Update the nixpkgs channel URL (e.g., `nixos-25.11`) to match your current NixOS release.
+
+**Finding your current release:**
+- On NixOS: `nixos-version` (shows current system version, e.g., `25.05.20250224...`)
+- From flake.lock: Check the `nixpkgs` input revision or run `nix flake metadata` to see locked references
+- Check system flake: `cat /etc/nixos/flake.nix | grep -E "nixos-24|nixos-25"` or similar
+- Use `channels` command: `nix-channel --list` (if using channels instead of flakes)
 
 #### Bash script
 ```bash
