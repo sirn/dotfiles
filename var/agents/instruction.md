@@ -17,7 +17,7 @@
 - **URLs**: You MUST follow any URL presented to you (especially in error messages).
 - **Temporary Files**: Use the `tmp/` directory. Create a `.gitignore` ignoring everything inside it. Clean up when done.
 - **Anti-Loop**: If a fix fails twice, STOP. Re-evaluate the cause, explain the blockage, and ask for guidance.
-- **Skill Execution**: Skills (located in `~/.gemini/skills/` or `var/agents/skills/`) are NOT automated tools. They are textual Standard Operating Procedures (SOPs). You MUST read the skill's `SKILL.md` and actively EXECUTE the steps defined therein using your tools (e.g., `run_shell_command`). Do not assume they run themselves.
+- **Skill Execution**: Skills (located in `~/.gemini/skills/` or `var/agents/skills/`) are NOT automated tools. They are textual Standard Operating Procedures (SOPs). You MUST read the skill's `SKILL.md` and actively EXECUTE the steps defined therein using your tools (e.g., `run_shell_command`). **Skills do NOT execute automatically - you MUST execute them yourself.** Do not assume they run themselves.
 
 ## Project Directories
 - `~/Dev/src/<hosting-provider>/<repo>/` - Cloned source repositories (e.g., `~/Dev/src/github.com/sirn/sirn`)
