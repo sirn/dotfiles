@@ -39,9 +39,10 @@ let
 
   # Generate 256-color palette at build time using Python script
   # This uses CIELAB interpolation for perceptually uniform colors
-  palette256Generator = pkgs.runCommand "generate-palette-256" {
-    nativeBuildInputs = [ pkgs.python3 ];
-  } ''
+  palette256Generator = pkgs.runCommand "generate-palette-256"
+    {
+      nativeBuildInputs = [ pkgs.python3 ];
+    } ''
     cat > input.json <<'EOF'
     {
       "bg": "${base16Colors.background}",
@@ -124,10 +125,12 @@ in
       colors = {
         background = stripHash colorScheme.background;
         foreground = stripHash colorScheme.foreground;
-      } // lib.listToAttrs (lib.imap0 (i: c: {
-        name = toString i;
-        value = stripHash c;
-      }) palette256);
+      } // lib.listToAttrs (lib.imap0
+        (i: c: {
+          name = toString i;
+          value = stripHash c;
+        })
+        palette256);
     };
   };
 
@@ -156,10 +159,12 @@ in
           colorScheme.bright.white
         ];
 
-        indexed = lib.listToAttrs (lib.imap0 (i: c: {
-          name = toString i;
-          value = c;
-        }) palette256);
+        indexed = lib.listToAttrs (lib.imap0
+          (i: c: {
+            name = toString i;
+            value = c;
+          })
+          palette256);
 
         background = colorScheme.background;
         cursor_bg = colorScheme.foreground;
@@ -237,47 +242,43 @@ in
 
   wayland.windowManager.sway = lib.mkIf config.wayland.windowManager.sway.enable {
     config = {
-      colors =
-        let
-          clear = "#ffffff00";
-        in
-        {
-          focused = {
-            background = "${colorScheme.normal.blue}99"; # 60%
-            border = "${colorScheme.normal.blue}99"; # 60%
-            childBorder = "${colorScheme.normal.blue}99"; # 60%
-            indicator = colorScheme.normal.blue;
-            text = colorScheme.foreground;
-          };
-          focusedInactive = {
-            background = "${colorScheme.bright.black}cc"; # 80%
-            border = "${colorScheme.bright.black}d8"; # 85%
-            childBorder = "${colorScheme.bright.black}99"; # 60%
-            indicator = colorScheme.normal.blue;
-            text = colorScheme.foreground;
-          };
-          unfocused = {
-            background = "${colorScheme.bright.black}99"; # 60%
-            border = "${colorScheme.bright.black}a5"; # 65%
-            childBorder = "${colorScheme.bright.black}66"; # 40%
-            indicator = colorScheme.bright.black;
-            text = colorScheme.foreground;
-          };
-          placeholder = {
-            background = colorScheme.normal.yellow;
-            border = colorScheme.normal.yellow;
-            childBorder = colorScheme.normal.yellow;
-            indicator = colorScheme.normal.yellow;
-            text = colorScheme.foreground;
-          };
-          urgent = {
-            background = colorScheme.normal.red;
-            border = colorScheme.normal.red;
-            childBorder = colorScheme.normal.red;
-            indicator = colorScheme.normal.red;
-            text = colorScheme.normal.black;
-          };
+      colors = {
+        focused = {
+          background = "${colorScheme.normal.blue}99"; # 60%
+          border = "${colorScheme.normal.blue}99"; # 60%
+          childBorder = "${colorScheme.normal.blue}99"; # 60%
+          indicator = "${colorScheme.normal.blue}a5"; # 65%
+          text = colorScheme.foreground;
         };
+        focusedInactive = {
+          background = "${colorScheme.bright.black}99"; # 60%
+          border = "${colorScheme.bright.black}a5"; # 65%
+          childBorder = "${colorScheme.bright.black}66"; # 40%
+          indicator = "${colorScheme.normal.black}50"; # 80%
+          text = colorScheme.foreground;
+        };
+        unfocused = {
+          background = "${colorScheme.bright.black}99"; # 60%
+          border = "${colorScheme.bright.black}a5"; # 65%
+          childBorder = "${colorScheme.bright.black}66"; # 40%
+          indicator = colorScheme.bright.black;
+          text = colorScheme.foreground;
+        };
+        placeholder = {
+          background = colorScheme.normal.yellow;
+          border = colorScheme.normal.yellow;
+          childBorder = colorScheme.normal.yellow;
+          indicator = colorScheme.normal.yellow;
+          text = colorScheme.foreground;
+        };
+        urgent = {
+          background = colorScheme.normal.red;
+          border = colorScheme.normal.red;
+          childBorder = colorScheme.normal.red;
+          indicator = colorScheme.normal.red;
+          text = colorScheme.normal.black;
+        };
+      };
     };
   };
 
