@@ -57,6 +57,9 @@ in
           "*" = {
             dwt = "enabled";
           };
+          "type:touchpad" = {
+            natural_scroll = "enabled";
+          };
           "type:keyboard" = {
             xkb_options = "ctrl:nocaps";
           };
