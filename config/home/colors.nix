@@ -59,7 +59,7 @@ let
     }
     EOF
 
-    python3 ${../../lib/generate-palette.py} < input.json > $out
+    python3 ${../../libexec/generate-palette.py} < input.json > $out
   '';
 
   # Read generated palette (IFD - Import From Derivation)

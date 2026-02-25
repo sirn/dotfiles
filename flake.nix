@@ -118,10 +118,8 @@
         [
           inputs.sops-nix.homeManagerModules.sops
           inputs.niri.homeModules.niri
-          ./lib/claude-code.nix
-          ./lib/flatpak.nix
-          ./lib/machine.nix
-          ./modules/machines/${hostname}.nix
+          ./modules
+          ./config/machines/${hostname}.nix
           (if builtins.pathExists ./local.nix then ./local.nix else { })
           inputs.nix-index-database.homeModules.nix-index
         ];

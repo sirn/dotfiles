@@ -61,8 +61,8 @@ Create a file named `local.nix` to have a machine-specific configuration that is
 ```nix
 {
   import = [
-    ./modules/programs/bitwarden.nix
-    ./modules/services/languagetool.nix
+    ./config/programs/bitwarden.nix
+    ./config/services/languagetool.nix
   ];
 
   # When running on a non-NixOS
@@ -78,8 +78,8 @@ For NixOS, this needs to be done as part of NixOS `configuration.nix`:
 
   home-manager.users.sirn = {
     imports = [
-      "${dotfiles}/modules/programs/bitwarden.nix"
-      "${dotfiles}/modules/programs/languagetool.nix"
+      "${dotfiles}/config/programs/bitwarden.nix"
+      "${dotfiles}/config/programs/languagetool.nix"
     ];
   };
 }
