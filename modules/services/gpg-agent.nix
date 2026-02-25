@@ -4,6 +4,11 @@ let
   cfg = config.services.gpg-agent;
 
   gpgcfg = config.programs.gpg;
+
+  swaycfg = config.wayland.windowManager.sway;
+  niricfg = config.programs.niri;
+
+  hasGui = swaycfg.enable || niricfg.enable;
 in
 {
   services.gpg-agent = {
@@ -12,9 +17,12 @@ in
 
     pinentry = {
       package = lib.mkDefault (
-        if pkgs.stdenv.isDarwin
-        then pkgs.pinentry_mac
-        else pkgs.pinentry-curses
+        if pkgs.stdenv.isDarwin then
+          pkgs.pinentry_mac
+        else if hasGui then
+          pkgs.pinentry-qt
+        else
+          pkgs.pinentry-curses
       );
     };
 
