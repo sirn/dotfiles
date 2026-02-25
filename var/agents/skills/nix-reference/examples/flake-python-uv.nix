@@ -37,8 +37,8 @@
                   in
                   ''
                     mkdir -p $out/bin
-                    makeWrapper ${actualUv}/bin/${actualUv.meta.mainProgram} $out/bin/uv
-                    makeWrapper ${actualUv}/bin/${actualUv.meta.mainProgram} $out/bin/uvx --add-flags "tool run"
+                    makeWrapper ${actualUv}/bin/${actualUv.meta.mainProgram} $out/bin/uv --add-flags "--managed-python"
+                    makeWrapper ${actualUv}/bin/${actualUv.meta.mainProgram} $out/bin/uvx --add-flags "--managed-python" --add-flags "tool run"
                   '';
               };
 
