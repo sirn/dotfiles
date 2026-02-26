@@ -1,3 +1,14 @@
+# Security Policy: Default Ask
+# 
+# Commands are categorized into three tiers:
+# - allow: Permitted without confirmation (read-only, safe operations)
+# - ask: Require explicit user confirmation before execution
+# - deny: Blocked entirely (never executed)
+#
+# Any command not explicitly in 'allow' or 'deny' defaults to 'ask'.
+# This follows the principle of least privilege - unknown commands
+# require confirmation rather than being silently permitted.
+
 [default.tools]
 read = true
 glob = true
@@ -6,6 +17,7 @@ list = true
 webfetch = true
 websearch = true
 
+# Safe commands that don't modify state or access sensitive data
 [default.commands.allow]
 shell = [
   "ls",

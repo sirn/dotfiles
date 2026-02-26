@@ -285,8 +285,12 @@ let
         else if c == "|" then "\\|"
         else c
       ) (lib.stringToCharacters cmd);
-    in "/^\\s*${escaped}\\b/i";
+    in
+    # Match command at start of string OR after shell operators (&&, ||, ;, |, etc.)
+    # This handles compound commands like "foo && rm -rf /" or "bar | sudo baz"
+    "/(?:^|[&|];\\(\\{`\\n)\\s*${escaped}\\b/i";
 
+  allowPatterns = lib.concatMapStringsSep ",\n  " toRegexPattern permissionsToml.default.commands.allow.shell;
   askPatterns = lib.concatMapStringsSep ",\n  " toRegexPattern permissionsToml.default.commands.ask.shell;
   denyPatterns = lib.concatMapStringsSep ",\n  " toRegexPattern permissionsToml.default.commands.deny.shell;
 
@@ -295,11 +299,20 @@ let
  * Safety Gate Extension for Pi Coding Agent
  *
  * Generated from permissions.toml
- * - ask: commands requiring user confirmation
+ * - allow: commands permitted without confirmation
+ * - ask: commands requiring user confirmation  
  * - deny: commands that are blocked entirely
+ *
+ * Policy: Ask by default - any command not explicitly allowed or denied
+ * requires user confirmation.
  */
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+
+// Commands permitted without confirmation (from permissions.toml [default.commands.allow])
+const allowPatterns = [
+  ${allowPatterns}
+];
 
 // Commands that require user confirmation (from permissions.toml [default.commands.ask])
 const askPatterns = [
@@ -338,24 +351,32 @@ export default function (pi: ExtensionAPI) {
       };
     }
 
-    // Check ask patterns - require confirmation
+    // Check allow patterns - permit without asking
+    if (matchesPattern(command, allowPatterns)) {
+      return undefined;
+    }
+
+    // Check ask patterns - require confirmation (explicit ask list)
     if (matchesPattern(command, askPatterns)) {
-      if (!ctx.hasUI) {
-        return {
-          block: true,
-          reason: `Command blocked (no UI for confirmation): "''${getCommandSummary(command)}"`,
-        };
-      }
+      // Fall through to confirmation dialog below
+    }
 
-      const choice = await ctx.ui.select(
-        `Confirm: ''${getCommandSummary(command)}`,
-        ["Yes, proceed", "No, cancel"]
-      );
+    // Default policy: ask for confirmation on any command not explicitly allowed
+    if (!ctx.hasUI) {
+      return {
+        block: true,
+        reason: `Command blocked (no UI for confirmation): "''${getCommandSummary(command)}"`,
+      };
+    }
 
-      if (choice !== "Yes, proceed") {
-        ctx.ui.notify("Command cancelled by user", "info");
-        return { block: true, reason: "Blocked by user" };
-      }
+    const choice = await ctx.ui.select(
+      `Confirm: ''${getCommandSummary(command)}`,
+      ["Yes, proceed", "No, cancel"]
+    );
+
+    if (choice !== "Yes, proceed") {
+      ctx.ui.notify("Command cancelled by user", "info");
+      return { block: true, reason: "Blocked by user" };
     }
 
     return undefined;
