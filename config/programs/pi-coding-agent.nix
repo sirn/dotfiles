@@ -288,7 +288,8 @@ let
     in
     # Match command at start of string OR after shell operators (&&, ||, ;, |, etc.)
     # This handles compound commands like "foo && rm -rf /" or "bar | sudo baz"
-    "/(?:^|[&|];\\(\\{`\\n)\\s*${escaped}\\b/i";
+    # Pattern matches: start of string, or &&, ||, ;, |, &, (, {, `, or newline
+    "/(?:^|\\|\\||&&|[&;|]|\\(\\{`\\n)\\s*${escaped}\\b/i";
 
   allowPatterns = lib.concatMapStringsSep ",\n  " toRegexPattern permissionsToml.default.commands.allow.shell;
   askPatterns = lib.concatMapStringsSep ",\n  " toRegexPattern permissionsToml.default.commands.ask.shell;
