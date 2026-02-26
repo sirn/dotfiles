@@ -152,6 +152,11 @@ let
     - Each MCP skill provides a `./mcp-wrapper.sh` script for tool discovery and execution.
     - **ALWAYS run `./mcp-wrapper.sh list` first to discover available tools before attempting to call any tool.**
     - After discovering tools, execute with: `./mcp-wrapper.sh call <tool-name> '<json-arguments>'`
+
+    ## Safety Guidelines (Pi-specific)
+    - When running destructive commands (`rm`, etc.), you must first ask the user.
+    - When doing a commit, ask user for confirmation first.
+    - Do not squash commit unless being told explicitly by the user.
   '';
 
   isStdioServer = server: server ? command || server ? package;
