@@ -40,6 +40,17 @@ Working copy is always a commit. Changes are first-class with stable IDs across 
 | Resolve | `jj resolve -r <id>` |
 | Undo | `jj undo` |
 
+### Limiting Output
+
+| Goal | Option | Example |
+|------|--------|---------|
+| Limit commit count | `-n <N>` / `--limit <N>` | `jj log -r ::@ -n 10` |
+| Summary only (diffs) | `-s` / `--summary` | `jj diff -s -r <id>` |
+| Summary only (status) | `-s` | `jj status -s` |
+| No graph (cleaner log) | `--no-graph` | `jj log -r ::@ --no-graph` |
+| Custom template | `-T <template>` | `jj log -r @ -T 'description ++ "\n"'` |
+| Limit description lines | `-T "..."` | `jj log -T 'description.first_line()'` |
+
 ### Revset Syntax
 
 ```
