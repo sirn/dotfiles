@@ -70,7 +70,12 @@
 - **Policy**: ALWAYS use `jj` (Jujutsu) for all version control operations. Do NOT use `git` unless explicitly requested by the user or if `jj` is functionally unavailable.
 - **Policy**: Do NOT create, modify, or squash commits on your own unless explicitly instructed by the user. You are NOT authorized to manage version control history autonomously.
 - **Commit Messages**: When asked to commit, keep messages concise, consistent, and following existing patterns.
-- **Jujutsu**: Refer to jj-reference skill for commands.
+- **Jujutsu Reference**: When performing any jj operation (commit, squash, rebase, etc.), **ALWAYS read the jj-reference skill first** to ensure correct command syntax. This skill is a `type: reference` skill - read it for information, not execution. Key patterns from the skill:
+  - Use explicit change IDs: `jj describe <id>`, `jj squash --from <id> --to <id>`
+  - Use `jj split -r <id> -m "msg" -- <file>` (non-interactive)
+  - Use `jj new <parent-id>` to create commits on specific parents
+  - Use `jj log -r ::@ -n 10` to view recent history
+  - Never use `@` or `@-` in scripts or operations - always use explicit change IDs
 
 ## Policy Footer
 - Ask when unsure; do not guess.
