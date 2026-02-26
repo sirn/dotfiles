@@ -115,3 +115,12 @@
 
   (setq gptel-backend gemacs--gptel-gemini-backend)
   (gemacs--llm-env-from-auth-source))
+
+
+;; pi-coding-agent - terminal coding agent integration
+;; https://github.com/dnouri/pi-coding-agent
+;; The `pi' binary handles all configuration (model, API keys, etc.)
+(use-package pi-coding-agent
+  :general
+  (leader
+    "a p" #'pi-coding-agent))

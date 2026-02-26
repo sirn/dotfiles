@@ -135,7 +135,6 @@ let
       inherit (baseEmacs) LIBRARY_PATH;
     };
   };
-
 in
 {
   programs.emacs = {
@@ -151,6 +150,10 @@ in
       pkgs.local.emacsPackages.sqlite3
       s
       use-package
+
+      # AI packages
+      pi-coding-agent
+      pkgs.local.emacsPackages.phscroll
 
       # Org packages
       org
@@ -220,17 +223,16 @@ in
       vterm
       which-key
 
-      (apheleia.overrideDerivation
-        (attrs: {
-          nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
+      (apheleia.overrideDerivation (attrs: {
+        nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
 
-          postInstall = ''
-            wrapProgram $out/share/emacs/site-lisp/elpa/${attrs.pname}-${attrs.version}/scripts/formatters/apheleia-npx \
-              --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.nodePackages.prettier ]}
-            wrapProgram $out/share/emacs/site-lisp/elpa/${attrs.pname}-${attrs.version}/scripts/formatters/apheleia-phpcs \
-              --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.php83Packages.php-codesniffer ]}
-          '';
-        }))
+        postInstall = ''
+          wrapProgram $out/share/emacs/site-lisp/elpa/${attrs.pname}-${attrs.version}/scripts/formatters/apheleia-npx \
+            --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.nodePackages.prettier ]}
+          wrapProgram $out/share/emacs/site-lisp/elpa/${attrs.pname}-${attrs.version}/scripts/formatters/apheleia-phpcs \
+            --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.php83Packages.php-codesniffer ]}
+        '';
+      }))
 
       (visual-regexp-steroids.overrideDerivation (attrs: {
         postPatch = ''
@@ -272,14 +274,26 @@ in
       yaml-mode
       zencoding-mode
 
-    ] ++ (if notmuchcfg.enable then [
-      # notmuch package also contains notmuch-mode so it needs to be here
-      # instead of in emacs-bin-deps below
-      notmuch
-    ] else [ ]) ++ (if pkgs.stdenv.isDarwin then [
-      exec-path-from-shell
-      osx-trash
-      pbcopy
-    ] else [ ]);
+    ]
+    ++ (
+      if notmuchcfg.enable then
+        [
+          # notmuch package also contains notmuch-mode so it needs to be here
+          # instead of in emacs-bin-deps below
+          notmuch
+        ]
+      else
+        [ ]
+    )
+    ++ (
+      if pkgs.stdenv.isDarwin then
+        [
+          exec-path-from-shell
+          osx-trash
+          pbcopy
+        ]
+      else
+        [ ]
+    );
   };
 }

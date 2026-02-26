@@ -39,7 +39,8 @@
     (declare-function gemacs--project-switch-command nil)
     (declare-function gemacs--project-switch-transient-menu nil)
     (declare-function gemacs--project-switch-smuggle-chosen-project nil)
-    (declare-function gemacs--project-gptel nil))
+    (declare-function gemacs--project-gptel nil)
+    (declare-function pi-coding-agent nil))
 
   :config
   (require 'transient)
@@ -76,6 +77,7 @@
     ["Tools"
      ("g" "GPTel" gemacs--project-gptel)
      ("m" "Magit" magit-project-status)
+     ("p" "Pi coding agent" pi-coding-agent)
      ("'" "Terminal (Eat)" eat-project)]
     ["Maintenance"
      ("S" "Sync projects" gemacs--project-sync)])
