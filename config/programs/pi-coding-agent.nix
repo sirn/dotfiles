@@ -22,6 +22,18 @@ let
     defaultModel = "accounts/fireworks/models/kimi-k2p5";
     defaultThinkingLevel = "medium";
     hideThinkingBlock = true;
+    enabledModels = [
+      "accounts/fireworks/models/*"
+      "hf:zai-org/*"
+      "hf:moonshotai/*"
+      "hf:MiniMaxAI/*"
+      "claude-opus-4-6"
+      "claude-sonnet-4-6"
+      "gpt-5.3-codex"
+      "gpt-5.3-codex-spark"
+      "gemini-3.1-pro-preview"
+      "gemini-3-flash-preview"
+    ];
     skills = [
       "skills/home-manager"
     ]
