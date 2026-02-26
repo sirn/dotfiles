@@ -46,12 +46,13 @@
 
 ## Hygiene & Formatting
 - Ensure no trailing whitespace or blank lines containing only spaces.
-- **Go**: Always run `gofmt`.
+- **Go**: Run `gofmt`.
 - **Python**: Run `black` and `isort`. If `pyproject.toml` mentions Ruff, use `ruff format`.
 - **Rust**: Run `cargo fmt`.
 - **Nix**: Run `nixfmt` (or `alejandra` if configured).
 - **JavaScript/TypeScript**: Use project-configured formatter (prettier, eslint --fix, biome).
-- **Shell**: Use `shfmt` if available.
+- **Shell**: Use `shfmt`.
+- **Fallback**: If formatting tools are not installed, use `nix run nixpkgs#<tool>`.
 - **Other languages**: Check for project-configured formatters before formatting.
 - **Tests**: Write tests for public interfaces only, unless internal behavior is observable.
 

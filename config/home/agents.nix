@@ -5,6 +5,7 @@
     ../programs/gemini.nix
     ../programs/mcp.nix
     ../programs/opencode.nix
+    ../programs/pi-coding-agent.nix
   ];
 
   programs.codex.enable = true;

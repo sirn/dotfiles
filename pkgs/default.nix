@@ -30,4 +30,6 @@ in
   tincan = (callPackage ./by-name/tincan/package.nix { });
 
   repoman = (callPackage ./by-name/repoman/package.nix { });
+
+  pi-coding-agent = (callPackage ./by-name/pi-coding-agent/package.nix { });
 }
