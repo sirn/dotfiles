@@ -51,6 +51,10 @@ in
         };
 
         settings = {
+          # Disable fractional-scale to force 2x rendering then downscale.
+          # This results in sharper image quality than native fractional scaling.
+          "widget.wayland.fractional-scale.enabled" = false;
+
           # Privacy & security
           "browser.contentblocking.category" = "strict";
           "dom.security.https_only_mode" = true;
