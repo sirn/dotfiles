@@ -19,8 +19,8 @@ let
 
   settingsJson = builtins.toJSON {
     quietStartup = true;
-    defaultProvider = "fireworks";
-    defaultModel = "accounts/fireworks/models/kimi-k2p5";
+    defaultProvider = "synthetic";
+    defaultModel = "hf:moonshotai/Kimi-K2.5";
     defaultThinkingLevel = "medium";
     hideThinkingBlock = true;
     enabledModels = [
