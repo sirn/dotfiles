@@ -61,7 +61,7 @@ in
   wayland.windowManager.sway = lib.mkIf (cfg.enable && swaycfg.enable) {
     config = {
       keybindings = {
-        "${swaycfg.config.modifier}+Ctrl+Shift+F10" = "exec pkill -INT -f ${lib.getExe cfg.package}";
+        "${swaycfg.config.modifier}+Alt+F10" = "exec pkill -INT -f ${lib.getExe cfg.package}";
       };
     };
   };

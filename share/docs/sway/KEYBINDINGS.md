@@ -18,8 +18,8 @@ These keybindings are available in the default mode.
 | `Mod+Shift+b`        | Send SIGUSR1 signal to Waybar (hide/unhide)             |
 | `Mod+Shift+c`        | Reload the Sway configuration file                      |
 | `Mod+Shift+e`        | Show a confirmation dialog to exit Sway                 |
-| `Mod+Ctrl+Shift+L`   | Manually trigger `swayidle` (e.g., to lock screen)      |
-| `Mod+Ctrl+Shift+F10` | Manually trigger `kanshi` (e.g., to rearrange displays) |
+| `Mod+Alt+L`          | Manually trigger `swayidle` (e.g., to lock screen)      |
+| `Mod+Alt+F10`        | Manually trigger `kanshi` (e.g., to rearrange displays) |
 
 ### Window Navigation & Manipulation
 
