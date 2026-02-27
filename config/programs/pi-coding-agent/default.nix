@@ -3,9 +3,9 @@
 let
   cfg = config.programs.pi-coding-agent;
 
-  instructionText = builtins.readFile ../../var/agents/instruction.md;
-  skillsDir = ../../var/agents/skills;
-  permissionsToml = lib.importTOML ../../var/agents/permissions.toml;
+  instructionText = builtins.readFile ../../../var/agents/instruction.md;
+  skillsDir = ../../../var/agents/skills;
+  permissionsToml = lib.importTOML ../../../var/agents/permissions.toml;
 
   wrappedPi = pkgs.writeScriptBin "pi" ''
     #!${pkgs.runtimeShell}
@@ -286,7 +286,7 @@ let
   };
 
   # Load static TypeScript extension
-  safetyGateTs = builtins.readFile ../../lib/pi-coding-agent/safety-gate.ts;
+  safetyGateTs = builtins.readFile ./safety-gate.ts;
 
   baseFiles = {
     ".pi/agent/settings.json".text = settingsJson;

@@ -25,7 +25,7 @@
     ../programs/mcp.nix
     ../programs/obsidian.nix
     ../programs/sublime-text.nix
-    ../programs/wezterm.nix
+    ../programs/wezterm
 
     # services
     ../services/swww.nix

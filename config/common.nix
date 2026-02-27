@@ -5,7 +5,7 @@
 
   imports = [
     ./home/agents.nix
-    ./home/colors.nix
+    ./home/colors
     ./home/email.nix
     ./home/shell.nix
     ./home/sops.nix

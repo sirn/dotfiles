@@ -12,7 +12,7 @@
     ./programs/intellij.nix
     ./programs/mpv.nix
     ./programs/sublime-text.nix
-    ./programs/wezterm.nix
+    ./programs/wezterm
     ./programs/yt-dlp.nix
   ];
 }
