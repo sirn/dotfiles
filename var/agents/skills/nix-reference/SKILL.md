@@ -4,6 +4,38 @@ type: reference
 description: Reference for Nix commands, flake patterns, and best practices
 ---
 
+## String Escaping
+
+When writing Nix strings that contain code for other languages (TypeScript, JavaScript, etc.), remember:
+
+| What you want in output | Nix syntax |
+|------------------------|-----------|
+| `${variable}` | `''${variable}` |
+| `$${variable}` | `$''${variable}` |
+| `''${literal}` | `'''${literal}` |
+
+**Rule**: Use two single quotes `''` before `${}` to prevent Nix from interpolating it.
+
+**Example** - Generating TypeScript with template literals:
+
+Nix source:
+```nix
+{
+  xdg.configFile."my-plugin.ts".text = ''
+    function log(msg: string) {
+      console.log(`[''${timestamp}] ''${msg}`);
+    }
+  '';
+}
+```
+
+Generated TypeScript:
+```typescript
+function log(msg: string) {
+  console.log(`[${timestamp}] ${msg}`);
+}
+```
+
 ## Nix Command Reference
 
 ### Flake Commands
