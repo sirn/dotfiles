@@ -1,5 +1,5 @@
 # Security Policy: Default Ask
-# 
+#
 # Commands are categorized into three tiers:
 # - allow: Permitted without confirmation (read-only, safe operations)
 # - ask: Require explicit user confirmation before execution
@@ -20,25 +20,210 @@ websearch = true
 # Safe commands that don't modify state or access sensitive data
 [default.commands.allow]
 shell = [
+  # File system navigation and listing
   "ls",
   "fd",
   "find",
+  "tree",
+  "lstr",
+
+  # Text search and filtering
   "rg",
   "grep",
+
+  # Git - read-only operations
   "git status",
   "git diff",
   "git log",
   "git branch",
+
+  # Jujutsu (jj) - read-only operations
   "jj status",
   "jj diff",
   "jj log",
   "jj show",
+
+  # Go - build, test, and lint
   "go test",
   "go build",
+  "go vet",
+  "go fmt",
+  "golangci-lint",
+  "golangci-lint run",
+  "staticcheck",
+
+  # Python - testing and linting (including uv and poetry)
+  "pytest",
+  "python -m pytest",
+  "python -m unittest",
+  "ruff",
+  "ruff check",
+  "ruff format --check",
+  "black --check",
+  "isort --check-only",
+  "mypy",
+  "pylint",
+  "flake8",
+  "uv run pytest",
+  "uv run ruff",
+  "uv run ruff check",
+  "uv run python -m pytest",
+  "poetry run pytest",
+  "poetry run ruff",
+  "poetry run ruff check",
+  "poetry run python -m pytest",
+
+  # Rust - check, test, and lint
+  "cargo",
+  "cargo check",
+  "cargo test",
+  "cargo clippy",
+  "cargo fmt --check",
+  "rustc --version",
+  "cargo --version",
+
+  # JavaScript/TypeScript - linting and type checking
+  "eslint",
+  "prettier --check",
+  "tsc --noEmit",
+  "tsc -p . --noEmit",
+  "node --version",
+  "npm --version",
+
+  # Ruby - linting and testing
+  "rubocop",
+  "bundle exec rspec",
+  "bundle exec rubocop",
+
+  # Java/Kotlin - build and check
+  "./gradlew check",
+  "gradle check",
+  "mvn verify",
+  "mvn test",
+  "ktlint",
+
+  # C/C++ - linting
+  "clang-tidy",
+  "cppcheck",
+  "make check",
+
+  # Nix - formatting and linting
+  "nixfmt",
+  "nixfmt --check",
+  "alejandra",
+  "alejandra --check",
+  "nix flake check",
+  "nix-linter",
+
+  # Shell - linting and formatting check
+  "shellcheck",
+  "shfmt",
+  "shfmt -l",
+  "shfmt --check",
+  "bash -n",
+
+  # General build tools
+  "make",
+  "gmake",
+  "just",
+  "just --list",
+
+  # HTTP clients - read-only fetching
   "curl",
   "wget",
-  "tree",
-  "lstr",
+
+  # Container & Orchestration - read-only inspection
+  "docker ps",
+  "docker ps -a",
+  "docker images",
+  "docker inspect",
+  "docker-compose config",
+  "podman ps",
+  "podman ps -a",
+  "podman images",
+  "podman inspect",
+  "kubectl get",
+  "kubectl describe",
+  "kubectl logs",
+  "kubectl version",
+
+  # Package Managers - list/info only
+  "npm list",
+  "pnpm list",
+  "yarn list",
+  "pip list",
+  "pip freeze",
+  "poetry show",
+  "poetry show --tree",
+  "uv pip list",
+  "uv pip tree",
+  "cargo tree",
+  "go mod graph",
+  "go mod why",
+  "go mod download -x",  # dry-run mode, doesn't write
+  "gem list",
+  "bundle list",
+  "nix path-info",
+  "nix derivation show",
+
+  # System & Environment - safe inspection
+  "which",
+  "command -v",
+  "uname",
+  "uname -a",
+  "pwd",
+  "whoami",
+  "id",
+  "cat --version",
+  "jq --version",
+  "sed --version",
+  "awk --version",
+
+  # Database - read-only inspection
+  "psql --command=\\dt",
+  "psql -c \\dt",
+  "pg_dump --schema-only",  # schema dump, no data
+  "mysqlshow",
+  "redis-cli ping",
+  "redis-cli info",
+
+  # Git - extended read-only
+  "git remote -v",
+  "git config --get",
+  "git config --list",
+  "git rev-parse",
+  "git rev-parse --show-toplevel",
+
+  # Jujutsu - extended read-only
+  "jj git remote list",
+  "jj bookmark list",
+  "jj bookmark",
+
+  # GitHub CLI (gh) - read-only operations only
+  "gh issue list",
+  "gh issue view",
+  "gh issue status",
+  "gh pr list",
+  "gh pr view",
+  "gh pr diff",
+  "gh pr checks",
+  "gh pr status",
+  "gh repo view",
+  "gh repo list",
+  "gh run list",
+  "gh run view",
+  "gh workflow list",
+  "gh workflow view",
+  "gh cache list",
+  "gh release list",
+  "gh release view",
+  "gh search repos",
+  "gh search issues",
+  "gh search prs",
+  "gh search code",
+  "gh search commits",
+  "gh status",
+  "gh api",
 ]
 
 [default.commands.ask]
@@ -53,6 +238,23 @@ shell = [
   "jj split",
   "jj abandon",
   "jj undo",
+
+  # Environment and secret exposure risks
+  "env",
+  "printenv",
+
+  # Container execution (can run commands inside containers)
+  "docker exec",
+  "docker run",
+  "podman exec",
+  "podman run",
+
+  # Kubernetes execution (can run commands in pods)
+  "kubectl exec",
+  "kubectl run",
+  "kubectl create",
+  "kubectl apply",
+  "kubectl delete",
 ]
 
 [default.commands.deny]
