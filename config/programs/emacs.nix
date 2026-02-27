@@ -49,7 +49,7 @@ let
       clojure-lsp
       gopls
       intelephense
-      nil
+      nixd
       pyright
       rubyPackages.ruby-lsp
       nodePackages.bash-language-server

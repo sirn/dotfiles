@@ -18,7 +18,7 @@
 
   :init
   (with-eval-after-load 'eglot
-    (add-to-list 'eglot-server-programs '(nix-ts-mode . ("nil"))))
+    (add-to-list 'eglot-server-programs '(nix-ts-mode . ("nixd"))))
 
   :config
   (with-eval-after-load 'apheleia
