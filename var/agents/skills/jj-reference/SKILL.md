@@ -9,6 +9,7 @@ description: Reference for Jujutsu (jj) version control commands
 Working copy is always a commit. Changes are first-class with stable IDs across rewrites.
 
 ### Best Practices
+- **User Authorization**: NEVER commit (`jj describe`, `jj commit`), squash (`jj squash`), split (`jj split`), or push (`jj git push`) without explicit user confirmation. Always ask before modifying version control history.
 - **Logical Commits**: Group changes into logical steps; try to make each commit "usable" on its own.
 - **Explicit Operations**: Always use explicit change IDs for all operations (e.g., `abandon`, `describe`, `edit`, `new`, `squash`, `split`, `rebase`, `bookmark`).
 - **Splitting**: Use `jj split -r <change-id> -m "<commit-message>" -- <file>`; do not use interactive `jj split`.
