@@ -86,6 +86,28 @@ jj bookmark track <name>@origin      # Track remote
 
 ### Working with Remotes
 
+#### Figuring Out Remote Repository
+
+To determine the remote repository URL (useful for `gh -R owner/repo` commands):
+
+```bash
+# List all remotes with URLs
+jj git remote list
+
+# Example output:
+# origin  git@github.com:owner/repo.git (fetch)
+# origin  git@github.com:owner/repo.git (push)
+
+# Parse owner/repo from remote URL
+jj git remote list | grep origin | head -1 | sed -E 's/.*github\.com[:/]([^/]+)\/([^/]+)\.git.*/\1\/\2/'
+```
+
+Common patterns to extract `owner/repo`:
+- SSH: `git@github.com:owner/repo.git` → `owner/repo`
+- HTTPS: `https://github.com/owner/repo.git` → `owner/repo`
+
+#### Remote Operations
+
 ```bash
 jj git fetch                          # Fetch all
 jj git push --bookmark feature        # Push bookmark
