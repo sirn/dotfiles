@@ -23,6 +23,7 @@
     ./programs/emacsc.nix
     ./programs/fd.nix
     ./programs/fzy.nix
+    ./programs/gh.nix
     ./programs/git.nix
     ./programs/gpg.nix
     ./programs/htop.nix
