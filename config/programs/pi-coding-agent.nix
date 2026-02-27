@@ -1,11 +1,8 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, pkgs, ... }:
 
 let
+  cfg = config.programs.pi-coding-agent;
+
   instructionText = builtins.readFile ../../var/agents/instruction.md;
   skillsDir = ../../var/agents/skills;
   permissionsToml = lib.importTOML ../../var/agents/permissions.toml;
@@ -14,8 +11,16 @@ let
     #!${pkgs.runtimeShell}
     exec "${lib.getExe pkgs.local.envWrapper}" \
       -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
-      -- "${lib.getExe pkgs.local.pi-coding-agent}" "$@"
+      -- "${lib.getExe cfg.package}" "$@"
   '';
+
+  # Base extensions that are always loaded
+  baseExtensions = [
+    "extensions/safety-gate.ts"
+  ];
+
+  # Combine base extensions with user-configured extensions
+  allExtensions = baseExtensions ++ cfg.extensions;
 
   settingsJson = builtins.toJSON {
     quietStartup = true;
@@ -39,9 +44,7 @@ let
       "skills/home-manager"
     ]
     ++ (map (name: "skills/mcp/mcp-${name}") (builtins.attrNames config.programs.mcp.servers));
-    extensions = [
-      "extensions/safety-gate.ts"
-    ];
+    extensions = allExtensions;
   };
 
   modelsJson = builtins.toJSON {
@@ -272,28 +275,30 @@ let
       # - In generated TS: \\\\\\\\ becomes \\ in the string
       # - In JS regex: \\ matches a literal backslash
       # Without double-escaping, \d would match a digit instead of literal \d
-      escaped = lib.concatMapStrings (c:
-        if c == "\\" then "\\\\\\\\"
-        else if c == "/" then "\\/"
-        else if c == "." then "\\."
-        else if c == "*" then "\\*"
-        else if c == "+" then "\\+"
-        else if c == "?" then "\\?"
-        else if c == "^" then "\\^"
-        else if c == "$" then "\\$"
-        else if c == "(" then "\\("
-        else if c == ")" then "\\)"
-        else if c == "[" then "\\["
-        else if c == "]" then "\\]"
-        else if c == "{" then "\\{"
-        else if c == "}" then "\\}"
-        else if c == "|" then "\\|"
-        else c
-      ) (lib.stringToCharacters cmd);
+      escaped = lib.concatMapStrings
+        (c:
+          if c == "\\" then "\\\\\\\\"
+          else if c == "/" then "\\/"
+          else if c == "." then "\\."
+          else if c == "*" then "\\*"
+          else if c == "+" then "\\+"
+          else if c == "?" then "\\?"
+          else if c == "^" then "\\^"
+          else if c == "$" then "\\$"
+          else if c == "(" then "\\("
+          else if c == ")" then "\\)"
+          else if c == "[" then "\\["
+          else if c == "]" then "\\]"
+          else if c == "{" then "\\{"
+          else if c == "}" then "\\}"
+          else if c == "|" then "\\|"
+          else c
+        )
+        (lib.stringToCharacters cmd);
     in
     # Match command at start of string OR after shell operators (&&, ||, ;, |, etc.)
-    # This handles compound commands like "foo && rm -rf /" or "bar | sudo baz"
-    # Pattern matches: start of string, or &&, ||, ;, |, &, (, {, `, or newline
+      # This handles compound commands like "foo && rm -rf /" or "bar | sudo baz"
+      # Pattern matches: start of string, or &&, ||, ;, |, &, (, {, `, or newline
     "/(?:^|\\|\\||&&|[&;|]|\\(\\{`\\n)\\s*${escaped}\\b/i";
 
   allowPatterns = lib.concatMapStringsSep ",\n  " toRegexPattern permissionsToml.default.commands.allow.shell;
@@ -301,94 +306,94 @@ let
   denyPatterns = lib.concatMapStringsSep ",\n  " toRegexPattern permissionsToml.default.commands.deny.shell;
 
   safetyGateTs = ''
-/**
- * Safety Gate Extension for Pi Coding Agent
- *
- * Generated from permissions.toml
- * - allow: commands permitted without confirmation
- * - ask: commands requiring user confirmation  
- * - deny: commands that are blocked entirely
- *
- * Policy: Ask by default - any command not explicitly allowed or denied
- * requires user confirmation.
- */
+    /**
+     * Safety Gate Extension for Pi Coding Agent
+     *
+     * Generated from permissions.toml
+     * - allow: commands permitted without confirmation
+     * - ask: commands requiring user confirmation
+     * - deny: commands that are blocked entirely
+     *
+     * Policy: Ask by default - any command not explicitly allowed or denied
+     * requires user confirmation.
+     */
 
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+    import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 
-// Commands permitted without confirmation (from permissions.toml [default.commands.allow])
-const allowPatterns = [
-  ${allowPatterns}
-];
+    // Commands permitted without confirmation (from permissions.toml [default.commands.allow])
+    const allowPatterns = [
+      ${allowPatterns}
+    ];
 
-// Commands that require user confirmation (from permissions.toml [default.commands.ask])
-const askPatterns = [
-  ${askPatterns}
-];
+    // Commands that require user confirmation (from permissions.toml [default.commands.ask])
+    const askPatterns = [
+      ${askPatterns}
+    ];
 
-// Commands that are denied entirely (from permissions.toml [default.commands.deny])
-const denyPatterns = [
-  ${denyPatterns}
-];
+    // Commands that are denied entirely (from permissions.toml [default.commands.deny])
+    const denyPatterns = [
+      ${denyPatterns}
+    ];
 
-// Check if a command matches any pattern
-function matchesPattern(command: string, patterns: RegExp[]): boolean {
-  return patterns.some((pattern) => pattern.test(command));
-}
-
-// Extract the base command for display
-function getCommandSummary(command: string): string {
-  if (command.length > 80) {
-    return command.slice(0, 77) + "...";
-  }
-  return command;
-}
-
-export default function (pi: ExtensionAPI) {
-  pi.on("tool_call", async (event, ctx) => {
-    if (event.toolName !== "bash") return undefined;
-
-    const command = event.input.command as string;
-
-    // Check deny patterns first (highest priority)
-    if (matchesPattern(command, denyPatterns)) {
-      return {
-        block: true,
-        reason: `Command blocked by safety policy: "''${getCommandSummary(command)}"`,
-      };
+    // Check if a command matches any pattern
+    function matchesPattern(command: string, patterns: RegExp[]): boolean {
+      return patterns.some((pattern) => pattern.test(command));
     }
 
-    // Check allow patterns - permit without asking
-    if (matchesPattern(command, allowPatterns)) {
-      return undefined;
+    // Extract the base command for display
+    function getCommandSummary(command: string): string {
+      if (command.length > 80) {
+        return command.slice(0, 77) + "...";
+      }
+      return command;
     }
 
-    // Check ask patterns - require confirmation (explicit ask list)
-    if (matchesPattern(command, askPatterns)) {
-      // Fall through to confirmation dialog below
+    export default function (pi: ExtensionAPI) {
+      pi.on("tool_call", async (event, ctx) => {
+        if (event.toolName !== "bash") return undefined;
+
+        const command = event.input.command as string;
+
+        // Check deny patterns first (highest priority)
+        if (matchesPattern(command, denyPatterns)) {
+          return {
+            block: true,
+            reason: `Command blocked by safety policy: "''${getCommandSummary(command)}"`,
+          };
+        }
+
+        // Check allow patterns - permit without asking
+        if (matchesPattern(command, allowPatterns)) {
+          return undefined;
+        }
+
+        // Check ask patterns - require confirmation (explicit ask list)
+        if (matchesPattern(command, askPatterns)) {
+          // Fall through to confirmation dialog below
+        }
+
+        // Default policy: ask for confirmation on any command not explicitly allowed
+        if (!ctx.hasUI) {
+          return {
+            block: true,
+            reason: `Command blocked (no UI for confirmation): "''${getCommandSummary(command)}"`,
+          };
+        }
+
+        const choice = await ctx.ui.select(
+          `Confirm: ''${getCommandSummary(command)}`,
+          ["Yes, proceed", "No, cancel"]
+        );
+
+        if (choice !== "Yes, proceed") {
+          ctx.ui.notify("Command cancelled by user", "info");
+          return { block: true, reason: "Blocked by user" };
+        }
+
+        return undefined;
+      });
     }
-
-    // Default policy: ask for confirmation on any command not explicitly allowed
-    if (!ctx.hasUI) {
-      return {
-        block: true,
-        reason: `Command blocked (no UI for confirmation): "''${getCommandSummary(command)}"`,
-      };
-    }
-
-    const choice = await ctx.ui.select(
-      `Confirm: ''${getCommandSummary(command)}`,
-      ["Yes, proceed", "No, cancel"]
-    );
-
-    if (choice !== "Yes, proceed") {
-      ctx.ui.notify("Command cancelled by user", "info");
-      return { block: true, reason: "Blocked by user" };
-    }
-
-    return undefined;
-  });
-}
-'';
+  '';
 
   baseFiles = {
     ".pi/agent/settings.json".text = settingsJson;
@@ -399,6 +404,8 @@ export default function (pi: ExtensionAPI) {
   };
 in
 {
+  programs.pi-coding-agent.enable = true;
+
   home.packages = [ wrappedPi ];
 
   programs.git.ignores = [ ".pi/" ];
