@@ -1,13 +1,13 @@
 { config, lib, pkgs, ... }:
 
 let
-  instructionText = builtins.readFile ../../var/agents/instruction.md;
+  instructionText = builtins.readFile ../../../var/agents/instruction.md;
 
-  skillsDir = ../../var/agents/skills;
+  skillsDir = ../../../var/agents/skills;
 
-  agentsDir = ../../var/agents/agents;
+  agentsDir = ../../../var/agents/agents;
 
-  permissionsPolicy = builtins.fromTOML (builtins.readFile ../../var/agents/permissions.toml);
+  permissionsPolicy = builtins.fromTOML (builtins.readFile ../../../var/agents/permissions.toml);
 
   effectivePolicy = mode:
     let

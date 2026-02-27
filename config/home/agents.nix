@@ -1,10 +1,10 @@
 {
   imports = [
     ../programs/claude-code
-    ../programs/codex.nix
-    ../programs/gemini.nix
+    ../programs/codex
+    ../programs/gemini
     ../programs/mcp.nix
-    ../programs/opencode.nix
+    ../programs/opencode
     ../programs/pi-coding-agent
   ];
 

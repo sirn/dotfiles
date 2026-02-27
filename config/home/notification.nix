@@ -1,18 +1,27 @@
 { config, lib, pkgs, ... }:
 
 let
-  mkNotify = title: body:
-    lib.concatStringsSep " " (
-      [
-        (lib.getExe pkgs.toastify)
-        "send"
-      ]
-      ++ lib.optionals (!pkgs.stdenv.isDarwin) [ "--expire-time" "10000" ]
-      ++ [
-        (lib.escapeShellArg title)
-        (lib.escapeShellArg body)
-      ]
-    );
+  # Claude Code: Stop hook with transcript fallback
+  claudeNotify = pkgs.writeShellApplication {
+    name = "claude-code-notify";
+    runtimeInputs = [ pkgs.jq pkgs.toastify ];
+    text = builtins.readFile ../programs/claude-code/notify.sh;
+  };
+
+  # Gemini CLI: AfterAgent hook with prompt_response from stdin
+  geminiNotify = pkgs.writeShellApplication {
+    name = "gemini-cli-notify";
+    runtimeInputs = [ pkgs.jq pkgs.toastify ];
+    text = builtins.readFile ../programs/gemini/notify.sh;
+  };
+
+  # Codex: notify hook with last-assistant-message from arguments or stdin
+  codexNotify = pkgs.writeShellApplication {
+    name = "codex-notify";
+    runtimeInputs = [ pkgs.jq pkgs.toastify ];
+    text = builtins.readFile ../programs/codex/notify.sh;
+  };
+
 in
 {
   programs.claude-code = lib.mkIf config.programs.claude-code.enable {
@@ -23,7 +32,7 @@ in
             hooks = [
               {
                 type = "command";
-                command = mkNotify "Claude Code" "Claude Code finished their turn";
+                command = lib.getExe claudeNotify;
               }
             ];
           }
@@ -33,47 +42,42 @@ in
   };
 
   programs.gemini-cli = lib.mkIf config.programs.gemini-cli.enable {
+    settings.hooksConfig.enabled = true;
     settings.hooks.AfterAgent = [
       {
-        type = "command";
-        name = "notify-turn-complete";
-        command = mkNotify "Gemini CLI" "Gemini finished their turn";
+        hooks = [
+          {
+            type = "command";
+            name = "notify-turn-complete";
+            command = lib.getExe geminiNotify;
+          }
+        ];
       }
     ];
   };
 
   programs.codex = lib.mkIf config.programs.codex.enable {
-    settingsOverride.notify =
-      let
-        notifyScript = pkgs.writeShellScript "codex-notify" ''
-          INPUT="$1"
-          TYPE=$(echo "$INPUT" | ${lib.getExe pkgs.jq} -r '.type // empty')
+    settingsOverride.notify = [
+      "${pkgs.runtimeShell}"
+      (lib.getExe codexNotify)
+    ];
+  };
 
-          if [ "$TYPE" = "agent-turn-complete" ]; then
-            ${mkNotify "Codex" "Codex finished their turn"}
-          fi
-        '';
-      in
-      [
-        "${pkgs.runtimeShell}"
-        notifyScript
-        "{}"
-      ];
+  programs.pi-coding-agent = lib.mkIf config.programs.pi-coding-agent.enable {
+    extensions = [ "extensions/notify-turn-complete.ts" ];
   };
 
   xdg.configFile."opencode/plugins/notify-turn-complete.ts" = lib.mkIf config.programs.opencode.enable {
-    text = ''
-      import type { Plugin } from "@opencode-ai/plugin"
+    text = builtins.replaceStrings
+      [ "\"__TOASTIFY_BIN__\"" ]
+      [ "\"${lib.getExe pkgs.toastify}\"" ]
+      (builtins.readFile ../programs/opencode/notify-turn-complete.ts);
+  };
 
-      export const NotifyTurnComplete: Plugin = async ({ project, client, $, directory, worktree }) => {
-        return {
-          event: async ({ event }) => {
-            if (event.type === "session.idle") {
-              await $`${mkNotify "OpenCode" "OpenCode finished their turn"}`
-            }
-          },
-        }
-      }
-    '';
+  home.file.".pi/agent/extensions/notify-turn-complete.ts" = lib.mkIf config.programs.pi-coding-agent.enable {
+    text = builtins.replaceStrings
+      [ "\"__TOASTIFY_BIN__\"" ]
+      [ "\"${lib.getExe pkgs.toastify}\"" ]
+      (builtins.readFile ../programs/pi-coding-agent/notify-turn-complete.ts);
   };
 }
