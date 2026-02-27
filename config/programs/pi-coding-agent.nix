@@ -268,12 +268,13 @@ let
   toRegexPattern = cmd:
     let
       # Escape special regex characters in the command
-      # Note: backslashes need double-escaping (\\\\) because:
-      # - In generated TS: \\\\ becomes \\ in the string
+      # Note: backslashes need double-escaping (\\\\\\\\) because:
+      # - In generated TS: \\\\\\\\ becomes \\ in the string
       # - In JS regex: \\ matches a literal backslash
       # Without double-escaping, \d would match a digit instead of literal \d
       escaped = lib.concatMapStrings (c:
         if c == "\\" then "\\\\\\\\"
+        else if c == "/" then "\\/"
         else if c == "." then "\\."
         else if c == "*" then "\\*"
         else if c == "+" then "\\+"
