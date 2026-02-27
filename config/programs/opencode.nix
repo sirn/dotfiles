@@ -126,6 +126,17 @@ let
           enabled = true;
         })
       servers;
+
+  # Generate MCP tool permissions from server allowedTools
+  opencodeMcpPermissions = lib.listToAttrs (lib.flatten (lib.mapAttrsToList (name: server:
+    let tools = server.allowedTools or null; in
+    if tools == null
+    then [{ name = "${name}_*"; value = true; }]
+    else
+      # Deny all tools by default, allow specific ones
+      [{ name = "${name}_*"; value = false; }] ++
+      (map (tool: { name = "${name}_${tool}"; value = true; }) tools)
+  ) config.programs.mcp.servers));
 in
 {
   programs.opencode = {
@@ -154,6 +165,7 @@ in
         build.model = "synthetic/hf:moonshotai/Kimi-K2.5";
       };
       permission = toOpencodePermissions "build";
+      tools = opencodeMcpPermissions;
     };
   };
 

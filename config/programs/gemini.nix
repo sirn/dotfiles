@@ -84,12 +84,22 @@ let
   toGeminiMcpServers = servers:
     lib.mapAttrs
       (name: server:
-        if isStdioServer server then {
-          command = server.command or (lib.getExe server.package);
-        } else {
-          command = lib.getExe pkgs.local.mcpServers.mcp-remote;
-          args = [ server.url ];
-        })
+        let
+          tools = server.allowedTools or null;
+          baseConfig = 
+            if isStdioServer server then {
+              command = server.command or (lib.getExe server.package);
+            } else {
+              command = lib.getExe pkgs.local.mcpServers.mcp-remote;
+              args = [ server.url ];
+            };
+          # Add trust setting based on allowedTools
+          trustConfig = 
+            if tools == null
+            then { trust = true; }
+            else { };
+        in
+          baseConfig // trustConfig)
       servers;
 in
 {

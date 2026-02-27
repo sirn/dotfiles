@@ -51,7 +51,8 @@ let
 
       mkBashPatterns = cmds: lib.concatMap (cmd: [ "Bash(${cmd})" "Bash(${cmd} *)" ]) cmds;
       bashAllows = mkBashPatterns (commands.allow.shell or [ ]);
-      allow = baseTools ++ pathAllows ++ bashAllows;
+      mcpAllows = claudeCodeMcpPermissions;
+      allow = baseTools ++ pathAllows ++ bashAllows ++ mcpAllows;
 
       ask = mkBashPatterns (commands.ask.shell or [ ]);
 
@@ -121,6 +122,14 @@ let
           url = server.url;
         })
       servers;
+
+  # Generate MCP permissions from server allowedTools
+  claudeCodeMcpPermissions = lib.flatten (lib.mapAttrsToList (name: server:
+    let tools = server.allowedTools or null; in
+    if tools == null
+    then [ "mcp__${name}__*" ]
+    else map (tool: "mcp__${name}__${tool}") tools
+  ) config.programs.mcp.servers);
 
   statusLineScript = pkgs.writeShellScript "claude-statusline" ''
     input=$(cat)
