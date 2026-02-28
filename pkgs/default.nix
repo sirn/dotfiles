@@ -20,8 +20,6 @@ in
   firefox-csshacks = (callPackage ./by-name/firefox/csshacks.nix { });
 
   mcpServers = {
-    context7 = (callPackage ./by-name/mcp-servers/context7/package.nix { });
-
     mcp-remote = (callPackage ./by-name/mcp-servers/mcp-remote/package.nix { });
   };
 
