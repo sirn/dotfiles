@@ -27,6 +27,25 @@ shell = [
   "tree",
   "lstr",
 
+  # File content viewing (read-only)
+  "cat",
+  "head",
+  "tail",
+  "bat",
+  "batcat",
+
+  # File metadata (read-only)
+  "file",
+  "stat",
+  "wc",
+
+  # Text processing (read-only)
+  "sort",
+  "uniq",
+  "cut",
+  "tr",
+  "sed -n",
+
   # Text search and filtering
   "rg",
   "grep",
