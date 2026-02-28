@@ -9,40 +9,13 @@ Documentation context retrieval using the Context7 API.
 
 Requires `CONTEXT7_API_KEY` environment variable to be set. API keys start with `ctx7sk`.
 
-## API Endpoints
+## API Endpoint
 
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/v2/libraries` | Search for indexed libraries |
-| `GET /api/v2/context` | Retrieve documentation context for a library |
-
-## Search Libraries
-
-Find indexed libraries before requesting context.
-
-**Request**:
-```bash
-curl -s "https://context7.com/api/v2/libraries?q=next.js" \
-  -H "Authorization: Bearer $CONTEXT7_API_KEY"
+```
+GET https://context7.com/api/v2/context
 ```
 
-**Response**:
-```json
-[
-  {
-    "id": "/vercel/next.js",
-    "name": "next",
-    "description": "The React Framework for the Web",
-    "links": {
-      "github": "https://github.com/vercel/next.js"
-    },
-    "language": "typescript",
-    "stars": 123456,
-    "lastUpdated": "2025-01-15T00:00:00.000Z",
-    "versions": ["v15.1.8", "v14.2.20"]
-  }
-]
-```
+Retrieve documentation context for a specific library.
 
 ## Get Context
 
@@ -50,92 +23,106 @@ Retrieve documentation context for a specific library.
 
 **Request**:
 ```bash
-curl -s "https://context7.com/api/v2/context?libraryId=/vercel/next.js&query=How%20to%20use%20useState" \
+curl -s "https://context7.com/api/v2/context?libraryId=/facebook/react&query=useEffect" \
   -H "Authorization: Bearer $CONTEXT7_API_KEY"
 ```
 
 **Response**:
-```json
-{
-  "id": "doc-123",
-  "title": "useState - React",
-  "content": "const [state, setState] = useState(initialState); ...",
-  "metadata": {
-    "source": "https://react.dev/reference/react/useState",
-    "library": "/vercel/next.js",
-    "version": "v15.1.8"
-  }
+Plain text/markdown format with code examples and source references:
+
+```markdown
+### Perform Side Effects in React Function Components using useEffect Hook
+
+Source: https://context7.com/facebook/react/llms.txt
+
+The `useEffect` hook enables functional components to perform side effects...
+
+\`\`\`jsx
+import { useState, useEffect } from 'react';
+
+function UserProfile({ userId }) {
+  // ... code example ...
 }
+\`\`\`
+
+--------------------------------
+
+### React > Hooks > useEffect
+
+Source: https://context7.com/facebook/react/llms.txt
+
+The `useEffect` hook performs side effects in function components...
 ```
 
 ## Example Usage
 
 ```bash
-# Step 1: Find a library
-LIBRARY=$(curl -s "https://context7.com/api/v2/libraries?q=react" \
-  -H "Authorization: Bearer $CONTEXT7_API_KEY" | \
-  jq -r '.[0].id')
+# Get documentation for React useEffect hook
+curl -s "https://context7.com/api/v2/context?libraryId=/facebook/react&query=useEffect" \
+  -H "Authorization: Bearer $CONTEXT7_API_KEY"
 
-# Step 2: Get context for a specific topic
-curl -s "https://context7.com/api/v2/context?libraryId=${LIBRARY}&query=hooks" \
-  -H "Authorization: Bearer $CONTEXT7_API_KEY" | jq .
+# Get documentation for a specific concept
+curl -s "https://context7.com/api/v2/context?libraryId=/facebook/react&query=useState%20hook" \
+  -H "Authorization: Bearer $CONTEXT7_API_KEY"
 
-# Search with specific version
-curl -s "https://context7.com/api/v2/context?libraryId=/vercel/next.js/v15.1.8&query=app%20router" \
-  -H "Authorization: Bearer $CONTEXT7_API_KEY" | jq .
+# Save to file for reference
+curl -s "https://context7.com/api/v2/context?libraryId=/facebook/react&query=hooks" \
+  -H "Authorization: Bearer $CONTEXT7_API_KEY" > react-hooks.md
 
-# Extract just the content
-curl -s "https://context7.com/api/v2/context?libraryId=/vercel/next.js&query=useState" \
-  -H "Authorization: Bearer $CONTEXT7_API_KEY" | \
-  jq -r '.content'
+# Search with URL-encoded query
+curl -s "https://context7.com/api/v2/context?libraryId=/vercel/next.js&query=app%20router" \
+  -H "Authorization: Bearer $CONTEXT7_API_KEY"
 ```
 
 ## Query Parameters
 
-### Libraries Search (`/api/v2/libraries`)
-
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `q` | string | **Required.** Search query for library name. |
-| `limit` | integer | Max results (default: 10). |
-
-### Context Retrieval (`/api/v2/context`)
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `libraryId` | string | **Required.** Library ID from search (e.g., `/owner/repo` or `/owner/repo/v1.0.0`). |
+| `libraryId` | string | **Required.** Library identifier (e.g., `/facebook/react`, `/vercel/next.js`). |
 | `query` | string | **Required.** Natural language query about the documentation topic. |
 
 ## Library ID Format
 
-| Format | Example | Use Case |
-|--------|---------|----------|
-| Owner/Repo | `/vercel/next.js` | Latest version |
-| With version | `/vercel/next.js/v15.1.8` | Specific version |
+Library IDs follow the pattern `/owner/repo`:
 
-## Response Fields
+| Example | Description |
+|---------|-------------|
+| `/facebook/react` | React library |
+| `/vercel/next.js` | Next.js framework |
 
-### Library Search Response
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Library identifier for context queries |
-| `name` | string | Package/library name |
-| `description` | string | Library description |
-| `language` | string | Primary programming language |
-| `stars` | integer | GitHub stars |
-| `versions` | array | Available indexed versions |
+## Response Format
 
 ### Context Response
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Document identifier |
-| `title` | string | Document title |
-| `content` | string | Documentation content |
-| `metadata.source` | string | Source URL |
-| `metadata.library` | string | Library ID |
-| `metadata.version` | string | Library version |
+The `/api/v2/context` endpoint returns plain text in markdown format with the following structure:
+
+- **Multiple sections** separated by `--------------------------------`
+- Each section contains:
+  - A **heading** (e.g., `### Component Name`)
+  - A **Source** URL
+  - **Description text** explaining the concept
+  - **Code examples** in fenced code blocks
+
+Example structure:
+```markdown
+### Topic Title
+
+Source: https://context7.com/owner/repo/llms.txt
+
+Description text explaining the concept...
+
+\`\`\`language
+// Code example
+\`\`\`
+
+--------------------------------
+
+### Another Topic
+
+Source: https://github.com/owner/repo/blob/...
+
+More documentation...
+```
 
 ## Error Handling
 
