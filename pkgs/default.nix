@@ -22,8 +22,6 @@ in
   mcpServers = {
     context7 = (callPackage ./by-name/mcp-servers/context7/package.nix { });
 
-    brave-search = (callPackage ./by-name/mcp-servers/brave-search/package.nix { });
-
     mcp-remote = (callPackage ./by-name/mcp-servers/mcp-remote/package.nix { });
   };
 
