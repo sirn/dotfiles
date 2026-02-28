@@ -66,6 +66,11 @@
   - Use project task runners (`make`, `task`) if present.
   - If a command fails, try `--help` to debug.
 
+## Search & Documentation
+- **context7**: Use for retrieving **library documentation** (React docs, Python stdlib, Rust ownership rules, etc.). Provides detailed examples and code snippets from official sources. Best for API references and language-specific documentation.
+- **brave-search**: Use for general **web searches** (news articles, blog posts, tutorials, etc.). Supports freshness filters, country/language targeting, and search operators. Best for finding fresh web content and information.
+- **synthetic-search**: Use for **search queries where privacy is important** (zero-data-retention API). Simple search with results containing title, URL, text snippet, and publication date.
+
 ## Version Control
 - **Policy**: ALWAYS use `jj` (Jujutsu) for all version control operations. Do NOT use `git` unless explicitly requested by the user or if `jj` is functionally unavailable.
 - **Policy**: Do NOT create, modify, or squash commits on your own unless explicitly instructed by the user. You are NOT authorized to manage version control history autonomously.
