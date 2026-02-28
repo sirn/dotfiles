@@ -9,12 +9,12 @@
 }:
 
 let
-  version = "0.55.1";
+  version = "0.55.3";
 
   platformMap = {
     x86_64-linux = {
       arch = "linux-x64";
-      hash = "sha256:10s90fxw5yh62j9wgy6m0dh2nf0c0syl1z84qw85ya94pahfcmbw";
+      hash = "sha256:sha256-Az8qDfnLk6y667/1DbLuf64nSWcrPP5mpOqgY7yOMTY=";
     };
     aarch64-linux = {
       arch = "linux-arm64";
