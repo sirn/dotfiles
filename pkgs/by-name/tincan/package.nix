@@ -2,12 +2,12 @@
 
 buildGoModule rec {
   pname = "tincan";
-  version = "0.1.0";
+  version = "0.2.0";
 
   src = fetchgit {
     url = "https://git.sr.ht/~sirn/tincan";
     rev = "refs/tags/v${version}";
-    hash = "sha256-Y9mgqbDv5jv2gRIIUlQXit7r3rqMNbFH5jhrQiSCKLE=";
+    hash = "sha256-Ge9IV/vobgfnXw3KqdOwUWzuk/CgfmiOfWEKrcfwQlQ=";
   };
 
   vendorHash = "sha256-A7ePGlDtqds0T4uDGXgCX/Pv1q0VRMQczeGWtb/b3ps=";
