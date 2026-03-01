@@ -1,11 +1,11 @@
-{
-  lib,
-  stdenv,
-  fetchurl,
-  autoPatchelfHook,
-  makeWrapper,
-  fd,
-  ripgrep,
+{ lib
+, stdenv
+, fetchurl
+, autoPatchelfHook
+, makeWrapper
+, fd
+, ripgrep
+,
 }:
 
 let
@@ -14,19 +14,19 @@ let
   platformMap = {
     x86_64-linux = {
       arch = "linux-x64";
-      hash = "sha256:sha256-Az8qDfnLk6y667/1DbLuf64nSWcrPP5mpOqgY7yOMTY=";
+      hash = "sha256-Az8qDfnLk6y667/1DbLuf64nSWcrPP5mpOqgY7yOMTY=";
     };
     aarch64-linux = {
       arch = "linux-arm64";
-      hash = "sha256:1cyza1x0z5x8gvqyhwpgv78c0l4258vx3b9cy6lqrdz6pgl9dliw";
+      hash = "sha256-p3IQmSV5ZbKHkQks06o0TCEO5RVIb6LJiVvq0G6YjkY=";
     };
     aarch64-darwin = {
       arch = "darwin-arm64";
-      hash = "sha256:1k31r52n69pml6jvl23h8j3znnqn0zkg4bbcrd0n6zkli950vfgv";
+      hash = "sha256-G5XVLmTcS8H811nxQMr726iaMnqHFJORFvth/TZ8ohs=";
     };
     x86_64-darwin = {
       arch = "darwin-x64";
-      hash = "sha256:1ad58497l0hrb2s7qsdp0fgrb945xsanqfzlxxxkqxg7064k0yfj";
+      hash = "sha256-/LCYggFKkm8tXEnMCBMMkFt2IZrZbHz/aI9rgY3E6/M=";
     };
   };
 
