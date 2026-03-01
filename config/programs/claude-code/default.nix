@@ -94,7 +94,8 @@ let
         else if !(agent.claude-code ? color) then throw "Agent ${name}: missing 'claude-code.color'"
         else if !(agent.claude-code ? model) then throw "Agent ${name}: missing 'claude-code.model'"
         else agent;
-    in valid;
+    in
+    valid;
 
   validClaudeCodeAgents = lib.mapAttrs validateClaudeCodeAgent claudeCodeAgents;
 
@@ -124,12 +125,14 @@ let
       servers;
 
   # Generate MCP permissions from server allowedTools
-  claudeCodeMcpPermissions = lib.flatten (lib.mapAttrsToList (name: server:
-    let tools = server.allowedTools or null; in
-    if tools == null
-    then [ "mcp__${name}__*" ]
-    else map (tool: "mcp__${name}__${tool}") tools
-  ) config.programs.mcp.servers);
+  claudeCodeMcpPermissions = lib.flatten (lib.mapAttrsToList
+    (name: server:
+      let tools = server.allowedTools or null; in
+      if tools == null
+      then [ "mcp__${name}__*" ]
+      else map (tool: "mcp__${name}__${tool}") tools
+    )
+    config.programs.mcp.servers);
 
   statusLineScript = pkgs.writeShellApplication {
     name = "claude-statusline";

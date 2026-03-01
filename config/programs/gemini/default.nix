@@ -86,7 +86,7 @@ let
       (name: server:
         let
           tools = server.allowedTools or null;
-          baseConfig = 
+          baseConfig =
             if isStdioServer server then {
               command = server.command or (lib.getExe server.package);
             } else {
@@ -94,12 +94,12 @@ let
               args = [ server.url ];
             };
           # Add trust setting based on allowedTools
-          trustConfig = 
+          trustConfig =
             if tools == null
             then { trust = true; }
             else { };
         in
-          baseConfig // trustConfig)
+        baseConfig // trustConfig)
       servers;
 in
 {
