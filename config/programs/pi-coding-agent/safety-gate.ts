@@ -7,6 +7,7 @@
  * - deny: commands that are blocked entirely
  *
  * Policy: Ask by default - any command not explicitly allowed or denied requires confirmation.
+ * Per-project overrides can be placed in .pi/safety-gate.json relative to the project root.
  */
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
@@ -20,10 +21,17 @@ interface SafetyConfig {
   deny: string[];
 }
 
-// Load config from JSON file in the same directory
+interface Patterns {
+  allow: RegExp[];
+  ask: RegExp[];
+  deny: RegExp[];
+}
+
+// Load global config from JSON file in the same directory
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const configPath = join(__dirname, "safety-gate.json");
-const config: SafetyConfig = JSON.parse(readFileSync(configPath, "utf-8"));
+const globalConfig: SafetyConfig = JSON.parse(
+  readFileSync(join(__dirname, "safety-gate.json"), "utf-8")
+);
 
 // Convert command strings to regex patterns
 function escapeRegex(s: string): string {
@@ -43,10 +51,35 @@ function toRegex(cmd: string): RegExp {
   );
 }
 
-// Convert config arrays to regex patterns
-const allowPatterns = config.allow.map(toRegex);
-const askPatterns = config.ask.map(toRegex);
-const denyPatterns = config.deny.map(toRegex);
+function toPatterns(cfg: SafetyConfig): Patterns {
+  return {
+    allow: cfg.allow.map(toRegex),
+    ask: cfg.ask.map(toRegex),
+    deny: cfg.deny.map(toRegex),
+  };
+}
+
+const globalPatterns = toPatterns(globalConfig);
+
+// Project-local patterns, loaded lazily on first tool_call (cwd is static per session)
+let projectPatterns: Patterns | null = null;
+
+function getProjectPatterns(cwd: string): Patterns {
+  if (projectPatterns !== null) return projectPatterns;
+  try {
+    const local: Partial<SafetyConfig> = JSON.parse(
+      readFileSync(join(cwd, ".pi", "safety-gate.json"), "utf-8")
+    );
+    projectPatterns = toPatterns({
+      allow: local.allow ?? [],
+      ask: local.ask ?? [],
+      deny: local.deny ?? [],
+    });
+  } catch {
+    projectPatterns = { allow: [], ask: [], deny: [] };
+  }
+  return projectPatterns;
+}
 
 // Check if a command matches any pattern
 function matchesPattern(command: string, patterns: RegExp[]): boolean {
@@ -66,17 +99,24 @@ export default function (pi: ExtensionAPI) {
     if (event.toolName !== "bash") return undefined;
 
     const command = event.input.command as string;
+    const project = getProjectPatterns(ctx.cwd);
 
-    // Check deny patterns first (highest priority)
-    if (matchesPattern(command, denyPatterns)) {
+    // Check deny patterns first (highest priority; global or project can deny)
+    if (
+      matchesPattern(command, globalPatterns.deny) ||
+      matchesPattern(command, project.deny)
+    ) {
       return {
         block: true,
         reason: `Command blocked by safety policy: "${getCommandSummary(command)}"`,
       };
     }
 
-    // Check allow patterns - permit without asking
-    if (matchesPattern(command, allowPatterns)) {
+    // Check allow patterns (project allow checked first to grant extra permissions)
+    if (
+      matchesPattern(command, project.allow) ||
+      matchesPattern(command, globalPatterns.allow)
+    ) {
       return undefined;
     }
 
