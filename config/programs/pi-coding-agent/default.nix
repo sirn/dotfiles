@@ -3,8 +3,8 @@
 let
   cfg = config.programs.pi-coding-agent;
 
-  instructionText = builtins.readFile ../../../var/agents/instruction.md;
   skillsDir = ../../../var/agents/skills;
+  instructionText = builtins.readFile ../../../var/agents/instruction.md;
   permissionsToml = lib.importTOML ../../../var/agents/permissions.toml;
 
   wrappedPi = pkgs.writeScriptBin "pi" ''
@@ -166,82 +166,38 @@ let
     - Do not squash commit unless being told explicitly by the user.
   '';
 
+  mcpWrapperTemplate = builtins.readFile ./mcp-wrapper.sh;
+  mcpExecStdioTemplate = builtins.readFile ./mcp-exec-stdio.sh;
+  mcpExecSseTemplate = builtins.readFile ./mcp-exec-sse.sh;
+
   isStdioServer = server: server ? command || server ? package;
 
-  toPiMcpWrapperScript =
-    name: server:
+  toPiMcpWrapperScript = name: server:
     let
       isStdio = isStdioServer server;
       serverCmd = if isStdio then (server.command or (lib.getExe server.package)) else "";
       serverUrl = if isStdio then "" else server.url;
       jqBin = lib.getExe pkgs.jq;
+      mcpRemoteBin = lib.getExe pkgs.local.mcpServers.mcp-remote;
+      timeoutBin = lib.getExe' pkgs.coreutils "timeout";
+
+      transportExec =
+        if isStdio then
+          builtins.replaceStrings
+            [ "__SERVER_CMD__" "__JQ_BIN__" ]
+            [ serverCmd jqBin ]
+            mcpExecStdioTemplate
+        else
+          builtins.replaceStrings
+            [ "__TIMEOUT_BIN__" "__MCP_REMOTE_BIN__" "__SERVER_URL__" "__JQ_BIN__" ]
+            [ timeoutBin mcpRemoteBin serverUrl jqBin ]
+            mcpExecSseTemplate;
     in
     pkgs.writeShellScript "mcp-${name}-wrapper" (
-      if isStdio then
-        ''
-          # MCP: ${name}
-          # Transport: stdio
-
-          COMMAND=$1
-
-          case "$COMMAND" in
-            list)
-              REQUEST='{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
-              ;;
-            call)
-              TOOL=$2
-              ARGS="''${3:-'{}'}"
-              REQUEST=$(${jqBin} -n -c \
-                --arg tool "$TOOL" \
-                --argjson args "$ARGS" \
-                '{jsonrpc:"2.0",id:1,method:"tools/call",params:{name:$tool,arguments:$args}}')
-              ;;
-            *)
-              echo "Usage: $0 list"
-              echo "       $0 call <tool> '<json-args>'"
-              exit 1
-              ;;
-          esac
-
-          echo "$REQUEST" | ${serverCmd} | ${jqBin} -r '.result | if (.tools) then (.tools[] | .name) else (.content[] | .text) end'
-        ''
-      else
-        ''
-          # MCP: ${name}
-          # Transport: sse
-
-          COMMAND=$1
-
-          case "$COMMAND" in
-            list)
-              REQUEST='{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
-              ;;
-            call)
-              TOOL=$2
-              ARGS="''${3:-'{}'}"
-              REQUEST=$(${jqBin} -n -c \
-                --arg tool "$TOOL" \
-                --argjson args "$ARGS" \
-                '{jsonrpc:"2.0",id:1,method:"tools/call",params:{name:$tool,arguments:$args}}')
-              ;;
-            *)
-              echo "Usage: $0 list"
-              echo "       $0 call <tool> '<json-args>'"
-              exit 1
-              ;;
-          esac
-
-          # Use a FIFO to maintain persistent stdin for SSE transport
-          # mcp-remote requires an open connection to receive async responses
-          FIFO=$(mktemp -u)
-          mkfifo "$FIFO"
-          # Open FIFO read-write (doesn't block on Linux) to keep it open via FD 3
-          exec 3<> "$FIFO"
-          echo "$REQUEST" > "$FIFO"
-          ${pkgs.coreutils}/bin/timeout "''${TIMEOUT:-30}" ${lib.getExe pkgs.local.mcpServers.mcp-remote} "${serverUrl}" < "$FIFO" 2>/dev/null | ${jqBin} -r '.result | if (.tools) then (.tools[] | .name) else (.content[] | .text) end'
-          exec 3<&-
-          rm -f "$FIFO"
-        ''
+      builtins.replaceStrings
+        [ "__MCP_NAME__" "__MCP_TRANSPORT__" "__JQ_BIN__" "__MCP_REMOTE_BIN__" "__TIMEOUT_BIN__" "__SERVER_CMD__" "__SERVER_URL__" "__TRANSPORT_EXEC__" ]
+        [ name (if isStdio then "stdio" else "sse") jqBin mcpRemoteBin timeoutBin serverCmd serverUrl transportExec ]
+        mcpWrapperTemplate
     );
 
   toPiMcpSkillText = name: ''
@@ -270,13 +226,15 @@ let
   # Generate MCP allow commands from config.programs.mcp.servers
   # allowedTools = null means allow all, list means only specific tools
   # Note: "list" is always allowed (read-only discovery operation)
-  mcpAllowCommands = lib.flatten (lib.mapAttrsToList (name: server:
-    let tools = server.allowedTools or null; in
-    [ "mcp-${name}/mcp-wrapper.sh list" ] ++
-    (if tools == null
-     then [ "mcp-${name}/mcp-wrapper.sh call" ]
-     else map (tool: "mcp-${name}/mcp-wrapper.sh call ${tool}") tools)
-  ) config.programs.mcp.servers);
+  mcpAllowCommands = lib.flatten (lib.mapAttrsToList
+    (name: server:
+      let tools = server.allowedTools or null; in
+      [ "mcp-${name}/mcp-wrapper.sh list" ] ++
+      (if tools == null
+      then [ "mcp-${name}/mcp-wrapper.sh call" ]
+      else map (tool: "mcp-${name}/mcp-wrapper.sh call ${tool}") tools)
+    )
+    config.programs.mcp.servers);
 
   # Generate JSON config for safety-gate extension
   safetyGateJson = builtins.toJSON {
@@ -291,14 +249,17 @@ let
   baseFiles = {
     ".pi/agent/settings.json".text = settingsJson;
     ".pi/agent/models.json".text = modelsJson;
-    ".pi/agent/AGENTS.md".text = agentsMdText;
+    ".pi/agent/AGENTS.md".text = cfg.instructionText;
     ".pi/agent/skills/home-manager".source = skillsDir;
     ".pi/agent/extensions/safety-gate.ts".text = safetyGateTs;
     ".pi/agent/extensions/safety-gate.json".text = safetyGateJson;
   };
 in
 {
-  programs.pi-coding-agent.enable = true;
+  programs.pi-coding-agent = {
+    enable = true;
+    instructionText = agentsMdText;
+  };
 
   home.packages = [ wrappedPi ];
 

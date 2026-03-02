@@ -18,5 +18,13 @@
       default = pkgs.local.pi-coding-agent;
       description = "The Pi coding agent package to use.";
     };
+
+    instructionText = lib.mkOption {
+      type = lib.types.lines;
+      default = "";
+      description = ''
+        The instruction text to use as AGENTS.md.
+      '';
+    };
   };
 }
