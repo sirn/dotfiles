@@ -17,91 +17,15 @@ let
   agentsMdText = ''
     ${instructionText}
 
-    ## MCP Skills (Pi-specific)
-    - MCP skills are located in `~/.pi/agent/skills/mcp/mcp-<name>/` directories.
-    - Each MCP skill provides a `./mcp-wrapper.sh` script for tool discovery and execution.
-    - **ALWAYS run `./mcp-wrapper.sh list` first to discover available tools before attempting to call any tool.**
-    - After discovering tools, execute with: `./mcp-wrapper.sh call <tool-name> '<json-arguments>'`
-
     ## Safety Guidelines (Pi-specific)
     - When running destructive commands (`rm`, etc.), you must first ask the user.
     - When doing a commit, ask user for confirmation first.
     - Do not squash commit unless being told explicitly by the user.
   '';
 
-  mcpWrapperTemplate = builtins.readFile ./mcp-wrapper.sh;
-  mcpExecStdioTemplate = builtins.readFile ./mcp-exec-stdio.sh;
-  mcpExecSseTemplate = builtins.readFile ./mcp-exec-sse.sh;
-
-  isStdioServer = server: server ? command || server ? package;
-
-  toPiMcpWrapperScript = name: server:
-    let
-      isStdio = isStdioServer server;
-      serverCmd = if isStdio then (server.command or (lib.getExe server.package)) else "";
-      serverUrl = if isStdio then "" else server.url;
-      jqBin = lib.getExe pkgs.jq;
-      mcpRemoteBin = lib.getExe pkgs.local.mcpServers.mcp-remote;
-      timeoutBin = lib.getExe' pkgs.coreutils "timeout";
-
-      transportExec =
-        if isStdio then
-          builtins.replaceStrings
-            [ "__SERVER_CMD__" "__JQ_BIN__" ]
-            [ serverCmd jqBin ]
-            mcpExecStdioTemplate
-        else
-          builtins.replaceStrings
-            [ "__TIMEOUT_BIN__" "__MCP_REMOTE_BIN__" "__SERVER_URL__" "__JQ_BIN__" ]
-            [ timeoutBin mcpRemoteBin serverUrl jqBin ]
-            mcpExecSseTemplate;
-    in
-    pkgs.writeShellScript "mcp-${name}-wrapper" (
-      builtins.replaceStrings
-        [ "__MCP_NAME__" "__MCP_TRANSPORT__" "__JQ_BIN__" "__MCP_REMOTE_BIN__" "__TIMEOUT_BIN__" "__SERVER_CMD__" "__SERVER_URL__" "__TRANSPORT_EXEC__" ]
-        [ name (if isStdio then "stdio" else "sse") jqBin mcpRemoteBin timeoutBin serverCmd serverUrl transportExec ]
-        mcpWrapperTemplate
-    );
-
-  toPiMcpSkillText = name: ''
-    ---
-    name: mcp-${name}
-    description: Skill to call ${name} MCP server. Run ./mcp-wrapper.sh list to discover available tools, then ./mcp-wrapper.sh call <tool-name> '<json-arguments>'.
-    ---
-
-    ## Tool discovery
-    ./mcp-wrapper.sh list
-
-    ## Tool execution
-    ./mcp-wrapper.sh call <tool-name> '<json-arguments>'
-
-    ## Example
-    ./mcp-wrapper.sh call search '{"query": "example"}'
-  '';
-
-  mkMcpSkillFiles = name: server: {
-    ".pi/agent/skills/mcp/mcp-${name}/SKILL.md".text = toPiMcpSkillText name;
-    ".pi/agent/skills/mcp/mcp-${name}/mcp-wrapper.sh".source = toPiMcpWrapperScript name server;
-  };
-
-  mcpSkillFiles = lib.mkMerge (lib.mapAttrsToList mkMcpSkillFiles config.programs.mcp.servers);
-
-  # Generate MCP allow commands from config.programs.mcp.servers
-  # allowedTools = null means allow all, list means only specific tools
-  # Note: "list" is always allowed (read-only discovery operation)
-  mcpAllowCommands = lib.flatten (lib.mapAttrsToList
-    (name: server:
-      let tools = server.allowedTools or null; in
-      [ "mcp-${name}/mcp-wrapper.sh list" ] ++
-      (if tools == null
-      then [ "mcp-${name}/mcp-wrapper.sh call" ]
-      else map (tool: "mcp-${name}/mcp-wrapper.sh call ${tool}") tools)
-    )
-    config.programs.mcp.servers);
-
   # Generate JSON config for safety-gate extension
   safetyGateJson = builtins.toJSON {
-    allow = permissionsToml.default.commands.allow.shell ++ mcpAllowCommands;
+    allow = permissionsToml.default.commands.allow.shell;
     ask = permissionsToml.default.commands.ask.shell;
     deny = permissionsToml.default.commands.deny.shell;
   };
@@ -227,12 +151,9 @@ in
     };
   };
 
-  home.file = lib.mkMerge [
-    {
-      ".pi/agent/skills/home-manager".source = skillsDir;
-      ".pi/agent/extensions/safety-gate.ts".text = safetyGateTs;
-      ".pi/agent/extensions/safety-gate.json".text = safetyGateJson;
-    }
-    mcpSkillFiles
-  ];
+  home.file = {
+    ".pi/agent/skills/home-manager".source = skillsDir;
+    ".pi/agent/extensions/safety-gate.ts".text = safetyGateTs;
+    ".pi/agent/extensions/safety-gate.json".text = safetyGateJson;
+  };
 }
