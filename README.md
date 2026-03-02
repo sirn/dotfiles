@@ -91,9 +91,9 @@ For NixOS, this needs to be done as part of NixOS `configuration.nix`:
 
 Application launchers are automatically generated for each Firefox profile defined in `programs.firefox.profiles`.
 
-For macOS, see Raycast section.
+**macOS**: Proper `.app` bundles are created for each profile (e.g., "Firefox (main).app") and copied to `~/Applications/Home Manager Apps/`. These appear in Spotlight, Dock, and LaunchServices. Raycast scripts are also generated as a secondary option (see Raycast section).
 
-For Linux, an XDG application named "Firefox (profile)" is automatically generated.
+**Linux**: An XDG desktop entry named "Firefox (profile)" is automatically generated.
 
 ### Raycast
 
