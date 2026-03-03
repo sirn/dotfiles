@@ -7,7 +7,14 @@ Web search using the Brave Search API.
 
 ## Prerequisites
 
-Requires `BRAVE_API_KEY` environment variable to be set.
+- `BRAVE_API_KEY` environment variable with a valid Brave Search API key
+
+**Check before use:**
+```bash
+[ -z "$BRAVE_API_KEY" ] && echo "Error: BRAVE_API_KEY not set" || echo "OK: BRAVE_API_KEY is set"
+```
+
+**Note:** Never hardcode `BRAVE_API_KEY`. Always use the environment variable.
 
 ## API Endpoint
 
@@ -154,5 +161,3 @@ curl -s "https://api.search.brave.com/res/v1/images/search?q=nature+landscape" \
 curl -s "https://api.search.brave.com/res/v1/videos/search?q=tutorials" \
   -H "X-Subscription-Token: $BRAVE_API_KEY"
 ```
-
-Always check that `BRAVE_API_KEY` is set before making requests.

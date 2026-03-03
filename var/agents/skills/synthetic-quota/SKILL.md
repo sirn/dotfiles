@@ -7,7 +7,14 @@ Retrieve information about your Synthetic API usage quotas and limits.
 
 ## Prerequisites
 
-Requires `SYNTHETIC_API_KEY` environment variable to be set.
+- `SYNTHETIC_API_KEY` environment variable with a valid Synthetic API key
+
+**Check before use:**
+```bash
+[ -z "$SYNTHETIC_API_KEY" ] && echo "Error: SYNTHETIC_API_KEY not set" || echo "OK: SYNTHETIC_API_KEY is set"
+```
+
+**Note:** Never hardcode `SYNTHETIC_API_KEY`. Always use the environment variable.
 
 ## API Endpoint
 
@@ -79,5 +86,3 @@ The API will return appropriate HTTP status codes:
 - `401` - Invalid or missing API key
 - `429` - Rate limit exceeded
 - `500` - Server error
-
-Always check that `SYNTHETIC_API_KEY` is set before making requests.
