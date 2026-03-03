@@ -53,6 +53,8 @@ curl -s https://api.synthetic.new/v2/quotas \
 | `subscription.requests` | number | Number of requests used in the current period |
 | `subscription.renewsAt` | string | ISO 8601 timestamp when the quota renews |
 
+**Tip:** Run `date` to check the current datetime when comparing against `renewsAt` timestamps.
+
 ## Example Usage
 
 ```bash
