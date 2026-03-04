@@ -193,6 +193,7 @@ shell = [
   "pwd",
   "whoami",
   "id",
+  "echo",
   "cat --version",
   "jq --version",
   "sed --version",
