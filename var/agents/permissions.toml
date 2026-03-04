@@ -194,6 +194,7 @@ shell = [
   "whoami",
   "id",
   "echo",
+  "date",
   "cat --version",
   "jq --version",
   "sed --version",
