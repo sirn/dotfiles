@@ -115,7 +115,7 @@ rm .codex/sessions/task.md
 Continue a previous session using the `thread_id`:
 
 ```bash
-# Resume by thread_id
+# Resume by thread_id (via exec resume subcommand)
 echo "Add rate limiting for POST endpoints too" | codex exec - \
   resume "$thread_id" \
   --json \
@@ -132,9 +132,9 @@ codex exec resume --last \
 
 | Flag | Description |
 |------|-------------|
-| `resume <THREAD_ID>` | Resume specific session |
-| `resume --last` | Resume most recent session in current directory |
-| `resume --last --all` | Resume most recent from any directory |
+| `exec resume <THREAD_ID>` | Resume specific session |
+| `exec resume --last` | Resume most recent session in current directory |
+| `exec resume --last --all` | Resume most recent from any directory |
 | `-i <path>` | Attach images to follow-up prompt |
 
 ## Permission and Safety
@@ -218,15 +218,15 @@ if echo "$output" | grep -q '"type":"turn.failed"'; then
 fi
 ```
 
-### Pattern 3: Ephemeral Sessions
+### Pattern 3: One-off Tasks
 
 ```bash
-# Use --ephemeral for one-off tasks that don't need resuming
-output=$(codex exec --ephemeral --json \
+# For one-off tasks that don't need resuming
+output=$(codex exec --json \
   --sandbox workspace-write \
   "Generate a README for this project")
 
-# No thread_id to track, output is self-contained
+# Output is self-contained
 response=$(echo "$output" | grep '"type":"item.completed"' | jq -s '.[-1].item.text')
 ```
 
@@ -278,9 +278,8 @@ rm .codex/sessions/review.md
 
 | Flag | Description |
 |------|-------------|
-| `--model`, `-m` | Override model (gpt-5-codex) |
+| `--model`, `-m` | Override model |
 | `--json` | JSONL output |
-| `--ephemeral` | Don't persist session files |
 | `--full-auto` | Automation preset |
 | `-o <path>` | Write final message to file |
 | `--output-schema <path>` | JSON Schema for output |
@@ -335,11 +334,10 @@ codex exec --skip-git-repo-check "analyze standalone files"
 ### Session Management
 *   **Extract thread_id:** Always capture from `thread.started` event (first line).
 *   **Parse JSONL:** Use `grep` and `jq` to extract specific events.
-*   **Ephemeral for One-offs:** Use `--ephemeral` when you don't need to resume.
+*   **Resume:** Use `codex exec resume --last` to continue the most recent session.
 
 ### Cost Control
 *   **Check Usage:** Look at `turn.completed` event for token usage.
-*   **Ephemeral:** Saves disk space for short tasks.
 
 ## Example: Complete Agent Delegation Workflow
 
