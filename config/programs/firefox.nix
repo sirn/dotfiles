@@ -33,7 +33,7 @@ let
         # Create the launcher script
         cat > "$appDir/Contents/MacOS/${execName}" << 'EOF'
         #!/bin/bash
-        /Applications/Firefox.app/Contents/MacOS/firefox -P "${name}" -no-remote &
+        exec open -n -a /Applications/Firefox.app --args -P "${name}" -no-remote
         EOF
         chmod +x "$appDir/Contents/MacOS/${execName}"
 
@@ -70,6 +70,10 @@ let
           <string>firefox</string>
           <key>LSUIElement</key>
           <false/>
+          <key>NSHighResolutionCapable</key>
+          <true/>
+          <key>NSSupportsAutomaticGraphicsSwitching</key>
+          <true/>
         </dict>
         </plist>
         PLISTEOF
