@@ -24,8 +24,8 @@ Setup home directory with Home Manager:
 
 ```shell
 $ HM_PROFILE=$(hostname -s)
-$ nix build --no-link .#homeConfigurations.$HM_PROFILE.activationPackage
-$ $(nix path-info .#homeConfigurations.$HM_PROFILE.activationPackage)/activate
+$ nix build --no-link path:.#homeConfigurations.$HM_PROFILE.activationPackage
+$ $(nix path-info path:.#homeConfigurations.$HM_PROFILE.activationPackage)/activate
 ```
 
 On subsequent updates, use:
@@ -49,7 +49,7 @@ To test building locally, use:
 
 ```shell
 $ HM_PROFILE=$(hostname -s)
-$ nix build ".#homeConfigurations.$HM_PROFILE.activationPackage"
+$ nix build "path:.#homeConfigurations.$HM_PROFILE.activationPackage"
 ```
 
 ## Configuration
