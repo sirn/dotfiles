@@ -32,6 +32,16 @@ in
         '';
       };
 
+      ggw = {
+        body = ''
+          set -l dir (repoman workspace list | ${pkgs.fzy}/bin/fzy -q "$argv")
+          if test -z "$dir"
+            return
+          end
+          cd $dir
+        '';
+      };
+
       ggp = {
         body = ''
           if not test -d $HOME/Dropbox/Projects
