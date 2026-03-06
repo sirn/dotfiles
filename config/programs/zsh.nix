@@ -54,6 +54,18 @@ in
               builtin cd "$dir" || return 1
             }
 
+            # Quickly jump into workspace directory.
+            ggw() {
+              local dir
+
+              dir=$(repoman workspace list | "${fzyCmd}" -q "$*")
+              if [ -z "$dir" ]; then
+                  return
+              fi
+
+              builtin cd "$dir" || return 1
+            }
+
             # Change directory in a project directory.
             ggp() {
               local dir
