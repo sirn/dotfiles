@@ -2,15 +2,15 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "repoman";
-  version = "0.2.0";
+  version = "0.3.0";
 
   src = fetchgit {
     url = "https://git.sr.ht/~sirn/repoman";
     rev = "refs/tags/v${version}";
-    hash = "sha256-rAiTmE2KtGDzLDLtR1KbnV1DSPbw9awUFEf8Tnjze+8=";
+    hash = "sha256-OoAMmrjZe6uMsgl9JKNMQnzSoCVz3BAgD6j8jZGbtT0=";
   };
 
-  cargoHash = "sha256-iKH1hHQwnkkqfHo+uVYYUTqla6Gm6H0YWVaFVOIgJkQ=";
+  cargoHash = "sha256-JkvX5Nu/neBDKN464U4QE9+0e28ksnqg9k7LthzCeMM=";
 
   nativeBuildInputs = [ pkg-config ];
 
