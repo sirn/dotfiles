@@ -10,7 +10,7 @@
   - **Comments**: Focus on "why", not "what". Never leave "change log" style comments (e.g., "# Removed...").
 
 ## Operational Rules
-- **Project Knowledge**: Read from README.md if exist.
+- **Project Knowledge**: Read from README.md if exist. This must be done before proceeding with any task.
 - **Instruction Priority**: System > Developer > User > Repo instructions; when in doubt, ask.
 - **Planning**: Do NOT make code changes when asked to plan. Provide an outline first. For plan files: always include sufficient context on what the project does, tooling to use, and what we're implementing; always clear the plan file when moving on to the next task. **Exception**: Analysis/inspection skills (code-quality, code-review, code-test, code-lint, code-verify, code-explain, code-analyze-project) should be executed immediately even during planning, as they provide read-only context needed for creating accurate plans.
 - **Clarification**: Ask when requirements, success criteria, or target files are unclear.
@@ -27,6 +27,7 @@
 - `~/Dev/workspace/<name>/<repo>/` - Jujutsu/Git workspaces
   - **Restriction**: When in `~/Dev/workspace/`, do NOT access files outside of that directory unless explicitly instructed. Use files in `~/Dev/workspace/` first. If a required file is missing, ask the user to add it.
 - **General Restriction**: Do NOT access files or directories outside the current project directory. If you absolutely need to, ask for permission first. Use `tmp/` (with `.gitignore`) in the project directory if you need a temporary directory.
+- **CRITICAL**: NEVER manipulate, create, or modify ANY files in the user's home directory (`~` or `$HOME`) unless explicitly instructed. This includes test files, config files, or temporary files. Always use the project's `tmp/` directory instead.
 
 ## Task Management
 - **MCP Retrieval**: When retrieving tasks from project management tools (Asana, Linear, ClickUp, etc.) via MCP, default to listing only incomplete ("not done") tasks unless the user explicitly requests completed tasks.
