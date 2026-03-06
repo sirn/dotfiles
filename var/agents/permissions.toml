@@ -126,13 +126,20 @@ shell = [
   "cppcheck",
   "make check",
 
-  # Nix - formatting and linting
+  # Nix - formatting, linting, and read-only operations
   "nixfmt",
   "nixfmt --check",
   "alejandra",
   "alejandra --check",
-  "nix flake check",
+  "nix flake",
   "nix-linter",
+  "nix-prefetch-git",
+  "nix build",
+  "nix-build",
+  "nix search",
+  "nix eval",
+  "nix why-depends",
+  "nix-channel --list",
 
   # Shell - linting and formatting check
   "shellcheck",
@@ -248,34 +255,50 @@ shell = [
 ]
 
 [default.commands.ask]
+# All patterns use regex with word boundaries for broad matching.
+# This catches subcommands passed via: bash -c "...", nix run ... -- ..., etc.
+# In TOML, \\b becomes \b in the regex (word boundary), \\s becomes \s (whitespace)
 shell = [
-  "rm",
-  "chmod",
-  "git commit",
-  "jj describe",
-  "jj new",
-  "jj commit",
-  "jj squash",
-  "jj split",
-  "jj abandon",
-  "jj undo",
+  # File/disk operations
+  "re:\\brm\\b",
+  "re:\\bdd\\b",
+  "re:\\bmkfs\\b",
+  "re:\\bfdisk\\b",
+  "re:\\bshred\\b",
+  "re:\\bchmod\\b",
+  "re:\\bchown\\b",
+
+  # Git operations
+  "re:\\bgit\\s+commit\\b",
+
+  # Jujutsu operations
+  "re:\\bjj\\s+describe\\b",
+  "re:\\bjj\\s+new\\b",
+  "re:\\bjj\\s+commit\\b",
+  "re:\\bjj\\s+squash\\b",
+  "re:\\bjj\\s+split\\b",
+  "re:\\bjj\\s+abandon\\b",
+  "re:\\bjj\\s+undo\\b",
 
   # Environment and secret exposure risks
-  "env",
-  "printenv",
+  "re:\\benv\\b",
+  "re:\\bprintenv\\b",
 
   # Container execution (can run commands inside containers)
-  "docker exec",
-  "docker run",
-  "podman exec",
-  "podman run",
+  "re:\\bdocker\\s+exec\\b",
+  "re:\\bdocker\\s+run\\b",
+  "re:\\bpodman\\s+exec\\b",
+  "re:\\bpodman\\s+run\\b",
 
   # Kubernetes execution (can run commands in pods)
-  "kubectl exec",
-  "kubectl run",
-  "kubectl create",
-  "kubectl apply",
-  "kubectl delete",
+  "re:\\bkubectl\\s+exec\\b",
+  "re:\\bkubectl\\s+run\\b",
+  "re:\\bkubectl\\s+create\\b",
+  "re:\\bkubectl\\s+apply\\b",
+  "re:\\bkubectl\\s+delete\\b",
+
+  # Nix - commands that can execute arbitrary code
+  "re:\\bnix\\s+run\\b",
 ]
 
 [default.commands.deny]

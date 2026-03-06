@@ -39,6 +39,16 @@ function escapeRegex(s: string): string {
 }
 
 function toRegex(cmd: string): RegExp {
+  // Raw regex pattern: re:<pattern>
+  if (cmd.startsWith("re:")) {
+    const pattern = cmd.slice(3);
+    try {
+      return new RegExp(pattern, "i");
+    } catch (e) {
+      throw new Error(`Invalid regex in safety-gate config "${cmd}": ${e}`);
+    }
+  }
+
   const escaped = escapeRegex(cmd);
   if (cmd.includes("/")) {
     // Path pattern: match anywhere (for MCP wrappers and path-prefixed commands)
@@ -94,6 +104,31 @@ function getCommandSummary(command: string): string {
   return command;
 }
 
+// Prompt user for confirmation
+async function confirmCommand(
+  command: string,
+  ctx: ExtensionAPI["context"]
+): Promise<{ block: boolean; reason?: string }> {
+  if (!ctx.hasUI) {
+    return {
+      block: true,
+      reason: `Command blocked (no UI for confirmation): "${getCommandSummary(command)}"`,
+    };
+  }
+
+  const choice = await ctx.ui.select(
+    `Confirm: ${getCommandSummary(command)}`,
+    ["Yes, proceed", "No, cancel"]
+  );
+
+  if (choice !== "Yes, proceed") {
+    ctx.ui.notify("Command cancelled by user", "info");
+    return { block: true, reason: "Blocked by user" };
+  }
+
+  return { block: false };
+}
+
 export default function (pi: ExtensionAPI) {
   pi.on("tool_call", async (event, ctx) => {
     if (event.toolName !== "bash") return undefined;
@@ -101,7 +136,7 @@ export default function (pi: ExtensionAPI) {
     const command = event.input.command as string;
     const project = getProjectPatterns(ctx.cwd);
 
-    // Check deny patterns first (highest priority; global or project can deny)
+    // 1. Check deny patterns first (highest priority; global or project can deny)
     if (
       matchesPattern(command, globalPatterns.deny) ||
       matchesPattern(command, project.deny)
@@ -112,7 +147,17 @@ export default function (pi: ExtensionAPI) {
       };
     }
 
-    // Check allow patterns (project allow checked first to grant extra permissions)
+    // 2. Check ask patterns (require confirmation, overrides allow)
+    if (
+      matchesPattern(command, globalPatterns.ask) ||
+      matchesPattern(command, project.ask)
+    ) {
+      const result = await confirmCommand(command, ctx);
+      if (result.block) return result;
+      return undefined; // User confirmed, proceed
+    }
+
+    // 3. Check allow patterns (proceed without confirmation)
     if (
       matchesPattern(command, project.allow) ||
       matchesPattern(command, globalPatterns.allow)
@@ -120,24 +165,9 @@ export default function (pi: ExtensionAPI) {
       return undefined;
     }
 
-    // Default policy: ask for confirmation on any command not explicitly allowed
-    if (!ctx.hasUI) {
-      return {
-        block: true,
-        reason: `Command blocked (no UI for confirmation): "${getCommandSummary(command)}"`,
-      };
-    }
-
-    const choice = await ctx.ui.select(
-      `Confirm: ${getCommandSummary(command)}`,
-      ["Yes, proceed", "No, cancel"]
-    );
-
-    if (choice !== "Yes, proceed") {
-      ctx.ui.notify("Command cancelled by user", "info");
-      return { block: true, reason: "Blocked by user" };
-    }
-
+    // 4. Default policy: ask for confirmation
+    const result = await confirmCommand(command, ctx);
+    if (result.block) return result;
     return undefined;
   });
 }
