@@ -150,6 +150,21 @@ in
         sandbox = pkgs.stdenv.isDarwin;
         inherit (toGeminiPermissions "build") allowed exclude;
       };
+      modelConfigs = {
+        overrides = [
+          {
+            match = { };
+            modelConfig = {
+              generateContentConfig = {
+                thinkingConfig = {
+                  thinkingBudget = 24576;
+                  includeThoughts = true;
+                };
+              };
+            };
+          }
+        ];
+      };
     };
   };
 

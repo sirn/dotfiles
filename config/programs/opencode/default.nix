@@ -166,6 +166,17 @@ in
       };
       permission = toOpencodePermissions "build";
       tools = opencodeMcpPermissions;
+      provider = {
+        synthetic = {
+          models = {
+            "hf:moonshotai/Kimi-K2.5" = {
+              options = {
+                reasoningEffort = "high";
+              };
+            };
+          };
+        };
+      };
     };
   };
 
