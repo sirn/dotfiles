@@ -9,7 +9,7 @@
 }:
 
 let
-  version = "0.55.3";
+  version = "0.57.0";
 
   platformMap = {
     x86_64-linux = {
