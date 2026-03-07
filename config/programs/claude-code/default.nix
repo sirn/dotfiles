@@ -162,6 +162,7 @@ in
       model = "opusplan";
       includeCoAuthoredBy = true;
       cleanupPeriodDays = 7;
+      effortLevel = "high";
       statusLine = {
         type = "command";
         command = lib.getExe statusLineScript;

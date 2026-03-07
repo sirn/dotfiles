@@ -47,7 +47,7 @@ in
       quietStartup = true;
       defaultProvider = "synthetic";
       defaultModel = "hf:moonshotai/Kimi-K2.5";
-      defaultThinkingLevel = "medium";
+      defaultThinkingLevel = "high";
       hideThinkingBlock = true;
       enabledModels = [
         "accounts/fireworks/models/*"
