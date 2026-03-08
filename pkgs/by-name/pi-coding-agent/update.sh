@@ -44,7 +44,7 @@ for system in "${!platforms[@]}"; do
 
   # Update the hash in package.nix using sed
   # Match the line with this system's arch and replace the hash
-  sed -i "/arch = \"$arch\";/,/hash = \"sha256:/ { s|hash = \"sha256:[^\"]*\"|hash = \"$sri_hash\"| }" "$package_file"
+  sed -i "/arch = \"$arch\";/,/hash = \"sha256-/ { s|hash = \"sha256-[^\"]*\"|hash = \"$sri_hash\"| }" "$package_file"
 done
 
 echo "Updated $package_file to version $version"
