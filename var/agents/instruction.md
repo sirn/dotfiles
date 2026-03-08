@@ -73,9 +73,11 @@
   - If a command fails, try `--help` to debug.
 
 ## Search & Documentation
-- **context7**: Use for retrieving **library documentation** (React docs, Python stdlib, Rust ownership rules, etc.). Provides detailed examples and code snippets from official sources. Best for API references and language-specific documentation.
-- **brave-search**: Use for general **web searches** (news articles, blog posts, tutorials, etc.). Supports freshness filters, country/language targeting, and search operators. Best for finding fresh web content and information.
-- **synthetic-search**: Use for **search queries where privacy is important** (zero-data-retention API). Simple search with results containing title, URL, text snippet, and publication date.
+- **WebSearch**: Native tool for general **web searches**. Use for finding documentation, tutorials, best practices, and current information.
+- **WebFetch**: Native tool to **fetch and analyze** specific web pages. Use for retrieving content from URLs.
+- **context7** (skill): Retrieve **library documentation**. Read the skill file and execute the documented steps.
+- **brave-search** (skill): General web search via Brave API. Read the skill file and execute curl commands.
+- **synthetic-search** (skill): Web search for **privacy-sensitive queries** (zero-data-retention). Read the skill file and execute curl commands.
 
 ## Version Control
 - **Policy**: ALWAYS use `jj` (Jujutsu) for all version control operations. Do NOT use `git` unless explicitly requested by the user or if `jj` is functionally unavailable.
