@@ -50,16 +50,24 @@ in
       defaultThinkingLevel = "high";
       hideThinkingBlock = false;
       enabledModels = [
+        # Synthetic/Fireworks
         "accounts/fireworks/models/*"
         "hf:zai-org/*"
         "hf:moonshotai/*"
         "hf:MiniMaxAI/*"
+
+        # Anthropic Claude
         "claude-opus-4-6"
         "claude-sonnet-4-6"
+
+        # OpenAI GPT-5 (Codex family)
         "gpt-5.3-codex"
         "gpt-5.3-codex-spark"
+        "gpt-5.1-codex-mini"
+
+        # Google Gemini
         "gemini-3.1-pro-preview"
-        "gemini-3-flash-preview"
+        "gemini-3.1-flash-lite"
       ];
     };
 
