@@ -146,3 +146,38 @@ jj undo                     # Undo last operation
 jj op log                   # View operation history
 jj op restore <op-id>       # Restore to state
 ```
+
+### Workspaces
+
+Jujutsu supports workspaces (similar to `git worktree`) for working on multiple branches simultaneously.
+
+#### Key Points
+
+- When in a workspace, changes are **not automatically reflected** in the local source repository
+- Some commands (e.g., `docker exec`, `podman exec`) may only point to the local source repository
+- You may need to track the workspace explicitly from the source repository
+
+#### Common Workspace Operations
+
+```bash
+# From the local source repository, track a workspace
+jj edit <workspace-name>@
+
+# Update stale workspaces
+jj workspace update-stale
+```
+
+#### Working with Workspaces
+
+When working in a workspace:
+
+1. **Changes made in the workspace** stay in the workspace until committed
+2. **To sync changes** to the source repo, navigate to the source and track the workspace
+3. **External tools** (like Docker/Podman exec) may operate on the source repo, not the workspace
+
+```bash
+# Example: sync workspace changes to source repo
+cd /path/to/source/repo
+jj edit my-workspace@
+jj workspace update-stale
+```
