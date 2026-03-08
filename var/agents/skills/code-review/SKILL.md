@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Comprehensive code review with support for fast, full, or performance-focused modes.
+description: Comprehensive code review with support for fast, full, or performance-focused modes. Use when user asks for code review, PR review, or to check code quality.
 ---
 
 Run a code review.

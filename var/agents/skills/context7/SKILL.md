@@ -1,6 +1,6 @@
 ---
 name: context7
-description: Retrieve up-to-date documentation context for libraries using the Context7 API.
+description: Retrieve up-to-date documentation context for libraries using the Context7 API. Use when needing current library documentation (React, Python stdlib, Rust, etc.) BEFORE implementing or writing code.
 ---
 
 Documentation context retrieval using the Context7 API.

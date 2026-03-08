@@ -1,7 +1,7 @@
 ---
 name: codex-reference
 type: reference
-description: Reference for calling the Codex CLI agent from other agents.
+description: Reference for calling the Codex CLI agent from other agents. ALWAYS read BEFORE invoking Codex to ensure correct JSONL protocol, session management, and subtask delegation patterns.
 ---
 
 ## Codex CLI Reference

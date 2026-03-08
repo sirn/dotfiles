@@ -1,6 +1,6 @@
 ---
 name: code-commit
-description: Commit current changes using jj. Analyzes changes, suggests commit messages following repository conventions, proposes splits if needed, and creates commits.
+description: Commit current changes using jj. Analyzes changes, suggests commit messages following repository conventions, proposes splits if needed, and creates commits. Use ONLY when user explicitly asks to commit changes or create commits.
 ---
 
 Commit current changes using Jujutsu (jj).

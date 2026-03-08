@@ -1,7 +1,7 @@
 ---
 name: gemini-reference
 type: reference
-description: Reference for calling the Gemini CLI agent from other agents.
+description: Reference for calling the Gemini CLI agent from other agents. ALWAYS read BEFORE invoking Gemini to ensure correct JSON protocol, session management, and subtask delegation patterns.
 ---
 
 ## Gemini CLI Reference

@@ -1,6 +1,6 @@
 ---
 name: code-explain
-description: Explain code, triage changes, or map project structure.
+description: Explain code, triage changes, or map project structure. Use when user asks to explain, understand, triage, or explore project structure.
 ---
 
 Explain code logic, triage incoming changes, or map the project architecture.

@@ -1,7 +1,7 @@
 ---
 name: jj-reference
 type: reference
-description: Reference for Jujutsu (jj) version control commands
+description: Reference for Jujutsu (jj) version control commands. ALWAYS read before performing ANY jj operation (commit, squash, rebase, describe, split, etc.) to ensure correct syntax and best practices.
 ---
 
 ## Jujutsu Command Reference

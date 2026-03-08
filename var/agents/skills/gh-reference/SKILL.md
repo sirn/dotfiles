@@ -1,7 +1,7 @@
 ---
 name: gh-reference
 type: reference
-description: Reference for GitHub CLI (gh) - READ-ONLY operations only
+description: Reference for GitHub CLI (gh) - READ-ONLY operations only. ALWAYS read BEFORE using gh commands to ensure correct syntax and available flags.
 ---
 
 ## GitHub CLI Reference (gh)

@@ -1,7 +1,7 @@
 ---
 name: claude-code-reference
 type: reference
-description: Reference for calling the Claude Code agent from other agents.
+description: Reference for calling the Claude Code agent from other agents. ALWAYS read BEFORE invoking Claude Code to ensure correct JSON protocol, session management, and subtask delegation patterns.
 ---
 
 ## Claude Code Reference

@@ -1,6 +1,6 @@
 ---
 name: code-quality
-description: Run comprehensive quality checks by orchestrating review, verification, testing, and linting.
+description: Run comprehensive quality checks by orchestrating review, verification, testing, and linting. Use when user asks to check code quality, run full checks, or verify code health.
 ---
 
 Run comprehensive quality checks by orchestrating sub-skills.

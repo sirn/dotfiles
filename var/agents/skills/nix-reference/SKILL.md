@@ -1,7 +1,7 @@
 ---
 name: nix-reference
 type: reference
-description: Reference for Nix commands, flake patterns, and best practices
+description: Reference for Nix commands, flake patterns, and best practices. ALWAYS read BEFORE running nix commands (nix build, nix develop, nix shell, etc.) or modifying flake.nix to ensure correct syntax and patterns.
 ---
 
 ## String Escaping

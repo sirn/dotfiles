@@ -1,6 +1,6 @@
 ---
 name: models-dev
-description: Query LLM model pricing and information from models.dev API.
+description: Query LLM model pricing and information from models.dev API. Use when user asks about LLM pricing, model costs, or which models are available on specific providers.
 ---
 
 Query LLM model pricing and availability from models.dev.
