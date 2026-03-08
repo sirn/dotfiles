@@ -17,6 +17,7 @@ in
       set -g set-clipboard on
       set -g set-titles on
       set -g extended-keys on
+      set -g extended-keys-format csi-u
       set -g set-titles-string "#W via tmux: #S"
       # xterm-compatible baseline (Alacritty, WezTerm, Foot, Ghostty, etc.)
       set -ga terminal-features ",xterm*:RGB"
