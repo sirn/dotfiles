@@ -16,6 +16,7 @@ in
       set -g default-command "exec ${cfg.shell}"
       set -g set-clipboard on
       set -g set-titles on
+      set -g extended-keys on
       set -g set-titles-string "#W via tmux: #S"
       set -ga terminal-features ",xterm*:clipboard"
 
