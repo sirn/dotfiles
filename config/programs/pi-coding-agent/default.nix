@@ -48,7 +48,7 @@ in
       defaultProvider = "synthetic";
       defaultModel = "hf:moonshotai/Kimi-K2.5";
       defaultThinkingLevel = "high";
-      hideThinkingBlock = true;
+      hideThinkingBlock = false;
       enabledModels = [
         "accounts/fireworks/models/*"
         "hf:zai-org/*"
