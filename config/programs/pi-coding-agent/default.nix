@@ -149,6 +149,56 @@ in
         ];
       };
     };
+
+    keybindings = {
+      # Cursor Movement (Emacs)
+      cursorUp = [ "up" "ctrl+p" ];
+      cursorDown = [ "down" "ctrl+n" ];
+      cursorLeft = [ "left" "ctrl+b" ];
+      cursorRight = [ "right" "ctrl+f" ];
+      cursorWordLeft = [ "alt+left" "ctrl+left" "alt+b" ];
+      cursorWordRight = [ "alt+right" "ctrl+right" "alt+f" ];
+      cursorLineStart = [ "home" "ctrl+a" ];
+      cursorLineEnd = [ "end" "ctrl+e" ];
+
+      # Deletion (Emacs)
+      deleteCharBackward = [ "backspace" "ctrl+h" ];
+      deleteCharForward = [ "delete" "ctrl+d" ];
+      deleteWordBackward = [ "ctrl+w" "alt+backspace" ];
+      deleteWordForward = [ "alt+d" "alt+delete" ];
+      deleteToLineStart = [ "ctrl+u" ];
+      deleteToLineEnd = [ "ctrl+k" ];
+
+      # Text Input
+      newLine = [ "shift+enter" "ctrl+j" ];
+      submit = [ "enter" ];
+      tab = [ "tab" ];
+
+      # Kill Ring (Emacs)
+      yank = [ "ctrl+y" ];
+      yankPop = [ "alt+y" ];
+      undo = [ "ctrl+_" "ctrl+/" ];
+
+      # Application
+      interrupt = [ "escape" ];
+      clear = [ "ctrl+c" ];
+      exit = [ "ctrl+d" ];
+      externalEditor = [ "ctrl+g" ];
+
+      # Session
+      selectModel = [ "ctrl+l" ];
+      cycleModelForward = [ "ctrl+period" ];
+      cycleModelBackward = [ "ctrl+comma" ];
+      cycleThinkingLevel = [ "shift+tab" ];
+
+      # Display
+      expandTools = [ "ctrl+o" ];
+      toggleThinking = [ "ctrl+t" ];
+
+      # Message Queue
+      followUp = [ "alt+enter" ];
+      dequeue = [ "alt+up" ];
+    };
   };
 
   home.file = {

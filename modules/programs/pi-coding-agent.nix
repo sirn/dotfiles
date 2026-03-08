@@ -41,6 +41,22 @@ in
       default = { };
       description = "Provider configurations for models.json.";
     };
+
+    keybindings = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.listOf lib.types.str);
+      default = { };
+      description = ''
+        Keyboard shortcuts configuration written to keybindings.json.
+        Each action maps to a list of key combinations.
+        See https://github.com/badlogic/pi-mono/blob/main/docs/keybindings.md
+      '';
+      example = lib.literalExpression ''
+        {
+          "cursorUp" = [ "up" "ctrl+p" ];
+          "newLine" = [ "shift+enter" "ctrl+j" ];
+        }
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -56,6 +72,8 @@ in
         providers = cfg.providers;
       };
       ".pi/agent/AGENTS.md".text = cfg.instructionText;
+    } // lib.optionalAttrs (cfg.keybindings != { }) {
+      ".pi/agent/keybindings.json".text = builtins.toJSON cfg.keybindings;
     };
   };
 }
