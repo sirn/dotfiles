@@ -8,7 +8,7 @@ in
     enable = true;
     escapeTime = 0;
     shell = config.machine.interactiveShell;
-    terminal = "screen-256color";
+    terminal = "tmux-256color";
     mouse = true;
 
     extraConfig = ''
@@ -18,9 +18,17 @@ in
       set -g set-titles on
       set -g extended-keys on
       set -g set-titles-string "#W via tmux: #S"
+      # xterm-compatible baseline (Alacritty, WezTerm, Foot, Ghostty, etc.)
+      set -ga terminal-features ",xterm*:RGB"
       set -ga terminal-features ",xterm*:clipboard"
+      set -ga terminal-features ",xterm*:cstyle"
+      set -ga terminal-features ",xterm*:ccolour"
+      set -ga terminal-features ",xterm*:hyperlinks"
+      set -ga terminal-features ",xterm*:strikethrough"
+      set -ga terminal-features ",xterm*:title"
+      set -ga terminal-features ",xterm*:focus"
 
-      # Wezterm terminal feature overrides
+      # Wezterm-specific (additional features)
       set -ga terminal-features ",wezterm:RGB"
       set -ga terminal-features ",wezterm:usstyle"
       set -ga terminal-features ",wezterm:cstyle"
