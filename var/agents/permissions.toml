@@ -306,7 +306,6 @@ shell = [
   "sudo",
   "kill",
   "systemctl",
-  "chown",
   "sops",
   "git push",
   "jj git push",
