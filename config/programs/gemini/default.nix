@@ -31,53 +31,71 @@ let
       paths = default.paths;
     };
 
-  toGeminiPermissions = mode:
+  tomlFormat = pkgs.formats.toml { };
+
+  toGeminiPolicyRules = mode:
     let
       policy = effectivePolicy mode;
       inherit (policy) tools commands paths;
 
-      baseAllowed = [
-        "ReadFileTool(**)"
-        "GlobTool(*)"
-        "GrepTool(*)"
-        "ShellTool(ls)"
-        "ShellTool(fd)"
-        "ShellTool(find)"
-        "ShellTool(rg)"
-        "ShellTool(grep)"
-        "ShellTool(curl)"
-        "ShellTool(wget)"
-        "ShellTool(git status)"
-        "ShellTool(git diff)"
-        "ShellTool(git log)"
-        "ShellTool(git branch)"
-        "ShellTool(jj status)"
-        "ShellTool(jj diff)"
-        "ShellTool(jj log)"
-        "ShellTool(jj show)"
-        "ShellTool(go test)"
-        "ShellTool(go build)"
-      ];
+      globToRegex = glob:
+        let
+          r1 = lib.replaceStrings [ "." ] [ "\\." ] glob;
+          p1 = lib.replaceStrings [ "**" ] [ "DOUBLESTAR" ] r1;
+          p2 = lib.replaceStrings [ "*" ] [ "[^/]*" ] p1;
+          p3 = lib.replaceStrings [ "DOUBLESTAR" ] [ ".*" ] p2;
+        in
+        p3;
 
-      buildExtras = lib.optionals tools.edit [
-        "Edit"
-        "WriteFile"
-        "ShellTool(tree)"
-        "ShellTool(lstr)"
-      ];
+      mkShellRule = decision: priority: pattern:
+        let
+          isRegex = lib.hasPrefix "re:" pattern;
+          content = if isRegex then lib.removePrefix "re:" pattern else pattern;
+        in
+        {
+          toolName = "run_shell_command";
+          decision = decision;
+          priority = priority;
+        } // (if isRegex then { commandRegex = content; } else { commandPrefix = content; });
 
-      allowed = baseAllowed ++ buildExtras;
+      mkPathRule = decision: priority: tool: glob: {
+        toolName = tool;
+        argsPattern = "file_path\":\"${globToRegex glob}";
+        decision = decision;
+        priority = priority;
+      };
 
-      shellExcludes = map (cmd: "ShellTool(${cmd})") (commands.deny.shell ++ commands.ask.shell);
-
-      pathExcludes =
-        map (p: "ReadFileTool(${p})") (paths.deny.read or [ ])
-        ++ lib.optionals tools.edit (map (p: "Edit(${p})") (paths.deny.edit or [ ]))
-        ++ lib.optionals tools.write (map (p: "WriteFile(${p})") (paths.deny.write or [ ]));
-
-      exclude = shellExcludes ++ pathExcludes;
+      baseTools =
+        lib.optional tools.read "read_file"
+        ++ lib.optional tools.glob "glob"
+        ++ lib.optional tools.grep "grep_search"
+        ++ lib.optional tools.list "list_directory"
+        ++ lib.optional tools.webfetch "web_fetch"
+        ++ lib.optional tools.websearch "google_web_search"
+        ++ [ "ask_user" "activate_skill" ];
     in
-    { inherit allowed exclude; };
+    [
+      { toolName = baseTools; decision = "allow"; priority = 100; }
+    ]
+    ++ lib.optional tools.edit { toolName = [ "replace" ]; decision = "allow"; priority = 100; }
+    ++ lib.optional tools.write { toolName = [ "write_file" ]; decision = "allow"; priority = 100; }
+    ++ (map (mkShellRule "allow" 150) (commands.allow.shell or [ ]))
+    ++ (map (mkShellRule "ask_user" 150) (commands.ask.shell or [ ]))
+    ++ (map (mkShellRule "deny" 150) (commands.deny.shell or [ ]))
+    # We map path rules specifically for each tool
+    ++ (lib.concatMap (glob: [
+      (mkPathRule "deny" 200 "read_file" glob)
+      (mkPathRule "deny" 200 "replace" glob)
+      (mkPathRule "deny" 200 "write_file" glob)
+    ]) (paths.deny.read or [ ]))
+    ++ (lib.concatMap (glob: [
+      (mkPathRule "allow" 250 "read_file" glob)
+      (mkPathRule "allow" 250 "replace" glob)
+      (mkPathRule "allow" 250 "write_file" glob)
+    ]) (paths.allow.read or [ ]));
+
+  policyRules = toGeminiPolicyRules "build";
+  policyFile = tomlFormat.generate "gemini-policy.toml" { rule = policyRules; };
 
   isStdioServer = server: server ? command || server ? package;
 
@@ -136,6 +154,11 @@ in
       general = {
         enablePromptCompletion = true;
         previewFeatures = true;
+        sessionRetention = {
+          enabled = true;
+          maxAge = "7d";
+          maxCount = 100;
+        };
       };
       ui = {
         theme = "ANSI";
@@ -158,7 +181,6 @@ in
       tools = {
         autoAccept = true;
         sandbox = pkgs.stdenv.isDarwin;
-        inherit (toGeminiPermissions "build") allowed exclude;
       };
       modelConfigs = {
         overrides = [
