@@ -35,7 +35,7 @@ let
     nativeBuildInputs = with pkgs; [
       fd
       jq
-      nixpkgs-fmt
+      nixfmt
       nodejs
       pandoc
       ripgrep

@@ -55,8 +55,8 @@
 - **Go**: Run `gofmt`.
 - **Python**: Run `black` and `isort`. If `pyproject.toml` mentions Ruff, use `ruff format`.
 - **Rust**: Run `cargo fmt`.
-- **Nix**: Run `nixfmt` (or `alejandra` if configured).
-- **JavaScript/TypeScript**: Use project-configured formatter (prettier, eslint --fix, biome).
+- **Nix**: Run `nixfmt`.
+- **JavaScript/TypeScript**: Use project-configured formatter (`prettier`, `eslint --fix`, `biome`).
 - **Shell**: Use `shfmt`.
 - **Fallback**: If formatting tools are not installed, use `nix run nixpkgs#<tool>`.
 - **Other languages**: Check for project-configured formatters before formatting.

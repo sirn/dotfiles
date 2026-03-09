@@ -22,5 +22,5 @@
 
   :config
   (with-eval-after-load 'apheleia
-    (add-to-list 'apheleia-formatters '(nixpkgs-fmt . ("nixpkgs-fmt" inplace)))
-    (add-to-list 'apheleia-mode-alist '(nix-ts-mode . nixpkgs-fmt))))
+    (add-to-list 'apheleia-formatters '(nixfmt . ("nixfmt" inplace)))
+    (add-to-list 'apheleia-mode-alist '(nix-ts-mode . nixfmt))))
