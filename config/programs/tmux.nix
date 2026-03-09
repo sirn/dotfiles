@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.programs.tmux;
@@ -83,16 +88,21 @@ in
         # Update SSH_TTY for new panes
         export SSH_TTY=$(tty)
 
-        ${if pkgs.stdenv.isLinux then ''
-        exec systemd-run \
-          --user \
-          --scope \
-          --slice=app.slice \
-          --setenv=SSH_TTY="$SSH_TTY" \
-          ${cfg.package}/bin/tmux new-session -A -s "$SESSION"
-        '' else ''
-        exec ${cfg.package}/bin/tmux new-session -A -s "$SESSION"
-        ''}
+        ${
+          if pkgs.stdenv.isLinux then
+            ''
+              exec systemd-run \
+                --user \
+                --scope \
+                --slice=app.slice \
+                --setenv=SSH_TTY="$SSH_TTY" \
+                ${cfg.package}/bin/tmux new-session -A -s "$SESSION"
+            ''
+          else
+            ''
+              exec ${cfg.package}/bin/tmux new-session -A -s "$SESSION"
+            ''
+        }
       '';
     };
   };

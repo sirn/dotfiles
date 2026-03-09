@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
   cfg = config.services.gpg-agent;
@@ -56,12 +61,12 @@ in
 
       socket_fdnames = lib.concatStringsSep ":" (lib.attrNames sockets);
 
-      socket_args = lib.flatten (lib.mapAttrsToList
-        (key: val: [
+      socket_args = lib.flatten (
+        lib.mapAttrsToList (key: val: [
           "-s"
           "unix::${val}"
-        ])
-        sockets);
+        ]) sockets
+      );
     in
     lib.mkIf (cfg.enable && pkgs.stdenv.isDarwin) {
       gpg-agent = lib.mkForce {
@@ -76,11 +81,14 @@ in
           ProgramArguments = [
             "${pkgs.systemfd}/bin/systemfd"
             "--no-pid"
-          ] ++ socket_args ++ [
+          ]
+          ++ socket_args
+          ++ [
             "--"
             "${gpgcfg.package}/bin/gpg-agent"
             "--supervise"
-          ] ++ lib.optional cfg.verbose "--verbose";
+          ]
+          ++ lib.optional cfg.verbose "--verbose";
 
           EnvironmentVariables = {
             GNUPGHOME = gpgcfg.homedir;

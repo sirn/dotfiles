@@ -1,4 +1,10 @@
-{ lib, buildNpmPackage, fetchzip, jq, moreutils }:
+{
+  lib,
+  buildNpmPackage,
+  fetchzip,
+  jq,
+  moreutils,
+}:
 
 buildNpmPackage rec {
   pname = "mcp-remote";

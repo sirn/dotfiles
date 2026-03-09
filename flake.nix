@@ -56,7 +56,8 @@
     };
   };
 
-  outputs = { nixpkgs, home-manager, ... }@inputs:
+  outputs =
+    { nixpkgs, home-manager, ... }@inputs:
     let
       config = {
         allowUnfree = true;
@@ -70,12 +71,15 @@
           # Remove once https://github.com/NixOS/nixpkgs/issues/493775 is in unstable.
           yt-dlp =
             if prev.stdenv.hostPlatform.isDarwin then
-              prev.yt-dlp.overridePythonAttrs
-                (oldAttrs: {
-                  dependencies = prev.lib.filter
-                    (p: !(prev.lib.elem (p.pname or "") [ "cffi" "secretstorage" ]))
-                    oldAttrs.dependencies;
-                })
+              prev.yt-dlp.overridePythonAttrs (oldAttrs: {
+                dependencies = prev.lib.filter (
+                  p:
+                  !(prev.lib.elem (p.pname or "") [
+                    "cffi"
+                    "secretstorage"
+                  ])
+                ) oldAttrs.dependencies;
+              })
             else
               prev.yt-dlp;
         })
@@ -85,10 +89,9 @@
           # See: https://github.com/NixOS/nixpkgs/issues/488689
           inetutils =
             if prev.stdenv.hostPlatform.isDarwin then
-              prev.inetutils.overrideAttrs
-                (oldAttrs: {
-                  hardeningDisable = (oldAttrs.hardeningDisable or [ ]) ++ [ "format" ];
-                })
+              prev.inetutils.overrideAttrs (oldAttrs: {
+                hardeningDisable = (oldAttrs.hardeningDisable or [ ]) ++ [ "format" ];
+              })
             else
               prev.inetutils;
         })
@@ -126,10 +129,12 @@
         ];
 
       mkDefaultConfig =
-        { username
-        , homeDirectory
+        {
+          username,
+          homeDirectory,
         }:
-        { pkgs, ... }: {
+        { pkgs, ... }:
+        {
           nixpkgs.overlays = overlays;
           nixpkgs.config = config;
           programs.home-manager.enable = true;
@@ -140,10 +145,11 @@
         };
 
       mkHomeConfig =
-        { hostname
-        , username
-        , system
-        , homeDirectory
+        {
+          hostname,
+          username,
+          system,
+          homeDirectory,
         }:
         home-manager.lib.homeManagerConfiguration {
           # home-manager will be responsible for evaluating the nixpkgs.overlays.
@@ -156,13 +162,15 @@
           pkgs = nixpkgs.legacyPackages.${system};
           modules = [
             (mkDefaultConfig { inherit username homeDirectory; })
-          ] ++ (mkModules { inherit hostname; });
+          ]
+          ++ (mkModules { inherit hostname; });
         };
 
       mkNixOSConfig =
-        { hostname
-        , username ? "sirn"
-        , homeDirectory ? "/home/${username}"
+        {
+          hostname,
+          username ? "sirn",
+          homeDirectory ? "/home/${username}",
         }:
         {
           home-manager.useGlobalPkgs = false;
@@ -171,30 +179,43 @@
           home-manager.users.${username} = {
             imports = [
               (mkDefaultConfig { inherit username homeDirectory; })
-            ] ++ (mkModules { inherit hostname; });
+            ]
+            ++ (mkModules { inherit hostname; });
           };
         };
 
       mkLinuxConfig =
-        { hostname
-        , username ? "sirn"
-        , system ? "x86_64-linux"
-        , homeDirectory ? "/home/${username}"
-        , ...
+        {
+          hostname,
+          username ? "sirn",
+          system ? "x86_64-linux",
+          homeDirectory ? "/home/${username}",
+          ...
         }:
         mkHomeConfig {
-          inherit hostname username system homeDirectory;
+          inherit
+            hostname
+            username
+            system
+            homeDirectory
+            ;
         };
 
       mkDarwinConfig =
-        { hostname
-        , username ? "sirn"
-        , system ? "aarch64-darwin"
-        , homeDirectory ? "/Users/${username}"
-        , ...
+        {
+          hostname,
+          username ? "sirn",
+          system ? "aarch64-darwin",
+          homeDirectory ? "/Users/${username}",
+          ...
         }:
         mkHomeConfig {
-          inherit hostname username system homeDirectory;
+          inherit
+            hostname
+            username
+            system
+            homeDirectory
+            ;
         };
     in
     {

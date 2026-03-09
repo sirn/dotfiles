@@ -31,7 +31,10 @@ in
   programs.niri = lib.mkIf (cfg.enable && niricfg.enable) {
     settings = {
       binds = {
-        "Mod+d".action.spawn = [ "${lib.getExe cfg.package}" "open" ];
+        "Mod+d".action.spawn = [
+          "${lib.getExe cfg.package}"
+          "open"
+        ];
       };
     };
   };

@@ -1,4 +1,9 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.programs.ghostty;
@@ -15,10 +20,7 @@ in
   programs.ghostty = {
     enable = true;
 
-    package =
-      if pkgs.stdenv.isLinux
-      then config.lib.nixGL.wrap pkgs.ghostty
-      else pkgs.ghostty-bin;
+    package = if pkgs.stdenv.isLinux then config.lib.nixGL.wrap pkgs.ghostty else pkgs.ghostty-bin;
 
     settings = lib.mkMerge [
       {
@@ -29,8 +31,7 @@ in
         keybind = [ "ctrl+bracket_left=text:\\x1b" ];
 
         command = builtins.concatStringsSep " " (
-          [ config.machine.interactiveShell ]
-          ++ lib.optional pkgs.stdenv.isDarwin "--login"
+          [ config.machine.interactiveShell ] ++ lib.optional pkgs.stdenv.isDarwin "--login"
         );
       }
       (lib.mkIf pkgs.stdenv.isLinux {

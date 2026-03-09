@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   swaycfg = config.wayland.windowManager.sway;
@@ -21,10 +26,16 @@ in
           "org.freedesktop.impl.portal.Inhibit" = "none";
           "org.freedesktop.impl.portal.AppChooser" = "gtk";
           "org.freedesktop.impl.portal.Settings" = "gtk;kde";
-        } // (if (swaycfg.enable || niricfg.enable) then {
-          "org.freedesktop.impl.portal.ScreenCast" = "wlr";
-          "org.freedesktop.impl.portal.Screenshot" = "wlr";
-        } else { });
+        }
+        // (
+          if (swaycfg.enable || niricfg.enable) then
+            {
+              "org.freedesktop.impl.portal.ScreenCast" = "wlr";
+              "org.freedesktop.impl.portal.Screenshot" = "wlr";
+            }
+          else
+            { }
+        );
       };
     };
   };

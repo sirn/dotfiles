@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.services.swww;
@@ -71,7 +76,10 @@ in
   systemd.user.services."swww-wallpaper" = lib.mkIf cfg.enable {
     Unit = {
       Description = "Update wallpaper with swww";
-      After = [ config.wayland.systemd.target "swww.service" ];
+      After = [
+        config.wayland.systemd.target
+        "swww.service"
+      ];
       PartOf = [ config.wayland.systemd.target ];
       ConditionEnvironment = "WAYLAND_DISPLAY";
     };
@@ -96,7 +104,10 @@ in
       Persistent = true;
     };
 
-    Install.WantedBy = [ config.wayland.systemd.target "timers.target" ];
+    Install.WantedBy = [
+      config.wayland.systemd.target
+      "timers.target"
+    ];
   };
 
   programs.swaylock.settings = lib.mkIf swaylockcfg.enable {

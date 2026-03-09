@@ -1,26 +1,30 @@
-{ lib, buildFHSEnv, stdenv, uv, makeWrapper }:
+{
+  lib,
+  buildFHSEnv,
+  stdenv,
+  uv,
+  makeWrapper,
+}:
 
 let
   fhsUv = buildFHSEnv {
     name = "uvx-fhs-base";
     runScript = "uv";
-    targetPkgs = pkgs': with pkgs'; [
-      uv
+    targetPkgs =
+      pkgs': with pkgs'; [
+        uv
 
-      # Used by uv
-      openssl
-      pkg-config
-      stdenv.cc.cc
-      zlib
-    ];
+        # Used by uv
+        openssl
+        pkg-config
+        stdenv.cc.cc
+        zlib
+      ];
 
     meta.mainProgram = "uv";
   };
 
-  actualUv =
-    if stdenv.isLinux
-    then fhsUv
-    else uv;
+  actualUv = if stdenv.isLinux then fhsUv else uv;
 in
 stdenv.mkDerivation {
   pname = "wrapped-uv";

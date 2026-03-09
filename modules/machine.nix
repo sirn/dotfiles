@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   inherit (pkgs.stdenv) isDarwin isLinux;
@@ -9,10 +14,7 @@ in
     machine = {
       wrapLauncher = mkOption {
         type = types.functionTo types.path;
-        default = x:
-          if lib.isDerivation x
-          then lib.getExe x
-          else x;
+        default = x: if lib.isDerivation x then lib.getExe x else x;
         description = ''
           Function to wrap a launcher command. Accepts either a package
           (will use lib.getExe) or a path string.

@@ -4,8 +4,14 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         pkgs = import nixpkgs {
           inherit system;
@@ -22,13 +28,14 @@
                     fhsUv = prev.buildFHSEnv {
                       name = "uv";
                       runScript = "uv";
-                      targetPkgs = pkgs': with pkgs'; [
-                        uv
-                        openssl
-                        pkg-config
-                        gcc
-                        zlib
-                      ];
+                      targetPkgs =
+                        pkgs': with pkgs'; [
+                          uv
+                          openssl
+                          pkg-config
+                          gcc
+                          zlib
+                        ];
 
                       meta.mainProgram = "uv";
                     };

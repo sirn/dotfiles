@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.programs.alacritty;
@@ -20,16 +25,10 @@ in
     package = config.lib.nixGL.wrap pkgs.alacritty;
 
     settings = {
-      window =
-        if pkgs.stdenv.isDarwin
-        then { option_as_alt = "Both"; }
-        else { };
+      window = if pkgs.stdenv.isDarwin then { option_as_alt = "Both"; } else { };
 
       font = {
-        size =
-          if pkgs.stdenv.isDarwin
-          then 14.0
-          else 12.0;
+        size = if pkgs.stdenv.isDarwin then 14.0 else 12.0;
 
         normal = {
           family = "PragmataPro Mono Liga";
@@ -39,10 +38,7 @@ in
       hints = {
         enabled = [
           {
-            command =
-              if pkgs.stdenv.isDarwin
-              then "open"
-              else "${pkgs.xdg-utils}/bin/xdg-open";
+            command = if pkgs.stdenv.isDarwin then "open" else "${pkgs.xdg-utils}/bin/xdg-open";
 
             hyperlinks = true;
             post_processing = true;
@@ -65,10 +61,7 @@ in
 
       shell = {
         program = config.machine.interactiveShell;
-        args =
-          if pkgs.stdenv.isDarwin
-          then [ "--login" ]
-          else [ ];
+        args = if pkgs.stdenv.isDarwin then [ "--login" ] else [ ];
       };
     };
   };

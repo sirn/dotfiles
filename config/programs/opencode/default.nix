@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 
 let
@@ -66,18 +67,16 @@ let
           toCmd = cmd: if lib.hasPrefix "re:" cmd then reToCmd cmd else cmd;
           mkEntries =
             decision: cmds:
-            lib.concatMap
-              (
-                cmd:
-                let
-                  effectiveCmd = toCmd cmd;
-                in
-                [
-                  (lib.nameValuePair "${effectiveCmd} *" decision)
-                  (lib.nameValuePair effectiveCmd decision)
-                ]
-              )
-              cmds;
+            lib.concatMap (
+              cmd:
+              let
+                effectiveCmd = toCmd cmd;
+              in
+              [
+                (lib.nameValuePair "${effectiveCmd} *" decision)
+                (lib.nameValuePair effectiveCmd decision)
+              ]
+            ) cmds;
           allows = mkEntries "allow" (commands.allow.shell or [ ]);
           asks = mkEntries "ask" (commands.ask.shell or [ ]);
           denies = mkEntries "deny" (commands.deny.shell or [ ]);
@@ -132,16 +131,14 @@ let
     name: agent:
     let
       isPrimary = (agent.opencode.primary or false);
-      modelLine = lib.optionalString
-        (
-          isPrimary && agent.opencode ? model
-        ) "model: ${agent.opencode.model}\n";
+      modelLine = lib.optionalString (
+        isPrimary && agent.opencode ? model
+      ) "model: ${agent.opencode.model}\n";
       modeVal = if !isPrimary then "subagent" else (agent.opencode.mode or "primary");
       modeLine = lib.optionalString (modeVal != "") "mode: ${modeVal}\n";
-      permissionLine = lib.optionalString
-        (
-          agent.opencode ? permission
-        ) "permission: ${builtins.toJSON agent.opencode.permission}\n";
+      permissionLine = lib.optionalString (
+        agent.opencode ? permission
+      ) "permission: ${builtins.toJSON agent.opencode.permission}\n";
     in
     ''
       ---
@@ -154,56 +151,50 @@ let
 
   toOpencodeMcpServers =
     servers:
-    lib.mapAttrs
-      (
-        name: server:
-        if isStdioServer server then
-          {
-            command = [ (server.command or (lib.getExe server.package)) ];
-            type = "local";
-            enabled = true;
-          }
-        else
-          {
-            url = server.url;
-            type = "remote";
-            enabled = true;
-          }
-      )
-      servers;
+    lib.mapAttrs (
+      name: server:
+      if isStdioServer server then
+        {
+          command = [ (server.command or (lib.getExe server.package)) ];
+          type = "local";
+          enabled = true;
+        }
+      else
+        {
+          url = server.url;
+          type = "remote";
+          enabled = true;
+        }
+    ) servers;
 
   # Generate MCP tool permissions from server allowedTools
   opencodeMcpPermissions = lib.listToAttrs (
     lib.flatten (
-      lib.mapAttrsToList
-        (
-          name: server:
-            let
-              tools = server.allowedTools or null;
-            in
-            if tools == null then
-              [
-                {
-                  name = "${name}_*";
-                  value = true;
-                }
-              ]
-            else
-            # Deny all tools by default, allow specific ones
-              [
-                {
-                  name = "${name}_*";
-                  value = false;
-                }
-              ]
-              ++ (map
-                (tool: {
-                  name = "${name}_${tool}";
-                  value = true;
-                })
-                tools)
-        )
-        config.programs.mcp.servers
+      lib.mapAttrsToList (
+        name: server:
+        let
+          tools = server.allowedTools or null;
+        in
+        if tools == null then
+          [
+            {
+              name = "${name}_*";
+              value = true;
+            }
+          ]
+        else
+          # Deny all tools by default, allow specific ones
+          [
+            {
+              name = "${name}_*";
+              value = false;
+            }
+          ]
+          ++ (map (tool: {
+            name = "${name}_${tool}";
+            value = true;
+          }) tools)
+      ) config.programs.mcp.servers
     )
   );
 in

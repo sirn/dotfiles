@@ -1,4 +1,11 @@
-{ lib, stdenv, fetchFromGitHub, emacs, sqlite, writeText }:
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  emacs,
+  sqlite,
+  writeText,
+}:
 
 stdenv.mkDerivation rec {
   pname = "sqlite3";

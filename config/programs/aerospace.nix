@@ -56,14 +56,38 @@
           cmd-ctrl-shift-semicolon = "mode service";
         };
         service.binding = {
-          esc = [ "reload-config" "mode main" ];
-          r = [ "flatten-workspace-tree" "mode main" ];
-          f = [ "layout floating tiling" "mode main" ];
-          backspace = [ "close-all-windows-but-current" "mode main" ];
-          cmd-ctrl-shift-h = [ "join-with left" "mode main" ];
-          cmd-ctrl-shift-j = [ "join-with down" "mode main" ];
-          cmd-ctrl-shift-k = [ "join-with up" "mode main" ];
-          cmd-ctrl-shift-l = [ "join-with right" "mode main" ];
+          esc = [
+            "reload-config"
+            "mode main"
+          ];
+          r = [
+            "flatten-workspace-tree"
+            "mode main"
+          ];
+          f = [
+            "layout floating tiling"
+            "mode main"
+          ];
+          backspace = [
+            "close-all-windows-but-current"
+            "mode main"
+          ];
+          cmd-ctrl-shift-h = [
+            "join-with left"
+            "mode main"
+          ];
+          cmd-ctrl-shift-j = [
+            "join-with down"
+            "mode main"
+          ];
+          cmd-ctrl-shift-k = [
+            "join-with up"
+            "mode main"
+          ];
+          cmd-ctrl-shift-l = [
+            "join-with right"
+            "mode main"
+          ];
         };
       };
     };

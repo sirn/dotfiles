@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
   pkg = pkgs.sway-audio-idle-inhibit;
@@ -18,7 +23,9 @@ in
       Restart = "on-failure";
     };
 
-    Install = { WantedBy = [ config.wayland.systemd.target ]; };
+    Install = {
+      WantedBy = [ config.wayland.systemd.target ];
+    };
   };
 
   programs.waybar = lib.mkIf waybarcfg.enable {

@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   programs.ssh = {
@@ -27,8 +32,14 @@
 
     includes = [
       "${config.home.homeDirectory}/.ssh/config.d/*"
-    ] ++ (if pkgs.stdenv.isDarwin then [
-      "${config.home.homeDirectory}/.orbstack/ssh/config"
-    ] else [ ]);
+    ]
+    ++ (
+      if pkgs.stdenv.isDarwin then
+        [
+          "${config.home.homeDirectory}/.orbstack/ssh/config"
+        ]
+      else
+        [ ]
+    );
   };
 }

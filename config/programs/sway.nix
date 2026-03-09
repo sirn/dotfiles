@@ -1,4 +1,10 @@
-{ options, config, lib, pkgs, ... }:
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   swayopts = options.wayland.windowManager.sway;
@@ -71,7 +77,8 @@ in
           "${cfg.modifier}+Return" = lib.mkDefault "exec ${cfg.terminal}";
           "${cfg.modifier}+Shift+q" = "kill";
           "${cfg.modifier}+Shift+c" = "reload";
-          "${cfg.modifier}+Shift+e" = "exec ${swaynagBin} -t warning -m 'Really exit?' -B 'Yes, exit sway' '${swaymsgBin} exit'";
+          "${cfg.modifier}+Shift+e" =
+            "exec ${swaynagBin} -t warning -m 'Really exit?' -B 'Yes, exit sway' '${swaymsgBin} exit'";
 
           # Focusing
           "${cfg.modifier}+${cfg.left}" = "focus left";

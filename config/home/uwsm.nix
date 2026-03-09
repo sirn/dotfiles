@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   swaycfg = config.wayland.windowManager.sway;
@@ -20,17 +25,12 @@ let
     exec uwsm finalize SWAYSOCK I3SOCK XCURSOR_SIZE XCURSOR_THEME
   '';
 
-  wrapLauncher = x:
+  wrapLauncher =
+    x:
     let
-      name =
-        if lib.isDerivation x
-        then x.pname or x.name
-        else baseNameOf x;
+      name = if lib.isDerivation x then x.pname or x.name else baseNameOf x;
 
-      cmd =
-        if lib.isDerivation x
-        then lib.getExe x
-        else x;
+      cmd = if lib.isDerivation x then lib.getExe x else x;
     in
     pkgs.writeShellScript "uwsm-${name}" ''
       exec ${lib.getExe pkgs.app2unit} -- ${cmd}
@@ -88,9 +88,11 @@ in
       Slice = appGraphicalSlice;
     };
 
-    sway-audio-idle-inhibit.Service = lib.mkIf (config.systemd.user.services ? sway-audio-idle-inhibit) {
-      Slice = appGraphicalSlice;
-    };
+    sway-audio-idle-inhibit.Service =
+      lib.mkIf (config.systemd.user.services ? sway-audio-idle-inhibit)
+        {
+          Slice = appGraphicalSlice;
+        };
 
     swww.Service = lib.mkIf config.services.swww.enable {
       Slice = appGraphicalSlice;

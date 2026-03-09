@@ -7,7 +7,5 @@
   };
 
   targets.genericLinux.nixGL.packages =
-    if pkgs.stdenv.isLinux && config.targets.genericLinux.enable
-    then pkgs.nixgl
-    else null;
+    if pkgs.stdenv.isLinux && config.targets.genericLinux.enable then pkgs.nixgl else null;
 }

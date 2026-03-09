@@ -1,24 +1,38 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   # Claude Code: Stop hook with transcript fallback
   claudeNotify = pkgs.writeShellApplication {
     name = "claude-code-notify";
-    runtimeInputs = [ pkgs.jq pkgs.toastify ];
+    runtimeInputs = [
+      pkgs.jq
+      pkgs.toastify
+    ];
     text = builtins.readFile ../programs/claude-code/notify.sh;
   };
 
   # Gemini CLI: AfterAgent hook with prompt_response from stdin
   geminiNotify = pkgs.writeShellApplication {
     name = "gemini-cli-notify";
-    runtimeInputs = [ pkgs.jq pkgs.toastify ];
+    runtimeInputs = [
+      pkgs.jq
+      pkgs.toastify
+    ];
     text = builtins.readFile ../programs/gemini/notify.sh;
   };
 
   # Codex: notify hook with last-assistant-message from arguments or stdin
   codexNotify = pkgs.writeShellApplication {
     name = "codex-notify";
-    runtimeInputs = [ pkgs.jq pkgs.toastify ];
+    runtimeInputs = [
+      pkgs.jq
+      pkgs.toastify
+    ];
     text = builtins.readFile ../programs/codex/notify.sh;
   };
 
@@ -67,17 +81,19 @@ in
     extensions = [ "extensions/notify-turn-complete.ts" ];
   };
 
-  xdg.configFile."opencode/plugins/notify-turn-complete.ts" = lib.mkIf config.programs.opencode.enable {
-    text = builtins.replaceStrings
-      [ "\"__TOASTIFY_BIN__\"" ]
-      [ "\"${lib.getExe pkgs.toastify}\"" ]
-      (builtins.readFile ../programs/opencode/notify-turn-complete.ts);
-  };
+  xdg.configFile."opencode/plugins/notify-turn-complete.ts" =
+    lib.mkIf config.programs.opencode.enable
+      {
+        text = builtins.replaceStrings [ "\"__TOASTIFY_BIN__\"" ] [ "\"${lib.getExe pkgs.toastify}\"" ] (
+          builtins.readFile ../programs/opencode/notify-turn-complete.ts
+        );
+      };
 
-  home.file.".pi/agent/extensions/notify-turn-complete.ts" = lib.mkIf config.programs.pi-coding-agent.enable {
-    text = builtins.replaceStrings
-      [ "\"__TOASTIFY_BIN__\"" ]
-      [ "\"${lib.getExe pkgs.toastify}\"" ]
-      (builtins.readFile ../programs/pi-coding-agent/notify-turn-complete.ts);
-  };
+  home.file.".pi/agent/extensions/notify-turn-complete.ts" =
+    lib.mkIf config.programs.pi-coding-agent.enable
+      {
+        text = builtins.replaceStrings [ "\"__TOASTIFY_BIN__\"" ] [ "\"${lib.getExe pkgs.toastify}\"" ] (
+          builtins.readFile ../programs/pi-coding-agent/notify-turn-complete.ts
+        );
+      };
 }

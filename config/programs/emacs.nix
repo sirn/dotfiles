@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.programs.emacs;
@@ -25,9 +30,12 @@ let
   hasGui = swaycfg.enable || niricfg.enable;
 
   baseEmacs =
-    if (pkgs.stdenv.isLinux && hasGui) then pkgs.emacs-pgtk
-    else if pkgs.stdenv.isDarwin then pkgs.emacs
-    else pkgs.emacs-nox;
+    if (pkgs.stdenv.isLinux && hasGui) then
+      pkgs.emacs-pgtk
+    else if pkgs.stdenv.isDarwin then
+      pkgs.emacs
+    else
+      pkgs.emacs-nox;
 
   emacsBinDeps = pkgs.stdenv.mkDerivation {
     name = "emacs-bin-deps";
@@ -129,11 +137,14 @@ let
         --add-flags "--init-directory=${emacsConfigDir}"
     '';
     inherit (baseEmacs) meta;
-    passthru = (baseEmacs.passthru or { }) // {
-      inherit (baseEmacs) src;
-    } // lib.optionalAttrs (baseEmacs ? LIBRARY_PATH) {
-      inherit (baseEmacs) LIBRARY_PATH;
-    };
+    passthru =
+      (baseEmacs.passthru or { })
+      // {
+        inherit (baseEmacs) src;
+      }
+      // lib.optionalAttrs (baseEmacs ? LIBRARY_PATH) {
+        inherit (baseEmacs) LIBRARY_PATH;
+      };
   };
 in
 {
@@ -142,158 +153,161 @@ in
 
     package = lib.mkDefault wrappedEmacs;
 
-    extraPackages = epkgs: with epkgs; [
-      # Early packages
-      el-patch
-      general
-      no-littering
-      pkgs.local.emacsPackages.sqlite3
-      s
-      use-package
+    extraPackages =
+      epkgs:
+      with epkgs;
+      [
+        # Early packages
+        el-patch
+        general
+        no-littering
+        pkgs.local.emacsPackages.sqlite3
+        s
+        use-package
 
-      # AI packages
-      pi-coding-agent
-      pkgs.local.emacsPackages.phscroll
+        # AI packages
+        pi-coding-agent
+        pkgs.local.emacsPackages.phscroll
 
-      # Org packages
-      org
-      org-modern
-      org-ql
-      org-super-agenda
+        # Org packages
+        org
+        org-modern
+        org-ql
+        org-super-agenda
 
-      # Packages
-      ace-link
-      ace-window
-      avy
-      clipetty
-      consult
-      corfu
-      corfu-prescient
-      corfu-terminal
-      doom-modeline
-      dtrt-indent
-      eat
-      editorconfig
-      eldoc
-      embark
-      embark-consult
-      envrc
-      evil
-      evil-collection
-      evil-commentary
-      evil-matchit
-      evil-mc
-      evil-org
-      evil-surround
-      flymake-collection
-      forge
-      ghub
-      git-gutter
-      gptel
-      helpful
-      magit
-      marginalia
-      modus-themes
-      nerd-icons
-      nerd-icons-dired
-      nix-ts-mode
-      ob-restclient
-      orderless
-      outline-indent
-      parinfer-rust-mode
-      pinentry
-      prescient
-      project
-      psc-ide
-      rainbow-delimiters
-      rainbow-mode
-      restclient
-      smartparens
-      sql-indent
-      tempel
-      treemacs
-      treemacs-evil
-      treemacs-nerd-icons
-      treesit-grammars.with-all-grammars
-      vundo
-      unkillable-scratch
-      vertico
-      vertico-prescient
-      visual-regexp
-      vterm
-      which-key
+        # Packages
+        ace-link
+        ace-window
+        avy
+        clipetty
+        consult
+        corfu
+        corfu-prescient
+        corfu-terminal
+        doom-modeline
+        dtrt-indent
+        eat
+        editorconfig
+        eldoc
+        embark
+        embark-consult
+        envrc
+        evil
+        evil-collection
+        evil-commentary
+        evil-matchit
+        evil-mc
+        evil-org
+        evil-surround
+        flymake-collection
+        forge
+        ghub
+        git-gutter
+        gptel
+        helpful
+        magit
+        marginalia
+        modus-themes
+        nerd-icons
+        nerd-icons-dired
+        nix-ts-mode
+        ob-restclient
+        orderless
+        outline-indent
+        parinfer-rust-mode
+        pinentry
+        prescient
+        project
+        psc-ide
+        rainbow-delimiters
+        rainbow-mode
+        restclient
+        smartparens
+        sql-indent
+        tempel
+        treemacs
+        treemacs-evil
+        treemacs-nerd-icons
+        treesit-grammars.with-all-grammars
+        vundo
+        unkillable-scratch
+        vertico
+        vertico-prescient
+        visual-regexp
+        vterm
+        which-key
 
-      (apheleia.overrideDerivation (attrs: {
-        nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
+        (apheleia.overrideDerivation (attrs: {
+          nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
 
-        postInstall = ''
-          wrapProgram $out/share/emacs/site-lisp/elpa/${attrs.pname}-${attrs.version}/scripts/formatters/apheleia-npx \
-            --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.nodePackages.prettier ]}
-          wrapProgram $out/share/emacs/site-lisp/elpa/${attrs.pname}-${attrs.version}/scripts/formatters/apheleia-phpcs \
-            --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.php83Packages.php-codesniffer ]}
-        '';
-      }))
+          postInstall = ''
+            wrapProgram $out/share/emacs/site-lisp/elpa/${attrs.pname}-${attrs.version}/scripts/formatters/apheleia-npx \
+              --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.nodePackages.prettier ]}
+            wrapProgram $out/share/emacs/site-lisp/elpa/${attrs.pname}-${attrs.version}/scripts/formatters/apheleia-phpcs \
+              --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.php83Packages.php-codesniffer ]}
+          '';
+        }))
 
-      (visual-regexp-steroids.overrideDerivation (attrs: {
-        postPatch = ''
-          substituteInPlace visual-regexp-steroids.el \
-            --replace "python %s" "${pkgs.python311}/bin/python3 %s"
-        '';
-      }))
+        (visual-regexp-steroids.overrideDerivation (attrs: {
+          postPatch = ''
+            substituteInPlace visual-regexp-steroids.el \
+              --replace "python %s" "${pkgs.python311}/bin/python3 %s"
+          '';
+        }))
 
-      # Languages
-      ansible
-      ansible-doc
-      clojure-mode
-      clojure-ts-mode
-      dockerfile-mode
-      elixir-mode
-      erlang
-      go-mode
-      groovy-mode
-      haskell-mode
-      hcl-mode
-      jq-mode
-      json-mode
-      jsonnet-mode
-      lua-mode
-      markdown-mode
-      nim-mode
-      nix-mode
-      pandoc-mode
-      php-mode
-      protobuf-mode
-      purescript-mode
-      rust-mode
-      svelte-mode
-      terraform-mode
-      toml-mode
-      typescript-mode
-      web-mode
-      with-editor
-      yaml-mode
-      zencoding-mode
+        # Languages
+        ansible
+        ansible-doc
+        clojure-mode
+        clojure-ts-mode
+        dockerfile-mode
+        elixir-mode
+        erlang
+        go-mode
+        groovy-mode
+        haskell-mode
+        hcl-mode
+        jq-mode
+        json-mode
+        jsonnet-mode
+        lua-mode
+        markdown-mode
+        nim-mode
+        nix-mode
+        pandoc-mode
+        php-mode
+        protobuf-mode
+        purescript-mode
+        rust-mode
+        svelte-mode
+        terraform-mode
+        toml-mode
+        typescript-mode
+        web-mode
+        with-editor
+        yaml-mode
+        zencoding-mode
 
-    ]
-    ++ (
-      if notmuchcfg.enable then
-        [
-          # notmuch package also contains notmuch-mode so it needs to be here
-          # instead of in emacs-bin-deps below
-          notmuch
-        ]
-      else
-        [ ]
-    )
-    ++ (
-      if pkgs.stdenv.isDarwin then
-        [
-          exec-path-from-shell
-          osx-trash
-          pbcopy
-        ]
-      else
-        [ ]
-    );
+      ]
+      ++ (
+        if notmuchcfg.enable then
+          [
+            # notmuch package also contains notmuch-mode so it needs to be here
+            # instead of in emacs-bin-deps below
+            notmuch
+          ]
+        else
+          [ ]
+      )
+      ++ (
+        if pkgs.stdenv.isDarwin then
+          [
+            exec-path-from-shell
+            osx-trash
+            pbcopy
+          ]
+        else
+          [ ]
+      );
   };
 }

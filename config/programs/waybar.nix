@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.programs.waybar;
@@ -21,21 +26,46 @@ in
         spacing = 2;
         layer = "top";
 
-        modules-left = (if swaycfg.enable then [
-          "sway/workspaces"
-          "sway/mode"
-          "sway/scratchpad"
-        ] else [ ]) ++ (if niricfg.enable then [
-          "niri/workspaces"
-        ] else [ ]) ++ [
-          "custom/media"
-        ];
+        modules-left =
+          (
+            if swaycfg.enable then
+              [
+                "sway/workspaces"
+                "sway/mode"
+                "sway/scratchpad"
+              ]
+            else
+              [ ]
+          )
+          ++ (
+            if niricfg.enable then
+              [
+                "niri/workspaces"
+              ]
+            else
+              [ ]
+          )
+          ++ [
+            "custom/media"
+          ];
 
-        modules-center = (if swaycfg.enable then [
-          "sway/window"
-        ] else [ ]) ++ (if niricfg.enable then [
-          "niri/window"
-        ] else [ ]);
+        modules-center =
+          (
+            if swaycfg.enable then
+              [
+                "sway/window"
+              ]
+            else
+              [ ]
+          )
+          ++ (
+            if niricfg.enable then
+              [
+                "niri/window"
+              ]
+            else
+              [ ]
+          );
 
         modules-right = [
           "idle_inhibitor"
@@ -52,7 +82,10 @@ in
         "sway/scratchpad" = lib.mkIf swaycfg.enable {
           format = "{icon} {count}";
           show-empty = false;
-          format-icons = [ "" "" ];
+          format-icons = [
+            ""
+            ""
+          ];
           tooltip = true;
           tooltip-format = "{app}: {title}";
         };
@@ -78,7 +111,13 @@ in
             critical = 10;
           };
           format = "{capacity}% {icon}";
-          format-icons = [ "" "" "" "" "" ];
+          format-icons = [
+            ""
+            ""
+            ""
+            ""
+            ""
+          ];
         };
 
         "clock" = {
@@ -86,23 +125,25 @@ in
           tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
         };
 
-        "pulseaudio" =
-          {
-            format = "{icon}";
-            format-bluetooth = "";
-            format-muted = "";
-            format-source = "";
-            format-icons = {
-              headphone = "";
-              hands-free = "";
-              headset = "";
-              phone = "";
-              portable = "";
-              car = "";
-              default = [ "" "" ];
-            };
-            on-click = "${pkgs.pavucontrol}/bin/pavucontrol";
+        "pulseaudio" = {
+          format = "{icon}";
+          format-bluetooth = "";
+          format-muted = "";
+          format-source = "";
+          format-icons = {
+            headphone = "";
+            hands-free = "";
+            headset = "";
+            phone = "";
+            portable = "";
+            car = "";
+            default = [
+              ""
+              ""
+            ];
           };
+          on-click = "${pkgs.pavucontrol}/bin/pavucontrol";
+        };
       };
     };
   };
@@ -122,7 +163,11 @@ in
 
   programs.niri.settings = lib.mkIf (cfg.enable && niricfg.enable) {
     binds = {
-      "Mod+Shift+B".action.spawn = [ "sh" "-c" "pkill -SIGUSR1 waybar" ];
+      "Mod+Shift+B".action.spawn = [
+        "sh"
+        "-c"
+        "pkill -SIGUSR1 waybar"
+      ];
     };
   };
 }

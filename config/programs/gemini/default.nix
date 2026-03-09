@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
 
 let
   cfg = config.programs.gemini-cli;
@@ -9,17 +14,24 @@ let
 
   permissionsPolicy = builtins.fromTOML (builtins.readFile ../../../var/agents/permissions.toml);
 
-  effectivePolicy = mode:
+  effectivePolicy =
+    mode:
     let
       default = permissionsPolicy.default or { };
       modePolicy = permissionsPolicy.mode.${mode} or { };
       mergeLists = lists: lib.unique (lib.concatLists (lib.filter (l: l != null) lists));
-      mergeCmds = section:
+      mergeCmds =
+        section:
         let
           defaultShell = (default.commands.${section} or { }).shell or [ ];
           modeShell = ((modePolicy.commands or { }).${section} or { }).shell or [ ];
         in
-        { shell = mergeLists [ defaultShell modeShell ]; };
+        {
+          shell = mergeLists [
+            defaultShell
+            modeShell
+          ];
+        };
     in
     {
       tools = default.tools // (modePolicy.tools or { });
@@ -33,12 +45,14 @@ let
 
   tomlFormat = pkgs.formats.toml { };
 
-  toGeminiPolicyRules = mode:
+  toGeminiPolicyRules =
+    mode:
     let
       policy = effectivePolicy mode;
       inherit (policy) tools commands paths;
 
-      globToRegex = glob:
+      globToRegex =
+        glob:
         let
           r1 = lib.replaceStrings [ "." ] [ "\\." ] glob;
           p1 = lib.replaceStrings [ "**" ] [ "DOUBLESTAR" ] r1;
@@ -47,7 +61,8 @@ let
         in
         p3;
 
-      mkShellRule = decision: priority: pattern:
+      mkShellRule =
+        decision: priority: pattern:
         let
           isRegex = lib.hasPrefix "re:" pattern;
           content = if isRegex then lib.removePrefix "re:" pattern else pattern;
@@ -56,7 +71,8 @@ let
           toolName = "run_shell_command";
           decision = decision;
           priority = priority;
-        } // (if isRegex then { commandRegex = content; } else { commandPrefix = content; });
+        }
+        // (if isRegex then { commandRegex = content; } else { commandPrefix = content; });
 
       mkPathRule = decision: priority: tool: glob: {
         toolName = tool;
@@ -72,13 +88,28 @@ let
         ++ lib.optional tools.list "list_directory"
         ++ lib.optional tools.webfetch "web_fetch"
         ++ lib.optional tools.websearch "google_web_search"
-        ++ [ "ask_user" "activate_skill" ];
+        ++ [
+          "ask_user"
+          "activate_skill"
+        ];
     in
     [
-      { toolName = baseTools; decision = "allow"; priority = 100; }
+      {
+        toolName = baseTools;
+        decision = "allow";
+        priority = 100;
+      }
     ]
-    ++ lib.optional tools.edit { toolName = [ "replace" ]; decision = "allow"; priority = 100; }
-    ++ lib.optional tools.write { toolName = [ "write_file" ]; decision = "allow"; priority = 100; }
+    ++ lib.optional tools.edit {
+      toolName = [ "replace" ];
+      decision = "allow";
+      priority = 100;
+    }
+    ++ lib.optional tools.write {
+      toolName = [ "write_file" ];
+      decision = "allow";
+      priority = 100;
+    }
     ++ (map (mkShellRule "allow" 150) (commands.allow.shell or [ ]))
     ++ (map (mkShellRule "ask_user" 150) (commands.ask.shell or [ ]))
     ++ (map (mkShellRule "deny" 150) (commands.deny.shell or [ ]))
@@ -99,26 +130,27 @@ let
 
   isStdioServer = server: server ? command || server ? package;
 
-  toGeminiMcpServers = servers:
-    lib.mapAttrs
-      (name: server:
-        let
-          tools = server.allowedTools or null;
-          baseConfig =
-            if isStdioServer server then {
+  toGeminiMcpServers =
+    servers:
+    lib.mapAttrs (
+      name: server:
+      let
+        tools = server.allowedTools or null;
+        baseConfig =
+          if isStdioServer server then
+            {
               command = server.command or (lib.getExe server.package);
-            } else {
+            }
+          else
+            {
               command = lib.getExe pkgs.local.mcpServers.mcp-remote;
               args = [ server.url ];
             };
-          # Add trust setting based on allowedTools
-          trustConfig =
-            if tools == null
-            then { trust = true; }
-            else { };
-        in
-        baseConfig // trustConfig)
-      servers;
+        # Add trust setting based on allowedTools
+        trustConfig = if tools == null then { trust = true; } else { };
+      in
+      baseConfig // trustConfig
+    ) servers;
 
   # Link individual skills rather than the entire directory,
   # allowing users to add custom skills alongside managed ones
@@ -127,18 +159,22 @@ let
   mkGeminiSkillLink = name: {
     ".gemini/skills/${name}".source = skillsDir + "/${name}";
   };
-  geminiSkillLinks = lib.foldl' (acc: name: acc // mkGeminiSkillLink name) {} (builtins.attrNames skillDirs);
+  geminiSkillLinks = lib.foldl' (acc: name: acc // mkGeminiSkillLink name) { } (
+    builtins.attrNames skillDirs
+  );
 in
 {
   programs.gemini-cli = {
     enable = true;
 
-    package = (pkgs.writeScriptBin "gemini" ''
-      #!${pkgs.runtimeShell}
-      exec "${lib.getExe pkgs.local.envWrapper}" \
-        -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
-        -- "${lib.getExe pkgs.unstable.gemini-cli}" "$@"
-    '');
+    package = (
+      pkgs.writeScriptBin "gemini" ''
+        #!${pkgs.runtimeShell}
+        exec "${lib.getExe pkgs.local.envWrapper}" \
+          -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
+          -- "${lib.getExe pkgs.unstable.gemini-cli}" "$@"
+      ''
+    );
 
     # In 25.11, defaultModel only accepts string and default to gemini-2.5-pro
     # We want to use the best Auto model; so this needs to be set to an empty string.
@@ -150,7 +186,10 @@ in
 
     settings = {
       mcpServers = toGeminiMcpServers config.programs.mcp.servers;
-      context.fileName = [ "AGENTS.md" "GEMINI.md" ];
+      context.fileName = [
+        "AGENTS.md"
+        "GEMINI.md"
+      ];
       general = {
         enablePromptCompletion = true;
         previewFeatures = true;
@@ -206,7 +245,10 @@ in
     ];
   };
 
-  home.file = lib.mkIf cfg.enable (geminiSkillLinks // {
-    ".gemini/policies/nix-managed.toml".source = policyFile;
-  });
+  home.file = lib.mkIf cfg.enable (
+    geminiSkillLinks
+    // {
+      ".gemini/policies/nix-managed.toml".source = policyFile;
+    }
+  );
 }

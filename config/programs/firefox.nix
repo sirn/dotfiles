@@ -1,19 +1,25 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   csshacks = pkgs.local.firefox-csshacks;
 
   firefoxProfiles = config.programs.firefox.profiles;
   firefoxExec =
-    if pkgs.stdenv.isDarwin
-    then "/Applications/Firefox.app/Contents/MacOS/firefox"
+    if pkgs.stdenv.isDarwin then
+      "/Applications/Firefox.app/Contents/MacOS/firefox"
+    else if config.flatpak.enable then
+      "flatpak run org.mozilla.firefox"
     else
-      if config.flatpak.enable
-      then "flatpak run org.mozilla.firefox"
-      else lib.getExe config.programs.firefox.finalPackage;
+      lib.getExe config.programs.firefox.finalPackage;
 
   # Create a macOS app bundle for a Firefox profile
-  mkFirefoxProfileApp = name:
+  mkFirefoxProfileApp =
+    name:
     let
       bundleId = "org.nix-community.home.firefox.${name}";
       appName = "Firefox (${name})";
@@ -86,18 +92,18 @@ in
     # If NixGL is configured (i.e. non-NixOS), wrap with NixGL
     # so OpenGL/Vulkan libraries are available. On Darwin and
     # when we're using Firefox from Flatpak, only configure Firefox.
-    package = lib.mkDefault
-      (if pkgs.stdenv.isLinux && !config.flatpak.enable
-      then config.lib.nixGL.wrap pkgs.firefox
-      else null);
+    package = lib.mkDefault (
+      if pkgs.stdenv.isLinux && !config.flatpak.enable then config.lib.nixGL.wrap pkgs.firefox else null
+    );
 
-    configPath = lib.mkDefault
-      (if pkgs.stdenv.isDarwin
-      then "Library/Application Support/Firefox"
+    configPath = lib.mkDefault (
+      if pkgs.stdenv.isDarwin then
+        "Library/Application Support/Firefox"
+      else if config.flatpak.enable then
+        ".var/app/org.mozilla.firefox/.mozilla/firefox"
       else
-        if config.flatpak.enable
-        then ".var/app/org.mozilla.firefox/.mozilla/firefox"
-        else ".mozilla/firefox");
+        ".mozilla/firefox"
+    );
 
     # By default, this is set to 2, which fails on non-NixOS Firefox
     # https://github.com/nix-community/home-manager/issues/6170
@@ -231,45 +237,48 @@ in
 
   # macOS: Raycast script commands
   home.file = lib.mkIf (config.programs.firefox.enable && pkgs.stdenv.isDarwin) (
-    lib.mapAttrs'
-      (name: profile: {
-        name = ".local/libexec/raycast/firefox-${name}.sh";
-        value = {
-          executable = true;
-          text = ''
-            #!/bin/bash
+    lib.mapAttrs' (name: profile: {
+      name = ".local/libexec/raycast/firefox-${name}.sh";
+      value = {
+        executable = true;
+        text = ''
+          #!/bin/bash
 
-            # @raycast.schemaVersion 1
-            # @raycast.title Firefox - ${name}
-            # @raycast.mode silent
-            # @raycast.icon 🦊
-            # @raycast.packageName Firefox Profiles
+          # @raycast.schemaVersion 1
+          # @raycast.title Firefox - ${name}
+          # @raycast.mode silent
+          # @raycast.icon 🦊
+          # @raycast.packageName Firefox Profiles
 
-            ${firefoxExec} -P "${name}" -no-remote &
-            echo "Launched Firefox with profile ${name}"
-          '';
-        };
-      })
-      firefoxProfiles
+          ${firefoxExec} -P "${name}" -no-remote &
+          echo "Launched Firefox with profile ${name}"
+        '';
+      };
+    }) firefoxProfiles
   );
 
   # Linux: XDG desktop entries
   xdg.desktopEntries = lib.mkIf (config.programs.firefox.enable && pkgs.stdenv.isLinux) (
-    lib.mapAttrs'
-      (name: profile: {
-        name = "firefox-${name}";
-        value = {
-          name = "Firefox (${name})";
-          genericName = "Web Browser";
-          exec = "${firefoxExec} -P ${name} %U";
-          icon = "firefox";
-          terminal = false;
-          categories = [ "Network" "WebBrowser" ];
-          mimeType = [ "text/html" "text/xml" "application/xhtml+xml" ];
-          startupNotify = true;
-        };
-      })
-      firefoxProfiles
+    lib.mapAttrs' (name: profile: {
+      name = "firefox-${name}";
+      value = {
+        name = "Firefox (${name})";
+        genericName = "Web Browser";
+        exec = "${firefoxExec} -P ${name} %U";
+        icon = "firefox";
+        terminal = false;
+        categories = [
+          "Network"
+          "WebBrowser"
+        ];
+        mimeType = [
+          "text/html"
+          "text/xml"
+          "application/xhtml+xml"
+        ];
+        startupNotify = true;
+      };
+    }) firefoxProfiles
   );
 
   # macOS: Application bundles for each profile

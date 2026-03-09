@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.programs.fish;
@@ -8,7 +13,10 @@ in
     enable = true;
 
     plugins = [
-      { name = "autopair"; src = pkgs.fishPlugins.autopair.src; }
+      {
+        name = "autopair";
+        src = pkgs.fishPlugins.autopair.src;
+      }
     ];
 
     functions = {

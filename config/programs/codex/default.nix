@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 
 let
@@ -80,20 +81,18 @@ let
 
   toCodexMcpServers =
     servers:
-    lib.mapAttrs
-      (
-        name: server:
-        if isStdioServer server then
-          {
-            command = server.command or (lib.getExe server.package);
-          }
-        else
-          {
-            command = lib.getExe pkgs.local.mcpServers.mcp-remote;
-            args = [ server.url ];
-          }
-      )
-      servers;
+    lib.mapAttrs (
+      name: server:
+      if isStdioServer server then
+        {
+          command = server.command or (lib.getExe server.package);
+        }
+      else
+        {
+          command = lib.getExe pkgs.local.mcpServers.mcp-remote;
+          args = [ server.url ];
+        }
+    ) servers;
 
   tomlFormat = pkgs.formats.toml { };
 

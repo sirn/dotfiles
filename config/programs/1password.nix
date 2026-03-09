@@ -1,19 +1,28 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   inherit (config.home) homeDirectory;
 
   agentSocketPath =
-    if pkgs.stdenv.isDarwin
-    then "${homeDirectory}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
-    else "${homeDirectory}/.1password/agent.sock";
+    if pkgs.stdenv.isDarwin then
+      "${homeDirectory}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+    else
+      "${homeDirectory}/.1password/agent.sock";
 in
 {
-  home.packages = with pkgs; [
-    _1password-cli
-  ] ++ lib.optional (!pkgs.stdenv.isDarwin && !config.flatpak.enable) [
-    _1password-gui
-  ];
+  home.packages =
+    with pkgs;
+    [
+      _1password-cli
+    ]
+    ++ lib.optional (!pkgs.stdenv.isDarwin && !config.flatpak.enable) [
+      _1password-gui
+    ];
 
   programs.ssh.matchBlocks."*".extraOptions = {
     "IdentityAgent" = lib.mkOverride 250 "\"${agentSocketPath}\"";

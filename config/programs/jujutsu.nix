@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.programs.jujutsu;
@@ -45,8 +50,16 @@ in
           '';
         in
         {
-          snapshot = [ "util" "exec" "--" "${jjSnapshot}/bin/jj-snapshot" ];
-          diff-ls = [ "diff" "--summary" ];
+          snapshot = [
+            "util"
+            "exec"
+            "--"
+            "${jjSnapshot}/bin/jj-snapshot"
+          ];
+          diff-ls = [
+            "diff"
+            "--summary"
+          ];
         };
     };
   };

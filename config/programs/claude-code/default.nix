@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 
 let
@@ -74,18 +75,16 @@ let
         );
       mkBashPatterns =
         cmds:
-        lib.concatMap
-          (
-            cmd:
-            let
-              effectiveCmd = if lib.hasPrefix "re:" cmd then reToCmd cmd else cmd;
-            in
-            [
-              "Bash(${effectiveCmd})"
-              "Bash(${effectiveCmd} *)"
-            ]
-          )
-          cmds;
+        lib.concatMap (
+          cmd:
+          let
+            effectiveCmd = if lib.hasPrefix "re:" cmd then reToCmd cmd else cmd;
+          in
+          [
+            "Bash(${effectiveCmd})"
+            "Bash(${effectiveCmd} *)"
+          ]
+        ) cmds;
       bashAllows = mkBashPatterns (commands.allow.shell or [ ]);
       mcpAllows = claudeCodeMcpPermissions;
       allow = baseTools ++ pathAllows ++ bashAllows ++ mcpAllows;
@@ -162,33 +161,29 @@ let
 
   toClaudeCodeMcpServers =
     servers:
-    lib.mapAttrs
-      (
-        name: server:
-        if isStdioServer server then
-          {
-            type = "stdio";
-            command = server.command or (lib.getExe server.package);
-          }
-        else
-          {
-            type = server.transport or "sse";
-            url = server.url;
-          }
-      )
-      servers;
+    lib.mapAttrs (
+      name: server:
+      if isStdioServer server then
+        {
+          type = "stdio";
+          command = server.command or (lib.getExe server.package);
+        }
+      else
+        {
+          type = server.transport or "sse";
+          url = server.url;
+        }
+    ) servers;
 
   # Generate MCP permissions from server allowedTools
   claudeCodeMcpPermissions = lib.flatten (
-    lib.mapAttrsToList
-      (
-        name: server:
-          let
-            tools = server.allowedTools or null;
-          in
-          if tools == null then [ "mcp__${name}__*" ] else map (tool: "mcp__${name}__${tool}") tools
-      )
-      config.programs.mcp.servers
+    lib.mapAttrsToList (
+      name: server:
+      let
+        tools = server.allowedTools or null;
+      in
+      if tools == null then [ "mcp__${name}__*" ] else map (tool: "mcp__${name}__${tool}") tools
+    ) config.programs.mcp.servers
   );
 
   statusLineScript = pkgs.writeShellApplication {

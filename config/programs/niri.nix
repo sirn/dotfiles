@@ -1,4 +1,9 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.programs.niri;
@@ -55,14 +60,44 @@ in
         "Mod+Shift+Slash".action.show-hotkey-overlay = { };
 
         # System volume controls
-        "XF86AudioRaiseVolume".action.spawn = [ "${pkgs.wireplumber}/bin/wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1+" ];
-        "XF86AudioLowerVolume".action.spawn = [ "${pkgs.wireplumber}/bin/wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1-" ];
-        "XF86AudioMute".action.spawn = [ "${pkgs.wireplumber}/bin/wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle" ];
-        "XF86AudioMicMute".action.spawn = [ "${pkgs.wireplumber}/bin/wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle" ];
+        "XF86AudioRaiseVolume".action.spawn = [
+          "${pkgs.wireplumber}/bin/wpctl"
+          "set-volume"
+          "@DEFAULT_AUDIO_SINK@"
+          "0.1+"
+        ];
+        "XF86AudioLowerVolume".action.spawn = [
+          "${pkgs.wireplumber}/bin/wpctl"
+          "set-volume"
+          "@DEFAULT_AUDIO_SINK@"
+          "0.1-"
+        ];
+        "XF86AudioMute".action.spawn = [
+          "${pkgs.wireplumber}/bin/wpctl"
+          "set-mute"
+          "@DEFAULT_AUDIO_SINK@"
+          "toggle"
+        ];
+        "XF86AudioMicMute".action.spawn = [
+          "${pkgs.wireplumber}/bin/wpctl"
+          "set-mute"
+          "@DEFAULT_AUDIO_SOURCE@"
+          "toggle"
+        ];
 
         # Brightness controls
-        "XF86MonBrightnessUp".action.spawn = [ "${lib.getExe pkgs.brightnessctl}" "--class=backlight" "set" "+10%" ];
-        "XF86MonBrightnessDown".action.spawn = [ "${lib.getExe pkgs.brightnessctl}" "--class=backlight" "set" "10%-" ];
+        "XF86MonBrightnessUp".action.spawn = [
+          "${lib.getExe pkgs.brightnessctl}"
+          "--class=backlight"
+          "set"
+          "+10%"
+        ];
+        "XF86MonBrightnessDown".action.spawn = [
+          "${lib.getExe pkgs.brightnessctl}"
+          "--class=backlight"
+          "set"
+          "10%-"
+        ];
 
         # Overview
         "Mod+O".action.toggle-overview = { };
@@ -206,49 +241,74 @@ in
           };
         }
         {
-          matches = [{ app-id = "mpv"; }];
+          matches = [ { app-id = "mpv"; } ];
           open-floating = true;
         }
         {
-          matches = [{ app-id = "pavucontrol"; }];
+          matches = [ { app-id = "pavucontrol"; } ];
           open-floating = true;
         }
 
         # Dolphin
         {
-          matches = [{ app-id = "org.kde.dolphin"; title = "Moving.*"; }];
+          matches = [
+            {
+              app-id = "org.kde.dolphin";
+              title = "Moving.*";
+            }
+          ];
           open-floating = true;
         }
         {
-          matches = [{ app-id = "org.kde.dolphin"; title = "Copying.*"; }];
+          matches = [
+            {
+              app-id = "org.kde.dolphin";
+              title = "Copying.*";
+            }
+          ];
           open-floating = true;
         }
 
         # Portals
         {
-          matches = [{ app-id = "org.freedesktop.impl.portal.*"; }];
+          matches = [ { app-id = "org.freedesktop.impl.portal.*"; } ];
           open-floating = true;
         }
 
         # Google Chrome (annoyingly did not set app_id)
         {
-          matches = [{ app-id = "firefox"; title = "Picture in picture"; }];
+          matches = [
+            {
+              app-id = "firefox";
+              title = "Picture in picture";
+            }
+          ];
           open-floating = true;
         }
 
         # Firefox
         {
-          matches = [{ app-id = "firefox"; title = "Picture-in-Picture"; }];
+          matches = [
+            {
+              app-id = "firefox";
+              title = "Picture-in-Picture";
+            }
+          ];
           open-floating = true;
         }
         {
-          matches = [{ app-id = "firefox"; title = "Firefox - Sharing Indicator"; }];
+          matches = [
+            {
+              app-id = "firefox";
+              title = "Firefox - Sharing Indicator";
+            }
+          ];
           open-floating = true;
         }
 
         # Looking Glass
         {
-          matches = [{ app-id = "looking-glass-client"; }];
+          matches = [ { app-id = "looking-glass-client"; } ];
           open-fullscreen = true;
         }
       ];
@@ -266,14 +326,16 @@ in
       Description = "A scrollable-tiling Wayland compositor";
       BindsTo = [ "graphical-session.target" ];
 
-      Before =
-        [ "graphical-session.target" ] ++
-        lib.optional config.xdg.autostart.enable [ "xdg-desktop-autostart.target" ];
+      Before = [
+        "graphical-session.target"
+      ]
+      ++ lib.optional config.xdg.autostart.enable [ "xdg-desktop-autostart.target" ];
 
       After = [ "graphical-session-pre.target" ];
-      Wants =
-        [ "graphical-session-pre.target" ] ++
-        lib.optional config.xdg.autostart.enable [ "xdg-desktop-autostart.target" ];
+      Wants = [
+        "graphical-session-pre.target"
+      ]
+      ++ lib.optional config.xdg.autostart.enable [ "xdg-desktop-autostart.target" ];
 
       # Avoid killing Niri session.
       X-RestartIfChanged = false;
@@ -291,8 +353,14 @@ in
       Description = "Shutdown running niri session";
       DefaultDependencies = false;
       StopWhenUnneeded = true;
-      Conflicts = [ "graphical-session.target" "graphical-session-pre.target" ];
-      After = [ "graphical-session.target" "graphical-session-pre.target" ];
+      Conflicts = [
+        "graphical-session.target"
+        "graphical-session-pre.target"
+      ];
+      After = [
+        "graphical-session.target"
+        "graphical-session-pre.target"
+      ];
     };
   };
 }

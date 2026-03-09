@@ -1,4 +1,10 @@
-{ lib, rustPlatform, fetchgit, pkg-config, openssl }:
+{
+  lib,
+  rustPlatform,
+  fetchgit,
+  pkg-config,
+  openssl,
+}:
 
 rustPlatform.buildRustPackage rec {
   pname = "repoman";

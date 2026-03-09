@@ -1,4 +1,9 @@
-{ lib, python3, writeScriptBin, runtimeShell }:
+{
+  lib,
+  python3,
+  writeScriptBin,
+  runtimeShell,
+}:
 
 let
   python = python3.withPackages (p: [ p.python-dotenv ]);

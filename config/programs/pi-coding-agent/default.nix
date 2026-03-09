@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.programs.pi-coding-agent;
@@ -81,7 +86,10 @@ in
             id = "hf:moonshotai/Kimi-K2.5";
             name = "Kimi K2.5 (Synthetic)";
             reasoning = true;
-            input = [ "text" "image" ];
+            input = [
+              "text"
+              "image"
+            ];
             contextWindow = 262144;
             maxTokens = 262144;
             cost = {
@@ -95,7 +103,10 @@ in
             id = "hf:zai-org/GLM-4.7";
             name = "GLM 4.7 (Synthetic)";
             reasoning = true;
-            input = [ "text" "image" ];
+            input = [
+              "text"
+              "image"
+            ];
             contextWindow = 202752;
             maxTokens = 8192;
             cost = {
@@ -109,7 +120,10 @@ in
             id = "hf:MiniMaxAI/MiniMax-M2.5";
             name = "MiniMax M2.5 (Synthetic)";
             reasoning = true;
-            input = [ "text" "image" ];
+            input = [
+              "text"
+              "image"
+            ];
             contextWindow = 1000000;
             maxTokens = 32768;
             cost = {
@@ -130,7 +144,10 @@ in
             id = "accounts/fireworks/models/kimi-k2p5";
             name = "Kimi K2.5 (Fireworks)";
             reasoning = true;
-            input = [ "text" "image" ];
+            input = [
+              "text"
+              "image"
+            ];
             contextWindow = 262144;
             maxTokens = 262144;
             cost = {
@@ -144,7 +161,10 @@ in
             id = "accounts/fireworks/models/glm-5";
             name = "GLM 5 (Fireworks)";
             reasoning = true;
-            input = [ "text" "image" ];
+            input = [
+              "text"
+              "image"
+            ];
             contextWindow = 202752;
             maxTokens = 8192;
             cost = {
@@ -160,32 +180,76 @@ in
 
     keybindings = {
       # Cursor Movement (Emacs)
-      cursorUp = [ "up" "ctrl+p" ];
-      cursorDown = [ "down" "ctrl+n" ];
-      cursorLeft = [ "left" "ctrl+b" ];
-      cursorRight = [ "right" "ctrl+f" ];
-      cursorWordLeft = [ "alt+left" "ctrl+left" "alt+b" ];
-      cursorWordRight = [ "alt+right" "ctrl+right" "alt+f" ];
-      cursorLineStart = [ "home" "ctrl+a" ];
-      cursorLineEnd = [ "end" "ctrl+e" ];
+      cursorUp = [
+        "up"
+        "ctrl+p"
+      ];
+      cursorDown = [
+        "down"
+        "ctrl+n"
+      ];
+      cursorLeft = [
+        "left"
+        "ctrl+b"
+      ];
+      cursorRight = [
+        "right"
+        "ctrl+f"
+      ];
+      cursorWordLeft = [
+        "alt+left"
+        "ctrl+left"
+        "alt+b"
+      ];
+      cursorWordRight = [
+        "alt+right"
+        "ctrl+right"
+        "alt+f"
+      ];
+      cursorLineStart = [
+        "home"
+        "ctrl+a"
+      ];
+      cursorLineEnd = [
+        "end"
+        "ctrl+e"
+      ];
 
       # Deletion (Emacs)
-      deleteCharBackward = [ "backspace" "ctrl+h" ];
-      deleteCharForward = [ "delete" "ctrl+d" ];
-      deleteWordBackward = [ "ctrl+w" "alt+backspace" ];
-      deleteWordForward = [ "alt+d" "alt+delete" ];
+      deleteCharBackward = [
+        "backspace"
+        "ctrl+h"
+      ];
+      deleteCharForward = [
+        "delete"
+        "ctrl+d"
+      ];
+      deleteWordBackward = [
+        "ctrl+w"
+        "alt+backspace"
+      ];
+      deleteWordForward = [
+        "alt+d"
+        "alt+delete"
+      ];
       deleteToLineStart = [ "ctrl+u" ];
       deleteToLineEnd = [ "ctrl+k" ];
 
       # Text Input
-      newLine = [ "shift+enter" "ctrl+j" ];
+      newLine = [
+        "shift+enter"
+        "ctrl+j"
+      ];
       submit = [ "enter" ];
       tab = [ "tab" ];
 
       # Kill Ring (Emacs)
       yank = [ "ctrl+y" ];
       yankPop = [ "alt+y" ];
-      undo = [ "ctrl+_" "ctrl+/" ];
+      undo = [
+        "ctrl+_"
+        "ctrl+/"
+      ];
 
       # Application
       interrupt = [ "escape" ];

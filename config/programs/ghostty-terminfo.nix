@@ -2,8 +2,6 @@
 
 {
   home.packages = [
-    (if pkgs.stdenv.isDarwin
-    then pkgs.ghostty-bin.terminfo
-    else pkgs.ghostty.terminfo)
+    (if pkgs.stdenv.isDarwin then pkgs.ghostty-bin.terminfo else pkgs.ghostty.terminfo)
   ];
 }

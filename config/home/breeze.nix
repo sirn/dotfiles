@@ -1,4 +1,9 @@
-{ pkgs, config, lib, ... }:
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
 
 let
   breezePkg = pkgs.kdePackages.breeze;
@@ -40,16 +45,14 @@ in
       gtk-alternative-button-order = 1;
     '';
 
-    gtk3.extraConfig =
-      {
-        gtk-alternative-button-order = 1;
-      };
+    gtk3.extraConfig = {
+      gtk-alternative-button-order = 1;
+    };
 
-    gtk4.extraConfig =
-      {
-        document-font-name = "sans-serif 10";
-        monospace-font-name = "monospace 10";
-      };
+    gtk4.extraConfig = {
+      document-font-name = "sans-serif 10";
+      monospace-font-name = "monospace 10";
+    };
   };
 
   qt = {
@@ -78,14 +81,12 @@ in
     activation =
       let
         gsettingsBin =
-          if pkgs.stdenv.isLinux && !config.targets.genericLinux.enable
-          then "${pkgs.glib.bin}/bin/gsettings"
-          else "/usr/bin/gsettings";
+          if pkgs.stdenv.isLinux && !config.targets.genericLinux.enable then
+            "${pkgs.glib.bin}/bin/gsettings"
+          else
+            "/usr/bin/gsettings";
 
-        colorScheme =
-          if gtkconf.theme.name == "Breeze-Dark"
-          then "prefer-dark"
-          else "prefer-light";
+        colorScheme = if gtkconf.theme.name == "Breeze-Dark" then "prefer-dark" else "prefer-light";
 
         gsettingsDesktopSchemas = pkgs.gsettings-desktop-schemas;
 

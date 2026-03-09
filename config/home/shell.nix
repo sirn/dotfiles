@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   home.sessionVariables = {
@@ -7,12 +12,14 @@
 
     # Unless this is set in .profile, Go will loiter go/ in home directory.
     GOPATH = "${config.home.homeDirectory}/Dev/go/gopath:${config.home.homeDirectory}/Dev";
-  } // lib.optionalAttrs pkgs.stdenv.isDarwin {
+  }
+  // lib.optionalAttrs pkgs.stdenv.isDarwin {
     TERMINFO_DIRS = "${config.home.homeDirectory}/.nix-profile/share/terminfo";
   };
 
-  home.sessionVariablesExtra =
-    (lib.optionalString pkgs.stdenv.isDarwin ''
+  home.sessionVariablesExtra = (
+    lib.optionalString pkgs.stdenv.isDarwin ''
       . "${pkgs.nix}/etc/profile.d/nix-daemon.sh"
-    '');
+    ''
+  );
 }

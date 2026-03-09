@@ -1,22 +1,30 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   inherit (config.home) homeDirectory;
 
   agentSocketPath =
-    if pkgs.stdenv.isDarwin
-    then "${homeDirectory}/.bitwarden-ssh-agent.sock"
+    if pkgs.stdenv.isDarwin then
+      "${homeDirectory}/.bitwarden-ssh-agent.sock"
+    else if config.flatpak.enable then
+      "${homeDirectory}/.var/app/com.bitwarden.desktop/data/.bitwarden-ssh-agent.sock"
     else
-      if config.flatpak.enable
-      then "${homeDirectory}/.var/app/com.bitwarden.desktop/data/.bitwarden-ssh-agent.sock"
-      else "${homeDirectory}/.bitwarden-ssh-agent.sock";
+      "${homeDirectory}/.bitwarden-ssh-agent.sock";
 in
 {
-  home.packages = with pkgs; [
-    bitwarden-cli
-  ] ++ lib.optional (!config.flatpak.enable) [
-    bitwarden-desktop
-  ];
+  home.packages =
+    with pkgs;
+    [
+      bitwarden-cli
+    ]
+    ++ lib.optional (!config.flatpak.enable) [
+      bitwarden-desktop
+    ];
 
   programs.ssh.matchBlocks."*".extraOptions = {
     "IdentityAgent" = lib.mkOverride 250 agentSocketPath;

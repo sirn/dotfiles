@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   # Base 16-color palette (modus-vivendi theme)
@@ -39,29 +44,31 @@ let
 
   # Generate 256-color palette at build time using Python script
   # This uses CIELAB interpolation for perceptually uniform colors
-  palette256Generator = pkgs.runCommand "generate-palette-256"
-    {
-      nativeBuildInputs = [ pkgs.python3 ];
-    } ''
-    cat > input.json <<'EOF'
-    {
-      "bg": "${base16Colors.background}",
-      "fg": "${base16Colors.foreground}",
-      "normal": [
-        "${base16Colors.normal.black}",
-        "${base16Colors.normal.red}",
-        "${base16Colors.normal.green}",
-        "${base16Colors.normal.yellow}",
-        "${base16Colors.normal.blue}",
-        "${base16Colors.normal.magenta}",
-        "${base16Colors.normal.cyan}",
-        "${base16Colors.normal.white}"
-      ]
-    }
-    EOF
+  palette256Generator =
+    pkgs.runCommand "generate-palette-256"
+      {
+        nativeBuildInputs = [ pkgs.python3 ];
+      }
+      ''
+        cat > input.json <<'EOF'
+        {
+          "bg": "${base16Colors.background}",
+          "fg": "${base16Colors.foreground}",
+          "normal": [
+            "${base16Colors.normal.black}",
+            "${base16Colors.normal.red}",
+            "${base16Colors.normal.green}",
+            "${base16Colors.normal.yellow}",
+            "${base16Colors.normal.blue}",
+            "${base16Colors.normal.magenta}",
+            "${base16Colors.normal.cyan}",
+            "${base16Colors.normal.white}"
+          ]
+        }
+        EOF
 
-    python3 ${./generate-palette.py} < input.json > $out
-  '';
+        python3 ${./generate-palette.py} < input.json > $out
+      '';
 
   # Read generated palette (IFD - Import From Derivation)
   palette240 = builtins.fromJSON (builtins.readFile palette256Generator);
@@ -125,12 +132,13 @@ in
       colors = {
         background = stripHash colorScheme.background;
         foreground = stripHash colorScheme.foreground;
-      } // lib.listToAttrs (lib.imap0
-        (i: c: {
+      }
+      // lib.listToAttrs (
+        lib.imap0 (i: c: {
           name = toString i;
           value = stripHash c;
-        })
-        palette256);
+        }) palette256
+      );
     };
   };
 
@@ -159,12 +167,12 @@ in
           colorScheme.bright.white
         ];
 
-        indexed = lib.listToAttrs (lib.imap0
-          (i: c: {
+        indexed = lib.listToAttrs (
+          lib.imap0 (i: c: {
             name = toString i;
             value = c;
-          })
-          palette256);
+          }) palette256
+        );
 
         background = colorScheme.background;
         cursor_bg = colorScheme.foreground;

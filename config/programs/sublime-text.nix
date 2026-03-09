@@ -1,13 +1,19 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
   configHome =
-    if pkgs.stdenv.isLinux
-    then
-      if config.flatpak.enable
-      then ".var/app/com.sublimehq.SublimeText/config/sublime-text"
-      else ".config/sublime-text"
-    else "Library/Application Support/Sublime Text";
+    if pkgs.stdenv.isLinux then
+      if config.flatpak.enable then
+        ".var/app/com.sublimehq.SublimeText/config/sublime-text"
+      else
+        ".config/sublime-text"
+    else
+      "Library/Application Support/Sublime Text";
 
   sublimeConfig = {
     theme = "Meetio Theme.sublime-theme";
@@ -19,12 +25,7 @@ let
 in
 {
   home.packages =
-    if pkgs.stdenv.isLinux
-    then
-      if config.flatpak.enable
-      then [ ]
-      else with pkgs; [ sublime4 ]
-    else [ ];
+    if pkgs.stdenv.isLinux then if config.flatpak.enable then [ ] else with pkgs; [ sublime4 ] else [ ];
 
   home.file = {
     "${configHome}/Packages/Meetio Theme".source = pkgs.fetchFromGitHub {

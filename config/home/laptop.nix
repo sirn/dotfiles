@@ -27,8 +27,20 @@ in
   programs.niri = lib.mkIf niricfg.enable {
     settings = {
       switch-events = {
-        "lid-open".action.spawn = [ "${lib.getExe niricfg.package}" "msg" "output" "eDP-1" "on" ];
-        "lid-close".action.spawn = [ "${lib.getExe niricfg.package}" "msg" "output" "eDP-1" "off" ];
+        "lid-open".action.spawn = [
+          "${lib.getExe niricfg.package}"
+          "msg"
+          "output"
+          "eDP-1"
+          "on"
+        ];
+        "lid-close".action.spawn = [
+          "${lib.getExe niricfg.package}"
+          "msg"
+          "output"
+          "eDP-1"
+          "off"
+        ];
       };
     };
   };

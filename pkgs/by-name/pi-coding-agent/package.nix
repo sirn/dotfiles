@@ -1,11 +1,11 @@
-{ lib
-, stdenv
-, fetchurl
-, autoPatchelfHook
-, makeWrapper
-, fd
-, ripgrep
-,
+{
+  lib,
+  stdenv,
+  fetchurl,
+  autoPatchelfHook,
+  makeWrapper,
+  fd,
+  ripgrep,
 }:
 
 let

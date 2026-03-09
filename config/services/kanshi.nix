@@ -1,14 +1,16 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.services.kanshi;
 
   swaycfg = config.wayland.windowManager.sway;
 
-  swaymsgBin =
-    if swaycfg.package != null
-    then "${swaycfg.package}/bin/swaymsg"
-    else "swaymsg";
+  swaymsgBin = if swaycfg.package != null then "${swaycfg.package}/bin/swaymsg" else "swaymsg";
 
   niricfg = config.programs.niri;
 in

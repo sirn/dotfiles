@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
   cfg = config.services.podman;
@@ -8,14 +13,13 @@ in
     enable = pkgs.stdenv.isLinux;
   };
 
-  home.packages = with pkgs; [
-    podman-compose
-    skopeo
-  ] ++ (
-    if pkgs.stdenv.isDarwin
-    then [ podman ]
-    else [ ]
-  );
+  home.packages =
+    with pkgs;
+    [
+      podman-compose
+      skopeo
+    ]
+    ++ (if pkgs.stdenv.isDarwin then [ podman ] else [ ]);
 
   # On Linux, also set DOCKER_HOST to use Podman socket
   home.sessionVariables = lib.mkIf cfg.enable {
