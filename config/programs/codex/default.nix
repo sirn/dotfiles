@@ -1,4 +1,8 @@
-{ config, lib, pkgs, ... }:
+{ config
+, lib
+, pkgs
+, ...
+}:
 
 let
   cfg = config.programs.codex;
@@ -9,17 +13,24 @@ let
 
   permissionsPolicy = builtins.fromTOML (builtins.readFile ../../../var/agents/permissions.toml);
 
-  effectivePolicy = mode:
+  effectivePolicy =
+    mode:
     let
       default = permissionsPolicy.default or { };
       modePolicy = permissionsPolicy.mode.${mode} or { };
       mergeLists = lists: lib.unique (lib.concatLists (lib.filter (l: l != null) lists));
-      mergeCmds = section:
+      mergeCmds =
+        section:
         let
           defaultShell = (default.commands.${section} or { }).shell or [ ];
           modeShell = ((modePolicy.commands or { }).${section} or { }).shell or [ ];
         in
-        { shell = mergeLists [ defaultShell modeShell ]; };
+        {
+          shell = mergeLists [
+            defaultShell
+            modeShell
+          ];
+        };
     in
     {
       tools = default.tools // (modePolicy.tools or { });
@@ -31,7 +42,8 @@ let
       paths = default.paths;
     };
 
-  toCodexConfig = mode:
+  toCodexConfig =
+    mode:
     let
       policy = effectivePolicy mode;
       inherit (policy) tools;
@@ -43,7 +55,8 @@ let
       network = false;
     };
 
-  toCodexRules = mode:
+  toCodexRules =
+    mode:
     let
       policy = effectivePolicy mode;
       inherit (policy) commands;
@@ -52,22 +65,34 @@ let
             pattern = ["${lib.concatStringsSep ''", "'' (lib.splitString " " cmd)}"],
             decision = "${decision}",
         )'';
-      forbiddenRules = map (mkPrefixRule "forbidden") (commands.deny.shell or [ ]);
-      promptRules = map (mkPrefixRule "prompt") (commands.ask.shell or [ ]);
+      reToCmd =
+        cmd:
+        builtins.replaceStrings [ "\\s+" ] [ " " ] (
+          builtins.replaceStrings [ "\\b" ] [ "" ] (lib.removePrefix "re:" cmd)
+        );
+      toCmd = cmd: if lib.hasPrefix "re:" cmd then reToCmd cmd else cmd;
+      forbiddenRules = map (cmd: mkPrefixRule "forbidden" (toCmd cmd)) (commands.deny.shell or [ ]);
+      promptRules = map (cmd: mkPrefixRule "prompt" (toCmd cmd)) (commands.ask.shell or [ ]);
     in
     lib.concatStringsSep "\n\n" (forbiddenRules ++ promptRules);
 
   isStdioServer = server: server ? command || server ? package;
 
-  toCodexMcpServers = servers:
+  toCodexMcpServers =
+    servers:
     lib.mapAttrs
-      (name: server:
-        if isStdioServer server then {
-          command = server.command or (lib.getExe server.package);
-        } else {
-          command = lib.getExe pkgs.local.mcpServers.mcp-remote;
-          args = [ server.url ];
-        })
+      (
+        name: server:
+        if isStdioServer server then
+          {
+            command = server.command or (lib.getExe server.package);
+          }
+        else
+          {
+            command = lib.getExe pkgs.local.mcpServers.mcp-remote;
+            args = [ server.url ];
+          }
+      )
       servers;
 
   tomlFormat = pkgs.formats.toml { };
@@ -76,16 +101,29 @@ let
   rulesContent = toCodexRules "build";
 
   baseSettings = {
-    inherit (codexConfig) approval_policy sandbox_mode allow_login_shell network;
+    inherit (codexConfig)
+      approval_policy
+      sandbox_mode
+      allow_login_shell
+      network
+      ;
     model_reasoning_effort = "high";
     mcp_servers = toCodexMcpServers config.programs.mcp.servers;
-  } // cfg.settingsOverride;
+  }
+  // cfg.settingsOverride;
 
   nixConfig = tomlFormat.generate "codex-config-nix" baseSettings;
 in
 {
   programs.codex = {
-    package = pkgs.unstable.codex;
+    package = (
+      pkgs.writeScriptBin "codex" ''
+        #!${pkgs.runtimeShell}
+        exec "${lib.getExe pkgs.local.envWrapper}" \
+          -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
+          -- "${lib.getExe pkgs.unstable.codex}" "$@"
+      ''
+    );
     custom-instructions = instructionText;
   };
 

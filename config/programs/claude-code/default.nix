@@ -1,4 +1,8 @@
-{ config, lib, pkgs, ... }:
+{ config
+, lib
+, pkgs
+, ...
+}:
 
 let
   cfg = config.programs.claude-code;
@@ -12,17 +16,24 @@ let
   permissionsPolicy = builtins.fromTOML (builtins.readFile ../../../var/agents/permissions.toml);
   domainsPolicy = builtins.fromTOML (builtins.readFile ../../../var/agents/domains.toml);
 
-  effectivePolicy = mode:
+  effectivePolicy =
+    mode:
     let
       default = permissionsPolicy.default or { };
       modePolicy = permissionsPolicy.mode.${mode} or { };
       mergeLists = lists: lib.unique (lib.concatLists (lib.filter (l: l != null) lists));
-      mergeCmds = section:
+      mergeCmds =
+        section:
         let
           defaultShell = (default.commands.${section} or { }).shell or [ ];
           modeShell = ((modePolicy.commands or { }).${section} or { }).shell or [ ];
         in
-        { shell = mergeLists [ defaultShell modeShell ]; };
+        {
+          shell = mergeLists [
+            defaultShell
+            modeShell
+          ];
+        };
     in
     {
       tools = default.tools // (modePolicy.tools or { });
@@ -34,42 +45,71 @@ let
       paths = default.paths;
     };
 
-  toClaudePermissions = mode:
+  toClaudePermissions =
+    mode:
     let
       policy = effectivePolicy mode;
       inherit (policy) tools commands paths;
 
       webFetchRules = map (d: "WebFetch(domain:${d})") (domainsPolicy.allowed or [ ]);
-      baseTools = [ "Glob(*)" "Grep(*)" "Read(**)" "WebSearch" ]
-        ++ lib.optional tools.edit "Edit(**)"
-        ++ lib.optional tools.write "Write(**)"
-        ++ webFetchRules;
+      baseTools = [
+        "Glob(*)"
+        "Grep(*)"
+        "Read(**)"
+        "WebSearch"
+      ]
+      ++ lib.optional tools.edit "Edit(**)"
+      ++ lib.optional tools.write "Write(**)"
+      ++ webFetchRules;
 
-      pathAllows = map (p: "Read(${p})") (paths.allow.read or [ ])
+      pathAllows =
+        map (p: "Read(${p})") (paths.allow.read or [ ])
         ++ lib.optionals tools.edit (map (p: "Edit(${p})") (paths.allow.edit or [ ]))
         ++ lib.optionals tools.write (map (p: "Write(${p})") (paths.allow.write or [ ]));
 
-      mkBashPatterns = cmds: lib.concatMap (cmd: [ "Bash(${cmd})" "Bash(${cmd} *)" ]) cmds;
+      reToCmd =
+        cmd:
+        builtins.replaceStrings [ "\\s+" ] [ " " ] (
+          builtins.replaceStrings [ "\\b" ] [ "" ] (lib.removePrefix "re:" cmd)
+        );
+      mkBashPatterns =
+        cmds:
+        lib.concatMap
+          (
+            cmd:
+            let
+              effectiveCmd = if lib.hasPrefix "re:" cmd then reToCmd cmd else cmd;
+            in
+            [
+              "Bash(${effectiveCmd})"
+              "Bash(${effectiveCmd} *)"
+            ]
+          )
+          cmds;
       bashAllows = mkBashPatterns (commands.allow.shell or [ ]);
       mcpAllows = claudeCodeMcpPermissions;
       allow = baseTools ++ pathAllows ++ bashAllows ++ mcpAllows;
 
       ask = mkBashPatterns (commands.ask.shell or [ ]);
 
-      pathDenies = map (p: "Read(${p})") (paths.deny.read or [ ])
+      pathDenies =
+        map (p: "Read(${p})") (paths.deny.read or [ ])
         ++ lib.optionals tools.edit (map (p: "Edit(${p})") (paths.deny.edit or [ ]))
         ++ lib.optionals tools.write (map (p: "Write(${p})") (paths.deny.write or [ ]));
 
       bashDenies = mkBashPatterns (commands.deny.shell or [ ]);
       deny = pathDenies ++ bashDenies;
     in
-    { inherit allow ask deny; };
+    {
+      inherit allow ask deny;
+    };
 
-  agentFiles = builtins.filter
-    (name: lib.hasSuffix ".toml" name)
-    (builtins.attrNames (builtins.readDir agentsDir));
+  agentFiles = builtins.filter (name: lib.hasSuffix ".toml" name) (
+    builtins.attrNames (builtins.readDir agentsDir)
+  );
 
-  loadAgent = tomlFile:
+  loadAgent =
+    tomlFile:
     let
       name = lib.removeSuffix ".toml" tomlFile;
       agentConfig = builtins.fromTOML (builtins.readFile (agentsDir + "/${tomlFile}"));
@@ -78,7 +118,9 @@ let
     in
     {
       inherit name;
-      value = agentConfig // { inherit prompt mode; };
+      value = agentConfig // {
+        inherit prompt mode;
+      };
     };
 
   agents = builtins.listToAttrs (map loadAgent agentFiles);
@@ -86,14 +128,20 @@ let
   # Filter agents that have claude-code configuration
   claudeCodeAgents = lib.filterAttrs (name: agent: agent ? claude-code) agents;
 
-  validateClaudeCodeAgent = name: agent:
+  validateClaudeCodeAgent =
+    name: agent:
     let
       valid =
-        if !(agent ? description) then throw "Agent ${name}: missing 'description'"
-        else if !(agent.claude-code ? allowedTools) then throw "Agent ${name}: missing 'claude-code.allowedTools'"
-        else if !(agent.claude-code ? color) then throw "Agent ${name}: missing 'claude-code.color'"
-        else if !(agent.claude-code ? model) then throw "Agent ${name}: missing 'claude-code.model'"
-        else agent;
+        if !(agent ? description) then
+          throw "Agent ${name}: missing 'description'"
+        else if !(agent.claude-code ? allowedTools) then
+          throw "Agent ${name}: missing 'claude-code.allowedTools'"
+        else if !(agent.claude-code ? color) then
+          throw "Agent ${name}: missing 'claude-code.color'"
+        else if !(agent.claude-code ? model) then
+          throw "Agent ${name}: missing 'claude-code.model'"
+        else
+          agent;
     in
     valid;
 
@@ -112,27 +160,36 @@ let
 
   isStdioServer = server: server ? command || server ? package;
 
-  toClaudeCodeMcpServers = servers:
+  toClaudeCodeMcpServers =
+    servers:
     lib.mapAttrs
-      (name: server:
-        if isStdioServer server then {
-          type = "stdio";
-          command = server.command or (lib.getExe server.package);
-        } else {
-          type = server.transport or "sse";
-          url = server.url;
-        })
+      (
+        name: server:
+        if isStdioServer server then
+          {
+            type = "stdio";
+            command = server.command or (lib.getExe server.package);
+          }
+        else
+          {
+            type = server.transport or "sse";
+            url = server.url;
+          }
+      )
       servers;
 
   # Generate MCP permissions from server allowedTools
-  claudeCodeMcpPermissions = lib.flatten (lib.mapAttrsToList
-    (name: server:
-      let tools = server.allowedTools or null; in
-      if tools == null
-      then [ "mcp__${name}__*" ]
-      else map (tool: "mcp__${name}__${tool}") tools
-    )
-    config.programs.mcp.servers);
+  claudeCodeMcpPermissions = lib.flatten (
+    lib.mapAttrsToList
+      (
+        name: server:
+          let
+            tools = server.allowedTools or null;
+          in
+          if tools == null then [ "mcp__${name}__*" ] else map (tool: "mcp__${name}__${tool}") tools
+      )
+      config.programs.mcp.servers
+  );
 
   statusLineScript = pkgs.writeShellApplication {
     name = "claude-statusline";
@@ -152,12 +209,21 @@ let
   mkClaudeSkillLink = name: {
     ".claude/skills/${name}".source = skillsDir + "/${name}";
   };
-  claudeSkillLinks = lib.foldl' (acc: name: acc // mkClaudeSkillLink name) {} (builtins.attrNames skillDirs);
+  claudeSkillLinks = lib.foldl' (acc: name: acc // mkClaudeSkillLink name) { } (
+    builtins.attrNames skillDirs
+  );
 in
 {
   programs.claude-code = {
     enable = true;
-    package = pkgs.unstable.claude-code;
+    package = (
+      pkgs.writeScriptBin "claude" ''
+        #!${pkgs.runtimeShell}
+        exec "${lib.getExe pkgs.local.envWrapper}" \
+          -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
+          -- "${lib.getExe pkgs.unstable.claude-code}" "$@"
+      ''
+    );
 
     agents = lib.mapAttrs mkClaudeCodeAgent validClaudeCodeAgents;
     memory.text = instructionText + ''

@@ -1,4 +1,8 @@
-{ config, lib, pkgs, ... }:
+{ config
+, lib
+, pkgs
+, ...
+}:
 
 let
   instructionText = builtins.readFile ../../../var/agents/instruction.md;
@@ -9,17 +13,24 @@ let
 
   permissionsPolicy = builtins.fromTOML (builtins.readFile ../../../var/agents/permissions.toml);
 
-  effectivePolicy = mode:
+  effectivePolicy =
+    mode:
     let
       default = permissionsPolicy.default or { };
       modePolicy = permissionsPolicy.mode.${mode} or { };
       mergeLists = lists: lib.unique (lib.concatLists (lib.filter (l: l != null) lists));
-      mergeCmds = section:
+      mergeCmds =
+        section:
         let
           defaultShell = (default.commands.${section} or { }).shell or [ ];
           modeShell = ((modePolicy.commands or { }).${section} or { }).shell or [ ];
         in
-        { shell = mergeLists [ defaultShell modeShell ]; };
+        {
+          shell = mergeLists [
+            defaultShell
+            modeShell
+          ];
+        };
     in
     {
       tools = default.tools // (modePolicy.tools or { });
@@ -31,27 +42,47 @@ let
       paths = default.paths;
     };
 
-  toOpencodePermissions = mode:
+  toOpencodePermissions =
+    mode:
     let
       policy = effectivePolicy mode;
       inherit (policy) tools commands paths;
 
-      mkPathRules = section:
+      mkPathRules =
+        section:
         lib.listToAttrs (map (p: lib.nameValuePair p "allow") (paths.allow.${section} or [ ]))
         // lib.listToAttrs (map (p: lib.nameValuePair p "deny") (paths.deny.${section} or [ ]))
-        // { "*" = "allow"; };
+        // {
+          "*" = "allow";
+        };
 
+      reToCmd =
+        cmd:
+        builtins.replaceStrings [ "\\s+" ] [ " " ] (
+          builtins.replaceStrings [ "\\b" ] [ "" ] (lib.removePrefix "re:" cmd)
+        );
       mkBashRules =
         let
-          allows = map (cmd: lib.nameValuePair "${cmd} *" "allow") (commands.allow.shell or [ ])
-            ++ map (cmd: lib.nameValuePair cmd "allow") (commands.allow.shell or [ ]);
-          asks = map (cmd: lib.nameValuePair "${cmd} *" "ask") (commands.ask.shell or [ ])
-            ++ map (cmd: lib.nameValuePair cmd "ask") (commands.ask.shell or [ ]);
-          denies = map (cmd: lib.nameValuePair "${cmd} *" "deny") (commands.deny.shell or [ ])
-            ++ map (cmd: lib.nameValuePair cmd "deny") (commands.deny.shell or [ ]);
+          toCmd = cmd: if lib.hasPrefix "re:" cmd then reToCmd cmd else cmd;
+          mkEntries =
+            decision: cmds:
+            lib.concatMap
+              (
+                cmd:
+                let
+                  effectiveCmd = toCmd cmd;
+                in
+                [
+                  (lib.nameValuePair "${effectiveCmd} *" decision)
+                  (lib.nameValuePair effectiveCmd decision)
+                ]
+              )
+              cmds;
+          allows = mkEntries "allow" (commands.allow.shell or [ ]);
+          asks = mkEntries "ask" (commands.ask.shell or [ ]);
+          denies = mkEntries "deny" (commands.deny.shell or [ ]);
         in
-        lib.listToAttrs (allows ++ asks ++ denies)
-        // { "*" = "ask"; };
+        lib.listToAttrs (allows ++ asks ++ denies) // { "*" = "ask"; };
     in
     {
       read = mkPathRules "read";
@@ -59,18 +90,17 @@ let
       grep = "allow";
       list = "allow";
       bash = mkBashRules;
-      edit = if tools.edit
-        then (mkPathRules "edit")
-        else (mkPathRules "edit" // { "*" = "deny"; });
+      edit = if tools.edit then (mkPathRules "edit") else (mkPathRules "edit" // { "*" = "deny"; });
       webfetch = "allow";
       websearch = "allow";
     };
 
-  agentFiles = builtins.filter
-    (name: lib.hasSuffix ".toml" name)
-    (builtins.attrNames (builtins.readDir agentsDir));
+  agentFiles = builtins.filter (name: lib.hasSuffix ".toml" name) (
+    builtins.attrNames (builtins.readDir agentsDir)
+  );
 
-  loadAgent = tomlFile:
+  loadAgent =
+    tomlFile:
     let
       name = lib.removeSuffix ".toml" tomlFile;
       agentConfig = builtins.fromTOML (builtins.readFile (agentsDir + "/${tomlFile}"));
@@ -79,7 +109,9 @@ let
     in
     {
       inherit name;
-      value = agentConfig // { inherit prompt mode; };
+      value = agentConfig // {
+        inherit prompt mode;
+      };
     };
 
   agents = builtins.listToAttrs (map loadAgent agentFiles);
@@ -87,22 +119,29 @@ let
   # Filter agents that have opencode configuration
   opencodeAgents = lib.filterAttrs (name: agent: agent ? opencode) agents;
 
-  validateOpencodeAgent = name: agent:
+  validateOpencodeAgent =
+    name: agent:
     let
-      valid =
-        if !(agent ? description) then throw "Agent ${name}: missing 'description'"
-        else agent;
-    in valid;
+      valid = if !(agent ? description) then throw "Agent ${name}: missing 'description'" else agent;
+    in
+    valid;
 
   validOpencodeAgents = lib.mapAttrs validateOpencodeAgent opencodeAgents;
 
-  mkOpencodeAgent = name: agent:
+  mkOpencodeAgent =
+    name: agent:
     let
       isPrimary = (agent.opencode.primary or false);
-      modelLine = lib.optionalString (isPrimary && agent.opencode ? model) "model: ${agent.opencode.model}\n";
+      modelLine = lib.optionalString
+        (
+          isPrimary && agent.opencode ? model
+        ) "model: ${agent.opencode.model}\n";
       modeVal = if !isPrimary then "subagent" else (agent.opencode.mode or "primary");
       modeLine = lib.optionalString (modeVal != "") "mode: ${modeVal}\n";
-      permissionLine = lib.optionalString (agent.opencode ? permission) "permission: ${builtins.toJSON agent.opencode.permission}\n";
+      permissionLine = lib.optionalString
+        (
+          agent.opencode ? permission
+        ) "permission: ${builtins.toJSON agent.opencode.permission}\n";
     in
     ''
       ---
@@ -113,42 +152,74 @@ let
 
   isStdioServer = server: server ? command || server ? package;
 
-  toOpencodeMcpServers = servers:
+  toOpencodeMcpServers =
+    servers:
     lib.mapAttrs
-      (name: server:
-        if isStdioServer server then {
-          command = [ (server.command or (lib.getExe server.package)) ];
-          type = "local";
-          enabled = true;
-        } else {
-          url = server.url;
-          type = "remote";
-          enabled = true;
-        })
+      (
+        name: server:
+        if isStdioServer server then
+          {
+            command = [ (server.command or (lib.getExe server.package)) ];
+            type = "local";
+            enabled = true;
+          }
+        else
+          {
+            url = server.url;
+            type = "remote";
+            enabled = true;
+          }
+      )
       servers;
 
   # Generate MCP tool permissions from server allowedTools
-  opencodeMcpPermissions = lib.listToAttrs (lib.flatten (lib.mapAttrsToList (name: server:
-    let tools = server.allowedTools or null; in
-    if tools == null
-    then [{ name = "${name}_*"; value = true; }]
-    else
-      # Deny all tools by default, allow specific ones
-      [{ name = "${name}_*"; value = false; }] ++
-      (map (tool: { name = "${name}_${tool}"; value = true; }) tools)
-  ) config.programs.mcp.servers));
+  opencodeMcpPermissions = lib.listToAttrs (
+    lib.flatten (
+      lib.mapAttrsToList
+        (
+          name: server:
+            let
+              tools = server.allowedTools or null;
+            in
+            if tools == null then
+              [
+                {
+                  name = "${name}_*";
+                  value = true;
+                }
+              ]
+            else
+            # Deny all tools by default, allow specific ones
+              [
+                {
+                  name = "${name}_*";
+                  value = false;
+                }
+              ]
+              ++ (map
+                (tool: {
+                  name = "${name}_${tool}";
+                  value = true;
+                })
+                tools)
+        )
+        config.programs.mcp.servers
+    )
+  );
 in
 {
   programs.opencode = {
     enable = true;
 
-    package = (pkgs.writeScriptBin "opencode" ''
-      #!${pkgs.runtimeShell}
-      exec "${lib.getExe pkgs.local.envWrapper}" \
-        -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
-        -a GOOGLE_GENERATIVE_AI_API_KEY=GEMINI_API_KEY \
-        -- "${lib.getExe pkgs.unstable.opencode}" "$@"
-    '');
+    package = (
+      pkgs.writeScriptBin "opencode" ''
+        #!${pkgs.runtimeShell}
+        exec "${lib.getExe pkgs.local.envWrapper}" \
+          -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
+          -a GOOGLE_GENERATIVE_AI_API_KEY=GEMINI_API_KEY \
+          -- "${lib.getExe pkgs.unstable.opencode}" "$@"
+      ''
+    );
 
     agents = lib.mapAttrs mkOpencodeAgent validOpencodeAgents;
     rules = instructionText + ''
