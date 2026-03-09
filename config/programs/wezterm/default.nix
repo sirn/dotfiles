@@ -31,6 +31,7 @@ in
       text = ''
         return {
           term = "wezterm",
+          enable_kitty_keyboard = true,
         }
       '';
     };
