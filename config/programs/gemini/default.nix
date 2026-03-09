@@ -101,6 +101,15 @@ let
         in
         baseConfig // trustConfig)
       servers;
+
+  # Link individual skills rather than the entire directory,
+  # allowing users to add custom skills alongside managed ones
+  skillsDirContents = builtins.readDir skillsDir;
+  skillDirs = lib.filterAttrs (_: type: type == "directory") skillsDirContents;
+  mkGeminiSkillLink = name: {
+    ".gemini/skills/${name}".source = skillsDir + "/${name}";
+  };
+  geminiSkillLinks = lib.foldl' (acc: name: acc // mkGeminiSkillLink name) {} (builtins.attrNames skillDirs);
 in
 {
   programs.gemini-cli = {
@@ -175,5 +184,7 @@ in
     ];
   };
 
-  home.file.".gemini/skills".source = lib.mkIf cfg.enable skillsDir;
+  home.file = lib.mkIf cfg.enable (geminiSkillLinks // {
+    ".gemini/policies/nix-managed.toml".source = policyFile;
+  });
 }

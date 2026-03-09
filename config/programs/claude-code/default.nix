@@ -144,6 +144,15 @@ let
     ];
     text = builtins.readFile ./statusline.sh;
   };
+
+  # Link individual skills rather than the entire directory,
+  # allowing users to add custom skills alongside managed ones
+  skillsDirContents = builtins.readDir skillsDir;
+  skillDirs = lib.filterAttrs (_: type: type == "directory") skillsDirContents;
+  mkClaudeSkillLink = name: {
+    ".claude/skills/${name}".source = skillsDir + "/${name}";
+  };
+  claudeSkillLinks = lib.foldl' (acc: name: acc // mkClaudeSkillLink name) {} (builtins.attrNames skillDirs);
 in
 {
   programs.claude-code = {
@@ -178,5 +187,5 @@ in
     ];
   };
 
-  home.file.".claude/skills".source = lib.mkIf cfg.enable skillsDir;
+  home.file = lib.mkIf cfg.enable claudeSkillLinks;
 }
