@@ -251,7 +251,10 @@ shell = [
   "gh search code",
   "gh search commits",
   "gh status",
-  "gh api",
+  # gh api GET requests only (explicit allowlist for defense in depth)
+  "re:\\bgh\\s+api\\b.*-\\s*X\\s+GET",
+  "re:\\bgh\\s+api\\b.*--method\\s+GET",
+  "re:\\bgh\\s+api\\b(?:\\s+(?!-X|--method).+)?\\s*$",  # gh api <endpoint> without -X (defaults to GET)
 ]
 
 [default.commands.ask]
@@ -309,6 +312,10 @@ shell = [
   "sops",
   "git push",
   "jj git push",
+  # GitHub CLI API - defense in depth: block destructive methods
+  # These are blocked even if user tries to approve in ask mode
+  "re:\\bgh\\s+api\\b.*-\\s*X\\s+(POST|PUT|PATCH|DELETE)",
+  "re:\\bgh\\s+api\\b.*--method\\s+(POST|PUT|PATCH|DELETE)",
 ]
 
 [default.paths.allow]
