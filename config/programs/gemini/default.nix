@@ -61,18 +61,28 @@ let
         in
         p3;
 
+      escapeRegex =
+        str:
+        builtins.replaceStrings
+          [ "." "*" "+" "?" "^" "$" "{" "}" "(" ")" "|" "[" "]" "\\" ]
+          [ "\\." "\\*" "\\+" "\\?" "\\^" "\\$" "\\{" "\\}" "\\(" "\\)" "\\|" "\\[" "\\]" "\\\\" ]
+          str;
+
       mkShellRule =
-        decision: priority: pattern:
-        let
-          isRegex = lib.hasPrefix "re:" pattern;
-          content = if isRegex then lib.removePrefix "re:" pattern else pattern;
-        in
+        decision: priority: entry:
         {
           toolName = "run_shell_command";
           decision = decision;
           priority = priority;
         }
-        // (if isRegex then { commandRegex = content; } else { commandPrefix = content; });
+        // (
+          if entry.mode == "exact" then
+            { commandRegex = "^${escapeRegex entry.match}$"; }
+          else if entry.mode == "substring" then
+            { commandRegex = "\\b${escapeRegex entry.match}\\b"; }
+          else
+            { commandPrefix = entry.match; }
+        );
 
       mkPathRule = decision: priority: tool: glob: {
         toolName = tool;

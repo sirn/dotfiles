@@ -68,22 +68,18 @@ let
         ++ lib.optionals tools.edit (map (p: "Edit(${p})") (paths.allow.edit or [ ]))
         ++ lib.optionals tools.write (map (p: "Write(${p})") (paths.allow.write or [ ]));
 
-      reToCmd =
-        cmd:
-        builtins.replaceStrings [ "\\s+" ] [ " " ] (
-          builtins.replaceStrings [ "\\b" ] [ "" ] (lib.removePrefix "re:" cmd)
-        );
       mkBashPatterns =
         cmds:
         lib.concatMap (
-          cmd:
+          entry:
           let
-            effectiveCmd = if lib.hasPrefix "re:" cmd then reToCmd cmd else cmd;
+            m = entry.match;
           in
-          [
-            "Bash(${effectiveCmd})"
-            "Bash(${effectiveCmd} *)"
-          ]
+          {
+            exact = [ "Bash(${m})" ];
+            prefix = [ "Bash(${m})" "Bash(${m} *)" ];
+            substring = [ "Bash(* ${m} *)" "Bash(${m} *)" "Bash(* ${m})" ];
+          }.${entry.mode or "prefix"}
         ) cmds;
       bashAllows = mkBashPatterns (commands.allow.shell or [ ]);
       mcpAllows = claudeCodeMcpPermissions;

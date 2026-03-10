@@ -15,10 +15,15 @@ import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
+interface CommandEntry {
+  match: string;
+  mode: "exact" | "prefix" | "substring";
+}
+
 interface SafetyConfig {
-  allow: string[];
-  ask: string[];
-  deny: string[];
+  allow: CommandEntry[];
+  ask: CommandEntry[];
+  deny: CommandEntry[];
 }
 
 interface Patterns {
@@ -33,32 +38,25 @@ const globalConfig: SafetyConfig = JSON.parse(
   readFileSync(join(__dirname, "safety-gate.json"), "utf-8")
 );
 
-// Convert command strings to regex patterns
+// Convert command entries to regex patterns
 function escapeRegex(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function toRegex(cmd: string): RegExp {
-  // Raw regex pattern: re:<pattern>
-  if (cmd.startsWith("re:")) {
-    const pattern = cmd.slice(3);
-    try {
-      return new RegExp(pattern, "i");
-    } catch (e) {
-      throw new Error(`Invalid regex in safety-gate config "${cmd}": ${e}`);
-    }
+function toRegex(entry: CommandEntry): RegExp {
+  const { match, mode } = entry;
+  const escaped = escapeRegex(match);
+  const shellBoundary =
+    `(?:^|\\|\\||&&|[&;|]|[({` + "`" + `\\n])\\s*`;
+  switch (mode) {
+    case "exact":
+      return new RegExp(`^\\s*${escaped}\\s*$`, "i");
+    case "substring":
+      return new RegExp(`\\b${escaped}\\b`, "i");
+    case "prefix":
+    default:
+      return new RegExp(`${shellBoundary}${escaped}\\b`, "i");
   }
-
-  const escaped = escapeRegex(cmd);
-  if (cmd.includes("/")) {
-    // Path pattern: match anywhere (for MCP wrappers and path-prefixed commands)
-    return new RegExp(`${escaped}\\b`, "i");
-  }
-  // Command pattern: match at start or after shell operators
-  return new RegExp(
-    `(?:^|\\|\\||&&|[&;|]|[({` + "`" + `\\n])\\s*${escaped}\\b`,
-    "i"
-  );
 }
 
 function toPatterns(cfg: SafetyConfig): Patterns {

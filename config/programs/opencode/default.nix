@@ -57,25 +57,27 @@ let
           "*" = "allow";
         };
 
-      reToCmd =
-        cmd:
-        builtins.replaceStrings [ "\\s+" ] [ " " ] (
-          builtins.replaceStrings [ "\\b" ] [ "" ] (lib.removePrefix "re:" cmd)
-        );
       mkBashRules =
         let
-          toCmd = cmd: if lib.hasPrefix "re:" cmd then reToCmd cmd else cmd;
           mkEntries =
             decision: cmds:
             lib.concatMap (
-              cmd:
+              entry:
               let
-                effectiveCmd = toCmd cmd;
+                m = entry.match;
               in
-              [
-                (lib.nameValuePair "${effectiveCmd} *" decision)
-                (lib.nameValuePair effectiveCmd decision)
-              ]
+              {
+                exact = [ (lib.nameValuePair m decision) ];
+                prefix = [
+                  (lib.nameValuePair "${m} *" decision)
+                  (lib.nameValuePair m decision)
+                ];
+                substring = [
+                  (lib.nameValuePair "* ${m} *" decision)
+                  (lib.nameValuePair "${m} *" decision)
+                  (lib.nameValuePair "* ${m}" decision)
+                ];
+              }.${entry.mode or "prefix"}
             ) cmds;
           allows = mkEntries "allow" (commands.allow.shell or [ ]);
           asks = mkEntries "ask" (commands.ask.shell or [ ]);

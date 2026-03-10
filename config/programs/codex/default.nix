@@ -61,19 +61,18 @@ let
     let
       policy = effectivePolicy mode;
       inherit (policy) commands;
-      mkPrefixRule = decision: cmd: ''
-        prefix_rule(
-            pattern = ["${lib.concatStringsSep ''", "'' (lib.splitString " " cmd)}"],
-            decision = "${decision}",
-        )'';
-      reToCmd =
-        cmd:
-        builtins.replaceStrings [ "\\s+" ] [ " " ] (
-          builtins.replaceStrings [ "\\b" ] [ "" ] (lib.removePrefix "re:" cmd)
-        );
-      toCmd = cmd: if lib.hasPrefix "re:" cmd then reToCmd cmd else cmd;
-      forbiddenRules = map (cmd: mkPrefixRule "forbidden" (toCmd cmd)) (commands.deny.shell or [ ]);
-      promptRules = map (cmd: mkPrefixRule "prompt" (toCmd cmd)) (commands.ask.shell or [ ]);
+      mkPrefixRule =
+        decision: entry:
+        let
+          m = entry.match;
+        in
+        ''
+          prefix_rule(
+              pattern = ["${lib.concatStringsSep ''", "'' (lib.splitString " " m)}"],
+              decision = "${decision}",
+          )'';
+      forbiddenRules = map (mkPrefixRule "forbidden") (commands.deny.shell or [ ]);
+      promptRules = map (mkPrefixRule "prompt") (commands.ask.shell or [ ]);
     in
     lib.concatStringsSep "\n\n" (forbiddenRules ++ promptRules);
 
