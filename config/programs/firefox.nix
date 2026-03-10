@@ -160,6 +160,9 @@ in
           "browser.compactmode.show" = true;
           "browser.ctrlTab.recentlyUsedOrder" = false;
           "browser.profiles.enabled" = false;
+          "sidebar.revamp" = true;
+          "sidebar.verticalTabs" = true;
+          "sidebar.visibility" = "expand-on-hover";
           "svg.context-properties.content.enabled" = true;
           "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
 
