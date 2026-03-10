@@ -311,12 +311,12 @@ in
       @define-color highlight_fg ${colorScheme.background};
       @define-color alert_bg ${colorScheme.normal.red};
       @define-color alert_fg ${colorScheme.normal.white};
-      @define-color battery_charging_bg ${getColor 195};
+      @define-color battery_charging_bg ${getColor 194};
       @define-color battery_charging_fg ${getColor 40};
-      @define-color battery_warning_bg ${getColor 208};
-      @define-color battery_warning_fg ${getColor 229};
-      @define-color battery_critical_bg ${getColor 1};
-      @define-color battery_critical_fg ${getColor 218};
+      @define-color battery_warning_bg ${colorScheme.bright.yellow};
+      @define-color battery_warning_fg ${colorScheme.bright.black};
+      @define-color battery_critical_bg ${colorScheme.bright.red};
+      @define-color battery_critical_fg ${colorScheme.bright.black};
 
       /* -------------------------------------------------------------------------
        * Global & Bar

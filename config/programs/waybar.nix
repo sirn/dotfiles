@@ -107,8 +107,8 @@ in
           states = {
             full = 100;
             normal = 80;
-            warning = 20;
-            critical = 10;
+            warning = 30;
+            critical = 15;
           };
           format = "{capacity}% {icon}";
           format-icons = [
@@ -132,8 +132,7 @@ in
           format-source = "";
           format-icons = {
             headphone = "";
-            hands-free = "";
-            headset = "";
+            headset = "";
             phone = "";
             portable = "";
             car = "";
