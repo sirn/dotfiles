@@ -24,36 +24,25 @@ webfetch = true
 websearch = true
 
 # Safe commands that don't modify state or access sensitive data
+
 [[default.commands.allow.shell]]
-match = "ls"
+match = "./gradlew check"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "fd"
+match = "alejandra"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "find"
+match = "alejandra --check"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "tree"
+match = "awk --version"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "lstr"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "cat"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "head"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "tail"
+match = "bash -n"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
@@ -65,23 +54,71 @@ match = "batcat"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "file"
+match = "black --check"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "stat"
+match = "bundle exec rspec"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "wc"
+match = "bundle exec rubocop"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "sort"
+match = "bundle list"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "uniq"
+match = "cargo"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "cargo --version"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "cargo check"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "cargo clippy"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "cargo fmt --check"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "cargo test"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "cargo tree"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "cat"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "cat --version"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "clang-tidy"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "command -v"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "cppcheck"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "curl"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
@@ -89,23 +126,167 @@ match = "cut"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "tr"
+match = "date"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "sed -n"
+match = "docker images"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "rg"
+match = "docker inspect"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "grep"
+match = "docker ps"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "git status"
+match = "docker ps -a"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "docker-compose config"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "echo"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "eslint"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "fd"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "file"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "find"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "flake8"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gem list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh api --method GET"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh api -X GET"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh cache list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh issue list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh issue status"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh issue view"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh pr checks"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh pr diff"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh pr list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh pr status"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh pr view"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh release list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh release view"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh repo list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh repo view"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh run list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh run view"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh search code"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh search commits"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh search issues"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh search prs"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh search repos"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh status"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh workflow list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gh workflow view"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "git branch"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "git config --get"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "git config --list"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
@@ -117,15 +298,95 @@ match = "git log"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "git branch"
+match = "git remote -v"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "jj status"
+match = "git remote list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "git rev-parse"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "git rev-parse --show-toplevel"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "git status"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gmake"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "go build"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "go fmt"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "go mod download -x"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "go mod graph"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "go mod why"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "go test"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "go vet"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "golangci-lint"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "gradle check"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "grep"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "head"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "id"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "isort --check-only"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "jj bookmark"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "jj bookmark list"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
 match = "jj diff"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "jj git remote list"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
@@ -137,27 +398,211 @@ match = "jj show"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "go test"
+match = "jj status"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "go build"
+match = "jq --version"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "go vet"
+match = "just"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "go fmt"
+match = "just --list"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "golangci-lint"
+match = "ktlint"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "staticcheck"
+match = "kubectl describe"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "kubectl get"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "kubectl logs"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "kubectl version"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "ls"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "lstr"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "make"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "make check"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "mvn test"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "mvn verify"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "mypy"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "mysqlshow"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "nix build"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "nix derivation show"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "nix eval"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "nix flake"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "nix path-info"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "nix search"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "nix why-depends"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "nix-build"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "nix-channel --list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "nix-linter"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "nix-prefetch-git"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "nixfmt"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "nixfmt --check"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "node --version"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "npm --version"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "npm list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "pg_dump --schema-only"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "pip freeze"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "pip list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "pnpm list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "podman images"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "podman inspect"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "podman ps"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "podman ps -a"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "poetry run pytest"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "poetry run python -m pytest"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "poetry run ruff"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "poetry run ruff check"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "poetry show"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "poetry show --tree"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "prettier --check"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "psql --command=\\dt"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "psql -c \\dt"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "pwd"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "pylint"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
@@ -173,6 +618,22 @@ match = "python -m unittest"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
+match = "redis-cli info"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "redis-cli ping"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rg"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rubocop"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
 match = "ruff"
 mode = "prefix"
 
@@ -185,203 +646,15 @@ match = "ruff format --check"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "black --check"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "isort --check-only"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "mypy"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "pylint"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "flake8"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "uv run pytest"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "uv run ruff"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "uv run ruff check"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "uv run python -m pytest"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "poetry run pytest"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "poetry run ruff"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "poetry run ruff check"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "poetry run python -m pytest"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "cargo"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "cargo check"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "cargo test"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "cargo clippy"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "cargo fmt --check"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
 match = "rustc --version"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "cargo --version"
+match = "sed --version"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "eslint"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "prettier --check"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "tsc --noEmit"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "tsc -p . --noEmit"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "node --version"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "npm --version"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "rubocop"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "bundle exec rspec"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "bundle exec rubocop"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "./gradlew check"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gradle check"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "mvn verify"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "mvn test"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "ktlint"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "clang-tidy"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "cppcheck"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "make check"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "nixfmt"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "nixfmt --check"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "alejandra"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "alejandra --check"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "nix flake"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "nix-linter"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "nix-prefetch-git"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "nix build"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "nix-build"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "nix search"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "nix eval"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "nix why-depends"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "nix-channel --list"
+match = "sed -n"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
@@ -393,167 +666,43 @@ match = "shfmt"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "shfmt -l"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
 match = "shfmt --check"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "bash -n"
+match = "shfmt -l"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "make"
+match = "sort"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "gmake"
+match = "stat"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "just"
+match = "staticcheck"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "just --list"
+match = "tail"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "curl"
+match = "tr"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "wget"
+match = "tree"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "docker ps"
+match = "tsc --noEmit"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "docker ps -a"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "docker images"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "docker inspect"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "docker-compose config"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "podman ps"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "podman ps -a"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "podman images"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "podman inspect"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "kubectl get"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "kubectl describe"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "kubectl logs"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "kubectl version"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "npm list"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "pnpm list"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "yarn list"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "pip list"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "pip freeze"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "poetry show"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "poetry show --tree"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "uv pip list"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "uv pip tree"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "cargo tree"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "go mod graph"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "go mod why"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "go mod download -x"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gem list"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "bundle list"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "nix path-info"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "nix derivation show"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "which"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "command -v"
+match = "tsc -p . --noEmit"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
@@ -565,7 +714,43 @@ match = "uname -a"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "pwd"
+match = "uniq"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "uv pip list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "uv pip tree"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "uv run pytest"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "uv run python -m pytest"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "uv run ruff"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "uv run ruff check"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "wc"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "wget"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "which"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
@@ -573,210 +758,11 @@ match = "whoami"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "id"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "echo"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "date"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "cat --version"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "jq --version"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "sed --version"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "awk --version"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "psql --command=\\dt"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "psql -c \\dt"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "pg_dump --schema-only"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "mysqlshow"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "redis-cli ping"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "redis-cli info"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "git remote -v"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "git config --get"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "git config --list"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "git rev-parse"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "git rev-parse --show-toplevel"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "jj git remote list"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "jj bookmark list"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "jj bookmark"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh issue list"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh issue view"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh issue status"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh pr list"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh pr view"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh pr diff"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh pr checks"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh pr status"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh repo view"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh repo list"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh run list"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh run view"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh workflow list"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh workflow view"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh cache list"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh release list"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh release view"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh search repos"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh search issues"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh search prs"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh search code"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh search commits"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh status"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh api -X GET"
-mode = "prefix"
-
-[[default.commands.allow.shell]]
-match = "gh api --method GET"
+match = "yarn list"
 mode = "prefix"
 
 # Commands that require explicit user confirmation
-# These use "substring" mode to match the command as a word (previously re:)
-[[default.commands.ask.shell]]
-match = "rm"
-mode = "substring"
-
-[[default.commands.ask.shell]]
-match = "dd"
-mode = "substring"
-
-[[default.commands.ask.shell]]
-match = "mkfs"
-mode = "substring"
-
-[[default.commands.ask.shell]]
-match = "fdisk"
-mode = "substring"
-
-[[default.commands.ask.shell]]
-match = "shred"
-mode = "substring"
+# These use "substring" mode to match the command as a word
 
 [[default.commands.ask.shell]]
 match = "chmod"
@@ -787,7 +773,35 @@ match = "chown"
 mode = "substring"
 
 [[default.commands.ask.shell]]
+match = "dd"
+mode = "substring"
+
+[[default.commands.ask.shell]]
+match = "docker exec"
+mode = "substring"
+
+[[default.commands.ask.shell]]
+match = "docker run"
+mode = "substring"
+
+[[default.commands.ask.shell]]
+match = "env"
+mode = "exact"
+
+[[default.commands.ask.shell]]
+match = "fdisk"
+mode = "substring"
+
+[[default.commands.ask.shell]]
 match = "git commit"
+mode = "substring"
+
+[[default.commands.ask.shell]]
+match = "jj abandon"
+mode = "substring"
+
+[[default.commands.ask.shell]]
+match = "jj commit"
 mode = "substring"
 
 [[default.commands.ask.shell]]
@@ -799,7 +813,7 @@ match = "jj new"
 mode = "substring"
 
 [[default.commands.ask.shell]]
-match = "jj commit"
+match = "jj split"
 mode = "substring"
 
 [[default.commands.ask.shell]]
@@ -807,39 +821,19 @@ match = "jj squash"
 mode = "substring"
 
 [[default.commands.ask.shell]]
-match = "jj split"
-mode = "substring"
-
-[[default.commands.ask.shell]]
-match = "jj abandon"
-mode = "substring"
-
-[[default.commands.ask.shell]]
 match = "jj undo"
 mode = "substring"
 
 [[default.commands.ask.shell]]
-match = "env"
-mode = "exact"
-
-[[default.commands.ask.shell]]
-match = "printenv"
-mode = "exact"
-
-[[default.commands.ask.shell]]
-match = "docker exec"
+match = "kubectl apply"
 mode = "substring"
 
 [[default.commands.ask.shell]]
-match = "docker run"
+match = "kubectl create"
 mode = "substring"
 
 [[default.commands.ask.shell]]
-match = "podman exec"
-mode = "substring"
-
-[[default.commands.ask.shell]]
-match = "podman run"
+match = "kubectl delete"
 mode = "substring"
 
 [[default.commands.ask.shell]]
@@ -851,60 +845,41 @@ match = "kubectl run"
 mode = "substring"
 
 [[default.commands.ask.shell]]
-match = "kubectl create"
-mode = "substring"
-
-[[default.commands.ask.shell]]
-match = "kubectl apply"
-mode = "substring"
-
-[[default.commands.ask.shell]]
-match = "kubectl delete"
+match = "mkfs"
 mode = "substring"
 
 [[default.commands.ask.shell]]
 match = "nix run"
 mode = "substring"
 
+[[default.commands.ask.shell]]
+match = "podman exec"
+mode = "substring"
+
+[[default.commands.ask.shell]]
+match = "podman run"
+mode = "substring"
+
+[[default.commands.ask.shell]]
+match = "printenv"
+mode = "exact"
+
+[[default.commands.ask.shell]]
+match = "rm"
+mode = "substring"
+
+[[default.commands.ask.shell]]
+match = "shred"
+mode = "substring"
+
 # Commands that are blocked entirely
-[[default.commands.deny.shell]]
-match = "sudo"
-mode = "substring"
 
 [[default.commands.deny.shell]]
-match = "kill"
-mode = "substring"
-
-[[default.commands.deny.shell]]
-match = "systemctl"
-mode = "substring"
-
-[[default.commands.deny.shell]]
-match = "sops"
-mode = "substring"
-
-[[default.commands.deny.shell]]
-match = "git push"
-mode = "substring"
-
-[[default.commands.deny.shell]]
-match = "jj git push"
-mode = "substring"
-
-[[default.commands.deny.shell]]
-match = "gh api -X POST"
+match = "gh api --method DELETE"
 mode = "prefix"
 
 [[default.commands.deny.shell]]
-match = "gh api -X PUT"
-mode = "prefix"
-
-[[default.commands.deny.shell]]
-match = "gh api -X PATCH"
-mode = "prefix"
-
-[[default.commands.deny.shell]]
-match = "gh api -X DELETE"
+match = "gh api --method PATCH"
 mode = "prefix"
 
 [[default.commands.deny.shell]]
@@ -916,12 +891,44 @@ match = "gh api --method PUT"
 mode = "prefix"
 
 [[default.commands.deny.shell]]
-match = "gh api --method PATCH"
+match = "gh api -X DELETE"
 mode = "prefix"
 
 [[default.commands.deny.shell]]
-match = "gh api --method DELETE"
+match = "gh api -X PATCH"
 mode = "prefix"
+
+[[default.commands.deny.shell]]
+match = "gh api -X POST"
+mode = "prefix"
+
+[[default.commands.deny.shell]]
+match = "gh api -X PUT"
+mode = "prefix"
+
+[[default.commands.deny.shell]]
+match = "git push"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "jj git push"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "kill"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "sops"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "sudo"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "systemctl"
+mode = "substring"
 
 [default.paths.allow]
 read = [
