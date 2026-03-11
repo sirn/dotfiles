@@ -27,5 +27,5 @@ in
 
   repoman = (callPackage ./by-name/repoman/package.nix { });
 
-  pi-coding-agent = (callPackage ./by-name/pi-coding-agent/package.nix { });
+  pi-coding-agent-bin = (callPackage ./by-name/pi-coding-agent-bin/package.nix { });
 }

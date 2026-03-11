@@ -16,7 +16,7 @@ let
     #!${pkgs.runtimeShell}
     exec "${lib.getExe pkgs.local.envWrapper}" \
       -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
-      -- "${lib.getExe pkgs.local.pi-coding-agent}" "$@"
+      -- "${lib.getExe pkgs.local.pi-coding-agent-bin}" "$@"
   '';
 
   agentsMdText = ''
