@@ -25,6 +25,13 @@
 - **Skill Execution**: Skills (located in `~/.gemini/skills/`, `~/.claude/skills/`, `~/.config/opencode/skill/home-manager/`, or `~/.codex/skills/home-manager/`) are NOT automated tools. They are textual Standard Operating Procedures (SOPs). You MUST read the skill's `SKILL.md` and actively EXECUTE the steps defined therein using your tools. **Skills do NOT execute automatically - you MUST execute them yourself.** Do not assume they run themselves.
 - **Skills During Planning**: Analysis/inspection skills (code-quality, code-review, code-test, code-lint, code-verify, code-explain, code-analyze-project) are read-only operations. Execute them immediately even when in Plan mode - they do NOT modify code and provide essential context for accurate planning.
 - **Reference Skills**: Skills with `type: reference` are documentation-only. Read them when you need the information, but do not "execute" them.
+- **Reference Skills First**: **ALWAYS** read the corresponding `*-reference` skill **before** performing operations with tools that have one. For example:
+  - Before any `nix` command (e.g., `nix build`, `nix develop`, `nix shell`) → read `nix-reference`
+  - Before any `jj` operation (e.g., `jj commit`, `jj squash`, `jj rebase`) → read `jj-reference`
+  - Before any `gh` command → read `gh-reference`
+  - Before invoking Claude Code → read `claude-code-reference`
+  - Before invoking Codex → read `codex-reference`
+  - Before invoking Gemini → read `gemini-reference`
 
 ## Project Directories
 - `~/Dev/src/<hosting-provider>/<repo>/` - Cloned source repositories (e.g., `~/Dev/src/github.com/sirn/sirn`)
@@ -63,7 +70,7 @@
 - **Tests**: Write tests for public interfaces only, unless internal behavior is observable.
 
 ## Environment & Tooling
-- **Nix**: You are in a Nix-enabled environment. Use `nix` commands (never `nix-env -i`). Use nix-shell shebangs for scripts needing specific dependencies. During development with flakes in a dirty workspace, ALWAYS use `path:.` or `path:/path/to/flake/dir` (the `path:` prefix is mandatory) to ensure untracked files are recognized, instead of using `git add`. Refer to nix-reference skill for detailed commands and patterns.
+- **Nix**: You are in a Nix-enabled environment. Use `nix` commands (never `nix-env -i`). Use nix-shell shebangs for scripts needing specific dependencies. During development with flakes in a dirty workspace, ALWAYS use `path:.` or `path:/path/to/flake/dir` (the `path:` prefix is mandatory) to ensure untracked files are recognized, instead of using `git add`.
 - **Nix Packages**: When adding a Nix package, use `nix-locate`, `WebFetch`, or `WebSearch` to verify the exact package name instead of guessing.
 - **Command Execution**:
   - **Long-running Processes**: Use the tool's native backgrounding functionality if available. Avoid manually appending `&` to shell commands. If no tool-provided backgrounding exists or you are unsure, ask the user to run the process.
@@ -85,7 +92,7 @@
 - **Commit Messages**: When asked to commit, keep messages concise, consistent, and following existing patterns.
 - **Commit Authorization**: You must only commit, or split, when explicitly told to do so.
 - **Co-Authored-By**: When committing, add a `Co-Authored-By:` trailer to indicate the commit was LLM assisted/generated.
-- **Jujutsu Reference**: When performing any jj operation (commit, squash, rebase, etc.), **ALWAYS read the jj-reference skill first** to ensure correct command syntax. This skill is a `type: reference` skill - read it for information, not execution. Key patterns from the skill:
+- **Jujutsu Reference**: See "Reference Skills First" rule above. Key patterns from `jj-reference`:
   - Use explicit change IDs: `jj describe <id>`, `jj squash --from <id> --to <id>`
   - Use `jj split -r <id> -m "msg" -- <file>` (non-interactive)
   - Use `jj new <parent-id>` to create commits on specific parents
