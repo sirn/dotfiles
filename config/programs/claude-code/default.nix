@@ -236,6 +236,7 @@ in
 
     settings = {
       model = "opusplan";
+      autoUpdaterStatus = "disabled";
       includeCoAuthoredBy = true;
       cleanupPeriodDays = 7;
       effortLevel = "high";
