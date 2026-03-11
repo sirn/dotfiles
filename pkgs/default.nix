@@ -17,8 +17,6 @@ in
 
   envWrapper = (callPackage ./by-name/env-wrapper/package.nix { });
 
-  firefox-csshacks = (callPackage ./by-name/firefox/csshacks.nix { });
-
   mcpServers = {
     mcp-remote = (callPackage ./by-name/mcp-servers/mcp-remote/package.nix { });
   };

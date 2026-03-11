@@ -6,8 +6,6 @@
 }:
 
 let
-  csshacks = pkgs.local.firefox-csshacks;
-
   firefoxProfiles = config.programs.firefox.profiles;
   firefoxExec =
     if pkgs.stdenv.isDarwin then
@@ -113,9 +111,7 @@ in
       main = {
         extensions = {
           packages = with pkgs.nur.repos.rycee.firefox-addons; [
-            auto-tab-discard
             dearrow
-            history-cleaner
             kagi-search
             languagetool
             sponsorblock
@@ -163,8 +159,6 @@ in
           "sidebar.revamp" = true;
           "sidebar.verticalTabs" = true;
           "sidebar.visibility" = "expand-on-hover";
-          "svg.context-properties.content.enabled" = true;
-          "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
 
           # Extensions
           "extensions.autoDisableScopes" = 0;
@@ -223,11 +217,12 @@ in
           "geo.provider.use_corelocation" = false;
 
           # Cleanup on shutdown
+          "privacy.sanitize.sanitizeOnShutdown" = true;
           "privacy.clearOnShutdown.cache" = true;
           "privacy.clearOnShutdown.cookies" = false;
           "privacy.clearOnShutdown.downloads" = true;
           "privacy.clearOnShutdown.formdata" = true;
-          "privacy.clearOnShutdown.history" = false;
+          "privacy.clearOnShutdown.history" = true;
           "privacy.clearOnShutdown.sessions" = false;
 
           # Additional AI features
