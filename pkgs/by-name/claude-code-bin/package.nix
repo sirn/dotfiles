@@ -46,8 +46,10 @@ stdenv.mkDerivation {
     inherit (platform) hash;
   };
 
-  nativeBuildInputs =
-    [ makeWrapper ] ++ lib.optionals stdenv.hostPlatform.isLinux [ autoPatchelfHook ];
+  nativeBuildInputs = [
+    makeWrapper
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [ autoPatchelfHook ];
   buildInputs = lib.optionals stdenv.hostPlatform.isLinux [ stdenv.cc.cc.lib ];
 
   dontUnpack = true;
@@ -60,7 +62,15 @@ stdenv.mkDerivation {
     cp $src $out/bin/.claude-wrapped
     chmod +x $out/bin/.claude-wrapped
     makeWrapper $out/bin/.claude-wrapped $out/bin/claude \
-      --prefix PATH : "${lib.makeBinPath (lib.optionals stdenv.hostPlatform.isLinux [ bubblewrap socat procps ])}"
+      --prefix PATH : "${
+        lib.makeBinPath (
+          lib.optionals stdenv.hostPlatform.isLinux [
+            bubblewrap
+            socat
+            procps
+          ]
+        )
+      }"
     runHook postInstall
   '';
 

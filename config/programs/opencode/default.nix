@@ -77,7 +77,8 @@ let
                   (lib.nameValuePair "${m} *" decision)
                   (lib.nameValuePair "* ${m}" decision)
                 ];
-              }.${entry.mode or "prefix"}
+              }
+              .${entry.mode or "prefix"}
             ) cmds;
           allows = mkEntries "allow" (commands.allow.shell or [ ]);
           asks = mkEntries "ask" (commands.ask.shell or [ ]);

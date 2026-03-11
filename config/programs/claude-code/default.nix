@@ -77,9 +77,17 @@ let
           in
           {
             exact = [ "Bash(${m})" ];
-            prefix = [ "Bash(${m})" "Bash(${m} *)" ];
-            substring = [ "Bash(* ${m} *)" "Bash(${m} *)" "Bash(* ${m})" ];
-          }.${entry.mode or "prefix"}
+            prefix = [
+              "Bash(${m})"
+              "Bash(${m} *)"
+            ];
+            substring = [
+              "Bash(* ${m} *)"
+              "Bash(${m} *)"
+              "Bash(* ${m})"
+            ];
+          }
+          .${entry.mode or "prefix"}
         ) cmds;
       bashAllows = mkBashPatterns (commands.allow.shell or [ ]);
       mcpAllows = claudeCodeMcpPermissions;
