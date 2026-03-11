@@ -182,7 +182,7 @@ in
         #!${pkgs.runtimeShell}
         exec "${lib.getExe pkgs.local.envWrapper}" \
           -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
-          -- "${lib.getExe pkgs.unstable.gemini-cli}" "$@"
+          -- "${lib.getExe pkgs.local.gemini-cli-bin}" "$@"
       ''
     );
 

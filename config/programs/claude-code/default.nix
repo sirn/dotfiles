@@ -210,9 +210,11 @@ in
     package = (
       pkgs.writeScriptBin "claude" ''
         #!${pkgs.runtimeShell}
+        export DISABLE_AUTOUPDATER=1
+        export DISABLE_INSTALLATION_CHECKS=1
         exec "${lib.getExe pkgs.local.envWrapper}" \
           -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
-          -- "${lib.getExe pkgs.unstable.claude-code}" "$@"
+          -- "${lib.getExe pkgs.local.claude-code-bin}" "$@"
       ''
     );
 

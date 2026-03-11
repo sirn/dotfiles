@@ -119,7 +119,7 @@ in
         #!${pkgs.runtimeShell}
         exec "${lib.getExe pkgs.local.envWrapper}" \
           -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
-          -- "${lib.getExe pkgs.unstable.codex}" "$@"
+          -- "${lib.getExe pkgs.local.codex-bin}" "$@"
       ''
     );
     custom-instructions = instructionText;
