@@ -7,16 +7,18 @@
 }:
 
 let
-  version = "0.33.0";
+  sources = lib.importJSON ./sources.json;
+  inherit (sources) version src files;
+
+  sandboxProfiles = lib.optionals stdenv.isDarwin (
+    map (file: fetchurl { inherit (file) url hash; }) files
+  );
 in
 stdenv.mkDerivation {
   pname = "gemini-cli-bin";
   inherit version;
 
-  src = fetchurl {
-    url = "https://github.com/google-gemini/gemini-cli/releases/download/v${version}/gemini.js";
-    hash = "sha256-HRNPHK5qXE8zvL2ZsHMe7e/hhbJx8jfQUknW5Z3KErU=";
-  };
+  src = fetchurl { inherit (src) url hash; };
 
   dontUnpack = true;
   dontBuild = true;
@@ -27,6 +29,9 @@ stdenv.mkDerivation {
     runHook preInstall
     mkdir -p $out/bin $out/share/gemini-cli
     cp $src $out/share/gemini-cli/gemini.js
+    ${lib.concatMapStrings (profile: ''
+      cp ${profile} $out/share/gemini-cli/$(basename ${profile})
+    '') sandboxProfiles}
     makeWrapper ${lib.getExe bun} $out/bin/gemini \
       --add-flags "$out/share/gemini-cli/gemini.js"
     runHook postInstall

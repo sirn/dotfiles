@@ -9,39 +9,18 @@
 }:
 
 let
-  version = "0.57.1";
+  sources = lib.importJSON ./sources.json;
+  inherit (sources) version systems;
 
-  platformMap = {
-    x86_64-linux = {
-      arch = "linux-x64";
-      hash = "sha256-ghQwKFWi+oPRW0cGvI6L6Rommqy0lhTBSqc/0sKqZac=";
-    };
-    aarch64-linux = {
-      arch = "linux-arm64";
-      hash = "sha256-GrX78MvEEKaM6MOAEGttfW4v6ryg3KJ7jmi3dw6h9K0=";
-    };
-    aarch64-darwin = {
-      arch = "darwin-arm64";
-      hash = "sha256-T8cLJKI+ODscNW6jdiDhGJ1ohCDfNrSMSbR1eJ9eD44=";
-    };
-    x86_64-darwin = {
-      arch = "darwin-x64";
-      hash = "sha256-vGdzPOmldi00rmCP62Va53Q08fU1qgimXG3kBFt37HM=";
-    };
-  };
-
-  platform =
-    platformMap.${stdenv.hostPlatform.system}
+  system =
+    systems.${stdenv.hostPlatform.system}
       or (throw "Unsupported system: ${stdenv.hostPlatform.system}");
 in
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "pi-coding-agent";
   inherit version;
 
-  src = fetchurl {
-    url = "https://github.com/badlogic/pi-mono/releases/download/v${version}/pi-${platform.arch}.tar.gz";
-    inherit (platform) hash;
-  };
+  src = fetchurl { inherit (system) url hash; };
 
   nativeBuildInputs = [
     makeWrapper
@@ -85,7 +64,7 @@ stdenv.mkDerivation rec {
     license = lib.licenses.mit;
     maintainers = [ ];
     mainProgram = "pi";
-    platforms = lib.attrNames platformMap;
+    platforms = lib.attrNames systems;
     sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
   };
 }

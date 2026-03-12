@@ -5,39 +5,18 @@
 }:
 
 let
-  version = "0.114.0";
+  sources = lib.importJSON ./sources.json;
+  inherit (sources) version systems;
 
-  platformMap = {
-    x86_64-linux = {
-      target = "x86_64-unknown-linux-musl";
-      hash = "sha256-kinejFHI7zBWW7UHyXou3ASoCzjkmkNj8zf+Bb7fNOs=";
-    };
-    aarch64-linux = {
-      target = "aarch64-unknown-linux-musl";
-      hash = "sha256-fTBzVoEHfBO28NpuiCo6r5ZY3yDRVfXZkiL7ex0pAJk=";
-    };
-    aarch64-darwin = {
-      target = "aarch64-apple-darwin";
-      hash = "sha256-yY61UGlfmersJ9+ZcaG3aoOssV61VSI4P6MbBJcpfFQ=";
-    };
-    x86_64-darwin = {
-      target = "x86_64-apple-darwin";
-      hash = "sha256-sMfOn242k+zBULwMuVtKF2bXuEl0cJDlB33o1NLKyXQ=";
-    };
-  };
-
-  platform =
-    platformMap.${stdenv.hostPlatform.system}
+  system =
+    systems.${stdenv.hostPlatform.system}
       or (throw "Unsupported system: ${stdenv.hostPlatform.system}");
 in
 stdenv.mkDerivation {
   pname = "codex-bin";
   inherit version;
 
-  src = fetchurl {
-    url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex-${platform.target}.tar.gz";
-    inherit (platform) hash;
-  };
+  src = fetchurl { inherit (system) url hash; };
 
   sourceRoot = ".";
 
@@ -47,7 +26,7 @@ stdenv.mkDerivation {
   installPhase = ''
     runHook preInstall
     mkdir -p $out/bin
-    cp codex-${platform.target} $out/bin/codex
+    cp codex-* $out/bin/codex
     chmod +x $out/bin/codex
     runHook postInstall
   '';
@@ -59,7 +38,7 @@ stdenv.mkDerivation {
     homepage = "https://github.com/openai/codex";
     license = lib.licenses.asl20;
     mainProgram = "codex";
-    platforms = lib.attrNames platformMap;
+    platforms = lib.attrNames systems;
     sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
   };
 }
