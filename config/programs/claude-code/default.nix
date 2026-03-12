@@ -63,10 +63,11 @@ let
       ++ lib.optional tools.write "Write(**)"
       ++ webFetchRules;
 
-      pathAllows =
+      pathAllows = lib.optionals (!cfg.sandbox.enabled) (
         map (p: "Read(${p})") (paths.allow.read or [ ])
         ++ lib.optionals tools.edit (map (p: "Edit(${p})") (paths.allow.edit or [ ]))
-        ++ lib.optionals tools.write (map (p: "Write(${p})") (paths.allow.write or [ ]));
+        ++ lib.optionals tools.write (map (p: "Write(${p})") (paths.allow.write or [ ]))
+      );
 
       mkBashPatterns =
         cmds:
@@ -95,10 +96,11 @@ let
 
       ask = mkBashPatterns (commands.ask.shell or [ ]);
 
-      pathDenies =
+      pathDenies = lib.optionals (!cfg.sandbox.enabled) (
         map (p: "Read(${p})") (paths.deny.read or [ ])
         ++ lib.optionals tools.edit (map (p: "Edit(${p})") (paths.deny.edit or [ ]))
-        ++ lib.optionals tools.write (map (p: "Write(${p})") (paths.deny.write or [ ]));
+        ++ lib.optionals tools.write (map (p: "Write(${p})") (paths.deny.write or [ ]))
+      );
 
       bashDenies = mkBashPatterns (commands.deny.shell or [ ]);
       deny = pathDenies ++ bashDenies;
@@ -245,13 +247,10 @@ in
         command = lib.getExe statusLineScript;
       };
       permissions = toClaudePermissions "build";
-    }
-    // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-      sandbox = {
-        enabled = true;
-      };
     };
   };
+
+  programs.claude-code.sandbox.enabled = pkgs.stdenv.hostPlatform.isLinux;
 
   programs.git = lib.mkIf cfg.enable {
     ignores = [
