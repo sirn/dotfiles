@@ -26,22 +26,16 @@ declare -A platforms=(
     ["x86_64-darwin"]="darwin-x64"
 )
 
-declare -A system_entries
+systems_json="{}"
 for system in "${!platforms[@]}"; do
     platform="${platforms[$system]}"
     hex=$(echo "$manifest" | jq -r ".platforms.\"${platform}\".checksum")
     sri=$(nix hash convert --hash-algo sha256 --to sri "$hex")
     url="${base_url}/${version}/${platform}/claude"
-    system_entries[$system]=$(jq -n --arg url "$url" --arg hash "$sri" '{url: $url, hash: $hash}')
+    systems_json=$(echo "$systems_json" | jq --arg key "$system" --arg url "$url" --arg hash "$sri" \
+        '. + {($key): {url: $url, hash: $hash}}')
     echo "  $system ($platform): $sri"
 done
-
-# Build systems JSON
-systems_json=$(
-    printf '%s\n' "${system_entries[@]}" |
-        jq -s '.' |
-        jq '{"x86_64-linux": .[0], "aarch64-linux": .[1], "aarch64-darwin": .[2], "x86_64-darwin": .[3]}'
-)
 
 jq -n \
     --arg version "$version" \

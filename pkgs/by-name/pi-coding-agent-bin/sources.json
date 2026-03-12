@@ -1,19 +1,19 @@
 {
   "version": "0.57.1",
   "systems": {
-    "x86_64-linux": {
+    "aarch64-linux": {
       "url": "https://github.com/badlogic/pi-mono/releases/download/v0.57.1/pi-linux-arm64.tar.gz",
       "hash": "sha256-GrX78MvEEKaM6MOAEGttfW4v6ryg3KJ7jmi3dw6h9K0="
     },
-    "aarch64-linux": {
+    "x86_64-linux": {
       "url": "https://github.com/badlogic/pi-mono/releases/download/v0.57.1/pi-linux-x64.tar.gz",
       "hash": "sha256-ghQwKFWi+oPRW0cGvI6L6Rommqy0lhTBSqc/0sKqZac="
     },
-    "aarch64-darwin": {
+    "x86_64-darwin": {
       "url": "https://github.com/badlogic/pi-mono/releases/download/v0.57.1/pi-darwin-x64.tar.gz",
       "hash": "sha256-vGdzPOmldi00rmCP62Va53Q08fU1qgimXG3kBFt37HM="
     },
-    "x86_64-darwin": {
+    "aarch64-darwin": {
       "url": "https://github.com/badlogic/pi-mono/releases/download/v0.57.1/pi-darwin-arm64.tar.gz",
       "hash": "sha256-T8cLJKI+ODscNW6jdiDhGJ1ohCDfNrSMSbR1eJ9eD44="
     }

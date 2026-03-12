@@ -43,13 +43,12 @@ for file in \
 done
 
 # Build final JSON
-printf '%s\n' "${file_entries[@]}" | jq -s '.' >"/tmp/files.json"
+files_json=$(printf '%s\n' "${file_entries[@]}" | jq -s '.')
 jq -n \
     --arg version "$version" \
     --arg url "$gemini_url" \
     --arg hash "$gemini_hash" \
-    --slurpfile files "/tmp/files.json" \
-    '{version: $version, src: {url: $url, hash: $hash}, files: $files[0]}' >"$sources_file"
-rm -f "/tmp/files.json"
+    --argjson files "$files_json" \
+    '{version: $version, src: {url: $url, hash: $hash}, files: $files}' >"$sources_file"
 
 echo "Updated $sources_file to $version"

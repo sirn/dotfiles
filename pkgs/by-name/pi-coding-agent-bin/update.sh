@@ -22,7 +22,7 @@ declare -A platforms=(
     ["x86_64-darwin"]="darwin-x64"
 )
 
-declare -A system_entries
+systems_json="{}"
 for system in "${!platforms[@]}"; do
     arch="${platforms[$system]}"
     url="https://github.com/badlogic/pi-mono/releases/download/v${version}/pi-${arch}.tar.gz"
@@ -30,15 +30,9 @@ for system in "${!platforms[@]}"; do
     hash=$(nix-prefetch-url --type sha256 "$url" 2>/dev/null)
     sri=$(nix hash convert --hash-algo sha256 --to sri "$hash" 2>/dev/null)
     echo "  $system: $sri"
-    system_entries[$system]=$(jq -n --arg url "$url" --arg hash "$sri" '{url: $url, hash: $hash}')
+    systems_json=$(echo "$systems_json" | jq --arg key "$system" --arg url "$url" --arg hash "$sri" \
+        '. + {($key): {url: $url, hash: $hash}}')
 done
-
-# Build systems JSON
-systems_json=$(
-    printf '%s\n' "${system_entries[@]}" |
-        jq -s '.' |
-        jq '{"x86_64-linux": .[0], "aarch64-linux": .[1], "aarch64-darwin": .[2], "x86_64-darwin": .[3]}'
-)
 
 jq -n \
     --arg version "$version" \
