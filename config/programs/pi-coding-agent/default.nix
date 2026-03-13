@@ -65,9 +65,8 @@ in
         "claude-opus-4-6"
         "claude-sonnet-4-6"
 
-        # OpenAI GPT-5 (Codex family)
-        "gpt-5.3-codex"
-        "gpt-5.3-codex-spark"
+        # OpenAI
+        "gpt-5.4"
         "gpt-5.1-codex-mini"
 
         # Google Gemini
@@ -172,6 +171,41 @@ in
               output = 3.2;
               cacheRead = 0;
               cacheWrite = 0;
+            };
+          }
+        ];
+      };
+      openai = {
+        baseUrl = "https://api.openai.com/v1";
+        apiKey = "OPENAI_API_KEY";
+        api = "openai-completions";
+        models = [
+          {
+            id = "gpt-5.4";
+            name = "GPT-5.4";
+            reasoning = true;
+            input = [ "text" "image" ];
+            contextWindow = 1050000;
+            maxTokens = 128000;
+            cost = {
+              input = 2.5;
+              output = 15.0;
+              cacheRead = 0.25;
+              cacheWrite = 0.0;
+            };
+          }
+          {
+            id = "gpt-5.1-codex-mini";
+            name = "GPT-5.1 Codex Mini";
+            reasoning = true;
+            input = [ "text" "image" ];
+            contextWindow = 400000;
+            maxTokens = 100000;
+            cost = {
+              input = 0.25;
+              output = 2.0;
+              cacheRead = 0.025;
+              cacheWrite = 0.0;
             };
           }
         ];

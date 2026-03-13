@@ -6,7 +6,7 @@ This directory contains the shared instruction system for multiple AI coding too
 
 ```
 instruction.md   → Global rules (shared by all tools)
-skills/          → SOP-style skill definitions (26 total)
+skills/          → SOP-style skill definitions (34 total)
 agents/          → Sub-agent definitions for Claude Code + OpenCode
 ```
 
@@ -73,9 +73,9 @@ These are for lookup only — do not "execute" them.
 
 ## Agent Categories
 
-- **Planners** (3): `opus-plan`, `gemini-plan`, `codex-plan` — Read-only planning agents
-- **Researchers** (3): `code-researcher`, `code-debug-researcher`, `code-architect` — Analysis and research
-- **Reviewers** (4): `quality-reviewer`, `convention-reviewer`, `simplicity-reviewer`, `security-researcher` — Analysis-only reviewers
+- **Planners** (3): `opus-plan`, `gemini-plan`, `gpt-plan` — Read-only planning agents
+- **Researchers** (4): `code-researcher`, `code-debug-researcher`, `security-researcher`, `code-architect` — Analysis and research
+- **Reviewers** (3): `quality-reviewer`, `convention-reviewer`, `simplicity-reviewer` — Analysis-only reviewers
 
 ## Configuration Per Tool
 
