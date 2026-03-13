@@ -14,6 +14,12 @@ let
 
   permissionsPolicy = builtins.fromTOML (builtins.readFile ../../../var/agents/permissions.toml);
 
+  agentPermissionsPath = ../../../var/agents/permissions.codex.toml;
+  agentPermissions =
+    if builtins.pathExists agentPermissionsPath
+    then builtins.fromTOML (builtins.readFile agentPermissionsPath)
+    else { };
+
   effectivePolicy =
     mode:
     let
@@ -25,11 +31,13 @@ let
         let
           defaultShell = (default.commands.${section} or { }).shell or [ ];
           modeShell = ((modePolicy.commands or { }).${section} or { }).shell or [ ];
+          agentShell = (((agentPermissions.default or { }).commands or { }).${section} or { }).shell or [ ];
         in
         {
           shell = mergeLists [
             defaultShell
             modeShell
+            agentShell
           ];
         };
     in

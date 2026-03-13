@@ -12,6 +12,12 @@ let
   instructionText = builtins.readFile ../../../var/agents/instruction.md;
   permissionsToml = lib.importTOML ../../../var/agents/permissions.toml;
 
+  agentPermissionsPath = ../../../var/agents/permissions.pi.toml;
+  agentPermissions =
+    if builtins.pathExists agentPermissionsPath
+    then lib.importTOML agentPermissionsPath
+    else { };
+
   wrappedPi = pkgs.writeScriptBin "pi" ''
     #!${pkgs.runtimeShell}
     exec "${lib.getExe pkgs.local.envWrapper}" \
@@ -30,9 +36,12 @@ let
 
   # Generate JSON config for safety-gate extension
   safetyGateJson = builtins.toJSON {
-    allow = permissionsToml.default.commands.allow.shell;
-    ask = permissionsToml.default.commands.ask.shell;
-    deny = permissionsToml.default.commands.deny.shell;
+    allow = permissionsToml.default.commands.allow.shell
+      ++ ((agentPermissions.default or { }).commands.allow.shell or [ ]);
+    ask = permissionsToml.default.commands.ask.shell
+      ++ ((agentPermissions.default or { }).commands.ask.shell or [ ]);
+    deny = permissionsToml.default.commands.deny.shell
+      ++ ((agentPermissions.default or { }).commands.deny.shell or [ ]);
   };
 
   # Load static TypeScript extension
