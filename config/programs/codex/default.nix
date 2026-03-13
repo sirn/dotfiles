@@ -114,6 +114,7 @@ let
 in
 {
   programs.codex = {
+    enable = true;
     package = (
       pkgs.writeScriptBin "codex" ''
         #!${pkgs.runtimeShell}

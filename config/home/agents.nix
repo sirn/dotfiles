@@ -8,7 +8,5 @@
     ../programs/pi-coding-agent
   ];
 
-  programs.codex.enable = true;
-
   programs.git.ignores = [ ".my/" ];
 }
