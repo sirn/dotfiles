@@ -71,7 +71,7 @@ in
 
         # Google Gemini
         "gemini-3.1-pro-preview"
-        "gemini-3.1-flash-lite"
+        "gemini-3.1-flash-lite-preview"
       ];
     };
 
@@ -175,16 +175,60 @@ in
           }
         ];
       };
+      anthropic = {
+        baseUrl = "https://api.anthropic.com";
+        apiKey = "ANTHROPIC_API_KEY";
+        api = "anthropic-messages";
+        models = [
+          {
+            id = "claude-opus-4-6";
+            name = "Claude Opus 4.6";
+            reasoning = true;
+            input = [
+              "text"
+              "image"
+            ];
+            contextWindow = 200000;
+            maxTokens = 128000;
+            cost = {
+              input = 5.0;
+              output = 25.0;
+              cacheRead = 0.5;
+              cacheWrite = 6.25;
+            };
+          }
+          {
+            id = "claude-sonnet-4-6";
+            name = "Claude Sonnet 4.6";
+            reasoning = true;
+            input = [
+              "text"
+              "image"
+            ];
+            contextWindow = 200000;
+            maxTokens = 64000;
+            cost = {
+              input = 3.0;
+              output = 15.0;
+              cacheRead = 0.3;
+              cacheWrite = 3.75;
+            };
+          }
+        ];
+      };
       openai = {
         baseUrl = "https://api.openai.com/v1";
         apiKey = "OPENAI_API_KEY";
-        api = "openai-completions";
+        api = "openai-responses";
         models = [
           {
             id = "gpt-5.4";
             name = "GPT-5.4";
             reasoning = true;
-            input = [ "text" "image" ];
+            input = [
+              "text"
+              "image"
+            ];
             contextWindow = 1050000;
             maxTokens = 128000;
             cost = {
@@ -198,7 +242,10 @@ in
             id = "gpt-5.1-codex-mini";
             name = "GPT-5.1 Codex Mini";
             reasoning = true;
-            input = [ "text" "image" ];
+            input = [
+              "text"
+              "image"
+            ];
             contextWindow = 400000;
             maxTokens = 100000;
             cost = {
@@ -206,6 +253,47 @@ in
               output = 2.0;
               cacheRead = 0.025;
               cacheWrite = 0.0;
+            };
+          }
+        ];
+      };
+      google = {
+        baseUrl = "https://generativelanguage.googleapis.com/v1beta";
+        apiKey = "GEMINI_API_KEY";
+        api = "google-generative-ai";
+        models = [
+          {
+            id = "gemini-3.1-pro-preview";
+            name = "Gemini 3.1 Pro Preview";
+            reasoning = true;
+            input = [
+              "text"
+              "image"
+            ];
+            contextWindow = 1048576;
+            maxTokens = 65536;
+            cost = {
+              input = 2.0;
+              output = 12.0;
+              cacheRead = 0.2;
+              cacheWrite = 0;
+            };
+          }
+          {
+            id = "gemini-3.1-flash-lite-preview";
+            name = "Gemini 3.1 Flash Lite Preview";
+            reasoning = false;
+            input = [
+              "text"
+              "image"
+            ];
+            contextWindow = 1048576;
+            maxTokens = 65536;
+            cost = {
+              input = 0.5;
+              output = 3.0;
+              cacheRead = 0.05;
+              cacheWrite = 0;
             };
           }
         ];
