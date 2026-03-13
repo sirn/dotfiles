@@ -157,8 +157,6 @@ in
           "browser.ctrlTab.recentlyUsedOrder" = false;
           "browser.profiles.enabled" = false;
           "sidebar.revamp" = true;
-          "sidebar.verticalTabs" = true;
-          "sidebar.visibility" = "expand-on-hover";
 
           # Extensions
           "extensions.autoDisableScopes" = 0;
