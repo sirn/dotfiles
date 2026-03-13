@@ -1,32 +1,32 @@
 {
-  "version": "0.33.0",
+  "version": "0.33.1",
   "src": {
-    "url": "https://github.com/google-gemini/gemini-cli/releases/download/v0.33.0/gemini.js",
-    "hash": "sha256-HRNPHK5qXE8zvL2ZsHMe7e/hhbJx8jfQUknW5Z3KErU="
+    "url": "https://github.com/google-gemini/gemini-cli/releases/download/v0.33.1/gemini.js",
+    "hash": "sha256-AWsXfHOfd5HoseqacmfkO+vuJStuG2vLysd0EUyF2f8="
   },
   "files": [
     {
-      "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/v0.33.0/packages/cli/src/utils/sandbox-macos-permissive-open.sb",
+      "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/v0.33.1/packages/cli/src/utils/sandbox-macos-permissive-open.sb",
       "hash": "sha256-X4TgltpBtPsuhNKAujY9urE5Wal4RTJE7T4R9+im2pc="
     },
     {
-      "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/v0.33.0/packages/cli/src/utils/sandbox-macos-permissive-proxied.sb",
+      "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/v0.33.1/packages/cli/src/utils/sandbox-macos-permissive-proxied.sb",
       "hash": "sha256-t1QlbqMuI7AyKuGxXxlGvpJbfklbk/GcsRr0LwWmrZs="
     },
     {
-      "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/v0.33.0/packages/cli/src/utils/sandbox-macos-restrictive-open.sb",
+      "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/v0.33.1/packages/cli/src/utils/sandbox-macos-restrictive-open.sb",
       "hash": "sha256-MucdQyoW+rZ8KzeDg8dcv0mRSAzTYuZErnRzpZfSQ9I="
     },
     {
-      "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/v0.33.0/packages/cli/src/utils/sandbox-macos-restrictive-proxied.sb",
+      "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/v0.33.1/packages/cli/src/utils/sandbox-macos-restrictive-proxied.sb",
       "hash": "sha256-diS/4C2E9wMY8/Eu+4adB8fesTX11RwrXWti26SY9rQ="
     },
     {
-      "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/v0.33.0/packages/cli/src/utils/sandbox-macos-strict-open.sb",
+      "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/v0.33.1/packages/cli/src/utils/sandbox-macos-strict-open.sb",
       "hash": "sha256-KWMtg81h79IORikR442GkSphl8QFmRoKOd0SPB3Lo+I="
     },
     {
-      "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/v0.33.0/packages/cli/src/utils/sandbox-macos-strict-proxied.sb",
+      "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/v0.33.1/packages/cli/src/utils/sandbox-macos-strict-proxied.sb",
       "hash": "sha256-EBA3HaOelAuIY7m174I41L0ehI4fu092/zv3iFe+dtI="
     }
   ]
