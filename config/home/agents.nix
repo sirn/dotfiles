@@ -6,6 +6,7 @@
     ../programs/mcp.nix
     ../programs/opencode
     ../programs/pi-coding-agent
+    ../programs/rtk
   ];
 
   programs.git.ignores = [ ".my/" ];

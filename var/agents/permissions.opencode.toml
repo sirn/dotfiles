@@ -1,0 +1,305 @@
+# RTK (Rust Token Killer) permission entries for OpenCode
+#
+# OpenCode evaluates permissions on the rewritten command (after
+# tool.execute.before hook), not the original. These entries allow
+# RTK-rewritten commands to pass permission checks.
+#
+# Deny/ask rules use substring mode and already match RTK-prefixed
+# commands (e.g., "* git push *" matches "rtk git push origin main"),
+# so only allow entries are needed here.
+#
+# TODO: Remove these entries once the permission.ask plugin hook is
+# implemented upstream (https://github.com/anomalyco/opencode/issues/7006).
+# At that point, evaluate the original (pre-rewrite) command against
+# permission rules in the RTK plugin's permission.ask hook instead.
+
+# cat/head/tail → rtk read
+[[default.commands.allow.shell]]
+match = "rtk read"
+mode = "prefix"
+
+# cargo → rtk cargo
+[[default.commands.allow.shell]]
+match = "rtk cargo"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk cargo check"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk cargo clippy"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk cargo fmt --check"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk cargo test"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk cargo tree"
+mode = "prefix"
+
+# curl → rtk curl
+[[default.commands.allow.shell]]
+match = "rtk curl"
+mode = "prefix"
+
+# docker → rtk docker
+[[default.commands.allow.shell]]
+match = "rtk docker images"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk docker inspect"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk docker ps"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk docker ps -a"
+mode = "prefix"
+
+# eslint → rtk lint
+[[default.commands.allow.shell]]
+match = "rtk lint"
+mode = "prefix"
+
+# find → rtk find
+[[default.commands.allow.shell]]
+match = "rtk find"
+mode = "prefix"
+
+# gh → rtk gh
+[[default.commands.allow.shell]]
+match = "rtk gh api --method GET"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh api -X GET"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh cache list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh issue list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh issue status"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh issue view"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh pr checks"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh pr diff"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh pr list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh pr status"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh pr view"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh release list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh release view"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh repo list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh repo view"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh run list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh run view"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh search code"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh search commits"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh search issues"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh search prs"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh search repos"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh status"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh workflow list"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gh workflow view"
+mode = "prefix"
+
+# git → rtk git (only the specific allowed subcommands, not config/remote/rev-parse)
+[[default.commands.allow.shell]]
+match = "rtk git branch"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk git diff"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk git log"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk git status"
+mode = "prefix"
+
+# go → rtk go (only build/test/vet, not fmt/mod)
+[[default.commands.allow.shell]]
+match = "rtk go build"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk go test"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk go vet"
+mode = "prefix"
+
+# golangci-lint → rtk golangci-lint
+[[default.commands.allow.shell]]
+match = "rtk golangci-lint"
+mode = "prefix"
+
+# grep/rg → rtk grep
+[[default.commands.allow.shell]]
+match = "rtk grep"
+mode = "prefix"
+
+# kubectl → rtk kubectl
+[[default.commands.allow.shell]]
+match = "rtk kubectl describe"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk kubectl get"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk kubectl logs"
+mode = "prefix"
+
+# ls → rtk ls
+[[default.commands.allow.shell]]
+match = "rtk ls"
+mode = "prefix"
+
+# mypy → rtk mypy
+[[default.commands.allow.shell]]
+match = "rtk mypy"
+mode = "prefix"
+
+# pip → rtk pip
+[[default.commands.allow.shell]]
+match = "rtk pip freeze"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk pip list"
+mode = "prefix"
+
+# pnpm → rtk pnpm
+[[default.commands.allow.shell]]
+match = "rtk pnpm list"
+mode = "prefix"
+
+# prettier → rtk prettier
+[[default.commands.allow.shell]]
+match = "rtk prettier --check"
+mode = "prefix"
+
+# psql → rtk psql
+[[default.commands.allow.shell]]
+match = "rtk psql --command=\\dt"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk psql -c \\dt"
+mode = "prefix"
+
+# pytest/python -m pytest → rtk pytest
+[[default.commands.allow.shell]]
+match = "rtk pytest"
+mode = "prefix"
+
+# ruff → rtk ruff
+[[default.commands.allow.shell]]
+match = "rtk ruff"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk ruff check"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk ruff format --check"
+mode = "prefix"
+
+# tree → rtk tree
+[[default.commands.allow.shell]]
+match = "rtk tree"
+mode = "prefix"
+
+# tsc → rtk tsc
+[[default.commands.allow.shell]]
+match = "rtk tsc --noEmit"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk tsc -p . --noEmit"
+mode = "prefix"
+
+# wget → rtk wget
+[[default.commands.allow.shell]]
+match = "rtk wget"
+mode = "prefix"

@@ -38,4 +38,6 @@ in
   opencode-bin = (callPackage ./by-name/opencode-bin/package.nix { });
 
   pi-coding-agent-bin = (callPackage ./by-name/pi-coding-agent-bin/package.nix { });
+
+  rtk = (callPackage ./by-name/rtk/package.nix { });
 }

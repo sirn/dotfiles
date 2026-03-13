@@ -630,6 +630,26 @@ match = "rg"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
+match = "rtk deps"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk gain"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk help"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk json"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "rtk log"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
 match = "rubocop"
 mode = "prefix"
 
@@ -867,6 +887,10 @@ mode = "exact"
 [[default.commands.ask.shell]]
 match = "rm"
 mode = "substring"
+
+[[default.commands.ask.shell]]
+match = "rtk env"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "shred"
