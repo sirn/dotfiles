@@ -77,10 +77,6 @@ in
     ];
   };
 
-  programs.pi-coding-agent = lib.mkIf config.programs.pi-coding-agent.enable {
-    extensions = [ "extensions/notify-turn-complete.ts" ];
-  };
-
   xdg.configFile."opencode/plugins/notify-turn-complete.ts" =
     lib.mkIf config.programs.opencode.enable
       {

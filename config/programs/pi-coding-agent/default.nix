@@ -56,11 +56,6 @@ in
 
     instructionText = agentsMdText;
 
-    extensions = [
-      "extensions/safety-gate.ts"
-      "extensions/plan-mode.ts"
-    ];
-
     settings = {
       quietStartup = true;
       defaultProvider = "synthetic";
