@@ -51,6 +51,15 @@ export default function (pi: ExtensionAPI) {
     pi.appendEntry("plan-mode", state);
   }
 
+  function updatePlanWidget(ctx: ExtensionContext) {
+    const state = loadState(ctx);
+    if (state?.phase === "plan") {
+      ctx.ui.setWidget("plan-mode", [ctx.ui.theme.fg("accent", "󰏯 plan mode")]);
+    } else {
+      ctx.ui.setWidget("plan-mode", undefined);
+    }
+  }
+
   function createMessageRenderer(
     header: string,
     colorKey: "accent" | "success",
@@ -111,6 +120,7 @@ ${planContent}`,
       fs.mkdirSync(path.dirname(planPath), { recursive: true });
 
       saveState(ctx, { phase: "plan", approved: false });
+      updatePlanWidget(ctx);
 
       pi.sendMessage(
         {
@@ -194,6 +204,7 @@ Do NOT write any code yet. Just create the plan file.`,
       }
 
       saveState(ctx, { phase: "idle", approved: true });
+      updatePlanWidget(ctx);
       const planContent = fs.readFileSync(planPath, "utf-8");
 
       if (choice === "Accept plan and clear context") {
@@ -278,6 +289,7 @@ Do NOT write any code yet. Just create the plan file.`,
       }
 
       saveState(ctx, { phase: "idle", approved: false });
+      updatePlanWidget(ctx);
 
       if (choice === "Leave plan mode and clear plan file") {
         try {
@@ -333,12 +345,7 @@ Do NOT write any code yet. Just create the plan file.`,
   });
 
   pi.on("turn_end", async (_event, ctx) => {
-    const state = loadState(ctx);
-    if (state?.phase === "plan") {
-      ctx.ui.setWidget("plan-mode", [ctx.ui.theme.fg("accent", "󰏯 plan mode")]);
-    } else {
-      ctx.ui.setWidget("plan-mode", undefined);
-    }
+    updatePlanWidget(ctx);
   });
 
   pi.on("before_agent_start", async (event, ctx) => {
