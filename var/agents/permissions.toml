@@ -1060,6 +1060,44 @@ write = [
   "**/*.agekey",
 ]
 
+# Plan mode: block filesystem-mutating commands
+
+[[mode.plan.commands.deny.shell]]
+match = "cp"
+mode = "substring"
+
+[[mode.plan.commands.deny.shell]]
+match = "ln"
+mode = "substring"
+
+[[mode.plan.commands.deny.shell]]
+match = "mkdir"
+mode = "substring"
+
+[[mode.plan.commands.deny.shell]]
+match = "mktemp"
+mode = "substring"
+
+[[mode.plan.commands.deny.shell]]
+match = "mv"
+mode = "substring"
+
+[[mode.plan.commands.deny.shell]]
+match = "rsync"
+mode = "substring"
+
+[[mode.plan.commands.deny.shell]]
+match = "sed -i"
+mode = "prefix"
+
+[[mode.plan.commands.deny.shell]]
+match = "tee"
+mode = "substring"
+
+[[mode.plan.commands.deny.shell]]
+match = "touch"
+mode = "substring"
+
 [mode.plan.tools]
 edit = false
 write = false

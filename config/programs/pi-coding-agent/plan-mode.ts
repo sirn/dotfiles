@@ -6,8 +6,76 @@ import {
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { Container, Text, Box, Spacer } from "@mariozechner/pi-tui";
+
+// --- Policy types and utilities (duplicated from safety-gate.ts) ---
+
+interface CommandEntry {
+  match: string;
+  mode: "exact" | "prefix" | "substring";
+}
+
+interface PlanPolicy {
+  tools: Record<string, boolean>;
+  commands: {
+    deny: CommandEntry[];
+    ask: CommandEntry[];
+    allow: CommandEntry[];
+  };
+}
+
+function escapeRegex(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function toRegex(entry: CommandEntry): RegExp {
+  const { match, mode } = entry;
+  const escaped = escapeRegex(match);
+  const shellBoundary =
+    `(?:^|\\|\\||&&|[&;|]|[({` + "`" + `\\n])\\s*`;
+  switch (mode) {
+    case "exact":
+      return new RegExp(`^\\s*${escaped}\\s*$`, "i");
+    case "substring":
+      return new RegExp(`\\b${escaped}\\b`, "i");
+    case "prefix":
+    default:
+      return new RegExp(`${shellBoundary}${escaped}\\b`, "i");
+  }
+}
+
+function getCommandSummary(command: string): string {
+  return command.length > 80 ? command.slice(0, 77) + "..." : command;
+}
+
+function loadPlanPolicy(): PlanPolicy | null {
+  try {
+    const extDir = path.dirname(fileURLToPath(import.meta.url));
+    return JSON.parse(fs.readFileSync(path.join(extDir, "plan-mode.json"), "utf-8"));
+  } catch {
+    return null;
+  }
+}
+
+interface PlanPatterns {
+  deny: RegExp[];
+  ask: RegExp[];
+  allow: RegExp[];
+}
+
+// Loaded once at extension init
+const planPolicy = loadPlanPolicy();
+const planPatterns: PlanPatterns | null = planPolicy
+  ? {
+      deny: planPolicy.commands.deny.map(toRegex),
+      ask: planPolicy.commands.ask.map(toRegex),
+      allow: planPolicy.commands.allow.map(toRegex),
+    }
+  : null;
+
+// --- Plan state management ---
 
 interface PlanState {
   phase: "idle" | "plan";
@@ -320,33 +388,58 @@ Do NOT write any code yet. Just create the plan file.`,
 
     const planPath = getPlanPath(ctx.cwd, ctx.sessionManager.getSessionFile());
 
+    // Tool-level blocking from [mode.plan.tools]
     if (event.toolName === "write" || event.toolName === "edit") {
       const targetPath = event.input?.path as string | undefined;
       if (targetPath && path.resolve(targetPath) === path.resolve(planPath)) {
         return { block: false };
       }
-      return {
-        block: true,
-        reason: "Plan mode active: Use /plan-accept before implementing code changes",
-      };
+      const toolAllowed = planPolicy?.tools[event.toolName] ?? false;
+      if (!toolAllowed) {
+        return {
+          block: true,
+          reason: "Plan mode active: Use /plan-accept before implementing code changes",
+        };
+      }
     }
 
-    if (event.toolName === "bash" && typeof event.input?.command === "string") {
+    // Bash command blocking from [mode.plan.commands]
+    if (event.toolName === "bash" && typeof event.input?.command === "string" && planPatterns) {
       const cmd = event.input.command;
 
-      // Allow specific safe stderr patterns (read-only)
-      const safeStderrPattern = /2>\/dev\/null|2>&1/;
-      if (safeStderrPattern.test(cmd)) {
+      // Deny: block silently
+      if (planPatterns.deny.some((p) => p.test(cmd))) {
+        return {
+          block: true,
+          reason: `Plan mode: Command blocked by policy: "${getCommandSummary(cmd)}"`,
+        };
+      }
+
+      // Ask: show confirmation dialog
+      if (planPatterns.ask.some((p) => p.test(cmd))) {
+        if (!ctx.hasUI) {
+          return {
+            block: true,
+            reason: `Plan mode: Command blocked (no UI): "${getCommandSummary(cmd)}"`,
+          };
+        }
+        const choice = await ctx.ui.select(
+          `Plan mode confirm: ${getCommandSummary(cmd)}`,
+          ["Yes, proceed", "No, cancel"],
+        );
+        if (choice !== "Yes, proceed") {
+          ctx.ui.notify("Command cancelled by user", "info");
+          return { block: true, reason: "Blocked by user" };
+        }
         return { block: false };
       }
 
-      // Block: all > and >> redirections (file creation/modification), sed -i, rm -rf, touch, mv, cp, mkdir
-      if (/>|>>|sed -i|rm -rf|touch |mv |cp |mkdir /.test(cmd)) {
-        return {
-          block: true,
-          reason: "Plan mode active: Mutating bash commands are blocked. Use /plan-accept first.",
-        };
+      // Allow: explicitly allow (skip safety-gate for this command)
+      if (planPatterns.allow.some((p) => p.test(cmd))) {
+        return { block: false };
       }
+
+      // No match → return undefined → safety-gate handles defaults
     }
   });
 

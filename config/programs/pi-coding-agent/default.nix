@@ -44,6 +44,16 @@ let
       ++ ((agentPermissions.default or { }).commands.deny.shell or [ ]);
   };
 
+  # Generate JSON config for plan-mode extension (plan-specific entries only)
+  planModeJson = builtins.toJSON {
+    tools = permissionsToml.mode.plan.tools or { edit = false; write = false; };
+    commands = {
+      deny = (permissionsToml.mode.plan.commands or { }).deny.shell or [ ];
+      ask = (permissionsToml.mode.plan.commands or { }).ask.shell or [ ];
+      allow = (permissionsToml.mode.plan.commands or { }).allow.shell or [ ];
+    };
+  };
+
   # Load static TypeScript extensions
   safetyGateTs = builtins.readFile ./safety-gate.ts;
   planModeTs = builtins.readFile ./plan-mode.ts;
@@ -408,5 +418,6 @@ in
     ".pi/agent/extensions/safety-gate.ts".text = safetyGateTs;
     ".pi/agent/extensions/safety-gate.json".text = safetyGateJson;
     ".pi/agent/extensions/plan-mode.ts".text = planModeTs;
+    ".pi/agent/extensions/plan-mode.json".text = planModeJson;
   };
 }
