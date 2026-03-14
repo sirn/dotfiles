@@ -234,8 +234,8 @@ in
       theme = "system";
       mcp = toOpencodeMcpServers config.programs.mcp.servers;
       mode = {
-        plan.model = "synthetic/hf:moonshotai/Kimi-K2.5";
-        build.model = "synthetic/hf:moonshotai/Kimi-K2.5";
+        plan.model = "fireworks-ai/accounts/fireworks/routers/kimi-k2p5-turbo";
+        build.model = "fireworks-ai/accounts/fireworks/routers/kimi-k2p5-turbo";
       };
       permission = toOpencodePermissions "build";
       tools = opencodeMcpPermissions;
@@ -245,6 +245,30 @@ in
             "hf:moonshotai/Kimi-K2.5" = {
               options = {
                 reasoningEffort = "high";
+              };
+            };
+          };
+        };
+        fireworks-ai = {
+          models = {
+            "accounts/fireworks/routers/kimi-k2p5-turbo" = {
+              id = "accounts/fireworks/routers/kimi-k2p5-turbo";
+              name = "Kimi K2.5 Turbo (Developer Pass)";
+              family = "kimi";
+              attachment = false;
+              reasoning = true;
+              tool_call = true;
+              temperature = true;
+              modalities = {
+                input = [
+                  "text"
+                  "image"
+                ];
+                output = [ "text" ];
+              };
+              limit = {
+                context = 256000;
+                output = 256000;
               };
             };
           };

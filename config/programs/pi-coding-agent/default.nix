@@ -68,13 +68,16 @@ in
 
     settings = {
       quietStartup = true;
-      defaultProvider = "synthetic";
-      defaultModel = "hf:moonshotai/Kimi-K2.5";
+      defaultProvider = "fireworks-ai";
+      defaultModel = "accounts/fireworks/routers/kimi-k2p5-turbo";
       defaultThinkingLevel = "high";
       hideThinkingBlock = false;
       enabledModels = [
-        # Synthetic/Fireworks
+        # Fireworks
         "accounts/fireworks/models/*"
+        "accounts/fireworks/routers/*"
+
+        # Synthetic
         "hf:zai-org/*"
         "hf:moonshotai/*"
         "hf:MiniMaxAI/*"
@@ -152,7 +155,7 @@ in
           }
         ];
       };
-      fireworks = {
+      fireworks-ai = {
         baseUrl = "https://api.fireworks.ai/inference/v1";
         apiKey = "FIREWORKS_API_KEY";
         api = "openai-completions";
@@ -170,6 +173,23 @@ in
             cost = {
               input = 0.6;
               output = 3.0;
+              cacheRead = 0;
+              cacheWrite = 0;
+            };
+          }
+          {
+            id = "accounts/fireworks/routers/kimi-k2p5-turbo";
+            name = "Kimi K2.5 Turbo (Developer Pass)";
+            reasoning = true;
+            input = [
+              "text"
+              "image"
+            ];
+            contextWindow = 256000;
+            maxTokens = 256000;
+            cost = {
+              input = 0;
+              output = 0;
               cacheRead = 0;
               cacheWrite = 0;
             };
