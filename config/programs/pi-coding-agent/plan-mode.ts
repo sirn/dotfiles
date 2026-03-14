@@ -171,14 +171,14 @@ export default function (pi: ExtensionAPI) {
         customType: "plan-mode-execute",
         content: `The plan has been approved. Execute the implementation plan step by step.
 
-Rules:
+## Rules
 - Execute ONE step at a time. Verify success before proceeding. Do NOT combine steps.
 - If a step fails, analyze the error. If it fails twice, STOP and wait for user input.
-- Keep changes minimal and idiomatic. Only modify in-scope files (§1).
+- Keep changes minimal and idiomatic. Only modify in-scope files.
 - Skip trivial text verifications (e.g., checking if a string was added) unless doing mass/complex changes.
-- Run the verification checklist (§6) after all steps complete.
+- Run the verification checklist after all steps complete.
 
-Plan Content:
+## Plan content
 ${planContent}`,
         display: true,
       },
@@ -198,43 +198,42 @@ ${planContent}`,
       pi.sendMessage(
         {
           customType: "plan-mode-prompt",
-          content: `Create a detailed implementation/execution plan based on the user instruction below:
+          content: `Create a detailed implementation/execution plan based on the user instruction
+Write the plan to: ${planPath}
 
+## Rules
 - CRITICAL: Use ONLY read-only commands (ls, rg, cat, read) for context gathering. Do NOT execute changes.
 - Read project README/config files first to understand conventions and tooling.
 - **Use web search**. Load the relevant search skill and perform a search. Do not guess.
 - Search current API/library documentation. Verify usage; do not assume. 
 - Use the \`write\` tool to write the plan file. Do NOT use bash to write files (they'll be blocked).
-
-Write the plan to:
-${planPath}
+- If there are pending questions; ask the user before creating a plan.
 
 ## User instruction
 ${args || "The requested feature"}
 
 ## Plan structure
 
-### 1. Overview and Scope
+### Overview
 What needs to be built/fixed, why, and how success is measured. What is OUT of scope. Keep the solution minimal.
 
-### 2. Context Summary
-Document read-only exploration discoveries: key files, existing patterns, dependencies, and non-obvious details.
+### Context
+Document read-only exploration discoveries: key files, existing patterns, dependencies, non-obvious details, and relevant URLs.
 Example: "\`src/auth.ts\` exports \`createSession(userId)\`; sessions stored in Redis with 24h TTL"
 
-### 3. Implementation Steps
+### Implementation Steps
 Ordered, atomic, verifiable steps. Each needs: a clear goal, specific files/changes, and a concrete success criterion (e.g., test command, linter run).
+Describe non-trivial changes in detail to prevent guesswork. Show before/after with ±5 lines of context if helpful.
 Example: "Step 1: Add Session type to types.ts — Success: tsc --noEmit passes"
 
-### 4. Detailed Code Changes
-Describe non-trivial changes in detail to prevent guesswork. Show before/after with ±5 lines of context if helpful.
-
-### 5. Open Questions
-Decisions needing user input before or during execution.
-
-### 6. Verification Checklist
+### Verification Checklist
 How to verify the complete implementation after all steps are done.
 
-Do NOT write any code yet. Just create the plan file.`,
+## Policy footer
+
+- Do NOT write any code yet. Just create the plan file.
+- You MUST only use the provided plan file exactly. Any attempt to write elsewhere will be blocked.
+- Once the plan is written, give the user the summarization of the plan.`,
           display: true,
           details: { userInstruction: args || "The requested feature" },
         },
