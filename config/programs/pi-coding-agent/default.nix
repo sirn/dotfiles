@@ -44,8 +44,9 @@ let
       ++ ((agentPermissions.default or { }).commands.deny.shell or [ ]);
   };
 
-  # Load static TypeScript extension
+  # Load static TypeScript extensions
   safetyGateTs = builtins.readFile ./safety-gate.ts;
+  planModeTs = builtins.readFile ./plan-mode.ts;
 in
 {
   programs.pi-coding-agent = {
@@ -55,7 +56,10 @@ in
 
     instructionText = agentsMdText;
 
-    extensions = [ "extensions/safety-gate.ts" ];
+    extensions = [
+      "extensions/safety-gate.ts"
+      "extensions/plan-mode.ts"
+    ];
 
     settings = {
       quietStartup = true;
@@ -408,5 +412,6 @@ in
     ".pi/agent/skills/home-manager".source = skillsDir;
     ".pi/agent/extensions/safety-gate.ts".text = safetyGateTs;
     ".pi/agent/extensions/safety-gate.json".text = safetyGateJson;
+    ".pi/agent/extensions/plan-mode.ts".text = planModeTs;
   };
 }
