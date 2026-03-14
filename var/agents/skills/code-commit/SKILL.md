@@ -17,6 +17,7 @@ Refer to the `jj-reference` skill for command syntax and **Best Practices** (exp
    - Run `jj log -r ::@ -n 20 --no-graph -T 'description ++ "\n---\n"'` for message style
    - Use `jj diff` for full diff view if needed
    - Analyze: Are changes logically related or distinct? Different subsystems/features? Mixed concerns (refactor + feature, fix + cleanup)?
+   - **IMPORTANT**: Only describe changes visible in `jj diff`. You may use conversation context to explain changes that ARE present in the diff, but never mention changes that are NOT in the diff (e.g., if something was removed in a prior commit and doesn't appear in the current diff, don't say "remove ...").
 
 2. **Determine if split is needed**:
    - If changes are logically distinct, propose splitting

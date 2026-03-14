@@ -88,7 +88,8 @@
 
 ## Version Control
 - **Policy**: ALWAYS use `jj` (Jujutsu) for all version control operations. Do NOT use `git` unless explicitly requested by the user or if `jj` is functionally unavailable.
-- **Policy**: Do NOT create, modify, or squash commits on your own unless explicitly instructed by the user. You are NOT authorized to manage version control history autonomously.
+- **Policy**: Do NOT create, modify, squash, or push commits on your own unless explicitly instructed by the user. You are NOT authorized to manage version control history autonomously.
+- **Push Authorization**: NEVER push to remote repositories (`jj git push`, `git push`, etc.) unless the user explicitly requests it. This includes pushing to any branch, creating pull requests, or modifying remote history.
 - **Commit Messages**: When asked to commit, keep messages concise, consistent, and following existing patterns.
 - **Commit Authorization**: You must only commit, or split, when explicitly told to do so.
 - **Co-Authored-By**: When committing, add a `Co-Authored-By:` trailer to indicate the commit was LLM assisted/generated.
