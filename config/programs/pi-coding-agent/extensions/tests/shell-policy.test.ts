@@ -9,6 +9,7 @@ import {
   evaluateCommand,
   mergePolicies,
   buildWrapperRuleMap,
+  normalizeShellPolicyConfig,
   type PolicyCommands,
   type EvalResult,
   type WrapperRuleConfig,
@@ -63,789 +64,522 @@ function assertThrows(fn: () => void, msg?: string): Error {
   }
 }
 
-// Provider pattern types
-interface TestCase {
-  name: string;
-  setup?: () => Record<string, unknown>;
-  input: Record<string, unknown>;
-  expected: Record<string, unknown>;
-}
-
-type TestRunner = (testCase: TestCase) => void;
-
-interface TestSuite {
-  name: string;
-  tests: TestCase[];
-  runner: TestRunner;
-}
-
-// Test suite registry - collects all test suites to be run later
-const testSuites: TestSuite[] = [];
-
-function runTestSuite(suiteName: string, tests: TestCase[], runner: TestRunner): void {
-  // Register the test suite for later execution
-  testSuites.push({ name: suiteName, tests, runner });
-}
-
-function executeTestSuites(): void {
-  for (const suite of testSuites) {
-    console.log(`\n=== ${suite.name} ===`);
-    for (const tc of suite.tests) {
-      test(tc.name, () => suite.runner(tc));
-    }
-  }
-}
-
 // ==================== TOKENIZER TESTS ====================
+console.log("\n=== Tokenizer Tests ===");
 
 // Basic words
-const tokenizerBasicTests: TestCase[] = [
-  {
-    name: "basic word",
-    input: { command: "ls" },
-    expected: { length: 1, firstToken: { type: "word", value: "ls" } }
-  },
-  {
-    name: "multiple words",
-    input: { command: "ls -la" },
-    expected: { length: 2, tokens: [{ type: "word", value: "ls" }, { type: "word", value: "-la" }] }
-  },
-  {
-    name: "echo with arguments",
-    input: { command: "echo hello world" },
-    expected: { length: 3, tokens: [{ type: "word", value: "echo" }, { type: "word", value: "hello" }, { type: "word", value: "world" }] }
-  }
-];
+test("basic word", () => {
+  const tokens = tokenize("ls");
+  assertEquals(tokens.length, 1);
+  assertEquals(tokens[0], { type: "word", value: "ls" });
+});
 
-runTestSuite("Tokenizer Basic Tests", tokenizerBasicTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
-  assertEquals(tokens.length, tc.expected.length);
-  if (tc.expected.tokens) {
-    for (let i = 0; i < tc.expected.tokens.length; i++) {
-      assertEquals(tokens[i], tc.expected.tokens[i]);
-    }
-  }
-  if (tc.expected.firstToken) {
-    assertEquals(tokens[0], tc.expected.firstToken);
-  }
+test("multiple words", () => {
+  const tokens = tokenize("ls -la");
+  assertEquals(tokens.length, 2);
+  assertEquals(tokens[0], { type: "word", value: "ls" });
+  assertEquals(tokens[1], { type: "word", value: "-la" });
+});
+
+test("echo with arguments", () => {
+  const tokens = tokenize("echo hello world");
+  assertEquals(tokens.length, 3);
+  assertEquals(tokens[0], { type: "word", value: "echo" });
+  assertEquals(tokens[1], { type: "word", value: "hello" });
+  assertEquals(tokens[2], { type: "word", value: "world" });
 });
 
 // Single quotes
-const tokenizerSingleQuoteTests: TestCase[] = [
-  {
-    name: "single quoted string",
-    input: { command: "echo 'hello world'" },
-    expected: { length: 2, tokens: [{ type: "word", value: "echo" }, { type: "word", value: "hello world" }] }
-  },
-  {
-    name: "escaped single quote (single quotes don't escape)",
-    input: { command: "'it\\'s'" },
-    expected: { shouldThrow: true }
-  },
-  {
-    name: "multiple single quoted words",
-    input: { command: "'foo' 'bar'" },
-    expected: { length: 2, tokens: [{ type: "word", value: "foo" }, { type: "word", value: "bar" }] }
-  }
-];
+test("single quoted string", () => {
+  const tokens = tokenize("echo 'hello world'");
+  assertEquals(tokens.length, 2);
+  assertEquals(tokens[0], { type: "word", value: "echo" });
+  assertEquals(tokens[1], { type: "word", value: "hello world" });
+});
 
-runTestSuite("Tokenizer Single Quote Tests", tokenizerSingleQuoteTests, (tc) => {
-  if (tc.expected.shouldThrow) {
-    assertThrows(() => tokenize(tc.input.command as string));
-    return;
-  }
-  const tokens = tokenize(tc.input.command as string);
-  assertEquals(tokens.length, tc.expected.length);
-  if (tc.expected.tokens) {
-    for (let i = 0; i < tc.expected.tokens.length; i++) {
-      assertEquals(tokens[i], tc.expected.tokens[i]);
-    }
-  }
+test("escaped single quote (single quotes don't escape)", () => {
+  assertThrows(() => tokenize("'it\\'s'"));
+});
+
+test("multiple single quoted words", () => {
+  const tokens = tokenize("'foo' 'bar'");
+  assertEquals(tokens.length, 2);
+  assertEquals(tokens[0], { type: "word", value: "foo" });
+  assertEquals(tokens[1], { type: "word", value: "bar" });
 });
 
 // Double quotes
-const tokenizerDoubleQuoteTests: TestCase[] = [
-  {
-    name: "double quoted string",
-    input: { command: "echo \"hello world\"" },
-    expected: { length: 2, secondToken: { type: "word", value: "hello world" } }
-  },
-  {
-    name: "escaped double quote",
-    input: { command: "\"say \\\"hi\\\"\"" },
-    expected: { length: 1, firstToken: { type: "word", value: 'say "hi"' } }
-  },
-  {
-    name: "double quote with variable reference",
-    input: { command: "\"value is $VAR\"" },
-    expected: { length: 1, firstToken: { type: "word", value: "value is $VAR" } }
-  }
-];
+test("double quoted string", () => {
+  const tokens = tokenize("echo \"hello world\"");
+  assertEquals(tokens.length, 2);
+  assertEquals(tokens[1], { type: "word", value: "hello world" });
+});
 
-runTestSuite("Tokenizer Double Quote Tests", tokenizerDoubleQuoteTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
-  assertEquals(tokens.length, tc.expected.length);
-  if (tc.expected.firstToken) {
-    assertEquals(tokens[0], tc.expected.firstToken);
-  }
-  if (tc.expected.secondToken) {
-    assertEquals(tokens[1], tc.expected.secondToken);
-  }
+test("escaped double quote", () => {
+  const tokens = tokenize("\"say \\\"hi\\\"\"");
+  assertEquals(tokens.length, 1);
+  assertEquals(tokens[0], { type: "word", value: 'say "hi"' });
+});
+
+test("double quote with variable reference", () => {
+  const tokens = tokenize("\"value is $VAR\"");
+  assertEquals(tokens.length, 1);
+  assertEquals(tokens[0], { type: "word", value: "value is $VAR" });
 });
 
 // Escape sequences
-const tokenizerEscapeTests: TestCase[] = [
-  {
-    name: "escaped space",
-    input: { command: "hello\\ world" },
-    expected: { length: 1, firstToken: { type: "word", value: "hello world" } }
-  },
-  {
-    name: "escaped newline (line continuation)",
-    input: { command: "echo \\\n  hello" },
-    expected: { length: 2, tokens: [{ type: "word", value: "echo" }, { type: "word", value: "hello" }] }
-  }
-];
+test("escaped space", () => {
+  const tokens = tokenize("hello\\ world");
+  assertEquals(tokens.length, 1);
+  assertEquals(tokens[0], { type: "word", value: "hello world" });
+});
 
-runTestSuite("Tokenizer Escape Tests", tokenizerEscapeTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
-  assertEquals(tokens.length, tc.expected.length);
-  if (tc.expected.tokens) {
-    for (let i = 0; i < tc.expected.tokens.length; i++) {
-      assertEquals(tokens[i], tc.expected.tokens[i]);
-    }
-  }
-  if (tc.expected.firstToken) {
-    assertEquals(tokens[0], tc.expected.firstToken);
-  }
+test("escaped newline (line continuation)", () => {
+  const tokens = tokenize("echo \\\n  hello");
+  assertEquals(tokens.length, 2);
+  assertEquals(tokens[0], { type: "word", value: "echo" });
+  assertEquals(tokens[1], { type: "word", value: "hello" });
 });
 
 // Operators
-const tokenizerOperatorTests: TestCase[] = [
-  {
-    name: "pipe operator",
-    input: { command: "cat file | grep hi" },
-    expected: { length: 5, operatorAt: { index: 2, value: "|" } }
-  },
-  {
-    name: "logical AND operator",
-    input: { command: "cmd1 && cmd2" },
-    expected: { length: 3, operatorAt: { index: 1, value: "&&" } }
-  },
-  {
-    name: "logical OR operator",
-    input: { command: "cmd1 || cmd2" },
-    expected: { length: 3, operatorAt: { index: 1, value: "||" } }
-  },
-  {
-    name: "semicolon operator",
-    input: { command: "cmd1 ; cmd2" },
-    expected: { length: 3, operatorAt: { index: 1, value: ";" } }
-  },
-  {
-    name: "background operator",
-    input: { command: "cmd &" },
-    expected: { length: 2, operatorAt: { index: 1, value: "&" } }
-  },
-  {
-    name: "mixed operators",
-    input: { command: "a && b || c ; d &" },
-    expected: { operatorCount: 4 }
-  }
-];
+test("pipe operator", () => {
+  const tokens = tokenize("cat file | grep hi");
+  assertEquals(tokens.length, 5);
+  assertEquals(tokens[2], { type: "operator", value: "|" });
+});
 
-runTestSuite("Tokenizer Operator Tests", tokenizerOperatorTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
-  if (tc.expected.length) {
-    assertEquals(tokens.length, tc.expected.length);
-  }
-  if (tc.expected.operatorAt) {
-    assertEquals(tokens[tc.expected.operatorAt.index], { type: "operator", value: tc.expected.operatorAt.value });
-  }
-  if (tc.expected.operatorCount) {
-    assertEquals(tokens.filter((t) => t.type === "operator").length, tc.expected.operatorCount);
-  }
+test("logical AND operator", () => {
+  const tokens = tokenize("cmd1 && cmd2");
+  assertEquals(tokens.length, 3);
+  assertEquals(tokens[1], { type: "operator", value: "&&" });
+});
+
+test("logical OR operator", () => {
+  const tokens = tokenize("cmd1 || cmd2");
+  assertEquals(tokens.length, 3);
+  assertEquals(tokens[1], { type: "operator", value: "||" });
+});
+
+test("semicolon operator", () => {
+  const tokens = tokenize("cmd1 ; cmd2");
+  assertEquals(tokens.length, 3);
+  assertEquals(tokens[1], { type: "operator", value: ";" });
+});
+
+test("background operator", () => {
+  const tokens = tokenize("cmd &");
+  assertEquals(tokens.length, 2);
+  assertEquals(tokens[1], { type: "operator", value: "&" });
+});
+
+test("mixed operators", () => {
+  const tokens = tokenize("a && b || c ; d &");
+  assertEquals(tokens.filter((t) => t.type === "operator").length, 4);
 });
 
 // Groups - subshells
-const tokenizerSubshellTests: TestCase[] = [
-  {
-    name: "subshell group",
-    input: { command: "(echo hi)" },
-    expected: { length: 1, firstTokenType: "group" }
-  },
-  {
-    name: "subshell with multiple commands",
-    input: { command: "(echo a && echo b)" },
-    expected: { length: 1, firstTokenType: "group" }
-  }
-];
+test("subshell group", () => {
+  const tokens = tokenize("(echo hi)");
+  assertEquals(tokens.length, 1);
+  assertEquals(tokens[0].type, "group");
+});
 
-runTestSuite("Tokenizer Subshell Tests", tokenizerSubshellTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
-  assertEquals(tokens.length, tc.expected.length);
-  if (tc.expected.firstTokenType) {
-    assertEquals(tokens[0].type, tc.expected.firstTokenType);
-  }
+test("subshell with multiple commands", () => {
+  const tokens = tokenize("(echo a && echo b)");
+  assertEquals(tokens.length, 1);
+  assertEquals(tokens[0].type, "group");
 });
 
 // Groups - command substitution
-const tokenizerSubstitutionTests: TestCase[] = [
-  {
-    name: "dollar substitution",
-    input: { command: "$(echo hi)" },
-    expected: { length: 1, firstTokenType: "group" }
-  },
-  {
-    name: "backtick substitution",
-    input: { command: "`echo hi`" },
-    expected: { length: 1, firstTokenType: "group" }
-  },
-  {
-    name: "nested substitution",
-    input: { command: "$(echo $(echo hi))" },
-    expected: { length: 1, firstTokenType: "group" }
-  }
-];
+test("dollar substitution", () => {
+  const tokens = tokenize("$(echo hi)");
+  assertEquals(tokens.length, 1);
+  assertEquals(tokens[0].type, "group");
+});
 
-runTestSuite("Tokenizer Substitution Tests", tokenizerSubstitutionTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
-  assertEquals(tokens.length, tc.expected.length);
-  if (tc.expected.firstTokenType) {
-    assertEquals(tokens[0].type, tc.expected.firstTokenType);
-  }
+test("backtick substitution", () => {
+  const tokens = tokenize("`echo hi`");
+  assertEquals(tokens.length, 1);
+  assertEquals(tokens[0].type, "group");
+});
+
+test("nested substitution", () => {
+  const tokens = tokenize("$(echo $(echo hi))");
+  assertEquals(tokens.length, 1);
+  assertEquals(tokens[0].type, "group");
 });
 
 // Redirections
-const tokenizerRedirectTests: TestCase[] = [
-  {
-    name: "output redirect",
-    input: { command: "echo hi > file.txt" },
-    expected: { length: 3, redirectAt: { index: 2, op: ">", target: "file.txt" } }
-  },
-  {
-    name: "append redirect",
-    input: { command: "echo hi >> file.txt" },
-    expected: { redirectAt: { index: 2, op: ">>", target: "file.txt" } }
-  },
-  {
-    name: "input redirect",
-    input: { command: "cat < file.txt" },
-    expected: { length: 2, redirectAt: { index: 1, op: "<", target: "file.txt" } }
-  },
-  {
-    name: "heredoc redirect",
-    input: { command: "cat <<EOF" },
-    expected: { redirectAt: { index: 1, op: "<<", target: "EOF" } }
-  },
-  {
-    name: "heredoc with strip redirect",
-    input: { command: "cat <<-EOF" },
-    expected: { redirectAt: { index: 1, op: "<<-", target: "EOF" } }
-  },
-  {
-    name: "here-string redirect",
-    input: { command: "cat <<<'hello'" },
-    expected: { redirectAt: { index: 1, op: "<<<", target: "hello" } }
-  },
-  {
-    name: "fd output redirect",
-    input: { command: "cmd 2> file.txt" },
-    expected: { redirectAt: { index: 1, op: "2>", target: "file.txt" } }
-  },
-  {
-    name: "fd append redirect",
-    input: { command: "cmd 2>> file.txt" },
-    expected: { redirectAt: { index: 1, op: "2>>", target: "file.txt" } }
-  },
-  {
-    name: "fd duplication redirect",
-    input: { command: "cmd 2>&1" },
-    expected: { redirectAt: { index: 1, op: "2>&", target: "1" } }
-  },
-  {
-    name: "input duplication redirect (parsed as separate tokens)",
-    input: { command: "cmd <&0" },
-    expected: { 
-      length: 4,
-      tokens: [
-        { type: "word", value: "cmd" },
-        { type: "redirect", op: "<", target: "" },
-        { type: "operator", value: "&" },
-        { type: "word", value: "0" }
-      ]
-    }
-  },
-  {
-    name: "multiple redirects",
-    input: { command: "cmd > out.txt 2> err.txt" },
-    expected: { redirectCount: 2 }
-  }
-];
+test("output redirect", () => {
+  const tokens = tokenize("echo hi > file.txt");
+  assertEquals(tokens.length, 3);
+  assertEquals(tokens[2], { type: "redirect", op: ">", target: "file.txt" });
+});
 
-runTestSuite("Tokenizer Redirect Tests", tokenizerRedirectTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
-  if (tc.expected.length) {
-    assertEquals(tokens.length, tc.expected.length);
-  }
-  if (tc.expected.redirectAt) {
-    assertEquals(tokens[tc.expected.redirectAt.index], { type: "redirect", op: tc.expected.redirectAt.op, target: tc.expected.redirectAt.target });
-  }
-  if (tc.expected.redirectCount) {
-    assertEquals(tokens.filter((t) => t.type === "redirect").length, tc.expected.redirectCount);
-  }
-  if (tc.expected.tokens) {
-    for (let i = 0; i < tc.expected.tokens.length; i++) {
-      assertEquals(tokens[i], tc.expected.tokens[i]);
-    }
-  }
+test("append redirect", () => {
+  const tokens = tokenize("echo hi >> file.txt");
+  assertEquals(tokens[2], { type: "redirect", op: ">>", target: "file.txt" });
+});
+
+test("input redirect", () => {
+  const tokens = tokenize("cat < file.txt");
+  assertEquals(tokens.length, 2);
+  assertEquals(tokens[1], { type: "redirect", op: "<", target: "file.txt" });
+});
+
+test("heredoc redirect", () => {
+  const tokens = tokenize("cat <<EOF");
+  assertEquals(tokens[1], { type: "redirect", op: "<<", target: "EOF" });
+});
+
+test("heredoc with strip redirect", () => {
+  const tokens = tokenize("cat <<-EOF");
+  assertEquals(tokens[1], { type: "redirect", op: "<<-", target: "EOF" });
+});
+
+test("here-string redirect", () => {
+  const tokens = tokenize("cat <<<'hello'");
+  assertEquals(tokens[1], { type: "redirect", op: "<<<", target: "hello" });
+});
+
+test("fd output redirect", () => {
+  const tokens = tokenize("cmd 2> file.txt");
+  assertEquals(tokens[1], { type: "redirect", op: "2>", target: "file.txt" });
+});
+
+test("fd append redirect", () => {
+  const tokens = tokenize("cmd 2>> file.txt");
+  assertEquals(tokens[1], { type: "redirect", op: "2>>", target: "file.txt" });
+});
+
+test("fd duplication redirect", () => {
+  const tokens = tokenize("cmd 2>&1");
+  assertEquals(tokens[1], { type: "redirect", op: "2>&", target: "1" });
+});
+
+test("input duplication redirect (parsed as separate tokens)", () => {
+  const tokens = tokenize("cmd <&0");
+  assertEquals(tokens.length, 4);
+  assertEquals(tokens[0], { type: "word", value: "cmd" });
+  assertEquals(tokens[1], { type: "redirect", op: "<", target: "" });
+  assertEquals(tokens[2], { type: "operator", value: "&" });
+  assertEquals(tokens[3], { type: "word", value: "0" });
+});
+
+test("multiple redirects", () => {
+  const tokens = tokenize("cmd > out.txt 2> err.txt");
+  assertEquals(tokens.filter((t) => t.type === "redirect").length, 2);
 });
 
 // Comments
-const tokenizerCommentTests: TestCase[] = [
-  {
-    name: "comment ignored",
-    input: { command: "echo hi # this is ignored" },
-    expected: { length: 2, tokens: [{ type: "word", value: "echo" }, { type: "word", value: "hi" }] }
-  },
-  {
-    name: "comment after redirect",
-    input: { command: "echo hi > file # comment" },
-    expected: { length: 3 }
-  }
-];
+test("comment ignored", () => {
+  const tokens = tokenize("echo hi # this is ignored");
+  assertEquals(tokens.length, 2);
+  assertEquals(tokens[0], { type: "word", value: "echo" });
+  assertEquals(tokens[1], { type: "word", value: "hi" });
+});
 
-runTestSuite("Tokenizer Comment Tests", tokenizerCommentTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
-  assertEquals(tokens.length, tc.expected.length);
-  if (tc.expected.tokens) {
-    for (let i = 0; i < tc.expected.tokens.length; i++) {
-      assertEquals(tokens[i], tc.expected.tokens[i]);
-    }
-  }
+test("comment after redirect", () => {
+  const tokens = tokenize("echo hi > file # comment");
+  assertEquals(tokens.length, 3);
 });
 
 // Variable substitution
-const tokenizerVariableTests: TestCase[] = [
-  {
-    name: "variable not parsed as standalone word",
-    input: { command: "echo $VAR" },
-    expected: { minLength: 1, firstToken: { type: "word", value: "echo" } }
-  }
-];
-
-runTestSuite("Tokenizer Variable Tests", tokenizerVariableTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
-  assertTrue(tokens.length >= (tc.expected.minLength as number));
-  if (tc.expected.firstToken) {
-    assertEquals(tokens[0], tc.expected.firstToken);
-  }
+test("variable not parsed as standalone word", () => {
+  const tokens = tokenize("echo $VAR");
+  assertTrue(tokens.length >= 1);
+  assertEquals(tokens[0], { type: "word", value: "echo" });
 });
 
 // Complex combinations
-const tokenizerComplexTests: TestCase[] = [
-  {
-    name: "pipeline with redirects",
-    input: { command: "echo \"hello\" > file.txt && cat < file.txt | grep hi" },
-    expected: { length: 9, operatorCount: 2, redirectCount: 2 }
-  },
-  {
-    name: "complex with groups",
-    input: { command: "echo $(date) && (ls -la) | wc -l" },
-    expected: { groupCount: 2 }
-  }
-];
+test("pipeline with redirects", () => {
+  const tokens = tokenize("echo \"hello\" > file.txt && cat < file.txt | grep hi");
+  assertEquals(tokens.length, 9);
+  assertEquals(tokens.filter((t) => t.type === "operator").length, 2);
+  assertEquals(tokens.filter((t) => t.type === "redirect").length, 2);
+});
 
-runTestSuite("Tokenizer Complex Tests", tokenizerComplexTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
-  if (tc.expected.length) {
-    assertEquals(tokens.length, tc.expected.length);
-  }
-  if (tc.expected.operatorCount) {
-    assertEquals(tokens.filter((t) => t.type === "operator").length, tc.expected.operatorCount);
-  }
-  if (tc.expected.redirectCount) {
-    assertEquals(tokens.filter((t) => t.type === "redirect").length, tc.expected.redirectCount);
-  }
-  if (tc.expected.groupCount) {
-    assertEquals(tokens.filter((t) => t.type === "group").length, tc.expected.groupCount);
-  }
+test("complex with groups", () => {
+  const tokens = tokenize("echo $(date) && (ls -la) | wc -l");
+  assertEquals(tokens.filter((t) => t.type === "group").length, 2);
 });
 
 // Error cases
-const tokenizerErrorTests: TestCase[] = [
-  {
-    name: "throws on unmatched single quote",
-    input: { command: "echo 'unclosed" },
-    expected: { shouldThrow: true }
-  },
-  {
-    name: "throws on unmatched double quote",
-    input: { command: "echo \"unclosed" },
-    expected: { shouldThrow: true }
-  },
-  {
-    name: "throws on unmatched subshell",
-    input: { command: "(echo hi" },
-    expected: { shouldThrow: true }
-  },
-  {
-    name: "throws on unmatched substitution",
-    input: { command: "$(echo hi" },
-    expected: { shouldThrow: true }
-  },
-  {
-    name: "throws on unmatched backtick",
-    input: { command: "`echo hi" },
-    expected: { shouldThrow: true }
-  }
-];
+test("throws on unmatched single quote", () => {
+  assertThrows(() => tokenize("echo 'unclosed"));
+});
 
-runTestSuite("Tokenizer Error Tests", tokenizerErrorTests, (tc) => {
-  assertThrows(() => tokenize(tc.input.command as string));
+test("throws on unmatched double quote", () => {
+  assertThrows(() => tokenize("echo \"unclosed"));
+});
+
+test("throws on unmatched subshell", () => {
+  assertThrows(() => tokenize("(echo hi"));
+});
+
+test("throws on unmatched substitution", () => {
+  assertThrows(() => tokenize("$(echo hi"));
+});
+
+test("throws on unmatched backtick", () => {
+  assertThrows(() => tokenize("`echo hi"));
 });
 
 // ==================== END TOKENIZER TESTS ====================
 
 // ==================== COMMAND EXTRACTION TESTS ====================
+console.log("\n=== Command Extraction Tests ===");
 
 // Basic commands
-const commandExtractionBasicTests: TestCase[] = [
-  {
-    name: "basic command",
-    input: { command: "ls -la" },
-    expected: { 
-      length: 1, 
-      firstCommand: { name: "ls", fullText: "ls -la", source: "direct" }
-    }
-  },
-  {
-    name: "command with redirects",
-    input: { command: "echo hi > file.txt" },
-    expected: { 
-      length: 1, 
-      firstCommand: { name: "echo", redirectCount: 1, firstRedirect: { op: ">", target: "file.txt" } }
-    }
-  },
-  {
-    name: "command with multiple redirects",
-    input: { command: "cmd > out.txt 2> err.txt" },
-    expected: { firstCommand: { redirectCount: 2 } }
-  }
-];
-
-runTestSuite("Command Extraction Basic Tests", commandExtractionBasicTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
+test("basic command", () => {
+  const tokens = tokenize("ls -la");
   const cmds = extractCommands(tokens);
-  if (tc.expected.length) {
-    assertEquals(cmds.length, tc.expected.length);
-  }
-  if (tc.expected.firstCommand) {
-    const fc = tc.expected.firstCommand;
-    if (fc.name) assertEquals(cmds[0].name, fc.name);
-    if (fc.fullText) assertEquals(cmds[0].fullText, fc.fullText);
-    if (fc.source) assertEquals(cmds[0].source, fc.source);
-    if (fc.redirectCount) assertEquals(cmds[0].redirects.length, fc.redirectCount);
-    if (fc.firstRedirect) assertEquals(cmds[0].redirects[0], fc.firstRedirect);
-  }
+  assertEquals(cmds.length, 1);
+  assertEquals(cmds[0].name, "ls");
+  assertEquals(cmds[0].fullText, "ls -la");
+  assertEquals(cmds[0].source, "direct");
+});
+
+test("command with redirects", () => {
+  const tokens = tokenize("echo hi > file.txt");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 1);
+  assertEquals(cmds[0].name, "echo");
+  assertEquals(cmds[0].redirects.length, 1);
+  assertEquals(cmds[0].redirects[0], { op: ">", target: "file.txt" });
+});
+
+test("command with multiple redirects", () => {
+  const tokens = tokenize("cmd > out.txt 2> err.txt");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds[0].redirects.length, 2);
 });
 
 // Multiple segments with control operators
-const commandExtractionControlTests: TestCase[] = [
-  {
-    name: "multiple with &&",
-    input: { command: "echo a && echo b" },
-    expected: { 
-      length: 2, 
-      commands: [
-        { name: "echo", fullText: "echo a" },
-        { name: "echo", fullText: "echo b" }
-      ]
-    }
-  },
-  {
-    name: "multiple with ||",
-    input: { command: "cmd1 || cmd2" },
-    expected: { length: 2, commands: [{ name: "cmd1" }, { name: "cmd2" }] }
-  },
-  {
-    name: "multiple with ;",
-    input: { command: "cmd1 ; cmd2 ; cmd3" },
-    expected: { length: 3 }
-  }
-];
-
-runTestSuite("Command Extraction Control Tests", commandExtractionControlTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
+test("multiple with &&", () => {
+  const tokens = tokenize("echo a && echo b");
   const cmds = extractCommands(tokens);
-  assertEquals(cmds.length, tc.expected.length);
-  if (tc.expected.commands) {
-    for (let i = 0; i < tc.expected.commands.length; i++) {
-      const exp = tc.expected.commands[i];
-      if (exp.name) assertEquals(cmds[i].name, exp.name);
-      if (exp.fullText) assertEquals(cmds[i].fullText, exp.fullText);
-    }
-  }
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[0].name, "echo");
+  assertEquals(cmds[0].fullText, "echo a");
+  assertEquals(cmds[1].name, "echo");
+  assertEquals(cmds[1].fullText, "echo b");
+});
+
+test("multiple with ||", () => {
+  const tokens = tokenize("cmd1 || cmd2");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[0].name, "cmd1");
+  assertEquals(cmds[1].name, "cmd2");
+});
+
+test("multiple with ;", () => {
+  const tokens = tokenize("cmd1 ; cmd2 ; cmd3");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 3);
 });
 
 // Pipelines
-const commandExtractionPipelineTests: TestCase[] = [
-  {
-    name: "simple pipeline",
-    input: { command: "cat file | grep hi" },
-    expected: { length: 2, names: ["cat", "grep"] }
-  },
-  {
-    name: "multi-stage pipeline",
-    input: { command: "cat file | grep hi | sort | uniq" },
-    expected: { length: 4, names: ["cat", "grep", "sort", "uniq"] }
-  }
-];
-
-runTestSuite("Command Extraction Pipeline Tests", commandExtractionPipelineTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
+test("simple pipeline", () => {
+  const tokens = tokenize("cat file | grep hi");
   const cmds = extractCommands(tokens);
-  assertEquals(cmds.length, tc.expected.length);
-  if (tc.expected.names) {
-    assertEquals(cmds.map((c) => c.name), tc.expected.names);
-  }
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds.map((c) => c.name), ["cat", "grep"]);
+});
+
+test("multi-stage pipeline", () => {
+  const tokens = tokenize("cat file | grep hi | sort | uniq");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 4);
+  assertEquals(cmds.map((c) => c.name), ["cat", "grep", "sort", "uniq"]);
 });
 
 // Subshells
-const commandExtractionSubshellTests: TestCase[] = [
-  {
-    name: "subshell with single command",
-    input: { command: "(echo hi)" },
-    expected: { subshellCount: 1, subshellNames: ["echo"] }
-  },
-  {
-    name: "subshell with multiple commands",
-    input: { command: "(echo a && echo b)" },
-    expected: { subshellCount: 2 }
-  },
-  {
-    name: "subshell with pipeline",
-    input: { command: "(cat file | grep hi)" },
-    expected: { subshellCount: 2 }
-  }
-];
-
-runTestSuite("Command Extraction Subshell Tests", commandExtractionSubshellTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
+test("subshell with single command", () => {
+  const tokens = tokenize("(echo hi)");
   const cmds = extractCommands(tokens);
   const subshellCmds = cmds.filter((c) => c.source === "subshell");
-  assertEquals(subshellCmds.length, tc.expected.subshellCount);
-  if (tc.expected.subshellNames) {
-    assertEquals(subshellCmds.map((c) => c.name), tc.expected.subshellNames);
-  }
+  assertEquals(subshellCmds.length, 1);
+  assertEquals(subshellCmds.map((c) => c.name), ["echo"]);
+});
+
+test("subshell with multiple commands", () => {
+  const tokens = tokenize("(echo a && echo b)");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.filter((c) => c.source === "subshell").length, 2);
+});
+
+test("subshell with pipeline", () => {
+  const tokens = tokenize("(cat file | grep hi)");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.filter((c) => c.source === "subshell").length, 2);
 });
 
 // Command substitution
-const commandExtractionSubstitutionTests: TestCase[] = [
-  {
-    name: "command substitution $(...)",
-    input: { command: "echo $(date)" },
-    expected: { length: 2, hasCommand: { name: "date", source: "substitution" } }
-  },
-  {
-    name: "backtick substitution",
-    input: { command: "echo `date`" },
-    expected: { length: 2, hasCommand: { name: "date", source: "substitution" } }
-  },
-  {
-    name: "nested substitution",
-    input: { command: "echo $(echo $(date))" },
-    expected: { minLength: 2, hasCommand: { name: "date" } }
-  }
-];
-
-runTestSuite("Command Extraction Substitution Tests", commandExtractionSubstitutionTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
+test("command substitution $(...)", () => {
+  const tokens = tokenize("echo $(date)");
   const cmds = extractCommands(tokens);
-  if (tc.expected.length) {
-    assertEquals(cmds.length, tc.expected.length);
-  }
-  if (tc.expected.minLength) {
-    assertTrue(cmds.length >= tc.expected.minLength);
-  }
-  if (tc.expected.hasCommand) {
-    const cmd = cmds.find((c) => c.name === tc.expected.hasCommand.name);
-    assertTrue(cmd !== undefined);
-    if (tc.expected.hasCommand.source) {
-      assertEquals(cmd?.source, tc.expected.hasCommand.source);
-    }
-  }
+  assertEquals(cmds.length, 2);
+  const cmd = cmds.find((c) => c.name === "date");
+  assertTrue(cmd !== undefined);
+  assertEquals(cmd?.source, "substitution");
+});
+
+test("backtick substitution", () => {
+  const tokens = tokenize("echo `date`");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+  const cmd = cmds.find((c) => c.name === "date");
+  assertTrue(cmd !== undefined);
+  assertEquals(cmd?.source, "substitution");
+});
+
+test("nested substitution", () => {
+  const tokens = tokenize("echo $(echo $(date))");
+  const cmds = extractCommands(tokens);
+  assertTrue(cmds.length >= 2);
+  assertTrue(cmds.some((c) => c.name === "date"));
 });
 
 // Wrapper commands
-const commandExtractionWrapperTests: TestCase[] = [
-  {
-    name: "bash -c wrapper",
-    input: { command: "bash -c 'echo hi'" },
-    expected: { length: 2, hasCommand: { name: "echo", source: "wrapper-arg" } }
-  },
-  {
-    name: "sh -c wrapper",
-    input: { command: "sh -c 'ls -la'" },
-    expected: { hasCommand: { name: "ls", source: "wrapper-arg" } }
-  },
-  {
-    name: "sudo passthrough",
-    input: { command: "sudo rm -rf /" },
-    expected: { 
-      length: 2, 
-      commands: [
-        { name: "sudo", source: "direct" },
-        { name: "rm", source: "wrapper-arg" }
-      ]
-    }
-  },
-  {
-    name: "doas passthrough",
-    input: { command: "doas ls -la" },
-    expected: { length: 2, secondCommand: { name: "ls" } }
-  },
-  {
-    name: "xargs passthrough",
-    input: { command: "xargs rm" },
-    expected: { length: 2, secondCommand: { name: "rm" } }
-  },
-  {
-    name: "time passthrough without --",
-    input: { command: "time sleep 1" },
-    expected: { length: 2, secondCommand: { name: "sleep" } }
-  },
-  {
-    name: "time -- passthrough respects -- end-of-options",
-    input: { command: "time -- echo hi" },
-    expected: { length: 2, secondCommand: { name: "echo" } }
-  },
-  {
-    name: "env wrapper handles -- before command",
-    input: { command: "env -- VAR=val cmd arg" },
-    expected: { 
-      length: 2, 
-      secondCommand: { name: "cmd", fullText: "cmd arg" }
-    }
-  },
-  {
-    name: "env wrapper skips assignments",
-    input: { command: "env VAR=val echo hi" },
-    expected: { length: 2, secondCommand: { name: "echo" } }
-  },
-  {
-    name: "env with multiple assignments",
-    input: { command: "env A=1 B=2 C=3 cmd arg" },
-    expected: { 
-      length: 2, 
-      secondCommand: { name: "cmd", fullText: "cmd arg" }
-    }
-  },
-  {
-    name: "nohup wrapper extracts utility operand",
-    input: { command: "nohup cat file.txt" },
-    expected: { length: 2, secondCommand: { name: "cat" } }
-  }
-];
-
-runTestSuite("Command Extraction Wrapper Tests", commandExtractionWrapperTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
+test("bash -c wrapper", () => {
+  const tokens = tokenize("bash -c 'echo hi'");
   const cmds = extractCommands(tokens);
-  if (tc.expected.length) {
-    assertEquals(cmds.length, tc.expected.length);
-  }
-  if (tc.expected.commands) {
-    for (let i = 0; i < tc.expected.commands.length; i++) {
-      const exp = tc.expected.commands[i];
-      if (exp.name) assertEquals(cmds[i].name, exp.name);
-      if (exp.source) assertEquals(cmds[i].source, exp.source);
-    }
-  }
-  if (tc.expected.secondCommand) {
-    const sc = tc.expected.secondCommand;
-    if (sc.name) assertEquals(cmds[1].name, sc.name);
-    if (sc.source) assertEquals(cmds[1].source, sc.source);
-    if (sc.fullText) assertEquals(cmds[1].fullText, sc.fullText);
-  }
-  if (tc.expected.hasCommand) {
-    const cmd = cmds.find((c) => c.name === tc.expected.hasCommand.name);
-    assertTrue(cmd !== undefined);
-    if (tc.expected.hasCommand.source) {
-      assertEquals(cmd?.source, tc.expected.hasCommand.source);
-    }
-  }
+  assertEquals(cmds.length, 2);
+  const cmd = cmds.find((c) => c.name === "echo");
+  assertTrue(cmd !== undefined);
+  assertEquals(cmd?.source, "wrapper-arg");
+});
+
+test("sh -c wrapper", () => {
+  const tokens = tokenize("sh -c 'ls -la'");
+  const cmds = extractCommands(tokens);
+  const cmd = cmds.find((c) => c.name === "ls");
+  assertTrue(cmd !== undefined);
+  assertEquals(cmd?.source, "wrapper-arg");
+});
+
+test("sudo passthrough", () => {
+  const tokens = tokenize("sudo rm -rf /");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[0].name, "sudo");
+  assertEquals(cmds[0].source, "direct");
+  assertEquals(cmds[1].name, "rm");
+  assertEquals(cmds[1].source, "wrapper-arg");
+});
+
+test("doas passthrough", () => {
+  const tokens = tokenize("doas ls -la");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[1].name, "ls");
+});
+
+test("xargs passthrough", () => {
+  const tokens = tokenize("xargs rm");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[1].name, "rm");
+});
+
+test("time passthrough without --", () => {
+  const tokens = tokenize("time sleep 1");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[1].name, "sleep");
+});
+
+test("time -- passthrough respects -- end-of-options", () => {
+  const tokens = tokenize("time -- echo hi");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[1].name, "echo");
+});
+
+test("env wrapper handles -- before command", () => {
+  const tokens = tokenize("env -- VAR=val cmd arg");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[1].name, "cmd");
+  assertEquals(cmds[1].fullText, "cmd arg");
+});
+
+test("env wrapper skips assignments", () => {
+  const tokens = tokenize("env VAR=val echo hi");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[1].name, "echo");
+});
+
+test("env with multiple assignments", () => {
+  const tokens = tokenize("env A=1 B=2 C=3 cmd arg");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[1].name, "cmd");
+  assertEquals(cmds[1].fullText, "cmd arg");
+});
+
+test("env skips assignments after double dash", () => {
+  const tokens = tokenize("env -- KEY=val cmd");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[1].name, "cmd");
+});
+
+test("nohup wrapper extracts utility operand", () => {
+  const tokens = tokenize("nohup cat file.txt");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[1].name, "cat");
+});
+
+test("sudo with only flags extracts no inner command", () => {
+  const tokens = tokenize("sudo -h");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 1);
+  assertEquals(cmds[0].name, "sudo");
 });
 
 // Nested wrappers
-const commandExtractionNestedTests: TestCase[] = [
-  {
-    name: "nested wrappers bash -c with sudo",
-    input: { command: "sudo bash -c 'rm -rf /'" },
-    expected: { length: 3, hasCommand: { name: "rm" } }
-  },
-  {
-    name: "deeply nested",
-    input: { command: "echo $(bash -c 'ls $(pwd)')" },
-    expected: { minLength: 3, hasCommands: ["bash", "ls", "pwd"] }
-  }
-];
-
-runTestSuite("Command Extraction Nested Tests", commandExtractionNestedTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
+test("nested wrappers bash -c with sudo", () => {
+  const tokens = tokenize("sudo bash -c 'rm -rf /'");
   const cmds = extractCommands(tokens);
-  if (tc.expected.length) {
-    assertEquals(cmds.length, tc.expected.length);
-  }
-  if (tc.expected.minLength) {
-    assertTrue(cmds.length >= tc.expected.minLength);
-  }
-  if (tc.expected.hasCommand) {
-    const cmd = cmds.find((c) => c.name === tc.expected.hasCommand.name);
-    assertTrue(cmd !== undefined);
-  }
-  if (tc.expected.hasCommands) {
-    for (const name of tc.expected.hasCommands) {
-      assertTrue(cmds.some((c) => c.name === name));
-    }
-  }
+  assertEquals(cmds.length, 3);
+  assertTrue(cmds.some((c) => c.name === "rm"));
+});
+
+test("deeply nested", () => {
+  const tokens = tokenize("echo $(bash -c 'ls $(pwd)')");
+  const cmds = extractCommands(tokens);
+  assertTrue(cmds.length >= 3);
+  assertTrue(cmds.some((c) => c.name === "bash"));
+  assertTrue(cmds.some((c) => c.name === "ls"));
+  assertTrue(cmds.some((c) => c.name === "pwd"));
 });
 
 // Complex cases
-const commandExtractionComplexTests: TestCase[] = [
-  {
-    name: "mixed pipeline and subshell",
-    input: { command: "(cat file) | grep hi" },
-    expected: { 
-      length: 2, 
-      commands: [
-        { name: "cat", source: "subshell" },
-        { name: "grep", source: "direct" }
-      ]
-    }
-  },
-  {
-    name: "command with empty segment after &&",
-    input: { command: "echo || ls" },
-    expected: { length: 2 }
-  }
-];
-
-runTestSuite("Command Extraction Complex Tests", commandExtractionComplexTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
+test("mixed pipeline and subshell", () => {
+  const tokens = tokenize("(cat file) | grep hi");
   const cmds = extractCommands(tokens);
-  assertEquals(cmds.length, tc.expected.length);
-  if (tc.expected.commands) {
-    for (let i = 0; i < tc.expected.commands.length; i++) {
-      const exp = tc.expected.commands[i];
-      if (exp.name) assertEquals(cmds[i].name, exp.name);
-      if (exp.source) assertEquals(cmds[i].source, exp.source);
-    }
-  }
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[0].name, "cat");
+  assertEquals(cmds[0].source, "subshell");
+  assertEquals(cmds[1].name, "grep");
+  assertEquals(cmds[1].source, "direct");
+});
+
+test("command with empty segment after &&", () => {
+  const tokens = tokenize("echo || ls");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
 });
 
 // ==================== END COMMAND EXTRACTION TESTS ====================
 
 // ==================== POLICY MATCHING TESTS ====================
+console.log("\n=== Policy Matching Tests ===");
 
 // Helper for creating simple policies
 const samplePolicy: PolicyCommands = {
@@ -855,402 +589,279 @@ const samplePolicy: PolicyCommands = {
 };
 
 // Exact match mode
-const exactMatchTests: TestCase[] = [
-  {
-    name: "exact match - matches",
-    setup: () => ({
-      policy: { allow: [], ask: [], deny: [{ match: "ls", mode: "exact" }] } as PolicyCommands
-    }),
-    input: { command: "ls" },
-    expected: { action: "deny" }
-  },
-  {
-    name: "exact match - case insensitive",
-    setup: () => ({
-      policy: { allow: [], ask: [], deny: [{ match: "LS", mode: "exact" }] } as PolicyCommands
-    }),
-    input: { command: "ls" },
-    expected: { action: "deny" }
-  },
-  {
-    name: "exact match - whitespace trimmed",
-    setup: () => ({
-      policy: { allow: [], ask: [], deny: [{ match: "ls", mode: "exact" }] } as PolicyCommands
-    }),
-    input: { command: "  ls  " },
-    expected: { action: "deny" }
-  },
-  {
-    name: "exact match - args don't match",
-    setup: () => ({
-      policy: { allow: [], ask: [], deny: [{ match: "ls", mode: "exact" }] } as PolicyCommands
-    }),
-    input: { command: "ls -la" },
-    expected: { action: "default" }
-  }
-];
+test("exact match - matches", () => {
+  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "ls", mode: "exact" }] };
+  assertEquals(evaluateCommand("ls", policy).action, "deny");
+});
 
-runTestSuite("Exact Match Tests", exactMatchTests, (tc) => {
-  const { policy } = tc.setup ? tc.setup() : { policy: samplePolicy };
-  const result = evaluateCommand(tc.input.command as string, policy as PolicyCommands);
-  assertEquals(result.action, tc.expected.action);
+test("exact match - case insensitive", () => {
+  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "LS", mode: "exact" }] };
+  assertEquals(evaluateCommand("ls", policy).action, "deny");
+});
+
+test("exact match - whitespace trimmed", () => {
+  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "ls", mode: "exact" }] };
+  assertEquals(evaluateCommand("  ls  ", policy).action, "deny");
+});
+
+test("exact match - args don't match", () => {
+  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "ls", mode: "exact" }] };
+  assertEquals(evaluateCommand("ls -la", policy).action, "default");
 });
 
 // Prefix match mode
-const prefixMatchTests: TestCase[] = [
-  {
-    name: "prefix match - matches",
-    input: { command: "ls -la" },
-    expected: { action: "allow" }
-  },
-  {
-    name: "prefix match - exact also matches",
-    input: { command: "ls" },
-    expected: { action: "allow" }
-  },
-  {
-    name: "prefix match - case insensitive",
-    input: { command: "LS -LA" },
-    expected: { action: "allow" }
-  },
-  {
-    name: "prefix match - no match when pattern longer",
-    input: { command: "l" },
-    expected: { action: "default" }
-  }
-];
+test("prefix match - matches", () => {
+  assertEquals(evaluateCommand("ls -la", samplePolicy).action, "allow");
+});
 
-runTestSuite("Prefix Match Tests", prefixMatchTests, (tc) => {
-  const result = evaluateCommand(tc.input.command as string, samplePolicy);
-  assertEquals(result.action, tc.expected.action);
+test("prefix match - exact also matches", () => {
+  assertEquals(evaluateCommand("ls", samplePolicy).action, "allow");
+});
+
+test("prefix match - case insensitive", () => {
+  assertEquals(evaluateCommand("LS -LA", samplePolicy).action, "allow");
+});
+
+test("prefix match - no match when pattern longer", () => {
+  assertEquals(evaluateCommand("l", samplePolicy).action, "default");
 });
 
 // Substring match mode
-const substringMatchTests: TestCase[] = [
-  {
-    name: "substring match - exact",
-    setup: () => ({
-      policy: { allow: [], ask: [], deny: [{ match: "rm -rf /", mode: "substring" }] } as PolicyCommands
-    }),
-    input: { command: "rm -rf /" },
-    expected: { action: "deny" }
-  },
-  {
-    name: "substring match - in pipeline",
-    setup: () => ({
-      policy: { allow: [], ask: [], deny: [{ match: "rm -rf /", mode: "substring" }] } as PolicyCommands
-    }),
-    input: { command: "echo hi && rm -rf /" },
-    expected: { action: "deny" }
-  },
-  {
-    name: "substring match - partial word",
-    setup: () => ({
-      policy: { allow: [], ask: [], deny: [{ match: "rm -rf", mode: "substring" }] } as PolicyCommands
-    }),
-    input: { command: "grm -rf file" },
-    expected: { action: "deny" }
-  },
-  {
-    name: "substring match - case insensitive",
-    setup: () => ({
-      policy: { allow: [], ask: [], deny: [{ match: "RM -RF /", mode: "substring" }] } as PolicyCommands
-    }),
-    input: { command: "echo hi && rm -rf /" },
-    expected: { action: "deny" }
-  },
-  {
-    name: "substring match - special characters",
-    setup: () => ({
-      policy: { allow: [], ask: [], deny: [{ match: "git push", mode: "substring" }] } as PolicyCommands
-    }),
-    input: { command: "git push origin main" },
-    expected: { action: "deny" }
-  }
-];
+test("substring match - exact", () => {
+  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "rm -rf /", mode: "substring" }] };
+  assertEquals(evaluateCommand("rm -rf /", policy).action, "deny");
+});
 
-runTestSuite("Substring Match Tests", substringMatchTests, (tc) => {
-  const { policy } = tc.setup ? tc.setup() : { policy: samplePolicy };
-  const result = evaluateCommand(tc.input.command as string, policy as PolicyCommands);
-  assertEquals(result.action, tc.expected.action);
+test("substring match - in pipeline", () => {
+  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "rm -rf /", mode: "substring" }] };
+  assertEquals(evaluateCommand("echo hi && rm -rf /", policy).action, "deny");
+});
+
+test("substring match - partial word", () => {
+  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "rm -rf", mode: "substring" }] };
+  assertEquals(evaluateCommand("grm -rf file", policy).action, "deny");
+});
+
+test("substring match - case insensitive", () => {
+  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "RM -RF /", mode: "substring" }] };
+  assertEquals(evaluateCommand("echo hi && rm -rf /", policy).action, "deny");
+});
+
+test("substring match - special characters", () => {
+  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "git push", mode: "substring" }] };
+  assertEquals(evaluateCommand("git push origin main", policy).action, "deny");
 });
 
 // has-redirect match mode
-const hasRedirectTests: TestCase[] = [
-  {
-    name: "has-redirect - output redirect",
-    setup: () => ({
-      policy: { allow: [], ask: [], deny: [{ match: "*", mode: "has-redirect" }] } as PolicyCommands
-    }),
-    input: { command: "echo hi > file.txt" },
-    expected: { action: "deny" }
-  },
-  {
-    name: "has-redirect - append redirect",
-    setup: () => ({
-      policy: { allow: [], ask: [], deny: [{ match: "*", mode: "has-redirect" }] } as PolicyCommands
-    }),
-    input: { command: "echo hi >> file.txt" },
-    expected: { action: "deny" }
-  },
-  {
-    name: "has-redirect - input redirect not matched",
-    setup: () => ({
-      policy: { allow: [], ask: [], deny: [{ match: "*", mode: "has-redirect" }] } as PolicyCommands
-    }),
-    input: { command: "cat < file.txt" },
-    expected: { action: "default" }
-  },
-  {
-    name: "has-redirect - /dev/null excluded",
-    setup: () => ({
-      policy: { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [{ match: "*", mode: "has-redirect" }] } as PolicyCommands
-    }),
-    input: { command: "ls 2>/dev/null" },
-    expected: { action: "allow" }
-  },
-  {
-    name: "has-redirect - fd duplication excluded",
-    setup: () => ({
-      policy: { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [{ match: "*", mode: "has-redirect" }] } as PolicyCommands
-    }),
-    input: { command: "ls 2>&1" },
-    expected: { action: "allow" }
-  },
-  {
-    name: "has-redirect - combined safe redirects",
-    setup: () => ({
-      policy: { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [{ match: "*", mode: "has-redirect" }] } as PolicyCommands
-    }),
-    input: { command: "ls 2>&1 >/dev/null" },
-    expected: { action: "allow" }
-  }
-];
+test("has-redirect - output redirect", () => {
+  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "*", mode: "has-redirect" }] };
+  assertEquals(evaluateCommand("echo hi > file.txt", policy).action, "deny");
+});
 
-runTestSuite("Has-Redirect Match Tests", hasRedirectTests, (tc) => {
-  const { policy } = tc.setup ? tc.setup() : { policy: samplePolicy };
-  const result = evaluateCommand(tc.input.command as string, policy as PolicyCommands);
-  assertEquals(result.action, tc.expected.action);
+test("has-redirect - append redirect", () => {
+  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "*", mode: "has-redirect" }] };
+  assertEquals(evaluateCommand("echo hi >> file.txt", policy).action, "deny");
+});
+
+test("has-redirect - input redirect not matched", () => {
+  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "*", mode: "has-redirect" }] };
+  assertEquals(evaluateCommand("cat < file.txt", policy).action, "default");
+});
+
+test("has-redirect - /dev/null excluded", () => {
+  const policy: PolicyCommands = { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [{ match: "*", mode: "has-redirect" }] };
+  assertEquals(evaluateCommand("ls 2>/dev/null", policy).action, "allow");
+});
+
+test("has-redirect - fd duplication excluded", () => {
+  const policy: PolicyCommands = { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [{ match: "*", mode: "has-redirect" }] };
+  assertEquals(evaluateCommand("ls 2>&1", policy).action, "allow");
+});
+
+test("has-redirect - combined safe redirects", () => {
+  const policy: PolicyCommands = { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [{ match: "*", mode: "has-redirect" }] };
+  assertEquals(evaluateCommand("ls 2>&1 >/dev/null", policy).action, "allow");
+});
+
+test("has-redirect - /dev/stderr excluded", () => {
+  const policy: PolicyCommands = { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [{ match: "*", mode: "has-redirect" }] };
+  assertEquals(evaluateCommand("ls > /dev/stderr", policy).action, "allow");
+});
+
+test("has-redirect - /dev/stdout excluded", () => {
+  const policy: PolicyCommands = { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [{ match: "*", mode: "has-redirect" }] };
+  assertEquals(evaluateCommand("ls > /dev/stdout", policy).action, "allow");
 });
 
 // has-heredoc match mode
-const hasHeredocTests: TestCase[] = [
-  {
-    name: "has-heredoc - matches heredoc",
-    setup: () => ({
-      policy: { allow: [], ask: [{ match: "*", mode: "has-heredoc" }], deny: [] } as PolicyCommands
-    }),
-    input: { command: "cat <<EOF" },
-    expected: { action: "ask" }
-  },
-  {
-    name: "has-heredoc - matches stripping variant",
-    setup: () => ({
-      policy: { allow: [], ask: [{ match: "*", mode: "has-heredoc" }], deny: [] } as PolicyCommands
-    }),
-    input: { command: "cat <<-EOF" },
-    expected: { action: "ask" }
-  },
-  {
-    name: "has-heredoc - no match without heredoc",
-    setup: () => ({
-      policy: { allow: [], ask: [{ match: "*", mode: "has-heredoc" }], deny: [] } as PolicyCommands
-    }),
-    input: { command: "cat file.txt" },
-    expected: { action: "default" }
-  },
-  {
-    name: "has-heredoc - here-string not matched",
-    setup: () => ({
-      policy: { allow: [], ask: [{ match: "*", mode: "has-heredoc" }], deny: [] } as PolicyCommands
-    }),
-    input: { command: "cat <<<'hello'" },
-    expected: { action: "default" }
-  }
-];
+test("has-heredoc - matches heredoc", () => {
+  const policy: PolicyCommands = { allow: [], ask: [{ match: "*", mode: "has-heredoc" }], deny: [] };
+  assertEquals(evaluateCommand("cat <<EOF", policy).action, "ask");
+});
 
-runTestSuite("Has-Heredoc Match Tests", hasHeredocTests, (tc) => {
-  const { policy } = tc.setup ? tc.setup() : { policy: samplePolicy };
-  const result = evaluateCommand(tc.input.command as string, policy as PolicyCommands);
-  assertEquals(result.action, tc.expected.action);
+test("has-heredoc - matches stripping variant", () => {
+  const policy: PolicyCommands = { allow: [], ask: [{ match: "*", mode: "has-heredoc" }], deny: [] };
+  assertEquals(evaluateCommand("cat <<-EOF", policy).action, "ask");
+});
+
+test("has-heredoc - no match without heredoc", () => {
+  const policy: PolicyCommands = { allow: [], ask: [{ match: "*", mode: "has-heredoc" }], deny: [] };
+  assertEquals(evaluateCommand("cat file.txt", policy).action, "default");
+});
+
+test("has-heredoc - here-string not matched", () => {
+  const policy: PolicyCommands = { allow: [], ask: [{ match: "*", mode: "has-heredoc" }], deny: [] };
+  assertEquals(evaluateCommand("cat <<<'hello'", policy).action, "default");
 });
 
 // Priority tests
-const priorityTests: TestCase[] = [
-  {
-    name: "deny takes priority over allow",
-    setup: () => ({
-      policy: { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [{ match: "ls", mode: "prefix" }] } as PolicyCommands
-    }),
-    input: { command: "ls -la" },
-    expected: { action: "deny" }
-  },
-  {
-    name: "deny takes priority over ask",
-    setup: () => ({
-      policy: { allow: [], ask: [{ match: "sudo", mode: "prefix" }], deny: [{ match: "sudo", mode: "prefix" }] } as PolicyCommands
-    }),
-    input: { command: "sudo ls" },
-    expected: { action: "deny" }
-  },
-  {
-    name: "ask escalates over allow",
-    input: { command: "echo hi && rm file" },
-    expected: { action: "ask" }
-  },
-  {
-    name: "multiple commands - one deny triggers deny",
-    setup: () => ({
-      policy: { allow: [{ match: "echo", mode: "prefix" }], ask: [], deny: [{ match: "rm -rf /", mode: "substring" }] } as PolicyCommands
-    }),
-    input: { command: "echo hi && rm -rf /" },
-    expected: { action: "deny" }
-  }
-];
+test("deny takes priority over allow", () => {
+  const policy: PolicyCommands = { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [{ match: "ls", mode: "prefix" }] };
+  assertEquals(evaluateCommand("ls -la", policy).action, "deny");
+});
 
-runTestSuite("Priority Tests", priorityTests, (tc) => {
-  const { policy } = tc.setup ? tc.setup() : { policy: samplePolicy };
-  const result = evaluateCommand(tc.input.command as string, policy as PolicyCommands);
-  assertEquals(result.action, tc.expected.action);
+test("deny takes priority over ask", () => {
+  const policy: PolicyCommands = { allow: [], ask: [{ match: "sudo", mode: "prefix" }], deny: [{ match: "sudo", mode: "prefix" }] };
+  assertEquals(evaluateCommand("sudo ls", policy).action, "deny");
+});
+
+test("ask escalates over allow", () => {
+  assertEquals(evaluateCommand("echo hi && rm file", samplePolicy).action, "ask");
+});
+
+test("allow downgrades to default when later command unmatched", () => {
+  assertEquals(evaluateCommand("echo hi && unknown_cmd", samplePolicy).action, "default");
+});
+
+test("ask not downgraded when later command unmatched", () => {
+  assertEquals(evaluateCommand("rm file && unknown_cmd", samplePolicy).action, "ask");
+});
+
+test("allow-unmatched-allow does not re-grant allow", () => {
+  assertEquals(evaluateCommand("echo hi | unknown_cmd | echo bye", samplePolicy).action, "default");
+});
+
+test("allow-allow stays allow", () => {
+  assertEquals(evaluateCommand("echo hi | echo bye", samplePolicy).action, "allow");
+});
+
+test("unmatched-allow stays default", () => {
+  assertEquals(evaluateCommand("unknown_cmd | echo hi", samplePolicy).action, "default");
+});
+
+test("multiple commands - one deny triggers deny", () => {
+  const policy: PolicyCommands = { allow: [{ match: "echo", mode: "prefix" }], ask: [], deny: [{ match: "rm -rf /", mode: "substring" }] };
+  assertEquals(evaluateCommand("echo hi && rm -rf /", policy).action, "deny");
 });
 
 // Wrapper command extraction
-const wrapperTests: TestCase[] = [
-  {
-    name: "wrapper command extraction - sudo denied",
-    input: { command: "sudo ls -la" },
-    expected: { action: "deny" }
-  },
-  {
-    name: "wrapper command extraction - sudo prefix match",
-    input: { command: "sudo ls" },
-    expected: { action: "deny" }
-  },
-  {
-    name: "wrapper command extraction - bash -c wrapper",
-    setup: () => ({
-      policy: { allow: [{ match: "echo", mode: "prefix" }], ask: [], deny: [{ match: "rm", mode: "prefix" }] } as PolicyCommands
-    }),
-    input: { command: "bash -c 'rm -rf /'" },
-    expected: { action: "deny" }
-  },
-  {
-    name: "wrapper command extraction - nested wrappers",
-    input: { command: "sudo bash -c 'ls -la'" },
-    expected: { action: "deny" }
-  }
-];
+test("wrapper command extraction - sudo denied", () => {
+  assertEquals(evaluateCommand("sudo ls -la", samplePolicy).action, "deny");
+});
 
-runTestSuite("Wrapper Command Tests", wrapperTests, (tc) => {
-  const { policy } = tc.setup ? tc.setup() : { policy: samplePolicy };
-  const result = evaluateCommand(tc.input.command as string, policy as PolicyCommands);
-  assertEquals(result.action, tc.expected.action);
+test("wrapper command extraction - sudo prefix match", () => {
+  assertEquals(evaluateCommand("sudo ls", samplePolicy).action, "deny");
+});
+
+test("wrapper command extraction - bash -c wrapper", () => {
+  const policy: PolicyCommands = { allow: [{ match: "echo", mode: "prefix" }], ask: [], deny: [{ match: "rm", mode: "prefix" }] };
+  assertEquals(evaluateCommand("bash -c 'rm -rf /'", policy).action, "deny");
+});
+
+test("wrapper command extraction - nested wrappers", () => {
+  assertEquals(evaluateCommand("sudo bash -c 'ls -la'", samplePolicy).action, "deny");
 });
 
 // Error handling
-const errorHandlingTests: TestCase[] = [
-  {
-    name: "parse error returns ask",
-    input: { command: "echo 'unclosed" },
-    expected: { action: "ask", reasonIncludes: "Unparseable" }
-  },
-  {
-    name: "empty command returns ask",
-    input: { command: "" },
-    expected: { action: "ask" }
-  },
-  {
-    name: "whitespace-only command returns ask",
-    input: { command: "   \n\t  " },
-    expected: { action: "ask" }
-  },
-  {
-    name: "unknown command returns default",
-    input: { command: "unknown_cmd" },
-    expected: { action: "default" }
-  }
-];
+test("parse error returns ask", () => {
+  const result = evaluateCommand("echo 'unclosed", samplePolicy);
+  assertEquals(result.action, "ask");
+  assertTrue(result.reason?.includes("Unparseable"));
+});
 
-runTestSuite("Error Handling Tests", errorHandlingTests, (tc) => {
-  const result = evaluateCommand(tc.input.command as string, samplePolicy);
-  assertEquals(result.action, tc.expected.action);
-  if (tc.expected.reasonIncludes) {
-    assertTrue(result.reason?.includes(tc.expected.reasonIncludes as string));
-  }
+test("empty command returns ask", () => {
+  assertEquals(evaluateCommand("", samplePolicy).action, "ask");
+});
+
+test("whitespace-only command returns ask", () => {
+  assertEquals(evaluateCommand("   \n\t  ", samplePolicy).action, "ask");
+});
+
+test("unknown command returns default", () => {
+  assertEquals(evaluateCommand("unknown_cmd", samplePolicy).action, "default");
+});
+
+test("unknown match mode treated as no-match", () => {
+  const policy: PolicyCommands = { allow: [{ match: "ls", mode: "nonexistent" as any }], ask: [], deny: [] };
+  assertEquals(evaluateCommand("ls", policy).action, "default");
+});
+
+test("bare variable as command returns ask", () => {
+  assertEquals(evaluateCommand("$CMD", samplePolicy).action, "ask");
+});
+
+test("${VAR} as command returns ask", () => {
+  assertEquals(evaluateCommand("${CMD}", samplePolicy).action, "ask");
 });
 
 // ==================== END POLICY MATCHING TESTS ====================
 
 // ==================== MERGE POLICIES TESTS ====================
+console.log("\n=== Merge Policies Tests ===");
 
-const mergePoliciesTests: TestCase[] = [
-  {
-    name: "combines all sections",
-    input: {
-      p1: { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [] } as PolicyCommands,
-      p2: { allow: [], ask: [{ match: "rm", mode: "prefix" }], deny: [{ match: "sudo", mode: "prefix" }] } as PolicyCommands
-    },
-    expected: { allow: 1, ask: 1, deny: 1, firstAllow: "ls", firstAsk: "rm", firstDeny: "sudo" }
-  },
-  {
-    name: "combines multiple policies",
-    input: {
-      policies: [
-        { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [] } as PolicyCommands,
-        { allow: [{ match: "cat", mode: "prefix" }], ask: [], deny: [] } as PolicyCommands,
-        { allow: [{ match: "grep", mode: "prefix" }], ask: [], deny: [] } as PolicyCommands
-      ]
-    },
-    expected: { allow: 3, matches: ["ls", "cat", "grep"] }
-  },
-  {
-    name: "empty policies",
-    input: {
-      p1: { allow: [], ask: [], deny: [] } as PolicyCommands,
-      p2: { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [] } as PolicyCommands
-    },
-    expected: { allow: 1, ask: 0, deny: 0 }
-  },
-  {
-    name: "both empty",
-    input: {
-      p1: { allow: [], ask: [], deny: [] } as PolicyCommands,
-      p2: { allow: [], ask: [], deny: [] } as PolicyCommands
-    },
-    expected: { allow: 0, ask: 0, deny: 0 }
-  },
-  {
-    name: "order preservation",
-    input: {
-      policies: [
-        { allow: [{ match: "a", mode: "exact" }], ask: [], deny: [] } as PolicyCommands,
-        { allow: [{ match: "b", mode: "exact" }], ask: [], deny: [] } as PolicyCommands,
-        { allow: [{ match: "c", mode: "exact" }], ask: [], deny: [] } as PolicyCommands
-      ]
-    },
-    expected: { matches: ["a", "b", "c"] }
-  }
-];
+test("combines all sections", () => {
+  const p1: PolicyCommands = { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [] };
+  const p2: PolicyCommands = { allow: [], ask: [{ match: "rm", mode: "prefix" }], deny: [{ match: "sudo", mode: "prefix" }] };
+  const merged = mergePolicies(p1, p2);
+  assertEquals(merged.allow.length, 1);
+  assertEquals(merged.ask.length, 1);
+  assertEquals(merged.deny.length, 1);
+  assertEquals(merged.allow[0].match, "ls");
+  assertEquals(merged.ask[0].match, "rm");
+  assertEquals(merged.deny[0].match, "sudo");
+});
 
-runTestSuite("Merge Policies Tests", mergePoliciesTests, (tc) => {
-  let merged: PolicyCommands;
-  if (tc.input.policies) {
-    merged = mergePolicies(...(tc.input.policies as PolicyCommands[]));
-  } else {
-    merged = mergePolicies(tc.input.p1 as PolicyCommands, tc.input.p2 as PolicyCommands);
-  }
-  if (tc.expected.allow !== undefined) assertEquals(merged.allow.length, tc.expected.allow);
-  if (tc.expected.ask !== undefined) assertEquals(merged.ask.length, tc.expected.ask);
-  if (tc.expected.deny !== undefined) assertEquals(merged.deny.length, tc.expected.deny);
-  if (tc.expected.firstAllow) assertEquals(merged.allow[0].match, tc.expected.firstAllow);
-  if (tc.expected.firstAsk) assertEquals(merged.ask[0].match, tc.expected.firstAsk);
-  if (tc.expected.firstDeny) assertEquals(merged.deny[0].match, tc.expected.firstDeny);
-  if (tc.expected.matches) assertEquals(merged.allow.map((e) => e.match), tc.expected.matches);
+test("combines multiple policies", () => {
+  const merged = mergePolicies(
+    { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [] },
+    { allow: [{ match: "cat", mode: "prefix" }], ask: [], deny: [] },
+    { allow: [{ match: "grep", mode: "prefix" }], ask: [], deny: [] },
+  );
+  assertEquals(merged.allow.length, 3);
+  assertEquals(merged.allow.map((e) => e.match), ["ls", "cat", "grep"]);
+});
+
+test("empty policies", () => {
+  const p1: PolicyCommands = { allow: [], ask: [], deny: [] };
+  const p2: PolicyCommands = { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [] };
+  const merged = mergePolicies(p1, p2);
+  assertEquals(merged.allow.length, 1);
+  assertEquals(merged.ask.length, 0);
+  assertEquals(merged.deny.length, 0);
+});
+
+test("both empty", () => {
+  const p1: PolicyCommands = { allow: [], ask: [], deny: [] };
+  const p2: PolicyCommands = { allow: [], ask: [], deny: [] };
+  const merged = mergePolicies(p1, p2);
+  assertEquals(merged.allow.length, 0);
+  assertEquals(merged.ask.length, 0);
+  assertEquals(merged.deny.length, 0);
+});
+
+test("order preservation", () => {
+  const merged = mergePolicies(
+    { allow: [{ match: "a", mode: "exact" }], ask: [], deny: [] },
+    { allow: [{ match: "b", mode: "exact" }], ask: [], deny: [] },
+    { allow: [{ match: "c", mode: "exact" }], ask: [], deny: [] },
+  );
+  assertEquals(merged.allow.map((e) => e.match), ["a", "b", "c"]);
 });
 
 // ==================== END MERGE POLICIES TESTS ====================
 
 // ==================== EDGE CASE & REGRESSION TESTS ====================
+console.log("\n=== Edge Cases & Regression Tests ===");
 
 // Production policy from permissions.toml (actual real-world rules)
 const productionPolicy: PolicyCommands = {
@@ -1284,346 +895,331 @@ const productionPolicy: PolicyCommands = {
 };
 
 // Production policy tests
-const productionPolicyTests: TestCase[] = [
-  { name: "git push denied", input: { command: "git push origin main" }, expected: { action: "deny" } },
-  { name: "git status allowed", input: { command: "git status" }, expected: { action: "default" } },
-  { name: "rm -rf / denied", input: { command: "rm -rf /" }, expected: { action: "deny" } },
-  { name: "rm -rf / in text denied", input: { command: "echo hi && rm -rf /" }, expected: { action: "deny" } },
-  { name: "chmod asks", input: { command: "chmod +x script.sh" }, expected: { action: "ask" } },
-  { name: "rm asks", input: { command: "rm file.txt" }, expected: { action: "ask" } },
-  { name: "docker exec asks", input: { command: "docker exec -it container bash" }, expected: { action: "ask" } },
-  { name: "nix run asks", input: { command: "nix run nixpkgs#something" }, expected: { action: "ask" } },
-  { name: "jj describe asks", input: { command: "jj describe -m 'update'" }, expected: { action: "ask" } },
-  { name: "gh api POST pattern not matching", input: { command: "gh api repos/foo --method POST" }, expected: { action: "default" } },
-  { name: "gh api GET allowed", input: { command: "gh api repos/foo" }, expected: { action: "default" } },
-  { name: "sudo denied", input: { command: "sudo ls -la" }, expected: { action: "deny" } },
-  { name: "safe redirect to /dev/null allowed", input: { command: "ls 2>/dev/null" }, expected: { action: "allow" } },
-  { name: "redirect to file denied", input: { command: "echo hi > file.txt" }, expected: { action: "deny" } },
-  { name: "heredoc asks", input: { command: "cat <<EOF\nhello\nEOF" }, expected: { action: "ask" } },
-  { name: "quoted > not redirect", input: { command: "jq '.x > .y' file.json" }, expected: { action: "default" } },
-  { name: "echo with quoted > allowed", input: { command: "echo 'hello > world'" }, expected: { action: "allow" } },
-  { name: "grep with quoted > allowed", input: { command: "grep '>' file.txt" }, expected: { action: "allow" } }
-];
-
-runTestSuite("Production Policy Tests", productionPolicyTests, (tc) => {
-  const result = evaluateCommand(tc.input.command as string, productionPolicy);
-  assertEquals(result.action, tc.expected.action);
-});
+test("git push denied", () => { assertEquals(evaluateCommand("git push origin main", productionPolicy).action, "deny"); });
+test("git status allowed", () => { assertEquals(evaluateCommand("git status", productionPolicy).action, "default"); });
+test("rm -rf / denied", () => { assertEquals(evaluateCommand("rm -rf /", productionPolicy).action, "deny"); });
+test("rm -rf / in text denied", () => { assertEquals(evaluateCommand("echo hi && rm -rf /", productionPolicy).action, "deny"); });
+test("chmod asks", () => { assertEquals(evaluateCommand("chmod +x script.sh", productionPolicy).action, "ask"); });
+test("rm asks", () => { assertEquals(evaluateCommand("rm file.txt", productionPolicy).action, "ask"); });
+test("docker exec asks", () => { assertEquals(evaluateCommand("docker exec -it container bash", productionPolicy).action, "ask"); });
+test("nix run asks", () => { assertEquals(evaluateCommand("nix run nixpkgs#something", productionPolicy).action, "ask"); });
+test("jj describe asks", () => { assertEquals(evaluateCommand("jj describe -m 'update'", productionPolicy).action, "ask"); });
+test("gh api POST pattern not matching", () => { assertEquals(evaluateCommand("gh api repos/foo --method POST", productionPolicy).action, "default"); });
+test("gh api GET allowed", () => { assertEquals(evaluateCommand("gh api repos/foo", productionPolicy).action, "default"); });
+test("sudo denied", () => { assertEquals(evaluateCommand("sudo ls -la", productionPolicy).action, "deny"); });
+test("safe redirect to /dev/null allowed", () => { assertEquals(evaluateCommand("ls 2>/dev/null", productionPolicy).action, "allow"); });
+test("redirect to file denied", () => { assertEquals(evaluateCommand("echo hi > file.txt", productionPolicy).action, "deny"); });
+test("heredoc asks", () => { assertEquals(evaluateCommand("cat <<EOF\nhello\nEOF", productionPolicy).action, "ask"); });
+test("quoted > not redirect", () => { assertEquals(evaluateCommand("jq '.x > .y' file.json", productionPolicy).action, "default"); });
+test("echo with quoted > allowed", () => { assertEquals(evaluateCommand("echo 'hello > world'", productionPolicy).action, "allow"); });
+test("grep with quoted > allowed", () => { assertEquals(evaluateCommand("grep '>' file.txt", productionPolicy).action, "allow"); });
 
 // Regression tests
-const regressionTests: TestCase[] = [
-  { name: "bash -c git push denied", input: { command: "bash -c 'git push'" }, expected: { action: "deny" } },
-  { name: "echo with quoted rm -rf / - substring matches", input: { command: "echo 'rm -rf /'" }, expected: { action: "deny" } },
-  { name: "grep with sudo pattern allowed", input: { command: "grep 'sudo' file.txt" }, expected: { action: "allow" } },
-  { name: "bash -c rm -rf / denied", input: { command: "bash -c 'rm -rf /'" }, expected: { action: "deny" } },
-  { name: "sudo in substitution denied", input: { command: "$(sudo reboot)" }, expected: { action: "deny" } }
-];
-
-runTestSuite("Regression Tests", regressionTests, (tc) => {
-  const result = evaluateCommand(tc.input.command as string, productionPolicy);
-  assertEquals(result.action, tc.expected.action);
-});
+test("bash -c git push denied", () => { assertEquals(evaluateCommand("bash -c 'git push'", productionPolicy).action, "deny"); });
+test("echo with quoted rm -rf / - substring matches", () => { assertEquals(evaluateCommand("echo 'rm -rf /'", productionPolicy).action, "deny"); });
+test("grep with sudo pattern allowed", () => { assertEquals(evaluateCommand("grep 'sudo' file.txt", productionPolicy).action, "allow"); });
+test("bash -c rm -rf / denied", () => { assertEquals(evaluateCommand("bash -c 'rm -rf /'", productionPolicy).action, "deny"); });
+test("sudo in substitution denied", () => { assertEquals(evaluateCommand("$(sudo reboot)", productionPolicy).action, "deny"); });
 
 // Complex edge cases - tokenization/extraction
-const edgeCaseComplexTests: TestCase[] = [
-  { name: "deeply nested subshells", input: { command: "$(echo $(echo $(echo hi)))" }, expected: { minCommands: 3 } },
-  { name: "wrapper in wrapper", input: { command: "sudo bash -c 'sh -c \"echo hi\"'" }, expected: { hasCommands: ["sudo", "bash"] } },
-  { name: "complex pipeline with subshells", input: { command: "(cat a; cat b) | grep x | (sort | uniq)" }, expected: { minCommands: 5 } },
-  { name: "multiple && || combinations", input: { command: "cmd1 && cmd2 || cmd3 && cmd4" }, expected: { commandCount: 4 } },
-  { name: "long command chain", input: { command: "a | b | c | d | e | f | g" }, expected: { commandCount: 7 } }
-];
-
-runTestSuite("Edge Case Complex Tests", edgeCaseComplexTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
+test("deeply nested subshells", () => {
+  const tokens = tokenize("$(echo $(echo $(echo hi)))");
   const cmds = extractCommands(tokens);
-  if (tc.expected.minCommands) assertTrue(cmds.length >= tc.expected.minCommands);
-  if (tc.expected.commandCount) assertEquals(cmds.length, tc.expected.commandCount);
-  if (tc.expected.hasCommands) {
-    for (const name of tc.expected.hasCommands) {
-      assertTrue(cmds.some((c) => c.name === name), `Expected command ${name} not found`);
-    }
-  }
+  assertTrue(cmds.length >= 3);
+});
+
+test("wrapper in wrapper", () => {
+  const tokens = tokenize("sudo bash -c 'sh -c \"echo hi\"'");
+  const cmds = extractCommands(tokens);
+  assertTrue(cmds.some((c) => c.name === "sudo"));
+  assertTrue(cmds.some((c) => c.name === "bash"));
+});
+
+test("complex pipeline with subshells", () => {
+  const tokens = tokenize("(cat a; cat b) | grep x | (sort | uniq)");
+  const cmds = extractCommands(tokens);
+  assertTrue(cmds.length >= 5);
+});
+
+test("multiple && || combinations", () => {
+  const tokens = tokenize("cmd1 && cmd2 || cmd3 && cmd4");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 4);
+});
+
+test("long command chain", () => {
+  const tokens = tokenize("a | b | c | d | e | f | g");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 7);
 });
 
 // Edge cases - redirects
-const edgeCaseRedirectTests: TestCase[] = [
-  { name: "redirects in various positions", input: { command: "cmd > out 2> err < input" }, expected: { redirectCount: 3 } },
-  { name: "quoted heredoc delimiter", input: { command: "cat <<'EOF'\nhello\nEOF" }, expected: { tokenAt: { index: 1, value: { type: "redirect", op: "<<", target: "EOF" } } } },
-  { name: "escaped characters in arguments", input: { command: "echo 'foo*bar'" }, expected: { tokenAt: { index: 1, value: { type: "word", value: "foo*bar" } } } },
-  { name: "double quotes with variable", input: { command: "echo \"value is $VAR\"" }, expected: { tokenAt: { index: 1, value: { type: "word", value: "value is $VAR" } } } }
-];
+test("redirects in various positions", () => {
+  const tokens = tokenize("cmd > out 2> err < input");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds[0].redirects.length, 3);
+});
 
-runTestSuite("Edge Case Redirect Tests", edgeCaseRedirectTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
-  if (tc.expected.redirectCount) {
-    const cmds = extractCommands(tokens);
-    assertEquals(cmds[0].redirects.length, tc.expected.redirectCount);
-  }
-  if (tc.expected.tokenAt) {
-    assertEquals(tokens[tc.expected.tokenAt.index], tc.expected.tokenAt.value);
-  }
+test("quoted heredoc delimiter", () => {
+  const tokens = tokenize("cat <<'EOF'\nhello\nEOF");
+  assertEquals(tokens[1], { type: "redirect", op: "<<", target: "EOF" });
+});
+
+test("escaped characters in arguments", () => {
+  const tokens = tokenize("echo 'foo*bar'");
+  assertEquals(tokens[1], { type: "word", value: "foo*bar" });
+});
+
+test("double quotes with variable", () => {
+  const tokens = tokenize("echo \"value is $VAR\"");
+  assertEquals(tokens[1], { type: "word", value: "value is $VAR" });
 });
 
 // Edge cases - policy evaluation
-const edgeCasePolicyTests: TestCase[] = [
-  { name: "command with flags before args", input: { command: "ls -la /tmp" }, expected: { action: "allow" } },
-  { name: "subshell with redirection", input: { command: "(echo hi) > file.txt" }, expected: { hasSubshell: true } }
-];
+test("command with flags before args", () => {
+  assertEquals(evaluateCommand("ls -la /tmp", productionPolicy).action, "allow");
+});
 
-runTestSuite("Edge Case Policy Tests", edgeCasePolicyTests, (tc) => {
-  if (tc.expected.action) {
-    const result = evaluateCommand(tc.input.command as string, productionPolicy);
-    assertEquals(result.action, tc.expected.action);
-  }
-  if (tc.expected.hasSubshell) {
-    const tokens = tokenize(tc.input.command as string);
-    const cmds = extractCommands(tokens);
-    assertTrue(cmds.some((c) => c.source === "subshell"));
-  }
+test("subshell with redirection", () => {
+  const tokens = tokenize("(echo hi) > file.txt");
+  const cmds = extractCommands(tokens);
+  assertTrue(cmds.some((c) => c.source === "subshell"));
 });
 
 // Double dash edge cases
-const doubleDashTests: TestCase[] = [
-  { name: "double dash as word", input: { command: "grep -- -v file" }, expected: { length: 4, tokenAt: { index: 1, value: { type: "word", value: "--" } } } },
-  { name: "double dash command does not recurse for grep", input: { command: "grep -- -v file" }, expected: { commandCount: 1, firstCommand: { name: "grep", fullText: "grep -- -v file" } } },
-  { name: "double dash with sudo extraction", input: { command: "sudo -- ls -la" }, expected: { commandCount: 2, commands: [{ name: "sudo" }, { name: "ls" }] } },
-  { 
-    name: "double dash in bash -c wrapper", 
-    setup: () => ({ policy: { allow: [{ match: "grep", mode: "prefix" }], ask: [], deny: [] } as PolicyCommands }),
-    input: { command: "bash -c 'grep -- -v file'" }, 
-    expected: { action: "allow" } 
-  }
-];
+test("double dash as word", () => {
+  const tokens = tokenize("grep -- -v file");
+  assertEquals(tokens.length, 4);
+  assertEquals(tokens[1], { type: "word", value: "--" });
+});
 
-runTestSuite("Double Dash Tests", doubleDashTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
-  if (tc.expected.length) assertEquals(tokens.length, tc.expected.length);
-  if (tc.expected.tokenAt) assertEquals(tokens[tc.expected.tokenAt.index], tc.expected.tokenAt.value);
-  if (tc.expected.commandCount) {
-    const cmds = extractCommands(tokens);
-    assertEquals(cmds.length, tc.expected.commandCount);
-    if (tc.expected.firstCommand) {
-      if (tc.expected.firstCommand.name) assertEquals(cmds[0].name, tc.expected.firstCommand.name);
-      if (tc.expected.firstCommand.fullText) assertEquals(cmds[0].fullText, tc.expected.firstCommand.fullText);
-    }
-    if (tc.expected.commands) {
-      for (let i = 0; i < tc.expected.commands.length; i++) {
-        if (tc.expected.commands[i].name) assertEquals(cmds[i].name, tc.expected.commands[i].name);
-      }
-    }
-  }
-  if (tc.expected.action) {
-    const { policy } = tc.setup ? tc.setup() : { policy: productionPolicy };
-    const result = evaluateCommand(tc.input.command as string, policy as PolicyCommands);
-    assertEquals(result.action, tc.expected.action);
-  }
+test("double dash command does not recurse for grep", () => {
+  const tokens = tokenize("grep -- -v file");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 1);
+  assertEquals(cmds[0].name, "grep");
+  assertEquals(cmds[0].fullText, "grep -- -v file");
+});
+
+test("double dash with sudo extraction", () => {
+  const tokens = tokenize("sudo -- ls -la");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[0].name, "sudo");
+  assertEquals(cmds[1].name, "ls");
+});
+
+test("double dash in bash -c wrapper", () => {
+  const policy: PolicyCommands = { allow: [{ match: "grep", mode: "prefix" }], ask: [], deny: [] };
+  assertEquals(evaluateCommand("bash -c 'grep -- -v file'", policy).action, "allow");
 });
 
 // Multiline string handling
-const multilineTests: TestCase[] = [
-  { name: "multiline in double quotes", input: { command: "echo \"line1\nline2\"" }, expected: { length: 2, hasNewline: true } },
-  { name: "multiline in single quotes", input: { command: "echo 'line1\nline2'" }, expected: { length: 2, hasNewline: true } }
-];
+test("multiline in double quotes", () => {
+  const tokens = tokenize("echo \"line1\nline2\"");
+  assertEquals(tokens.length, 2);
+  assertTrue((tokens[1] as { value: string }).value.includes("\n"));
+});
 
-runTestSuite("Multiline Tests", multilineTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
-  assertEquals(tokens.length, tc.expected.length);
-  if (tc.expected.hasNewline) {
-    assertTrue((tokens[1] as { value: string }).value.includes("\n"));
-  }
+test("multiline in single quotes", () => {
+  const tokens = tokenize("echo 'line1\nline2'");
+  assertEquals(tokens.length, 2);
+  assertTrue((tokens[1] as { value: string }).value.includes("\n"));
 });
 
 // Heredoc with shell script content
-const heredocContentTests: TestCase[] = [
-  {
-    name: "heredoc with shell commands - text content not executed",
-    setup: () => ({
-      policy: { allow: [{ match: "cat", mode: "prefix" }], ask: [], deny: [{ match: "rm -rf /", mode: "substring" }] } as PolicyCommands
-    }),
-    input: { command: "cat <<EOF\nrm -rf /\nEOF" },
-    expected: { action: "allow" }
-  },
-  {
-    name: "bash heredoc - heredoc body not extracted",
-    setup: () => ({
-      policy: { allow: [{ match: "bash", mode: "prefix" }], ask: [], deny: [{ match: "rm", mode: "prefix" }] } as PolicyCommands
-    }),
-    input: { command: "bash <<EOF\nrm -rf /\nEOF" },
-    expected: { action: "allow" }
-  }
-];
+test("heredoc with shell commands - text content not executed", () => {
+  const policy: PolicyCommands = { allow: [{ match: "cat", mode: "prefix" }], ask: [], deny: [{ match: "rm -rf /", mode: "substring" }] };
+  assertEquals(evaluateCommand("cat <<EOF\nrm -rf /\nEOF", policy).action, "allow");
+});
 
-runTestSuite("Heredoc Content Tests", heredocContentTests, (tc) => {
-  const { policy } = tc.setup();
-  const result = evaluateCommand(tc.input.command as string, policy);
-  assertEquals(result.action, tc.expected.action);
+test("bash heredoc - heredoc body not extracted", () => {
+  const policy: PolicyCommands = { allow: [{ match: "bash", mode: "prefix" }], ask: [], deny: [{ match: "rm", mode: "prefix" }] };
+  assertEquals(evaluateCommand("bash <<EOF\nrm -rf /\nEOF", policy).action, "allow");
 });
 
 // Complex stderr/stdout redirect combinations
-const fdRedirectTests: TestCase[] = [
-  { name: "redirect stdout to file stderr to stdout", input: { command: "cmd > file 2>&1" }, expected: { redirectCount: 2, firstOp: ">", secondOp: "2>&" } },
-  { name: "redirect stderr first then stdout", input: { command: "cmd 2>&1 > file" }, expected: { redirectCount: 2, firstOp: "2>&", secondOp: ">" } },
-  { name: "explicit fd redirects", input: { command: "cmd 1>out.txt 2>err.txt" }, expected: { redirectCount: 2, firstOp: "1>", secondOp: "2>" } },
-  { name: "append with stderr merge", input: { command: "cmd >> file 2>&1" }, expected: { redirectCount: 2, firstOp: ">>", secondOp: "2>&" } },
-  { name: "bash ampersand redirect syntax", input: { command: "cmd &> file" }, expected: { minRedirects: 1 } }
-];
-
-runTestSuite("FD Redirect Tests", fdRedirectTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
+test("redirect stdout to file stderr to stdout", () => {
+  const tokens = tokenize("cmd > file 2>&1");
   const redirects = tokens.filter((t) => t.type === "redirect");
-  if (tc.expected.redirectCount) assertEquals(redirects.length, tc.expected.redirectCount);
-  if (tc.expected.minRedirects) assertTrue(redirects.length >= tc.expected.minRedirects);
-  if (tc.expected.firstOp) assertEquals((redirects[0] as { op: string }).op, tc.expected.firstOp);
-  if (tc.expected.secondOp) assertEquals((redirects[1] as { op: string }).op, tc.expected.secondOp);
+  assertEquals(redirects.length, 2);
+  assertEquals((redirects[0] as { op: string }).op, ">");
+  assertEquals((redirects[1] as { op: string }).op, "2>&");
+});
+
+test("redirect stderr first then stdout", () => {
+  const tokens = tokenize("cmd 2>&1 > file");
+  const redirects = tokens.filter((t) => t.type === "redirect");
+  assertEquals(redirects.length, 2);
+  assertEquals((redirects[0] as { op: string }).op, "2>&");
+  assertEquals((redirects[1] as { op: string }).op, ">");
+});
+
+test("explicit fd redirects", () => {
+  const tokens = tokenize("cmd 1>out.txt 2>err.txt");
+  const redirects = tokens.filter((t) => t.type === "redirect");
+  assertEquals(redirects.length, 2);
+  assertEquals((redirects[0] as { op: string }).op, "1>");
+  assertEquals((redirects[1] as { op: string }).op, "2>");
+});
+
+test("append with stderr merge", () => {
+  const tokens = tokenize("cmd >> file 2>&1");
+  const redirects = tokens.filter((t) => t.type === "redirect");
+  assertEquals(redirects.length, 2);
+  assertEquals((redirects[0] as { op: string }).op, ">>");
+  assertEquals((redirects[1] as { op: string }).op, "2>&");
+});
+
+test("bash ampersand redirect syntax", () => {
+  const tokens = tokenize("cmd &> file");
+  const redirects = tokens.filter((t) => t.type === "redirect");
+  assertTrue(redirects.length >= 1);
 });
 
 // Deny keyword in various contexts
-const denyContextTests: TestCase[] = [
-  {
-    name: "deny substring in heredoc body - not extracted",
-    setup: () => ({
-      policy: { allow: [{ match: "bash", mode: "prefix" }], ask: [], deny: [{ match: "rm -rf /", mode: "substring" }] } as PolicyCommands
-    }),
-    input: { command: "bash <<EOF\necho hi\nrm -rf /\nEOF" },
-    expected: { action: "allow" }
-  },
-  {
-    name: "deny keyword in quoted string still matches substring",
-    setup: () => ({
-      policy: { allow: [], ask: [], deny: [{ match: "rm -rf /", mode: "substring" }] } as PolicyCommands
-    }),
-    input: { command: "echo 'rm -rf /'" },
-    expected: { action: "deny" }
-  }
-];
+test("deny substring in heredoc body - not extracted", () => {
+  const policy: PolicyCommands = { allow: [{ match: "bash", mode: "prefix" }], ask: [], deny: [{ match: "rm -rf /", mode: "substring" }] };
+  assertEquals(evaluateCommand("bash <<EOF\necho hi\nrm -rf /\nEOF", policy).action, "allow");
+});
 
-runTestSuite("Deny Context Tests", denyContextTests, (tc) => {
-  const { policy } = tc.setup();
-  const result = evaluateCommand(tc.input.command as string, policy);
-  assertEquals(result.action, tc.expected.action);
+test("deny keyword in quoted string still matches substring", () => {
+  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "rm -rf /", mode: "substring" }] };
+  assertEquals(evaluateCommand("echo 'rm -rf /'", policy).action, "deny");
 });
 
 // Complex multiline command
-const multilineCommandTests: TestCase[] = [
-  { name: "complex multiline command", input: { command: "echo 'start' && \\\n  echo 'middle' && \\\n  echo 'end'" }, expected: { commandCount: 3, allEcho: true } }
-];
-
-runTestSuite("Multiline Command Tests", multilineCommandTests, (tc) => {
-  const tokens = tokenize(tc.input.command as string);
+test("complex multiline command", () => {
+  const tokens = tokenize("echo 'start' && \\\n  echo 'middle' && \\\n  echo 'end'");
   const cmds = extractCommands(tokens);
-  assertEquals(cmds.length, tc.expected.commandCount);
-  if (tc.expected.allEcho) {
-    assertEquals(cmds.every((c) => c.name === "echo"), true);
-  }
+  assertEquals(cmds.length, 3);
+  assertEquals(cmds.every((c) => c.name === "echo"), true);
 });
 
 // SECURITY: Double-dash wrapper bypass attempts
-const securityTests: TestCase[] = [
-  {
-    name: "passthrough wrapper skips -- and extracts inner command",
-    setup: () => ({
-      tokens: tokenize("time -- echo hi"),
-      policy: { allow: [{ match: "time", mode: "prefix" }], ask: [], deny: [{ match: "echo", mode: "prefix" }] } as PolicyCommands
-    }),
-    input: { command: "time -- echo hi" },
-    expected: { commandCount: 2, commands: [{ name: "time", source: "direct" }, { name: "echo", source: "wrapper-arg" }], action: "deny", reasonIncludes: "echo" }
-  },
-  {
-    name: "bash -c -- 'cmd' treats -- as command string",
-    input: { command: "bash -c -- 'rm -rf /'" },
-    expected: { commandCount: 2, commands: [{ name: "bash" }, { name: "--" }] }
-  },
-  {
-    name: "bash -c without -- extracts correctly",
-    input: { command: "bash -c 'rm -rf /'" },
-    expected: { commandCount: 2, commands: [{ name: "bash" }, { name: "rm" }] }
-  },
-  {
-    name: "env -- VAR=val cmd extracts actual utility",
-    input: { command: "env -- VAR=val cmd" },
-    expected: { commandCount: 2, commands: [{ name: "env" }, { name: "cmd" }] }
-  }
-];
+test("passthrough wrapper skips -- and extracts inner command", () => {
+  const tokens = tokenize("time -- echo hi");
+  const policy: PolicyCommands = { allow: [{ match: "time", mode: "prefix" }], ask: [], deny: [{ match: "echo", mode: "prefix" }] };
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[0].name, "time");
+  assertEquals(cmds[0].source, "direct");
+  assertEquals(cmds[1].name, "echo");
+  assertEquals(cmds[1].source, "wrapper-arg");
+  const result = evaluateCommand("time -- echo hi", policy);
+  assertEquals(result.action, "deny");
+  assertTrue(result.reason?.includes("echo"));
+});
 
-runTestSuite("Security Tests", securityTests, (tc) => {
-  const { tokens, policy } = tc.setup ? tc.setup() : { tokens: undefined, policy: undefined };
-  const testTokens = tokens || tokenize(tc.input.command as string);
-  const cmds = extractCommands(testTokens);
-  if (tc.expected.commandCount) assertEquals(cmds.length, tc.expected.commandCount);
-  if (tc.expected.commands) {
-    for (let i = 0; i < tc.expected.commands.length; i++) {
-      if (tc.expected.commands[i].name) assertEquals(cmds[i].name, tc.expected.commands[i].name);
-      if (tc.expected.commands[i].source) assertEquals(cmds[i].source, tc.expected.commands[i].source);
-    }
-  }
-  if (tc.expected.action && policy) {
-    const result = evaluateCommand(tc.input.command as string, policy);
-    assertEquals(result.action, tc.expected.action);
-    if (tc.expected.reasonIncludes) {
-      assertTrue(result.reason?.includes(tc.expected.reasonIncludes as string));
-    }
-  }
+test("bash -c -- 'cmd' treats -- as command string", () => {
+  const tokens = tokenize("bash -c -- 'rm -rf /'");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[0].name, "bash");
+  assertEquals(cmds[1].name, "--");
+});
+
+test("bash -c without -- extracts correctly", () => {
+  const tokens = tokenize("bash -c 'rm -rf /'");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[0].name, "bash");
+  assertEquals(cmds[1].name, "rm");
+});
+
+test("env -- VAR=val cmd extracts actual utility", () => {
+  const tokens = tokenize("env -- VAR=val cmd");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[0].name, "env");
+  assertEquals(cmds[1].name, "cmd");
 });
 
 // ==================== EXTENSIBILITY TESTS ====================
+console.log("\n=== Extensibility Tests ===");
 
-const extensibilityTests: TestCase[] = [
-  {
-    name: "custom wrapper via config without code change",
-    setup: () => ({
-      customRules: buildWrapperRuleMap([{ name: "custom-wrapper", kind: "utility-operand" } as WrapperRuleConfig])
-    }),
-    input: { command: "custom-wrapper -- cmd arg" },
-    expected: { commandCount: 2, firstCommand: { name: "custom-wrapper" }, secondCommand: { name: "cmd", source: "wrapper-arg" } }
-  },
-  {
-    name: "evaluateCommand with custom wrapper rules",
-    setup: () => ({
-      customRules: buildWrapperRuleMap([{ name: "mycmd", kind: "utility-operand" } as WrapperRuleConfig]),
-      policy: { allow: [{ match: "inner", mode: "prefix" }], ask: [], deny: [] } as PolicyCommands
-    }),
-    input: { command: "mycmd inner" },
-    expected: { action: "allow" }
-  }
-];
+test("custom wrapper via config without code change", () => {
+  const customRules = buildWrapperRuleMap([{ name: "custom-wrapper", kind: "utility-operand" } as WrapperRuleConfig]);
+  const tokens = tokenize("custom-wrapper -- cmd arg");
+  const cmds = extractCommands(tokens, "direct", customRules);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[0].name, "custom-wrapper");
+  assertEquals(cmds[1].name, "cmd");
+  assertEquals(cmds[1].source, "wrapper-arg");
+});
 
-runTestSuite("Extensibility Tests", extensibilityTests, (tc) => {
-  const { customRules, policy } = tc.setup();
-  if (tc.expected.commandCount) {
-    const tokens = tokenize(tc.input.command as string);
-    const cmds = extractCommands(tokens, "direct", customRules);
-    assertEquals(cmds.length, tc.expected.commandCount);
-    if (tc.expected.firstCommand) {
-      if (tc.expected.firstCommand.name) assertEquals(cmds[0].name, tc.expected.firstCommand.name);
-      if (tc.expected.firstCommand.source) assertEquals(cmds[0].source, tc.expected.firstCommand.source);
-    }
-    if (tc.expected.secondCommand) {
-      if (tc.expected.secondCommand.name) assertEquals(cmds[1].name, tc.expected.secondCommand.name);
-      if (tc.expected.secondCommand.source) assertEquals(cmds[1].source, tc.expected.secondCommand.source);
-    }
-  }
-  if (tc.expected.action) {
-    const result = evaluateCommand(tc.input.command as string, policy, customRules);
-    assertEquals(result.action, tc.expected.action);
-  }
+test("evaluateCommand with custom wrapper rules", () => {
+  const customRules = buildWrapperRuleMap([{ name: "mycmd", kind: "utility-operand" } as WrapperRuleConfig]);
+  const policy: PolicyCommands = { allow: [{ match: "inner", mode: "prefix" }], ask: [], deny: [] };
+  assertEquals(evaluateCommand("mycmd inner", policy, customRules).action, "allow");
+});
+
+test("buildWrapperRuleMap overrides builtin", () => {
+  const rules = buildWrapperRuleMap([{ name: "sudo", kind: "shell-c" } as WrapperRuleConfig]);
+  const tokens = tokenize("sudo -c 'echo hi'");
+  const cmds = extractCommands(tokens, "direct", rules);
+  assertTrue(cmds.some((c) => c.name === "echo" && c.source === "wrapper-arg"));
+});
+
+test("buildWrapperRuleMap with undefined entries", () => {
+  const rules = buildWrapperRuleMap(undefined);
+  const tokens = tokenize("sudo ls");
+  const cmds = extractCommands(tokens, "direct", rules);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[1].name, "ls");
 });
 
 // ==================== END EDGE CASE & REGRESSION TESTS ====================
 
-// Run all tests and print summary
-function runAllTests(): void {
-  console.log("=== Shell Policy Engine Test Suite ===\n");
+// ==================== NORMALIZE CONFIG TESTS ====================
+console.log("\n=== Normalize Config Tests ===");
 
-  // Execute all registered test suites
-  executeTestSuites();
+test("normalizeShellPolicyConfig - null input", () => {
+  const config = normalizeShellPolicyConfig(null);
+  assertEquals(config.commands, { allow: [], ask: [], deny: [] });
+});
 
-  console.log("\n=== Summary ===");
-  console.log(`${stats.passed} passed, ${stats.failed} failed`);
-  if (stats.failures.length > 0) {
-    console.log("\nFailures:");
-    stats.failures.forEach((f) => console.log(`  - ${f}`));
-    process.exit(1);
-  }
+test("normalizeShellPolicyConfig - valid commands key", () => {
+  const config = normalizeShellPolicyConfig({
+    commands: { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [] },
+  });
+  assertEquals(config.commands.allow.length, 1);
+  assertEquals(config.commands.allow[0].match, "ls");
+});
+
+test("normalizeShellPolicyConfig - bare policy (no commands key)", () => {
+  const config = normalizeShellPolicyConfig({
+    allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [],
+  });
+  assertEquals(config.commands.allow.length, 1);
+});
+
+test("normalizeShellPolicyConfig - invalid wrappers filtered", () => {
+  const config = normalizeShellPolicyConfig({
+    commands: { allow: [], ask: [], deny: [] },
+    wrappers: [
+      { name: "valid", kind: "shell-c" },
+      { name: "bad", kind: "nonexistent" },
+      null,
+      42,
+    ],
+  });
+  assertEquals(config.wrappers?.length, 1);
+  assertEquals(config.wrappers?.[0].name, "valid");
+});
+
+test("normalizeShellPolicyConfig - non-array fields default to empty", () => {
+  const config = normalizeShellPolicyConfig({ commands: { allow: "bad", ask: 42, deny: null } });
+  assertEquals(config.commands, { allow: [], ask: [], deny: [] });
+});
+
+// ==================== END NORMALIZE CONFIG TESTS ====================
+
+// Tests run inline above; print summary
+console.log("\n=== Summary ===");
+console.log(`${stats.passed} passed, ${stats.failed} failed`);
+if (stats.failures.length > 0) {
+  console.log("\nFailures:");
+  stats.failures.forEach((f) => console.log(`  - ${f}`));
+  process.exit(1);
 }
-
-runAllTests();

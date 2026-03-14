@@ -9,71 +9,48 @@ import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { Container, Text, Box, Spacer } from "@mariozechner/pi-tui";
+import {
+  evaluateCommand,
+  mergePolicies,
+  buildWrapperRuleMap,
+  normalizeShellPolicyConfig,
+  getCommandSummary,
+  type PolicyCommands,
+  type WrapperRuleConfig,
+} from "../lib/shell-policy.js";
 
-// --- Policy types and utilities (duplicated from safety-gate.ts) ---
+// Pi-specific structural policies for plan mode (not in shared permissions.toml)
+const piPlanStructuralPolicy: PolicyCommands = {
+  allow: [],
+  ask: [],
+  deny: [{ match: "*", mode: "has-redirect" }],
+};
 
-interface CommandEntry {
-  match: string;
-  mode: "exact" | "prefix" | "substring";
-}
+// --- Policy types ---
 
 interface PlanPolicy {
   tools: Record<string, boolean>;
-  commands: {
-    deny: CommandEntry[];
-    ask: CommandEntry[];
-    allow: CommandEntry[];
-  };
-}
-
-function escapeRegex(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function toRegex(entry: CommandEntry): RegExp {
-  const { match, mode } = entry;
-  const escaped = escapeRegex(match);
-  const shellBoundary =
-    `(?:^|\\|\\||&&|[&;|]|[({` + "`" + `\\n])\\s*`;
-  switch (mode) {
-    case "exact":
-      return new RegExp(`^\\s*${escaped}\\s*$`, "i");
-    case "substring":
-      return new RegExp(`\\b${escaped}\\b`, "i");
-    case "prefix":
-    default:
-      return new RegExp(`${shellBoundary}${escaped}\\b`, "i");
-  }
-}
-
-function getCommandSummary(command: string): string {
-  return command.length > 80 ? command.slice(0, 77) + "..." : command;
+  commands: PolicyCommands;
+  wrappers?: WrapperRuleConfig[];
 }
 
 function loadPlanPolicy(): PlanPolicy | null {
   try {
     const extDir = path.dirname(fileURLToPath(import.meta.url));
-    return JSON.parse(fs.readFileSync(path.join(extDir, "plan-mode.json"), "utf-8"));
+    const raw = JSON.parse(fs.readFileSync(path.join(extDir, "../plan-mode.json"), "utf-8"));
+    const shellConfig = normalizeShellPolicyConfig({ commands: raw.commands, wrappers: raw.wrappers });
+    return {
+      tools: typeof raw.tools === "object" && raw.tools !== null ? raw.tools : {},
+      commands: shellConfig.commands,
+      wrappers: shellConfig.wrappers,
+    };
   } catch {
     return null;
   }
 }
 
-interface PlanPatterns {
-  deny: RegExp[];
-  ask: RegExp[];
-  allow: RegExp[];
-}
-
 // Loaded once at extension init
 const planPolicy = loadPlanPolicy();
-const planPatterns: PlanPatterns | null = planPolicy
-  ? {
-      deny: planPolicy.commands.deny.map(toRegex),
-      ask: planPolicy.commands.ask.map(toRegex),
-      allow: planPolicy.commands.allow.map(toRegex),
-    }
-  : null;
 
 // --- Plan state management ---
 
@@ -85,7 +62,7 @@ interface PlanState {
 export default function (pi: ExtensionAPI) {
   const PLAN_DIR = path.join(os.homedir(), ".pi/agent/plans");
 
-  const stateMap = new Map<string, PlanState>();
+  const stateMap = new Map<string, PlanState | null>();
 
   function getPlanPath(
     projectDir: string,
@@ -109,7 +86,7 @@ export default function (pi: ExtensionAPI) {
       }
     }
 
-    if (state) stateMap.set(sessionId, state);
+    stateMap.set(sessionId, state);
     return state;
   }
 
@@ -194,6 +171,12 @@ ${planContent}`,
 
       saveState(ctx, { phase: "plan", approved: false });
       updatePlanWidget(ctx);
+
+      // If no args and plan file exists, enter plan mode silently
+      if (!args && fs.existsSync(planPath)) {
+        ctx.ui.notify("Plan mode active. Existing plan loaded.", "info");
+        return;
+      }
 
       pi.sendMessage(
         {
@@ -403,42 +386,43 @@ How to verify the complete implementation after all steps are done.
     }
 
     // Bash command blocking from [mode.plan.commands]
-    if (event.toolName === "bash" && typeof event.input?.command === "string" && planPatterns) {
-      const cmd = event.input.command;
-
-      // Deny: block silently
-      if (planPatterns.deny.some((p) => p.test(cmd))) {
-        return {
-          block: true,
-          reason: `Plan mode: Command blocked by policy: "${getCommandSummary(cmd)}"`,
-        };
+    if (event.toolName === "bash" && typeof event.input?.command === "string") {
+      if (!planPolicy) {
+        return { block: true, reason: "Plan mode: Shell commands blocked (plan policy unavailable)" };
       }
+      const cmd = event.input.command;
+      const wrapperRules = buildWrapperRuleMap(planPolicy.wrappers);
+      const result = evaluateCommand(cmd, mergePolicies(planPolicy.commands, piPlanStructuralPolicy), wrapperRules);
 
-      // Ask: show confirmation dialog
-      if (planPatterns.ask.some((p) => p.test(cmd))) {
-        if (!ctx.hasUI) {
+      switch (result.action) {
+        case "deny":
           return {
             block: true,
-            reason: `Plan mode: Command blocked (no UI): "${getCommandSummary(cmd)}"`,
+            reason: `Plan mode: Command blocked by policy: "${getCommandSummary(cmd)}"`,
           };
+        case "ask": {
+          if (!ctx.hasUI) {
+            return {
+              block: true,
+              reason: `Plan mode: Command blocked (no UI): "${getCommandSummary(cmd)}"`,
+            };
+          }
+          const choice = await ctx.ui.select(
+            `Plan mode confirm: ${getCommandSummary(cmd)}`,
+            ["Yes, proceed", "No, cancel"],
+          );
+          if (choice !== "Yes, proceed") {
+            ctx.ui.notify("Command cancelled by user", "info");
+            return { block: true, reason: "Blocked by user" };
+          }
+          return { block: false };
         }
-        const choice = await ctx.ui.select(
-          `Plan mode confirm: ${getCommandSummary(cmd)}`,
-          ["Yes, proceed", "No, cancel"],
-        );
-        if (choice !== "Yes, proceed") {
-          ctx.ui.notify("Command cancelled by user", "info");
-          return { block: true, reason: "Blocked by user" };
-        }
-        return { block: false };
+        case "allow":
+          return { block: false };
+        case "default":
+          // No match → return undefined → safety-gate handles defaults
+          return undefined;
       }
-
-      // Allow: explicitly allow (skip safety-gate for this command)
-      if (planPatterns.allow.some((p) => p.test(cmd))) {
-        return { block: false };
-      }
-
-      // No match → return undefined → safety-gate handles defaults
     }
   });
 
@@ -451,10 +435,11 @@ How to verify the complete implementation after all steps are done.
     if (state?.phase !== "plan") return;
 
     // Inject plan mode reminder as a hidden message (AI sees it, user doesn't)
+    const planPath = getPlanPath(ctx.cwd, ctx.sessionManager.getSessionFile());
     return {
       message: {
         customType: "plan-mode-context",
-        content: `[Plan mode active - do NOT execute any changes, only read-only exploration and planning]
+        content: `[Plan mode active - do NOT execute any changes, only read-only exploration and planning; only write a plan to ${planPath}]
 
 User instruction: ${event.prompt}`,
         display: false,

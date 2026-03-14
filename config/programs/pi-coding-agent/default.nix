@@ -14,9 +14,7 @@ let
 
   agentPermissionsPath = ../../../var/agents/permissions.pi.toml;
   agentPermissions =
-    if builtins.pathExists agentPermissionsPath
-    then lib.importTOML agentPermissionsPath
-    else { };
+    if builtins.pathExists agentPermissionsPath then lib.importTOML agentPermissionsPath else { };
 
   wrappedPi = pkgs.writeScriptBin "pi" ''
     #!${pkgs.runtimeShell}
@@ -36,27 +34,54 @@ let
 
   # Generate JSON config for safety-gate extension
   safetyGateJson = builtins.toJSON {
-    allow = permissionsToml.default.commands.allow.shell
-      ++ ((agentPermissions.default or { }).commands.allow.shell or [ ]);
-    ask = permissionsToml.default.commands.ask.shell
-      ++ ((agentPermissions.default or { }).commands.ask.shell or [ ]);
-    deny = permissionsToml.default.commands.deny.shell
-      ++ ((agentPermissions.default or { }).commands.deny.shell or [ ]);
+    commands = {
+      allow =
+        permissionsToml.default.commands.allow.shell
+        ++ ((agentPermissions.default or { }).commands.allow.shell or [ ]);
+      ask =
+        permissionsToml.default.commands.ask.shell
+        ++ ((agentPermissions.default or { }).commands.ask.shell or [ ]);
+      deny =
+        permissionsToml.default.commands.deny.shell
+        ++ ((agentPermissions.default or { }).commands.deny.shell or [ ]);
+    };
+    wrappers = (permissionsToml.default.commands.wrappers or [ ]);
   };
 
   # Generate JSON config for plan-mode extension (plan-specific entries only)
   planModeJson = builtins.toJSON {
-    tools = permissionsToml.mode.plan.tools or { edit = false; write = false; };
+    tools =
+      permissionsToml.mode.plan.tools or {
+        edit = false;
+        write = false;
+      };
     commands = {
       deny = (permissionsToml.mode.plan.commands or { }).deny.shell or [ ];
       ask = (permissionsToml.mode.plan.commands or { }).ask.shell or [ ];
       allow = (permissionsToml.mode.plan.commands or { }).allow.shell or [ ];
     };
+    wrappers = (permissionsToml.mode.plan.commands.wrappers or [ ]);
   };
 
-  # Load static TypeScript extensions
-  safetyGateTs = builtins.readFile ./safety-gate.ts;
-  planModeTs = builtins.readFile ./plan-mode.ts;
+  # Write JSON files to store paths (safer than echo in shell)
+  safetyGateJsonFile = pkgs.writeTextFile {
+    name = "safety-gate.json";
+    text = safetyGateJson;
+  };
+
+  planModeJsonFile = pkgs.writeTextFile {
+    name = "plan-mode.json";
+    text = planModeJson;
+  };
+
+  # Combine bundled extensions with generated JSON configs into a single directory
+  bundledExtensions = pkgs.runCommand "pi-bundled-extensions" { } ''
+    mkdir -p $out
+    cp -r ${./extensions}/. $out/
+    cp ${safetyGateJsonFile} $out/safety-gate.json
+    cp ${planModeJsonFile} $out/plan-mode.json
+  '';
+
 in
 {
   programs.pi-coding-agent = {
@@ -435,9 +460,6 @@ in
 
   home.file = {
     ".pi/agent/skills/home-manager".source = skillsDir;
-    ".pi/agent/extensions/safety-gate.ts".text = safetyGateTs;
-    ".pi/agent/extensions/safety-gate.json".text = safetyGateJson;
-    ".pi/agent/extensions/plan-mode.ts".text = planModeTs;
-    ".pi/agent/extensions/plan-mode.json".text = planModeJson;
+    ".pi/agent/extensions/home-manager".source = bundledExtensions;
   };
 }

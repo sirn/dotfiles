@@ -1,0 +1,12 @@
+{
+  "name": "pi-extension-home-manager",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "pi": {
+    "extensions": [
+      "./extensions/safety-gate.ts",
+      "./extensions/plan-mode.ts"
+    ]
+  }
+}
