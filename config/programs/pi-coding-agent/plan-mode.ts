@@ -77,7 +77,12 @@ export default function (pi: ExtensionAPI) {
         const text = typeof message.content === "string" ? message.content : fallback;
         box.addChild(new Text(text, 0, 0));
       } else {
-        box.addChild(new Text(theme.fg(colorKey, theme.bold(header)) + theme.fg("muted", ` (${keyHint("expandTools", "to expand")})`), 0, 0));
+        const userInstruction = message.details?.userInstruction || fallback;
+        box.addChild(new Text(theme.fg(colorKey, theme.bold(header)), 0, 0));
+        box.addChild(new Spacer(1));
+        box.addChild(new Text(userInstruction, 0, 0));
+        box.addChild(new Spacer(1));
+        box.addChild(new Text(theme.fg("muted", `(${keyHint("expandTools", "to expand")})`), 0, 0));
       }
 
       container.addChild(box);
@@ -163,6 +168,7 @@ How to verify the complete implementation after all steps are done.
 
 Do NOT write any code yet. Just create the plan file.`,
           display: true,
+          details: { userInstruction: args || "The requested feature" },
         },
         { triggerTurn: true },
       );
