@@ -2,7 +2,7 @@
   imports = [
     ./home/fonts.nix
     ./home/home.nix
-    ./home/notification.nix
+    ./home/notification
 
     # programs
     ./programs/1password.nix

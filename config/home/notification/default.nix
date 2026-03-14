@@ -13,7 +13,7 @@ let
       pkgs.jq
       pkgs.toastify
     ];
-    text = builtins.readFile ../programs/claude-code/notify.sh;
+    text = builtins.readFile ../../programs/claude-code/notify.sh;
   };
 
   # Gemini CLI: AfterAgent hook with prompt_response from stdin
@@ -23,7 +23,7 @@ let
       pkgs.jq
       pkgs.toastify
     ];
-    text = builtins.readFile ../programs/gemini/notify.sh;
+    text = builtins.readFile ../../programs/gemini/notify.sh;
   };
 
   # Codex: notify hook with last-assistant-message from arguments or stdin
@@ -33,7 +33,7 @@ let
       pkgs.jq
       pkgs.toastify
     ];
-    text = builtins.readFile ../programs/codex/notify.sh;
+    text = builtins.readFile ../../programs/codex/notify.sh;
   };
 
 in
@@ -81,7 +81,7 @@ in
     lib.mkIf config.programs.opencode.enable
       {
         text = builtins.replaceStrings [ "\"__TOASTIFY_BIN__\"" ] [ "\"${lib.getExe pkgs.toastify}\"" ] (
-          builtins.readFile ../programs/opencode/notify-turn-complete.ts
+          builtins.readFile ./notification-opencode.ts
         );
       };
 
@@ -89,7 +89,7 @@ in
     lib.mkIf config.programs.pi-coding-agent.enable
       {
         text = builtins.replaceStrings [ "\"__TOASTIFY_BIN__\"" ] [ "\"${lib.getExe pkgs.toastify}\"" ] (
-          builtins.readFile ../programs/pi-coding-agent/notify-turn-complete.ts
+          builtins.readFile ./notification-pi.ts
         );
       };
 }

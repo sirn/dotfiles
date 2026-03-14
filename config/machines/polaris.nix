@@ -20,7 +20,7 @@
     ../home/i18n.nix
     ../home/laptop.nix
     ../home/niri.nix
-    ../home/notification.nix
+    ../home/notification
     ../home/sway.nix
     ../home/uwsm.nix
 
