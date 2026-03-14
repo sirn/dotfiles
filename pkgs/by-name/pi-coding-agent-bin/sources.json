@@ -1,21 +1,21 @@
 {
-  "version": "0.57.1",
+  "version": "0.58.1",
   "systems": {
     "aarch64-linux": {
-      "url": "https://github.com/badlogic/pi-mono/releases/download/v0.57.1/pi-linux-arm64.tar.gz",
-      "hash": "sha256-GrX78MvEEKaM6MOAEGttfW4v6ryg3KJ7jmi3dw6h9K0="
+      "url": "https://github.com/badlogic/pi-mono/releases/download/v0.58.1/pi-linux-arm64.tar.gz",
+      "hash": "sha256-w3unkbb3xS+PTUoLxKuOkvo1XtGvo2UPDDG9Jam6wbA="
     },
     "x86_64-linux": {
-      "url": "https://github.com/badlogic/pi-mono/releases/download/v0.57.1/pi-linux-x64.tar.gz",
-      "hash": "sha256-ghQwKFWi+oPRW0cGvI6L6Rommqy0lhTBSqc/0sKqZac="
+      "url": "https://github.com/badlogic/pi-mono/releases/download/v0.58.1/pi-linux-x64.tar.gz",
+      "hash": "sha256-A1EQGBbfU/dCl31DfJXOUHc2i0G8v2hV5URjV0TsEQ0="
     },
     "x86_64-darwin": {
-      "url": "https://github.com/badlogic/pi-mono/releases/download/v0.57.1/pi-darwin-x64.tar.gz",
-      "hash": "sha256-vGdzPOmldi00rmCP62Va53Q08fU1qgimXG3kBFt37HM="
+      "url": "https://github.com/badlogic/pi-mono/releases/download/v0.58.1/pi-darwin-x64.tar.gz",
+      "hash": "sha256-pzLD8KBz2SPgYE3LKa7LNduM3yq5lVNH37CdNlcED0g="
     },
     "aarch64-darwin": {
-      "url": "https://github.com/badlogic/pi-mono/releases/download/v0.57.1/pi-darwin-arm64.tar.gz",
-      "hash": "sha256-T8cLJKI+ODscNW6jdiDhGJ1ohCDfNrSMSbR1eJ9eD44="
+      "url": "https://github.com/badlogic/pi-mono/releases/download/v0.58.1/pi-darwin-arm64.tar.gz",
+      "hash": "sha256-EA6FHcFxDA5cwO8SYOoGVYl6Y2LeTzKD0xOpdn70+1c="
     }
   }
 }
