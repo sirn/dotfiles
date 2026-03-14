@@ -16,9 +16,10 @@ let
 
   agentPermissionsPath = ../../../var/agents/permissions.opencode.toml;
   agentPermissions =
-    if builtins.pathExists agentPermissionsPath
-    then builtins.fromTOML (builtins.readFile agentPermissionsPath)
-    else { };
+    if builtins.pathExists agentPermissionsPath then
+      builtins.fromTOML (builtins.readFile agentPermissionsPath)
+    else
+      { };
 
   effectivePolicy =
     mode:
