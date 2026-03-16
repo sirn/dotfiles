@@ -96,8 +96,7 @@ let
         }
       else
         {
-          command = lib.getExe pkgs.local.mcpServers.mcp-remote;
-          args = [ server.url ];
+          url = server.url;
         }
     ) servers;
 

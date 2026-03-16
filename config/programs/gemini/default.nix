@@ -191,8 +191,7 @@ let
             }
           else
             {
-              command = lib.getExe pkgs.local.mcpServers.mcp-remote;
-              args = [ server.url ];
+              url = server.url;
             };
         # Add trust setting based on allowedTools
         trustConfig = if tools == null then { trust = true; } else { };

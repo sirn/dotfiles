@@ -17,10 +17,6 @@ in
 
   envWrapper = (callPackage ./by-name/env-wrapper/package.nix { });
 
-  mcpServers = {
-    mcp-remote = (callPackage ./by-name/mcp-servers/mcp-remote/package.nix { });
-  };
-
   wrapped-uv = (callPackage ./by-name/wrapped-uv/wrapped.nix { });
 
   tincan = (callPackage ./by-name/tincan/package.nix { });

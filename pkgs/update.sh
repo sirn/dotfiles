@@ -76,7 +76,6 @@ main() {
         sleep 5
 
         _update --argstr skip-prompt true --argstr path local || exit 1
-        _update --argstr skip-prompt true --argstr path local.mcpServers || exit 1
         exit 0
     fi
 
