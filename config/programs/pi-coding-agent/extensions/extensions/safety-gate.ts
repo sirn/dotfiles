@@ -16,20 +16,19 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   evaluateCommand,
-  mergePolicies,
+  extractCommands,
+  tokenize,
   buildWrapperRuleMap,
   normalizeShellPolicyConfig,
   getCommandSummary,
   type PolicyCommands,
   type WrapperRuleConfig,
+  type ExtractedCommand,
 } from "../lib/shell-policy.js";
 
-// Pi-specific structural policies (not in shared permissions.toml)
-const piStructuralPolicy: PolicyCommands = {
-  allow: [],
-  ask: [{ match: "*", mode: "has-heredoc" }],
-  deny: [],
-};
+function hasHeredoc(cmd: ExtractedCommand): boolean {
+  return cmd.redirects.some((r) => r.op === "<<" || r.op === "<<-");
+}
 
 // Load global config from JSON file in the same directory
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -90,12 +89,24 @@ export default function (pi: ExtensionAPI) {
 
     if (typeof event.input?.command !== "string") return undefined;
     const command = event.input.command;
-    const merged = mergePolicies(globalConfig, getProjectConfig(ctx.cwd), piStructuralPolicy);
+    const merged = { allow: globalConfig.allow.concat(getProjectConfig(ctx.cwd).allow), ask: globalConfig.ask.concat(getProjectConfig(ctx.cwd).ask), deny: globalConfig.deny.concat(getProjectConfig(ctx.cwd).deny) };
     const wrapperRules = buildWrapperRuleMap([
       ...globalWrapperRules,
       ...projectWrapperRules,
     ]);
+
+    // First evaluate against the merged JSON policy
     const result = evaluateCommand(command, merged, wrapperRules);
+
+    // Check local structural rules (heredocs) on extracted commands
+    const extractedCmds = extractCommands(tokenize(command), "direct", wrapperRules);
+
+    for (const extractedCmd of extractedCmds) {
+      // Ask for heredocs
+      if (hasHeredoc(extractedCmd)) {
+        return await confirmCommand(command, ctx);
+      }
+    }
 
     switch (result.action) {
       case "deny":

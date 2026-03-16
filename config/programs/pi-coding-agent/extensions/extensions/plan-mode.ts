@@ -11,20 +11,57 @@ import { fileURLToPath } from "node:url";
 import { Container, Text, Box, Spacer } from "@mariozechner/pi-tui";
 import {
   evaluateCommand,
-  mergePolicies,
+  extractCommands,
+  tokenize,
   buildWrapperRuleMap,
   normalizeShellPolicyConfig,
   getCommandSummary,
   type PolicyCommands,
   type WrapperRuleConfig,
+  type ExtractedCommand,
 } from "../lib/shell-policy.js";
 
-// Pi-specific structural policies for plan mode (not in shared permissions.toml)
-const piPlanStructuralPolicy: PolicyCommands = {
-  allow: [],
-  ask: [],
-  deny: [{ match: "*", mode: "has-redirect" }],
-};
+const SAFE_REDIRECT_TARGETS = new Set(["/dev/null", "/dev/stderr", "/dev/stdout"]);
+
+function isSafeRedirect(r: { op: string; target: string }): boolean {
+  if (r.op.endsWith("&")) return true;
+  if (SAFE_REDIRECT_TARGETS.has(r.target)) return true;
+  return false;
+}
+
+function hasUnsafeRedirect(cmd: ExtractedCommand): boolean {
+  return cmd.redirects.some((r) =>
+    (r.op.endsWith(">") || r.op.endsWith(">>")) &&
+    !r.op.startsWith("<<") &&
+    !isSafeRedirect(r)
+  );
+}
+
+function hasHeredoc(cmd: ExtractedCommand): boolean {
+  return cmd.redirects.some((r) => r.op === "<<" || r.op === "<<-");
+}
+
+async function confirmCommand(
+  cmd: string,
+  ctx: ExtensionContext,
+  promptPrefix: string,
+): Promise<{ block: boolean; reason?: string }> {
+  if (!ctx.hasUI) {
+    return {
+      block: true,
+      reason: `${promptPrefix} blocked (no UI): "${getCommandSummary(cmd)}"`,
+    };
+  }
+  const choice = await ctx.ui.select(
+    `${promptPrefix}: ${getCommandSummary(cmd)}`,
+    ["Yes, proceed", "No, cancel"],
+  );
+  if (choice !== "Yes, proceed") {
+    ctx.ui.notify("Command cancelled by user", "info");
+    return { block: true, reason: "Blocked by user" };
+  }
+  return { block: false };
+}
 
 // --- Policy types ---
 
@@ -392,28 +429,45 @@ How to verify the complete implementation after all steps are done.
       }
       const cmd = event.input.command;
       const wrapperRules = buildWrapperRuleMap(planPolicy.wrappers);
-      const result = evaluateCommand(cmd, mergePolicies(planPolicy.commands, piPlanStructuralPolicy), wrapperRules);
 
-      switch (result.action) {
-        case "deny":
+      // First evaluate against the JSON policy
+      const result = evaluateCommand(cmd, planPolicy.commands, wrapperRules);
+
+      // If already denied by JSON policy, return that result
+      if (result.action === "deny") {
+        return {
+          block: true,
+          reason: `Plan mode: Command blocked by policy: "${getCommandSummary(cmd)}"`,
+        };
+      }
+
+      // Check local structural rules (redirects) on extracted commands
+      const extractedCmds = extractCommands(tokenize(cmd), "direct", wrapperRules);
+
+      for (const extractedCmd of extractedCmds) {
+        // Block unsafe file output redirects
+        if (hasUnsafeRedirect(extractedCmd)) {
           return {
             block: true,
-            reason: `Plan mode: Command blocked by policy: "${getCommandSummary(cmd)}"`,
+            reason: `Plan mode: Command with file output redirect blocked: "${getCommandSummary(cmd)}"`,
           };
-        case "ask": {
-          if (!ctx.hasUI) {
-            return {
-              block: true,
-              reason: `Plan mode: Command blocked (no UI): "${getCommandSummary(cmd)}"`,
-            };
+        }
+
+        // Ask for heredocs
+        if (hasHeredoc(extractedCmd)) {
+          const confirmation = await confirmCommand(cmd, ctx, "Plan mode confirm");
+          if (confirmation.block) {
+            return confirmation;
           }
-          const choice = await ctx.ui.select(
-            `Plan mode confirm: ${getCommandSummary(cmd)}`,
-            ["Yes, proceed", "No, cancel"],
-          );
-          if (choice !== "Yes, proceed") {
-            ctx.ui.notify("Command cancelled by user", "info");
-            return { block: true, reason: "Blocked by user" };
+        }
+      }
+
+      // Handle ask/allow/default from policy evaluation
+      switch (result.action) {
+        case "ask": {
+          const confirmation = await confirmCommand(cmd, ctx, "Plan mode confirm");
+          if (confirmation.block) {
+            return confirmation;
           }
           return { block: false };
         }

@@ -10,7 +10,7 @@
 
 export interface CommandEntry {
   match: string;
-  mode: "exact" | "prefix" | "substring" | "has-redirect" | "has-heredoc";
+  mode: "exact" | "prefix" | "substring";
 }
 
 export interface PolicyCommands {
@@ -77,14 +77,6 @@ export function normalizeShellPolicyConfig(raw: unknown): ShellPolicyConfig {
   return { commands: normalizePolicyCommands(obj) };
 }
 
-const SAFE_REDIRECT_TARGETS = new Set(["/dev/null", "/dev/stderr", "/dev/stdout"]);
-
-function isSafeRedirect(r: { op: string; target: string }): boolean {
-  if (r.op.endsWith("&")) return true;
-  if (SAFE_REDIRECT_TARGETS.has(r.target)) return true;
-  return false;
-}
-
 // --- Tokenizer ---
 
 interface WordToken {
@@ -105,7 +97,7 @@ interface RedirectToken {
   op: string;     // ">", ">>", "<", "<<", "<<-", "<<<", or with fd: "2>", "2>>"
   target: string; // filename, heredoc delimiter, or here-string value
 }
-type Token = WordToken | OpToken | GroupToken | RedirectToken;
+export type Token = WordToken | OpToken | GroupToken | RedirectToken;
 
 export function tokenize(input: string): Token[] {
   const tokens: Token[] = [];
@@ -458,7 +450,7 @@ export function tokenize(input: string): Token[] {
  *   https://pubs.opengroup.org/onlinepubs/9699919799/utilities/nohup.html
  */
 
-interface ExtractedCommand {
+export interface ExtractedCommand {
   name: string;
   fullText: string;
   redirects: { op: string; target: string }[];
@@ -645,12 +637,6 @@ function matchEntry(cmd: ExtractedCommand, entry: CommandEntry): boolean {
       return text.trimStart().toLowerCase().startsWith(match.toLowerCase());
     case "substring":
       return text.toLowerCase().includes(match.toLowerCase());
-    case "has-redirect":
-      return cmd.redirects.some((r) =>
-        (r.op.endsWith(">") || r.op.endsWith(">>")) && !r.op.startsWith("<<") && !isSafeRedirect(r)
-      );
-    case "has-heredoc":
-      return cmd.redirects.some((r) => r.op === "<<" || r.op === "<<-");
     default: {
       const _exhaustive: never = mode;
       return false;

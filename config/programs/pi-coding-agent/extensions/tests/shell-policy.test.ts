@@ -652,68 +652,6 @@ test("substring match - special characters", () => {
   assertEquals(evaluateCommand("git push origin main", policy).action, "deny");
 });
 
-// has-redirect match mode
-test("has-redirect - output redirect", () => {
-  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "*", mode: "has-redirect" }] };
-  assertEquals(evaluateCommand("echo hi > file.txt", policy).action, "deny");
-});
-
-test("has-redirect - append redirect", () => {
-  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "*", mode: "has-redirect" }] };
-  assertEquals(evaluateCommand("echo hi >> file.txt", policy).action, "deny");
-});
-
-test("has-redirect - input redirect not matched", () => {
-  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "*", mode: "has-redirect" }] };
-  assertEquals(evaluateCommand("cat < file.txt", policy).action, "default");
-});
-
-test("has-redirect - /dev/null excluded", () => {
-  const policy: PolicyCommands = { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [{ match: "*", mode: "has-redirect" }] };
-  assertEquals(evaluateCommand("ls 2>/dev/null", policy).action, "allow");
-});
-
-test("has-redirect - fd duplication excluded", () => {
-  const policy: PolicyCommands = { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [{ match: "*", mode: "has-redirect" }] };
-  assertEquals(evaluateCommand("ls 2>&1", policy).action, "allow");
-});
-
-test("has-redirect - combined safe redirects", () => {
-  const policy: PolicyCommands = { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [{ match: "*", mode: "has-redirect" }] };
-  assertEquals(evaluateCommand("ls 2>&1 >/dev/null", policy).action, "allow");
-});
-
-test("has-redirect - /dev/stderr excluded", () => {
-  const policy: PolicyCommands = { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [{ match: "*", mode: "has-redirect" }] };
-  assertEquals(evaluateCommand("ls > /dev/stderr", policy).action, "allow");
-});
-
-test("has-redirect - /dev/stdout excluded", () => {
-  const policy: PolicyCommands = { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [{ match: "*", mode: "has-redirect" }] };
-  assertEquals(evaluateCommand("ls > /dev/stdout", policy).action, "allow");
-});
-
-// has-heredoc match mode
-test("has-heredoc - matches heredoc", () => {
-  const policy: PolicyCommands = { allow: [], ask: [{ match: "*", mode: "has-heredoc" }], deny: [] };
-  assertEquals(evaluateCommand("cat <<EOF", policy).action, "ask");
-});
-
-test("has-heredoc - matches stripping variant", () => {
-  const policy: PolicyCommands = { allow: [], ask: [{ match: "*", mode: "has-heredoc" }], deny: [] };
-  assertEquals(evaluateCommand("cat <<-EOF", policy).action, "ask");
-});
-
-test("has-heredoc - no match without heredoc", () => {
-  const policy: PolicyCommands = { allow: [], ask: [{ match: "*", mode: "has-heredoc" }], deny: [] };
-  assertEquals(evaluateCommand("cat file.txt", policy).action, "default");
-});
-
-test("has-heredoc - here-string not matched", () => {
-  const policy: PolicyCommands = { allow: [], ask: [{ match: "*", mode: "has-heredoc" }], deny: [] };
-  assertEquals(evaluateCommand("cat <<<'hello'", policy).action, "default");
-});
-
 // Priority tests
 test("deny takes priority over allow", () => {
   const policy: PolicyCommands = { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [{ match: "ls", mode: "prefix" }] };
@@ -880,7 +818,6 @@ const productionPolicy: PolicyCommands = {
     { match: "docker exec", mode: "substring" },
     { match: "nix run", mode: "substring" },
     { match: "jj describe", mode: "substring" },
-    { match: "*", mode: "has-heredoc" },
   ],
   deny: [
     { match: "sudo", mode: "prefix" },
@@ -890,7 +827,6 @@ const productionPolicy: PolicyCommands = {
     { match: "gh api --method POST", mode: "substring" },
     { match: "gh api --method PUT", mode: "substring" },
     { match: "gh api --method DELETE", mode: "substring" },
-    { match: "*", mode: "has-redirect" },
   ],
 };
 
@@ -907,9 +843,6 @@ test("jj describe asks", () => { assertEquals(evaluateCommand("jj describe -m 'u
 test("gh api POST pattern not matching", () => { assertEquals(evaluateCommand("gh api repos/foo --method POST", productionPolicy).action, "default"); });
 test("gh api GET allowed", () => { assertEquals(evaluateCommand("gh api repos/foo", productionPolicy).action, "default"); });
 test("sudo denied", () => { assertEquals(evaluateCommand("sudo ls -la", productionPolicy).action, "deny"); });
-test("safe redirect to /dev/null allowed", () => { assertEquals(evaluateCommand("ls 2>/dev/null", productionPolicy).action, "allow"); });
-test("redirect to file denied", () => { assertEquals(evaluateCommand("echo hi > file.txt", productionPolicy).action, "deny"); });
-test("heredoc asks", () => { assertEquals(evaluateCommand("cat <<EOF\nhello\nEOF", productionPolicy).action, "ask"); });
 test("quoted > not redirect", () => { assertEquals(evaluateCommand("jq '.x > .y' file.json", productionPolicy).action, "default"); });
 test("echo with quoted > allowed", () => { assertEquals(evaluateCommand("echo 'hello > world'", productionPolicy).action, "allow"); });
 test("grep with quoted > allowed", () => { assertEquals(evaluateCommand("grep '>' file.txt", productionPolicy).action, "allow"); });
