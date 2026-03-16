@@ -802,7 +802,7 @@ mode = "substring"
 
 [[default.commands.ask.shell]]
 match = "docker exec"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "docker run"
@@ -818,7 +818,7 @@ mode = "substring"
 
 [[default.commands.ask.shell]]
 match = "git commit"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "jj abandon"
@@ -834,7 +834,7 @@ mode = "substring"
 
 [[default.commands.ask.shell]]
 match = "jj new"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "jj split"
@@ -846,7 +846,7 @@ mode = "substring"
 
 [[default.commands.ask.shell]]
 match = "jj undo"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "kubectl apply"
@@ -874,7 +874,7 @@ mode = "substring"
 
 [[default.commands.ask.shell]]
 match = "nix run"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "podman exec"
@@ -948,6 +948,10 @@ mode = "substring"
 
 [[default.commands.deny.shell]]
 match = "sops"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "doas"
 mode = "substring"
 
 [[default.commands.deny.shell]]
@@ -1068,27 +1072,27 @@ write = [
 
 [[mode.plan.commands.deny.shell]]
 match = "cp"
-mode = "substring"
+mode = "prefix"
 
 [[mode.plan.commands.deny.shell]]
 match = "ln"
-mode = "substring"
+mode = "prefix"
 
 [[mode.plan.commands.deny.shell]]
 match = "mkdir"
-mode = "substring"
+mode = "prefix"
 
 [[mode.plan.commands.deny.shell]]
 match = "mktemp"
-mode = "substring"
+mode = "prefix"
 
 [[mode.plan.commands.deny.shell]]
 match = "mv"
-mode = "substring"
+mode = "prefix"
 
 [[mode.plan.commands.deny.shell]]
 match = "rsync"
-mode = "substring"
+mode = "prefix"
 
 [[mode.plan.commands.deny.shell]]
 match = "sed -i"
@@ -1096,11 +1100,11 @@ mode = "prefix"
 
 [[mode.plan.commands.deny.shell]]
 match = "tee"
-mode = "substring"
+mode = "prefix"
 
 [[mode.plan.commands.deny.shell]]
 match = "touch"
-mode = "substring"
+mode = "prefix"
 
 [mode.plan.tools]
 edit = false
