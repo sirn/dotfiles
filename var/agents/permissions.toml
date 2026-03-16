@@ -402,7 +402,7 @@ match = "jj status"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
-match = "jq --version"
+match = "jq"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
@@ -691,6 +691,10 @@ mode = "prefix"
 
 [[default.commands.allow.shell]]
 match = "shfmt -l"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "sleep"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
