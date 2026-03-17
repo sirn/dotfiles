@@ -11,7 +11,10 @@ let
   inherit (sources) version src files;
 
   sandboxProfiles = lib.optionals stdenv.isDarwin (
-    map (file: fetchurl { inherit (file) url hash; }) files
+    map (file: {
+      file = fetchurl { inherit (file) url hash; };
+      name = lib.last (lib.splitString "/" file.url);
+    }) files
   );
 in
 stdenv.mkDerivation {
@@ -30,7 +33,7 @@ stdenv.mkDerivation {
     mkdir -p $out/bin $out/share/gemini-cli
     cp $src $out/share/gemini-cli/gemini.js
     ${lib.concatMapStrings (profile: ''
-      cp ${profile} $out/share/gemini-cli/$(basename ${profile})
+      cp ${profile.file} $out/share/gemini-cli/${profile.name}
     '') sandboxProfiles}
     makeWrapper ${lib.getExe bun} $out/bin/gemini \
       --add-flags "$out/share/gemini-cli/gemini.js"
