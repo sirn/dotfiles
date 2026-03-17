@@ -1,7 +1,7 @@
 ---
 name: terraform-reference
 type: reference
-description: Reference for Terraform CLI commands and workflows. ALWAYS read before running terraform commands to ensure correct syntax and follow the standard plan-to-file workflow.
+description: Reference for Terraform CLI commands and workflows. ALWAYS read before running terraform commands to ensure correct syntax and follow the standard plan-then-confirm workflow.
 ---
 
 ## Terraform CLI Reference
@@ -10,9 +10,20 @@ Terraform is an infrastructure as code tool for building, changing, and versioni
 
 ### Best Practices
 
-- **Standard workflow is plan-to-file then apply**: Always save the plan to a file and review it before applying
+- **Standard workflow is plan, then confirm with user, then apply**: Run `terraform plan`, summarize changes to user, get explicit confirmation, then run `terraform apply`
 - **Summarize changes to user**: Before running `terraform apply`, always show the user a summary of what will change
-- **Never apply without permission**: Do not run `terraform apply` without explicit user confirmation
+- **Never apply without explicit user instruction**: Do not run `terraform apply` until the user has explicitly told you to do so
+- **Never re-run terraform plan to filter output**: Each plan execution verifies resource state from the remote provider, which is slow and can yield different results if infrastructure changed between runs. If you need to search or filter plan output, save it to a temp file first, then use grep/head/tail on that file:
+  ```bash
+  # ❌ Avoid: Running plan multiple times
+  terraform plan | grep "aws_instance"
+  terraform plan | head -20
+
+  # ✅ Correct: Save once, then filter
+  terraform plan > /tmp/tfplan.txt
+  grep "aws_instance" /tmp/tfplan.txt
+  head -20 /tmp/tfplan.txt
+  ```
 - **Use `-auto-approve` only with permission**: Only use `-auto-approve` when the user has already explicitly approved the changes
 - **Use `-target` sparingly**: Targeted applies can leave infrastructure in inconsistent state; use only for emergencies
 - **State locking**: Never force-unlock state unless you understand why it's locked
@@ -29,25 +40,22 @@ This is the standard, safe workflow for applying Terraform changes:
 # Step 1: Initialize (if not already done)
 terraform init
 
-# Step 2: Create a saved plan file
-terraform plan -out=tfplan
+# Step 2: Create a plan and review output
+terraform plan
 
-# Step 3: Show the plan to summarize changes for user
-terraform show -json tfplan | jq -r '.resource_changes[] | "\(.address): \(.change.actions | join(\", \"))"' 2>/dev/null || terraform show tfplan
+# Step 3: Summarize changes to user and get explicit confirmation
+# (Discuss: what will be created/modified/destroyed)
 
-# Step 4: Apply the saved plan (ONLY after user confirms)
-terraform apply tfplan
+# Step 4: Apply (ONLY after user explicitly tells you to apply)
+terraform apply
 
-# Step 5: Clean up plan file after successful apply
-rm tfplan
+# Step 5: Confirm success with user
 ```
 
 **Important Rules:**
-1. Always save plan to a file (`-out=tfplan`)
+1. Always run `terraform plan` first and review the output
 2. Always summarize changes for the user before applying
-3. Never use `terraform apply` without either:
-   - User explicitly confirming the apply, OR
-   - Using a saved plan file (`terraform apply tfplan`) which is the approved plan
+3. Never run `terraform apply` until the user has explicitly told you to do so
 4. Only use `-auto-approve` if the user has already given explicit permission to apply changes
 
 ### Core Workflow Commands
@@ -58,14 +66,10 @@ rm tfplan
 | Initialize with upgrade | `terraform init -upgrade` |
 | Validate configuration | `terraform validate` |
 | Create execution plan | `terraform plan` |
-| Create and save plan | `terraform plan -out=tfplan` |
 | Plan with variables | `terraform plan -var="key=value"` |
 | Apply changes | `terraform apply` |
-| Apply saved plan file | `terraform apply tfplan` |
 | Apply with auto-approve (USE WITH CAUTION) | `terraform apply -auto-approve` |
 | Apply with target | `terraform apply -target=resource.address` |
-| Show plan file contents | `terraform show tfplan` |
-| Show plan as JSON | `terraform show -json tfplan` |
 | Destroy infrastructure | `terraform destroy` |
 | Auto-approve destroy (USE WITH CAUTION) | `terraform destroy -auto-approve` |
 | Refresh state | `terraform refresh` |
@@ -123,7 +127,6 @@ rm tfplan
 | JSON format | `terraform output -json` |
 | Show state/plan | `terraform show` |
 | Show JSON | `terraform show -json` |
-| Show plan file | `terraform show plan.tfplan` |
 | Interactive console | `terraform console` |
 | Console with state | `terraform console -state=path` |
 
@@ -138,7 +141,6 @@ rm tfplan
 | Mirror providers | `terraform providers mirror <dir>` |
 | Show provider schema | `terraform providers schema -json` |
 | Dependency graph | `terraform graph` |
-| Graph with plan | `terraform graph -plan=plan.tfplan` |
 
 ### Authentication and Misc
 
@@ -168,49 +170,45 @@ rm tfplan
 
 ### Common Workflows
 
-#### Standard Safe Apply Workflow (RECOMMENDED)
+#### Standard Safe Apply Workflow (ALWAYS Follow This)
 Always use this workflow to apply changes safely:
 
 ```bash
 # Step 1: Initialize
 terraform init
 
-# Step 2: Create and save a plan
-terraform plan -out=tfplan
+# Step 2: Create a plan and review output
+terraform plan
 
-# Step 3: Show plan summary to user (human readable)
-terraform show tfplan
+# Step 3: Summarize changes to user
+# Discuss what will be created, modified, or destroyed
 
-# Step 4: Apply ONLY after user confirms
-terraform apply tfplan
-
-# Step 5: Clean up
-rm tfplan
+# Step 4: Apply ONLY after user explicitly tells you to apply
+terraform apply
 ```
 
 **Key Points:**
-- The saved plan file (`tfplan`) ensures only the reviewed changes are applied
-- Always show the plan to the user and get explicit confirmation before applying
+- Always run `terraform plan` first and review the output
+- Always show a summary of changes to the user
+- Never run `terraform apply` until the user explicitly tells you to do so
 - Only use `-auto-approve` if the user has already explicitly approved the changes
 
 #### First-time Setup
 ```bash
 terraform init
 terraform validate
-terraform plan -out=tfplan
-terraform show tfplan  # Review with user
-terraform apply tfplan  # Apply after user confirms
-rm tfplan
+terraform plan
+# Review output and discuss with user
+terraform apply  # Only after user tells you to apply
 ```
 
 #### Working with Workspaces
 ```bash
 terraform workspace new production
 terraform workspace select production
-terraform plan -out=tfplan -var-file=production.tfvars
-terraform show tfplan  # Review with user
-terraform apply tfplan   # Apply after user confirms
-rm tfplan
+terraform plan -var-file=production.tfvars
+# Review output and discuss with user
+terraform apply  # Only after user tells you to apply
 ```
 
 #### Safe State Modification
@@ -219,10 +217,10 @@ rm tfplan
 terraform state pull > backup-$(date +%Y%m%d).json
 
 # Step 2: Preview changes with plan
-terraform plan -out=tfplan
-terraform show tfplan  # Review with user
+terraform plan
+# Review output and discuss with user
 
-# Step 3: Make state changes (after user confirms)
+# Step 3: Make state changes (only after user confirms)
 terraform state mv module.old module.new
 terraform state rm deprecated.resource
 
@@ -244,14 +242,12 @@ terraform plan
 ```bash
 # Only use targeted apply for emergencies
 # Step 1: Plan with target
-terraform plan -target=aws_instance.bastion -out=tfplan
+terraform plan -target=aws_instance.bastion
 
-# Step 2: Review with user
-terraform show tfplan
+# Step 2: Review output and discuss with user
 
-# Step 3: Apply after explicit user confirmation
-terraform apply tfplan
-rm tfplan
+# Step 3: Apply only after explicit user instruction
+terraform apply -target=aws_instance.bastion
 ```
 
 ### State Locking
