@@ -32,54 +32,63 @@ let
     - Do not squash commit unless being told explicitly by the user.
   '';
 
-  # Generate JSON config for safety-gate extension
-  safetyGateJson = builtins.toJSON {
-    commands = {
-      allow =
-        permissionsToml.default.commands.allow.shell
-        ++ ((agentPermissions.default or { }).commands.allow.shell or [ ]);
-      ask =
-        permissionsToml.default.commands.ask.shell
-        ++ ((agentPermissions.default or { }).commands.ask.shell or [ ]);
-      deny =
-        permissionsToml.default.commands.deny.shell
-        ++ ((agentPermissions.default or { }).commands.deny.shell or [ ]);
-    };
-    wrappers = (permissionsToml.default.commands.wrappers or [ ]);
-  };
-
-  # Generate JSON config for plan-mode extension (plan-specific entries only)
-  planModeJson = builtins.toJSON {
-    tools =
-      permissionsToml.mode.plan.tools or {
-        edit = false;
-        write = false;
+  # Generate unified policy JSON for all extensions
+  policyJson = builtins.toJSON {
+    default = {
+      commands = {
+        allow =
+          permissionsToml.default.commands.allow.shell
+          ++ ((agentPermissions.default or { }).commands.allow.shell or [ ]);
+        ask =
+          permissionsToml.default.commands.ask.shell
+          ++ ((agentPermissions.default or { }).commands.ask.shell or [ ]);
+        deny =
+          permissionsToml.default.commands.deny.shell
+          ++ ((agentPermissions.default or { }).commands.deny.shell or [ ]);
       };
-    commands = {
-      deny = (permissionsToml.mode.plan.commands or { }).deny.shell or [ ];
-      ask = (permissionsToml.mode.plan.commands or { }).ask.shell or [ ];
-      allow = (permissionsToml.mode.plan.commands or { }).allow.shell or [ ];
+      wrappers = (permissionsToml.default.commands.wrappers or [ ]);
+      redirects = permissionsToml.default.redirects or { action = "allow"; };
+      heredocs = permissionsToml.default.heredocs or { action = "ask"; };
     };
-    wrappers = (permissionsToml.mode.plan.commands.wrappers or [ ]);
+    modes.plan = {
+      tools =
+        permissionsToml.mode.plan.tools or {
+          edit = false;
+          write = false;
+        };
+      commands = {
+        deny = (permissionsToml.mode.plan.commands or { }).deny.shell or [ ];
+        ask = (permissionsToml.mode.plan.commands or { }).ask.shell or [ ];
+        allow = (permissionsToml.mode.plan.commands or { }).allow.shell or [ ];
+      };
+      wrappers =
+        (permissionsToml.default.commands.wrappers or [ ])
+        ++ (permissionsToml.mode.plan.commands.wrappers or [ ]);
+      redirects =
+        permissionsToml.mode.plan.redirects or {
+          action = "deny";
+          safeTargets = [
+            "/dev/null"
+            "/dev/stderr"
+            "/dev/stdout"
+          ];
+          allowFdDup = true;
+        };
+      heredocs = permissionsToml.mode.plan.heredocs or { action = "ask"; };
+    };
   };
 
-  # Write JSON files to store paths (safer than echo in shell)
-  safetyGateJsonFile = pkgs.writeTextFile {
-    name = "safety-gate.json";
-    text = safetyGateJson;
+  # Write JSON file to store path (safer than echo in shell)
+  policyJsonFile = pkgs.writeTextFile {
+    name = "policy.json";
+    text = policyJson;
   };
 
-  planModeJsonFile = pkgs.writeTextFile {
-    name = "plan-mode.json";
-    text = planModeJson;
-  };
-
-  # Combine bundled extensions with generated JSON configs into a single directory
-  bundledExtensions = pkgs.runCommand "pi-bundled-extensions" { } ''
-    mkdir -p $out
-    cp -r ${./extensions}/. $out/
-    cp ${safetyGateJsonFile} $out/safety-gate.json
-    cp ${planModeJsonFile} $out/plan-mode.json
+  # Combine bundled extensions with generated JSON config into a single derivation
+  bundledAgent = pkgs.runCommand "pi-bundled-agent" { } ''
+    mkdir -p $out/extensions/home-manager
+    cp -r ${./extensions}/. $out/extensions/home-manager/
+    cp ${policyJsonFile} $out/policy.json
   '';
 
 in
@@ -478,6 +487,7 @@ in
 
   home.file = {
     ".pi/agent/skills/home-manager".source = skillsDir;
-    ".pi/agent/extensions/home-manager".source = bundledExtensions;
+    ".pi/agent/extensions/home-manager".source = "${bundledAgent}/extensions/home-manager";
+    ".pi/agent/policy.json".source = "${bundledAgent}/policy.json";
   };
 }

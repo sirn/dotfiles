@@ -7,38 +7,40 @@
  * - deny: commands that are blocked entirely
  *
  * Policy: Ask by default - any command not explicitly allowed or denied requires confirmation.
- * Per-project overrides can be placed in .pi/safety-gate.json relative to the project root.
+ * Per-project overrides can be placed in .pi/policy.json relative to the project root.
  */
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   evaluateCommand,
+  evaluateHeredocs,
   extractCommands,
   tokenize,
   buildWrapperRuleMap,
+  normalizeUnifiedPolicyConfig,
   normalizeShellPolicyConfig,
   getCommandSummary,
   type PolicyCommands,
+  type HeredocPolicy,
   type WrapperRuleConfig,
-  type ExtractedCommand,
 } from "../lib/shell-policy.js";
 
-function hasHeredoc(cmd: ExtractedCommand): boolean {
-  return cmd.redirects.some((r) => r.op === "<<" || r.op === "<<-");
-}
-
-// Load global config from JSON file in the same directory
+// Load global config from unified policy.json
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const globalConfigRaw = JSON.parse(
-  readFileSync(join(__dirname, "../safety-gate.json"), "utf-8"),
+  readFileSync(join(__dirname, "../../../policy.json"), "utf-8"),
 );
 
-const globalParsed = normalizeShellPolicyConfig(globalConfigRaw);
-const globalConfig: PolicyCommands = globalParsed.commands;
-let globalWrapperRules: WrapperRuleConfig[] = globalParsed.wrappers ?? [];
+const globalUnified = normalizeUnifiedPolicyConfig(globalConfigRaw);
+const globalConfig: PolicyCommands = globalUnified.default.commands;
+let globalWrapperRules: WrapperRuleConfig[] =
+  globalUnified.default.wrappers ?? [];
+const globalHeredocPolicy: HeredocPolicy = globalUnified.default.heredocs ?? {
+  action: "ask",
+};
 
 // Project-local config, loaded lazily on first tool_call (cwd is static per session)
 let projectConfig: PolicyCommands | null = null;
@@ -46,16 +48,23 @@ let projectWrapperRules: WrapperRuleConfig[] = [];
 
 function getProjectConfig(cwd: string): PolicyCommands {
   if (projectConfig !== null) return projectConfig;
-  try {
-    const parsed = normalizeShellPolicyConfig(
-      JSON.parse(readFileSync(join(cwd, ".pi", "safety-gate.json"), "utf-8")),
-    );
-    projectConfig = parsed.commands;
-    projectWrapperRules = parsed.wrappers ?? [];
-  } catch {
-    projectConfig = { allow: [], ask: [], deny: [] };
-    projectWrapperRules = [];
+  const policyPath = join(cwd, ".pi", "policy.json");
+  if (existsSync(policyPath)) {
+    try {
+      const raw = JSON.parse(readFileSync(policyPath, "utf-8"));
+      const parsed =
+        "default" in raw
+          ? normalizeUnifiedPolicyConfig(raw).default
+          : normalizeShellPolicyConfig(raw);
+      projectConfig = parsed.commands;
+      projectWrapperRules = parsed.wrappers ?? [];
+      return projectConfig;
+    } catch {
+      // fall through to empty policy
+    }
   }
+  projectConfig = { allow: [], ask: [], deny: [] };
+  projectWrapperRules = [];
   return projectConfig;
 }
 
@@ -102,18 +111,22 @@ export default function (pi: ExtensionAPI) {
     // First evaluate against the merged JSON policy
     const result = evaluateCommand(command, merged, wrapperRules);
 
-    // Check local structural rules (heredocs) on extracted commands
+    // Check heredoc policy on extracted commands
     const extractedCmds = extractCommands(
       tokenize(command),
       "direct",
       wrapperRules,
     );
 
-    for (const extractedCmd of extractedCmds) {
-      // Ask for heredocs
-      if (hasHeredoc(extractedCmd)) {
-        return await confirmCommand(command, ctx);
-      }
+    const heredocResult = evaluateHeredocs(extractedCmds, globalHeredocPolicy);
+    if (heredocResult.action === "ask" || heredocResult.action === "default") {
+      return await confirmCommand(command, ctx);
+    }
+    if (heredocResult.action === "deny") {
+      return {
+        block: true,
+        reason: `Command blocked by safety policy: "${getCommandSummary(command)}"`,
+      };
     }
 
     switch (result.action) {

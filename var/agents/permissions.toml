@@ -962,6 +962,90 @@ mode = "prefix"
 match = "systemctl"
 mode = "prefix"
 
+# Wrapper rules define how nested commands are extracted for policy evaluation.
+# When a wrapper command is detected, the policy engine recurses into its inner
+# command rather than just evaluating the wrapper itself. Available kinds:
+#
+# - shell-c: Shells invoked with -c (bash, sh, zsh, dash, ksh). The operand
+#   immediately following -c is the command string. Note: -- after -c is the
+#   command string itself, not an option terminator.
+#
+# - utility-operand: POSIX-style wrappers (sudo, time, nohup, etc.). Follows
+#   POSIX Guideline 10: -- ends option parsing, and the first remaining operand
+#   is the utility to invoke.
+#
+# - env: Like utility-operand, but also skips NAME=VALUE assignments before
+#   extracting the inner command.
+#
+# - xargs: Like utility-operand but may construct commands from operands.
+#   Treated separately due to different command-construction semantics.
+
+[[default.commands.wrappers]]
+name = "bash"
+kind = "shell-c"
+
+[[default.commands.wrappers]]
+name = "sh"
+kind = "shell-c"
+
+[[default.commands.wrappers]]
+name = "zsh"
+kind = "shell-c"
+
+[[default.commands.wrappers]]
+name = "dash"
+kind = "shell-c"
+
+[[default.commands.wrappers]]
+name = "ksh"
+kind = "shell-c"
+
+[[default.commands.wrappers]]
+name = "sudo"
+kind = "utility-operand"
+
+[[default.commands.wrappers]]
+name = "doas"
+kind = "utility-operand"
+
+[[default.commands.wrappers]]
+name = "time"
+kind = "utility-operand"
+
+[[default.commands.wrappers]]
+name = "nohup"
+kind = "utility-operand"
+
+[[default.commands.wrappers]]
+name = "nice"
+kind = "utility-operand"
+
+[[default.commands.wrappers]]
+name = "chroot"
+kind = "utility-operand"
+
+[[default.commands.wrappers]]
+name = "timeout"
+kind = "utility-operand"
+
+[[default.commands.wrappers]]
+name = "setsid"
+kind = "utility-operand"
+
+[[default.commands.wrappers]]
+name = "env"
+kind = "env"
+
+[[default.commands.wrappers]]
+name = "xargs"
+kind = "xargs"
+
+[default.redirects]
+action = "allow"
+
+[default.heredocs]
+action = "ask"
+
 [default.paths.allow]
 read = [
   "**/*.env.example",
@@ -1105,6 +1189,14 @@ mode = "prefix"
 [[mode.plan.commands.deny.shell]]
 match = "touch"
 mode = "prefix"
+
+[mode.plan.redirects]
+action = "deny"
+safeTargets = ["/dev/null", "/dev/stderr", "/dev/stdout"]
+allowFdDup = true
+
+[mode.plan.heredocs]
+action = "ask"
 
 [mode.plan.tools]
 edit = false

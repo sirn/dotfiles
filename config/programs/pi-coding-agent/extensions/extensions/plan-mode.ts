@@ -11,40 +11,18 @@ import { fileURLToPath } from "node:url";
 import { Container, Text, Box, Spacer } from "@mariozechner/pi-tui";
 import {
   evaluateCommand,
+  evaluateRedirects,
+  evaluateHeredocs,
   extractCommands,
   tokenize,
   buildWrapperRuleMap,
-  normalizeShellPolicyConfig,
+  normalizeUnifiedPolicyConfig,
   getCommandSummary,
   type PolicyCommands,
+  type RedirectPolicy,
+  type HeredocPolicy,
   type WrapperRuleConfig,
-  type ExtractedCommand,
 } from "../lib/shell-policy.js";
-
-const SAFE_REDIRECT_TARGETS = new Set([
-  "/dev/null",
-  "/dev/stderr",
-  "/dev/stdout",
-]);
-
-function isSafeRedirect(r: { op: string; target: string }): boolean {
-  if (r.op.endsWith("&")) return true;
-  if (SAFE_REDIRECT_TARGETS.has(r.target)) return true;
-  return false;
-}
-
-function hasUnsafeRedirect(cmd: ExtractedCommand): boolean {
-  return cmd.redirects.some(
-    (r) =>
-      (r.op.endsWith(">") || r.op.endsWith(">>")) &&
-      !r.op.startsWith("<<") &&
-      !isSafeRedirect(r),
-  );
-}
-
-function hasHeredoc(cmd: ExtractedCommand): boolean {
-  return cmd.redirects.some((r) => r.op === "<<" || r.op === "<<-");
-}
 
 async function confirmCommand(
   cmd: string,
@@ -74,23 +52,25 @@ interface PlanPolicy {
   tools: Record<string, boolean>;
   commands: PolicyCommands;
   wrappers?: WrapperRuleConfig[];
+  redirects?: RedirectPolicy;
+  heredocs?: HeredocPolicy;
 }
 
 function loadPlanPolicy(): PlanPolicy | null {
   try {
     const extDir = path.dirname(fileURLToPath(import.meta.url));
     const raw = JSON.parse(
-      fs.readFileSync(path.join(extDir, "../plan-mode.json"), "utf-8"),
+      fs.readFileSync(path.join(extDir, "../../../policy.json"), "utf-8"),
     );
-    const shellConfig = normalizeShellPolicyConfig({
-      commands: raw.commands,
-      wrappers: raw.wrappers,
-    });
+    const unified = normalizeUnifiedPolicyConfig(raw);
+    const planMode = unified.modes?.plan;
+    if (!planMode) return null;
     return {
-      tools:
-        typeof raw.tools === "object" && raw.tools !== null ? raw.tools : {},
-      commands: shellConfig.commands,
-      wrappers: shellConfig.wrappers,
+      tools: planMode.tools ?? {},
+      commands: planMode.commands,
+      wrappers: planMode.wrappers,
+      redirects: planMode.redirects,
+      heredocs: planMode.heredocs,
     };
   } catch {
     return null;
@@ -248,16 +228,44 @@ ${planContent}`,
       pi.sendMessage(
         {
           customType: "plan-mode-prompt",
-          content: `Create a detailed implementation/execution plan based on the user instruction
+          content: `Create a detailed implementation/execution plan based on the user instruction.
 Write the plan to: ${planPath}
 
+## Pre-Planning Phase (REQUIRED — complete ALL steps in order before writing the plan)
+
+### Step 1: Evaluate Existing Plan
+Check whether a plan file already exists at: ${planPath}
+- If it exists: read it and evaluate whether it is relevant to the current user request.
+  - If relevant: acknowledge it and build on or refine it.
+  - If not relevant: discard it (overwrite with a fresh plan).
+- If it does not exist: proceed to step 2.
+
+### Step 2: Gather Context
+Collect all context necessary to successfully accomplish the request:
+- Read the project README and any relevant configuration or source files.
+- **Perform a web search**: load the relevant search skill and execute it. Do not guess or assume.
+- **Research official documentation** for every library, tool, or API involved. Look up exact call conventions, flags, and return types — do not infer from memory.
+- If any requirement is ambiguous or information is missing, **ask the user** before proceeding.
+
+### Step 3: Define Success Criteria
+Derive explicit, measurable success criteria from the user request:
+- What does "done" look like? (e.g., "tests pass", "command exits 0", "output matches expected format")
+- If the criteria are non-obvious or involve tradeoffs, **confirm them with the user** before writing the plan.
+
+### Step 4: Write the Plan
+Only after completing steps 1–3, write the plan to: ${planPath}
+
+### Step 5: Verify the Plan
+Before finalising, validate the plan's correctness:
+- **Re-consult official documentation** to confirm every call convention, option, and API contract used in the plan.
+- **Run ad-hoc read-only probes** where helpful (e.g., \`ls\`, \`cat\`, \`--help\`, dry-runs, \`tsc --noEmit\`) to verify assumptions without modifying the system.
+
 ## Rules
-- CRITICAL: Use ONLY read-only commands (ls, rg, cat, read) for context gathering. Do NOT execute changes.
-- Read project README/config files first to understand conventions and tooling.
-- **Use web search**. Load the relevant search skill and perform a search. Do not guess.
-- Search current API/library documentation. Verify usage; do not assume. 
-- Use the \`write\` tool to write the plan file. Do NOT use bash to write files (they'll be blocked).
-- If there are pending questions; ask the user before creating a plan.
+- CRITICAL: Use ONLY read-only commands for context gathering and verification. Do NOT execute changes.
+- Use the \`write\` tool to write the plan file. Do NOT use bash to write files (they will be blocked).
+- **Always cite documentation**: include a URL or reference for every external tool, API, or convention referenced in the plan.
+- Do NOT write any code yet. Just create the plan file.
+- You MUST use only the provided plan file path. Any attempt to write elsewhere will be blocked.
 
 ## User instruction
 ${args || "The requested feature"}
@@ -267,23 +275,26 @@ ${args || "The requested feature"}
 ### Overview
 What needs to be built/fixed, why, and how success is measured. What is OUT of scope. Keep the solution minimal.
 
+### Success Criteria
+Explicit, measurable criteria that define when the implementation is complete.
+
 ### Context
-Document read-only exploration discoveries: key files, existing patterns, dependencies, non-obvious details, and relevant URLs.
+Read-only exploration findings: key files, existing patterns, dependencies, non-obvious details, and relevant URLs.
 Example: "\`src/auth.ts\` exports \`createSession(userId)\`; sessions stored in Redis with 24h TTL"
 
 ### Implementation Steps
-Ordered, atomic, verifiable steps. Each needs: a clear goal, specific files/changes, and a concrete success criterion (e.g., test command, linter run).
-Describe non-trivial changes in detail to prevent guesswork. Show before/after with ±5 lines of context if helpful.
+Ordered, atomic, verifiable steps. Each step needs: a clear goal, specific files/changes, and a concrete success criterion (e.g., test command, linter run).
+Describe non-trivial changes in sufficient detail to prevent guesswork. Show before/after with ±5 lines of context if helpful.
 Example: "Step 1: Add Session type to types.ts — Success: tsc --noEmit passes"
 
 ### Verification Checklist
 How to verify the complete implementation after all steps are done.
 
-## Policy footer
+### References
+Documentation URLs and sources consulted during planning.
 
-- Do NOT write any code yet. Just create the plan file.
-- You MUST only use the provided plan file exactly. Any attempt to write elsewhere will be blocked.
-- Once the plan is written, give the user the summarization of the plan.`,
+## Policy footer
+- Once the plan is written, present a concise summarisation of the plan to the user.`,
           display: true,
           details: {
             userInstruction: args || "The requested feature",
@@ -511,32 +522,52 @@ How to verify the complete implementation after all steps are done.
         };
       }
 
-      // Check local structural rules (redirects) on extracted commands
+      // Check redirect and heredoc policies on extracted commands
       const extractedCmds = extractCommands(
         tokenize(cmd),
         "direct",
         wrapperRules,
       );
 
-      for (const extractedCmd of extractedCmds) {
-        // Block unsafe file output redirects
-        if (hasUnsafeRedirect(extractedCmd)) {
+      if (planPolicy.redirects) {
+        const redirectResult = evaluateRedirects(
+          extractedCmds,
+          planPolicy.redirects,
+        );
+        if (redirectResult.action === "deny") {
           return {
             block: true,
             reason: `Plan mode: Command with file output redirect blocked: "${getCommandSummary(cmd)}"`,
           };
         }
-
-        // Ask for heredocs
-        if (hasHeredoc(extractedCmd)) {
+        if (redirectResult.action === "ask") {
           const confirmation = await confirmCommand(
             cmd,
             ctx,
             "Plan mode confirm",
           );
-          if (confirmation.block) {
-            return confirmation;
-          }
+          if (confirmation.block) return confirmation;
+        }
+      }
+
+      if (planPolicy.heredocs) {
+        const heredocResult = evaluateHeredocs(
+          extractedCmds,
+          planPolicy.heredocs,
+        );
+        if (heredocResult.action === "deny") {
+          return {
+            block: true,
+            reason: `Plan mode: Heredoc command blocked: "${getCommandSummary(cmd)}"`,
+          };
+        }
+        if (heredocResult.action === "ask") {
+          const confirmation = await confirmCommand(
+            cmd,
+            ctx,
+            "Plan mode confirm",
+          );
+          if (confirmation.block) return confirmation;
         }
       }
 

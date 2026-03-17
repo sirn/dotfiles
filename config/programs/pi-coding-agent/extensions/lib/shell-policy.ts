@@ -36,6 +36,29 @@ export interface ShellPolicyConfig {
   wrappers?: WrapperRuleConfig[];
 }
 
+export interface RedirectPolicy {
+  action: Action;
+  safeTargets?: string[];
+  allowFdDup?: boolean;
+}
+
+export interface HeredocPolicy {
+  action: Action;
+}
+
+export interface ModePolicy {
+  tools?: Record<string, boolean>;
+  commands: PolicyCommands;
+  wrappers?: WrapperRuleConfig[];
+  redirects?: RedirectPolicy;
+  heredocs?: HeredocPolicy;
+}
+
+export interface UnifiedPolicyConfig {
+  default: ModePolicy;
+  modes?: Record<string, ModePolicy>;
+}
+
 function normalizePolicyCommands(raw: unknown): PolicyCommands {
   if (typeof raw !== "object" || raw === null) {
     return { allow: [], ask: [], deny: [] };
@@ -80,6 +103,78 @@ export function normalizeShellPolicyConfig(raw: unknown): ShellPolicyConfig {
     return { commands, wrappers };
   }
   return { commands: normalizePolicyCommands(obj) };
+}
+
+function normalizeAction(raw: unknown): Action {
+  if (raw === "allow" || raw === "ask" || raw === "deny" || raw === "default")
+    return raw;
+  return "allow";
+}
+
+export function normalizeRedirectPolicy(raw: unknown): RedirectPolicy {
+  if (typeof raw !== "object" || raw === null) return { action: "allow" };
+  const obj = raw as Record<string, unknown>;
+  const action = normalizeAction(obj.action);
+  const safeTargets = Array.isArray(obj.safeTargets)
+    ? obj.safeTargets.filter((t): t is string => typeof t === "string")
+    : undefined;
+  const allowFdDup =
+    typeof obj.allowFdDup === "boolean" ? obj.allowFdDup : undefined;
+  return { action, safeTargets, allowFdDup };
+}
+
+export function normalizeHeredocPolicy(raw: unknown): HeredocPolicy {
+  if (typeof raw !== "object" || raw === null) return { action: "allow" };
+  const obj = raw as Record<string, unknown>;
+  return { action: normalizeAction(obj.action) };
+}
+
+export function normalizeModePolicy(raw: unknown): ModePolicy {
+  if (typeof raw !== "object" || raw === null) {
+    return { commands: { allow: [], ask: [], deny: [] } };
+  }
+  const obj = raw as Record<string, unknown>;
+  const commands = normalizePolicyCommands(obj.commands);
+  const wrappers = Array.isArray(obj.wrappers)
+    ? obj.wrappers
+        .map(normalizeWrapperRuleConfig)
+        .filter((w): w is WrapperRuleConfig => w !== null)
+    : undefined;
+  const redirects =
+    obj.redirects !== undefined
+      ? normalizeRedirectPolicy(obj.redirects)
+      : undefined;
+  const heredocs =
+    obj.heredocs !== undefined
+      ? normalizeHeredocPolicy(obj.heredocs)
+      : undefined;
+  const tools =
+    typeof obj.tools === "object" && obj.tools !== null
+      ? (obj.tools as Record<string, boolean>)
+      : undefined;
+  return { commands, wrappers, redirects, heredocs, tools };
+}
+
+export function normalizeUnifiedPolicyConfig(
+  raw: unknown,
+): UnifiedPolicyConfig {
+  if (typeof raw !== "object" || raw === null) {
+    return { default: { commands: { allow: [], ask: [], deny: [] } } };
+  }
+  const obj = raw as Record<string, unknown>;
+  const defaultPolicy = normalizeModePolicy(obj.default);
+  const modes: Record<string, ModePolicy> = {};
+  if (typeof obj.modes === "object" && obj.modes !== null) {
+    for (const [key, value] of Object.entries(
+      obj.modes as Record<string, unknown>,
+    )) {
+      modes[key] = normalizeModePolicy(value);
+    }
+  }
+  return {
+    default: defaultPolicy,
+    modes: Object.keys(modes).length > 0 ? modes : undefined,
+  };
 }
 
 // --- Tokenizer ---
@@ -739,14 +834,13 @@ export function extractCommands(
 
 export function buildWrapperRuleMap(
   entries: WrapperRuleConfig[] | undefined,
-  base: WrapperRuleMap = BUILTIN_WRAPPER_RULES,
 ): WrapperRuleMap {
-  if (!entries || entries.length === 0) return base;
-  const merged = new Map(base);
+  if (!entries || entries.length === 0) return BUILTIN_WRAPPER_RULES;
+  const map = new Map<string, WrapperRule>();
   for (const entry of entries) {
-    merged.set(entry.name.toLowerCase(), { kind: entry.kind });
+    map.set(entry.name.toLowerCase(), { kind: entry.kind });
   }
-  return merged;
+  return map;
 }
 
 // --- Policy Matching ---
@@ -823,6 +917,44 @@ export function evaluateCommand(
     reason:
       result === "default" ? "No policy match" : `Policy matched: ${result}`,
   };
+}
+
+export function evaluateRedirects(
+  cmds: ExtractedCommand[],
+  policy: RedirectPolicy,
+): EvalResult {
+  for (const cmd of cmds) {
+    for (const r of cmd.redirects) {
+      // Strip optional fd prefix (single digit) to get base op
+      const baseOp = r.op.replace(/^\d/, "");
+      // Skip input redirects
+      if (
+        baseOp === "<" ||
+        baseOp === "<<" ||
+        baseOp === "<<-" ||
+        baseOp === "<<<"
+      )
+        continue;
+      // Allow fd-dup operations if configured
+      if (policy.allowFdDup && r.op.endsWith("&")) continue;
+      // Allow safe targets
+      if (policy.safeTargets?.includes(r.target)) continue;
+      return { action: policy.action, reason: `Redirect to "${r.target}"` };
+    }
+  }
+  return { action: "allow", reason: "No unsafe redirects" };
+}
+
+export function evaluateHeredocs(
+  cmds: ExtractedCommand[],
+  policy: HeredocPolicy,
+): EvalResult {
+  for (const cmd of cmds) {
+    if (cmd.redirects.some((r) => r.op === "<<" || r.op === "<<-")) {
+      return { action: policy.action, reason: "Heredoc detected" };
+    }
+  }
+  return { action: "allow", reason: "No heredocs" };
 }
 
 export function getCommandSummary(command: string): string {

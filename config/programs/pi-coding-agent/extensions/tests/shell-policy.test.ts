@@ -7,12 +7,18 @@ import {
   tokenize,
   extractCommands,
   evaluateCommand,
+  evaluateRedirects,
+  evaluateHeredocs,
   mergePolicies,
   buildWrapperRuleMap,
   normalizeShellPolicyConfig,
+  normalizeUnifiedPolicyConfig,
   type PolicyCommands,
   type EvalResult,
   type WrapperRuleConfig,
+  type ExtractedCommand,
+  type RedirectPolicy,
+  type HeredocPolicy,
 } from "../lib/shell-policy.ts";
 
 // Simple assertion framework (self-contained)
@@ -1352,7 +1358,7 @@ test("evaluateCommand with custom wrapper rules", () => {
   );
 });
 
-test("buildWrapperRuleMap overrides builtin", () => {
+test("buildWrapperRuleMap replaces builtins when entries provided", () => {
   const rules = buildWrapperRuleMap([
     { name: "sudo", kind: "shell-c" } as WrapperRuleConfig,
   ]);
@@ -1422,6 +1428,217 @@ test("normalizeShellPolicyConfig - non-array fields default to empty", () => {
 });
 
 // ==================== END NORMALIZE CONFIG TESTS ====================
+
+// ==================== EVALUATE REDIRECTS TESTS ====================
+
+function makeCmd(
+  redirects: { op: string; target: string }[],
+): ExtractedCommand {
+  return { name: "cmd", fullText: "cmd", redirects, source: "direct" };
+}
+
+test("evaluateRedirects - allow policy always allows", () => {
+  const policy: RedirectPolicy = { action: "allow" };
+  const cmds = [makeCmd([{ op: ">", target: "file.txt" }])];
+  const result = evaluateRedirects(cmds, policy);
+  assertEquals(result.action, "allow");
+});
+
+test("evaluateRedirects - deny policy blocks unsafe output redirect", () => {
+  const policy: RedirectPolicy = { action: "deny" };
+  const cmds = [makeCmd([{ op: ">", target: "file.txt" }])];
+  const result = evaluateRedirects(cmds, policy);
+  assertEquals(result.action, "deny");
+});
+
+test("evaluateRedirects - safe targets are allowed", () => {
+  const policy: RedirectPolicy = {
+    action: "deny",
+    safeTargets: ["/dev/null", "/dev/stderr", "/dev/stdout"],
+  };
+  const cmds = [makeCmd([{ op: ">", target: "/dev/null" }])];
+  const result = evaluateRedirects(cmds, policy);
+  assertEquals(result.action, "allow");
+});
+
+test("evaluateRedirects - unsafe target denied even with safeTargets set", () => {
+  const policy: RedirectPolicy = {
+    action: "deny",
+    safeTargets: ["/dev/null"],
+  };
+  const cmds = [makeCmd([{ op: ">", target: "output.txt" }])];
+  const result = evaluateRedirects(cmds, policy);
+  assertEquals(result.action, "deny");
+});
+
+test("evaluateRedirects - fd-dup allowed with allowFdDup", () => {
+  const policy: RedirectPolicy = { action: "deny", allowFdDup: true };
+  const cmds = [makeCmd([{ op: "2>&", target: "1" }])];
+  const result = evaluateRedirects(cmds, policy);
+  assertEquals(result.action, "allow");
+});
+
+test("evaluateRedirects - fd-dup blocked without allowFdDup", () => {
+  const policy: RedirectPolicy = { action: "deny", allowFdDup: false };
+  const cmds = [makeCmd([{ op: "2>&", target: "1" }])];
+  const result = evaluateRedirects(cmds, policy);
+  assertEquals(result.action, "deny");
+});
+
+test("evaluateRedirects - ask action returns ask", () => {
+  const policy: RedirectPolicy = { action: "ask" };
+  const cmds = [makeCmd([{ op: ">", target: "file.txt" }])];
+  const result = evaluateRedirects(cmds, policy);
+  assertEquals(result.action, "ask");
+});
+
+test("evaluateRedirects - input redirect < always passes", () => {
+  const policy: RedirectPolicy = { action: "deny" };
+  const cmds = [makeCmd([{ op: "<", target: "input.txt" }])];
+  const result = evaluateRedirects(cmds, policy);
+  assertEquals(result.action, "allow");
+});
+
+test("evaluateRedirects - heredoc << always passes", () => {
+  const policy: RedirectPolicy = { action: "deny" };
+  const cmds = [makeCmd([{ op: "<<", target: "EOF" }])];
+  const result = evaluateRedirects(cmds, policy);
+  assertEquals(result.action, "allow");
+});
+
+test("evaluateRedirects - here-string <<< always passes", () => {
+  const policy: RedirectPolicy = { action: "deny" };
+  const cmds = [makeCmd([{ op: "<<<", target: "value" }])];
+  const result = evaluateRedirects(cmds, policy);
+  assertEquals(result.action, "allow");
+});
+
+test("evaluateRedirects - fd-prefixed output redirect 2> evaluated", () => {
+  const policy: RedirectPolicy = { action: "deny" };
+  const cmds = [makeCmd([{ op: "2>", target: "err.log" }])];
+  const result = evaluateRedirects(cmds, policy);
+  assertEquals(result.action, "deny");
+});
+
+test("evaluateRedirects - no redirects always allows", () => {
+  const policy: RedirectPolicy = { action: "deny" };
+  const cmds = [makeCmd([])];
+  const result = evaluateRedirects(cmds, policy);
+  assertEquals(result.action, "allow");
+});
+
+// ==================== END EVALUATE REDIRECTS TESTS ====================
+
+// ==================== EVALUATE HEREDOCS TESTS ====================
+
+test("evaluateHeredocs - allow policy always allows", () => {
+  const policy: HeredocPolicy = { action: "allow" };
+  const cmds = [makeCmd([{ op: "<<", target: "EOF" }])];
+  const result = evaluateHeredocs(cmds, policy);
+  assertEquals(result.action, "allow");
+});
+
+test("evaluateHeredocs - ask policy returns ask on heredoc", () => {
+  const policy: HeredocPolicy = { action: "ask" };
+  const cmds = [makeCmd([{ op: "<<", target: "EOF" }])];
+  const result = evaluateHeredocs(cmds, policy);
+  assertEquals(result.action, "ask");
+});
+
+test("evaluateHeredocs - deny policy returns deny on heredoc", () => {
+  const policy: HeredocPolicy = { action: "deny" };
+  const cmds = [makeCmd([{ op: "<<", target: "EOF" }])];
+  const result = evaluateHeredocs(cmds, policy);
+  assertEquals(result.action, "deny");
+});
+
+test("evaluateHeredocs - <<- also triggers", () => {
+  const policy: HeredocPolicy = { action: "ask" };
+  const cmds = [makeCmd([{ op: "<<-", target: "END" }])];
+  const result = evaluateHeredocs(cmds, policy);
+  assertEquals(result.action, "ask");
+});
+
+test("evaluateHeredocs - no heredocs always allows", () => {
+  const policy: HeredocPolicy = { action: "ask" };
+  const cmds = [makeCmd([{ op: ">", target: "file.txt" }])];
+  const result = evaluateHeredocs(cmds, policy);
+  assertEquals(result.action, "allow");
+});
+
+test("evaluateHeredocs - empty commands always allows", () => {
+  const policy: HeredocPolicy = { action: "deny" };
+  const result = evaluateHeredocs([], policy);
+  assertEquals(result.action, "allow");
+});
+
+// ==================== END EVALUATE HEREDOCS TESTS ====================
+
+// ==================== NORMALIZE UNIFIED POLICY TESTS ====================
+
+test("normalizeUnifiedPolicyConfig - minimal config", () => {
+  const config = normalizeUnifiedPolicyConfig({
+    default: { commands: { allow: [], ask: [], deny: [] } },
+  });
+  assertEquals(config.default.commands, { allow: [], ask: [], deny: [] });
+  assertEquals(config.modes, undefined);
+});
+
+test("normalizeUnifiedPolicyConfig - with modes", () => {
+  const config = normalizeUnifiedPolicyConfig({
+    default: { commands: { allow: [], ask: [], deny: [] } },
+    modes: {
+      plan: {
+        tools: { edit: false, write: false },
+        commands: { allow: [], ask: [], deny: [] },
+      },
+    },
+  });
+  assertTrue(config.modes?.plan !== undefined);
+  assertEquals(config.modes?.plan.tools, { edit: false, write: false });
+});
+
+test("normalizeUnifiedPolicyConfig - with redirects and heredocs", () => {
+  const config = normalizeUnifiedPolicyConfig({
+    default: {
+      commands: { allow: [], ask: [], deny: [] },
+      redirects: { action: "allow" },
+      heredocs: { action: "ask" },
+    },
+    modes: {
+      plan: {
+        commands: { allow: [], ask: [], deny: [] },
+        redirects: {
+          action: "deny",
+          safeTargets: ["/dev/null"],
+          allowFdDup: true,
+        },
+        heredocs: { action: "ask" },
+      },
+    },
+  });
+  assertEquals(config.default.redirects?.action, "allow");
+  assertEquals(config.default.heredocs?.action, "ask");
+  assertEquals(config.modes?.plan.redirects?.action, "deny");
+  assertEquals(config.modes?.plan.redirects?.safeTargets, ["/dev/null"]);
+  assertEquals(config.modes?.plan.redirects?.allowFdDup, true);
+});
+
+test("normalizeUnifiedPolicyConfig - null/undefined input defaults", () => {
+  const config = normalizeUnifiedPolicyConfig(null);
+  assertEquals(config.default.commands, { allow: [], ask: [], deny: [] });
+  assertEquals(config.modes, undefined);
+});
+
+test("normalizeUnifiedPolicyConfig - missing fields default gracefully", () => {
+  const config = normalizeUnifiedPolicyConfig({ default: {} });
+  assertEquals(config.default.commands, { allow: [], ask: [], deny: [] });
+  assertEquals(config.default.redirects, undefined);
+  assertEquals(config.default.heredocs, undefined);
+  assertEquals(config.default.tools, undefined);
+});
+
+// ==================== END NORMALIZE UNIFIED POLICY TESTS ====================
 
 // Tests run inline above; print summary
 console.log("\n=== Summary ===");
