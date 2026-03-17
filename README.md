@@ -1,26 +1,53 @@
 # Dotfiles
 
-## Instructions
+Dotfiles repository for managing configurations across Linux and macOS machines.
 
-Clone the repository:
+## Project Structure
 
-```shell
-$ git clone git@git.sr.ht:~sirn/dotfiles ~/.dotfiles
-```
+- `flake.nix`: The entry point defining Home Manager configurations and NixOS modules.
+- `config/`: Home Manager configuration files organized by program or service.
+- `modules/`: NixOS modules for system-level integration.
+- `pkgs/`: Custom package definitions and overlays.
+- `lib/`: Helper functions and utilities.
+- `local.nix`: A machine-specific configuration file (gitignored) for local overrides.
+- `secrets/`: Secrets managed with sops-nix.
 
-Install Nix:
+## Machine Profiles
+
+The following hostnames are defined as machine profiles in `flake.nix`:
+
+- `phoebe` (Linux)
+- `polaris` (Linux)
+- `system76` (Linux)
+- `terra` (Linux)
+- `theia` (macOS - `aarch64-darwin`)
+- `ws` (Linux)
+
+## Getting Started
+
+### Verify Nix Installation
+
+Ensure Nix is installed. If not, install it with:
 
 ```shell
 $ sh <(curl -L https://nixos.org/nix/install) --daemon
 ```
 
-Configure nix, edit `~/.config/nix/nix.conf`:
+Configure nix, edit `~/.config/nix/nix.conf` to enable flakes:
 
 ```ini
 experimental-features = nix-command flakes
 ```
 
-Setup home directory with Home Manager:
+### Clone the Repository
+
+```shell
+$ git clone git@git.sr.ht:~sirn/dotfiles ~/.dotfiles
+```
+
+### Setup Home Manager (Standalone)
+
+For macOS or generic Linux (non-NixOS), apply the Home Manager configuration using the machine profile name.
 
 ```shell
 $ HM_PROFILE=$(hostname -s)
@@ -34,9 +61,9 @@ On subsequent updates, use:
 $ home-manager switch --flake path:.#$HM_PROFILE
 ```
 
-## NixOS Module
+### Setup as NixOS Module
 
-This repository also provides a module to be used with Home Manager NixOS Module:
+This repository provides a module to be used directly with the Home Manager NixOS module. In your NixOS configuration (`configuration.nix`), add:
 
 ```nix
 modules = [
@@ -45,7 +72,19 @@ modules = [
 ];
 ```
 
-To test building locally, use:
+## Development & Maintenance
+
+### Formatting
+
+To format all files consistently:
+
+```shell
+nix run path:.#treefmt
+```
+
+### Testing Builds Locally
+
+Test a build locally without applying the configuration:
 
 ```shell
 $ HM_PROFILE=$(hostname -s)
@@ -56,21 +95,21 @@ $ nix build "path:.#homeConfigurations.$HM_PROFILE.activationPackage"
 
 ### Local Configuration
 
-Create a file named `local.nix` to have a machine-specific configuration that is not committed a machine profile.
+Create a file named `local.nix` to have a machine-specific configuration that is not committed to the repository.
 
 ```nix
 {
-  import = [
+  imports = [
     ./config/programs/bitwarden.nix
     ./config/services/languagetool.nix
   ];
 
-  # When running on a non-NixOS
+  # When running on a non-NixOS Linux:
   targets.genericLinux.enable = true;
 }
 ```
 
-For NixOS, this needs to be done as part of NixOS `configuration.nix`:
+For NixOS, this needs to be done as part of the system's `configuration.nix` instead:
 
 ```nix
 {
