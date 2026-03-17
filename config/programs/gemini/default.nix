@@ -270,7 +270,7 @@ in
             modelConfig = {
               generateContentConfig = {
                 thinkingConfig = {
-                  thinkingBudget = 24576;
+                  thinkingLevel = "MEDIUM";
                   includeThoughts = true;
                 };
               };

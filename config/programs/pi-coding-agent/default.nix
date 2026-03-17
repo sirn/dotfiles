@@ -95,7 +95,7 @@ in
       quietStartup = true;
       defaultProvider = "fireworks-ai";
       defaultModel = "accounts/fireworks/routers/kimi-k2p5-turbo";
-      defaultThinkingLevel = "high";
+      defaultThinkingLevel = "medium";
       hideThinkingBlock = false;
       enabledModels = [
         # Fireworks
@@ -363,7 +363,7 @@ in
           {
             id = "gemini-3.1-flash-lite-preview";
             name = "Gemini 3.1 Flash Lite Preview";
-            reasoning = false;
+            reasoning = true;
             input = [
               "text"
               "image"

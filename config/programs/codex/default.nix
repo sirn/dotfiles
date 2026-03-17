@@ -109,7 +109,7 @@ let
       allow_login_shell
       network
       ;
-    model_reasoning_effort = "high";
+    model_reasoning_effort = "medium";
     mcp_servers = toCodexMcpServers config.programs.mcp.servers;
   }
   // cfg.settingsOverride;
