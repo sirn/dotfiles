@@ -113,7 +113,8 @@ in
 
         # OpenAI
         "gpt-5.4"
-        "gpt-5.1-codex-mini"
+        "gpt-5.4-mini"
+        "gpt-5.4-nano"
 
         # Google Gemini
         "gemini-3.1-pro-preview"
@@ -302,19 +303,36 @@ in
             };
           }
           {
-            id = "gpt-5.1-codex-mini";
-            name = "GPT-5.1 Codex Mini";
+            id = "gpt-5.4-mini";
+            name = "GPT-5.4 Mini";
             reasoning = true;
             input = [
               "text"
               "image"
             ];
             contextWindow = 400000;
-            maxTokens = 100000;
+            maxTokens = 128000;
             cost = {
-              input = 0.25;
-              output = 2.0;
-              cacheRead = 0.025;
+              input = 0.75;
+              output = 4.5;
+              cacheRead = 0.075;
+              cacheWrite = 0.0;
+            };
+          }
+          {
+            id = "gpt-5.4-nano";
+            name = "GPT-5.4 Nano";
+            reasoning = true;
+            input = [
+              "text"
+              "image"
+            ];
+            contextWindow = 400000;
+            maxTokens = 128000;
+            cost = {
+              input = 0.2;
+              output = 1.25;
+              cacheRead = 0.02;
               cacheWrite = 0.0;
             };
           }
