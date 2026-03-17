@@ -800,13 +800,6 @@ mode = "prefix"
 match = "dd"
 mode = "prefix"
 
-[[default.commands.ask.shell]]
-match = "docker exec"
-mode = "prefix"
-
-[[default.commands.ask.shell]]
-match = "docker run"
-mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "env"
@@ -876,13 +869,6 @@ mode = "prefix"
 match = "nix run"
 mode = "prefix"
 
-[[default.commands.ask.shell]]
-match = "podman exec"
-mode = "prefix"
-
-[[default.commands.ask.shell]]
-match = "podman run"
-mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "printenv"
@@ -979,6 +965,11 @@ mode = "prefix"
 #
 # - xargs: Like utility-operand but may construct commands from operands.
 #   Treated separately due to different command-construction semantics.
+#
+# - docker-run: Container runtimes (docker, podman). Recognizes subcommands
+#   "run", "exec", and "create". Skips container flags and the image/container
+#   name to extract the inner command. Uses -- if present; otherwise
+#   best-effort flag parsing (unknown boolean flags cause safe fallthrough).
 
 [[default.commands.wrappers]]
 name = "bash"
@@ -1039,6 +1030,14 @@ kind = "env"
 [[default.commands.wrappers]]
 name = "xargs"
 kind = "xargs"
+
+[[default.commands.wrappers]]
+name = "docker"
+kind = "docker-run"
+
+[[default.commands.wrappers]]
+name = "podman"
+kind = "docker-run"
 
 [default.redirects]
 action = "allow"

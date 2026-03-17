@@ -21,6 +21,27 @@ import {
   type HeredocPolicy,
 } from "../lib/shell-policy.ts";
 
+// Wrapper rules used by tests that exercise wrapper extraction
+const TEST_WRAPPER_RULES = buildWrapperRuleMap([
+  { name: "bash", kind: "shell-c" },
+  { name: "sh", kind: "shell-c" },
+  { name: "zsh", kind: "shell-c" },
+  { name: "dash", kind: "shell-c" },
+  { name: "ksh", kind: "shell-c" },
+  { name: "sudo", kind: "utility-operand" },
+  { name: "doas", kind: "utility-operand" },
+  { name: "time", kind: "utility-operand" },
+  { name: "nohup", kind: "utility-operand" },
+  { name: "nice", kind: "utility-operand" },
+  { name: "chroot", kind: "utility-operand" },
+  { name: "timeout", kind: "utility-operand" },
+  { name: "setsid", kind: "utility-operand" },
+  { name: "env", kind: "env" },
+  { name: "xargs", kind: "xargs" },
+  { name: "docker", kind: "docker-run" },
+  { name: "podman", kind: "docker-run" },
+] as WrapperRuleConfig[]);
+
 // Simple assertion framework (self-contained)
 interface TestStats {
   passed: number;
@@ -469,7 +490,7 @@ test("nested substitution", () => {
 // Wrapper commands
 test("bash -c wrapper", () => {
   const tokens = tokenize("bash -c 'echo hi'");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertEquals(cmds.length, 2);
   const cmd = cmds.find((c) => c.name === "echo");
   assertTrue(cmd !== undefined);
@@ -478,7 +499,7 @@ test("bash -c wrapper", () => {
 
 test("sh -c wrapper", () => {
   const tokens = tokenize("sh -c 'ls -la'");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   const cmd = cmds.find((c) => c.name === "ls");
   assertTrue(cmd !== undefined);
   assertEquals(cmd?.source, "wrapper-arg");
@@ -486,7 +507,7 @@ test("sh -c wrapper", () => {
 
 test("sudo passthrough", () => {
   const tokens = tokenize("sudo rm -rf /");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertEquals(cmds.length, 2);
   assertEquals(cmds[0].name, "sudo");
   assertEquals(cmds[0].source, "direct");
@@ -496,35 +517,35 @@ test("sudo passthrough", () => {
 
 test("doas passthrough", () => {
   const tokens = tokenize("doas ls -la");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertEquals(cmds.length, 2);
   assertEquals(cmds[1].name, "ls");
 });
 
 test("xargs passthrough", () => {
   const tokens = tokenize("xargs rm");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertEquals(cmds.length, 2);
   assertEquals(cmds[1].name, "rm");
 });
 
 test("time passthrough without --", () => {
   const tokens = tokenize("time sleep 1");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertEquals(cmds.length, 2);
   assertEquals(cmds[1].name, "sleep");
 });
 
 test("time -- passthrough respects -- end-of-options", () => {
   const tokens = tokenize("time -- echo hi");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertEquals(cmds.length, 2);
   assertEquals(cmds[1].name, "echo");
 });
 
 test("env wrapper handles -- before command", () => {
   const tokens = tokenize("env -- VAR=val cmd arg");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertEquals(cmds.length, 2);
   assertEquals(cmds[1].name, "cmd");
   assertEquals(cmds[1].fullText, "cmd arg");
@@ -532,14 +553,14 @@ test("env wrapper handles -- before command", () => {
 
 test("env wrapper skips assignments", () => {
   const tokens = tokenize("env VAR=val echo hi");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertEquals(cmds.length, 2);
   assertEquals(cmds[1].name, "echo");
 });
 
 test("env with multiple assignments", () => {
   const tokens = tokenize("env A=1 B=2 C=3 cmd arg");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertEquals(cmds.length, 2);
   assertEquals(cmds[1].name, "cmd");
   assertEquals(cmds[1].fullText, "cmd arg");
@@ -547,21 +568,21 @@ test("env with multiple assignments", () => {
 
 test("env skips assignments after double dash", () => {
   const tokens = tokenize("env -- KEY=val cmd");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertEquals(cmds.length, 2);
   assertEquals(cmds[1].name, "cmd");
 });
 
 test("nohup wrapper extracts utility operand", () => {
   const tokens = tokenize("nohup cat file.txt");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertEquals(cmds.length, 2);
   assertEquals(cmds[1].name, "cat");
 });
 
 test("sudo with only flags extracts no inner command", () => {
   const tokens = tokenize("sudo -h");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertEquals(cmds.length, 1);
   assertEquals(cmds[0].name, "sudo");
 });
@@ -569,14 +590,14 @@ test("sudo with only flags extracts no inner command", () => {
 // Nested wrappers
 test("nested wrappers bash -c with sudo", () => {
   const tokens = tokenize("sudo bash -c 'rm -rf /'");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertEquals(cmds.length, 3);
   assertTrue(cmds.some((c) => c.name === "rm"));
 });
 
 test("deeply nested", () => {
   const tokens = tokenize("echo $(bash -c 'ls $(pwd)')");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertTrue(cmds.length >= 3);
   assertTrue(cmds.some((c) => c.name === "bash"));
   assertTrue(cmds.some((c) => c.name === "ls"));
@@ -787,11 +808,17 @@ test("multiple commands - one deny triggers deny", () => {
 
 // Wrapper command extraction
 test("wrapper command extraction - sudo denied", () => {
-  assertEquals(evaluateCommand("sudo ls -la", samplePolicy).action, "deny");
+  assertEquals(
+    evaluateCommand("sudo ls -la", samplePolicy, TEST_WRAPPER_RULES).action,
+    "deny",
+  );
 });
 
 test("wrapper command extraction - sudo prefix match", () => {
-  assertEquals(evaluateCommand("sudo ls", samplePolicy).action, "deny");
+  assertEquals(
+    evaluateCommand("sudo ls", samplePolicy, TEST_WRAPPER_RULES).action,
+    "deny",
+  );
 });
 
 test("wrapper command extraction - bash -c wrapper", () => {
@@ -800,12 +827,16 @@ test("wrapper command extraction - bash -c wrapper", () => {
     ask: [],
     deny: [{ match: "rm", mode: "prefix" }],
   };
-  assertEquals(evaluateCommand("bash -c 'rm -rf /'", policy).action, "deny");
+  assertEquals(
+    evaluateCommand("bash -c 'rm -rf /'", policy, TEST_WRAPPER_RULES).action,
+    "deny",
+  );
 });
 
 test("wrapper command extraction - nested wrappers", () => {
   assertEquals(
-    evaluateCommand("sudo bash -c 'ls -la'", samplePolicy).action,
+    evaluateCommand("sudo bash -c 'ls -la'", samplePolicy, TEST_WRAPPER_RULES)
+      .action,
     "deny",
   );
 });
@@ -1076,7 +1107,7 @@ test("deeply nested subshells", () => {
 
 test("wrapper in wrapper", () => {
   const tokens = tokenize("sudo bash -c 'sh -c \"echo hi\"'");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertTrue(cmds.some((c) => c.name === "sudo"));
   assertTrue(cmds.some((c) => c.name === "bash"));
 });
@@ -1152,7 +1183,7 @@ test("double dash command does not recurse for grep", () => {
 
 test("double dash with sudo extraction", () => {
   const tokens = tokenize("sudo -- ls -la");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertEquals(cmds.length, 2);
   assertEquals(cmds[0].name, "sudo");
   assertEquals(cmds[1].name, "ls");
@@ -1165,7 +1196,8 @@ test("double dash in bash -c wrapper", () => {
     deny: [],
   };
   assertEquals(
-    evaluateCommand("bash -c 'grep -- -v file'", policy).action,
+    evaluateCommand("bash -c 'grep -- -v file'", policy, TEST_WRAPPER_RULES)
+      .action,
     "allow",
   );
 });
@@ -1290,20 +1322,20 @@ test("passthrough wrapper skips -- and extracts inner command", () => {
     ask: [],
     deny: [{ match: "echo", mode: "prefix" }],
   };
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertEquals(cmds.length, 2);
   assertEquals(cmds[0].name, "time");
   assertEquals(cmds[0].source, "direct");
   assertEquals(cmds[1].name, "echo");
   assertEquals(cmds[1].source, "wrapper-arg");
-  const result = evaluateCommand("time -- echo hi", policy);
+  const result = evaluateCommand("time -- echo hi", policy, TEST_WRAPPER_RULES);
   assertEquals(result.action, "deny");
   assertTrue(result.reason?.includes("echo"));
 });
 
 test("bash -c -- 'cmd' treats -- as command string", () => {
   const tokens = tokenize("bash -c -- 'rm -rf /'");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertEquals(cmds.length, 2);
   assertEquals(cmds[0].name, "bash");
   assertEquals(cmds[1].name, "--");
@@ -1311,7 +1343,7 @@ test("bash -c -- 'cmd' treats -- as command string", () => {
 
 test("bash -c without -- extracts correctly", () => {
   const tokens = tokenize("bash -c 'rm -rf /'");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertEquals(cmds.length, 2);
   assertEquals(cmds[0].name, "bash");
   assertEquals(cmds[1].name, "rm");
@@ -1319,7 +1351,7 @@ test("bash -c without -- extracts correctly", () => {
 
 test("env -- VAR=val cmd extracts actual utility", () => {
   const tokens = tokenize("env -- VAR=val cmd");
-  const cmds = extractCommands(tokens);
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
   assertEquals(cmds.length, 2);
   assertEquals(cmds[0].name, "env");
   assertEquals(cmds[1].name, "cmd");
@@ -1367,15 +1399,106 @@ test("buildWrapperRuleMap replaces builtins when entries provided", () => {
   assertTrue(cmds.some((c) => c.name === "echo" && c.source === "wrapper-arg"));
 });
 
-test("buildWrapperRuleMap with undefined entries", () => {
+test("buildWrapperRuleMap with undefined entries returns empty map", () => {
   const rules = buildWrapperRuleMap(undefined);
   const tokens = tokenize("sudo ls");
   const cmds = extractCommands(tokens, "direct", rules);
-  assertEquals(cmds.length, 2);
-  assertEquals(cmds[1].name, "ls");
+  // No wrappers configured: only the direct sudo command, no inner extraction
+  assertEquals(cmds.length, 1);
+  assertEquals(cmds[0].name, "sudo");
 });
 
 // ==================== END EDGE CASE & REGRESSION TESTS ====================
+
+// ==================== DOCKER-RUN WRAPPER TESTS ====================
+console.log("\n=== Docker-Run Wrapper Tests ===");
+
+test("docker run basic extracts inner command", () => {
+  const tokens = tokenize("docker run ubuntu ls -la");
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[0].name, "docker");
+  assertEquals(cmds[1].name, "ls");
+  assertEquals(cmds[1].source, "wrapper-arg");
+});
+
+test("docker run with flags extracts inner command", () => {
+  const tokens = tokenize("docker run --rm -it -v /a:/b -e FOO=bar ubuntu ls");
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[1].name, "ls");
+  assertEquals(cmds[1].source, "wrapper-arg");
+});
+
+test("docker run with -- extracts inner command", () => {
+  const tokens = tokenize("docker run --rm -- ubuntu ls -la");
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[1].name, "ls");
+  assertEquals(cmds[1].fullText, "ls -la");
+});
+
+test("docker exec extracts inner command", () => {
+  const tokens = tokenize("docker exec -it mycontainer bash");
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[1].name, "bash");
+  assertEquals(cmds[1].source, "wrapper-arg");
+});
+
+test("podman run extracts inner command", () => {
+  const tokens = tokenize("podman run alpine cat /etc/hosts");
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
+  assertEquals(cmds.length, 2);
+  assertEquals(cmds[1].name, "cat");
+  assertEquals(cmds[1].source, "wrapper-arg");
+});
+
+test("docker run with no inner command returns only docker", () => {
+  const tokens = tokenize("docker run ubuntu");
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
+  assertEquals(cmds.length, 1);
+  assertEquals(cmds[0].name, "docker");
+});
+
+test("docker build is not a wrapper subcommand", () => {
+  const tokens = tokenize("docker build .");
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
+  assertEquals(cmds.length, 1);
+  assertEquals(cmds[0].name, "docker");
+});
+
+test("docker run nested wrappers extracts deeply", () => {
+  const tokens = tokenize("docker run ubuntu sudo ls");
+  const cmds = extractCommands(tokens, "direct", TEST_WRAPPER_RULES);
+  // docker (direct), sudo (wrapper-arg), ls (wrapper-arg)
+  assertEquals(cmds.length, 3);
+  assertTrue(cmds.some((c) => c.name === "sudo"));
+  assertTrue(cmds.some((c) => c.name === "ls"));
+});
+
+test("evaluateCommand docker run rm -rf / denied", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [],
+    deny: [{ match: "rm", mode: "prefix" }],
+  };
+  assertEquals(
+    evaluateCommand("docker run ubuntu rm -rf /", policy, TEST_WRAPPER_RULES)
+      .action,
+    "deny",
+  );
+});
+
+test("extractCommands with empty wrapper rules does not extract sudo", () => {
+  const emptyRules = buildWrapperRuleMap([]);
+  const tokens = tokenize("sudo ls");
+  const cmds = extractCommands(tokens, "direct", emptyRules);
+  assertEquals(cmds.length, 1);
+  assertEquals(cmds[0].name, "sudo");
+});
+
+// ==================== END DOCKER-RUN WRAPPER TESTS ====================
 
 // ==================== NORMALIZE CONFIG TESTS ====================
 console.log("\n=== Normalize Config Tests ===");

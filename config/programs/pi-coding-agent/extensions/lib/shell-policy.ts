@@ -81,7 +81,8 @@ function normalizeWrapperRuleConfig(raw: unknown): WrapperRuleConfig | null {
     kind !== "shell-c" &&
     kind !== "utility-operand" &&
     kind !== "env" &&
-    kind !== "xargs"
+    kind !== "xargs" &&
+    kind !== "docker-run"
   ) {
     return null;
   }
@@ -632,6 +633,14 @@ export function tokenize(input: string): Token[] {
  *    - Similar to utility-operand but may construct command from operands
  *    - Treated separately due to different command-construction semantics
  *
+ * 5. docker-run family (docker, podman):
+ *    - Recognizes subcommands: run, exec, create
+ *    - Skips Docker/Podman flags (with arity-aware parsing) and image/container name
+ *    - Uses -- end-of-options if present; otherwise best-effort flag parsing
+ *    - Unknown boolean flags cause safe fallthrough (fail to extract → docker
+ *      command itself evaluated by policy); false positives cannot occur
+ *    - Note: docker compose run is NOT handled (subcommand would be "compose")
+ *
  * WHY NO GENERIC -- HEURISTIC?
  *
  * A naive "anything after -- is a nested command" rule would be WRONG for:
@@ -660,7 +669,12 @@ export interface ExtractedCommand {
   source: "direct" | "subshell" | "substitution" | "wrapper-arg";
 }
 
-export type WrapperKind = "shell-c" | "utility-operand" | "env" | "xargs";
+export type WrapperKind =
+  | "shell-c"
+  | "utility-operand"
+  | "env"
+  | "xargs"
+  | "docker-run";
 
 export interface WrapperRule {
   kind: WrapperKind;
@@ -668,23 +682,7 @@ export interface WrapperRule {
 
 export type WrapperRuleMap = ReadonlyMap<string, WrapperRule>;
 
-const BUILTIN_WRAPPER_RULES: WrapperRuleMap = new Map([
-  ["bash", { kind: "shell-c" }],
-  ["sh", { kind: "shell-c" }],
-  ["zsh", { kind: "shell-c" }],
-  ["dash", { kind: "shell-c" }],
-  ["ksh", { kind: "shell-c" }],
-  ["sudo", { kind: "utility-operand" }],
-  ["doas", { kind: "utility-operand" }],
-  ["time", { kind: "utility-operand" }],
-  ["nohup", { kind: "utility-operand" }],
-  ["nice", { kind: "utility-operand" }],
-  ["chroot", { kind: "utility-operand" }],
-  ["timeout", { kind: "utility-operand" }],
-  ["setsid", { kind: "utility-operand" }],
-  ["env", { kind: "env" }],
-  ["xargs", { kind: "xargs" }],
-]);
+const EMPTY_WRAPPER_RULES: WrapperRuleMap = new Map();
 
 function isAssignmentToken(word: string): boolean {
   const eq = word.indexOf("=");
@@ -745,6 +743,80 @@ function extractXargsInner(wordTokens: WordToken[]): WordToken[] | undefined {
   return extractUtilityOperandInner(wordTokens);
 }
 
+const DOCKER_BOOLEAN_FLAGS = new Set([
+  "--detach",
+  "--interactive",
+  "--tty",
+  "--rm",
+  "--privileged",
+  "--init",
+  "--read-only",
+  "--publish-all",
+  "--oom-kill-disable",
+  "--no-healthcheck",
+  "--sig-proxy",
+  "--help",
+  "-d",
+  "-i",
+  "-t",
+  "-P",
+]);
+
+function extractDockerRunInner(
+  wordTokens: WordToken[],
+): WordToken[] | undefined {
+  if (wordTokens.length < 3) return undefined;
+  const sub = wordTokens[1].value.toLowerCase();
+  if (sub !== "run" && sub !== "exec" && sub !== "create") return undefined;
+
+  let i = 2;
+  while (i < wordTokens.length) {
+    const val = wordTokens[i].value;
+
+    // -- ends option parsing; next token is image/container, then command
+    if (val === "--") {
+      i += 2; // skip -- and image/container
+      return i < wordTokens.length ? wordTokens.slice(i) : undefined;
+    }
+
+    // Long flag with = is self-contained
+    if (val.startsWith("--") && val.includes("=")) {
+      i++;
+      continue;
+    }
+
+    // Known boolean flag (long or short)
+    if (DOCKER_BOOLEAN_FLAGS.has(val)) {
+      i++;
+      continue;
+    }
+
+    // Combined short flags: -dit, -it, etc. (length > 2 = multiple flags)
+    if (val.startsWith("-") && !val.startsWith("--") && val.length > 2) {
+      i++;
+      continue;
+    }
+
+    // Unknown long flag without = — assume takes next token as argument
+    if (val.startsWith("--")) {
+      i += 2;
+      continue;
+    }
+
+    // Single short flag (-v, -e, -p, etc.) — assume takes next token as argument
+    if (val.startsWith("-") && val.length === 2) {
+      i += 2;
+      continue;
+    }
+
+    // First non-flag token is image/container — skip it
+    i++;
+    // Remaining tokens are the command
+    return i < wordTokens.length ? wordTokens.slice(i) : undefined;
+  }
+  return undefined;
+}
+
 function extractWrapperInnerTokens(
   rule: WrapperRule,
   wordTokens: WordToken[],
@@ -758,6 +830,8 @@ function extractWrapperInnerTokens(
       return extractEnvInner(wordTokens);
     case "xargs":
       return extractXargsInner(wordTokens);
+    case "docker-run":
+      return extractDockerRunInner(wordTokens);
     default:
       return undefined;
   }
@@ -766,7 +840,7 @@ function extractWrapperInnerTokens(
 export function extractCommands(
   tokens: Token[],
   source: ExtractedCommand["source"] = "direct",
-  wrapperRules: WrapperRuleMap = BUILTIN_WRAPPER_RULES,
+  wrapperRules: WrapperRuleMap = EMPTY_WRAPPER_RULES,
 ): ExtractedCommand[] {
   const results: ExtractedCommand[] = [];
 
@@ -835,7 +909,7 @@ export function extractCommands(
 export function buildWrapperRuleMap(
   entries: WrapperRuleConfig[] | undefined,
 ): WrapperRuleMap {
-  if (!entries || entries.length === 0) return BUILTIN_WRAPPER_RULES;
+  if (!entries || entries.length === 0) return EMPTY_WRAPPER_RULES;
   const map = new Map<string, WrapperRule>();
   for (const entry of entries) {
     map.set(entry.name.toLowerCase(), { kind: entry.kind });
@@ -872,7 +946,7 @@ export function evaluateCommand(
     cmds = extractCommands(
       tokenize(command),
       "direct",
-      wrapperRules ?? BUILTIN_WRAPPER_RULES,
+      wrapperRules ?? EMPTY_WRAPPER_RULES,
     );
   } catch (e) {
     return {
