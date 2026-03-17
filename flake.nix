@@ -36,6 +36,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Multi-file formatting with Nix
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     ## Package overlays
     ##
 
@@ -57,7 +63,12 @@
   };
 
   outputs =
-    { nixpkgs, home-manager, ... }@inputs:
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      ...
+    }@inputs:
     let
       config = {
         allowUnfree = true;
@@ -129,10 +140,7 @@
         ];
 
       mkDefaultConfig =
-        {
-          username,
-          homeDirectory,
-        }:
+        { username, homeDirectory }:
         { pkgs, ... }:
         {
           nixpkgs.overlays = overlays;
@@ -217,8 +225,44 @@
             homeDirectory
             ;
         };
+
+      # Helper for eachSystem pattern
+      eachSystem =
+        f:
+        nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ] (
+          system: f nixpkgs.legacyPackages.${system}
+        );
+
+      # Eval the treefmt configuration
+      treefmtEval = eachSystem (
+        pkgs:
+        inputs.treefmt-nix.lib.evalModule pkgs {
+          # Used to find the project root
+          projectRootFile = "flake.nix";
+
+          # Enable formatters
+          programs.nixfmt = {
+            enable = true;
+            package = pkgs.nixfmt-rfc-style;
+            strict = true;
+          };
+
+          programs.prettier.enable = true;
+          programs.shfmt.enable = true;
+
+          # Global settings
+          settings = {
+            excludes = [
+              "*.sops.*"
+              "flake.lock"
+              "secrets/**"
+            ];
+          };
+        }
+      );
     in
     {
+      # Home Manager module to be included by a standalnoe Home Manager
       homeConfigurations = {
         phoebe = mkLinuxConfig { hostname = "phoebe"; };
         polaris = mkLinuxConfig { hostname = "polaris"; };
@@ -228,6 +272,7 @@
         ws = mkLinuxConfig { hostname = "ws"; };
       };
 
+      # NixOS module to be included by NixOS configuration
       nixosModules = {
         phoebe = mkNixOSConfig { hostname = "phoebe"; };
         polaris = mkNixOSConfig { hostname = "polaris"; };
@@ -235,5 +280,13 @@
         terra = mkNixOSConfig { hostname = "terra"; };
         ws = mkNixOSConfig { hostname = "ws"; };
       };
+
+      # Apps output for nix run path:.#treefmt
+      apps = eachSystem (pkgs: {
+        treefmt = {
+          type = "app";
+          program = "${treefmtEval.${pkgs.system}.config.build.wrapper}/bin/treefmt";
+        };
+      });
     };
 }
