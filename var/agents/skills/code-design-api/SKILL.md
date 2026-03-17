@@ -6,6 +6,7 @@ description: Design API contracts and specifications. Use when asked to design R
 Design API contracts, schemas, and specifications before implementation.
 
 ## Process
+
 1. Identify context:
    - Protocol: REST, GraphQL, gRPC, TRPC
    - Format: OpenAPI/Swagger, Protocol Buffers, Zod/TypeBox schemas
@@ -22,6 +23,7 @@ Design API contracts, schemas, and specifications before implementation.
    - **Examples**: JSON/Text payloads
 
 ## Output
+
 1. **API Specification** (OpenAPI YAML, Proto file, or Interface code)
 2. **Usage Example** (curl or client code)
 3. **Design Rationale** (RESTfulness, Breaking changes avoidance)

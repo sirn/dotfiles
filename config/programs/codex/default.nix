@@ -16,9 +16,10 @@ let
 
   agentPermissionsPath = ../../../var/agents/permissions.codex.toml;
   agentPermissions =
-    if builtins.pathExists agentPermissionsPath
-    then builtins.fromTOML (builtins.readFile agentPermissionsPath)
-    else { };
+    if builtins.pathExists agentPermissionsPath then
+      builtins.fromTOML (builtins.readFile agentPermissionsPath)
+    else
+      { };
 
   effectivePolicy =
     mode:
@@ -91,13 +92,9 @@ let
     lib.mapAttrs (
       name: server:
       if isStdioServer server then
-        {
-          command = server.command or (lib.getExe server.package);
-        }
+        { command = server.command or (lib.getExe server.package); }
       else
-        {
-          url = server.url;
-        }
+        { url = server.url; }
     ) servers;
 
   tomlFormat = pkgs.formats.toml { };
@@ -134,9 +131,7 @@ in
   };
 
   programs.git = {
-    ignores = [
-      ".codex/"
-    ];
+    ignores = [ ".codex/" ];
   };
 
   home.file.".codex/skills/home-manager".source = skillsDir;

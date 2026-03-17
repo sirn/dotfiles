@@ -10,6 +10,7 @@ Retrieve information about your Synthetic API usage quotas and limits.
 - `SYNTHETIC_API_KEY` environment variable with a valid Synthetic API key
 
 **Check before use:**
+
 ```bash
 [ -z "$SYNTHETIC_API_KEY" ] && echo "Error: SYNTHETIC_API_KEY not set" || echo "OK: SYNTHETIC_API_KEY is set"
 ```
@@ -29,12 +30,14 @@ GET https://api.synthetic.new/v2/quotas
 Retrieve current quota information.
 
 **Request**:
+
 ```bash
 curl -s https://api.synthetic.new/v2/quotas \
   -H "Authorization: Bearer $SYNTHETIC_API_KEY"
 ```
 
 **Response**:
+
 ```json
 {
   "subscription": {
@@ -47,11 +50,11 @@ curl -s https://api.synthetic.new/v2/quotas \
 
 ## Response Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `subscription.limit` | number | Total request quota for the current period |
+| Field                   | Type   | Description                                   |
+| ----------------------- | ------ | --------------------------------------------- |
+| `subscription.limit`    | number | Total request quota for the current period    |
 | `subscription.requests` | number | Number of requests used in the current period |
-| `subscription.renewsAt` | string | ISO 8601 timestamp when the quota renews |
+| `subscription.renewsAt` | string | ISO 8601 timestamp when the quota renews      |
 
 **Important:** Always run `date` before reporting quota information to the user. This provides context for interpreting `renewsAt` timestamps (e.g., "renews in 3 hours" vs "renews in 5 days").
 
@@ -84,6 +87,7 @@ alias synthetic_quota='curl -s https://api.synthetic.new/v2/quotas \
 ## Error Handling
 
 The API will return appropriate HTTP status codes:
+
 - `200` - Success
 - `401` - Invalid or missing API key
 - `429` - Rate limit exceeded

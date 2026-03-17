@@ -9,8 +9,8 @@ current_version=$(jq -r '.version' "$sources_file")
 version=$(curl -s https://api.github.com/repos/google-gemini/gemini-cli/releases/latest | jq -r '.tag_name' | sed 's/^v//')
 
 if [ "$current_version" = "$version" ]; then
-    echo "Already at latest version: $version"
-    exit 0
+  echo "Already at latest version: $version"
+  exit 0
 fi
 
 echo "Updating from $current_version to $version"
@@ -28,27 +28,27 @@ echo "  $gemini_hash"
 # Fetch sandbox hashes
 declare -a file_entries
 for file in \
-    sandbox-macos-permissive-open.sb \
-    sandbox-macos-permissive-proxied.sb \
-    sandbox-macos-restrictive-open.sb \
-    sandbox-macos-restrictive-proxied.sb \
-    sandbox-macos-strict-open.sb \
-    sandbox-macos-strict-proxied.sb; do
-    url="${base_url}/${file}"
-    echo "Fetching hash for ${file}..."
-    hash=$(nix-prefetch-url --type sha256 "$url" 2>/dev/null)
-    sri=$(nix hash convert --hash-algo sha256 --to sri "$hash" 2>/dev/null)
-    echo "  $sri"
-    file_entries+=("$(jq -n --arg url "$url" --arg hash "$sri" '{url: $url, hash: $hash}')")
+  sandbox-macos-permissive-open.sb \
+  sandbox-macos-permissive-proxied.sb \
+  sandbox-macos-restrictive-open.sb \
+  sandbox-macos-restrictive-proxied.sb \
+  sandbox-macos-strict-open.sb \
+  sandbox-macos-strict-proxied.sb; do
+  url="${base_url}/${file}"
+  echo "Fetching hash for ${file}..."
+  hash=$(nix-prefetch-url --type sha256 "$url" 2>/dev/null)
+  sri=$(nix hash convert --hash-algo sha256 --to sri "$hash" 2>/dev/null)
+  echo "  $sri"
+  file_entries+=("$(jq -n --arg url "$url" --arg hash "$sri" '{url: $url, hash: $hash}')")
 done
 
 # Build final JSON
 files_json=$(printf '%s\n' "${file_entries[@]}" | jq -s '.')
 jq -n \
-    --arg version "$version" \
-    --arg url "$gemini_url" \
-    --arg hash "$gemini_hash" \
-    --argjson files "$files_json" \
-    '{version: $version, src: {url: $url, hash: $hash}, files: $files}' >"$sources_file"
+  --arg version "$version" \
+  --arg url "$gemini_url" \
+  --arg hash "$gemini_hash" \
+  --argjson files "$files_json" \
+  '{version: $version, src: {url: $url, hash: $hash}, files: $files}' >"$sources_file"
 
 echo "Updated $sources_file to $version"

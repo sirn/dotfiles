@@ -10,6 +10,7 @@ Asana API v1.0 reference for common operations.
 - `ASANA_PAT` environment variable with a valid Asana Personal Access Token
 
 **Check before use:**
+
 ```bash
 [ -z "$ASANA_PAT" ] && echo "Error: ASANA_PAT not set" || echo "OK: ASANA_PAT is set"
 ```
@@ -41,6 +42,7 @@ curl -s -H "Authorization: Bearer $ASANA_PAT" \
 ```
 
 **Response**:
+
 ```json
 [
   {
@@ -84,6 +86,7 @@ curl -s -H "Authorization: Bearer $ASANA_PAT" \
 ```
 
 **Response**:
+
 ```json
 {
   "gid": "1234567890123456",
@@ -123,6 +126,7 @@ curl -s -H "Authorization: Bearer $ASANA_PAT" \
 ```
 
 **Response**:
+
 ```json
 {
   "gid": "1234567890123456",
@@ -154,6 +158,7 @@ curl -s -H "Authorization: Bearer $ASANA_PAT" \
 ```
 
 **Response**:
+
 ```json
 [
   {
@@ -174,6 +179,7 @@ curl -s -H "Authorization: Bearer $ASANA_PAT" \
 ```
 
 **Response**:
+
 ```json
 {
   "gid": "1234567890123456",
@@ -187,7 +193,9 @@ curl -s -H "Authorization: Bearer $ASANA_PAT" \
   "tags": [{ "gid": "...", "name": "..." }],
   "projects": [{ "gid": "...", "name": "..." }],
   "memberships": [{ "section": { "gid": "...", "name": "..." } }],
-  "custom_fields": [{ "gid": "...", "name": "Priority", "enum_value": { "name": "High" } }],
+  "custom_fields": [
+    { "gid": "...", "name": "Priority", "enum_value": { "name": "High" } }
+  ],
   "permalink_url": "https://app.asana.com/1/...",
   "resource_type": "task"
 }
@@ -262,6 +270,7 @@ curl -s -H "Authorization: Bearer $ASANA_PAT" \
 ```
 
 **Response**:
+
 ```json
 [
   {
@@ -308,6 +317,7 @@ curl -s -H "Authorization: Bearer $ASANA_PAT" \
 ```
 
 **Response**:
+
 ```json
 [
   {
@@ -341,6 +351,7 @@ curl -s -H "Authorization: Bearer $ASANA_PAT" \
 ```
 
 **Response**:
+
 ```json
 [
   {
@@ -399,6 +410,7 @@ curl -s -H "Authorization: Bearer $ASANA_PAT" \
 ```
 
 **Response**:
+
 ```json
 [
   {
@@ -440,6 +452,7 @@ curl -s -H "Authorization: Bearer $ASANA_PAT" \
 ```
 
 Common opt_fields values:
+
 - `name`, `notes`, `completed`, `due_on`, `due_at`
 - `assignee.name`, `assignee.gid`
 - `projects.name`, `projects.gid`
@@ -449,14 +462,14 @@ Common opt_fields values:
 
 ## Error Handling
 
-| Status | Meaning |
-|--------|---------|
-| `200` | Success |
-| `400` | Bad request (invalid parameters) |
-| `401` | Unauthorized (invalid token) |
-| `403` | Forbidden (insufficient permissions) |
-| `404` | Not found |
-| `429` | Rate limit exceeded (1500 req/min) |
+| Status | Meaning                              |
+| ------ | ------------------------------------ |
+| `200`  | Success                              |
+| `400`  | Bad request (invalid parameters)     |
+| `401`  | Unauthorized (invalid token)         |
+| `403`  | Forbidden (insufficient permissions) |
+| `404`  | Not found                            |
+| `429`  | Rate limit exceeded (1500 req/min)   |
 
 ## Best Practices
 

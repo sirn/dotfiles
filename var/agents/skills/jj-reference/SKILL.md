@@ -9,6 +9,7 @@ description: Reference for Jujutsu (jj) version control commands. ALWAYS read be
 Working copy is always a commit. Changes are first-class with stable IDs across rewrites.
 
 ### Best Practices
+
 - **User Authorization**: NEVER commit (`jj describe`, `jj commit`), squash (`jj squash`), split (`jj split`), or push (`jj git push`) without explicit user confirmation. Always ask before modifying version control history.
 - **Logical Commits**: Group changes into logical steps; try to make each commit "usable" on its own.
 - **Explicit Operations**: Always use explicit change IDs for all operations (e.g., `abandon`, `describe`, `edit`, `new`, `squash`, `split`, `rebase`, `bookmark`).
@@ -17,40 +18,41 @@ Working copy is always a commit. Changes are first-class with stable IDs across 
 - **Direct Referencing**: Reference change-id directly (or unique prefix) instead of using `@-` or `@` to avoid ambiguity.
 
 ### Key Concepts
+
 - `@` = working copy commit
 - `@-` = parent, `@--` = grandparent
 - Revsets: `::@` (ancestors), `main..@` (commits since main)
 
 ### Day-to-Day Commands
 
-| Task | Command |
-|------|---------|
-| Status | `jj status` (Repo status) / `jj show <id>` (Change summary) |
-| Diff | `jj diff -r <id>` |
-| Log | `jj log -r <revset>` |
-| New commit | `jj new <parent-id> -m "msg"` |
-| Describe | `jj describe <id> -m "msg"` |
-| Commit + new | `jj commit -m "msg"` |
-| Navigate | `jj edit <id>` |
-| Abandon | `jj abandon <id>` |
-| Squash | `jj squash --from <from-id> --to <target-id>` |
-| Split commit | `jj split -r <id> -m "msg" -- <path>` |
-| Rebase | `jj rebase -r <id> -d <dest>` |
-| Show file | `jj file show <path> -r <id>` |
-| Blame | `jj file annotate <path> -r <id>` |
-| Resolve | `jj resolve -r <id>` |
-| Undo | `jj undo` |
+| Task         | Command                                                     |
+| ------------ | ----------------------------------------------------------- |
+| Status       | `jj status` (Repo status) / `jj show <id>` (Change summary) |
+| Diff         | `jj diff -r <id>`                                           |
+| Log          | `jj log -r <revset>`                                        |
+| New commit   | `jj new <parent-id> -m "msg"`                               |
+| Describe     | `jj describe <id> -m "msg"`                                 |
+| Commit + new | `jj commit -m "msg"`                                        |
+| Navigate     | `jj edit <id>`                                              |
+| Abandon      | `jj abandon <id>`                                           |
+| Squash       | `jj squash --from <from-id> --to <target-id>`               |
+| Split commit | `jj split -r <id> -m "msg" -- <path>`                       |
+| Rebase       | `jj rebase -r <id> -d <dest>`                               |
+| Show file    | `jj file show <path> -r <id>`                               |
+| Blame        | `jj file annotate <path> -r <id>`                           |
+| Resolve      | `jj resolve -r <id>`                                        |
+| Undo         | `jj undo`                                                   |
 
 ### Limiting Output
 
-| Goal | Option | Example |
-|------|--------|---------|
-| Limit commit count | `-n <N>` / `--limit <N>` | `jj log -r ::@ -n 10` |
-| Summary only (diffs) | `-s` / `--summary` | `jj diff -s -r <id>` |
-| Summary only (status) | `-s` | `jj status -s` |
-| No graph (cleaner log) | `--no-graph` | `jj log -r ::@ --no-graph` |
-| Custom template | `-T <template>` | `jj log -r @ -T 'description ++ "\n"'` |
-| Limit description lines | `-T "..."` | `jj log -T 'description.first_line()'` |
+| Goal                    | Option                   | Example                                |
+| ----------------------- | ------------------------ | -------------------------------------- |
+| Limit commit count      | `-n <N>` / `--limit <N>` | `jj log -r ::@ -n 10`                  |
+| Summary only (diffs)    | `-s` / `--summary`       | `jj diff -s -r <id>`                   |
+| Summary only (status)   | `-s`                     | `jj status -s`                         |
+| No graph (cleaner log)  | `--no-graph`             | `jj log -r ::@ --no-graph`             |
+| Custom template         | `-T <template>`          | `jj log -r @ -T 'description ++ "\n"'` |
+| Limit description lines | `-T "..."`               | `jj log -T 'description.first_line()'` |
 
 ### Revset Syntax
 
@@ -104,6 +106,7 @@ jj git remote list | grep origin | head -1 | sed -E 's/.*github\.com[:/]([^/]+)\
 ```
 
 Common patterns to extract `owner/repo`:
+
 - SSH: `git@github.com:owner/repo.git` → `owner/repo`
 - HTTPS: `https://github.com/owner/repo.git` → `owner/repo`
 
@@ -118,6 +121,7 @@ jj git push --bookmark new --allow-new  # Push new bookmark
 ### Common Workflows
 
 #### Squash workflow (recommended)
+
 ```bash
 jj new <parent-id>
 # ... make changes ...
@@ -125,6 +129,7 @@ jj squash --from <change-id> --to <target-id>
 ```
 
 #### Feature branch
+
 ```bash
 jj new <main-id>
 jj describe <id> -m "feat: add feature"
@@ -133,6 +138,7 @@ jj git push --bookmark <name> --allow-new
 ```
 
 #### Resolve conflicts
+
 ```bash
 jj resolve --list -r <id>          # List conflicts
 jj resolve -r <id>                 # Use merge tool
@@ -141,6 +147,7 @@ jj resolve --tool=:theirs -r <id>  # Accept incoming
 ```
 
 #### Recovery
+
 ```bash
 jj undo                     # Undo last operation
 jj op log                   # View operation history

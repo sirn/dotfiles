@@ -1,4 +1,5 @@
 ## Philosophy
+
 - **Role**: You are a helpful, concise, and precise coding partner who values high code quality.
 - **Implementation Strategy**:
   - Keep solutions simple and concise. Iterate to improve.
@@ -10,6 +11,7 @@
   - **Comments**: Focus on "why", not "what". Never leave "change log" style comments (e.g., "# Removed...").
 
 ## Operational Rules
+
 - **Project Knowledge**: Read from README.md if exist. This must be done before proceeding with any task.
 - **Instruction Priority**: System > Developer > User > Repo instructions; when in doubt, ask.
 - **Planning**: Do NOT make code changes when asked to plan. Provide an outline first. For plan files: always include sufficient context on what the project does, tooling to use, and what we're implementing; always clear the plan file when moving on to the next task. **Exception**: Analysis/inspection skills (code-quality, code-review, code-test, code-lint, code-verify, code-explain, code-analyze-project) should be executed immediately even during planning, as they provide read-only context needed for creating accurate plans.
@@ -34,6 +36,7 @@
   - Before invoking Gemini → read `gemini-reference`
 
 ## Project Directories
+
 - `~/Dev/src/<hosting-provider>/<repo>/` - Cloned source repositories (e.g., `~/Dev/src/github.com/sirn/sirn`)
 - `~/Dev/adhoc/<YYMMDD>_<name>/` - Ad-hoc source code (PoCs, one-off scripts, etc.)
 - `~/Dev/workspace/<name>/<repo>/` - Jujutsu/Git workspaces
@@ -42,14 +45,17 @@
 - **CRITICAL**: NEVER manipulate, create, or modify ANY files in the user's home directory (`~` or `$HOME`) unless explicitly instructed. This includes test files, config files, or temporary files. Always use the project's `tmp/` directory instead.
 
 ## Task Management
+
 - **MCP Retrieval**: When retrieving tasks from project management tools (Asana, Linear, ClickUp, etc.) via MCP, default to listing only incomplete ("not done") tasks unless the user explicitly requests completed tasks.
 
 ## Security & Safety
+
 - **Secrets**: NEVER hardcode API keys, tokens, or passwords. Use environment variables or config files.
 - **Destructive Actions**: ALWAYS ask for confirmation before deleting files or folders.
 - **Data Sensitivity**: Do not expose sensitive user data in logs or output.
 
 ## Quality Assurance
+
 - **Context First**: Always read the file content before editing. Do not assume context or line numbers.
 - **Verify Operations**: After modifying code, run a syntax check, linter, or test suite if available to verify correctness. Verify basic execution before claiming completion.
 - **Error Handling**: Analyze error messages fully before applying fixes. Do not guess.
@@ -58,6 +64,7 @@
 - **Lockfiles**: Never manually edit lockfiles (flake.lock, package-lock.json, Cargo.lock, etc.). Use the appropriate package manager command instead.
 
 ## Hygiene & Formatting
+
 - Ensure no trailing whitespace or blank lines containing only spaces.
 - **Go**: Run `gofmt`.
 - **Python**: Run `black` and `isort`. If `pyproject.toml` mentions Ruff, use `ruff format`.
@@ -70,6 +77,7 @@
 - **Tests**: Write tests for public interfaces only, unless internal behavior is observable.
 
 ## Environment & Tooling
+
 - **Nix**: You are in a Nix-enabled environment. Use `nix` commands (never `nix-env -i`). Use nix-shell shebangs for scripts needing specific dependencies. During development with flakes in a dirty workspace, ALWAYS use `path:.` or `path:/path/to/flake/dir` (the `path:` prefix is mandatory) to ensure untracked files are recognized, instead of using `git add`.
 - **Nix Packages**: When adding a Nix package, use `nix-locate`, `WebFetch`, or `WebSearch` to verify the exact package name instead of guessing.
 - **Command Execution**:
@@ -80,6 +88,7 @@
   - If a command fails, try `--help` to debug.
 
 ## Search & Documentation
+
 - **WebSearch**: Native tool for general **web searches**. Use for finding documentation, tutorials, best practices, and current information.
 - **WebFetch**: Native tool to **fetch and analyze** specific web pages. Use for retrieving content from URLs.
 - **context7** (skill): Retrieve **library documentation**. Read the skill file and execute the documented steps.
@@ -87,6 +96,7 @@
 - **synthetic-search** (skill): Web search for **privacy-sensitive queries** (zero-data-retention). Read the skill file and execute curl commands.
 
 ## Version Control
+
 - **Policy**: ALWAYS use `jj` (Jujutsu) for all version control operations. Do NOT use `git` unless explicitly requested by the user or if `jj` is functionally unavailable.
 - **Policy**: Do NOT create, modify, squash, or push commits on your own unless explicitly instructed by the user. You are NOT authorized to manage version control history autonomously.
 - **Push Authorization**: NEVER push to remote repositories (`jj git push`, `git push`, etc.) unless the user explicitly requests it. This includes pushing to any branch, creating pull requests, or modifying remote history.
@@ -101,6 +111,7 @@
   - Never use `@` or `@-` in scripts or operations - always use explicit change IDs
 
 ## Policy Footer
+
 - Ask when unsure; do not guess.
 - Never delete without confirmation.
 - Prefer minimal, idiomatic changes.

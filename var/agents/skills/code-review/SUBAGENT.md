@@ -6,11 +6,13 @@ description: Comprehensive code review with support for fast, full, or performan
 Run a code review using specialized agents.
 
 ## Modes
+
 - **Full** (default): Uses all 5 agents (Quality, Security, Convention, Simplicity, Tech Researcher)
 - **Fast**: Uses 2 agents (Quality, Simplicity) for quick feedback
 - **Performance**: Uses Tech Researcher to focus specifically on performance optimization
 
 ## Process
+
 1. Identify context:
    - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
    - If the user specified specific files or paths, focus on those
@@ -36,6 +38,7 @@ Run a code review using specialized agents.
 4. Synthesize findings into a unified report
 
 ## Output
+
 1. **Executive Summary**
 2. **Critical Issues** (Must fix)
 3. **Security Analysis** (Full mode only)

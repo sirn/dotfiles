@@ -22,6 +22,7 @@ Retrieve documentation context for a specific library.
 Retrieve documentation context for a specific library.
 
 **Request**:
+
 ```bash
 curl -s "https://context7.com/api/v2/context?libraryId=/facebook/react&query=useEffect" \
   -H "Authorization: Bearer $CONTEXT7_API_KEY"
@@ -41,11 +42,11 @@ The `useEffect` hook enables functional components to perform side effects...
 import { useState, useEffect } from 'react';
 
 function UserProfile({ userId }) {
-  // ... code example ...
+// ... code example ...
 }
 \`\`\`
 
---------------------------------
+---
 
 ### React > Hooks > useEffect
 
@@ -76,18 +77,18 @@ curl -s "https://context7.com/api/v2/context?libraryId=/vercel/next.js&query=app
 
 ## Query Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
+| Parameter   | Type   | Description                                                                    |
+| ----------- | ------ | ------------------------------------------------------------------------------ |
 | `libraryId` | string | **Required.** Library identifier (e.g., `/facebook/react`, `/vercel/next.js`). |
-| `query` | string | **Required.** Natural language query about the documentation topic. |
+| `query`     | string | **Required.** Natural language query about the documentation topic.            |
 
 ## Library ID Format
 
 Library IDs follow the pattern `/owner/repo`:
 
-| Example | Description |
-|---------|-------------|
-| `/facebook/react` | React library |
+| Example           | Description       |
+| ----------------- | ----------------- |
+| `/facebook/react` | React library     |
 | `/vercel/next.js` | Next.js framework |
 
 ## Response Format
@@ -104,6 +105,7 @@ The `/api/v2/context` endpoint returns plain text in markdown format with the fo
   - **Code examples** in fenced code blocks
 
 Example structure:
+
 ```markdown
 ### Topic Title
 
@@ -115,7 +117,7 @@ Description text explaining the concept...
 // Code example
 \`\`\`
 
---------------------------------
+---
 
 ### Another Topic
 
@@ -126,19 +128,19 @@ More documentation...
 
 ## Error Handling
 
-| Status | Meaning | Action |
-|--------|---------|--------|
-| `200` | Success | Process normally |
-| `202` | Accepted - Library not finalized | Wait and retry |
-| `301` | Moved - Library redirected | Use new ID from `redirectUrl` |
-| `400` | Bad Request | Check query parameters |
-| `401` | Unauthorized - Invalid API key | Verify key (starts with `ctx7sk`) |
-| `403` | Forbidden | Check library access permissions |
-| `404` | Not Found | Verify the library ID |
-| `422` | Unprocessable - Library too large/no code | Try different library |
-| `429` | Too Many Requests | Wait for `Retry-After` header |
-| `500` | Internal Server Error | Retry with backoff |
-| `503` | Service Unavailable | Retry later |
+| Status | Meaning                                   | Action                            |
+| ------ | ----------------------------------------- | --------------------------------- |
+| `200`  | Success                                   | Process normally                  |
+| `202`  | Accepted - Library not finalized          | Wait and retry                    |
+| `301`  | Moved - Library redirected                | Use new ID from `redirectUrl`     |
+| `400`  | Bad Request                               | Check query parameters            |
+| `401`  | Unauthorized - Invalid API key            | Verify key (starts with `ctx7sk`) |
+| `403`  | Forbidden                                 | Check library access permissions  |
+| `404`  | Not Found                                 | Verify the library ID             |
+| `422`  | Unprocessable - Library too large/no code | Try different library             |
+| `429`  | Too Many Requests                         | Wait for `Retry-After` header     |
+| `500`  | Internal Server Error                     | Retry with backoff                |
+| `503`  | Service Unavailable                       | Retry later                       |
 
 ## Rate Limits
 
@@ -149,10 +151,11 @@ More documentation...
 ## Best Practices
 
 1. **Be specific with queries**: Use detailed natural language
+
    ```bash
    # Good
    curl -s ".../context?...&query=How%20to%20implement%20authentication%20with%20middleware"
-   
+
    # Less optimal
    curl -s ".../context?...&query=auth"
    ```

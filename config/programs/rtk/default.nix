@@ -63,18 +63,14 @@ in
     "Library/Application Support/rtk/config.toml" = lib.mkIf pkgs.stdenv.isDarwin {
       source = tomlFormat.generate "rtk-config" rtkConfig;
     };
-    ".pi/agent/extensions/rtk-rewrite.ts" = lib.mkIf piCfg.enable {
-      text = rtkRewritePiTs;
-    };
+    ".pi/agent/extensions/rtk-rewrite.ts" = lib.mkIf piCfg.enable { text = rtkRewritePiTs; };
   };
 
   xdg.configFile = {
     "rtk/config.toml" = lib.mkIf pkgs.stdenv.isLinux {
       source = tomlFormat.generate "rtk-config" rtkConfig;
     };
-    "opencode/plugins/rtk-rewrite.ts" = lib.mkIf opencodeCfg.enable {
-      text = rtkRewriteOpencodeTs;
-    };
+    "opencode/plugins/rtk-rewrite.ts" = lib.mkIf opencodeCfg.enable { text = rtkRewriteOpencodeTs; };
   };
 
   programs.claude-code.settings = lib.mkIf claudeCfg.enable {

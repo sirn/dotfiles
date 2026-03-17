@@ -14,12 +14,12 @@ agents/          → Sub-agent definitions for Claude Code + OpenCode
 
 Each AI tool consumes these files differently:
 
-| Tool | Receives | Consumption |
-|------|----------|-------------|
-| **Claude Code** | `instruction.md` + `skills/` + `agents/` | Skills in `~/.claude/skills/`, agents registered |
-| **OpenCode** | `instruction.md` + `skills/` + `agents/` | Skills in `~/.config/opencode/skill/home-manager/`, agents registered |
-| **Gemini CLI** | `instruction.md` + `skills/` | Skills in `~/.gemini/skills/`, no sub-agents |
-| **Codex** | `instruction.md` + `skills/` | Skills in `~/.codex/skills/home-manager/`, no sub-agents |
+| Tool            | Receives                                 | Consumption                                                           |
+| --------------- | ---------------------------------------- | --------------------------------------------------------------------- |
+| **Claude Code** | `instruction.md` + `skills/` + `agents/` | Skills in `~/.claude/skills/`, agents registered                      |
+| **OpenCode**    | `instruction.md` + `skills/` + `agents/` | Skills in `~/.config/opencode/skill/home-manager/`, agents registered |
+| **Gemini CLI**  | `instruction.md` + `skills/`             | Skills in `~/.gemini/skills/`, no sub-agents                          |
+| **Codex**       | `instruction.md` + `skills/`             | Skills in `~/.codex/skills/home-manager/`, no sub-agents              |
 
 ## File Types
 
@@ -33,6 +33,7 @@ When both exist, the agent should prefer SUBAGENT.md for higher-quality parallel
 ### Reference Skills
 
 Skills with `type: reference` in their frontmatter are documentation-only:
+
 - `claude-code-reference`
 - `codex-reference`
 - `gemini-reference`
@@ -59,6 +60,7 @@ These are for lookup only — do not "execute" them.
 
 1. Create `agents/<name>.md` with the agent prompt
 2. Create `agents/<name>.toml` with configuration:
+
    ```toml
    description = "Agent description"
 

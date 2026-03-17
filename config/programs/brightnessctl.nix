@@ -1,7 +1,5 @@
 { pkgs, ... }:
 
 {
-  home.packages = with pkgs; [
-    brightnessctl
-  ];
+  home.packages = with pkgs; [ brightnessctl ];
 }

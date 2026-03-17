@@ -4,9 +4,7 @@ let
   tomlFormat = pkgs.formats.toml { };
 in
 {
-  home.packages = with pkgs; [
-    local.repoman
-  ];
+  home.packages = with pkgs; [ local.repoman ];
 
   xdg.configFile."repoman/config.toml".source = tomlFormat.generate "repoman-config" {
     roots = [

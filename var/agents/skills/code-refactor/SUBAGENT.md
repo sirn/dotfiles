@@ -6,6 +6,7 @@ description: Execute safe, targeted refactoring with step-by-step guidance. Use 
 Execute safe, targeted refactoring by analyzing code and providing actionable steps.
 
 ## Process
+
 1. Identify context:
    - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
    - If the user specified specific files or paths, focus on those
@@ -19,7 +20,9 @@ Execute safe, targeted refactoring by analyzing code and providing actionable st
 3. Synthesize findings into concrete refactoring steps
 
 ## Output
+
 Present a refactoring plan with:
+
 1. **Identified Refactorings** - Each refactoring opportunity with rationale
    - Function extraction
    - Variable renaming

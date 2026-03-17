@@ -70,15 +70,8 @@ in
     programs.git.ignores = [ ".pi/" ];
 
     home.file = {
-      ".pi/agent/settings.json".text = builtins.toJSON (
-        cfg.settings
-        // {
-          extensions = cfg.extensions;
-        }
-      );
-      ".pi/agent/models.json".text = builtins.toJSON {
-        providers = cfg.providers;
-      };
+      ".pi/agent/settings.json".text = builtins.toJSON (cfg.settings // { extensions = cfg.extensions; });
+      ".pi/agent/models.json".text = builtins.toJSON { providers = cfg.providers; };
       ".pi/agent/AGENTS.md".text = cfg.instructionText;
     }
     // lib.optionalAttrs (cfg.keybindings != { }) {

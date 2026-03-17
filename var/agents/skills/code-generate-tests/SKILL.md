@@ -6,6 +6,7 @@ description: Generate tests for untested functions and edge cases, then run them
 Generate tests for untested functions and edge cases, then verify they pass.
 
 ## Process
+
 1. Identify context:
    - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
    - If the user specified specific files or paths, focus on those
@@ -40,9 +41,11 @@ Generate tests for untested functions and edge cases, then verify they pass.
    - Re-run tests to verify
 
 ## Stop Condition
+
 - If test generation or fixing fails twice, stop and ask for guidance.
 
 ## Output
+
 1. **Test Framework Detected**
 2. **Untested Functions/Paths Identified**
 3. **Generated Tests** (with file locations and coverage summary)

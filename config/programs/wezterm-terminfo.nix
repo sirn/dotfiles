@@ -1,7 +1,5 @@
 { pkgs, ... }:
 
 {
-  home.packages = [
-    pkgs.wezterm.terminfo
-  ];
+  home.packages = [ pkgs.wezterm.terminfo ];
 }

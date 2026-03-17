@@ -37,35 +37,12 @@ in
             else
               [ ]
           )
-          ++ (
-            if niricfg.enable then
-              [
-                "niri/workspaces"
-              ]
-            else
-              [ ]
-          )
-          ++ [
-            "custom/media"
-          ];
+          ++ (if niricfg.enable then [ "niri/workspaces" ] else [ ])
+          ++ [ "custom/media" ];
 
         modules-center =
-          (
-            if swaycfg.enable then
-              [
-                "sway/window"
-              ]
-            else
-              [ ]
-          )
-          ++ (
-            if niricfg.enable then
-              [
-                "niri/window"
-              ]
-            else
-              [ ]
-          );
+          (if swaycfg.enable then [ "sway/window" ] else [ ])
+          ++ (if niricfg.enable then [ "niri/window" ] else [ ]);
 
         modules-right = [
           "idle_inhibitor"
@@ -75,9 +52,7 @@ in
           "clock"
         ];
 
-        "sway/mode" = lib.mkIf swaycfg.enable {
-          format = "<span style = \"italic\">{}</span>";
-        };
+        "sway/mode" = lib.mkIf swaycfg.enable { format = "<span style = \"italic\">{}</span>"; };
 
         "sway/scratchpad" = lib.mkIf swaycfg.enable {
           format = "{icon} {count}";
@@ -147,9 +122,7 @@ in
     };
   };
 
-  home.packages = with pkgs; [
-    font-awesome
-  ];
+  home.packages = with pkgs; [ font-awesome ];
 
   wayland.windowManager.sway = lib.mkIf (cfg.enable && swaycfg.enable) {
     config = {

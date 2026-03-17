@@ -12,9 +12,7 @@
 
     fcitx5 = {
       waylandFrontend = true;
-      addons = with pkgs; [
-        fcitx5-mozc
-      ];
+      addons = with pkgs; [ fcitx5-mozc ];
     };
   };
 }

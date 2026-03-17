@@ -6,6 +6,7 @@ description: Design database schemas, ORM models, and migrations. Use when asked
 Design data models, database schemas, and ORM definitions.
 
 ## Process
+
 1. Identify context:
    - Identify the database technology (Postgres, MySQL, SQLite, Mongo, etc.)
    - Identify the ORM/Framework (Prisma, TypeORM, SQLAlchemy, Django, etc.)
@@ -21,6 +22,7 @@ Design data models, database schemas, and ORM definitions.
    - **Validation**: Check for normalization issues or N+1 query risks in relationships
 
 ## Output
+
 1. **Schema Design** (ER Diagram description or Model code)
 2. **Migration Plan** (SQL or CLI commands)
 3. **Rationale** (Why these types/indices were chosen)

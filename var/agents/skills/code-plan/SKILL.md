@@ -6,6 +6,7 @@ description: Generate comprehensive implementation plan based on analysis. Use w
 Generate a comprehensive implementation plan based on task analysis.
 
 ## Process
+
 1. Identify context:
    - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
    - If the user specified specific files or paths, focus on those
@@ -25,6 +26,7 @@ Generate a comprehensive implementation plan based on task analysis.
 4. Synthesize findings into a clear implementation plan
 
 ## Output
+
 1. **Context Analysis**
    - Relevant code structure and patterns
    - Existing architectural decisions

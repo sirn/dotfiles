@@ -10,7 +10,7 @@ if [ -z "$CMD" ]; then
 fi
 
 case "$CMD" in
-  *'<<'*) exit 0 ;;
+*'<<'*) exit 0 ;;
 esac
 
 REWRITTEN=$(rtk rewrite "$CMD" 2>/dev/null) || exit 0

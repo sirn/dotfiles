@@ -6,6 +6,7 @@ description: Generate documentation, docstrings, or ADRs. Use when asked to docu
 Generate missing documentation or architectural decision records (ADRs).
 
 ## Process
+
 1. Identify context:
    - If code changes are involved: run `jj diff -s` first to see changed files
    - If the user specified specific files or paths, focus on those
@@ -29,6 +30,7 @@ Generate missing documentation or architectural decision records (ADRs).
    - **Action**: Create new file in `doc/adr/` (or project equivalent)
 
 ## Output
+
 1. **Documentation Plan** (what will be documented)
 2. **Generated Content** (preview)
 3. **Changes Applied** (file paths)

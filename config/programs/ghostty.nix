@@ -71,9 +71,7 @@ in
   programs.niri = lib.mkIf (cfg.enable && niricfg.enable) {
     settings = {
       binds = {
-        "Mod+T".action.spawn = [
-          "${ghosttyLauncher}"
-        ];
+        "Mod+T".action.spawn = [ "${ghosttyLauncher}" ];
       };
     };
   };

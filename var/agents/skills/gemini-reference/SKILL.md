@@ -11,17 +11,19 @@ Invoke the Gemini agent for sub-tasks using structured JSON output and explicit 
 ## When to Use Gemini
 
 Use Gemini when you need:
+
 - **Large context window** - Can process extensive codebases in one pass
 - **General purpose tasks** - Good balance of capability across domains
 - **Fast responses** - Flash models for quick analysis
 - **Cost efficiency** - Lower cost per token for large inputs
 
 ## Capabilities
-*   **Core Tools**: `ReadFileTool`, `WriteFile`, `Edit`, `GlobTool`, `GrepTool`, `ShellTool`.
-*   **MCP Servers**:
-    *   `context7`: Documentation queries.
-    *   `brave-search`: Web search (Brave).
-*   **Specialty**: General purpose, large context window.
+
+- **Core Tools**: `ReadFileTool`, `WriteFile`, `Edit`, `GlobTool`, `GrepTool`, `ShellTool`.
+- **MCP Servers**:
+  - `context7`: Documentation queries.
+  - `brave-search`: Web search (Brave).
+- **Specialty**: General purpose, large context window.
 
 ## Calling from Another Agent
 
@@ -38,19 +40,21 @@ session_id=$(echo "$result" | jq -r '.session_id')
 
 ### Output Formats
 
-| Format | Description |
-|--------|-------------|
-| `text` (default) | Plain text output |
-| `json` | Single JSON object with `response`, `stats`, `session_id` |
-| `stream-json` | Streaming newline-delimited JSON (JSONL) events |
+| Format           | Description                                               |
+| ---------------- | --------------------------------------------------------- |
+| `text` (default) | Plain text output                                         |
+| `json`           | Single JSON object with `response`, `stats`, `session_id` |
+| `stream-json`    | Streaming newline-delimited JSON (JSONL) events           |
 
 **JSON Response Fields:**
+
 - `response`: (string) The model's final answer
 - `stats`: (object) Token usage and API latency metrics
 - `session_id`: (string) Session identifier for resuming
 - `error`: (object, optional) Error details if request failed
 
 **Streaming JSON Event Types:**
+
 - `init`: Session metadata (session ID, model)
 - `message`: User and assistant message chunks
 - `tool_use`: Tool call requests with arguments
@@ -127,12 +131,12 @@ rm .gemini/sessions/continue.md
 
 **Resume Options:**
 
-| Flag | Description |
-|------|-------------|
-| `--resume <id>` | Resume specific session by ID or UUID |
-| `--resume "latest"` | Resume most recent session |
-| `--resume 5` | Resume by index number |
-| `--list-sessions` | List available sessions |
+| Flag                | Description                           |
+| ------------------- | ------------------------------------- |
+| `--resume <id>`     | Resume specific session by ID or UUID |
+| `--resume "latest"` | Resume most recent session            |
+| `--resume 5`        | Resume by index number                |
+| `--list-sessions`   | List available sessions               |
 
 **Important:** Always use explicit `--resume` with session ID when calling from another agent.
 
@@ -144,10 +148,10 @@ By default, Gemini requests confirmation for actions that modify your system. Wh
 
 Set the approval mode for tool execution:
 
-| Mode | Description |
-|------|-------------|
-| `default` | Prompt for permission on sensitive actions |
-| `auto_edit` | Automatically approve file edits only |
+| Mode        | Description                                |
+| ----------- | ------------------------------------------ |
+| `default`   | Prompt for permission on sensitive actions |
+| `auto_edit` | Automatically approve file edits only      |
 
 ```bash
 # Safe for file editing tasks
@@ -240,24 +244,24 @@ rm .gemini/sessions/review.md
 
 ## Additional Useful Flags
 
-| Flag | Description |
-|------|-------------|
-| `--model`, `-m` | Model to use (auto/pro/flash/flash-lite) |
-| `--output-format`, `-o` | Output format (text/json/stream-json) |
-| `--sandbox`, `-s` | Run in sandbox |
-| `--include-directories` | Add directories to workspace |
-| `--extensions`, `-e` | Enable specific extensions |
-| `--allowed-mcp-server-names` | Allow specific MCP servers |
-| `--debug`, `-d` | Debug mode with verbose logging |
+| Flag                         | Description                              |
+| ---------------------------- | ---------------------------------------- |
+| `--model`, `-m`              | Model to use (auto/pro/flash/flash-lite) |
+| `--output-format`, `-o`      | Output format (text/json/stream-json)    |
+| `--sandbox`, `-s`            | Run in sandbox                           |
+| `--include-directories`      | Add directories to workspace             |
+| `--extensions`, `-e`         | Enable specific extensions               |
+| `--allowed-mcp-server-names` | Allow specific MCP servers               |
+| `--debug`, `-d`              | Debug mode with verbose logging          |
 
 ## Model Selection
 
-| Alias | Description |
-|-------|-------------|
-| `auto` | **Default.** Resolves to preview model if enabled, else pro |
-| `pro` | Complex reasoning tasks |
-| `flash` | Fast, balanced for most tasks |
-| `flash-lite` | Fastest for simple tasks |
+| Alias        | Description                                                 |
+| ------------ | ----------------------------------------------------------- |
+| `auto`       | **Default.** Resolves to preview model if enabled, else pro |
+| `pro`        | Complex reasoning tasks                                     |
+| `flash`      | Fast, balanced for most tasks                               |
+| `flash-lite` | Fastest for simple tasks                                    |
 
 ## Piping Input
 
@@ -277,24 +281,28 @@ gemini "Review @package.json and explain the dependencies"
 ## Best Practices for Agent Delegation
 
 ### Prompting
-*   **Be Specific:** Provide clear goals, file paths, and constraints.
-*   **Include Context:** Use `@path/to/file` to reference files explicitly.
-*   **Headless Context:** Gemini can't see your context - include everything in the prompt.
+
+- **Be Specific:** Provide clear goals, file paths, and constraints.
+- **Include Context:** Use `@path/to/file` to reference files explicitly.
+- **Headless Context:** Gemini can't see your context - include everything in the prompt.
 
 ### Permission Safety
-*   **Start Conservative:** Use `--approval-mode default` initially.
-*   **Escalate as Needed:** Check `.error` field and re-run with `auto_edit`.
-*   **Sandbox Untrusted Code:** Always use `--sandbox` when running untrusted code.
+
+- **Start Conservative:** Use `--approval-mode default` initially.
+- **Escalate as Needed:** Check `.error` field and re-run with `auto_edit`.
+- **Sandbox Untrusted Code:** Always use `--sandbox` when running untrusted code.
 
 ### Session Management
-*   **Always Extract session_id:** Capture it from JSON output.
-*   **Check for Errors:** Always inspect the `.error` field in JSON response.
-*   **Session per Task:** Use separate sessions for unrelated tasks.
+
+- **Always Extract session_id:** Capture it from JSON output.
+- **Check for Errors:** Always inspect the `.error` field in JSON response.
+- **Session per Task:** Use separate sessions for unrelated tasks.
 
 ### Model Selection
-*   **flash**: Quick summaries, simple tasks
-*   **pro**: Complex architecture, security reviews
-*   **auto**: Let Gemini decide based on prompt
+
+- **flash**: Quick summaries, simple tasks
+- **pro**: Complex architecture, security reviews
+- **auto**: Let Gemini decide based on prompt
 
 ## Example: Complete Agent Delegation Workflow
 
@@ -347,12 +355,12 @@ rm -rf tmp
 
 ## Exit Codes
 
-| Code | Meaning |
-|------|---------|
-| `0` | Success |
-| `1` | General error or API failure |
+| Code | Meaning                                   |
+| ---- | ----------------------------------------- |
+| `0`  | Success                                   |
+| `1`  | General error or API failure              |
 | `42` | Input error (invalid prompt or arguments) |
-| `53` | Turn limit exceeded |
+| `53` | Turn limit exceeded                       |
 
 ## Structured Output with Schema
 

@@ -9,9 +9,7 @@ let
   jjcfg = config.programs.jujutsu;
 in
 {
-  home.packages = [
-    pkgs.watchman
-  ];
+  home.packages = [ pkgs.watchman ];
 
   programs.jujutsu = lib.mkIf jjcfg.enable {
     settings = {

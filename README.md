@@ -100,6 +100,7 @@ Application launchers are automatically generated for each Firefox profile defin
 Generated scripts are stored at `~/.local/libexec/raycast`.
 
 To use Raycast script commands:
+
 1. Apply configuration: `home-manager switch --flake .#$HM_PROFILE`
 2. Open Raycast Preferences (⌘ + ,)
 3. Go to Extensions → Script Commands

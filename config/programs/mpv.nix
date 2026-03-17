@@ -22,9 +22,7 @@
     };
 
     config = lib.mkMerge [
-      {
-        hwdec = "auto";
-      }
+      { hwdec = "auto"; }
       (lib.mkIf pkgs.stdenv.isLinux {
         vo = "gpu-next";
         gpu-api = "vulkan";

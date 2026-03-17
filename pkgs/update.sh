@@ -3,8 +3,8 @@
 set -euo pipefail
 
 BASE_DIR=$(
-    cd "$(dirname "$0")/.."
-    pwd -P
+  cd "$(dirname "$0")/.."
+  pwd -P
 )
 
 cd "$BASE_DIR"
@@ -18,68 +18,68 @@ c_reset=$(tput sgr0 2>/dev/null || true)
 c_white=$(tput setaf 7 2>/dev/null || true)
 
 _log_error() {
-    printf >&2 "%s[ERROR]%s %s\\n" \
-        "$c_red" \
-        "$c_reset" \
-        "$*"
+  printf >&2 '%s[ERROR]%s %s\n' \
+    "$c_red" \
+    "$c_reset" \
+    "$*"
 }
 
 _log_debug() {
-    if [ "$DEBUG" = "1" ] || [ "$DEBUG" = "true" ]; then
-        printf >&2 "%s[DEBUG]%s %s\\n" \
-            "$c_yellow" \
-            "$c_reset" \
-            "$*"
-    fi
+  if [ "$DEBUG" = "1" ] || [ "$DEBUG" = "true" ]; then
+    printf >&2 '%s[DEBUG]%s %s\n' \
+      "$c_yellow" \
+      "$c_reset" \
+      "$*"
+  fi
 }
 
 _log_info() {
-    printf >&2 "%s[INFO]%s %s\\n" \
-        "$c_blue" \
-        "$c_reset" \
-        "$*"
+  printf >&2 '%s[INFO]%s %s\n' \
+    "$c_blue" \
+    "$c_reset" \
+    "$*"
 }
 
 if [ -n "${NIX_SSL_CERT_FILE:-}" ] && [ -f "${NIX_SSL_CERT_FILE}" ]; then
-    export SSL_CERT_FILE="${NIX_SSL_CERT_FILE}"
-    export NPM_CONFIG_CAFILE="${NIX_SSL_CERT_FILE}"
-    _log_debug "Using CA bundle: ${NIX_SSL_CERT_FILE}"
+  export SSL_CERT_FILE="${NIX_SSL_CERT_FILE}"
+  export NPM_CONFIG_CAFILE="${NIX_SSL_CERT_FILE}"
+  _log_debug "Using CA bundle: ${NIX_SSL_CERT_FILE}"
 fi
 
 _cmd() {
-    _log_debug "Running command: $*"
-    "$@"
+  _log_debug "Running command: $*"
+  "$@"
 }
 
 _update() {
-    _cmd nix-shell "$(nix-instantiate --find-file nixpkgs)/maintainers/scripts/update.nix" \
-        --impure \
-        --arg include-overlays '(import ./. { }).overlays' \
-        "$@"
+  _cmd nix-shell "$(nix-instantiate --find-file nixpkgs)/maintainers/scripts/update.nix" \
+    --impure \
+    --arg include-overlays '(import ./. { }).overlays' \
+    "$@"
 }
 
 main() {
-    if [ ! -d "$BASE_DIR/.git" ]; then
-        _log_error "Needs to be run in a Git project"
-        exit 1
-    fi
+  if [ ! -d "$BASE_DIR/.git" ]; then
+    _log_error "Needs to be run in a Git project"
+    exit 1
+  fi
 
-    if ! command -v nix >/dev/null; then
-        _log_error "Needs to be run in a Nix environment"
-        exit 1
-    fi
+  if ! command -v nix >/dev/null; then
+    _log_error "Needs to be run in a Nix environment"
+    exit 1
+  fi
 
-    if [ -z "$*" ]; then
-        _log_info "Running update scripts for known packages"
-        _log_info "To run manually, provide args: $0 [args]"
-        _log_info "Sleeping for 5 secs before beginning..."
-        sleep 5
+  if [ -z "$*" ]; then
+    _log_info "Running update scripts for known packages"
+    _log_info "To run manually, provide args: $0 [args]"
+    _log_info "Sleeping for 5 secs before beginning..."
+    sleep 5
 
-        _update --argstr skip-prompt true --argstr path local || exit 1
-        exit 0
-    fi
+    _update --argstr skip-prompt true --argstr path local || exit 1
+    exit 0
+  fi
 
-    _update "$@"
+  _update "$@"
 }
 
 main "$@"

@@ -6,6 +6,7 @@ description: Analyzes project structure to identify tooling and workflows. Use d
 Analyze project structure to identify tooling and workflows.
 
 ## Detection Areas
+
 1. **Existing wrappers**: bin/, .my/bin/
 2. **Build systems**: Makefile, Taskfile.yml, justfile
 3. **Containers**: Dockerfile, Containerfile, docker-compose.yml, compose.yml
@@ -14,7 +15,9 @@ Analyze project structure to identify tooling and workflows.
 6. **CI/CD**: .github/workflows/, .gitlab-ci.yml, Jenkinsfile
 
 ## Output
+
 Return findings as:
+
 - **Project type**: (nodejs, python, go, rust, etc.)
 - **Existing wrappers**: paths found (bin/, .my/bin/, or none)
 - **Has flake**: location if exists (flake.nix, .my/flake.nix, or none)

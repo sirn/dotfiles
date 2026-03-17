@@ -6,6 +6,7 @@ description: Run comprehensive quality checks by orchestrating review, verificat
 Run comprehensive quality checks by orchestrating sub-skills.
 
 ## Process
+
 1. Identify context:
    - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
    - If the user specified specific files or paths, focus on those
@@ -20,6 +21,7 @@ Run comprehensive quality checks by orchestrating sub-skills.
 4. Consolidate findings into a single report
 
 ## Output
+
 1. **Summary** - Overall code health assessment (including issue counts)
 2. **Review Findings** - From code-review (Critical, Quality, Security, Convention, Best Practices)
 3. **Verification Findings** - From code-verify (API mismatches or documentation issues)

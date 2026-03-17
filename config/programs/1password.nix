@@ -17,12 +17,8 @@ in
 {
   home.packages =
     with pkgs;
-    [
-      _1password-cli
-    ]
-    ++ lib.optional (!pkgs.stdenv.isDarwin && !config.flatpak.enable) [
-      _1password-gui
-    ];
+    [ _1password-cli ]
+    ++ lib.optional (!pkgs.stdenv.isDarwin && !config.flatpak.enable) [ _1password-gui ];
 
   programs.ssh.matchBlocks."*".extraOptions = {
     "IdentityAgent" = lib.mkOverride 250 "\"${agentSocketPath}\"";

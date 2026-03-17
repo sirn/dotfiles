@@ -57,7 +57,10 @@ function assertThrows(fn: () => void, msg?: string): Error {
     fn();
     throw new Error(msg || "Expected function to throw");
   } catch (e) {
-    if (e instanceof Error && e.message === (msg || "Expected function to throw")) {
+    if (
+      e instanceof Error &&
+      e.message === (msg || "Expected function to throw")
+    ) {
       throw e;
     }
     return e as Error;
@@ -110,19 +113,19 @@ test("multiple single quoted words", () => {
 
 // Double quotes
 test("double quoted string", () => {
-  const tokens = tokenize("echo \"hello world\"");
+  const tokens = tokenize('echo "hello world"');
   assertEquals(tokens.length, 2);
   assertEquals(tokens[1], { type: "word", value: "hello world" });
 });
 
 test("escaped double quote", () => {
-  const tokens = tokenize("\"say \\\"hi\\\"\"");
+  const tokens = tokenize('"say \\"hi\\""');
   assertEquals(tokens.length, 1);
   assertEquals(tokens[0], { type: "word", value: 'say "hi"' });
 });
 
 test("double quote with variable reference", () => {
-  const tokens = tokenize("\"value is $VAR\"");
+  const tokens = tokenize('"value is $VAR"');
   assertEquals(tokens.length, 1);
   assertEquals(tokens[0], { type: "word", value: "value is $VAR" });
 });
@@ -249,7 +252,11 @@ test("fd output redirect", () => {
 
 test("fd append redirect", () => {
   const tokens = tokenize("cmd 2>> file.txt");
-  assertEquals(tokens[1], { type: "redirect", op: "2>>", target: "file.txt" });
+  assertEquals(tokens[1], {
+    type: "redirect",
+    op: "2>>",
+    target: "file.txt",
+  });
 });
 
 test("fd duplication redirect", () => {
@@ -293,7 +300,9 @@ test("variable not parsed as standalone word", () => {
 
 // Complex combinations
 test("pipeline with redirects", () => {
-  const tokens = tokenize("echo \"hello\" > file.txt && cat < file.txt | grep hi");
+  const tokens = tokenize(
+    'echo "hello" > file.txt && cat < file.txt | grep hi',
+  );
   assertEquals(tokens.length, 9);
   assertEquals(tokens.filter((t) => t.type === "operator").length, 2);
   assertEquals(tokens.filter((t) => t.type === "redirect").length, 2);
@@ -310,7 +319,7 @@ test("throws on unmatched single quote", () => {
 });
 
 test("throws on unmatched double quote", () => {
-  assertThrows(() => tokenize("echo \"unclosed"));
+  assertThrows(() => tokenize('echo "unclosed'));
 });
 
 test("throws on unmatched subshell", () => {
@@ -385,14 +394,20 @@ test("simple pipeline", () => {
   const tokens = tokenize("cat file | grep hi");
   const cmds = extractCommands(tokens);
   assertEquals(cmds.length, 2);
-  assertEquals(cmds.map((c) => c.name), ["cat", "grep"]);
+  assertEquals(
+    cmds.map((c) => c.name),
+    ["cat", "grep"],
+  );
 });
 
 test("multi-stage pipeline", () => {
   const tokens = tokenize("cat file | grep hi | sort | uniq");
   const cmds = extractCommands(tokens);
   assertEquals(cmds.length, 4);
-  assertEquals(cmds.map((c) => c.name), ["cat", "grep", "sort", "uniq"]);
+  assertEquals(
+    cmds.map((c) => c.name),
+    ["cat", "grep", "sort", "uniq"],
+  );
 });
 
 // Subshells
@@ -401,7 +416,10 @@ test("subshell with single command", () => {
   const cmds = extractCommands(tokens);
   const subshellCmds = cmds.filter((c) => c.source === "subshell");
   assertEquals(subshellCmds.length, 1);
-  assertEquals(subshellCmds.map((c) => c.name), ["echo"]);
+  assertEquals(
+    subshellCmds.map((c) => c.name),
+    ["echo"],
+  );
 });
 
 test("subshell with multiple commands", () => {
@@ -583,29 +601,48 @@ console.log("\n=== Policy Matching Tests ===");
 
 // Helper for creating simple policies
 const samplePolicy: PolicyCommands = {
-  allow: [{ match: "ls", mode: "prefix" }, { match: "echo", mode: "prefix" }],
+  allow: [
+    { match: "ls", mode: "prefix" },
+    { match: "echo", mode: "prefix" },
+  ],
   ask: [{ match: "rm", mode: "prefix" }],
   deny: [{ match: "sudo", mode: "prefix" }],
 };
 
 // Exact match mode
 test("exact match - matches", () => {
-  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "ls", mode: "exact" }] };
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [],
+    deny: [{ match: "ls", mode: "exact" }],
+  };
   assertEquals(evaluateCommand("ls", policy).action, "deny");
 });
 
 test("exact match - case insensitive", () => {
-  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "LS", mode: "exact" }] };
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [],
+    deny: [{ match: "LS", mode: "exact" }],
+  };
   assertEquals(evaluateCommand("ls", policy).action, "deny");
 });
 
 test("exact match - whitespace trimmed", () => {
-  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "ls", mode: "exact" }] };
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [],
+    deny: [{ match: "ls", mode: "exact" }],
+  };
   assertEquals(evaluateCommand("  ls  ", policy).action, "deny");
 });
 
 test("exact match - args don't match", () => {
-  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "ls", mode: "exact" }] };
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [],
+    deny: [{ match: "ls", mode: "exact" }],
+  };
   assertEquals(evaluateCommand("ls -la", policy).action, "default");
 });
 
@@ -628,67 +665,117 @@ test("prefix match - no match when pattern longer", () => {
 
 // Substring match mode
 test("substring match - exact", () => {
-  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "rm -rf /", mode: "substring" }] };
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [],
+    deny: [{ match: "rm -rf /", mode: "substring" }],
+  };
   assertEquals(evaluateCommand("rm -rf /", policy).action, "deny");
 });
 
 test("substring match - in pipeline", () => {
-  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "rm -rf /", mode: "substring" }] };
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [],
+    deny: [{ match: "rm -rf /", mode: "substring" }],
+  };
   assertEquals(evaluateCommand("echo hi && rm -rf /", policy).action, "deny");
 });
 
 test("substring match - partial word", () => {
-  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "rm -rf", mode: "substring" }] };
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [],
+    deny: [{ match: "rm -rf", mode: "substring" }],
+  };
   assertEquals(evaluateCommand("grm -rf file", policy).action, "deny");
 });
 
 test("substring match - case insensitive", () => {
-  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "RM -RF /", mode: "substring" }] };
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [],
+    deny: [{ match: "RM -RF /", mode: "substring" }],
+  };
   assertEquals(evaluateCommand("echo hi && rm -rf /", policy).action, "deny");
 });
 
 test("substring match - special characters", () => {
-  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "git push", mode: "substring" }] };
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [],
+    deny: [{ match: "git push", mode: "substring" }],
+  };
   assertEquals(evaluateCommand("git push origin main", policy).action, "deny");
 });
 
 // Priority tests
 test("deny takes priority over allow", () => {
-  const policy: PolicyCommands = { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [{ match: "ls", mode: "prefix" }] };
+  const policy: PolicyCommands = {
+    allow: [{ match: "ls", mode: "prefix" }],
+    ask: [],
+    deny: [{ match: "ls", mode: "prefix" }],
+  };
   assertEquals(evaluateCommand("ls -la", policy).action, "deny");
 });
 
 test("deny takes priority over ask", () => {
-  const policy: PolicyCommands = { allow: [], ask: [{ match: "sudo", mode: "prefix" }], deny: [{ match: "sudo", mode: "prefix" }] };
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "sudo", mode: "prefix" }],
+    deny: [{ match: "sudo", mode: "prefix" }],
+  };
   assertEquals(evaluateCommand("sudo ls", policy).action, "deny");
 });
 
 test("ask escalates over allow", () => {
-  assertEquals(evaluateCommand("echo hi && rm file", samplePolicy).action, "ask");
+  assertEquals(
+    evaluateCommand("echo hi && rm file", samplePolicy).action,
+    "ask",
+  );
 });
 
 test("allow downgrades to default when later command unmatched", () => {
-  assertEquals(evaluateCommand("echo hi && unknown_cmd", samplePolicy).action, "default");
+  assertEquals(
+    evaluateCommand("echo hi && unknown_cmd", samplePolicy).action,
+    "default",
+  );
 });
 
 test("ask not downgraded when later command unmatched", () => {
-  assertEquals(evaluateCommand("rm file && unknown_cmd", samplePolicy).action, "ask");
+  assertEquals(
+    evaluateCommand("rm file && unknown_cmd", samplePolicy).action,
+    "ask",
+  );
 });
 
 test("allow-unmatched-allow does not re-grant allow", () => {
-  assertEquals(evaluateCommand("echo hi | unknown_cmd | echo bye", samplePolicy).action, "default");
+  assertEquals(
+    evaluateCommand("echo hi | unknown_cmd | echo bye", samplePolicy).action,
+    "default",
+  );
 });
 
 test("allow-allow stays allow", () => {
-  assertEquals(evaluateCommand("echo hi | echo bye", samplePolicy).action, "allow");
+  assertEquals(
+    evaluateCommand("echo hi | echo bye", samplePolicy).action,
+    "allow",
+  );
 });
 
 test("unmatched-allow stays default", () => {
-  assertEquals(evaluateCommand("unknown_cmd | echo hi", samplePolicy).action, "default");
+  assertEquals(
+    evaluateCommand("unknown_cmd | echo hi", samplePolicy).action,
+    "default",
+  );
 });
 
 test("multiple commands - one deny triggers deny", () => {
-  const policy: PolicyCommands = { allow: [{ match: "echo", mode: "prefix" }], ask: [], deny: [{ match: "rm -rf /", mode: "substring" }] };
+  const policy: PolicyCommands = {
+    allow: [{ match: "echo", mode: "prefix" }],
+    ask: [],
+    deny: [{ match: "rm -rf /", mode: "substring" }],
+  };
   assertEquals(evaluateCommand("echo hi && rm -rf /", policy).action, "deny");
 });
 
@@ -702,12 +789,19 @@ test("wrapper command extraction - sudo prefix match", () => {
 });
 
 test("wrapper command extraction - bash -c wrapper", () => {
-  const policy: PolicyCommands = { allow: [{ match: "echo", mode: "prefix" }], ask: [], deny: [{ match: "rm", mode: "prefix" }] };
+  const policy: PolicyCommands = {
+    allow: [{ match: "echo", mode: "prefix" }],
+    ask: [],
+    deny: [{ match: "rm", mode: "prefix" }],
+  };
   assertEquals(evaluateCommand("bash -c 'rm -rf /'", policy).action, "deny");
 });
 
 test("wrapper command extraction - nested wrappers", () => {
-  assertEquals(evaluateCommand("sudo bash -c 'ls -la'", samplePolicy).action, "deny");
+  assertEquals(
+    evaluateCommand("sudo bash -c 'ls -la'", samplePolicy).action,
+    "deny",
+  );
 });
 
 // Error handling
@@ -730,7 +824,11 @@ test("unknown command returns default", () => {
 });
 
 test("unknown match mode treated as no-match", () => {
-  const policy: PolicyCommands = { allow: [{ match: "ls", mode: "nonexistent" as any }], ask: [], deny: [] };
+  const policy: PolicyCommands = {
+    allow: [{ match: "ls", mode: "nonexistent" as any }],
+    ask: [],
+    deny: [],
+  };
   assertEquals(evaluateCommand("ls", policy).action, "default");
 });
 
@@ -748,8 +846,16 @@ test("${VAR} as command returns ask", () => {
 console.log("\n=== Merge Policies Tests ===");
 
 test("combines all sections", () => {
-  const p1: PolicyCommands = { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [] };
-  const p2: PolicyCommands = { allow: [], ask: [{ match: "rm", mode: "prefix" }], deny: [{ match: "sudo", mode: "prefix" }] };
+  const p1: PolicyCommands = {
+    allow: [{ match: "ls", mode: "prefix" }],
+    ask: [],
+    deny: [],
+  };
+  const p2: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "rm", mode: "prefix" }],
+    deny: [{ match: "sudo", mode: "prefix" }],
+  };
   const merged = mergePolicies(p1, p2);
   assertEquals(merged.allow.length, 1);
   assertEquals(merged.ask.length, 1);
@@ -766,12 +872,19 @@ test("combines multiple policies", () => {
     { allow: [{ match: "grep", mode: "prefix" }], ask: [], deny: [] },
   );
   assertEquals(merged.allow.length, 3);
-  assertEquals(merged.allow.map((e) => e.match), ["ls", "cat", "grep"]);
+  assertEquals(
+    merged.allow.map((e) => e.match),
+    ["ls", "cat", "grep"],
+  );
 });
 
 test("empty policies", () => {
   const p1: PolicyCommands = { allow: [], ask: [], deny: [] };
-  const p2: PolicyCommands = { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [] };
+  const p2: PolicyCommands = {
+    allow: [{ match: "ls", mode: "prefix" }],
+    ask: [],
+    deny: [],
+  };
   const merged = mergePolicies(p1, p2);
   assertEquals(merged.allow.length, 1);
   assertEquals(merged.ask.length, 0);
@@ -793,7 +906,10 @@ test("order preservation", () => {
     { allow: [{ match: "b", mode: "exact" }], ask: [], deny: [] },
     { allow: [{ match: "c", mode: "exact" }], ask: [], deny: [] },
   );
-  assertEquals(merged.allow.map((e) => e.match), ["a", "b", "c"]);
+  assertEquals(
+    merged.allow.map((e) => e.match),
+    ["a", "b", "c"],
+  );
 });
 
 // ==================== END MERGE POLICIES TESTS ====================
@@ -831,28 +947,119 @@ const productionPolicy: PolicyCommands = {
 };
 
 // Production policy tests
-test("git push denied", () => { assertEquals(evaluateCommand("git push origin main", productionPolicy).action, "deny"); });
-test("git status allowed", () => { assertEquals(evaluateCommand("git status", productionPolicy).action, "default"); });
-test("rm -rf / denied", () => { assertEquals(evaluateCommand("rm -rf /", productionPolicy).action, "deny"); });
-test("rm -rf / in text denied", () => { assertEquals(evaluateCommand("echo hi && rm -rf /", productionPolicy).action, "deny"); });
-test("chmod asks", () => { assertEquals(evaluateCommand("chmod +x script.sh", productionPolicy).action, "ask"); });
-test("rm asks", () => { assertEquals(evaluateCommand("rm file.txt", productionPolicy).action, "ask"); });
-test("docker exec asks", () => { assertEquals(evaluateCommand("docker exec -it container bash", productionPolicy).action, "ask"); });
-test("nix run asks", () => { assertEquals(evaluateCommand("nix run nixpkgs#something", productionPolicy).action, "ask"); });
-test("jj describe asks", () => { assertEquals(evaluateCommand("jj describe -m 'update'", productionPolicy).action, "ask"); });
-test("gh api POST pattern not matching", () => { assertEquals(evaluateCommand("gh api repos/foo --method POST", productionPolicy).action, "default"); });
-test("gh api GET allowed", () => { assertEquals(evaluateCommand("gh api repos/foo", productionPolicy).action, "default"); });
-test("sudo denied", () => { assertEquals(evaluateCommand("sudo ls -la", productionPolicy).action, "deny"); });
-test("quoted > not redirect", () => { assertEquals(evaluateCommand("jq '.x > .y' file.json", productionPolicy).action, "default"); });
-test("echo with quoted > allowed", () => { assertEquals(evaluateCommand("echo 'hello > world'", productionPolicy).action, "allow"); });
-test("grep with quoted > allowed", () => { assertEquals(evaluateCommand("grep '>' file.txt", productionPolicy).action, "allow"); });
+test("git push denied", () => {
+  assertEquals(
+    evaluateCommand("git push origin main", productionPolicy).action,
+    "deny",
+  );
+});
+test("git status allowed", () => {
+  assertEquals(
+    evaluateCommand("git status", productionPolicy).action,
+    "default",
+  );
+});
+test("rm -rf / denied", () => {
+  assertEquals(evaluateCommand("rm -rf /", productionPolicy).action, "deny");
+});
+test("rm -rf / in text denied", () => {
+  assertEquals(
+    evaluateCommand("echo hi && rm -rf /", productionPolicy).action,
+    "deny",
+  );
+});
+test("chmod asks", () => {
+  assertEquals(
+    evaluateCommand("chmod +x script.sh", productionPolicy).action,
+    "ask",
+  );
+});
+test("rm asks", () => {
+  assertEquals(evaluateCommand("rm file.txt", productionPolicy).action, "ask");
+});
+test("docker exec asks", () => {
+  assertEquals(
+    evaluateCommand("docker exec -it container bash", productionPolicy).action,
+    "ask",
+  );
+});
+test("nix run asks", () => {
+  assertEquals(
+    evaluateCommand("nix run nixpkgs#something", productionPolicy).action,
+    "ask",
+  );
+});
+test("jj describe asks", () => {
+  assertEquals(
+    evaluateCommand("jj describe -m 'update'", productionPolicy).action,
+    "ask",
+  );
+});
+test("gh api POST pattern not matching", () => {
+  assertEquals(
+    evaluateCommand("gh api repos/foo --method POST", productionPolicy).action,
+    "default",
+  );
+});
+test("gh api GET allowed", () => {
+  assertEquals(
+    evaluateCommand("gh api repos/foo", productionPolicy).action,
+    "default",
+  );
+});
+test("sudo denied", () => {
+  assertEquals(evaluateCommand("sudo ls -la", productionPolicy).action, "deny");
+});
+test("quoted > not redirect", () => {
+  assertEquals(
+    evaluateCommand("jq '.x > .y' file.json", productionPolicy).action,
+    "default",
+  );
+});
+test("echo with quoted > allowed", () => {
+  assertEquals(
+    evaluateCommand("echo 'hello > world'", productionPolicy).action,
+    "allow",
+  );
+});
+test("grep with quoted > allowed", () => {
+  assertEquals(
+    evaluateCommand("grep '>' file.txt", productionPolicy).action,
+    "allow",
+  );
+});
 
 // Regression tests
-test("bash -c git push denied", () => { assertEquals(evaluateCommand("bash -c 'git push'", productionPolicy).action, "deny"); });
-test("echo with quoted rm -rf / - substring matches", () => { assertEquals(evaluateCommand("echo 'rm -rf /'", productionPolicy).action, "deny"); });
-test("grep with sudo pattern allowed", () => { assertEquals(evaluateCommand("grep 'sudo' file.txt", productionPolicy).action, "allow"); });
-test("bash -c rm -rf / denied", () => { assertEquals(evaluateCommand("bash -c 'rm -rf /'", productionPolicy).action, "deny"); });
-test("sudo in substitution denied", () => { assertEquals(evaluateCommand("$(sudo reboot)", productionPolicy).action, "deny"); });
+test("bash -c git push denied", () => {
+  assertEquals(
+    evaluateCommand("bash -c 'git push'", productionPolicy).action,
+    "deny",
+  );
+});
+test("echo with quoted rm -rf / - substring matches", () => {
+  assertEquals(
+    evaluateCommand("echo 'rm -rf /'", productionPolicy).action,
+    "deny",
+  );
+});
+test("grep with sudo pattern allowed", () => {
+  assertEquals(
+    evaluateCommand("grep 'sudo' file.txt", productionPolicy).action,
+    "allow",
+  );
+});
+test("bash -c rm -rf / denied", () => {
+  assertEquals(
+    evaluateCommand("bash -c 'rm -rf /'", productionPolicy).action,
+    "deny",
+  );
+});
+test("sudo in substitution denied", () => {
+  assertEquals(
+    evaluateCommand("$(sudo reboot)", productionPolicy).action,
+    "deny",
+  );
+});
 
 // Complex edge cases - tokenization/extraction
 test("deeply nested subshells", () => {
@@ -904,13 +1111,16 @@ test("escaped characters in arguments", () => {
 });
 
 test("double quotes with variable", () => {
-  const tokens = tokenize("echo \"value is $VAR\"");
+  const tokens = tokenize('echo "value is $VAR"');
   assertEquals(tokens[1], { type: "word", value: "value is $VAR" });
 });
 
 // Edge cases - policy evaluation
 test("command with flags before args", () => {
-  assertEquals(evaluateCommand("ls -la /tmp", productionPolicy).action, "allow");
+  assertEquals(
+    evaluateCommand("ls -la /tmp", productionPolicy).action,
+    "allow",
+  );
 });
 
 test("subshell with redirection", () => {
@@ -943,13 +1153,20 @@ test("double dash with sudo extraction", () => {
 });
 
 test("double dash in bash -c wrapper", () => {
-  const policy: PolicyCommands = { allow: [{ match: "grep", mode: "prefix" }], ask: [], deny: [] };
-  assertEquals(evaluateCommand("bash -c 'grep -- -v file'", policy).action, "allow");
+  const policy: PolicyCommands = {
+    allow: [{ match: "grep", mode: "prefix" }],
+    ask: [],
+    deny: [],
+  };
+  assertEquals(
+    evaluateCommand("bash -c 'grep -- -v file'", policy).action,
+    "allow",
+  );
 });
 
 // Multiline string handling
 test("multiline in double quotes", () => {
-  const tokens = tokenize("echo \"line1\nline2\"");
+  const tokens = tokenize('echo "line1\nline2"');
   assertEquals(tokens.length, 2);
   assertTrue((tokens[1] as { value: string }).value.includes("\n"));
 });
@@ -962,13 +1179,27 @@ test("multiline in single quotes", () => {
 
 // Heredoc with shell script content
 test("heredoc with shell commands - text content not executed", () => {
-  const policy: PolicyCommands = { allow: [{ match: "cat", mode: "prefix" }], ask: [], deny: [{ match: "rm -rf /", mode: "substring" }] };
-  assertEquals(evaluateCommand("cat <<EOF\nrm -rf /\nEOF", policy).action, "allow");
+  const policy: PolicyCommands = {
+    allow: [{ match: "cat", mode: "prefix" }],
+    ask: [],
+    deny: [{ match: "rm -rf /", mode: "substring" }],
+  };
+  assertEquals(
+    evaluateCommand("cat <<EOF\nrm -rf /\nEOF", policy).action,
+    "allow",
+  );
 });
 
 test("bash heredoc - heredoc body not extracted", () => {
-  const policy: PolicyCommands = { allow: [{ match: "bash", mode: "prefix" }], ask: [], deny: [{ match: "rm", mode: "prefix" }] };
-  assertEquals(evaluateCommand("bash <<EOF\nrm -rf /\nEOF", policy).action, "allow");
+  const policy: PolicyCommands = {
+    allow: [{ match: "bash", mode: "prefix" }],
+    ask: [],
+    deny: [{ match: "rm", mode: "prefix" }],
+  };
+  assertEquals(
+    evaluateCommand("bash <<EOF\nrm -rf /\nEOF", policy).action,
+    "allow",
+  );
 });
 
 // Complex stderr/stdout redirect combinations
@@ -1012,27 +1243,47 @@ test("bash ampersand redirect syntax", () => {
 
 // Deny keyword in various contexts
 test("deny substring in heredoc body - not extracted", () => {
-  const policy: PolicyCommands = { allow: [{ match: "bash", mode: "prefix" }], ask: [], deny: [{ match: "rm -rf /", mode: "substring" }] };
-  assertEquals(evaluateCommand("bash <<EOF\necho hi\nrm -rf /\nEOF", policy).action, "allow");
+  const policy: PolicyCommands = {
+    allow: [{ match: "bash", mode: "prefix" }],
+    ask: [],
+    deny: [{ match: "rm -rf /", mode: "substring" }],
+  };
+  assertEquals(
+    evaluateCommand("bash <<EOF\necho hi\nrm -rf /\nEOF", policy).action,
+    "allow",
+  );
 });
 
 test("deny keyword in quoted string still matches substring", () => {
-  const policy: PolicyCommands = { allow: [], ask: [], deny: [{ match: "rm -rf /", mode: "substring" }] };
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [],
+    deny: [{ match: "rm -rf /", mode: "substring" }],
+  };
   assertEquals(evaluateCommand("echo 'rm -rf /'", policy).action, "deny");
 });
 
 // Complex multiline command
 test("complex multiline command", () => {
-  const tokens = tokenize("echo 'start' && \\\n  echo 'middle' && \\\n  echo 'end'");
+  const tokens = tokenize(
+    "echo 'start' && \\\n  echo 'middle' && \\\n  echo 'end'",
+  );
   const cmds = extractCommands(tokens);
   assertEquals(cmds.length, 3);
-  assertEquals(cmds.every((c) => c.name === "echo"), true);
+  assertEquals(
+    cmds.every((c) => c.name === "echo"),
+    true,
+  );
 });
 
 // SECURITY: Double-dash wrapper bypass attempts
 test("passthrough wrapper skips -- and extracts inner command", () => {
   const tokens = tokenize("time -- echo hi");
-  const policy: PolicyCommands = { allow: [{ match: "time", mode: "prefix" }], ask: [], deny: [{ match: "echo", mode: "prefix" }] };
+  const policy: PolicyCommands = {
+    allow: [{ match: "time", mode: "prefix" }],
+    ask: [],
+    deny: [{ match: "echo", mode: "prefix" }],
+  };
   const cmds = extractCommands(tokens);
   assertEquals(cmds.length, 2);
   assertEquals(cmds[0].name, "time");
@@ -1072,7 +1323,12 @@ test("env -- VAR=val cmd extracts actual utility", () => {
 console.log("\n=== Extensibility Tests ===");
 
 test("custom wrapper via config without code change", () => {
-  const customRules = buildWrapperRuleMap([{ name: "custom-wrapper", kind: "utility-operand" } as WrapperRuleConfig]);
+  const customRules = buildWrapperRuleMap([
+    {
+      name: "custom-wrapper",
+      kind: "utility-operand",
+    } as WrapperRuleConfig,
+  ]);
   const tokens = tokenize("custom-wrapper -- cmd arg");
   const cmds = extractCommands(tokens, "direct", customRules);
   assertEquals(cmds.length, 2);
@@ -1082,13 +1338,24 @@ test("custom wrapper via config without code change", () => {
 });
 
 test("evaluateCommand with custom wrapper rules", () => {
-  const customRules = buildWrapperRuleMap([{ name: "mycmd", kind: "utility-operand" } as WrapperRuleConfig]);
-  const policy: PolicyCommands = { allow: [{ match: "inner", mode: "prefix" }], ask: [], deny: [] };
-  assertEquals(evaluateCommand("mycmd inner", policy, customRules).action, "allow");
+  const customRules = buildWrapperRuleMap([
+    { name: "mycmd", kind: "utility-operand" } as WrapperRuleConfig,
+  ]);
+  const policy: PolicyCommands = {
+    allow: [{ match: "inner", mode: "prefix" }],
+    ask: [],
+    deny: [],
+  };
+  assertEquals(
+    evaluateCommand("mycmd inner", policy, customRules).action,
+    "allow",
+  );
 });
 
 test("buildWrapperRuleMap overrides builtin", () => {
-  const rules = buildWrapperRuleMap([{ name: "sudo", kind: "shell-c" } as WrapperRuleConfig]);
+  const rules = buildWrapperRuleMap([
+    { name: "sudo", kind: "shell-c" } as WrapperRuleConfig,
+  ]);
   const tokens = tokenize("sudo -c 'echo hi'");
   const cmds = extractCommands(tokens, "direct", rules);
   assertTrue(cmds.some((c) => c.name === "echo" && c.source === "wrapper-arg"));
@@ -1114,7 +1381,11 @@ test("normalizeShellPolicyConfig - null input", () => {
 
 test("normalizeShellPolicyConfig - valid commands key", () => {
   const config = normalizeShellPolicyConfig({
-    commands: { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [] },
+    commands: {
+      allow: [{ match: "ls", mode: "prefix" }],
+      ask: [],
+      deny: [],
+    },
   });
   assertEquals(config.commands.allow.length, 1);
   assertEquals(config.commands.allow[0].match, "ls");
@@ -1122,7 +1393,9 @@ test("normalizeShellPolicyConfig - valid commands key", () => {
 
 test("normalizeShellPolicyConfig - bare policy (no commands key)", () => {
   const config = normalizeShellPolicyConfig({
-    allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [],
+    allow: [{ match: "ls", mode: "prefix" }],
+    ask: [],
+    deny: [],
   });
   assertEquals(config.commands.allow.length, 1);
 });
@@ -1142,7 +1415,9 @@ test("normalizeShellPolicyConfig - invalid wrappers filtered", () => {
 });
 
 test("normalizeShellPolicyConfig - non-array fields default to empty", () => {
-  const config = normalizeShellPolicyConfig({ commands: { allow: "bad", ask: 42, deny: null } });
+  const config = normalizeShellPolicyConfig({
+    commands: { allow: "bad", ask: 42, deny: null },
+  });
   assertEquals(config.commands, { allow: [], ask: [], deny: [] });
 });
 

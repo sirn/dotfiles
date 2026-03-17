@@ -8,6 +8,7 @@ Evaluate and address PR review comments by delegating to specialized agents.
 ## Prerequisites
 
 **Reference these skills first:**
+
 - Read `jj-reference` skill for Jujutsu commands to understand change context
 - Read `gh-reference` skill for GitHub CLI commands to fetch PR comments
 
@@ -22,7 +23,7 @@ Evaluate and address PR review comments by delegating to specialized agents.
    - Check PR status: `gh pr checks <number> -R owner/repo`
    - If checks failing, fetch logs: `gh run view <run-id> -R owner/repo --log-failed`
    - Run `jj diff -s` to see current working copy changes
-   
+
    **Important**: Always use `-X GET` to be explicit about read-only access.
 
 2. **Spawn parallel agents** for comment analysis:
@@ -57,22 +58,26 @@ Evaluate and address PR review comments by delegating to specialized agents.
 ## Agent Roles
 
 **quality-reviewer**:
+
 - Analyze each comment for bugs, logic errors, and quality issues
 - Determine if already addressed by existing changes
 - Validate technical accuracy of feedback
 - Flag unclear or ambiguous comments
 
 **security-researcher**:
+
 - Identify security-related comments
 - Validate security concerns vs false positives
 - Assess severity of security issues
 
 **simplicity-reviewer**:
+
 - Evaluate complexity-related comments
 - Distinguish valid simplifications from over-engineering suggestions
 - Recommend pragmatic approaches
 
 **code-researcher**:
+
 - Use WebSearch/WebFetch to verify patterns
 - Look up official documentation
 - Research idiomatic solutions

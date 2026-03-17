@@ -6,9 +6,7 @@
 }:
 
 {
-  home.sessionPath = [
-    "${config.home.homeDirectory}/.local/bin"
-  ];
+  home.sessionPath = [ "${config.home.homeDirectory}/.local/bin" ];
 
   home.sessionVariables = {
     LANG = "en_US.UTF-8";

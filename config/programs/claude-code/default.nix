@@ -19,9 +19,10 @@ let
 
   agentPermissionsPath = ../../../var/agents/permissions.claude-code.toml;
   agentPermissions =
-    if builtins.pathExists agentPermissionsPath
-    then builtins.fromTOML (builtins.readFile agentPermissionsPath)
-    else { };
+    if builtins.pathExists agentPermissionsPath then
+      builtins.fromTOML (builtins.readFile agentPermissionsPath)
+    else
+      { };
 
   effectivePolicy =
     mode:
@@ -215,9 +216,7 @@ let
   # allowing users to add custom skills alongside managed ones
   skillsDirContents = builtins.readDir skillsDir;
   skillDirs = lib.filterAttrs (_: type: type == "directory") skillsDirContents;
-  mkClaudeSkillLink = name: {
-    ".claude/skills/${name}".source = skillsDir + "/${name}";
-  };
+  mkClaudeSkillLink = name: { ".claude/skills/${name}".source = skillsDir + "/${name}"; };
   claudeSkillLinks = lib.foldl' (acc: name: acc // mkClaudeSkillLink name) { } (
     builtins.attrNames skillDirs
   );

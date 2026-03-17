@@ -43,9 +43,7 @@ in
   programs.niri = lib.mkIf (cfg.enable && niricfg.enable) {
     settings = {
       binds = {
-        "Mod+T".action.spawn = [
-          "${footLauncher}"
-        ];
+        "Mod+T".action.spawn = [ "${footLauncher}" ];
       };
     };
   };

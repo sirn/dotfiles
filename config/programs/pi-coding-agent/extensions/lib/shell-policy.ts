@@ -54,7 +54,12 @@ function normalizeWrapperRuleConfig(raw: unknown): WrapperRuleConfig | null {
   if (typeof candidate.name !== "string") return null;
   if (typeof candidate.kind !== "string") return null;
   const kind = candidate.kind as WrapperKind;
-  if (kind !== "shell-c" && kind !== "utility-operand" && kind !== "env" && kind !== "xargs") {
+  if (
+    kind !== "shell-c" &&
+    kind !== "utility-operand" &&
+    kind !== "env" &&
+    kind !== "xargs"
+  ) {
     return null;
   }
   return { name: candidate.name, kind };
@@ -94,7 +99,7 @@ interface GroupToken {
 }
 interface RedirectToken {
   type: "redirect";
-  op: string;     // ">", ">>", "<", "<<", "<<-", "<<<", or with fd: "2>", "2>>"
+  op: string; // ">", ">>", "<", "<<", "<<-", "<<<", or with fd: "2>", "2>>"
   target: string; // filename, heredoc delimiter, or here-string value
 }
 export type Token = WordToken | OpToken | GroupToken | RedirectToken;
@@ -112,10 +117,23 @@ export function tokenize(input: string): Token[] {
     if (input[i] === "'") return readSingleQuoted();
     if (input[i] === '"') return readDoubleQuoted();
     let target = "";
-    while (i < len && input[i] !== " " && input[i] !== "\t" && input[i] !== "\n"
-        && input[i] !== "\r" && input[i] !== "|" && input[i] !== ";"
-        && input[i] !== "&" && input[i] !== ")" && input[i] !== "#") {
-      if (input[i] === "\\") { i++; if (i < len) target += input[i++]; continue; }
+    while (
+      i < len &&
+      input[i] !== " " &&
+      input[i] !== "\t" &&
+      input[i] !== "\n" &&
+      input[i] !== "\r" &&
+      input[i] !== "|" &&
+      input[i] !== ";" &&
+      input[i] !== "&" &&
+      input[i] !== ")" &&
+      input[i] !== "#"
+    ) {
+      if (input[i] === "\\") {
+        i++;
+        if (i < len) target += input[i++];
+        continue;
+      }
       target += input[i++];
     }
     return target;
@@ -175,7 +193,10 @@ export function tokenize(input: string): Token[] {
           if (input[i] === "(") depth++;
           else if (input[i] === ")") {
             depth--;
-            if (depth === 0) { i++; break; }
+            if (depth === 0) {
+              i++;
+              break;
+            }
           }
           inner += input[i++];
         }
@@ -189,7 +210,11 @@ export function tokenize(input: string): Token[] {
         i++; // skip opening backtick
         let inner = "";
         while (i < len && input[i] !== "`") {
-          if (input[i] === "\\") { i++; if (i < len) inner += input[i++]; continue; }
+          if (input[i] === "\\") {
+            i++;
+            if (i < len) inner += input[i++];
+            continue;
+          }
           inner += input[i++];
         }
         if (i >= len) throw new Error("Unmatched backtick inside double quote");
@@ -213,7 +238,10 @@ export function tokenize(input: string): Token[] {
       if (input[i] === "(") depth++;
       else if (input[i] === ")") {
         depth--;
-        if (depth === 0) { i++; break; }
+        if (depth === 0) {
+          i++;
+          break;
+        }
       }
       inner += input[i++];
     }
@@ -225,7 +253,11 @@ export function tokenize(input: string): Token[] {
     i++; // skip opening `
     let inner = "";
     while (i < len && input[i] !== "`") {
-      if (input[i] === "\\") { i++; if (i < len) inner += input[i++]; continue; }
+      if (input[i] === "\\") {
+        i++;
+        if (i < len) inner += input[i++];
+        continue;
+      }
       inner += input[i++];
     }
     if (i >= len) throw new Error("Unmatched backtick");
@@ -241,7 +273,10 @@ export function tokenize(input: string): Token[] {
       if (input[i] === "(") depth++;
       else if (input[i] === ")") {
         depth--;
-        if (depth === 0) { i++; break; }
+        if (depth === 0) {
+          i++;
+          break;
+        }
       }
       inner += input[i++];
     }
@@ -254,16 +289,25 @@ export function tokenize(input: string): Token[] {
     while (i < len) {
       const ch = input[i];
       if (ch === " " || ch === "\t" || ch === "\n" || ch === "\r") break;
-      if (ch === "'" ) { val += readSingleQuoted(); continue; }
-      if (ch === '"' ) { val += readDoubleQuoted(); continue; }
+      if (ch === "'") {
+        val += readSingleQuoted();
+        continue;
+      }
+      if (ch === '"') {
+        val += readDoubleQuoted();
+        continue;
+      }
       if (ch === "#" && val === "") break; // comment at word boundary
-      if (ch === "|" || ch === "&" || ch === ";" ) break;
+      if (ch === "|" || ch === "&" || ch === ";") break;
       if (ch === "(" && val === "") break; // subshell, handled above
       if (ch === "`") break; // backtick group, handled above
       if (ch === "$" && peek(1) === "(") break; // substitution, handled above
       if (ch === "\\") {
         i++;
-        if (i < len && input[i] === "\n") { i++; continue; } // line continuation
+        if (i < len && input[i] === "\n") {
+          i++;
+          continue;
+        } // line continuation
         if (i < len) val += input[i++];
         continue;
       }
@@ -277,7 +321,10 @@ export function tokenize(input: string): Token[] {
   while (i < len) {
     const ch = input[i];
 
-    if (ch === " " || ch === "\t") { i++; continue; }
+    if (ch === " " || ch === "\t") {
+      i++;
+      continue;
+    }
     if (ch === "\n" || ch === "\r") {
       i++;
       if (pendingHeredocs.length > 0) consumeHeredocBodies();
@@ -288,20 +335,49 @@ export function tokenize(input: string): Token[] {
     if (ch === "#") break;
 
     // Operators: handle multi-char first
-    if (ch === "|" && peek(1) === "|") { tokens.push({ type: "operator", value: "||" }); i += 2; continue; }
-    if (ch === "&" && peek(1) === "&") { tokens.push({ type: "operator", value: "&&" }); i += 2; continue; }
-    if (ch === "|") { tokens.push({ type: "operator", value: "|" }); i++; continue; }
-    if (ch === ";") { tokens.push({ type: "operator", value: ";" }); i++; continue; }
-    if (ch === "&" && peek(1) !== "&") { tokens.push({ type: "operator", value: "&" }); i++; continue; }
+    if (ch === "|" && peek(1) === "|") {
+      tokens.push({ type: "operator", value: "||" });
+      i += 2;
+      continue;
+    }
+    if (ch === "&" && peek(1) === "&") {
+      tokens.push({ type: "operator", value: "&&" });
+      i += 2;
+      continue;
+    }
+    if (ch === "|") {
+      tokens.push({ type: "operator", value: "|" });
+      i++;
+      continue;
+    }
+    if (ch === ";") {
+      tokens.push({ type: "operator", value: ";" });
+      i++;
+      continue;
+    }
+    if (ch === "&" && peek(1) !== "&") {
+      tokens.push({ type: "operator", value: "&" });
+      i++;
+      continue;
+    }
 
     // Subshell
-    if (ch === "(") { tokens.push(readSubshell()); continue; }
+    if (ch === "(") {
+      tokens.push(readSubshell());
+      continue;
+    }
 
     // Command substitution $( ... )
-    if (ch === "$" && peek(1) === "(") { tokens.push(readSubstitution()); continue; }
+    if (ch === "$" && peek(1) === "(") {
+      tokens.push(readSubstitution());
+      continue;
+    }
 
     // Backtick substitution
-    if (ch === "`") { tokens.push(readBacktick()); continue; }
+    if (ch === "`") {
+      tokens.push(readBacktick());
+      continue;
+    }
 
     // Variable substitution $VAR — skip as a word fragment
     if (ch === "$") {
@@ -330,8 +406,13 @@ export function tokenize(input: string): Token[] {
 
     if (rch === "<" || rch === ">") {
       // Here-string: <<<
-      if (rch === "<" && ri + 1 < len && input[ri + 1] === "<"
-          && ri + 2 < len && input[ri + 2] === "<") {
+      if (
+        rch === "<" &&
+        ri + 1 < len &&
+        input[ri + 1] === "<" &&
+        ri + 2 < len &&
+        input[ri + 2] === "<"
+      ) {
         i = ri + 3;
         const target = readRedirectTarget();
         tokens.push({ type: "redirect", op: fdPrefix + "<<<", target });
@@ -339,11 +420,18 @@ export function tokenize(input: string): Token[] {
       }
 
       // Heredoc: << or <<-
-      if (rch === "<" && ri + 1 < len && input[ri + 1] === "<"
-          && (ri + 2 >= len || input[ri + 2] !== "<")) {
+      if (
+        rch === "<" &&
+        ri + 1 < len &&
+        input[ri + 1] === "<" &&
+        (ri + 2 >= len || input[ri + 2] !== "<")
+      ) {
         i = ri + 2;
         let strip = false;
-        if (i < len && input[i] === "-") { strip = true; i++; }
+        if (i < len && input[i] === "-") {
+          strip = true;
+          i++;
+        }
         while (i < len && (input[i] === " " || input[i] === "\t")) i++;
         let delim = "";
         if (i < len && (input[i] === "'" || input[i] === '"')) {
@@ -351,11 +439,23 @@ export function tokenize(input: string): Token[] {
           while (i < len && input[i] !== q) delim += input[i++];
           if (i < len) i++;
         } else {
-          while (i < len && input[i] !== " " && input[i] !== "\t"
-              && input[i] !== "\n" && input[i] !== "\r"
-              && input[i] !== ";" && input[i] !== "|"
-              && input[i] !== "&" && input[i] !== ")" && input[i] !== "#") {
-            if (input[i] === "\\") { i++; if (i < len) delim += input[i++]; continue; }
+          while (
+            i < len &&
+            input[i] !== " " &&
+            input[i] !== "\t" &&
+            input[i] !== "\n" &&
+            input[i] !== "\r" &&
+            input[i] !== ";" &&
+            input[i] !== "|" &&
+            input[i] !== "&" &&
+            input[i] !== ")" &&
+            input[i] !== "#"
+          ) {
+            if (input[i] === "\\") {
+              i++;
+              if (i < len) delim += input[i++];
+              continue;
+            }
             delim += input[i++];
           }
         }
@@ -369,12 +469,20 @@ export function tokenize(input: string): Token[] {
       if (rch === ">") {
         i = ri + 1;
         let op = fdPrefix + ">";
-        if (i < len && input[i] === ">") { op += ">"; i++; }
+        if (i < len && input[i] === ">") {
+          op += ">";
+          i++;
+        }
         if (i < len && input[i] === "&") {
           i++;
           let fd = "";
-          while (i < len && input[i] >= "0" && input[i] <= "9") fd += input[i++];
-          tokens.push({ type: "redirect", op: op + "&", target: fd || "-" });
+          while (i < len && input[i] >= "0" && input[i] <= "9")
+            fd += input[i++];
+          tokens.push({
+            type: "redirect",
+            op: op + "&",
+            target: fd || "-",
+          });
           continue;
         }
         const target = readRedirectTarget();
@@ -497,7 +605,9 @@ function extractShellCInner(wordTokens: WordToken[]): WordToken[] | undefined {
   return undefined;
 }
 
-function extractUtilityOperandInner(wordTokens: WordToken[]): WordToken[] | undefined {
+function extractUtilityOperandInner(
+  wordTokens: WordToken[],
+): WordToken[] | undefined {
   let sawDoubleDash = false;
   for (let i = 1; i < wordTokens.length; i++) {
     const value = wordTokens[i].value;
@@ -540,7 +650,10 @@ function extractXargsInner(wordTokens: WordToken[]): WordToken[] | undefined {
   return extractUtilityOperandInner(wordTokens);
 }
 
-function extractWrapperInnerTokens(rule: WrapperRule, wordTokens: WordToken[]): WordToken[] | undefined {
+function extractWrapperInnerTokens(
+  rule: WrapperRule,
+  wordTokens: WordToken[],
+): WordToken[] | undefined {
   switch (rule.kind) {
     case "shell-c":
       return extractShellCInner(wordTokens);
@@ -586,14 +699,19 @@ export function extractCommands(
 
     // Find the command name: first non-group word token
     const wordTokens = seg.filter((t): t is WordToken => t.type === "word");
-    const redirectTokens = seg.filter((t): t is RedirectToken => t.type === "redirect");
+    const redirectTokens = seg.filter(
+      (t): t is RedirectToken => t.type === "redirect",
+    );
     if (wordTokens.length === 0) continue;
 
     const cmdName = wordTokens[0].value;
     if (!cmdName) continue;
 
     const fullText = wordTokens.map((t) => t.value).join(" ");
-    const redirects = redirectTokens.map((t) => ({ op: t.op, target: t.target }));
+    const redirects = redirectTokens.map((t) => ({
+      op: t.op,
+      target: t.target,
+    }));
     results.push({ name: cmdName, fullText, redirects, source });
 
     const wrapperRule = wrapperRules.get(cmdName.toLowerCase());
@@ -602,7 +720,13 @@ export function extractCommands(
       if (innerTokens && innerTokens.length > 0) {
         const innerText = innerTokens.map((t) => t.value).join(" ");
         try {
-          results.push(...extractCommands(tokenize(innerText), "wrapper-arg", wrapperRules));
+          results.push(
+            ...extractCommands(
+              tokenize(innerText),
+              "wrapper-arg",
+              wrapperRules,
+            ),
+          );
         } catch {
           // parse failure — the nested command will default to "ask"
         }
@@ -651,9 +775,16 @@ export function evaluateCommand(
 ): EvalResult {
   let cmds: ExtractedCommand[];
   try {
-    cmds = extractCommands(tokenize(command), "direct", wrapperRules ?? BUILTIN_WRAPPER_RULES);
+    cmds = extractCommands(
+      tokenize(command),
+      "direct",
+      wrapperRules ?? BUILTIN_WRAPPER_RULES,
+    );
   } catch (e) {
-    return { action: "ask", reason: `Unparseable shell command: ${String(e)}` };
+    return {
+      action: "ask",
+      reason: `Unparseable shell command: ${String(e)}`,
+    };
   }
 
   if (cmds.length === 0) {
@@ -675,7 +806,11 @@ export function evaluateCommand(
     }
     // Allow: wrapper-arg commands can always promote; direct commands only if no prior unmatched direct
     if (policy.allow.some((e) => matchEntry(cmd, e))) {
-      if (result === "default" && (cmd.source === "wrapper-arg" || !sawDirectUnmatched)) result = "allow";
+      if (
+        result === "default" &&
+        (cmd.source === "wrapper-arg" || !sawDirectUnmatched)
+      )
+        result = "allow";
       continue;
     }
     // No match — downgrade allow to default; track unmatched direct commands
@@ -683,7 +818,11 @@ export function evaluateCommand(
     result = result === "allow" ? "default" : result;
   }
 
-  return { action: result, reason: result === "default" ? "No policy match" : `Policy matched: ${result}` };
+  return {
+    action: result,
+    reason:
+      result === "default" ? "No policy match" : `Policy matched: ${result}`,
+  };
 }
 
 export function getCommandSummary(command: string): string {

@@ -4,20 +4,20 @@
 
 Use the following order for `use-package` and always leave a single line between keywords:
 
--   `demand`
--   `defer`
--   `after`
--   `require`
--   `general`
--   `commands`
--   `custom`
--   `preface`
--   `init`
--   `config`
+- `demand`
+- `defer`
+- `after`
+- `require`
+- `general`
+- `commands`
+- `custom`
+- `preface`
+- `init`
+- `config`
 
 `:commands` must only be used when commands is not marked as autoloaded and must be accompany by a comment:
 
-``` elisp
+```elisp
 (use-package treemacs
   ;; Not exposed via autoload by Treemacs
   :commands (treemacs-switch-workspace
@@ -32,7 +32,7 @@ Use the following order for `use-package` and always leave a single line between
 
 `apheleia` is explicitly enabled per major-mode:
 
-``` elisp
+```elisp
 (use-package markdown-mode
   :init
   (add-hook 'markdown-mode-hook #'apheleia-mode))
@@ -40,7 +40,7 @@ Use the following order for `use-package` and always leave a single line between
 
 Any adjustments to `apheleia`'s variables should be done via `:config`:
 
-``` elisp
+```elisp
 (use-package markdown-mode
   :init
   (add-hook 'markdown-mode-hook #'apheleia-mode)
@@ -55,7 +55,7 @@ Any adjustments to `apheleia`'s variables should be done via `:config`:
 
 `eglot` is explicitly enabled per major-mode:
 
-``` elisp
+```elisp
 (use-package typescript-ts-mode
   :preface
   (eval-when-compile
@@ -78,7 +78,7 @@ Any adjustments to `apheleia`'s variables should be done via `:config`:
 
 `tree-sitter` is explicitly enabled and hooks are to be moved into the relevant `-ts-mode`:
 
-``` elisp
+```elisp
 (use-package typescript-mode
   :init
   (add-to-list 'major-mode-remap-alist '(typescript-mode . typescript-ts-mode)))
@@ -94,7 +94,7 @@ Note the hook is added to `-ts-mode-hook` in this case.
 
 `flycheck` is explicitly enabled per major-mode:
 
-``` elisp
+```elisp
 (use-package sh-mode
   :init
   (add-hook 'sh-mode-hook #'flycheck-mode))

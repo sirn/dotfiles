@@ -4,9 +4,7 @@ let
   jsonFormat = pkgs.formats.json { };
 in
 {
-  home.packages = with pkgs; [
-    zed-editor
-  ];
+  home.packages = with pkgs; [ zed-editor ];
 
   xdg.configFile = {
     "zed/settings.json" = {

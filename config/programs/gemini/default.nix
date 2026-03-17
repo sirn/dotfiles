@@ -16,9 +16,10 @@ let
 
   agentPermissionsPath = ../../../var/agents/permissions.gemini.toml;
   agentPermissions =
-    if builtins.pathExists agentPermissionsPath
-    then builtins.fromTOML (builtins.readFile agentPermissionsPath)
-    else { };
+    if builtins.pathExists agentPermissionsPath then
+      builtins.fromTOML (builtins.readFile agentPermissionsPath)
+    else
+      { };
 
   effectivePolicy =
     mode:
@@ -186,13 +187,9 @@ let
         tools = server.allowedTools or null;
         baseConfig =
           if isStdioServer server then
-            {
-              command = server.command or (lib.getExe server.package);
-            }
+            { command = server.command or (lib.getExe server.package); }
           else
-            {
-              url = server.url;
-            };
+            { url = server.url; };
         # Add trust setting based on allowedTools
         trustConfig = if tools == null then { trust = true; } else { };
       in
@@ -203,9 +200,7 @@ let
   # allowing users to add custom skills alongside managed ones
   skillsDirContents = builtins.readDir skillsDir;
   skillDirs = lib.filterAttrs (_: type: type == "directory") skillsDirContents;
-  mkGeminiSkillLink = name: {
-    ".gemini/skills/${name}".source = skillsDir + "/${name}";
-  };
+  mkGeminiSkillLink = name: { ".gemini/skills/${name}".source = skillsDir + "/${name}"; };
   geminiSkillLinks = lib.foldl' (acc: name: acc // mkGeminiSkillLink name) { } (
     builtins.attrNames skillDirs
   );
@@ -286,16 +281,9 @@ in
     };
   };
 
-  programs.git = lib.mkIf cfg.enable {
-    ignores = [
-      ".gemini/"
-    ];
-  };
+  programs.git = lib.mkIf cfg.enable { ignores = [ ".gemini/" ]; };
 
   home.file = lib.mkIf cfg.enable (
-    geminiSkillLinks
-    // {
-      ".gemini/policies/nix-managed.toml".source = policyFile;
-    }
+    geminiSkillLinks // { ".gemini/policies/nix-managed.toml".source = policyFile; }
   );
 }

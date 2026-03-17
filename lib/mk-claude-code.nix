@@ -16,15 +16,10 @@ in
 {
   files = {
     "${configDir}/settings.json".source = jsonFormat.generate "claude-code-settings.json" (
-      cfg.settings
-      // {
-        "$schema" = "https://json.schemastore.org/claude-code-settings.json";
-      }
+      cfg.settings // { "$schema" = "https://json.schemastore.org/claude-code-settings.json"; }
     );
   }
-  // lib.optionalAttrs (cfg.memory.text != null) {
-    "${configDir}/CLAUDE.md".text = cfg.memory.text;
-  }
+  // lib.optionalAttrs (cfg.memory.text != null) { "${configDir}/CLAUDE.md".text = cfg.memory.text; }
   // lib.optionalAttrs (cfg.memory.source != null) {
     "${configDir}/CLAUDE.md".source = cfg.memory.source;
   }

@@ -6,33 +6,33 @@ This document provides a summary of the custom keybindings configured in this Em
 
 These keybindings are generally available in most modes.
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
-| `C-x o` | `ace-window` | Select a window to switch to using `ace-window`. |
-| `C-x C-b` | `consult-buffer` | Switch buffers using `consult`. |
-| `C-x C-f` | `project-find-file` | Find file in the current project. |
-| `C-x C-j` | `dired-jump` | Open directory of current buffer in Dired. |
-| `C-c C-d` | `helpful-at-point` | Show help for the symbol at point. |
-| `M-%` | `vr/query-replace` | `visual-regexp` query replace. |
-| `M-g I` | `consult-imenu-multi` | Search for definitions/sections across multiple buffers. |
-| `M-g g` | `consult-goto-line` | Go to a specific line number in the current buffer. |
-| `M-g i` | `consult-imenu` | Search for definitions/sections in the current buffer. |
-| `M-s r` | `consult-ripgrep` | Search the project with `ripgrep` (same as `leader s r`). |
-| `M-y` | `consult-yank-pop` | Select an item from the kill ring to yank. |
-| `M-+` | `tempel-complete` | Complete template at point. |
-| `M-*` | `tempel-insert` | Insert a template. |
+| Key       | Command               | Description                                               |
+| :-------- | :-------------------- | :-------------------------------------------------------- |
+| `C-x o`   | `ace-window`          | Select a window to switch to using `ace-window`.          |
+| `C-x C-b` | `consult-buffer`      | Switch buffers using `consult`.                           |
+| `C-x C-f` | `project-find-file`   | Find file in the current project.                         |
+| `C-x C-j` | `dired-jump`          | Open directory of current buffer in Dired.                |
+| `C-c C-d` | `helpful-at-point`    | Show help for the symbol at point.                        |
+| `M-%`     | `vr/query-replace`    | `visual-regexp` query replace.                            |
+| `M-g I`   | `consult-imenu-multi` | Search for definitions/sections across multiple buffers.  |
+| `M-g g`   | `consult-goto-line`   | Go to a specific line number in the current buffer.       |
+| `M-g i`   | `consult-imenu`       | Search for definitions/sections in the current buffer.    |
+| `M-s r`   | `consult-ripgrep`     | Search the project with `ripgrep` (same as `leader s r`). |
+| `M-y`     | `consult-yank-pop`    | Select an item from the kill ring to yank.                |
+| `M-+`     | `tempel-complete`     | Complete template at point.                               |
+| `M-*`     | `tempel-insert`       | Insert a template.                                        |
 
 ### macOS Specific Global Keybindings
 
 These bindings are active only when running Emacs on macOS.
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
-| `s-v` | `yank` | Paste from system clipboard. |
-| `s-c` | `evil-yank` | Copy to system clipboard. |
-| `s-w` | `delete-window` | Close the current window. |
-| `s-W` | `delete-frame` | Close the current Emacs frame (application window). |
-| `s-n` | `make-frame` | Create a new Emacs frame (application window). |
+| Key   | Command         | Description                                         |
+| :---- | :-------------- | :-------------------------------------------------- |
+| `s-v` | `yank`          | Paste from system clipboard.                        |
+| `s-c` | `evil-yank`     | Copy to system clipboard.                           |
+| `s-w` | `delete-window` | Close the current window.                           |
+| `s-W` | `delete-frame`  | Close the current Emacs frame (application window). |
+| `s-n` | `make-frame`    | Create a new Emacs frame (application window).      |
 
 ---
 
@@ -44,177 +44,177 @@ All custom commands are organized under the `<leader>` key, which is `SPC` (Spac
 
 Buffer operations and management commands.
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
-| `SPC b b` | `consult-buffer` | Find buffer. |
-| `SPC b k` | `kill-buffer` | Kill the current buffer. |
+| Key       | Command                      | Description                       |
+| :-------- | :--------------------------- | :-------------------------------- |
+| `SPC b b` | `consult-buffer`             | Find buffer.                      |
+| `SPC b k` | `kill-buffer`                | Kill the current buffer.          |
 | `SPC b R` | `gemacs--revert-all-buffers` | Revert all file-visiting buffers. |
-| `SPC b S` | `gemacs--save-all-buffers` | Save all modified buffers. |
+| `SPC b S` | `gemacs--save-all-buffers`   | Save all modified buffers.        |
 
 ### `SPC f` - File Operations
 
 File finding and navigation commands.
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
-| `SPC f f` | `consult-fd` | Find file using `fd`. |
-| `SPC f F` | `find-file` | Find file. |
+| Key       | Command           | Description                                |
+| :-------- | :---------------- | :----------------------------------------- |
+| `SPC f f` | `consult-fd`      | Find file using `fd`.                      |
+| `SPC f F` | `find-file`       | Find file.                                 |
 | `SPC f o` | `consult-outline` | Search for headings in the current buffer. |
 
 ### `SPC p` - Project Commands
 
 Project-specific commands and operations.
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
-| `SPC p` | `(Prefix)` | Project-specific commands. |
-| `SPC p p` | `project-switch-project` | Switch to another project. |
-| `SPC p '` | `eat-project` | Open a terminal in the project root. |
-| `SPC p b` | `consult-project-buffer` | Find a buffer belonging to the current project. |
-| `SPC p c` | `gemacs--project-claude-code-ide-menu` | Open Claude Code IDE menu in the project root. |
-| `SPC p d` | `project-dired` | Open project root in Dired. |
-| `SPC p f` | `gemacs--project-fd` | Find file in project using `fd`. |
-| `SPC p g` | `gemacs--project-gptel` | Open GPTel in the project root. |
-| `SPC p m` | `magit-project-status` | Open Magit status for the project. |
-| `SPC p s` | `consult-ripgrep` | Search project with `ripgrep`. |
-| `SPC p S` | `gemacs--project-sync` | Sync known projects from `repoman`. |
+| Key       | Command                                | Description                                     |
+| :-------- | :------------------------------------- | :---------------------------------------------- |
+| `SPC p`   | `(Prefix)`                             | Project-specific commands.                      |
+| `SPC p p` | `project-switch-project`               | Switch to another project.                      |
+| `SPC p '` | `eat-project`                          | Open a terminal in the project root.            |
+| `SPC p b` | `consult-project-buffer`               | Find a buffer belonging to the current project. |
+| `SPC p c` | `gemacs--project-claude-code-ide-menu` | Open Claude Code IDE menu in the project root.  |
+| `SPC p d` | `project-dired`                        | Open project root in Dired.                     |
+| `SPC p f` | `gemacs--project-fd`                   | Find file in project using `fd`.                |
+| `SPC p g` | `gemacs--project-gptel`                | Open GPTel in the project root.                 |
+| `SPC p m` | `magit-project-status`                 | Open Magit status for the project.              |
+| `SPC p s` | `consult-ripgrep`                      | Search project with `ripgrep`.                  |
+| `SPC p S` | `gemacs--project-sync`                 | Sync known projects from `repoman`.             |
 
 ### `SPC E` - Environment
 
 Environment variable management commands.
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
+| Key     | Command    | Description                                          |
+| :------ | :--------- | :--------------------------------------------------- |
 | `SPC E` | `(Prefix)` | `envrc` commands for managing environment variables. |
 
 ### `'` - Terminal
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
-| `' '` | `eat` | Open a new `eat` terminal. |
-| `' e` | `eshell` | Open `eshell`. |
+| Key   | Command  | Description                |
+| :---- | :------- | :------------------------- |
+| `' '` | `eat`    | Open a new `eat` terminal. |
+| `' e` | `eshell` | Open `eshell`.             |
 
 ### `a` - AI / LLM
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
-| `a c` | `claude-code-ide-menu` | Show the Claude Code IDE menu. |
-| `a g` | `gemacs--gptel-transient-menu` | Show the GPTel menu. |
+| Key   | Command                        | Description                    |
+| :---- | :----------------------------- | :----------------------------- |
+| `a c` | `claude-code-ide-menu`         | Show the Claude Code IDE menu. |
+| `a g` | `gemacs--gptel-transient-menu` | Show the GPTel menu.           |
 
 ### `A` - Applications
 
 #### `A m` - Mail (Notmuch)
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
-| `A m c` | `notmuch-mua-new-mail` | Compose a new email. |
-| `A m m` | `notmuch` | Open the Notmuch email client. |
+| Key     | Command                | Description                    |
+| :------ | :--------------------- | :----------------------------- |
+| `A m c` | `notmuch-mua-new-mail` | Compose a new email.           |
+| `A m m` | `notmuch`              | Open the Notmuch email client. |
 
 #### `A w` - Web (eww)
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
-| `A w w` | `eww` | Open URL in `eww` browser. |
-| `A w s` | `eww-search-words` | Search the web with `eww`. |
-| `A w b` | `eww-list-bookmarks` | List `eww` bookmarks. |
+| Key     | Command              | Description                |
+| :------ | :------------------- | :------------------------- |
+| `A w w` | `eww`                | Open URL in `eww` browser. |
+| `A w s` | `eww-search-words`   | Search the web with `eww`. |
+| `A w b` | `eww-list-bookmarks` | List `eww` bookmarks.      |
 
 ### `c` - Code
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
-| `c e` | `(Prefix)` | Embark commands. |
-| `c e a` | `embark-act` | Show contextual actions for the item at point. |
-| `c e e` | `embark-dwim` | Execute the default action for the item at point. |
-| `c e b` | `embark-bindings` | Show all possible Embark actions for the current context. |
-| `c f` | `(Prefix)` | Flymake error-checking commands. |
-| `c f f` | `flymake-show-buffer-diagnostics` | Show buffer diagnostics. |
-| `c f p` | `flymake-show-project-diagnostics` | Show project diagnostics. |
-| `c f n` | `flymake-goto-next-error` | Go to next error. |
-| `c f N` | `flymake-goto-prev-error` | Go to previous error. |
-| `c l` | `(Prefix)` | Eglot (LSP) commands. |
-| `c x` | `(Prefix)` | Xref (cross-reference) commands. |
+| Key     | Command                            | Description                                               |
+| :------ | :--------------------------------- | :-------------------------------------------------------- |
+| `c e`   | `(Prefix)`                         | Embark commands.                                          |
+| `c e a` | `embark-act`                       | Show contextual actions for the item at point.            |
+| `c e e` | `embark-dwim`                      | Execute the default action for the item at point.         |
+| `c e b` | `embark-bindings`                  | Show all possible Embark actions for the current context. |
+| `c f`   | `(Prefix)`                         | Flymake error-checking commands.                          |
+| `c f f` | `flymake-show-buffer-diagnostics`  | Show buffer diagnostics.                                  |
+| `c f p` | `flymake-show-project-diagnostics` | Show project diagnostics.                                 |
+| `c f n` | `flymake-goto-next-error`          | Go to next error.                                         |
+| `c f N` | `flymake-goto-prev-error`          | Go to previous error.                                     |
+| `c l`   | `(Prefix)`                         | Eglot (LSP) commands.                                     |
+| `c x`   | `(Prefix)`                         | Xref (cross-reference) commands.                          |
 
 ### `e` - Edit
 
 #### `e i` - Ispell
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
-| `e i b` | `ispell-buffer` | Spell-check the entire buffer. |
-| `e i i` | `ispell` | Start spell-checking. |
+| Key     | Command         | Description                      |
+| :------ | :-------------- | :------------------------------- |
+| `e i b` | `ispell-buffer` | Spell-check the entire buffer.   |
+| `e i i` | `ispell`        | Start spell-checking.            |
 | `e i r` | `ispell-region` | Spell-check the selected region. |
-| `e i w` | `ispell-word` | Spell-check the word at point. |
+| `e i w` | `ispell-word`   | Spell-check the word at point.   |
 
 #### `e u` - Undo
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
+| Key   | Command | Description                          |
+| :---- | :------ | :----------------------------------- |
 | `e u` | `vundo` | Open the vundo undo tree visualizer. |
 
 #### `e w` - Whitespace
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
+| Key   | Command              | Description         |
+| :---- | :------------------- | :------------------ |
 | `e w` | `whitespace-cleanup` | Cleanup whitespace. |
 
 #### `e x` - eXpressions (Smartparens)
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
-| `e x (` | `sp-wrap-round` | Wrap selection in `()`. |
-| `e x {` | `sp-wrap-curly` | Wrap selection in `{}`. |
-| `e x <` | `sp-backward-slurp-sexp` | Slurp expression backward. |
-| `e x >` | `sp-forward-slurp-sexp` | Slurp expression forward. |
-| `e x d` | `sp-splice-sexp` | Unwrap expression (splice). |
-| `e x k` | `sp-kill-whole-line` | Kill the current line. |
+| Key     | Command                  | Description                 |
+| :------ | :----------------------- | :-------------------------- |
+| `e x (` | `sp-wrap-round`          | Wrap selection in `()`.     |
+| `e x {` | `sp-wrap-curly`          | Wrap selection in `{}`.     |
+| `e x <` | `sp-backward-slurp-sexp` | Slurp expression backward.  |
+| `e x >` | `sp-forward-slurp-sexp`  | Slurp expression forward.   |
+| `e x d` | `sp-splice-sexp`         | Unwrap expression (splice). |
+| `e x k` | `sp-kill-whole-line`     | Kill the current line.      |
 
 #### `e y` - Tempel (Snippets)
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
-| `e y s` | `tempel-insert` | Insert a template. |
+| Key     | Command           | Description                 |
+| :------ | :---------------- | :-------------------------- |
+| `e y s` | `tempel-insert`   | Insert a template.          |
 | `e y c` | `tempel-complete` | Complete template at point. |
 
 ### `g` - Git
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
+| Key | Command                | Description                                |
+| :-- | :--------------------- | :----------------------------------------- |
 | `g` | `magit-project-status` | Open Magit status for the current project. |
 
 ### `h` - Help
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
-| `h` | `(Prefix)` | `helpful` and other help commands. |
-| `h h` | `helpful-at-point` | Show help for symbol at point. |
+| Key   | Command            | Description                        |
+| :---- | :----------------- | :--------------------------------- |
+| `h`   | `(Prefix)`         | `helpful` and other help commands. |
+| `h h` | `helpful-at-point` | Show help for symbol at point.     |
 
 ### `o` - Org Mode
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
+| Key | Command    | Description                                |
+| :-- | :--------- | :----------------------------------------- |
 | `o` | `(Prefix)` | Org mode commands (capture, agenda, etc.). |
 
 ### `s` - Search / Jump
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
+| Key   | Command           | Description                                  |
+| :---- | :---------------- | :------------------------------------------- |
 | `s s` | `consult-ripgrep` | Search project with `ripgrep` (main search). |
-| `s j` | `avy-goto-char` | Jump to a character on screen. |
-| `s J` | `avy-goto-char-2` | Jump to a 2-character sequence on screen. |
-| `s l` | `avy-goto-line` | Jump to a line on screen. |
-| `s L` | `ace-link` | Jump to a link, URL, or file path at point. |
+| `s j` | `avy-goto-char`   | Jump to a character on screen.               |
+| `s J` | `avy-goto-char-2` | Jump to a 2-character sequence on screen.    |
+| `s l` | `avy-goto-line`   | Jump to a line on screen.                    |
+| `s L` | `ace-link`        | Jump to a link, URL, or file path at point.  |
 
 ### `t` - Treemacs
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
-| `t t` | `treemacs` | Toggle Treemacs. |
-| `t T` | `treemacs-select-window` | Switch to Treemacs window. |
+| Key     | Command                             | Description                       |
+| :------ | :---------------------------------- | :-------------------------------- |
+| `t t`   | `treemacs`                          | Toggle Treemacs.                  |
+| `t T`   | `treemacs-select-window`            | Switch to Treemacs window.        |
 | `t p a` | `treemacs-add-project-to-workspace` | Add project to Treemacs workspace |
-| `t w c` | `treemacs-create-workspace` | Create Treemacs workspace. |
-| `t w e` | `treemacs-edit-workspace` | Edit Treemacs workspace. |
-| `t w r` | `treemacs-rename-workspace` | Rename Treemacs workspace. |
-| `t w w` | `treemacs-switch-workspace` | Switch Treemacs workspace. |
+| `t w c` | `treemacs-create-workspace`         | Create Treemacs workspace.        |
+| `t w e` | `treemacs-edit-workspace`           | Edit Treemacs workspace.          |
+| `t w r` | `treemacs-rename-workspace`         | Rename Treemacs workspace.        |
+| `t w w` | `treemacs-switch-workspace`         | Switch Treemacs workspace.        |
 
 ### `T` - Toggles
 
@@ -225,26 +225,26 @@ Environment variable management commands.
 
 ### `w` - Windows
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
-| `w /` | `split-window-right` | Split window vertically. |
-| `w -` | `split-window-below` | Split window horizontally. |
-| `w =` | `balance-windows` | Balance window sizes. |
-| `w b` | `consult-buffer-other-window` | Open buffer in other window. |
-| `w B` | `consult-buffer-other-frame` | Open buffer in other frame. |
-| `w d` | `delete-window` | Delete the current window. |
-| `w D` | `delete-other-windows` | Delete all other windows. |
-| `w R` | `redraw-display` | Redraw the display. |
-| `w w` | `ace-window` | Select a window to switch to. |
+| Key   | Command                       | Description                   |
+| :---- | :---------------------------- | :---------------------------- |
+| `w /` | `split-window-right`          | Split window vertically.      |
+| `w -` | `split-window-below`          | Split window horizontally.    |
+| `w =` | `balance-windows`             | Balance window sizes.         |
+| `w b` | `consult-buffer-other-window` | Open buffer in other window.  |
+| `w B` | `consult-buffer-other-frame`  | Open buffer in other frame.   |
+| `w d` | `delete-window`               | Delete the current window.    |
+| `w D` | `delete-other-windows`        | Delete all other windows.     |
+| `w R` | `redraw-display`              | Redraw the display.           |
+| `w w` | `ace-window`                  | Select a window to switch to. |
 
 ### `z` - Code Folding (Origami)
 
-| Key | Command | Description |
-| :--- | :--- | :--- |
-| `z z` | `origami-toggle-node` | Toggle fold at point (main folding action). |
-| `z c` | `origami-close-node` | Close fold at point. |
-| `z o` | `origami-open-node` | Open fold at point. |
-| `z r` | `origami-open-all-nodes` | Open all folds in buffer. |
-| `z m` | `origami-close-all-nodes` | Close all folds in buffer. |
-| `z n` | `origami-next-fold` | Move to next fold. |
-| `z p` | `origami-previous-fold` | Move to previous fold. |
+| Key   | Command                   | Description                                 |
+| :---- | :------------------------ | :------------------------------------------ |
+| `z z` | `origami-toggle-node`     | Toggle fold at point (main folding action). |
+| `z c` | `origami-close-node`      | Close fold at point.                        |
+| `z o` | `origami-open-node`       | Open fold at point.                         |
+| `z r` | `origami-open-all-nodes`  | Open all folds in buffer.                   |
+| `z m` | `origami-close-all-nodes` | Close all folds in buffer.                  |
+| `z n` | `origami-next-fold`       | Move to next fold.                          |
+| `z p` | `origami-previous-fold`   | Move to previous fold.                      |

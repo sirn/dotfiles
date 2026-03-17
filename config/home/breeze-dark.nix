@@ -4,9 +4,7 @@ let
   breezePkg = pkgs.kdePackages.breeze;
 in
 {
-  imports = [
-    ./breeze.nix
-  ];
+  imports = [ ./breeze.nix ];
 
   gtk = {
     theme = {

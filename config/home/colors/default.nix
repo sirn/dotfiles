@@ -45,10 +45,7 @@ let
   # Generate 256-color palette at build time using Python script
   # This uses CIELAB interpolation for perceptually uniform colors
   palette256Generator =
-    pkgs.runCommand "generate-palette-256"
-      {
-        nativeBuildInputs = [ pkgs.python3 ];
-      }
+    pkgs.runCommand "generate-palette-256" { nativeBuildInputs = [ pkgs.python3 ]; }
       ''
         cat > input.json <<'EOF'
         {

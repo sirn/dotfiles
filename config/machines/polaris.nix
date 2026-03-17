@@ -51,18 +51,14 @@
       {
         profile = {
           name = "only_internal";
-          outputs = [
-            { criteria = "$internal"; }
-          ];
+          outputs = [ { criteria = "$internal"; } ];
         };
       }
       {
         profile = {
           name = "dual_aw3225qf_internal";
           outputs = [
-            {
-              criteria = "$aw3225qf";
-            }
+            { criteria = "$aw3225qf"; }
             {
               criteria = "$internal";
               status = "disable";

@@ -8,6 +8,7 @@ Evaluate and address PR review comments by classifying them and creating a concr
 ## Prerequisites
 
 **Reference these skills first:**
+
 - Read `jj-reference` skill for Jujutsu commands to understand change context
 - Read `gh-reference` skill for GitHub CLI commands to fetch PR comments
 
@@ -24,7 +25,7 @@ Evaluate and address PR review comments by classifying them and creating a concr
    - Fetch review comments: `gh api repos/owner/repo/pulls/<number>/comments -X GET --paginate`
    - Fetch review threads: `gh api repos/owner/repo/pulls/<number>/reviews -X GET --paginate`
    - Check PR checks: `gh pr checks <number> -R owner/repo`
-   
+
    **Important**: Always use `-X GET` (or `--method GET`) to be explicit about read-only access. This ensures commands are allowed by the safety policy.
 
 3. **Check GitHub Actions** (if checks are failing):

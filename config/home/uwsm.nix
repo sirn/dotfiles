@@ -39,9 +39,7 @@ in
 {
   machine.wrapLauncher = wrapLauncher;
 
-  home.packages = with pkgs; [
-    app2unit
-  ];
+  home.packages = with pkgs; [ app2unit ];
 
   home.sessionVariables = {
     APP2UNIT_SLICES = builtins.concatStringsSep " " [
@@ -57,9 +55,7 @@ in
     };
 
     config = {
-      startup = [
-        { command = "${uwsmFinalize}"; }
-      ];
+      startup = [ { command = "${uwsmFinalize}"; } ];
     };
   };
 
@@ -76,42 +72,24 @@ in
   };
 
   systemd.user.services = {
-    copyq.Service = lib.mkIf config.services.copyq.enable {
-      Slice = appGraphicalSlice;
-    };
+    copyq.Service = lib.mkIf config.services.copyq.enable { Slice = appGraphicalSlice; };
 
-    kanshi.Service = lib.mkIf config.services.kanshi.enable {
-      Slice = appGraphicalSlice;
-    };
+    kanshi.Service = lib.mkIf config.services.kanshi.enable { Slice = appGraphicalSlice; };
 
-    swayidle.Service = lib.mkIf config.services.swayidle.enable {
-      Slice = appGraphicalSlice;
-    };
+    swayidle.Service = lib.mkIf config.services.swayidle.enable { Slice = appGraphicalSlice; };
 
-    sway-audio-idle-inhibit.Service =
-      lib.mkIf (config.systemd.user.services ? sway-audio-idle-inhibit)
-        {
-          Slice = appGraphicalSlice;
-        };
+    sway-audio-idle-inhibit.Service = lib.mkIf (
+      config.systemd.user.services ? sway-audio-idle-inhibit
+    ) { Slice = appGraphicalSlice; };
 
-    swww.Service = lib.mkIf config.services.swww.enable {
-      Slice = appGraphicalSlice;
-    };
+    swww.Service = lib.mkIf config.services.swww.enable { Slice = appGraphicalSlice; };
 
-    "swww-wallpaper".Service = lib.mkIf config.services.swww.enable {
-      Slice = appGraphicalSlice;
-    };
+    "swww-wallpaper".Service = lib.mkIf config.services.swww.enable { Slice = appGraphicalSlice; };
 
-    waybar.Service = lib.mkIf config.programs.waybar.enable {
-      Slice = appGraphicalSlice;
-    };
+    waybar.Service = lib.mkIf config.programs.waybar.enable { Slice = appGraphicalSlice; };
 
-    vicinae.Service = lib.mkIf config.programs.vicinae.enable {
-      Slice = appGraphicalSlice;
-    };
+    vicinae.Service = lib.mkIf config.programs.vicinae.enable { Slice = appGraphicalSlice; };
 
-    wlsunset.Service = lib.mkIf config.services.wlsunset.enable {
-      Slice = appGraphicalSlice;
-    };
+    wlsunset.Service = lib.mkIf config.services.wlsunset.enable { Slice = appGraphicalSlice; };
   };
 }

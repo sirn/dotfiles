@@ -56,9 +56,7 @@ in
   ];
 
   # https://wiki.archlinux.org/title/Font_configuration
-  gtk.gtk4.extraConfig = lib.mkIf pkgs.stdenv.isLinux {
-    gtk-hint-font-metrics = true;
-  };
+  gtk.gtk4.extraConfig = lib.mkIf pkgs.stdenv.isLinux { gtk-hint-font-metrics = true; };
 
   home.file = lib.mkIf pkgs.stdenv.isLinux {
     ".config/fontconfig/conf.d/21-emoji.conf" = {

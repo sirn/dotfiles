@@ -6,6 +6,7 @@ description: Sets up project development environment (wrapper scripts and/or Nix
 Set up a project development environment with wrapper scripts and/or a Nix flake.
 
 ## Parameters
+
 - **location**: Desired location for setup artifacts.
   - "machine-local": Inside `.my/` (ignored by git, good for personal tools).
   - "project-local": Root level (e.g., `bin/`, `flake.nix`).
@@ -36,6 +37,7 @@ For each setup type selected:
 5. If machine-local: Create `.my/.gitignore` with content `*`
 
 6. Create wrapper scripts with template:
+
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
@@ -69,6 +71,7 @@ set -euo pipefail
 5. If machine-local: Create `.my/.gitignore` with content `*` if not exists
 
 6. Verify the flake: `nix flake check path:.`
+
 - If verification fails, fix issues and re-verify
 
 ## Output

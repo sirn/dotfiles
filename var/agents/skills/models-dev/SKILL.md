@@ -21,6 +21,7 @@ GET https://models.dev/api.json
 The API data is cached at `~/.cache/agents/models.json` and refreshed only if older than 24 hours.
 
 **Update cache (if needed):**
+
 ```bash
 CACHE_FILE="$HOME/.cache/agents/models.json"
 mkdir -p "$(dirname "$CACHE_FILE")"
@@ -33,11 +34,13 @@ fi
 ## Data Structure
 
 The API is organized by provider:
+
 - Top level: provider IDs (google, anthropic, openai, fireworks, etc.)
 - Each provider: `{id, name, models, doc, env, npm}`
 - `models`: object keyed by model ID
 
 **Example:**
+
 ```json
 {
   "google": {
@@ -146,6 +149,7 @@ jq '
 ## Example Usage
 
 **How much does Gemini 3 Flash cost?**
+
 ```bash
 CACHE_FILE="$HOME/.cache/agents/models.json"
 
@@ -169,6 +173,7 @@ jq '
 ```
 
 **What models are available on Fireworks?**
+
 ```bash
 CACHE_FILE="$HOME/.cache/agents/models.json"
 
@@ -191,6 +196,7 @@ jq '
 ```
 
 **Find cheapest model for a given context size:**
+
 ```bash
 CACHE_FILE="$HOME/.cache/agents/models.json"
 MIN_CONTEXT=128000
@@ -208,25 +214,25 @@ jq --argjson min_ctx "$MIN_CONTEXT" '
 
 ## Response Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Provider ID (e.g., `google`, `fireworks`) |
-| `name` | string | Provider display name |
-| `models.<id>.name` | string | Human-readable model name |
-| `models.<id>.cost.input` | number | Input price per 1M tokens |
-| `models.<id>.cost.output` | number | Output price per 1M tokens |
+| Field                         | Type   | Description                                     |
+| ----------------------------- | ------ | ----------------------------------------------- |
+| `id`                          | string | Provider ID (e.g., `google`, `fireworks`)       |
+| `name`                        | string | Provider display name                           |
+| `models.<id>.name`            | string | Human-readable model name                       |
+| `models.<id>.cost.input`      | number | Input price per 1M tokens                       |
+| `models.<id>.cost.output`     | number | Output price per 1M tokens                      |
 | `models.<id>.cost.cache_read` | number | Cached input price per 1M tokens (if supported) |
-| `models.<id>.limit.context` | number | Maximum context window (tokens) |
-| `models.<id>.limit.output` | number | Maximum output tokens |
+| `models.<id>.limit.context`   | number | Maximum context window (tokens)                 |
+| `models.<id>.limit.output`    | number | Maximum output tokens                           |
 
 ## Error Handling
 
-| Issue | Resolution |
-|-------|------------|
-| Cache file missing | Re-fetch from API |
-| Cache older than 24h | Re-fetch from API |
-| Provider not found | Check provider ID spelling |
-| Model not found | Check model ID or search by name |
+| Issue                | Resolution                       |
+| -------------------- | -------------------------------- |
+| Cache file missing   | Re-fetch from API                |
+| Cache older than 24h | Re-fetch from API                |
+| Provider not found   | Check provider ID spelling       |
+| Model not found      | Check model ID or search by name |
 
 ## Cost Units
 

@@ -6,6 +6,7 @@ description: Commit current changes using jj. Analyzes changes, suggests commit 
 Commit current changes using Jujutsu (jj).
 
 ## Important
+
 **IMPORTANT**: Always use `jj` (Jujutsu) commands. Only fall back to `git` if jj is not available.
 Refer to the `jj-reference` skill for command syntax and **Best Practices** (explicit change IDs, logical grouping, etc.).
 
@@ -37,6 +38,7 @@ Refer to the `jj-reference` skill for command syntax and **Best Practices** (exp
 ## Output Format
 
 When analyzing, provide:
+
 1. **Suggested commit message** following repo's existing style
 2. **Should split?** Yes/No with reasoning
 3. If split recommended: how to split (files/hunks per commit), message for each, `jj` commands

@@ -10,6 +10,7 @@ ClickUp API v2 reference for common operations.
 - `CLICKUP_PAT` environment variable with a valid ClickUp Personal Access Token
 
 **Check before use:**
+
 ```bash
 [ -z "$CLICKUP_PAT" ] && echo "Error: CLICKUP_PAT not set" || echo "OK: CLICKUP_PAT is set"
 ```
@@ -41,6 +42,7 @@ curl -s -H "Authorization: $CLICKUP_PAT" \
 ```
 
 **Response**:
+
 ```json
 {
   "teams": [
@@ -101,6 +103,7 @@ curl -s -H "Authorization: $CLICKUP_PAT" \
 ```
 
 **Response**:
+
 ```json
 {
   "id": "ABC123DEF",
@@ -209,14 +212,14 @@ echo "https://app.clickup.com/t/ABC123DEF/86abc4d12" | sed 's/.*\///'
 
 ## Error Handling
 
-| Status | Meaning |
-|--------|---------|
-| `200` | Success |
-| `400` | Bad request (invalid parameters) |
-| `401` | Unauthorized (invalid token) |
-| `403` | Forbidden (insufficient permissions) |
-| `404` | Not found |
-| `429` | Rate limit exceeded |
+| Status | Meaning                              |
+| ------ | ------------------------------------ |
+| `200`  | Success                              |
+| `400`  | Bad request (invalid parameters)     |
+| `401`  | Unauthorized (invalid token)         |
+| `403`  | Forbidden (insufficient permissions) |
+| `404`  | Not found                            |
+| `429`  | Rate limit exceeded                  |
 
 ## Best Practices
 

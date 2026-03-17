@@ -25,10 +25,16 @@ export default function (pi: ExtensionAPI) {
       const raw = extractLastAssistantText(messages);
       const truncated = raw.replace(/\n/g, " ").trim().slice(0, 200);
       const body = truncated || "Pi has finished their turn";
-      execFileSync(toastifyBin, ["send", "Pi", body], { stdio: "ignore" });
+      execFileSync(toastifyBin, ["send", "Pi", body], {
+        stdio: "ignore",
+      });
     } catch {
       try {
-        execFileSync(toastifyBin, ["send", "Pi", "Pi has finished their turn"], { stdio: "ignore" });
+        execFileSync(
+          toastifyBin,
+          ["send", "Pi", "Pi has finished their turn"],
+          { stdio: "ignore" },
+        );
       } catch {}
     }
   });

@@ -6,6 +6,7 @@ description: Verify API usage against official documentation. Use when user asks
 Audit API usage against authoritative documentation.
 
 ## Process
+
 1. Identify the APIs, versions, or libraries in use from the user's request or context
 2. Research the official documentation:
    - Fetch official documentation for the libraries/APIs (use WebSearch/WebFetch)
@@ -15,6 +16,7 @@ Audit API usage against authoritative documentation.
 4. Summarize mismatches, deprecated usage, or required configuration
 
 ## Output
+
 1. **Confirmed Correct Usage**
 2. **Issues or Mismatches**
 3. **Required Changes**

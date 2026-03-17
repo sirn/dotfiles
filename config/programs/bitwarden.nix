@@ -19,12 +19,7 @@ in
 {
   home.packages =
     with pkgs;
-    [
-      bitwarden-cli
-    ]
-    ++ lib.optional (!config.flatpak.enable) [
-      bitwarden-desktop
-    ];
+    [ bitwarden-cli ] ++ lib.optional (!config.flatpak.enable) [ bitwarden-desktop ];
 
   programs.ssh.matchBlocks."*".extraOptions = {
     "IdentityAgent" = lib.mkOverride 250 agentSocketPath;
@@ -49,8 +44,6 @@ in
   };
 
   programs.firefox = lib.mkIf config.programs.firefox.enable {
-    profiles.main.extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
-      bitwarden
-    ];
+    profiles.main.extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [ bitwarden ];
   };
 }

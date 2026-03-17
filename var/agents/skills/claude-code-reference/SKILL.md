@@ -11,18 +11,20 @@ Invoke the Claude Code agent for sub-tasks using structured JSON output and expl
 ## When to Use Claude Code
 
 Use Claude Code when you need:
+
 - **Complex reasoning and planning** - Uses `opusplan` model for sophisticated analysis
 - **Multi-file refactoring** - Excellent at understanding and modifying across large codebases
 - **Tool-rich operations** - File operations, Bash execution, Web search, MCP servers
 - **Persistent sessions** - Continue complex tasks across multiple interactions
 
 ## Capabilities
-*   **Core Tools**: File operations (Read, Write, Edit, Glob, Grep), Bash execution (safe subset).
-*   **Web**: `WebSearch`, `WebFetch`.
-*   **MCP Servers**:
-    *   `context7`: Documentation queries.
-    *   `brave-search`: Web search (Brave).
-*   **Specialty**: Excellent at planning, reasoning, and complex refactoring. Uses `opusplan` model.
+
+- **Core Tools**: File operations (Read, Write, Edit, Glob, Grep), Bash execution (safe subset).
+- **Web**: `WebSearch`, `WebFetch`.
+- **MCP Servers**:
+  - `context7`: Documentation queries.
+  - `brave-search`: Web search (Brave).
+- **Specialty**: Excellent at planning, reasoning, and complex refactoring. Uses `opusplan` model.
 
 ## Calling from Another Agent
 
@@ -40,13 +42,14 @@ session_id=$(echo "$result" | jq -r '.session_id')
 
 ### Output Formats
 
-| Format | Description |
-|--------|-------------|
-| `text` (default) | Plain text output |
-| `json` | Single JSON result with `response`, `session_id`, `usage`, `permission_denials` |
-| `stream-json` | Real-time streaming JSON events |
+| Format           | Description                                                                     |
+| ---------------- | ------------------------------------------------------------------------------- |
+| `text` (default) | Plain text output                                                               |
+| `json`           | Single JSON result with `response`, `session_id`, `usage`, `permission_denials` |
+| `stream-json`    | Real-time streaming JSON events                                                 |
 
 **JSON Response Fields:**
+
 - `response`: (string) The agent's final answer
 - `session_id`: (string) UUID for continuing the session
 - `usage`: (object) Token usage and cost information
@@ -151,12 +154,12 @@ claude -p "Update package hashes" --allowedTools "Read,Edit,Bash(nix-prefetch-*)
 
 Use `--permission-mode` for high-level permission behavior:
 
-| Mode | Description |
-|------|-------------|
-| `default` | Prompt for permission on sensitive actions |
-| `acceptEdits` | Automatically accept file edits |
-| `plan` | Start in Plan Mode (read-only exploration) |
-| `dontAsk` | Don't ask for permissions (still checks) |
+| Mode                | Description                                   |
+| ------------------- | --------------------------------------------- |
+| `default`           | Prompt for permission on sensitive actions    |
+| `acceptEdits`       | Automatically accept file edits               |
+| `plan`              | Start in Plan Mode (read-only exploration)    |
+| `dontAsk`           | Don't ask for permissions (still checks)      |
 | `bypassPermissions` | Skip all permission checks (use with caution) |
 
 ## Agent Delegation Patterns
@@ -225,38 +228,42 @@ rm .claude/sessions/review.md
 
 ## Additional Useful Flags
 
-| Flag | Description |
-|------|-------------|
-| `--model` | Set model (sonnet/opus/haiku) |
-| `--max-turns` | Limit agentic turns before stopping |
-| `--max-budget-usd` | Max spend before stopping |
-| `--tools` | Restrict available tools (vs allow them) |
-| `--verbose` | Full turn-by-turn output |
-| `--no-session-persistence` | Don't save to disk (one-off tasks) |
-| `--system-prompt` | Replace system prompt |
-| `--append-system-prompt` | Append to system prompt |
+| Flag                       | Description                              |
+| -------------------------- | ---------------------------------------- |
+| `--model`                  | Set model (sonnet/opus/haiku)            |
+| `--max-turns`              | Limit agentic turns before stopping      |
+| `--max-budget-usd`         | Max spend before stopping                |
+| `--tools`                  | Restrict available tools (vs allow them) |
+| `--verbose`                | Full turn-by-turn output                 |
+| `--no-session-persistence` | Don't save to disk (one-off tasks)       |
+| `--system-prompt`          | Replace system prompt                    |
+| `--append-system-prompt`   | Append to system prompt                  |
 
 ## Best Practices for Agent Delegation
 
 ### Prompting
-*   **Be Specific:** Provide clear goals, file paths, and constraints.
-*   **Include Context:** The spawned agent can't see your context - include relevant files with `@path`.
-*   **Provide Verification:** Include success criteria so Claude can verify its work.
+
+- **Be Specific:** Provide clear goals, file paths, and constraints.
+- **Include Context:** The spawned agent can't see your context - include relevant files with `@path`.
+- **Provide Verification:** Include success criteria so Claude can verify its work.
 
 ### Permission Safety
-*   **Start Conservative:** Use minimal `--allowedTools` initially.
-*   **Escalate as Needed:** Check `permission_denials` and continue with broader permissions.
-*   **Never use `--dangerously-skip-permissions`**: Always use scoped `--allowedTools`.
+
+- **Start Conservative:** Use minimal `--allowedTools` initially.
+- **Escalate as Needed:** Check `permission_denials` and continue with broader permissions.
+- **Never use `--dangerously-skip-permissions`**: Always use scoped `--allowedTools`.
 
 ### Session Management
-*   **Always Extract session_id:** Capture it from JSON output even if you don't plan to continue.
-*   **Session per Task:** Use separate sessions for unrelated tasks.
-*   **Check permission_denials:** Always inspect this array in the JSON response.
+
+- **Always Extract session_id:** Capture it from JSON output even if you don't plan to continue.
+- **Session per Task:** Use separate sessions for unrelated tasks.
+- **Check permission_denials:** Always inspect this array in the JSON response.
 
 ### Cost Control
-*   **Use `--max-budget-usd`:** Prevent runaway costs in automation.
-*   **Use `--max-turns`:** Limit how long the agent runs.
-*   **Monitor usage:** Check the `usage` field in JSON output.
+
+- **Use `--max-budget-usd`:** Prevent runaway costs in automation.
+- **Use `--max-turns`:** Limit how long the agent runs.
+- **Monitor usage:** Check the `usage` field in JSON output.
 
 ## Example: Complete Agent Delegation Workflow
 

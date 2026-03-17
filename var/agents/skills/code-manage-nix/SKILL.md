@@ -6,10 +6,11 @@ description: Search for and add Nix packages to the project. Use when asked to a
 Search for and add Nix packages to the environment.
 
 ## Process
+
 1. **Identify Package**:
    - Get the common name from user (e.g., "ripgrep", "python requests")
    - Use `nix-locate` (via Bash) or WebSearch to find the **exact attribute path** in `nixpkgs` (e.g., `pkgs.ripgrep`, `pkgs.python3Packages.requests`)
-   - *Crucial*: Verify the package exists in the current nixpkgs channel/version
+   - _Crucial_: Verify the package exists in the current nixpkgs channel/version
 
 2. **Detect Configuration**:
    - Locate `flake.nix`, `shell.nix`, or `default.nix`
@@ -25,6 +26,7 @@ Search for and add Nix packages to the environment.
    - If verification fails, undo and report
 
 ## Output
+
 1. **Package Found**: Exact attribute name
 2. **File Modified**: Path to config
 3. **Verification Status**: Success/Fail

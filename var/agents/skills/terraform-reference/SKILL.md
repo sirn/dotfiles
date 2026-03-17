@@ -14,6 +14,7 @@ Terraform is an infrastructure as code tool for building, changing, and versioni
 - **Summarize changes to user**: Before running `terraform apply`, always show the user a summary of what will change
 - **Never apply without explicit user instruction**: Do not run `terraform apply` until the user has explicitly told you to do so
 - **Never re-run terraform plan to filter output**: Each plan execution verifies resource state from the remote provider, which is slow and can yield different results if infrastructure changed between runs. If you need to search or filter plan output, save it to a temp file first, then use grep/head/tail on that file:
+
   ```bash
   # ❌ Avoid: Running plan multiple times
   terraform plan | grep "aws_instance"
@@ -24,6 +25,7 @@ Terraform is an infrastructure as code tool for building, changing, and versioni
   grep "aws_instance" /tmp/tfplan.txt
   head -20 /tmp/tfplan.txt
   ```
+
 - **Use `-auto-approve` only with permission**: Only use `-auto-approve` when the user has already explicitly approved the changes
 - **Use `-target` sparingly**: Targeted applies can leave infrastructure in inconsistent state; use only for emergencies
 - **State locking**: Never force-unlock state unless you understand why it's locked
@@ -53,6 +55,7 @@ terraform apply
 ```
 
 **Important Rules:**
+
 1. Always run `terraform plan` first and review the output
 2. Always summarize changes for the user before applying
 3. Never run `terraform apply` until the user has explicitly told you to do so
@@ -60,117 +63,118 @@ terraform apply
 
 ### Core Workflow Commands
 
-| Task | Command |
-|------|---------|
-| Initialize directory | `terraform init` |
-| Initialize with upgrade | `terraform init -upgrade` |
-| Validate configuration | `terraform validate` |
-| Create execution plan | `terraform plan` |
-| Plan with variables | `terraform plan -var="key=value"` |
-| Apply changes | `terraform apply` |
-| Apply with auto-approve (USE WITH CAUTION) | `terraform apply -auto-approve` |
-| Apply with target | `terraform apply -target=resource.address` |
-| Destroy infrastructure | `terraform destroy` |
-| Auto-approve destroy (USE WITH CAUTION) | `terraform destroy -auto-approve` |
-| Refresh state | `terraform refresh` |
+| Task                                       | Command                                    |
+| ------------------------------------------ | ------------------------------------------ |
+| Initialize directory                       | `terraform init`                           |
+| Initialize with upgrade                    | `terraform init -upgrade`                  |
+| Validate configuration                     | `terraform validate`                       |
+| Create execution plan                      | `terraform plan`                           |
+| Plan with variables                        | `terraform plan -var="key=value"`          |
+| Apply changes                              | `terraform apply`                          |
+| Apply with auto-approve (USE WITH CAUTION) | `terraform apply -auto-approve`            |
+| Apply with target                          | `terraform apply -target=resource.address` |
+| Destroy infrastructure                     | `terraform destroy`                        |
+| Auto-approve destroy (USE WITH CAUTION)    | `terraform destroy -auto-approve`          |
+| Refresh state                              | `terraform refresh`                        |
 
 ### State Management Commands
 
-| Task | Command |
-|------|---------|
-| List state resources | `terraform state list` |
-| List with pattern | `terraform state list 'module.foo.*'` |
-| Show resource details | `terraform state show resource.address` |
-| Remove resource from state | `terraform state rm resource.address` |
-| Move resource in state | `terraform state mv source.destination` |
-| Pull raw state (JSON) | `terraform state pull > state.json` |
-| Push raw state | `terraform state push state.json` |
-| Replace provider | `terraform state replace-provider old.provider new.provider` |
+| Task                       | Command                                                      |
+| -------------------------- | ------------------------------------------------------------ |
+| List state resources       | `terraform state list`                                       |
+| List with pattern          | `terraform state list 'module.foo.*'`                        |
+| Show resource details      | `terraform state show resource.address`                      |
+| Remove resource from state | `terraform state rm resource.address`                        |
+| Move resource in state     | `terraform state mv source.destination`                      |
+| Pull raw state (JSON)      | `terraform state pull > state.json`                          |
+| Push raw state             | `terraform state push state.json`                            |
+| Replace provider           | `terraform state replace-provider old.provider new.provider` |
 
 ### Resource Import and Tainting
 
-| Task | Command |
-|------|---------|
-| Import existing resource | `terraform import resource.address resource.id` |
-| Taint resource (recreate) | `terraform taint resource.address` |
-| Untaint resource | `terraform untaint resource.address` |
+| Task                      | Command                                         |
+| ------------------------- | ----------------------------------------------- |
+| Import existing resource  | `terraform import resource.address resource.id` |
+| Taint resource (recreate) | `terraform taint resource.address`              |
+| Untaint resource          | `terraform untaint resource.address`            |
 
 ### Workspace Commands
 
-| Task | Command |
-|------|---------|
-| Show current workspace | `terraform workspace show` |
-| List workspaces | `terraform workspace list` |
-| Select workspace | `terraform workspace select <name>` |
-| Create new workspace | `terraform workspace new <name>` |
-| Delete workspace | `terraform workspace delete <name>` |
-| Delete with resources | `terraform workspace delete -force <name>` |
+| Task                   | Command                                    |
+| ---------------------- | ------------------------------------------ |
+| Show current workspace | `terraform workspace show`                 |
+| List workspaces        | `terraform workspace list`                 |
+| Select workspace       | `terraform workspace select <name>`        |
+| Create new workspace   | `terraform workspace new <name>`           |
+| Delete workspace       | `terraform workspace delete <name>`        |
+| Delete with resources  | `terraform workspace delete -force <name>` |
 
 ### Format and Validate
 
-| Task | Command |
-|------|---------|
-| Format all files | `terraform fmt` |
-| Format recursive | `terraform fmt -recursive` |
-| Check formatting | `terraform fmt -check` |
-| Show diff | `terraform fmt -diff` |
-| Validate config | `terraform validate` |
+| Task               | Command                    |
+| ------------------ | -------------------------- |
+| Format all files   | `terraform fmt`            |
+| Format recursive   | `terraform fmt -recursive` |
+| Check formatting   | `terraform fmt -check`     |
+| Show diff          | `terraform fmt -diff`      |
+| Validate config    | `terraform validate`       |
 | Validate with JSON | `terraform validate -json` |
 
 ### Output and Inspection
 
-| Task | Command |
-|------|---------|
-| Show all outputs | `terraform output` |
-| Show specific output | `terraform output <name>` |
-| Raw output value | `terraform output -raw <name>` |
-| JSON format | `terraform output -json` |
-| Show state/plan | `terraform show` |
-| Show JSON | `terraform show -json` |
-| Interactive console | `terraform console` |
-| Console with state | `terraform console -state=path` |
+| Task                 | Command                         |
+| -------------------- | ------------------------------- |
+| Show all outputs     | `terraform output`              |
+| Show specific output | `terraform output <name>`       |
+| Raw output value     | `terraform output -raw <name>`  |
+| JSON format          | `terraform output -json`        |
+| Show state/plan      | `terraform show`                |
+| Show JSON            | `terraform show -json`          |
+| Interactive console  | `terraform console`             |
+| Console with state   | `terraform console -state=path` |
 
 ### Module and Provider Commands
 
-| Task | Command |
-|------|---------|
-| Download modules | `terraform get` |
-| Update modules | `terraform get -update` |
-| List providers | `terraform providers` |
-| Lock provider versions | `terraform providers lock` |
-| Mirror providers | `terraform providers mirror <dir>` |
-| Show provider schema | `terraform providers schema -json` |
-| Dependency graph | `terraform graph` |
+| Task                   | Command                            |
+| ---------------------- | ---------------------------------- |
+| Download modules       | `terraform get`                    |
+| Update modules         | `terraform get -update`            |
+| List providers         | `terraform providers`              |
+| Lock provider versions | `terraform providers lock`         |
+| Mirror providers       | `terraform providers mirror <dir>` |
+| Show provider schema   | `terraform providers schema -json` |
+| Dependency graph       | `terraform graph`                  |
 
 ### Authentication and Misc
 
-| Task | Command |
-|------|---------|
-| Terraform Cloud login | `terraform login` |
-| Terraform Cloud logout | `terraform logout` |
-| Show version | `terraform version` |
-| JSON version | `terraform version -json` |
-| Force unlock state | `terraform force-unlock <lock-id>` |
-| Module metadata | `terraform metadata` |
-| Run tests | `terraform test` |
+| Task                   | Command                            |
+| ---------------------- | ---------------------------------- |
+| Terraform Cloud login  | `terraform login`                  |
+| Terraform Cloud logout | `terraform logout`                 |
+| Show version           | `terraform version`                |
+| JSON version           | `terraform version -json`          |
+| Force unlock state     | `terraform force-unlock <lock-id>` |
+| Module metadata        | `terraform metadata`               |
+| Run tests              | `terraform test`                   |
 
 ### Common Options
 
-| Goal | Flag | Example |
-|------|------|---------|
-| Specify working dir | `-chdir=<dir>` | `terraform -chdir=./infra plan` |
-| Disable colors | `-no-color` | `terraform plan -no-color` |
-| Parallelism | `-parallelism=<n>` | `terraform apply -parallelism=10` |
-| Var file | `-var-file=<file>` | `terraform plan -var-file=prod.tfvars` |
-| Single var | `-var="key=value"` | `terraform apply -var="region=us-east-1"` |
-| Backend config | `-backend-config=<key=value>` | Used with init |
-| Lock state | `-lock=true` (default) | `terraform apply -lock=true` |
-| Lock timeout | `-lock-timeout=<duration>` | `terraform apply -lock-timeout=5m` |
-| JSON output | `-json` | `terraform show -json` |
+| Goal                | Flag                          | Example                                   |
+| ------------------- | ----------------------------- | ----------------------------------------- |
+| Specify working dir | `-chdir=<dir>`                | `terraform -chdir=./infra plan`           |
+| Disable colors      | `-no-color`                   | `terraform plan -no-color`                |
+| Parallelism         | `-parallelism=<n>`            | `terraform apply -parallelism=10`         |
+| Var file            | `-var-file=<file>`            | `terraform plan -var-file=prod.tfvars`    |
+| Single var          | `-var="key=value"`            | `terraform apply -var="region=us-east-1"` |
+| Backend config      | `-backend-config=<key=value>` | Used with init                            |
+| Lock state          | `-lock=true` (default)        | `terraform apply -lock=true`              |
+| Lock timeout        | `-lock-timeout=<duration>`    | `terraform apply -lock-timeout=5m`        |
+| JSON output         | `-json`                       | `terraform show -json`                    |
 
 ### Common Workflows
 
 #### Standard Safe Apply Workflow (ALWAYS Follow This)
+
 Always use this workflow to apply changes safely:
 
 ```bash
@@ -188,12 +192,14 @@ terraform apply
 ```
 
 **Key Points:**
+
 - Always run `terraform plan` first and review the output
 - Always show a summary of changes to the user
 - Never run `terraform apply` until the user explicitly tells you to do so
 - Only use `-auto-approve` if the user has already explicitly approved the changes
 
 #### First-time Setup
+
 ```bash
 terraform init
 terraform validate
@@ -203,6 +209,7 @@ terraform apply  # Only after user tells you to apply
 ```
 
 #### Working with Workspaces
+
 ```bash
 terraform workspace new production
 terraform workspace select production
@@ -212,6 +219,7 @@ terraform apply  # Only after user tells you to apply
 ```
 
 #### Safe State Modification
+
 ```bash
 # Step 1: Backup state first
 terraform state pull > backup-$(date +%Y%m%d).json
@@ -229,6 +237,7 @@ terraform plan  # Should show no changes if state ops were correct
 ```
 
 #### Import Existing Resources
+
 ```bash
 # Step 1: Find the resource ID in cloud provider
 # Step 2: Import the resource
@@ -239,6 +248,7 @@ terraform plan
 ```
 
 #### Targeted Apply (Emergency Only - WITH CAUTION)
+
 ```bash
 # Only use targeted apply for emergencies
 # Step 1: Plan with target

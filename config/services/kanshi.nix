@@ -40,25 +40,19 @@ in
       {
         profile = {
           name = "aw3225qf";
-          outputs = [
-            { criteria = "$aw3225qf"; }
-          ];
+          outputs = [ { criteria = "$aw3225qf"; } ];
         };
       }
       {
         profile = {
           name = "pa148";
-          outputs = [
-            { criteria = "$pa148"; }
-          ];
+          outputs = [ { criteria = "$pa148"; } ];
         };
       }
     ];
   };
 
-  systemd.user.services.kanshi.Service = lib.mkIf cfg.enable {
-    Slice = lib.mkDefault "app.slice";
-  };
+  systemd.user.services.kanshi.Service = lib.mkIf cfg.enable { Slice = lib.mkDefault "app.slice"; };
 
   wayland.windowManager.sway = lib.mkIf (cfg.enable && swaycfg.enable) {
     config = {

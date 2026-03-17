@@ -1,7 +1,5 @@
 { pkgs, ... }:
 
 {
-  home.packages = with pkgs; [
-    local.tincan
-  ];
+  home.packages = with pkgs; [ local.tincan ];
 }

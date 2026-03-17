@@ -33,7 +33,7 @@ function hasHeredoc(cmd: ExtractedCommand): boolean {
 // Load global config from JSON file in the same directory
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const globalConfigRaw = JSON.parse(
-  readFileSync(join(__dirname, "../safety-gate.json"), "utf-8")
+  readFileSync(join(__dirname, "../safety-gate.json"), "utf-8"),
 );
 
 const globalParsed = normalizeShellPolicyConfig(globalConfigRaw);
@@ -48,7 +48,7 @@ function getProjectConfig(cwd: string): PolicyCommands {
   if (projectConfig !== null) return projectConfig;
   try {
     const parsed = normalizeShellPolicyConfig(
-      JSON.parse(readFileSync(join(cwd, ".pi", "safety-gate.json"), "utf-8"))
+      JSON.parse(readFileSync(join(cwd, ".pi", "safety-gate.json"), "utf-8")),
     );
     projectConfig = parsed.commands;
     projectWrapperRules = parsed.wrappers ?? [];
@@ -61,7 +61,7 @@ function getProjectConfig(cwd: string): PolicyCommands {
 
 async function confirmCommand(
   command: string,
-  ctx: ExtensionAPI["context"]
+  ctx: ExtensionAPI["context"],
 ): Promise<{ block: boolean; reason?: string }> {
   if (!ctx.hasUI) {
     return {
@@ -70,10 +70,10 @@ async function confirmCommand(
     };
   }
 
-  const choice = await ctx.ui.select(
-    `Confirm: ${getCommandSummary(command)}`,
-    ["Yes, proceed", "No, cancel"]
-  );
+  const choice = await ctx.ui.select(`Confirm: ${getCommandSummary(command)}`, [
+    "Yes, proceed",
+    "No, cancel",
+  ]);
 
   if (choice !== "Yes, proceed") {
     ctx.ui.notify("Command cancelled by user", "info");
@@ -89,7 +89,11 @@ export default function (pi: ExtensionAPI) {
 
     if (typeof event.input?.command !== "string") return undefined;
     const command = event.input.command;
-    const merged = { allow: globalConfig.allow.concat(getProjectConfig(ctx.cwd).allow), ask: globalConfig.ask.concat(getProjectConfig(ctx.cwd).ask), deny: globalConfig.deny.concat(getProjectConfig(ctx.cwd).deny) };
+    const merged = {
+      allow: globalConfig.allow.concat(getProjectConfig(ctx.cwd).allow),
+      ask: globalConfig.ask.concat(getProjectConfig(ctx.cwd).ask),
+      deny: globalConfig.deny.concat(getProjectConfig(ctx.cwd).deny),
+    };
     const wrapperRules = buildWrapperRuleMap([
       ...globalWrapperRules,
       ...projectWrapperRules,
@@ -99,7 +103,11 @@ export default function (pi: ExtensionAPI) {
     const result = evaluateCommand(command, merged, wrapperRules);
 
     // Check local structural rules (heredocs) on extracted commands
-    const extractedCmds = extractCommands(tokenize(command), "direct", wrapperRules);
+    const extractedCmds = extractCommands(
+      tokenize(command),
+      "direct",
+      wrapperRules,
+    );
 
     for (const extractedCmd of extractedCmds) {
       // Ask for heredocs

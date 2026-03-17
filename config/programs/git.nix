@@ -9,9 +9,7 @@ let
   gpgcfg = config.programs.gpg;
 in
 {
-  home.packages = with pkgs; [
-    git-crypt
-  ];
+  home.packages = with pkgs; [ git-crypt ];
 
   programs.git = {
     enable = true;
@@ -45,14 +43,10 @@ in
         "ssh://git@git.sr.ht/".insteadOf = "https://git.sr.ht/";
       };
 
-      safe.directory = [
-        "/etc/nixos"
-      ];
+      safe.directory = [ "/etc/nixos" ];
     };
 
-    includes = [
-      { path = "${config.home.homeDirectory}/.config/git/config_local"; }
-    ];
+    includes = [ { path = "${config.home.homeDirectory}/.config/git/config_local"; } ];
 
     ignores = [
       # Editor files

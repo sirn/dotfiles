@@ -37,9 +37,7 @@ in
     maxCacheTtlSsh = 43200;
 
     # gpg --list-keys --with-keygrip
-    sshKeys = [
-      "DB2F6C327247DA184010A3181710D1C56B427410"
-    ];
+    sshKeys = [ "DB2F6C327247DA184010A3181710D1C56B427410" ];
 
     extraConfig = ''
       allow-emacs-pinentry

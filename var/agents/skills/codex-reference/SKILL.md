@@ -11,17 +11,19 @@ Invoke the Codex agent for sub-tasks using structured JSONL output and explicit 
 ## When to Use Codex
 
 Use Codex when you need:
+
 - **High-speed code generation** - Fastest at writing and editing code
 - **Code review and triage** - Excellent at analyzing diffs and suggesting fixes
 - **Apply-patch workflows** - Good at implementing specific changes
 - **Cost efficiency** - Lower cost for straightforward coding tasks
 
 ## Capabilities
-* **Core Tools**: File system access (Workspace Write), Shell execution.
-* **MCP Servers**:
-  * `context7`: Documentation queries.
-  * `brave-search`: Web search (Brave).
-* **Specialty**: High-speed code generation and review. Good for "apply this change" tasks.
+
+- **Core Tools**: File system access (Workspace Write), Shell execution.
+- **MCP Servers**:
+  - `context7`: Documentation queries.
+  - `brave-search`: Web search (Brave).
+- **Specialty**: High-speed code generation and review. Good for "apply this change" tasks.
 
 ## Calling from Another Agent
 
@@ -40,12 +42,13 @@ final_response=$(echo "$result" | grep '"type":"item.completed"' | jq -s '.[-1].
 
 ### Output Formats
 
-| Format | Description |
-|--------|-------------|
-| `text` (default) | Formatted text output to stdout |
-| `json` | Newline-delimited JSON (JSONL) events |
+| Format           | Description                           |
+| ---------------- | ------------------------------------- |
+| `text` (default) | Formatted text output to stdout       |
+| `json`           | Newline-delimited JSON (JSONL) events |
 
 **JSONL Event Types:**
+
 - `thread.started` - Session metadata including `thread_id`
 - `turn.started` - Agent turn begins
 - `turn.completed` - Agent turn completes with usage stats
@@ -54,6 +57,7 @@ final_response=$(echo "$result" | grep '"type":"item.completed"' | jq -s '.[-1].
 - `error` - Non-fatal warnings and system errors
 
 **Extracting Session ID:**
+
 ```bash
 # First line contains thread_id
 thread_id=$(head -1 output.jsonl | jq -r '.thread_id')
@@ -130,12 +134,12 @@ codex exec resume --last \
 
 **Resume Options:**
 
-| Flag | Description |
-|------|-------------|
-| `exec resume <THREAD_ID>` | Resume specific session |
-| `exec resume --last` | Resume most recent session in current directory |
-| `exec resume --last --all` | Resume most recent from any directory |
-| `-i <path>` | Attach images to follow-up prompt |
+| Flag                       | Description                                     |
+| -------------------------- | ----------------------------------------------- |
+| `exec resume <THREAD_ID>`  | Resume specific session                         |
+| `exec resume --last`       | Resume most recent session in current directory |
+| `exec resume --last --all` | Resume most recent from any directory           |
+| `-i <path>`                | Attach images to follow-up prompt               |
 
 ## Permission and Safety
 
@@ -145,11 +149,11 @@ By default, `codex exec` runs in a **read-only sandbox**. Configure permissions:
 
 Control approval prompts:
 
-| Mode | Description |
-|------|-------------|
-| `untrusted` | Prompt for untrusted commands |
-| `on-request` | Prompt when agent requests |
-| `never` | No prompts (for agent delegation) |
+| Mode         | Description                       |
+| ------------ | --------------------------------- |
+| `untrusted`  | Prompt for untrusted commands     |
+| `on-request` | Prompt when agent requests        |
+| `never`      | No prompts (for agent delegation) |
 
 ```bash
 # For agent delegation - no prompts
@@ -160,10 +164,10 @@ codex exec --ask-for-approval never --sandbox workspace-write "fix lint errors"
 
 Select sandbox policy:
 
-| Mode | Description |
-|------|-------------|
-| `read-only` | **Default.** Cannot modify files or network |
-| `workspace-write` | Can edit files in the workspace |
+| Mode                 | Description                                            |
+| -------------------- | ------------------------------------------------------ |
+| `read-only`          | **Default.** Cannot modify files or network            |
+| `workspace-write`    | Can edit files in the workspace                        |
 | `danger-full-access` | Full system access (use only in isolated environments) |
 
 ```bash
@@ -276,19 +280,19 @@ rm .codex/sessions/review.md
 
 ## Additional Useful Flags
 
-| Flag | Description |
-|------|-------------|
-| `--model`, `-m` | Override model |
-| `--json` | JSONL output |
-| `--full-auto` | Automation preset |
-| `-o <path>` | Write final message to file |
-| `--output-schema <path>` | JSON Schema for output |
-| `--cd`, `-C` | Set working directory |
-| `--add-dir <path>` | Grant additional directories |
-| `--config`, `-c` | Config override |
-| `--profile`, `-p` | Config profile |
-| `--skip-git-repo-check` | Run outside git repo |
-| `--image`, `-i` | Attach images |
+| Flag                     | Description                  |
+| ------------------------ | ---------------------------- |
+| `--model`, `-m`          | Override model               |
+| `--json`                 | JSONL output                 |
+| `--full-auto`            | Automation preset            |
+| `-o <path>`              | Write final message to file  |
+| `--output-schema <path>` | JSON Schema for output       |
+| `--cd`, `-C`             | Set working directory        |
+| `--add-dir <path>`       | Grant additional directories |
+| `--config`, `-c`         | Config override              |
+| `--profile`, `-p`        | Config profile               |
+| `--skip-git-repo-check`  | Run outside git repo         |
+| `--image`, `-i`          | Attach images                |
 
 ## Piping Input
 
@@ -322,22 +326,26 @@ codex exec --skip-git-repo-check "analyze standalone files"
 ## Best Practices for Agent Delegation
 
 ### Prompting
-*   **Be Specific:** Provide clear, self-contained instructions.
-*   **Reference Files:** Use `@path/to/file` for explicit file references.
-*   **Include Context:** Codex can't see your context - include everything.
+
+- **Be Specific:** Provide clear, self-contained instructions.
+- **Reference Files:** Use `@path/to/file` for explicit file references.
+- **Include Context:** Codex can't see your context - include everything.
 
 ### Permission Safety
-*   **Least Privilege:** Start with `read-only`, escalate to `workspace-write`.
-*   **Auto-approve in Delegation:** Use `--ask-for-approval never` with restricted sandboxes.
-*   **Full-auto Shortcut:** Use `--full-auto` for quick delegation.
+
+- **Least Privilege:** Start with `read-only`, escalate to `workspace-write`.
+- **Auto-approve in Delegation:** Use `--ask-for-approval never` with restricted sandboxes.
+- **Full-auto Shortcut:** Use `--full-auto` for quick delegation.
 
 ### Session Management
-*   **Extract thread_id:** Always capture from `thread.started` event (first line).
-*   **Parse JSONL:** Use `grep` and `jq` to extract specific events.
-*   **Resume:** Use `codex exec resume --last` to continue the most recent session.
+
+- **Extract thread_id:** Always capture from `thread.started` event (first line).
+- **Parse JSONL:** Use `grep` and `jq` to extract specific events.
+- **Resume:** Use `codex exec resume --last` to continue the most recent session.
 
 ### Cost Control
-*   **Check Usage:** Look at `turn.completed` event for token usage.
+
+- **Check Usage:** Look at `turn.completed` event for token usage.
 
 ## Example: Complete Agent Delegation Workflow
 

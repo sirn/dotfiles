@@ -31,9 +31,7 @@ stdenv.mkDerivation {
   src = ./.;
   version = uv.version;
 
-  nativeBuildInputs = [
-    makeWrapper
-  ];
+  nativeBuildInputs = [ makeWrapper ];
 
   installPhase = ''
     mkdir -p $out/bin

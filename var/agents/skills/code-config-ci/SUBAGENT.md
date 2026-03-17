@@ -6,6 +6,7 @@ description: Configure or debug CI/CD pipelines. Use when asked about GitHub Act
 Configure, debug, and optimize CI/CD pipelines.
 
 ## Process
+
 1. Identify context:
    - Identify the CI provider (GitHub Actions, GitLab CI, Jenkins, etc.)
    - Locate the config files (`.github/workflows/*.yml`, `.gitlab-ci.yml`, etc.)
@@ -20,6 +21,7 @@ Configure, debug, and optimize CI/CD pipelines.
    - **Optimize**: Suggest caching strategies, parallelism, or container optimization
 
 ## Output
+
 1. **Pipeline Configuration** (YAML/Groovy content)
 2. **Security Checks** (Permissions, Secrets usage)
 3. **Optimization Notes** (Cache keys, Docker image sizes)

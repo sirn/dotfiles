@@ -6,11 +6,13 @@ description: Comprehensive code review with support for fast, full, or performan
 Run a code review.
 
 ## Modes
+
 - **Full** (default): Review for quality, security, conventions, simplicity, and best practices
 - **Fast**: Review for quality and simplicity only
 - **Performance**: Focus on performance optimization
 
 ## Process
+
 1. Identify context:
    - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
    - If the user specified specific files or paths, focus on those
@@ -37,6 +39,7 @@ Run a code review.
 4. Synthesize findings into a unified report
 
 ## Output
+
 1. **Executive Summary**
 2. **Critical Issues** (Must fix)
 3. **Security Analysis** (Full mode only)

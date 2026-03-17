@@ -10,6 +10,7 @@ Web search using the Synthetic Search API.
 - `SYNTHETIC_API_KEY` environment variable with a valid Synthetic API key
 
 **Check before use:**
+
 ```bash
 [ -z "$SYNTHETIC_API_KEY" ] && echo "Error: SYNTHETIC_API_KEY not set" || echo "OK: SYNTHETIC_API_KEY is set"
 ```
@@ -27,6 +28,7 @@ POST https://api.synthetic.new/v2/search
 Perform a web search query.
 
 **Request**:
+
 ```bash
 curl -s https://api.synthetic.new/v2/search \
   -H "Authorization: Bearer $SYNTHETIC_API_KEY" \
@@ -35,6 +37,7 @@ curl -s https://api.synthetic.new/v2/search \
 ```
 
 **Response**:
+
 ```json
 {
   "results": [
@@ -72,17 +75,18 @@ curl -s https://api.synthetic.new/v2/search \
 
 ## Response Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `results` | array | List of search results |
-| `results[].url` | string | URL of the result |
-| `results[].title` | string | Title of the page |
-| `results[].text` | string | Snippet/summary of the content |
-| `results[].published` | string | ISO 8601 publication date |
+| Field                 | Type   | Description                    |
+| --------------------- | ------ | ------------------------------ |
+| `results`             | array  | List of search results         |
+| `results[].url`       | string | URL of the result              |
+| `results[].title`     | string | Title of the page              |
+| `results[].text`      | string | Snippet/summary of the content |
+| `results[].published` | string | ISO 8601 publication date      |
 
 ## Error Handling
 
 The API will return appropriate HTTP status codes:
+
 - `200` - Success
 - `401` - Invalid or missing API key
 - `429` - Rate limit exceeded

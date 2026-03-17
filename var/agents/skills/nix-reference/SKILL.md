@@ -8,17 +8,18 @@ description: Reference for Nix commands, flake patterns, and best practices. ALW
 
 When writing Nix strings that contain code for other languages (TypeScript, JavaScript, etc.), remember:
 
-| What you want in output | Nix syntax |
-|------------------------|-----------|
-| `${variable}` | `''${variable}` |
-| `$${variable}` | `$''${variable}` |
-| `''${literal}` | `'''${literal}` |
+| What you want in output | Nix syntax       |
+| ----------------------- | ---------------- |
+| `${variable}`           | `''${variable}`  |
+| `$${variable}`          | `$''${variable}` |
+| `''${literal}`          | `'''${literal}`  |
 
 **Rule**: Use two single quotes `''` before `${}` to prevent Nix from interpolating it.
 
 **Example** - Generating TypeScript with template literals:
 
 Nix source:
+
 ```nix
 {
   xdg.configFile."my-plugin.ts".text = ''
@@ -30,6 +31,7 @@ Nix source:
 ```
 
 Generated TypeScript:
+
 ```typescript
 function log(msg: string) {
   console.log(`[${timestamp}] ${msg}`);
@@ -39,6 +41,7 @@ function log(msg: string) {
 ## Nix Command Reference
 
 ### Flake Commands
+
 - `nix build .#<package>` - Build a package
 - `nix run .#<package>` - Run a package
 - `nix develop` - Enter dev shell
@@ -54,12 +57,14 @@ See [examples/interactive-shell.bash](examples/interactive-shell.bash)
 > **Note**: Update the nixpkgs channel URL (e.g., `nixos-25.11`) to match your current NixOS release.
 
 **Finding your current release:**
+
 - On NixOS: `nixos-version` (shows current system version, e.g., `25.05.20250224...`)
 - From flake.lock: Check the `nixpkgs` input revision or run `nix flake metadata` to see locked references
 - Check system flake: `cat /etc/nixos/flake.nix | grep -E "nixos-24|nixos-25"` or similar
 - Use `channels` command: `nix-channel --list` (if using channels instead of flakes)
 
 #### Bash script
+
 ```bash
 #!/usr/bin/env nix-shell
 #! nix-shell -i bash --pure
@@ -70,6 +75,7 @@ curl -s https://api.example.com | jq .
 ```
 
 #### Python script
+
 ```python
 #!/usr/bin/env nix-shell
 #! nix-shell -i python3 --pure
@@ -83,6 +89,7 @@ print(requests.get("https://api.example.com").json())
 ### devShell Patterns
 
 #### mkShell vs mkShellNoCC
+
 - `mkShell` - When you need C compiler (native extensions)
 - `mkShellNoCC` - Pure scripting (Python, Node.js, Go)
 
@@ -99,4 +106,5 @@ See [examples/flake-python-uv.nix](examples/flake-python-uv.nix)
 See [examples/overlay-pattern.nix](examples/overlay-pattern.nix)
 
 ### Never Use
+
 - `nix-env -i` (use flakes or declarative config)

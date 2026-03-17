@@ -1,9 +1,7 @@
 { pkgs, lib, ... }:
 
 {
-  home.packages = [
-    pkgs.ollama
-  ];
+  home.packages = [ pkgs.ollama ];
 
   systemd.user.services.ollama = lib.mkIf pkgs.stdenv.isLinux {
     Install.WantedBy = [ "default.target" ];

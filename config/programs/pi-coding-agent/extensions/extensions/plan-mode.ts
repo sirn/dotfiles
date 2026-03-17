@@ -21,7 +21,11 @@ import {
   type ExtractedCommand,
 } from "../lib/shell-policy.js";
 
-const SAFE_REDIRECT_TARGETS = new Set(["/dev/null", "/dev/stderr", "/dev/stdout"]);
+const SAFE_REDIRECT_TARGETS = new Set([
+  "/dev/null",
+  "/dev/stderr",
+  "/dev/stdout",
+]);
 
 function isSafeRedirect(r: { op: string; target: string }): boolean {
   if (r.op.endsWith("&")) return true;
@@ -30,10 +34,11 @@ function isSafeRedirect(r: { op: string; target: string }): boolean {
 }
 
 function hasUnsafeRedirect(cmd: ExtractedCommand): boolean {
-  return cmd.redirects.some((r) =>
-    (r.op.endsWith(">") || r.op.endsWith(">>")) &&
-    !r.op.startsWith("<<") &&
-    !isSafeRedirect(r)
+  return cmd.redirects.some(
+    (r) =>
+      (r.op.endsWith(">") || r.op.endsWith(">>")) &&
+      !r.op.startsWith("<<") &&
+      !isSafeRedirect(r),
   );
 }
 
@@ -74,10 +79,16 @@ interface PlanPolicy {
 function loadPlanPolicy(): PlanPolicy | null {
   try {
     const extDir = path.dirname(fileURLToPath(import.meta.url));
-    const raw = JSON.parse(fs.readFileSync(path.join(extDir, "../plan-mode.json"), "utf-8"));
-    const shellConfig = normalizeShellPolicyConfig({ commands: raw.commands, wrappers: raw.wrappers });
+    const raw = JSON.parse(
+      fs.readFileSync(path.join(extDir, "../plan-mode.json"), "utf-8"),
+    );
+    const shellConfig = normalizeShellPolicyConfig({
+      commands: raw.commands,
+      wrappers: raw.wrappers,
+    });
     return {
-      tools: typeof raw.tools === "object" && raw.tools !== null ? raw.tools : {},
+      tools:
+        typeof raw.tools === "object" && raw.tools !== null ? raw.tools : {},
       commands: shellConfig.commands,
       wrappers: shellConfig.wrappers,
     };
@@ -105,7 +116,10 @@ export default function (pi: ExtensionAPI) {
     projectDir: string,
     sessionFile: string | undefined,
   ): string {
-    const normalized = path.resolve(projectDir).replace(/^\//, "").replace(/\//g, "-");
+    const normalized = path
+      .resolve(projectDir)
+      .replace(/^\//, "")
+      .replace(/\//g, "-");
     const sessionId = sessionFile
       ? path.basename(sessionFile, ".jsonl")
       : "default";
@@ -156,7 +170,8 @@ export default function (pi: ExtensionAPI) {
       if (expanded) {
         box.addChild(new Text(theme.fg(colorKey, theme.bold(header)), 0, 0));
         box.addChild(new Spacer(1)); // colored empty line between header and body
-        const text = typeof message.content === "string" ? message.content : fallback;
+        const text =
+          typeof message.content === "string" ? message.content : fallback;
         box.addChild(new Text(text, 0, 0));
       } else {
         const userInstruction = message.details?.userInstruction || fallback;
@@ -164,7 +179,13 @@ export default function (pi: ExtensionAPI) {
         box.addChild(new Spacer(1));
         box.addChild(new Text(userInstruction, 0, 0));
         box.addChild(new Spacer(1));
-        box.addChild(new Text(theme.fg("muted", `(${keyHint("expandTools", "to expand")})`), 0, 0));
+        box.addChild(
+          new Text(
+            theme.fg("muted", `(${keyHint("expandTools", "to expand")})`),
+            0,
+            0,
+          ),
+        );
       }
 
       container.addChild(box);
@@ -176,8 +197,14 @@ export default function (pi: ExtensionAPI) {
     };
   }
 
-  pi.registerMessageRenderer("plan-mode-prompt", createMessageRenderer("󰏯 plan mode", "accent", "Plan requested."));
-  pi.registerMessageRenderer("plan-mode-execute", createMessageRenderer("󰏫 plan approved", "success", "Plan accepted."));
+  pi.registerMessageRenderer(
+    "plan-mode-prompt",
+    createMessageRenderer("󰏯 plan mode", "accent", "Plan requested."),
+  );
+  pi.registerMessageRenderer(
+    "plan-mode-execute",
+    createMessageRenderer("󰏫 plan approved", "success", "Plan accepted."),
+  );
 
   function sendExecutionMessage(planContent: string) {
     pi.sendMessage(
@@ -203,7 +230,10 @@ ${planContent}`,
   pi.registerCommand("plan", {
     description: "Create an implementation plan for review",
     handler: async (args, ctx) => {
-      const planPath = getPlanPath(ctx.cwd, ctx.sessionManager.getSessionFile());
+      const planPath = getPlanPath(
+        ctx.cwd,
+        ctx.sessionManager.getSessionFile(),
+      );
       fs.mkdirSync(path.dirname(planPath), { recursive: true });
 
       saveState(ctx, { phase: "plan", approved: false });
@@ -255,7 +285,9 @@ How to verify the complete implementation after all steps are done.
 - You MUST only use the provided plan file exactly. Any attempt to write elsewhere will be blocked.
 - Once the plan is written, give the user the summarization of the plan.`,
           display: true,
-          details: { userInstruction: args || "The requested feature" },
+          details: {
+            userInstruction: args || "The requested feature",
+          },
         },
         { triggerTurn: true },
       );
@@ -271,7 +303,10 @@ How to verify the complete implementation after all steps are done.
         return;
       }
 
-      const planPath = getPlanPath(ctx.cwd, ctx.sessionManager.getSessionFile());
+      const planPath = getPlanPath(
+        ctx.cwd,
+        ctx.sessionManager.getSessionFile(),
+      );
 
       if (!fs.existsSync(planPath)) {
         ctx.ui.notify(`Plan file not found: ${planPath}`, "error");
@@ -280,7 +315,10 @@ How to verify the complete implementation after all steps are done.
 
       const stat = fs.statSync(planPath);
       if (stat.size < 50) {
-        ctx.ui.notify("Plan file is too small or empty. Please write a detailed plan first.", "error");
+        ctx.ui.notify(
+          "Plan file is too small or empty. Please write a detailed plan first.",
+          "error",
+        );
         return;
       }
 
@@ -301,7 +339,10 @@ How to verify the complete implementation after all steps are done.
       const planContent = fs.readFileSync(planPath, "utf-8");
 
       if (choice === "Accept plan and clear context") {
-        ctx.ui.notify("Plan accepted! Creating new session for fresh execution...", "success");
+        ctx.ui.notify(
+          "Plan accepted! Creating new session for fresh execution...",
+          "success",
+        );
 
         const result = await ctx.newSession({
           parentSession: ctx.sessionManager.getSessionFile(),
@@ -312,16 +353,26 @@ How to verify the complete implementation after all steps are done.
           return;
         }
 
-        const newPlanPath = getPlanPath(ctx.cwd, ctx.sessionManager.getSessionFile());
+        const newPlanPath = getPlanPath(
+          ctx.cwd,
+          ctx.sessionManager.getSessionFile(),
+        );
         fs.mkdirSync(path.dirname(newPlanPath), { recursive: true });
         fs.renameSync(planPath, newPlanPath);
 
-        ctx.ui.notify("New session created. Starting plan execution...", "success");
+        ctx.ui.notify(
+          "New session created. Starting plan execution...",
+          "success",
+        );
         sendExecutionMessage(planContent);
       } else if (choice === "Accept plan and compact") {
-        ctx.ui.notify("Plan accepted! Compacting context for execution...", "success");
+        ctx.ui.notify(
+          "Plan accepted! Compacting context for execution...",
+          "success",
+        );
         ctx.compact({
-          customInstructions: "User has accepted the implementation plan. Summarize the current conversation in a short, concise text focusing on the context needed for plan execution.",
+          customInstructions:
+            "User has accepted the implementation plan. Summarize the current conversation in a short, concise text focusing on the context needed for plan execution.",
           onComplete: () => {
             ctx.ui.notify("Context compacted. Ready for execution.", "success");
             sendExecutionMessage(planContent);
@@ -338,7 +389,10 @@ How to verify the complete implementation after all steps are done.
     description: "Display and optionally edit the current plan",
     handler: async (_args, ctx) => {
       const state = loadState(ctx);
-      const planPath = getPlanPath(ctx.cwd, ctx.sessionManager.getSessionFile());
+      const planPath = getPlanPath(
+        ctx.cwd,
+        ctx.sessionManager.getSessionFile(),
+      );
       if (!state || !fs.existsSync(planPath)) {
         ctx.ui.notify("No plan found. Use /plan to create one.", "error");
         return;
@@ -351,7 +405,10 @@ How to verify the complete implementation after all steps are done.
 
       if (edited && edited !== content) {
         if (state.approved) {
-          ctx.ui.notify("Cannot edit an approved plan. Use /plan to create a new one.", "warning");
+          ctx.ui.notify(
+            "Cannot edit an approved plan. Use /plan to create a new one.",
+            "warning",
+          );
         } else {
           fs.writeFileSync(planPath, edited, "utf-8");
           ctx.ui.notify("Plan updated manually.", "success");
@@ -369,7 +426,10 @@ How to verify the complete implementation after all steps are done.
         return;
       }
 
-      const planPath = getPlanPath(ctx.cwd, ctx.sessionManager.getSessionFile());
+      const planPath = getPlanPath(
+        ctx.cwd,
+        ctx.sessionManager.getSessionFile(),
+      );
       const choice = await ctx.ui.select("Cancel Plan?", [
         "Leave plan mode",
         "Leave plan mode and clear plan file",
@@ -390,10 +450,16 @@ How to verify the complete implementation after all steps are done.
             fs.unlinkSync(planPath);
             ctx.ui.notify("Plan mode cancelled. Plan file deleted.", "success");
           } else {
-            ctx.ui.notify("Plan mode cancelled. Plan file already removed.", "success");
+            ctx.ui.notify(
+              "Plan mode cancelled. Plan file already removed.",
+              "success",
+            );
           }
         } catch (error) {
-          ctx.ui.notify(`Plan cancelled but failed to delete file: ${error}`, "warning");
+          ctx.ui.notify(
+            `Plan cancelled but failed to delete file: ${error}`,
+            "warning",
+          );
         }
       } else {
         ctx.ui.notify("Plan mode cancelled. Back to normal mode.", "success");
@@ -417,7 +483,8 @@ How to verify the complete implementation after all steps are done.
       if (!toolAllowed) {
         return {
           block: true,
-          reason: "Plan mode active: Use /plan-accept before implementing code changes",
+          reason:
+            "Plan mode active: Use /plan-accept before implementing code changes",
         };
       }
     }
@@ -425,7 +492,10 @@ How to verify the complete implementation after all steps are done.
     // Bash command blocking from [mode.plan.commands]
     if (event.toolName === "bash" && typeof event.input?.command === "string") {
       if (!planPolicy) {
-        return { block: true, reason: "Plan mode: Shell commands blocked (plan policy unavailable)" };
+        return {
+          block: true,
+          reason: "Plan mode: Shell commands blocked (plan policy unavailable)",
+        };
       }
       const cmd = event.input.command;
       const wrapperRules = buildWrapperRuleMap(planPolicy.wrappers);
@@ -442,7 +512,11 @@ How to verify the complete implementation after all steps are done.
       }
 
       // Check local structural rules (redirects) on extracted commands
-      const extractedCmds = extractCommands(tokenize(cmd), "direct", wrapperRules);
+      const extractedCmds = extractCommands(
+        tokenize(cmd),
+        "direct",
+        wrapperRules,
+      );
 
       for (const extractedCmd of extractedCmds) {
         // Block unsafe file output redirects
@@ -455,7 +529,11 @@ How to verify the complete implementation after all steps are done.
 
         // Ask for heredocs
         if (hasHeredoc(extractedCmd)) {
-          const confirmation = await confirmCommand(cmd, ctx, "Plan mode confirm");
+          const confirmation = await confirmCommand(
+            cmd,
+            ctx,
+            "Plan mode confirm",
+          );
           if (confirmation.block) {
             return confirmation;
           }
@@ -465,7 +543,11 @@ How to verify the complete implementation after all steps are done.
       // Handle ask/allow/default from policy evaluation
       switch (result.action) {
         case "ask": {
-          const confirmation = await confirmCommand(cmd, ctx, "Plan mode confirm");
+          const confirmation = await confirmCommand(
+            cmd,
+            ctx,
+            "Plan mode confirm",
+          );
           if (confirmation.block) {
             return confirmation;
           }

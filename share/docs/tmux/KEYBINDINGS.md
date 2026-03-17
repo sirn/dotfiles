@@ -8,10 +8,10 @@ The prefix key is `C-b` (Control+b), referred to as `Prefix` in this document.
 
 These keybindings are available after pressing `Prefix`.
 
-| Key | Action |
-|:----|:-------|
-| `r` | Reload the tmux configuration file |
-| `X` | Resize pane to 85% of the window width |
+| Key | Action                                  |
+| :-- | :-------------------------------------- |
+| `r` | Reload the tmux configuration file      |
+| `X` | Resize pane to 85% of the window width  |
 | `Y` | Resize pane to 85% of the window height |
 
 ## Copy Mode Keybindings
@@ -20,13 +20,13 @@ These bindings are active in copy mode (e.g., entered via `Prefix` `[`).
 
 ### Vi Mode
 
-| Key | Action |
-|:----|:-------|
-| `v` | Begin selection |
+| Key | Action                                                   |
+| :-- | :------------------------------------------------------- |
+| `v` | Begin selection                                          |
 | `y` | Copy selection to system clipboard and exit (macOS only) |
 
 ### Emacs Mode
 
-| Key | Action |
-|:----|:-------|
+| Key   | Action                                                   |
+| :---- | :------------------------------------------------------- |
 | `M-w` | Copy selection to system clipboard and exit (macOS only) |

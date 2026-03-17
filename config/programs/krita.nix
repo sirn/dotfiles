@@ -1,7 +1,5 @@
 { pkgs, ... }:
 
 {
-  home.packages = with pkgs; [
-    krita
-  ];
+  home.packages = with pkgs; [ krita ];
 }

@@ -1,7 +1,5 @@
 { config, pkgs, ... }:
 
 {
-  home.packages = with pkgs; [
-    rsync
-  ];
+  home.packages = with pkgs; [ rsync ];
 }

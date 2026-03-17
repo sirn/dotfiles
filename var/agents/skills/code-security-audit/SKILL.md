@@ -6,6 +6,7 @@ description: Specific deep-dive security analysis. Use when asked to audit secur
 Perform a focused security audit on specific components.
 
 ## Process
+
 1. Identify context:
    - Target specific files, modules, or API endpoints mentioned by the user
 
@@ -19,6 +20,7 @@ Perform a focused security audit on specific components.
 3. Synthesize findings into a Security Report
 
 ## Output
+
 1. **Executive Summary** (Risk Level)
 2. **Vulnerability Analysis**
    - **Critical**: Exploitable flaws (Stop the line)

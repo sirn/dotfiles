@@ -23,9 +23,7 @@ in
 
   systemd.user.services.emacs.Service = lib.mkIf cfg.enable {
     Slice = lib.mkDefault "app.slice";
-    Environment = [
-      "COLORTERM=truecolor"
-    ];
+    Environment = [ "COLORTERM=truecolor" ];
   };
 
   launchd.agents.emacs = lib.mkIf pkgs.stdenv.isDarwin {

@@ -142,9 +142,7 @@ let
       // {
         inherit (baseEmacs) src;
       }
-      // lib.optionalAttrs (baseEmacs ? LIBRARY_PATH) {
-        inherit (baseEmacs) LIBRARY_PATH;
-      };
+      // lib.optionalAttrs (baseEmacs ? LIBRARY_PATH) { inherit (baseEmacs) LIBRARY_PATH; };
   };
 in
 {

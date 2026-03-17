@@ -6,6 +6,7 @@ description: Generate comprehensive implementation plan based on analysis. Use w
 Generate a comprehensive implementation plan based on task analysis and research.
 
 ## Process
+
 1. Identify context:
    - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories
    - If the user specified specific files or paths, focus on those
@@ -19,6 +20,7 @@ Generate a comprehensive implementation plan based on task analysis and research
 3. Synthesize all findings into a clear implementation plan
 
 ## Output
+
 1. **Context Analysis** (from code-architect)
    - Relevant code structure and patterns
    - Existing architectural decisions
@@ -41,12 +43,12 @@ Generate a comprehensive implementation plan based on task analysis and research
    - Over-engineering risk to avoid
    - Pragmatic vs ideal tradeoffs
 
-6. **Architectural Guidance** (from code-architect)
+5. **Architectural Guidance** (from code-architect)
    - High-level design approach
    - Module boundaries and interfaces
    - Design tradeoffs considered
 
-7. **Implementation Plan** (synthesize)
+6. **Implementation Plan** (synthesize)
    - Numbered, concrete steps
    - File to modify with specific locations
    - Dependencies to add (research-backed)
