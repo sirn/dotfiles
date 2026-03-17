@@ -790,15 +790,15 @@ mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "chmod"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "chown"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "dd"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "docker exec"
@@ -806,7 +806,7 @@ mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "docker run"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "env"
@@ -814,7 +814,7 @@ mode = "exact"
 
 [[default.commands.ask.shell]]
 match = "fdisk"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "git commit"
@@ -822,15 +822,15 @@ mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "jj abandon"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "jj commit"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "jj describe"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "jj new"
@@ -838,11 +838,11 @@ mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "jj split"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "jj squash"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "jj undo"
@@ -850,27 +850,27 @@ mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "kubectl apply"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "kubectl create"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "kubectl delete"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "kubectl exec"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "kubectl run"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "mkfs"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "nix run"
@@ -878,11 +878,11 @@ mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "podman exec"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "podman run"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "printenv"
@@ -890,7 +890,7 @@ mode = "exact"
 
 [[default.commands.ask.shell]]
 match = "rm"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "rtk env"
@@ -898,7 +898,7 @@ mode = "prefix"
 
 [[default.commands.ask.shell]]
 match = "shred"
-mode = "substring"
+mode = "prefix"
 
 # Commands that are blocked entirely
 
@@ -936,31 +936,31 @@ mode = "prefix"
 
 [[default.commands.deny.shell]]
 match = "git push"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.deny.shell]]
 match = "jj git push"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.deny.shell]]
 match = "kill"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.deny.shell]]
 match = "sops"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.deny.shell]]
 match = "doas"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.deny.shell]]
 match = "sudo"
-mode = "substring"
+mode = "prefix"
 
 [[default.commands.deny.shell]]
 match = "systemctl"
-mode = "substring"
+mode = "prefix"
 
 [default.paths.allow]
 read = [
