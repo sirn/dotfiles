@@ -711,13 +711,13 @@ test("substring match - in pipeline", () => {
   assertEquals(evaluateCommand("echo hi && rm -rf /", policy).action, "deny");
 });
 
-test("substring match - partial word", () => {
+test("substring match - no partial word match", () => {
   const policy: PolicyCommands = {
     allow: [],
     ask: [],
     deny: [{ match: "rm -rf", mode: "substring" }],
   };
-  assertEquals(evaluateCommand("grm -rf file", policy).action, "deny");
+  assertEquals(evaluateCommand("grm -rf file", policy).action, "default");
 });
 
 test("substring match - case insensitive", () => {
@@ -736,6 +736,82 @@ test("substring match - special characters", () => {
     deny: [{ match: "git push", mode: "substring" }],
   };
   assertEquals(evaluateCommand("git push origin main", policy).action, "deny");
+});
+
+test("token substring - exact token match", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [],
+    deny: [{ match: "rm", mode: "substring" }],
+  };
+  assertEquals(evaluateCommand("rm -rf /", policy).action, "deny");
+});
+
+test("token substring - no partial token match", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [],
+    deny: [{ match: "rm", mode: "substring" }],
+  };
+  assertEquals(evaluateCommand("firmware update", policy).action, "default");
+});
+
+test("token substring - multi-token position-independent", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [],
+    deny: [{ match: "-X POST", mode: "substring" }],
+  };
+  assertEquals(
+    evaluateCommand("curl --foo -X POST https://example.com", policy).action,
+    "deny",
+  );
+});
+
+test("token substring - multi-token at start", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [],
+    deny: [{ match: "-X POST", mode: "substring" }],
+  };
+  assertEquals(evaluateCommand("-X POST", policy).action, "deny");
+});
+
+test("token substring - multi-token no match when tokens differ", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [],
+    deny: [{ match: "-X POST", mode: "substring" }],
+  };
+  assertEquals(
+    evaluateCommand("curl -XPOST https://example.com", policy).action,
+    "default",
+  );
+});
+
+test("token substring - case insensitive tokens", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [],
+    deny: [{ match: "-x post", mode: "substring" }],
+  };
+  assertEquals(evaluateCommand("curl -X POST url", policy).action, "deny");
+});
+
+test("token substring - deny overrides allow for curl mutation", () => {
+  const policy: PolicyCommands = {
+    allow: [{ match: "curl", mode: "prefix" }],
+    ask: [],
+    deny: [{ match: "-X POST", mode: "substring" }],
+  };
+  assertEquals(
+    evaluateCommand("curl -s -X POST https://api.example.com", policy).action,
+    "deny",
+  );
+  assertEquals(
+    evaluateCommand("curl -s https://api.example.com", policy).action,
+    "allow",
+  );
 });
 
 // Priority tests
@@ -979,9 +1055,9 @@ const productionPolicy: PolicyCommands = {
     { match: "doas", mode: "prefix" },
     { match: "git push", mode: "substring" },
     { match: "rm -rf /", mode: "substring" },
-    { match: "gh api --method POST", mode: "substring" },
-    { match: "gh api --method PUT", mode: "substring" },
-    { match: "gh api --method DELETE", mode: "substring" },
+    { match: "--method POST", mode: "substring" },
+    { match: "--method PUT", mode: "substring" },
+    { match: "--method DELETE", mode: "substring" },
   ],
 };
 
@@ -1034,10 +1110,10 @@ test("jj describe asks", () => {
     "ask",
   );
 });
-test("gh api POST pattern not matching", () => {
+test("gh api --method POST denied", () => {
   assertEquals(
     evaluateCommand("gh api repos/foo --method POST", productionPolicy).action,
-    "default",
+    "deny",
   );
 });
 test("gh api GET allowed", () => {
@@ -1071,14 +1147,15 @@ test("grep with quoted > allowed", () => {
 // Regression tests
 test("bash -c git push denied", () => {
   assertEquals(
-    evaluateCommand("bash -c 'git push'", productionPolicy).action,
+    evaluateCommand("bash -c 'git push'", productionPolicy, TEST_WRAPPER_RULES)
+      .action,
     "deny",
   );
 });
-test("echo with quoted rm -rf / - substring matches", () => {
+test("echo with quoted rm -rf / - quoted content is single token", () => {
   assertEquals(
     evaluateCommand("echo 'rm -rf /'", productionPolicy).action,
-    "deny",
+    "allow",
   );
 });
 test("grep with sudo pattern allowed", () => {
@@ -1089,7 +1166,8 @@ test("grep with sudo pattern allowed", () => {
 });
 test("bash -c rm -rf / denied", () => {
   assertEquals(
-    evaluateCommand("bash -c 'rm -rf /'", productionPolicy).action,
+    evaluateCommand("bash -c 'rm -rf /'", productionPolicy, TEST_WRAPPER_RULES)
+      .action,
     "deny",
   );
 });
@@ -1294,13 +1372,13 @@ test("deny substring in heredoc body - not extracted", () => {
   );
 });
 
-test("deny keyword in quoted string still matches substring", () => {
+test("quoted string content not matched by token substring", () => {
   const policy: PolicyCommands = {
     allow: [],
     ask: [],
     deny: [{ match: "rm -rf /", mode: "substring" }],
   };
-  assertEquals(evaluateCommand("echo 'rm -rf /'", policy).action, "deny");
+  assertEquals(evaluateCommand("echo 'rm -rf /'", policy).action, "default");
 });
 
 // Complex multiline command
@@ -1559,7 +1637,13 @@ test("normalizeShellPolicyConfig - non-array fields default to empty", () => {
 function makeCmd(
   redirects: { op: string; target: string }[],
 ): ExtractedCommand {
-  return { name: "cmd", fullText: "cmd", redirects, source: "direct" };
+  return {
+    name: "cmd",
+    fullText: "cmd",
+    words: ["cmd"],
+    redirects,
+    source: "direct",
+  };
 }
 
 test("evaluateRedirects - allow policy always allows", () => {

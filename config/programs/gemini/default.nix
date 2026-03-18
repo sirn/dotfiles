@@ -118,7 +118,7 @@ let
           if entry.mode == "exact" then
             { commandRegex = "^${escapeRegex entry.match}$"; }
           else if entry.mode == "substring" then
-            { commandRegex = "\\b${escapeRegex entry.match}\\b"; }
+            { commandRegex = "(?:^|\\s)${escapeRegex entry.match}(?:\\s|$)"; }
           else
             { commandPrefix = entry.match; }
         );

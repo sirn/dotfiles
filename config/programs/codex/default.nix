@@ -70,18 +70,24 @@ let
     let
       policy = effectivePolicy mode;
       inherit (policy) commands;
-      mkPrefixRule =
+      mkRule =
         decision: entry:
         let
           m = entry.match;
+          mode = entry.mode or "prefix";
         in
-        ''
-          prefix_rule(
-              pattern = ["${lib.concatStringsSep ''", "'' (lib.splitString " " m)}"],
-              decision = "${decision}",
-          )'';
-      forbiddenRules = map (mkPrefixRule "forbidden") (commands.deny.shell or [ ]);
-      promptRules = map (mkPrefixRule "prompt") (commands.ask.shell or [ ]);
+        if mode == "substring" then
+          ''
+            # NOTE: Cannot express substring match "${m}" as prefix_rule.
+            # Blocked at sandbox level (network = false) or by agent instructions.''
+        else
+          ''
+            prefix_rule(
+                pattern = ["${lib.concatStringsSep ''", "'' (lib.splitString " " m)}"],
+                decision = "${decision}",
+            )'';
+      forbiddenRules = map (mkRule "forbidden") (commands.deny.shell or [ ]);
+      promptRules = map (mkRule "prompt") (commands.ask.shell or [ ]);
     in
     lib.concatStringsSep "\n\n" (forbiddenRules ++ promptRules);
 

@@ -665,6 +665,7 @@ export function tokenize(input: string): Token[] {
 export interface ExtractedCommand {
   name: string;
   fullText: string;
+  words: string[];
   redirects: { op: string; target: string }[];
   source: "direct" | "subshell" | "substitution" | "wrapper-arg";
 }
@@ -689,6 +690,7 @@ export type DecisionSource = "commands" | "redirects" | "heredocs" | "default";
 export interface CommandEvaluation {
   name: string;
   fullText: string;
+  words: string[];
   source: ExtractedCommand["source"];
   redirects: { op: string; target: string }[];
   action: Action;
@@ -963,11 +965,12 @@ export function extractCommands(
     if (!cmdName) continue;
 
     const fullText = wordTokens.map((t) => t.value).join(" ");
+    const words = wordTokens.map((t) => t.value);
     const redirects = redirectTokens.map((t) => ({
       op: t.op,
       target: t.target,
     }));
-    results.push({ name: cmdName, fullText, redirects, source });
+    results.push({ name: cmdName, fullText, words, redirects, source });
 
     const wrapperRule = wrapperRules.get(cmdName.toLowerCase());
     if (wrapperRule) {
@@ -1015,6 +1018,23 @@ function wrapperRuleMapToConfig(
 
 // --- Policy Matching ---
 
+function matchTokenSubstring(
+  cmdWords: string[],
+  matchTokens: string[],
+): boolean {
+  if (matchTokens.length === 0 || matchTokens.length > cmdWords.length)
+    return false;
+  outer: for (let i = 0; i <= cmdWords.length - matchTokens.length; i++) {
+    for (let j = 0; j < matchTokens.length; j++) {
+      if (cmdWords[i + j].toLowerCase() !== matchTokens[j].toLowerCase()) {
+        continue outer;
+      }
+    }
+    return true;
+  }
+  return false;
+}
+
 function matchEntry(cmd: ExtractedCommand, entry: CommandEntry): boolean {
   const { match, mode } = entry;
   const text = cmd.fullText;
@@ -1023,8 +1043,10 @@ function matchEntry(cmd: ExtractedCommand, entry: CommandEntry): boolean {
       return text.trim().toLowerCase() === match.toLowerCase();
     case "prefix":
       return text.trimStart().toLowerCase().startsWith(match.toLowerCase());
-    case "substring":
-      return text.toLowerCase().includes(match.toLowerCase());
+    case "substring": {
+      const matchTokens = match.split(/\s+/).filter(Boolean);
+      return matchTokenSubstring(cmd.words, matchTokens);
+    }
     default: {
       const _exhaustive: never = mode;
       return false;
@@ -1058,6 +1080,7 @@ function buildCommandEvaluation(
   return {
     name: cmd.name,
     fullText: cmd.fullText,
+    words: cmd.words,
     source: cmd.source,
     redirects: cmd.redirects,
     action,
