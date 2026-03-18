@@ -10,14 +10,10 @@ import { fileURLToPath } from "node:url";
 
 import { Container, Text, Box, Spacer } from "@mariozechner/pi-tui";
 import {
-  evaluateCommand,
-  evaluateRedirects,
-  evaluateHeredocs,
-  extractCommands,
-  tokenize,
-  buildWrapperRuleMap,
+  evaluate,
   normalizeUnifiedPolicyConfig,
   getCommandSummary,
+  type EvalResult,
   type PolicyCommands,
   type RedirectPolicy,
   type HeredocPolicy,
@@ -25,18 +21,19 @@ import {
 } from "../lib/shell-policy.js";
 
 async function confirmCommand(
-  cmd: string,
+  command: string,
   ctx: ExtensionContext,
-  promptPrefix: string,
+  result: EvalResult,
 ): Promise<{ block: boolean; reason?: string }> {
   if (!ctx.hasUI) {
     return {
       block: true,
-      reason: `${promptPrefix} blocked (no UI): "${getCommandSummary(cmd)}"`,
+      reason: `Command blocked (no UI for confirmation): "${getCommandSummary(command)}"`,
     };
   }
+  const trigger = formatTriggerReason(result, "Plan mode");
   const choice = await ctx.ui.select(
-    `${promptPrefix}: ${getCommandSummary(cmd)}`,
+    `${trigger}: ${getCommandSummary(command)}`,
     ["Yes, proceed", "No, cancel"],
   );
   if (choice !== "Yes, proceed") {
@@ -44,6 +41,26 @@ async function confirmCommand(
     return { block: true, reason: "Blocked by user" };
   }
   return { block: false };
+}
+
+function formatTriggerReason(result: EvalResult, modeName: string): string {
+  switch (result.decidedBy) {
+    case "commands":
+      return result.match
+        ? `${modeName} (${result.match.category}: ${result.match.entry.match})`
+        : `${modeName} (command policy)`;
+    case "redirects":
+      return `${modeName} (redirect policy)`;
+    case "heredocs":
+      return `${modeName} (heredoc policy)`;
+    default:
+      return result.match ? `${modeName} (${result.match.category})` : modeName;
+  }
+}
+
+function formatPolicyMatch(match: EvalResult["match"]): string {
+  if (!match) return "policy";
+  return `${match.category}: ${match.entry.match}`;
 }
 
 // --- Policy types ---
@@ -509,88 +526,46 @@ Documentation URLs and sources consulted during planning.
           reason: "Plan mode: Shell commands blocked (plan policy unavailable)",
         };
       }
-      const cmd = event.input.command;
-      const wrapperRules = buildWrapperRuleMap(planPolicy.wrappers);
+      const command = event.input.command;
 
-      // First evaluate against the JSON policy
-      const result = evaluateCommand(cmd, planPolicy.commands, wrapperRules);
+      // Evaluate using unified evaluate() function
+      const result = evaluate(command, {
+        commands: planPolicy.commands,
+        redirects: planPolicy.redirects,
+        heredocs: planPolicy.heredocs,
+        wrappers: planPolicy.wrappers,
+      });
 
-      // If already denied by JSON policy, return that result
+      // Handle based on unified result
       if (result.action === "deny") {
-        return {
-          block: true,
-          reason: `Plan mode: Command blocked by policy: "${getCommandSummary(cmd)}"`,
-        };
+        const decidedBy = result.decidedBy;
+        let reason: string;
+        switch (decidedBy) {
+          case "commands":
+            reason = `Command blocked by policy (${formatPolicyMatch(result.match)}): "${getCommandSummary(command)}"`;
+            break;
+          case "redirects":
+            reason = `Command with file output redirect blocked (redirect policy): "${getCommandSummary(command)}"`;
+            break;
+          case "heredocs":
+            reason = `Heredoc command blocked (heredoc policy): "${getCommandSummary(command)}"`;
+            break;
+          default:
+            reason = `Command blocked by policy: "${getCommandSummary(command)}"`;
+        }
+        return { block: true, reason };
       }
 
-      // Check redirect and heredoc policies on extracted commands
-      const extractedCmds = extractCommands(
-        tokenize(cmd),
-        "direct",
-        wrapperRules,
-      );
-
-      if (planPolicy.redirects) {
-        const redirectResult = evaluateRedirects(
-          extractedCmds,
-          planPolicy.redirects,
-        );
-        if (redirectResult.action === "deny") {
-          return {
-            block: true,
-            reason: `Plan mode: Command with file output redirect blocked: "${getCommandSummary(cmd)}"`,
-          };
-        }
-        if (redirectResult.action === "ask") {
-          const confirmation = await confirmCommand(
-            cmd,
-            ctx,
-            "Plan mode confirm",
-          );
-          if (confirmation.block) return confirmation;
-        }
+      if (result.action === "ask") {
+        return await confirmCommand(command, ctx, result);
       }
 
-      if (planPolicy.heredocs) {
-        const heredocResult = evaluateHeredocs(
-          extractedCmds,
-          planPolicy.heredocs,
-        );
-        if (heredocResult.action === "deny") {
-          return {
-            block: true,
-            reason: `Plan mode: Heredoc command blocked: "${getCommandSummary(cmd)}"`,
-          };
-        }
-        if (heredocResult.action === "ask") {
-          const confirmation = await confirmCommand(
-            cmd,
-            ctx,
-            "Plan mode confirm",
-          );
-          if (confirmation.block) return confirmation;
-        }
+      if (result.action === "allow") {
+        return { block: false };
       }
 
-      // Handle ask/allow/default from policy evaluation
-      switch (result.action) {
-        case "ask": {
-          const confirmation = await confirmCommand(
-            cmd,
-            ctx,
-            "Plan mode confirm",
-          );
-          if (confirmation.block) {
-            return confirmation;
-          }
-          return { block: false };
-        }
-        case "allow":
-          return { block: false };
-        case "default":
-          // No match → return undefined → safety-gate handles defaults
-          return undefined;
-      }
+      // default - let safety-gate handle
+      return undefined;
     }
   });
 

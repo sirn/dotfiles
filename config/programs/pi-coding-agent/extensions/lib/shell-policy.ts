@@ -21,9 +21,9 @@ export interface PolicyCommands {
 
 export type Action = "allow" | "ask" | "deny" | "default";
 
-export interface EvalResult {
-  action: Action;
-  reason: string;
+export interface PolicyMatch {
+  category: "allow" | "ask" | "deny";
+  entry: CommandEntry;
 }
 
 export interface WrapperRuleConfig {
@@ -682,6 +682,92 @@ export interface WrapperRule {
 
 export type WrapperRuleMap = ReadonlyMap<string, WrapperRule>;
 
+// --- Evaluation Detail Types (for analyze()/evaluate()) ---
+
+export type DecisionSource = "commands" | "redirects" | "heredocs" | "default";
+
+export interface CommandEvaluation {
+  name: string;
+  fullText: string;
+  source: ExtractedCommand["source"];
+  redirects: { op: string; target: string }[];
+  action: Action;
+  match?: PolicyMatch;
+  matches: PolicyMatch[];
+}
+
+export interface RedirectEvaluation {
+  cmdName: string;
+  op: string;
+  target: string;
+  action: Action;
+  reason: string;
+}
+
+export interface HeredocEvaluation {
+  detected: boolean;
+  action: Action;
+  reason: string;
+}
+
+export interface CommandsPhaseSummary {
+  action: Action;
+  reason: string;
+  triggered: boolean;
+  match?: PolicyMatch;
+}
+
+export interface RedirectsPhaseSummary {
+  action: Action;
+  reason: string;
+  triggered: boolean;
+  redirects: RedirectEvaluation[];
+}
+
+export interface HeredocsPhaseSummary {
+  action: Action;
+  reason: string;
+  triggered: boolean;
+  heredoc: HeredocEvaluation;
+}
+
+export interface ShellPolicyAnalysis {
+  input: string;
+  tokens: Token[];
+  commands: CommandEvaluation[];
+  phases: {
+    commands?: CommandsPhaseSummary;
+    redirects?: RedirectsPhaseSummary;
+    heredocs?: HeredocsPhaseSummary;
+  };
+  final: {
+    action: Action;
+    reason: string;
+    decidedBy: DecisionSource;
+    match?: PolicyMatch;
+  };
+}
+
+export interface EvaluationPolicy {
+  commands?: PolicyCommands;
+  redirects?: RedirectPolicy;
+  heredocs?: HeredocPolicy;
+  wrappers?: WrapperRuleConfig[];
+}
+
+/** Unified evaluation result from evaluate() */
+export interface EvalResult {
+  action: Action;
+  reason: string;
+  decidedBy: DecisionSource;
+  match?: PolicyMatch;
+  details?: {
+    commands: CommandEvaluation[];
+    redirects?: RedirectEvaluation[];
+    heredocs?: HeredocEvaluation;
+  };
+}
+
 const EMPTY_WRAPPER_RULES: WrapperRuleMap = new Map();
 
 function isAssignmentToken(word: string): boolean {
@@ -917,6 +1003,16 @@ export function buildWrapperRuleMap(
   return map;
 }
 
+function wrapperRuleMapToConfig(
+  wrapperRules: WrapperRuleMap | undefined,
+): WrapperRuleConfig[] | undefined {
+  if (!wrapperRules || wrapperRules.size === 0) return undefined;
+  return [...wrapperRules.entries()].map(([name, rule]) => ({
+    name,
+    kind: rule.kind,
+  }));
+}
+
 // --- Policy Matching ---
 
 function matchEntry(cmd: ExtractedCommand, entry: CommandEntry): boolean {
@@ -936,99 +1032,436 @@ function matchEntry(cmd: ExtractedCommand, entry: CommandEntry): boolean {
   }
 }
 
-export function evaluateCommand(
-  command: string,
+function collectPolicyMatches(
+  cmd: ExtractedCommand,
   policy: PolicyCommands,
-  wrapperRules?: WrapperRuleMap,
-): EvalResult {
-  let cmds: ExtractedCommand[];
-  try {
-    cmds = extractCommands(
-      tokenize(command),
-      "direct",
-      wrapperRules ?? EMPTY_WRAPPER_RULES,
-    );
-  } catch (e) {
-    return {
-      action: "ask",
-      reason: `Unparseable shell command: ${String(e)}`,
-    };
-  }
+): PolicyMatch[] {
+  return [
+    ...policy.deny
+      .filter((entry) => matchEntry(cmd, entry))
+      .map((entry): PolicyMatch => ({ category: "deny", entry })),
+    ...policy.ask
+      .filter((entry) => matchEntry(cmd, entry))
+      .map((entry): PolicyMatch => ({ category: "ask", entry })),
+    ...policy.allow
+      .filter((entry) => matchEntry(cmd, entry))
+      .map((entry): PolicyMatch => ({ category: "allow", entry })),
+  ];
+}
 
-  if (cmds.length === 0) {
-    return { action: "ask", reason: "Empty or unrecognized command" };
-  }
+function buildCommandEvaluation(
+  cmd: ExtractedCommand,
+  action: Action,
+  matches: PolicyMatch[],
+  match?: PolicyMatch,
+): CommandEvaluation {
+  return {
+    name: cmd.name,
+    fullText: cmd.fullText,
+    source: cmd.source,
+    redirects: cmd.redirects,
+    action,
+    match,
+    matches,
+  };
+}
 
+// --- Internal Evaluation Functions (not exported) ---
+
+interface CommandsInternalResult extends CommandsPhaseSummary {
+  commands: CommandEvaluation[];
+}
+
+function buildDefaultCommandEvaluations(
+  cmds: ExtractedCommand[],
+): CommandEvaluation[] {
+  return cmds.map((cmd) => buildCommandEvaluation(cmd, "default", []));
+}
+
+function evaluateCommandsInternal(
+  cmds: ExtractedCommand[],
+  policy: PolicyCommands,
+): CommandsInternalResult {
+  const commandEvaluations: CommandEvaluation[] = [];
   let result: Action = "default";
   let sawDirectUnmatched = false;
+  let matchInfo: PolicyMatch | undefined;
 
   for (const cmd of cmds) {
-    // Deny takes immediate priority
-    if (policy.deny.some((e) => matchEntry(cmd, e))) {
-      return { action: "deny", reason: `Denied command: ${cmd.name}` };
+    let cmdAction: Action = "default";
+    let cmdMatch: PolicyMatch | undefined;
+    const matches = collectPolicyMatches(cmd, policy);
+    const denyMatch = matches.find((match) => match.category === "deny");
+    const askMatch = matches.find((match) => match.category === "ask");
+    const allowMatch = matches.find((match) => match.category === "allow");
+
+    if (denyMatch) {
+      commandEvaluations.push(
+        buildCommandEvaluation(cmd, "deny", matches, denyMatch),
+      );
+      return {
+        action: "deny",
+        reason: `Denied command: ${cmd.name}`,
+        triggered: true,
+        match: denyMatch,
+        commands: commandEvaluations,
+      };
     }
-    // Ask escalates result
-    if (policy.ask.some((e) => matchEntry(cmd, e))) {
+
+    if (askMatch) {
       result = "ask";
-      continue;
+      matchInfo = askMatch;
+      cmdAction = "ask";
+      cmdMatch = askMatch;
     }
-    // Allow: wrapper-arg commands can always promote; direct commands only if no prior unmatched direct
-    if (policy.allow.some((e) => matchEntry(cmd, e))) {
+
+    if (allowMatch) {
       if (
         result === "default" &&
         (cmd.source === "wrapper-arg" || !sawDirectUnmatched)
-      )
+      ) {
         result = "allow";
-      continue;
+        matchInfo = allowMatch;
+      }
+      if (cmdAction === "default") {
+        cmdAction = "allow";
+        cmdMatch = allowMatch;
+      }
     }
-    // No match — downgrade allow to default; track unmatched direct commands
-    if (cmd.source === "direct") sawDirectUnmatched = true;
-    result = result === "allow" ? "default" : result;
+
+    if (cmdAction === "default") {
+      if (cmd.source === "direct") sawDirectUnmatched = true;
+      if (result === "allow") result = "default";
+    }
+
+    commandEvaluations.push(
+      buildCommandEvaluation(cmd, cmdAction, matches, cmdMatch),
+    );
   }
 
   return {
     action: result,
     reason:
       result === "default" ? "No policy match" : `Policy matched: ${result}`,
+    triggered: result !== "default",
+    match: matchInfo,
+    commands: commandEvaluations,
   };
 }
 
-export function evaluateRedirects(
+interface RedirectsInternalResult extends RedirectsPhaseSummary {}
+
+function evaluateRedirectsInternal(
   cmds: ExtractedCommand[],
   policy: RedirectPolicy,
-): EvalResult {
+): RedirectsInternalResult {
+  const redirectEvaluations: RedirectEvaluation[] = [];
+  let triggered = false;
+  let lastTriggeredReason = "No unsafe redirects";
+
   for (const cmd of cmds) {
     for (const r of cmd.redirects) {
-      // Strip optional fd prefix (single digit) to get base op
       const baseOp = r.op.replace(/^\d/, "");
-      // Skip input redirects
       if (
         baseOp === "<" ||
         baseOp === "<<" ||
         baseOp === "<<-" ||
         baseOp === "<<<"
-      )
+      ) {
+        redirectEvaluations.push({
+          cmdName: cmd.name,
+          op: r.op,
+          target: r.target,
+          action: "allow",
+          reason: "Input redirect allowed",
+        });
         continue;
-      // Allow fd-dup operations if configured
-      if (policy.allowFdDup && r.op.endsWith("&")) continue;
-      // Allow safe targets
-      if (policy.safeTargets?.includes(r.target)) continue;
-      return { action: policy.action, reason: `Redirect to "${r.target}"` };
+      }
+
+      if (policy.allowFdDup && r.op.endsWith("&")) {
+        redirectEvaluations.push({
+          cmdName: cmd.name,
+          op: r.op,
+          target: r.target,
+          action: "allow",
+          reason: "FD duplication allowed",
+        });
+        continue;
+      }
+
+      if (policy.safeTargets?.includes(r.target)) {
+        redirectEvaluations.push({
+          cmdName: cmd.name,
+          op: r.op,
+          target: r.target,
+          action: "allow",
+          reason: "Safe target",
+        });
+        continue;
+      }
+
+      triggered = true;
+      lastTriggeredReason = `Redirect to "${r.target}"`;
+      redirectEvaluations.push({
+        cmdName: cmd.name,
+        op: r.op,
+        target: r.target,
+        action: policy.action,
+        reason: lastTriggeredReason,
+      });
+
+      if (policy.action !== "allow") {
+        return {
+          action: policy.action,
+          reason: lastTriggeredReason,
+          triggered,
+          redirects: redirectEvaluations,
+        };
+      }
     }
   }
-  return { action: "allow", reason: "No unsafe redirects" };
+
+  return {
+    action: "allow",
+    reason: triggered ? lastTriggeredReason : "No unsafe redirects",
+    triggered,
+    redirects: redirectEvaluations,
+  };
 }
 
-export function evaluateHeredocs(
+interface HeredocsInternalResult extends HeredocsPhaseSummary {}
+
+function evaluateHeredocsInternal(
   cmds: ExtractedCommand[],
   policy: HeredocPolicy,
-): EvalResult {
+): HeredocsInternalResult {
   for (const cmd of cmds) {
     if (cmd.redirects.some((r) => r.op === "<<" || r.op === "<<-")) {
-      return { action: policy.action, reason: "Heredoc detected" };
+      return {
+        action: policy.action,
+        reason: "Heredoc detected",
+        triggered: true,
+        heredoc: {
+          detected: true,
+          action: policy.action,
+          reason: "Heredoc detected",
+        },
+      };
     }
   }
-  return { action: "allow", reason: "No heredocs" };
+
+  return {
+    action: "allow",
+    reason: "No heredocs",
+    triggered: false,
+    heredoc: {
+      detected: false,
+      action: "allow",
+      reason: "No heredocs",
+    },
+  };
+}
+
+// --- Priority Determination Helper ---
+
+const ACTION_PRIORITY: Record<Action, number> = {
+  default: 0,
+  allow: 1,
+  ask: 2,
+  deny: 3,
+};
+
+export function compareActions(left: Action, right: Action): number {
+  return ACTION_PRIORITY[left] - ACTION_PRIORITY[right];
+}
+
+const SOURCE_PRIORITY: Record<Exclude<DecisionSource, "default">, number> = {
+  commands: 0,
+  redirects: 1,
+  heredocs: 2,
+};
+
+interface WinnerCandidate {
+  action: Action;
+  reason: string;
+  source: Exclude<DecisionSource, "default">;
+  triggered: boolean;
+  match?: PolicyMatch;
+}
+
+interface WinnerResult {
+  action: Action;
+  reason: string;
+  source: DecisionSource;
+  match?: PolicyMatch;
+}
+
+function compareCandidates(a: WinnerCandidate, b: WinnerCandidate): number {
+  const actionDiff = compareActions(a.action, b.action);
+  if (actionDiff !== 0) return actionDiff;
+  return SOURCE_PRIORITY[b.source] - SOURCE_PRIORITY[a.source];
+}
+
+function determineWinner(
+  commandResult: CommandsInternalResult | null,
+  redirectResult: RedirectsInternalResult | null,
+  heredocResult: HeredocsInternalResult | null,
+): WinnerResult {
+  const candidates: WinnerCandidate[] = [];
+
+  if (commandResult) {
+    candidates.push({
+      action: commandResult.action,
+      reason: commandResult.reason,
+      source: "commands",
+      triggered: commandResult.triggered,
+      match: commandResult.match,
+    });
+  }
+
+  if (redirectResult) {
+    candidates.push({
+      action: redirectResult.action,
+      reason: redirectResult.reason,
+      source: "redirects",
+      triggered: redirectResult.triggered,
+    });
+  }
+
+  if (heredocResult) {
+    candidates.push({
+      action: heredocResult.action,
+      reason: heredocResult.reason,
+      source: "heredocs",
+      triggered: heredocResult.triggered,
+    });
+  }
+
+  if (candidates.length === 0) {
+    return {
+      action: "default",
+      reason: "No policy configured",
+      source: "default",
+    };
+  }
+
+  const activeCandidates = candidates.filter(
+    (candidate) => candidate.triggered,
+  );
+  if (activeCandidates.length === 0) {
+    return {
+      action: "default",
+      reason: commandResult?.reason ?? "No policy match",
+      source: "default",
+    };
+  }
+
+  const winner = activeCandidates.reduce((best, candidate) =>
+    compareCandidates(candidate, best) > 0 ? candidate : best,
+  );
+
+  return {
+    action: winner.action,
+    reason: winner.reason,
+    source: winner.source,
+    match: winner.match,
+  };
+}
+
+// --- Primary Evaluation Functions ---
+
+export function analyze(
+  command: string,
+  policy: EvaluationPolicy,
+): ShellPolicyAnalysis {
+  const wrapperRules = buildWrapperRuleMap(policy.wrappers);
+
+  let tokens: Token[];
+  let cmds: ExtractedCommand[];
+  try {
+    tokens = tokenize(command);
+    cmds = extractCommands(tokens, "direct", wrapperRules);
+  } catch (e) {
+    return {
+      input: command,
+      tokens: [],
+      commands: [],
+      phases: {},
+      final: {
+        action: "ask",
+        reason: `Unparseable: ${String(e)}`,
+        decidedBy: "default",
+      },
+    };
+  }
+
+  if (cmds.length === 0) {
+    return {
+      input: command,
+      tokens,
+      commands: [],
+      phases: {},
+      final: {
+        action: "ask",
+        reason: "Empty or unrecognized command",
+        decidedBy: "default",
+      },
+    };
+  }
+
+  const commandResult = policy.commands
+    ? evaluateCommandsInternal(cmds, policy.commands)
+    : null;
+  const redirectResult = policy.redirects
+    ? evaluateRedirectsInternal(cmds, policy.redirects)
+    : null;
+  const heredocResult = policy.heredocs
+    ? evaluateHeredocsInternal(cmds, policy.heredocs)
+    : null;
+  const winner = determineWinner(commandResult, redirectResult, heredocResult);
+  const match = winner.source === "commands" ? commandResult?.match : undefined;
+
+  return {
+    input: command,
+    tokens,
+    commands: commandResult?.commands ?? buildDefaultCommandEvaluations(cmds),
+    phases: {
+      commands: commandResult
+        ? {
+            action: commandResult.action,
+            reason: commandResult.reason,
+            triggered: commandResult.triggered,
+            match: commandResult.match,
+          }
+        : undefined,
+      redirects: redirectResult ?? undefined,
+      heredocs: heredocResult ?? undefined,
+    },
+    final: {
+      action: winner.action,
+      reason: winner.reason,
+      decidedBy: winner.source,
+      match,
+    },
+  };
+}
+
+export function evaluate(
+  command: string,
+  policy: EvaluationPolicy,
+): EvalResult {
+  const analysis = analyze(command, policy);
+  return {
+    action: analysis.final.action,
+    reason: analysis.final.reason,
+    decidedBy: analysis.final.decidedBy,
+    match: analysis.final.match,
+    details: {
+      commands: analysis.commands,
+      redirects: analysis.phases.redirects?.redirects,
+      heredocs: analysis.phases.heredocs?.heredoc,
+    },
+  };
 }
 
 export function getCommandSummary(command: string): string {
@@ -1040,5 +1473,47 @@ export function mergePolicies(...policies: PolicyCommands[]): PolicyCommands {
     allow: policies.flatMap((p) => p.allow),
     ask: policies.flatMap((p) => p.ask),
     deny: policies.flatMap((p) => p.deny),
+  };
+}
+
+// --- Backward-Compatible Wrappers (deprecated, use evaluate() instead) ---
+
+/** @deprecated Use evaluate() instead */
+export function evaluateCommand(
+  command: string,
+  policy: PolicyCommands,
+  wrapperRules?: WrapperRuleMap,
+): EvalResult {
+  return evaluate(command, {
+    commands: policy,
+    wrappers: wrapperRuleMapToConfig(wrapperRules),
+  });
+}
+
+/** @deprecated Use evaluate() instead */
+export function evaluateRedirects(
+  cmds: ExtractedCommand[],
+  policy: RedirectPolicy,
+): EvalResult {
+  const result = evaluateRedirectsInternal(cmds, policy);
+  return {
+    action: result.action,
+    reason: result.reason,
+    decidedBy: "redirects",
+    details: { commands: [], redirects: result.redirects },
+  };
+}
+
+/** @deprecated Use evaluate() instead */
+export function evaluateHeredocs(
+  cmds: ExtractedCommand[],
+  policy: HeredocPolicy,
+): EvalResult {
+  const result = evaluateHeredocsInternal(cmds, policy);
+  return {
+    action: result.action,
+    reason: result.reason,
+    decidedBy: "heredocs",
+    details: { commands: [], heredocs: result.heredoc },
   };
 }

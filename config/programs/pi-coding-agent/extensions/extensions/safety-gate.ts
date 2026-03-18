@@ -15,14 +15,12 @@ import { readFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
-  evaluateCommand,
-  evaluateHeredocs,
-  extractCommands,
-  tokenize,
-  buildWrapperRuleMap,
+  evaluate,
+  mergePolicies,
   normalizeUnifiedPolicyConfig,
   normalizeShellPolicyConfig,
   getCommandSummary,
+  type EvalResult,
   type PolicyCommands,
   type HeredocPolicy,
   type WrapperRuleConfig,
@@ -36,7 +34,7 @@ const globalConfigRaw = JSON.parse(
 
 const globalUnified = normalizeUnifiedPolicyConfig(globalConfigRaw);
 const globalConfig: PolicyCommands = globalUnified.default.commands;
-let globalWrapperRules: WrapperRuleConfig[] =
+const globalWrapperRules: WrapperRuleConfig[] =
   globalUnified.default.wrappers ?? [];
 const globalHeredocPolicy: HeredocPolicy = globalUnified.default.heredocs ?? {
   action: "ask",
@@ -71,6 +69,7 @@ function getProjectConfig(cwd: string): PolicyCommands {
 async function confirmCommand(
   command: string,
   ctx: ExtensionAPI["context"],
+  result: EvalResult,
 ): Promise<{ block: boolean; reason?: string }> {
   if (!ctx.hasUI) {
     return {
@@ -79,10 +78,11 @@ async function confirmCommand(
     };
   }
 
-  const choice = await ctx.ui.select(`Confirm: ${getCommandSummary(command)}`, [
-    "Yes, proceed",
-    "No, cancel",
-  ]);
+  const trigger = formatTriggerReason(result);
+  const choice = await ctx.ui.select(
+    `Confirm${trigger}: ${getCommandSummary(command)}`,
+    ["Yes, proceed", "No, cancel"],
+  );
 
   if (choice !== "Yes, proceed") {
     ctx.ui.notify("Command cancelled by user", "info");
@@ -92,55 +92,52 @@ async function confirmCommand(
   return { block: false };
 }
 
+function formatTriggerReason(result: EvalResult): string {
+  switch (result.decidedBy) {
+    case "commands":
+      return result.match
+        ? ` (${result.match.category}: ${result.match.entry.match})`
+        : " (command policy)";
+    case "redirects":
+      return " (redirect policy)";
+    case "heredocs":
+      return " (heredoc policy)";
+    default:
+      return result.match ? ` (${result.match.category})` : "";
+  }
+}
+
+function formatPolicyMatch(match: EvalResult["match"]): string {
+  if (!match) return "policy";
+  return `${match.category}: ${match.entry.match}`;
+}
+
 export default function (pi: ExtensionAPI) {
   pi.on("tool_call", async (event, ctx) => {
     if (event.toolName !== "bash") return undefined;
 
     if (typeof event.input?.command !== "string") return undefined;
     const command = event.input.command;
-    const merged = {
-      allow: globalConfig.allow.concat(getProjectConfig(ctx.cwd).allow),
-      ask: globalConfig.ask.concat(getProjectConfig(ctx.cwd).ask),
-      deny: globalConfig.deny.concat(getProjectConfig(ctx.cwd).deny),
-    };
-    const wrapperRules = buildWrapperRuleMap([
-      ...globalWrapperRules,
-      ...projectWrapperRules,
-    ]);
+    const projectCommands = getProjectConfig(ctx.cwd);
 
-    // First evaluate against the merged JSON policy
-    const result = evaluateCommand(command, merged, wrapperRules);
-
-    // Check heredoc policy on extracted commands
-    const extractedCmds = extractCommands(
-      tokenize(command),
-      "direct",
-      wrapperRules,
-    );
-
-    const heredocResult = evaluateHeredocs(extractedCmds, globalHeredocPolicy);
-    if (heredocResult.action === "ask" || heredocResult.action === "default") {
-      return await confirmCommand(command, ctx);
-    }
-    if (heredocResult.action === "deny") {
-      return {
-        block: true,
-        reason: `Command blocked by safety policy: "${getCommandSummary(command)}"`,
-      };
-    }
+    const result = evaluate(command, {
+      commands: mergePolicies(globalConfig, projectCommands),
+      heredocs: globalHeredocPolicy,
+      wrappers: [...globalWrapperRules, ...projectWrapperRules],
+    });
 
     switch (result.action) {
       case "deny":
         return {
           block: true,
-          reason: `Command blocked by safety policy: "${getCommandSummary(command)}"`,
+          reason: `Command blocked by safety policy (${formatPolicyMatch(result.match)}): "${getCommandSummary(command)}"`,
         };
       case "ask":
-        return await confirmCommand(command, ctx);
+        return await confirmCommand(command, ctx, result);
       case "allow":
         return undefined;
       case "default":
-        return await confirmCommand(command, ctx);
+        return await confirmCommand(command, ctx, result);
     }
   });
 }

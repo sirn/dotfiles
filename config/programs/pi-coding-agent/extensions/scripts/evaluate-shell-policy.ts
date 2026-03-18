@@ -17,28 +17,22 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import {
-  tokenize,
-  extractCommands,
-  evaluateCommand,
-  evaluateRedirects,
-  evaluateHeredocs,
-  buildWrapperRuleMap,
+  analyze,
+  compareActions,
   normalizeShellPolicyConfig,
   normalizeUnifiedPolicyConfig,
   type Token,
-  type ExtractedCommand,
-  type CommandEntry,
   type PolicyCommands,
   type WrapperRuleConfig,
   type RedirectPolicy,
   type HeredocPolicy,
-  type EvalResult,
   type Action,
+  type CommandEvaluation,
+  type ShellPolicyAnalysis,
 } from "../lib/shell-policy.js";
 
 // --- ANSI Colors ---
 const B = "\x1b[1m";
-const D = "\x1b[2m";
 const R = "\x1b[0m";
 const GRY = "\x1b[90m";
 const RED = "\x1b[31m";
@@ -146,7 +140,7 @@ function formatTokenValue(token: Token): string {
   }
 }
 
-function formatSource(source: ExtractedCommand["source"]): string {
+function formatSource(source: CommandEvaluation["source"]): string {
   const icons: Record<typeof source, string> = {
     direct: "→",
     "wrapper-arg": "↳",
@@ -230,99 +224,16 @@ function loadPolicyEntries(jsonPath: string): PolicyEntry[] {
   ];
 }
 
-// Evaluate a single command against policy entries
-function evaluateAgainstEntries(
-  cmd: ExtractedCommand,
-  entries: CommandEntry[],
-): { matched: boolean; matches: CommandEntry[] } {
-  const matches: CommandEntry[] = [];
-  for (const entry of entries) {
-    const { match, mode } = entry;
-    const text = cmd.fullText;
-    let matched = false;
-    switch (mode) {
-      case "exact":
-        matched = text.trim().toLowerCase() === match.toLowerCase();
-        break;
-      case "prefix":
-        matched = text
-          .trimStart()
-          .toLowerCase()
-          .startsWith(match.toLowerCase());
-        break;
-      case "substring":
-        matched = text.toLowerCase().includes(match.toLowerCase());
-        break;
-    }
-    if (matched) {
-      matches.push(entry);
-    }
-  }
-  return { matched: matches.length > 0, matches };
-}
-
 // --- Multi-Policy Evaluation Types and Functions ---
 
 interface PolicyResult {
   policyPath: string;
   entryName: string;
-  command: string;
-  tokens: Token[];
-  commands: ExtractedCommand[];
-  entry: PolicyEntry;
-  finalAction: Action;
-  redirectResult?: EvalResult;
-  heredocResult?: EvalResult;
+  analysis?: ShellPolicyAnalysis;
   error?: string;
 }
 
-function getCommandMatches(
-  cmd: ExtractedCommand,
-  entry: PolicyEntry,
-): {
-  action: Action;
-  matches: Array<{ match: string; mode: string; category: Action }>;
-} {
-  const denyResult = evaluateAgainstEntries(cmd, entry.commands.deny);
-  const askResult = evaluateAgainstEntries(cmd, entry.commands.ask);
-  const allowResult = evaluateAgainstEntries(cmd, entry.commands.allow);
-
-  const allMatches: Array<{ match: string; mode: string; category: Action }> =
-    [];
-
-  if (denyResult.matched) {
-    for (const m of denyResult.matches) {
-      allMatches.push({ match: m.match, mode: m.mode, category: "deny" });
-    }
-  }
-  if (askResult.matched) {
-    for (const m of askResult.matches) {
-      allMatches.push({ match: m.match, mode: m.mode, category: "ask" });
-    }
-  }
-  if (allowResult.matched) {
-    for (const m of allowResult.matches) {
-      allMatches.push({ match: m.match, mode: m.mode, category: "allow" });
-    }
-  }
-
-  let action: Action = "default";
-  if (denyResult.matched) action = "deny";
-  else if (askResult.matched) action = "ask";
-  else if (allowResult.matched) action = "allow";
-
-  return { action, matches: allMatches };
-}
-
-const ACTION_PRIORITY: Record<Action, number> = {
-  deny: 3,
-  ask: 2,
-  allow: 1,
-  default: 0,
-};
-
 function evaluatePolicy(policyPath: string, command: string): PolicyResult[] {
-  // Load policy entries (may be multiple for unified format)
   let entries: PolicyEntry[];
   try {
     entries = loadPolicyEntries(policyPath);
@@ -331,124 +242,53 @@ function evaluatePolicy(policyPath: string, command: string): PolicyResult[] {
       {
         policyPath,
         entryName: path.basename(policyPath),
-        command,
-        tokens: [],
-        commands: [],
-        entry: { name: "error", commands: { allow: [], ask: [], deny: [] } },
-        finalAction: "ask",
         error: String(e),
       },
     ];
   }
 
-  // Tokenize once (same for all entries)
-  let tokens: Token[];
-  try {
-    tokens = tokenize(command);
-  } catch (e) {
-    return entries.map((entry) => ({
-      policyPath,
-      entryName: entry.name,
-      command,
-      tokens: [],
-      commands: [],
-      entry,
-      finalAction: "ask" as Action,
-      error: `Parse error: ${String(e)}`,
-    }));
-  }
-
-  return entries.map((entry) => {
-    const wrapperRules = buildWrapperRuleMap(entry.wrappers);
-
-    let commands: ExtractedCommand[];
-    try {
-      commands = extractCommands(tokens, "direct", wrapperRules);
-    } catch (e) {
-      return {
-        policyPath,
-        entryName: entry.name,
-        command,
-        tokens,
-        commands: [],
-        entry,
-        finalAction: "ask" as Action,
-        error: `Extraction error: ${String(e)}`,
-      };
-    }
-
-    const evalResult = evaluateCommand(command, entry.commands, wrapperRules);
-    const redirectResult = entry.redirects
-      ? evaluateRedirects(commands, entry.redirects)
-      : undefined;
-    const heredocResult = entry.heredocs
-      ? evaluateHeredocs(commands, entry.heredocs)
-      : undefined;
-
-    // Final action is most restrictive across all evaluations
-    let finalAction: Action = evalResult.action;
-    if (
-      redirectResult &&
-      ACTION_PRIORITY[redirectResult.action] > ACTION_PRIORITY[finalAction]
-    ) {
-      finalAction = redirectResult.action;
-    }
-    if (
-      heredocResult &&
-      ACTION_PRIORITY[heredocResult.action] > ACTION_PRIORITY[finalAction]
-    ) {
-      finalAction = heredocResult.action;
-    }
-
-    return {
-      policyPath,
-      entryName: entry.name,
-      command,
-      tokens,
-      commands,
-      entry,
-      finalAction,
-      redirectResult,
-      heredocResult,
-    };
-  });
+  return entries.map((entry) => ({
+    policyPath,
+    entryName: entry.name,
+    analysis: analyze(command, {
+      commands: entry.commands,
+      redirects: entry.redirects,
+      heredocs: entry.heredocs,
+      wrappers: entry.wrappers,
+    }),
+  }));
 }
 
 // --- Main ---
 
-function printResults(
-  command: string,
-  results: PolicyResult[],
-  showTokens: boolean,
-): void {
-  // Show tokenization once (it's the same for all policies)
-  if (showTokens && results.length > 0 && results[0].tokens.length > 0) {
+function printResults(results: PolicyResult[], showTokens: boolean): void {
+  const firstAnalysis = results.find((result) => result.analysis)?.analysis;
+  if (showTokens && firstAnalysis && firstAnalysis.tokens.length > 0) {
     console.log(`${B}Tokens:${R}`);
-    for (let i = 0; i < results[0].tokens.length; i++) {
+    for (let i = 0; i < firstAnalysis.tokens.length; i++) {
       console.log(
-        `  ${GRY}${i + 1}.${R} ${YEL}${formatTokenValue(results[0].tokens[i])}${R}`,
+        `  ${GRY}${i + 1}.${R} ${YEL}${formatTokenValue(firstAnalysis.tokens[i])}${R}`,
       );
     }
     console.log();
   }
 
-  // Show results for each policy entry
   for (const result of results) {
     const displayName = `${path.basename(result.policyPath)} (${result.entryName})`;
 
-    if (result.error) {
+    if (result.error || !result.analysis) {
       console.log(`${B}${displayName}:${R} ${RED}Error: ${result.error}${R}`);
       continue;
     }
 
+    const { analysis } = result;
     console.log(`${B}${displayName}:${R}`);
 
-    // Show commands with per-entry matches
-    if (result.commands.length === 0) {
+    if (analysis.commands.length === 0) {
       console.log("  (no commands)");
     } else {
-      for (let i = 0; i < result.commands.length; i++) {
-        const cmd = result.commands[i];
+      for (let i = 0; i < analysis.commands.length; i++) {
+        const cmd = analysis.commands[i];
         const extra =
           cmd.redirects.length > 0
             ? ` [${cmd.redirects.map((r) => `${r.op} ${r.target}`).join(", ")}]`
@@ -456,53 +296,55 @@ function printResults(
         process.stdout.write(
           `  ${GRY}${i + 1}.${R} ${YEL}${cmd.fullText}${R} ${formatSource(cmd.source)}${extra}\n`,
         );
+        process.stdout.write(
+          `     ${B}Policy:${R} ${formatAction(cmd.action)}\n`,
+        );
 
-        // Get matches for this command
-        const { action, matches } = getCommandMatches(cmd, result.entry);
-
-        process.stdout.write(`     ${B}Policy:${R} ${formatAction(action)}\n`);
-
-        // Output matches in tree format
-        if (matches.length > 0) {
-          for (let j = 0; j < matches.length; j++) {
-            const m = matches[j];
-            const isLast = j === matches.length - 1;
+        if (cmd.matches.length > 0) {
+          for (let j = 0; j < cmd.matches.length; j++) {
+            const match = cmd.matches[j];
+            const isLast = j === cmd.matches.length - 1;
             const branch = isLast ? "└─" : "├─";
             const line = isLast ? "  " : "│ ";
 
             process.stdout.write(
-              `     ${branch} ${B}match:${R} ${YEL}${m.match}${R}\n`,
+              `     ${branch} ${B}match:${R} ${YEL}${match.entry.match}${R}\n`,
             );
-            process.stdout.write(`     ${line} ${B}mode:${R} ${m.mode}\n`);
             process.stdout.write(
-              `     ${line} ${B}policy:${R} ${formatAction(m.category)}\n`,
+              `     ${line} ${B}mode:${R} ${match.entry.mode}\n`,
+            );
+            process.stdout.write(
+              `     ${line} ${B}policy:${R} ${formatAction(match.category)}\n`,
             );
           }
         }
       }
     }
 
-    // Show redirect/heredoc evaluation if present
-    if (result.redirectResult) {
+    if (analysis.phases.redirects) {
       console.log(
-        `  ${B}Redirects:${R} ${formatAction(result.redirectResult.action)} ${GRY}(${result.redirectResult.reason})${R}`,
+        `  ${B}Redirects:${R} ${formatAction(analysis.phases.redirects.action)} ${GRY}(${analysis.phases.redirects.reason})${R}`,
       );
     }
-    if (result.heredocResult) {
+    if (analysis.phases.heredocs) {
       console.log(
-        `  ${B}Heredocs:${R} ${formatAction(result.heredocResult.action)} ${GRY}(${result.heredocResult.reason})${R}`,
+        `  ${B}Heredocs:${R} ${formatAction(analysis.phases.heredocs.action)} ${GRY}(${analysis.phases.heredocs.reason})${R}`,
       );
     }
 
-    console.log(`  ${B}Result:${R} ${formatAction(result.finalAction)}`);
+    console.log(
+      `  ${B}Result:${R} ${formatAction(analysis.final.action)} ${GRY}(decided by: ${analysis.final.decidedBy})${R}`,
+    );
     console.log();
   }
 
-  // Overall summary: most restrictive across all results
   let overall: Action = "default";
-  for (const r of results) {
-    if (ACTION_PRIORITY[r.finalAction] > ACTION_PRIORITY[overall]) {
-      overall = r.finalAction;
+  for (const result of results) {
+    if (
+      result.analysis &&
+      compareActions(result.analysis.final.action, overall) > 0
+    ) {
+      overall = result.analysis.final.action;
     }
   }
 
@@ -538,7 +380,7 @@ function main(): void {
   }
 
   // Print results
-  printResults(command, results, true);
+  printResults(results, true);
 }
 
 main();

@@ -30,6 +30,10 @@ match = "./gradlew check"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
+match = "["
+mode = "prefix"
+
+[[default.commands.allow.shell]]
 match = "alejandra"
 mode = "prefix"
 
@@ -598,6 +602,10 @@ match = "psql -c \\dt"
 mode = "prefix"
 
 [[default.commands.allow.shell]]
+match = "cd"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
 match = "pwd"
 mode = "prefix"
 
@@ -711,6 +719,10 @@ mode = "prefix"
 
 [[default.commands.allow.shell]]
 match = "tail"
+mode = "prefix"
+
+[[default.commands.allow.shell]]
+match = "test"
 mode = "prefix"
 
 [[default.commands.allow.shell]]

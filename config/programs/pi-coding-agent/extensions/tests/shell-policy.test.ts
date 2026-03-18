@@ -4,6 +4,8 @@
  */
 
 import {
+  analyze,
+  evaluate,
   tokenize,
   extractCommands,
   evaluateCommand,
@@ -1696,6 +1698,119 @@ test("evaluateHeredocs - empty commands always allows", () => {
 });
 
 // ==================== END EVALUATE HEREDOCS TESTS ====================
+
+// ==================== UNIFIED EVALUATION TESTS ====================
+
+test("evaluate - neutral redirects and heredocs do not promote default", () => {
+  const policy = {
+    commands: {
+      allow: [{ match: "ls", mode: "prefix" as const }],
+      ask: [],
+      deny: [],
+    },
+    redirects: { action: "deny" as const },
+    heredocs: { action: "ask" as const },
+  };
+
+  const analysis = analyze("unknown_cmd", policy);
+  const result = evaluate("unknown_cmd", policy);
+
+  assertEquals(analysis.final.action, "default");
+  assertEquals(analysis.final.decidedBy, "default");
+  assertEquals(analysis.phases.redirects?.reason, "No unsafe redirects");
+  assertEquals(analysis.phases.redirects?.triggered, false);
+  assertEquals(analysis.phases.heredocs?.reason, "No heredocs");
+  assertEquals(analysis.phases.heredocs?.triggered, false);
+  assertEquals(result.action, "default");
+});
+
+test("evaluate - deny beats ask and allow across categories", () => {
+  const result = evaluate("cat > out.txt <<EOF\nhello\nEOF", {
+    commands: {
+      allow: [{ match: "cat", mode: "exact" }],
+      ask: [],
+      deny: [],
+    },
+    redirects: { action: "deny" },
+    heredocs: { action: "ask" },
+  });
+
+  assertEquals(result.action, "deny");
+  assertEquals(result.decidedBy, "redirects");
+});
+
+test("analyze - tie-breaking is deterministic across phases", () => {
+  const commandWins = analyze("cat <<EOF\nhello\nEOF", {
+    commands: {
+      allow: [],
+      ask: [{ match: "cat", mode: "exact" }],
+      deny: [],
+    },
+    heredocs: { action: "ask" },
+  });
+  assertEquals(commandWins.final.action, "ask");
+  assertEquals(commandWins.final.decidedBy, "commands");
+
+  const redirectWins = analyze("unknown_cmd > out.txt <<EOF\nhello\nEOF", {
+    commands: { allow: [], ask: [], deny: [] },
+    redirects: { action: "ask" },
+    heredocs: { action: "ask" },
+  });
+  assertEquals(redirectWins.final.action, "ask");
+  assertEquals(redirectWins.final.decidedBy, "redirects");
+});
+
+test("analyze - exposes ordered command match payloads for CLI", () => {
+  const analysis = analyze("ls -la", {
+    commands: {
+      allow: [{ match: "ls", mode: "prefix" }],
+      ask: [{ match: "-la", mode: "substring" }],
+      deny: [{ match: "ls -la", mode: "exact" }],
+    },
+  });
+
+  assertEquals(analysis.commands[0].action, "deny");
+  assertEquals(
+    analysis.commands[0].matches.map(
+      (match) => `${match.category}:${match.entry.match}`,
+    ),
+    ["deny:ls -la", "ask:-la", "allow:ls"],
+  );
+  assertEquals(analysis.final.match, {
+    category: "deny",
+    entry: { match: "ls -la", mode: "exact" },
+  });
+});
+
+test("analyze - exposes phase summaries used by CLI and runtime", () => {
+  const analysis = analyze("echo hi > output.txt", {
+    commands: {
+      allow: [{ match: "echo", mode: "prefix" }],
+      ask: [],
+      deny: [],
+    },
+    redirects: { action: "ask" },
+  });
+
+  assertEquals(analysis.final.action, "ask");
+  assertEquals(analysis.final.decidedBy, "redirects");
+  assertEquals(analysis.phases.redirects, {
+    action: "ask",
+    reason: 'Redirect to "output.txt"',
+    triggered: true,
+    redirects: [
+      {
+        cmdName: "echo",
+        op: ">",
+        target: "output.txt",
+        action: "ask",
+        reason: 'Redirect to "output.txt"',
+      },
+    ],
+  });
+});
+
+// ==================== END UNIFIED EVALUATION TESTS ====================
 
 // ==================== NORMALIZE UNIFIED POLICY TESTS ====================
 
