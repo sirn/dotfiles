@@ -342,7 +342,7 @@ in
                 output = 128000;
               };
               options = {
-                reasoningEffort = "medium";
+                reasoningEffort = "high";
               };
             };
           };

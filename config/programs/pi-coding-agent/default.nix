@@ -104,7 +104,7 @@ in
       quietStartup = true;
       defaultProvider = "fireworks-ai";
       defaultModel = "accounts/fireworks/routers/kimi-k2p5-turbo";
-      defaultThinkingLevel = "medium";
+      defaultThinkingLevel = "high";
       hideThinkingBlock = false;
       enabledModels = [
         # Fireworks
