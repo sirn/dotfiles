@@ -196,7 +196,8 @@ export default function (pi: ExtensionAPI) {
 - Execute ONE step at a time. Verify success before proceeding. Do NOT combine steps.
 - If a step fails, analyze the error. If it fails twice, STOP and wait for user input.
 - Keep changes minimal and idiomatic. Only modify in-scope files.
-- Skip trivial text verifications (e.g., checking if a string was added) unless doing mass/complex changes.
+- Verify *results*, not *actions*: validate outcomes (e.g., "test passes", "service works"), not that you performed the step.
+- Do not over-verify or verify trivial things (e.g., checking if text exists in a source file you just edited).
 - Run the verification checklist after all steps complete.
 
 ## Plan content
