@@ -12,26 +12,76 @@ let
   codexCfg = config.programs.codex;
   geminiCfg = config.programs.gemini-cli;
 
-  rtkInstructionText = ''
-
-    ## RTK (Shell Output Optimization)
-
-    RTK (`rtk`) is available for compact shell output. The following commands are useful for analysis and debugging:
-
-    - `rtk help` — show all available RTK commands
-    - `rtk curl <url>` — compact HTTP responses
-    - `rtk err <cmd>` — run command, show only errors/warnings
-    - `rtk log <file>` — show deduplicated log entries with counts
-    - `rtk json <file>` — show JSON structure (keys only, no values)
-    - `rtk deps` — show compact dependency overview
-    - `rtk env` — show environment variables (compact)
-    - `rtk summary <cmd>` — smart summary of command output
-    - `rtk test <cmd>` — run tests, show failures only
-    - `rtk proxy <cmd>` — run command without any RTK filtering
-  '';
-
   rtkBin = lib.getExe pkgs.local.rtk;
   tomlFormat = pkgs.formats.toml { };
+
+  # Commands to ignore (not proxy commands)
+  ignoreCommands = [
+    "err"
+    "test"
+    "summary"
+    "smart"
+    "proxy"
+    "read"
+    "json"
+    "deps"
+    "env"
+    "log"
+    "gain"
+    "diff"
+    "init"
+    "discover"
+    "learn"
+    "verify"
+    "hook-audit"
+    "rewrite"
+    "help"
+    "config"
+    "cc-economics"
+  ]
+  ++ rtkConfig.hooks.exclude_commands;
+
+  # Generate RTK instructions dynamically from `rtk --help` output
+  rtkInstructionTextFile =
+    pkgs.runCommand "rtk-instructions.md"
+      {
+        nativeBuildInputs = [ pkgs.local.rtk ];
+        ignore = lib.concatStringsSep " " ignoreCommands;
+      }
+      ''
+        cat > $out << 'HEADER'
+        ## RTK (Shell Output Optimization)
+
+        RTK (`rtk`) is available for compact shell output. Use `rtk --help` to see all available commands. The following commands are automatically rewritten by RTK and should NOT be additionally filtered/parsed with tail, head, jq, etc.:
+
+        HEADER
+
+        ${rtkBin} --help 2>/dev/null | ${pkgs.gawk}/bin/awk -v ignore="$ignore" '
+        BEGIN {
+          split(ignore, ignarr, " ");
+          for (i in ignarr) is_ignored[ignarr[i]] = 1;
+        }
+
+        /^Commands:/ { in_commands = 1; next }
+        /^Options:/ { in_commands = 0 }
+
+        in_commands && /^  [a-z0-9-]+/ {
+          cmd = $1;
+
+          # Skip ignored commands
+          if (is_ignored[cmd]) next;
+
+          # Extract description
+          desc = substr($0, index($0, $2));
+          gsub(/^[ \t]+/, "", desc);
+          gsub(/[ \t]+/, " ", desc);
+
+          printf "- `rtk %s <args>` — %s (replaces `%s`)\n", cmd, desc, cmd;
+        }
+        ' >> $out
+      '';
+
+  rtkInstructionText = builtins.readFile rtkInstructionTextFile;
 
   rtkRewriteClaudeSh = pkgs.writeShellApplication {
     name = "rtk-rewrite-claude";
