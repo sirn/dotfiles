@@ -25,8 +25,8 @@ let
 
   agentsMdText = ''
     ${instructionText}
-
     ## Safety Guidelines (Pi-specific)
+
     - When running destructive commands (`rm`, etc.), you must first ask the user.
     - When doing a commit, ask user for confirmation first.
     - Do not squash commit unless being told explicitly by the user.
