@@ -427,8 +427,11 @@ export function tokenize(input: string): Token[] {
       continue;
     }
 
-    // Comment
-    if (ch === "#") break;
+    // Comment - skip to end of line
+    if (ch === "#") {
+      while (i < len && input[i] !== "\n" && input[i] !== "\r") i++;
+      continue;
+    }
 
     // Operators: handle multi-char first
     if (ch === "|" && peek(1) === "|") {

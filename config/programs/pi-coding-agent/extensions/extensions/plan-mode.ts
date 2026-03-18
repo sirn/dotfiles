@@ -31,7 +31,7 @@ async function confirmCommand(
       reason: `Command blocked (no UI for confirmation): "${getCommandSummary(command)}"`,
     };
   }
-  const trigger = formatTriggerReason(result, "Plan mode");
+  const trigger = formatTriggerReason(result, "Confirm");
   const choice = await ctx.ui.select(
     `${trigger}: ${getCommandSummary(command)}`,
     ["Yes, proceed", "No, cancel"],
@@ -43,18 +43,18 @@ async function confirmCommand(
   return { block: false };
 }
 
-function formatTriggerReason(result: EvalResult, modeName: string): string {
+function formatTriggerReason(result: EvalResult, label: string): string {
   switch (result.decidedBy) {
     case "commands":
       return result.match
-        ? `${modeName} (${result.match.category}: ${result.match.entry.match})`
-        : `${modeName} (command policy)`;
+        ? `${label} (${result.match.category}: ${result.match.entry.match})`
+        : `${label} (command policy)`;
     case "redirects":
-      return `${modeName} (redirect policy)`;
+      return `${label} (redirect policy)`;
     case "heredocs":
-      return `${modeName} (heredoc policy)`;
+      return `${label} (heredoc policy)`;
     default:
-      return result.match ? `${modeName} (${result.match.category})` : modeName;
+      return result.match ? `${label} (${result.match.category})` : "";
   }
 }
 

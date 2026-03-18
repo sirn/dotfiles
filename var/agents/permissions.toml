@@ -901,36 +901,186 @@ mode = "prefix"
 # Commands that are blocked entirely
 
 [[default.commands.deny.shell]]
-match = "gh api --method DELETE"
+match = "--method DELETE"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "--method=DELETE"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "--method PATCH"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "--method=PATCH"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "--method POST"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "--method=POST"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "--method PUT"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "--method=PUT"
+mode = "substring"
+
+# gh api: implicit POST via field/input flags
+
+[[default.commands.deny.shell]]
+match = "gh api --input"
 mode = "prefix"
 
 [[default.commands.deny.shell]]
-match = "gh api --method PATCH"
+match = "gh api -f"
 mode = "prefix"
 
 [[default.commands.deny.shell]]
-match = "gh api --method POST"
+match = "gh api --field"
 mode = "prefix"
 
 [[default.commands.deny.shell]]
-match = "gh api --method PUT"
+match = "gh api -F"
 mode = "prefix"
 
 [[default.commands.deny.shell]]
-match = "gh api -X DELETE"
+match = "gh api --raw-field"
+mode = "prefix"
+
+# gh: mutating subcommands
+
+[[default.commands.deny.shell]]
+match = "gh issue create"
 mode = "prefix"
 
 [[default.commands.deny.shell]]
-match = "gh api -X PATCH"
+match = "gh issue close"
 mode = "prefix"
 
 [[default.commands.deny.shell]]
-match = "gh api -X POST"
+match = "gh issue delete"
 mode = "prefix"
 
 [[default.commands.deny.shell]]
-match = "gh api -X PUT"
+match = "gh issue edit"
 mode = "prefix"
+
+[[default.commands.deny.shell]]
+match = "gh issue reopen"
+mode = "prefix"
+
+[[default.commands.deny.shell]]
+match = "gh pr create"
+mode = "prefix"
+
+[[default.commands.deny.shell]]
+match = "gh pr close"
+mode = "prefix"
+
+[[default.commands.deny.shell]]
+match = "gh pr edit"
+mode = "prefix"
+
+[[default.commands.deny.shell]]
+match = "gh pr merge"
+mode = "prefix"
+
+[[default.commands.deny.shell]]
+match = "gh pr reopen"
+mode = "prefix"
+
+[[default.commands.deny.shell]]
+match = "gh release create"
+mode = "prefix"
+
+[[default.commands.deny.shell]]
+match = "gh release delete"
+mode = "prefix"
+
+[[default.commands.deny.shell]]
+match = "gh repo create"
+mode = "prefix"
+
+[[default.commands.deny.shell]]
+match = "gh repo delete"
+mode = "prefix"
+
+[[default.commands.deny.shell]]
+match = "gh repo fork"
+mode = "prefix"
+
+# curl: explicit non-GET HTTP methods
+
+[[default.commands.deny.shell]]
+match = "-X POST"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "-XPOST"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "--request POST"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "--request=POST"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "-X PUT"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "-XPUT"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "--request PUT"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "--request=PUT"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "-X DELETE"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "-XDELETE"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "--request DELETE"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "--request=DELETE"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "-X PATCH"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "-XPATCH"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "--request PATCH"
+mode = "substring"
+
+[[default.commands.deny.shell]]
+match = "--request=PATCH"
+mode = "substring"
 
 [[default.commands.deny.shell]]
 match = "git push"

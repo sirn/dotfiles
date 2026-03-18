@@ -320,6 +320,36 @@ test("comment after redirect", () => {
   assertEquals(tokens.length, 3);
 });
 
+// Leading comment line handling (fix for tokenizer breaking at comment start)
+test("leading comment line with command", () => {
+  const tokens = tokenize("# comment\nls -alh");
+  const words = tokens.filter((t) => t.type === "word");
+  assertEquals(words.length, 2);
+  assertEquals(words[0], { type: "word", value: "ls" });
+  assertEquals(words[1], { type: "word", value: "-alh" });
+});
+
+test("multiple leading comment lines", () => {
+  const tokens = tokenize("# comment 1\n# comment 2\nls -alh");
+  const words = tokens.filter((t) => t.type === "word");
+  assertEquals(words.length, 2);
+  assertEquals(words[0], { type: "word", value: "ls" });
+  assertEquals(words[1], { type: "word", value: "-alh" });
+});
+
+test("comment-only input returns empty", () => {
+  const tokens = tokenize("# just a comment");
+  const words = tokens.filter((t) => t.type === "word");
+  assertEquals(words.length, 0);
+});
+
+test("comment at line start with CRLF newline", () => {
+  const tokens = tokenize("# comment\r\nls");
+  const words = tokens.filter((t) => t.type === "word");
+  assertEquals(words.length, 1);
+  assertEquals(words[0], { type: "word", value: "ls" });
+});
+
 // Variable substitution
 test("variable not parsed as standalone word", () => {
   const tokens = tokenize("echo $VAR");
