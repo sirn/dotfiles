@@ -248,7 +248,7 @@ in
       autoUpdaterStatus = "disabled";
       includeCoAuthoredBy = true;
       cleanupPeriodDays = 7;
-      effortLevel = "medium";
+      effortLevel = "high";
       statusLine = {
         type = "command";
         command = lib.getExe statusLineScript;
