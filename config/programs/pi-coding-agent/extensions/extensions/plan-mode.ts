@@ -3,111 +3,38 @@ import {
   type ExtensionAPI,
   type ExtensionContext,
 } from "@mariozechner/pi-coding-agent";
+import { getExecutionMode } from "../lib/execution-mode.js";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { fileURLToPath } from "node:url";
 
 import { Container, Text, Box, Spacer } from "@mariozechner/pi-tui";
-import {
-  evaluate,
-  normalizeUnifiedPolicyConfig,
-  getCommandSummary,
-  type EvalResult,
-  type PolicyCommands,
-  type RedirectPolicy,
-  type HeredocPolicy,
-  type WrapperRuleConfig,
-} from "../lib/shell-policy.js";
-
-async function confirmCommand(
-  command: string,
-  ctx: ExtensionContext,
-  result: EvalResult,
-): Promise<{ block: boolean; reason?: string }> {
-  if (!ctx.hasUI) {
-    return {
-      block: true,
-      reason: `Command blocked (no UI for confirmation): "${getCommandSummary(command)}"`,
-    };
-  }
-  const trigger = formatTriggerReason(result, "Confirm");
-  const choice = await ctx.ui.select(
-    `${trigger}: ${getCommandSummary(command)}`,
-    ["Yes, proceed", "No, cancel"],
-  );
-  if (choice !== "Yes, proceed") {
-    ctx.ui.notify("Command cancelled by user", "info");
-    return { block: true, reason: "Blocked by user" };
-  }
-  return { block: false };
-}
-
-function formatTriggerReason(result: EvalResult, label: string): string {
-  switch (result.decidedBy) {
-    case "commands":
-      return result.match
-        ? `${label} (${result.match.category}: ${result.match.entry.match})`
-        : `${label} (command policy)`;
-    case "redirects":
-      return `${label} (redirect policy)`;
-    case "heredocs":
-      return `${label} (heredoc policy)`;
-    default:
-      return result.match ? `${label} (${result.match.category})` : "";
-  }
-}
-
-function formatPolicyMatch(match: EvalResult["match"]): string {
-  if (!match) return "policy";
-  return `${match.category}: ${match.entry.match}`;
-}
-
-// --- Policy types ---
-
-interface PlanPolicy {
-  tools: Record<string, boolean>;
-  commands: PolicyCommands;
-  wrappers?: WrapperRuleConfig[];
-  redirects?: RedirectPolicy;
-  heredocs?: HeredocPolicy;
-}
-
-function loadPlanPolicy(): PlanPolicy | null {
-  try {
-    const extDir = path.dirname(fileURLToPath(import.meta.url));
-    const raw = JSON.parse(
-      fs.readFileSync(path.join(extDir, "../../../policy.json"), "utf-8"),
-    );
-    const unified = normalizeUnifiedPolicyConfig(raw);
-    const planMode = unified.modes?.plan;
-    if (!planMode) return null;
-    return {
-      tools: planMode.tools ?? {},
-      commands: planMode.commands,
-      wrappers: planMode.wrappers,
-      redirects: planMode.redirects,
-      heredocs: planMode.heredocs,
-    };
-  } catch {
-    return null;
-  }
-}
-
-// Loaded once at extension init
-const planPolicy = loadPlanPolicy();
-
-// --- Plan state management ---
-
-interface PlanState {
-  phase: "idle" | "plan";
-  approved: boolean;
-}
 
 export default function (pi: ExtensionAPI) {
   const PLAN_DIR = path.join(os.homedir(), ".pi/agent/plans");
 
-  const stateMap = new Map<string, PlanState | null>();
+  // --- Mode state management ---
+
+  const modeCache = new Map<string, string>();
+
+  function getMode(ctx: ExtensionContext): string {
+    const sessionId = ctx.sessionManager.getSessionFile() ?? "ephemeral";
+    if (modeCache.has(sessionId)) return modeCache.get(sessionId)!;
+    const mode = getExecutionMode(ctx).mode;
+    modeCache.set(sessionId, mode);
+    return mode;
+  }
+
+  function setMode(ctx: ExtensionContext, mode: string) {
+    const sessionId = ctx.sessionManager.getSessionFile() ?? "ephemeral";
+    modeCache.set(sessionId, mode);
+    const planPath = getPlanPath(ctx.cwd, ctx.sessionManager.getSessionFile());
+    pi.appendEntry("execution-mode", {
+      mode,
+      policyOverride:
+        mode === "plan" ? { write: [planPath], edit: [planPath] } : undefined,
+    });
+  }
 
   function getPlanPath(
     projectDir: string,
@@ -123,30 +50,8 @@ export default function (pi: ExtensionAPI) {
     return path.join(PLAN_DIR, `--${normalized}--`, `${sessionId}.md`);
   }
 
-  function loadState(ctx: ExtensionContext): PlanState | null {
-    const sessionId = ctx.sessionManager.getSessionFile() ?? "ephemeral";
-    if (stateMap.has(sessionId)) return stateMap.get(sessionId)!;
-
-    let state: PlanState | null = null;
-    for (const entry of ctx.sessionManager.getEntries()) {
-      if (entry.type === "custom" && entry.customType === "plan-mode") {
-        state = entry.data as PlanState;
-      }
-    }
-
-    stateMap.set(sessionId, state);
-    return state;
-  }
-
-  function saveState(ctx: ExtensionContext, state: PlanState) {
-    const sessionId = ctx.sessionManager.getSessionFile() ?? "ephemeral";
-    stateMap.set(sessionId, state);
-    pi.appendEntry("plan-mode", state);
-  }
-
   function updatePlanWidget(ctx: ExtensionContext) {
-    const state = loadState(ctx);
-    if (state?.phase === "plan") {
+    if (getMode(ctx) === "plan") {
       ctx.ui.setWidget("plan-mode", [ctx.ui.theme.fg("accent", "󰏯 plan mode")]);
     } else {
       ctx.ui.setWidget("plan-mode", undefined);
@@ -234,7 +139,7 @@ ${planContent}`,
       );
       fs.mkdirSync(path.dirname(planPath), { recursive: true });
 
-      saveState(ctx, { phase: "plan", approved: false });
+      setMode(ctx, "plan");
       updatePlanWidget(ctx);
 
       // If no args and plan file exists, enter plan mode silently
@@ -326,8 +231,7 @@ Documentation URLs and sources consulted during planning.
   pi.registerCommand("plan-accept", {
     description: "Accept plan and trigger execution with context options",
     handler: async (_args, ctx) => {
-      const state = loadState(ctx);
-      if (!state) {
+      if (getMode(ctx) !== "plan") {
         ctx.ui.notify("No active plan found. Use /plan first.", "error");
         return;
       }
@@ -363,7 +267,7 @@ Documentation URLs and sources consulted during planning.
         return;
       }
 
-      saveState(ctx, { phase: "idle", approved: true });
+      setMode(ctx, "edit");
       updatePlanWidget(ctx);
       const planContent = fs.readFileSync(planPath, "utf-8");
 
@@ -417,31 +321,23 @@ Documentation URLs and sources consulted during planning.
   pi.registerCommand("plan-show", {
     description: "Display and optionally edit the current plan",
     handler: async (_args, ctx) => {
-      const state = loadState(ctx);
+      const mode = getMode(ctx);
       const planPath = getPlanPath(
         ctx.cwd,
         ctx.sessionManager.getSessionFile(),
       );
-      if (!state || !fs.existsSync(planPath)) {
+      if (mode !== "plan" || !fs.existsSync(planPath)) {
         ctx.ui.notify("No plan found. Use /plan to create one.", "error");
         return;
       }
 
       const content = fs.readFileSync(planPath, "utf-8");
-      const title = `Plan (${state.approved ? "APPROVED" : "DRAFT"})`;
 
-      const edited = await ctx.ui.editor(title, content);
+      const edited = await ctx.ui.editor("Plan", content);
 
       if (edited && edited !== content) {
-        if (state.approved) {
-          ctx.ui.notify(
-            "Cannot edit an approved plan. Use /plan to create a new one.",
-            "warning",
-          );
-        } else {
-          fs.writeFileSync(planPath, edited, "utf-8");
-          ctx.ui.notify("Plan updated manually.", "success");
-        }
+        fs.writeFileSync(planPath, edited, "utf-8");
+        ctx.ui.notify("Plan updated manually.", "success");
       }
     },
   });
@@ -449,8 +345,7 @@ Documentation URLs and sources consulted during planning.
   pi.registerCommand("plan-cancel", {
     description: "Cancel plan mode and return to normal mode",
     handler: async (_args, ctx) => {
-      const state = loadState(ctx);
-      if (!state) {
+      if (getMode(ctx) !== "plan") {
         ctx.ui.notify("No active plan found.", "error");
         return;
       }
@@ -470,7 +365,7 @@ Documentation URLs and sources consulted during planning.
         return;
       }
 
-      saveState(ctx, { phase: "idle", approved: false });
+      setMode(ctx, "edit");
       updatePlanWidget(ctx);
 
       if (choice === "Leave plan mode and clear plan file") {
@@ -496,86 +391,12 @@ Documentation URLs and sources consulted during planning.
     },
   });
 
-  pi.on("tool_call", async (event, ctx) => {
-    const state = loadState(ctx);
-    if (state?.phase !== "plan") return;
-
-    const planPath = getPlanPath(ctx.cwd, ctx.sessionManager.getSessionFile());
-
-    // Tool-level blocking from [mode.plan.tools]
-    if (event.toolName === "write" || event.toolName === "edit") {
-      const targetPath = event.input?.path as string | undefined;
-      if (targetPath && path.resolve(targetPath) === path.resolve(planPath)) {
-        return { block: false };
-      }
-      const toolAllowed = planPolicy?.tools[event.toolName] ?? false;
-      if (!toolAllowed) {
-        return {
-          block: true,
-          reason:
-            "Plan mode active: Use /plan-accept before implementing code changes",
-        };
-      }
-    }
-
-    // Bash command blocking from [mode.plan.commands]
-    if (event.toolName === "bash" && typeof event.input?.command === "string") {
-      if (!planPolicy) {
-        return {
-          block: true,
-          reason: "Plan mode: Shell commands blocked (plan policy unavailable)",
-        };
-      }
-      const command = event.input.command;
-
-      // Evaluate using unified evaluate() function
-      const result = evaluate(command, {
-        commands: planPolicy.commands,
-        redirects: planPolicy.redirects,
-        heredocs: planPolicy.heredocs,
-        wrappers: planPolicy.wrappers,
-      });
-
-      // Handle based on unified result
-      if (result.action === "deny") {
-        const decidedBy = result.decidedBy;
-        let reason: string;
-        switch (decidedBy) {
-          case "commands":
-            reason = `Command blocked by policy (${formatPolicyMatch(result.match)}): "${getCommandSummary(command)}"`;
-            break;
-          case "redirects":
-            reason = `Command with file output redirect blocked (redirect policy): "${getCommandSummary(command)}"`;
-            break;
-          case "heredocs":
-            reason = `Heredoc command blocked (heredoc policy): "${getCommandSummary(command)}"`;
-            break;
-          default:
-            reason = `Command blocked by policy: "${getCommandSummary(command)}"`;
-        }
-        return { block: true, reason };
-      }
-
-      if (result.action === "ask") {
-        return await confirmCommand(command, ctx, result);
-      }
-
-      if (result.action === "allow") {
-        return { block: false };
-      }
-
-      // default - let safety-gate handle
-      return undefined;
-    }
-  });
-
   pi.on("turn_end", async (_event, ctx) => {
     updatePlanWidget(ctx);
   });
 
   pi.on("before_agent_start", async (event, ctx) => {
-    const state = loadState(ctx);
-    if (state?.phase !== "plan") return;
+    if (getMode(ctx) !== "plan") return;
 
     // Inject plan mode reminder as a hidden message (AI sees it, user doesn't)
     const planPath = getPlanPath(ctx.cwd, ctx.sessionManager.getSessionFile());

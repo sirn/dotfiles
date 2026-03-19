@@ -1009,16 +1009,6 @@ export function buildWrapperRuleMap(
   return map;
 }
 
-function wrapperRuleMapToConfig(
-  wrapperRules: WrapperRuleMap | undefined,
-): WrapperRuleConfig[] | undefined {
-  if (!wrapperRules || wrapperRules.size === 0) return undefined;
-  return [...wrapperRules.entries()].map(([name, rule]) => ({
-    name,
-    kind: rule.kind,
-  }));
-}
-
 // --- Policy Matching ---
 
 function matchTokenSubstring(
@@ -1226,7 +1216,9 @@ function evaluateRedirectsInternal(
         continue;
       }
 
-      triggered = true;
+      if (policy.action !== "allow") {
+        triggered = true;
+      }
       lastTriggeredReason = `Redirect to "${r.target}"`;
       redirectEvaluations.push({
         cmdName: cmd.name,
@@ -1266,7 +1258,7 @@ function evaluateHeredocsInternal(
       return {
         action: policy.action,
         reason: "Heredoc detected",
-        triggered: true,
+        triggered: policy.action !== "allow",
         heredoc: {
           detected: true,
           action: policy.action,
@@ -1502,44 +1494,29 @@ export function mergePolicies(...policies: PolicyCommands[]): PolicyCommands {
   };
 }
 
-// --- Backward-Compatible Wrappers (deprecated, use evaluate() instead) ---
-
-/** @deprecated Use evaluate() instead */
-export function evaluateCommand(
-  command: string,
-  policy: PolicyCommands,
-  wrapperRules?: WrapperRuleMap,
-): EvalResult {
-  return evaluate(command, {
-    commands: policy,
-    wrappers: wrapperRuleMapToConfig(wrapperRules),
-  });
-}
-
-/** @deprecated Use evaluate() instead */
-export function evaluateRedirects(
-  cmds: ExtractedCommand[],
-  policy: RedirectPolicy,
-): EvalResult {
-  const result = evaluateRedirectsInternal(cmds, policy);
+/**
+ * Merge a mode-specific policy on top of a default policy.
+ *
+ * - commands: concatenated (evaluation priority handles conflicts)
+ * - redirects/heredocs: mode overrides default (if specified)
+ * - wrappers: mode replaces default (if present; default.nix pre-merges)
+ */
+export function mergeEvaluationPolicies(
+  defaultPolicy: ModePolicy,
+  modePolicy?: ModePolicy,
+): EvaluationPolicy {
+  if (!modePolicy) {
+    return {
+      commands: defaultPolicy.commands,
+      redirects: defaultPolicy.redirects,
+      heredocs: defaultPolicy.heredocs,
+      wrappers: defaultPolicy.wrappers,
+    };
+  }
   return {
-    action: result.action,
-    reason: result.reason,
-    decidedBy: "redirects",
-    details: { commands: [], redirects: result.redirects },
-  };
-}
-
-/** @deprecated Use evaluate() instead */
-export function evaluateHeredocs(
-  cmds: ExtractedCommand[],
-  policy: HeredocPolicy,
-): EvalResult {
-  const result = evaluateHeredocsInternal(cmds, policy);
-  return {
-    action: result.action,
-    reason: result.reason,
-    decidedBy: "heredocs",
-    details: { commands: [], heredocs: result.heredoc },
+    commands: mergePolicies(defaultPolicy.commands, modePolicy.commands),
+    redirects: modePolicy.redirects ?? defaultPolicy.redirects,
+    heredocs: modePolicy.heredocs ?? defaultPolicy.heredocs,
+    wrappers: modePolicy.wrappers ?? defaultPolicy.wrappers,
   };
 }

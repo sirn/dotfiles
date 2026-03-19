@@ -19,16 +19,16 @@ import * as path from "node:path";
 import {
   analyze,
   compareActions,
-  normalizeShellPolicyConfig,
+  mergeEvaluationPolicies,
   normalizeUnifiedPolicyConfig,
   type Token,
-  type PolicyCommands,
   type WrapperRuleConfig,
   type RedirectPolicy,
   type HeredocPolicy,
   type Action,
   type CommandEvaluation,
   type ShellPolicyAnalysis,
+  type EvaluationPolicy,
 } from "../lib/shell-policy.js";
 
 // --- ANSI Colors ---
@@ -47,6 +47,7 @@ const WHT = "\x1b[37m"; // White for default
 interface CliArgs {
   policyPaths: string[]; // One or more policy files to evaluate
   commandParts: string[]; // Command as individual args (to be joined)
+  mode: string; // Always present, defaults to "edit"
 }
 
 // --- Helpers ---
@@ -57,19 +58,31 @@ function printUsage(): void {
   console.log();
   console.log("Options:");
   console.log(
-    "  -f, --file <path>  Use custom policy file (can be used multiple times)",
+    "  -f, --file <path>  Use custom policy file (default: ~/.pi/agent/policy.json)",
+  );
+  console.log(
+    "  -m, --mode <mode>  Evaluate with mode merged on top of default (default: edit)",
   );
   console.log(
     "  --                 End option parsing (useful if command starts with -)",
   );
   console.log();
-  console.log("Default behavior:");
-  console.log("  Evaluates against policy.json (default and plan modes)");
+  console.log("Description:");
+  console.log(
+    "  Evaluates shell commands against merged policy (default + mode).",
+  );
+  console.log(
+    "  This matches the runtime behavior of the shell-policy extension.",
+  );
   console.log();
   console.log("Examples:");
-  console.log(`  ${scriptName} curl https://example.com`);
-  console.log(`  ${scriptName} -f ./custom.json ls -la`);
-  console.log(`  ${scriptName} -- rm -rf /tmp/test`);
+  console.log(
+    `  ${scriptName} ls -la                    # Uses 'edit' mode (default only)`,
+  );
+  console.log(
+    `  ${scriptName} -m plan -- ls -la         # Merges plan mode on default`,
+  );
+  console.log(`  ${scriptName} -f ./policy.json -- rm -rf /tmp/test`);
 }
 
 const DEFAULT_POLICIES = ["~/.pi/agent/policy.json"];
@@ -83,6 +96,7 @@ function parseArgs(): CliArgs | null {
 
   const policyPaths: string[] = [];
   const commandParts: string[] = [];
+  let mode = "edit"; // Default mode
   let i = 0;
 
   // Parse options
@@ -93,6 +107,13 @@ function parseArgs(): CliArgs | null {
         return null;
       }
       policyPaths.push(args[i + 1]);
+      i += 2;
+    } else if (args[i] === "-m" || args[i] === "--mode") {
+      if (i + 1 >= args.length) {
+        console.error("Error: -m requires a mode name");
+        return null;
+      }
+      mode = args[i + 1];
       i += 2;
     } else if (args[i] === "--") {
       // Everything after -- is the command
@@ -122,6 +143,7 @@ function parseArgs(): CliArgs | null {
   return {
     policyPaths: expandedPaths,
     commandParts,
+    mode, // Always "edit" or user-specified
   };
 }
 
@@ -166,103 +188,117 @@ function formatAction(action: Action): string {
   return `${colors[action]}${icons[action]} ${action}${R}`;
 }
 
-// A single named policy entry (one per mode in unified format, or one for legacy)
-interface PolicyEntry {
-  name: string;
-  commands: PolicyCommands;
-  wrappers?: WrapperRuleConfig[];
-  redirects?: RedirectPolicy;
-  heredocs?: HeredocPolicy;
+// --- Merged Policy Loading ---
+
+// Load and merge policy for a specific mode
+interface MergedPolicyResult {
+  policyPath: string;
+  mode: string;
+  mergedPolicy: EvaluationPolicy;
+  error?: string;
 }
 
-// Load policy from JSON file; returns one entry per mode for unified format
-function loadPolicyEntries(jsonPath: string): PolicyEntry[] {
+function loadMergedPolicy(jsonPath: string, mode: string): MergedPolicyResult {
   const fullPath = path.resolve(jsonPath);
   if (!fs.existsSync(fullPath)) {
-    throw new Error(`Policy file not found: ${fullPath}`);
+    return {
+      policyPath: fullPath,
+      mode,
+      mergedPolicy: { commands: { allow: [], ask: [], deny: [] } },
+      error: `Policy file not found: ${fullPath}`,
+    };
   }
 
-  const content = fs.readFileSync(fullPath, "utf-8");
-  const raw = JSON.parse(content);
-
-  if ("default" in raw) {
-    // Unified format — expand into per-mode entries.
-    // Modes come first to match runtime evaluation order (plan-mode runs before safety-gate).
+  try {
+    const content = fs.readFileSync(fullPath, "utf-8");
+    const raw = JSON.parse(content);
     const unified = normalizeUnifiedPolicyConfig(raw);
-    const entries: PolicyEntry[] = [];
-    if (unified.modes) {
-      for (const [modeName, mode] of Object.entries(unified.modes)) {
-        entries.push({
-          name: modeName,
-          commands: mode.commands,
-          wrappers: mode.wrappers,
-          redirects: mode.redirects,
-          heredocs: mode.heredocs,
-        });
-      }
-    }
-    entries.push({
-      name: "default",
-      commands: unified.default.commands,
-      wrappers: unified.default.wrappers,
-      redirects: unified.default.redirects,
-      heredocs: unified.default.heredocs,
-    });
-    return entries;
-  }
 
-  // Legacy format
-  const normalized = normalizeShellPolicyConfig(
-    raw.commands ? raw : { commands: raw },
-  );
-  return [
-    {
-      name: path.basename(jsonPath, ".json"),
-      commands: normalized.commands,
-      wrappers: normalized.wrappers,
-    },
-  ];
+    // Get mode policy (undefined if mode is "edit" or doesn't exist)
+    const modePolicy =
+      mode !== "edit" && mode !== "default" ? unified.modes?.[mode] : undefined;
+
+    if (mode !== "edit" && mode !== "default" && !modePolicy) {
+      const availableModes = unified.modes
+        ? Object.keys(unified.modes).join(", ")
+        : "none";
+      return {
+        policyPath: fullPath,
+        mode,
+        mergedPolicy: { commands: unified.default.commands },
+        error: `Mode "${mode}" not found in ${path.basename(fullPath)}. Available modes: ${availableModes}`,
+      };
+    }
+
+    // Merge: default + mode (same as shell-policy.ts)
+    const merged = mergeEvaluationPolicies(unified.default, modePolicy);
+
+    return {
+      policyPath: fullPath,
+      mode,
+      mergedPolicy: merged,
+    };
+  } catch (e) {
+    return {
+      policyPath: fullPath,
+      mode,
+      mergedPolicy: { commands: { allow: [], ask: [], deny: [] } },
+      error: String(e),
+    };
+  }
 }
 
 // --- Multi-Policy Evaluation Types and Functions ---
 
 interface PolicyResult {
   policyPath: string;
-  entryName: string;
+  mode: string; // Track which mode was used
   analysis?: ShellPolicyAnalysis;
   error?: string;
 }
 
-function evaluatePolicy(policyPath: string, command: string): PolicyResult[] {
-  let entries: PolicyEntry[];
-  try {
-    entries = loadPolicyEntries(policyPath);
-  } catch (e) {
-    return [
-      {
-        policyPath,
-        entryName: path.basename(policyPath),
-        error: String(e),
-      },
-    ];
+function evaluateMergedPolicy(
+  policyPath: string,
+  command: string,
+  mode: string,
+): PolicyResult {
+  const loaded = loadMergedPolicy(policyPath, mode);
+
+  if (loaded.error) {
+    return {
+      policyPath,
+      mode,
+      error: loaded.error,
+    };
   }
 
-  return entries.map((entry) => ({
+  const analysis = analyze(command, loaded.mergedPolicy);
+
+  return {
     policyPath,
-    entryName: entry.name,
-    analysis: analyze(command, {
-      commands: entry.commands,
-      redirects: entry.redirects,
-      heredocs: entry.heredocs,
-      wrappers: entry.wrappers,
-    }),
-  }));
+    mode,
+    analysis,
+  };
 }
 
 // --- Main ---
 
 function printResults(results: PolicyResult[], showTokens: boolean): void {
-  const firstAnalysis = results.find((result) => result.analysis)?.analysis;
+  const firstResult = results[0];
+  if (!firstResult) {
+    console.log("No results to display.");
+    return;
+  }
+
+  // Show mode header
+  const modeDisplay =
+    firstResult.mode === "edit"
+      ? "edit (default only, no mode-specific rules)"
+      : `${firstResult.mode} (merged with default)`;
+  console.log(`${B}Mode:${R} ${modeDisplay}`);
+  console.log();
+
+  const firstAnalysis = results.find((r) => r.analysis)?.analysis;
   if (showTokens && firstAnalysis && firstAnalysis.tokens.length > 0) {
     console.log(`${B}Tokens:${R}`);
     for (let i = 0; i < firstAnalysis.tokens.length; i++) {
@@ -274,7 +310,7 @@ function printResults(results: PolicyResult[], showTokens: boolean): void {
   }
 
   for (const result of results) {
-    const displayName = `${path.basename(result.policyPath)} (${result.entryName})`;
+    const displayName = `${path.basename(result.policyPath)} (merged)`;
 
     if (result.error || !result.analysis) {
       console.log(`${B}${displayName}:${R} ${RED}Error: ${result.error}${R}`);
@@ -338,6 +374,7 @@ function printResults(results: PolicyResult[], showTokens: boolean): void {
     console.log();
   }
 
+  // Calculate overall from merged results
   let overall: Action = "default";
   for (const result of results) {
     if (
@@ -361,18 +398,18 @@ function main(): void {
   // Join command parts into full command string
   const command = args.commandParts.join(" ");
 
-  // Evaluate against all specified policies (each may expand into multiple results)
+  // Evaluate against merged policy for each policy file
   const results: PolicyResult[] = [];
   for (const policyPath of args.policyPaths) {
-    const policyResults = evaluatePolicy(policyPath, command);
-    results.push(...policyResults);
+    const result = evaluateMergedPolicy(policyPath, command, args.mode);
+    results.push(result);
   }
 
   // Check for errors
   const errors = results.filter((r) => r.error);
   if (errors.length > 0) {
     for (const err of errors) {
-      console.error(`${RED}Error loading ${err.policyPath}: ${err.error}${R}`);
+      console.error(`${RED}Error: ${err.error}${R}`);
     }
     if (errors.length === results.length) {
       process.exit(1);

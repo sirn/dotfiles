@@ -1,7 +1,7 @@
 /**
- * Safety Gate Extension for Pi Coding Agent
+ * Shell Policy Extension for Pi Coding Agent
  *
- * Loads command policies from safety-gate.json and enforces them via tool_call hooks.
+ * Loads command policies from policy.json and enforces them via tool_call hooks.
  * - allow: commands permitted without confirmation
  * - ask: commands requiring user confirmation
  * - deny: commands that are blocked entirely
@@ -11,16 +11,19 @@
  */
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import { getExecutionMode } from "../lib/execution-mode.js";
 import { readFileSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
+import path, { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   evaluate,
   mergePolicies,
+  mergeEvaluationPolicies,
   normalizeUnifiedPolicyConfig,
   normalizeShellPolicyConfig,
   getCommandSummary,
   type EvalResult,
+  type EvaluationPolicy,
   type PolicyCommands,
   type HeredocPolicy,
   type WrapperRuleConfig,
@@ -33,20 +36,22 @@ const globalConfigRaw = JSON.parse(
 );
 
 const globalUnified = normalizeUnifiedPolicyConfig(globalConfigRaw);
-const globalConfig: PolicyCommands = globalUnified.default.commands;
-const globalWrapperRules: WrapperRuleConfig[] =
-  globalUnified.default.wrappers ?? [];
-const globalHeredocPolicy: HeredocPolicy = globalUnified.default.heredocs ?? {
-  action: "ask",
-};
 
-// Project-local config, loaded lazily on first tool_call (cwd is static per session)
-let projectConfig: PolicyCommands | null = null;
-let projectWrapperRules: WrapperRuleConfig[] = [];
+// Project-local config, keyed by cwd for safe multi-project support
+interface ProjectPolicyCache {
+  commands: PolicyCommands;
+  wrappers: WrapperRuleConfig[];
+}
 
-function getProjectConfig(cwd: string): PolicyCommands {
-  if (projectConfig !== null) return projectConfig;
+const projectPolicyCache = new Map<string, ProjectPolicyCache>();
+
+function getProjectPolicy(cwd: string): ProjectPolicyCache {
+  const cached = projectPolicyCache.get(cwd);
+  if (cached) return cached;
+
   const policyPath = join(cwd, ".pi", "policy.json");
+  let commands: PolicyCommands = { allow: [], ask: [], deny: [] };
+  let wrappers: WrapperRuleConfig[] = [];
   if (existsSync(policyPath)) {
     try {
       const raw = JSON.parse(readFileSync(policyPath, "utf-8"));
@@ -54,16 +59,16 @@ function getProjectConfig(cwd: string): PolicyCommands {
         "default" in raw
           ? normalizeUnifiedPolicyConfig(raw).default
           : normalizeShellPolicyConfig(raw);
-      projectConfig = parsed.commands;
-      projectWrapperRules = parsed.wrappers ?? [];
-      return projectConfig;
+      commands = parsed.commands;
+      wrappers = parsed.wrappers ?? [];
     } catch {
       // fall through to empty policy
     }
   }
-  projectConfig = { allow: [], ask: [], deny: [] };
-  projectWrapperRules = [];
-  return projectConfig;
+
+  const result = { commands, wrappers };
+  projectPolicyCache.set(cwd, result);
+  return result;
 }
 
 async function confirmCommand(
@@ -113,18 +118,64 @@ function formatPolicyMatch(match: EvalResult["match"]): string {
 }
 
 export default function (pi: ExtensionAPI) {
+  function isPathAllowed(
+    toolName: string,
+    targetPath: string | undefined,
+    policyOverride: { write?: string[]; edit?: string[] } | undefined,
+  ): boolean {
+    if (!targetPath || !policyOverride) return false;
+    const allowedPaths =
+      toolName === "write" ? policyOverride.write : policyOverride.edit;
+    if (!allowedPaths) return false;
+    const resolvedTarget = path.resolve(targetPath);
+    return allowedPaths.some(
+      (allowedPath) => path.resolve(allowedPath) === resolvedTarget,
+    );
+  }
+
   pi.on("tool_call", async (event, ctx) => {
+    const { mode: currentMode, policyOverride } = getExecutionMode(ctx);
+    const modePolicy = globalUnified.modes?.[currentMode];
+
+    // --- Write/Edit tool blocking based on mode's tools config ---
+    if (event.toolName === "write" || event.toolName === "edit") {
+      if (modePolicy?.tools) {
+        const toolAllowed = modePolicy.tools[event.toolName] ?? true;
+        if (!toolAllowed) {
+          // Check if this path is explicitly allowed by policy override
+          const targetPath = event.input?.path as string | undefined;
+          if (isPathAllowed(event.toolName, targetPath, policyOverride)) {
+            return undefined; // Allow this specific path
+          }
+          return {
+            block: true,
+            reason: `Tool "${event.toolName}" blocked by "${currentMode}" mode policy`,
+          };
+        }
+      }
+      return undefined; // No opinion on write/edit otherwise
+    }
+
+    // --- Bash command evaluation ---
     if (event.toolName !== "bash") return undefined;
-
     if (typeof event.input?.command !== "string") return undefined;
-    const command = event.input.command;
-    const projectCommands = getProjectConfig(ctx.cwd);
 
-    const result = evaluate(command, {
-      commands: mergePolicies(globalConfig, projectCommands),
-      heredocs: globalHeredocPolicy,
-      wrappers: [...globalWrapperRules, ...projectWrapperRules],
-    });
+    const command = event.input.command;
+    const projectPolicy = getProjectPolicy(ctx.cwd);
+
+    // Merge: default + mode + project
+    const basePolicy = mergeEvaluationPolicies(
+      globalUnified.default,
+      modePolicy,
+    );
+    const mergedPolicy: EvaluationPolicy = {
+      commands: mergePolicies(basePolicy.commands!, projectPolicy.commands),
+      redirects: basePolicy.redirects,
+      heredocs: basePolicy.heredocs,
+      wrappers: [...(basePolicy.wrappers ?? []), ...projectPolicy.wrappers],
+    };
+
+    const result = evaluate(command, mergedPolicy);
 
     switch (result.action) {
       case "deny":

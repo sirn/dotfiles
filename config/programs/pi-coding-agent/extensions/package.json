@@ -5,8 +5,8 @@
   "type": "module",
   "pi": {
     "extensions": [
-      "./extensions/safety-gate.ts",
-      "./extensions/plan-mode.ts"
+      "./extensions/plan-mode.ts",
+      "./extensions/shell-policy.ts"
     ]
   }
 }
