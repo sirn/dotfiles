@@ -1186,6 +1186,10 @@ name = "setsid"
 kind = "utility-operand"
 
 [[default.commands.wrappers]]
+name = "command"
+kind = "utility-operand"
+
+[[default.commands.wrappers]]
 name = "env"
 kind = "env"
 
