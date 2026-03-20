@@ -270,7 +270,21 @@ in
   };
 
   home.file = lib.mkIf cfg.enable (
-    claudeSkillLinks
+    {
+      ".claude/keybindings.json".text = builtins.toJSON {
+        "$schema" = "https://www.schemastore.org/claude-code-keybindings.json";
+        "$docs" = "https://code.claude.com/docs/en/keybindings";
+        bindings = [
+          {
+            context = "Chat";
+            bindings = {
+              "ctrl+j" = "chat:newline";
+            };
+          }
+        ];
+      };
+    }
+    // claudeSkillLinks
     // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux (
       let
         arch = if pkgs.stdenv.hostPlatform.isx86_64 then "x64" else "arm64";
