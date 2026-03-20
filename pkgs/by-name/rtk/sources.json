@@ -1,21 +1,21 @@
 {
-  "version": "0.29.0",
+  "version": "0.31.0",
   "systems": {
     "aarch64-linux": {
-      "url": "https://github.com/rtk-ai/rtk/releases/download/v0.29.0/rtk-aarch64-unknown-linux-gnu.tar.gz",
-      "hash": "sha256-Edn9SbaN1tBb6VNChIIFm8ppt8AnCk/dl+XsHkdzqds="
+      "url": "https://github.com/rtk-ai/rtk/releases/download/v0.31.0/rtk-aarch64-unknown-linux-gnu.tar.gz",
+      "hash": "sha256-hgLh51ndfGfj5OtfGK6B7ceEBbpVqPsQxjj68TBv7pM="
     },
     "x86_64-linux": {
-      "url": "https://github.com/rtk-ai/rtk/releases/download/v0.29.0/rtk-x86_64-unknown-linux-musl.tar.gz",
-      "hash": "sha256-FxUUIt+JKO7OSmYlS5dNanJliCC+AMwaGKqHy3fP/Gg="
+      "url": "https://github.com/rtk-ai/rtk/releases/download/v0.31.0/rtk-x86_64-unknown-linux-musl.tar.gz",
+      "hash": "sha256-sBIRpwEecOJ0aTjn1rMXBTKIv49gaXS7uIk+nZ2EEek="
     },
     "x86_64-darwin": {
-      "url": "https://github.com/rtk-ai/rtk/releases/download/v0.29.0/rtk-x86_64-apple-darwin.tar.gz",
-      "hash": "sha256-YApQtj5T7/PIvB+94AmbcLG8dRi6ulDr2F/4yyVjS6Y="
+      "url": "https://github.com/rtk-ai/rtk/releases/download/v0.31.0/rtk-x86_64-apple-darwin.tar.gz",
+      "hash": "sha256-95uA3/a841ktDkIuaD7MBgpgafpYG7TGqYlhdHbV83g="
     },
     "aarch64-darwin": {
-      "url": "https://github.com/rtk-ai/rtk/releases/download/v0.29.0/rtk-aarch64-apple-darwin.tar.gz",
-      "hash": "sha256-N6pzwJ8EQ2AytMbvGOSG7zHl2Qy6NLGdLCujbnL6QHI="
+      "url": "https://github.com/rtk-ai/rtk/releases/download/v0.31.0/rtk-aarch64-apple-darwin.tar.gz",
+      "hash": "sha256-rx1ip1ZBXB6sRmuz8bDG5lh6JXTepX0vlJJLkezmQS0="
     }
   }
 }
