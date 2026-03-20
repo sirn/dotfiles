@@ -129,6 +129,10 @@ in
         "gemini-3.1-pro-preview"
         "gemini-3.1-flash-lite-preview"
       ];
+      retry = {
+        maxRetries = 10;
+        maxDelayMs = 0;
+      };
     };
 
     providers = {
@@ -456,14 +460,29 @@ in
       "tui.input.tab" = [ "tab" ];
 
       # Selection (for ctx.ui.select dialogs)
-      "tui.select.up" = [ "up" "ctrl+p" ];
-      "tui.select.down" = [ "down" "ctrl+n" ];
+      "tui.select.up" = [
+        "up"
+        "ctrl+p"
+      ];
+      "tui.select.down" = [
+        "down"
+        "ctrl+n"
+      ];
       "tui.select.confirm" = [ "enter" ];
-      "tui.select.cancel" = [ "escape" "ctrl+c" ];
+      "tui.select.cancel" = [
+        "escape"
+        "ctrl+c"
+      ];
 
       # Tree Navigation (session tree view)
-      "app.tree.foldOrUp" = [ "ctrl+left" "alt+left" ];
-      "app.tree.unfoldOrDown" = [ "ctrl+right" "alt+right" ];
+      "app.tree.foldOrUp" = [
+        "ctrl+left"
+        "alt+left"
+      ];
+      "app.tree.unfoldOrDown" = [
+        "ctrl+right"
+        "alt+right"
+      ];
 
       # Kill Ring (Emacs)
       "tui.editor.yank" = [ "ctrl+y" ];
