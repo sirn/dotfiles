@@ -62,14 +62,16 @@ let
       inherit (policy) tools commands paths;
 
       webFetchRules = map (d: "WebFetch(domain:${d})") (domainsPolicy.allowed or [ ]);
+      mkToolPerm =
+        tool: if cfg.sandbox.enabled && pkgs.stdenv.hostPlatform.isLinux then tool else "${tool}(**)";
       baseTools = [
         "Glob(*)"
         "Grep(*)"
-        "Read(**)"
+        (mkToolPerm "Read")
         "WebSearch"
       ]
-      ++ lib.optional tools.edit "Edit(**)"
-      ++ lib.optional tools.write "Write(**)"
+      ++ lib.optional tools.edit (mkToolPerm "Edit")
+      ++ lib.optional tools.write (mkToolPerm "Write")
       ++ webFetchRules;
 
       pathAllows = lib.optionals (!cfg.sandbox.enabled) (
