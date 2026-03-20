@@ -392,96 +392,96 @@ in
 
     keybindings = {
       # Cursor Movement (Emacs)
-      cursorUp = [
+      "tui.editor.cursorUp" = [
         "up"
         "ctrl+p"
       ];
-      cursorDown = [
+      "tui.editor.cursorDown" = [
         "down"
         "ctrl+n"
       ];
-      cursorLeft = [
+      "tui.editor.cursorLeft" = [
         "left"
         "ctrl+b"
       ];
-      cursorRight = [
+      "tui.editor.cursorRight" = [
         "right"
         "ctrl+f"
       ];
-      cursorWordLeft = [
+      "tui.editor.cursorWordLeft" = [
         "alt+left"
         "ctrl+left"
         "alt+b"
       ];
-      cursorWordRight = [
+      "tui.editor.cursorWordRight" = [
         "alt+right"
         "ctrl+right"
         "alt+f"
       ];
-      cursorLineStart = [
+      "tui.editor.cursorLineStart" = [
         "home"
         "ctrl+a"
       ];
-      cursorLineEnd = [
+      "tui.editor.cursorLineEnd" = [
         "end"
         "ctrl+e"
       ];
 
       # Deletion (Emacs)
-      deleteCharBackward = [
+      "tui.editor.deleteCharBackward" = [
         "backspace"
         "ctrl+h"
       ];
-      deleteCharForward = [
+      "tui.editor.deleteCharForward" = [
         "delete"
         "ctrl+d"
       ];
-      deleteWordBackward = [
+      "tui.editor.deleteWordBackward" = [
         "ctrl+w"
         "alt+backspace"
       ];
-      deleteWordForward = [
+      "tui.editor.deleteWordForward" = [
         "alt+d"
         "alt+delete"
       ];
-      deleteToLineStart = [ "ctrl+u" ];
-      deleteToLineEnd = [ "ctrl+k" ];
+      "tui.editor.deleteToLineStart" = [ "ctrl+u" ];
+      "tui.editor.deleteToLineEnd" = [ "ctrl+k" ];
 
       # Text Input
-      newLine = [
+      "tui.input.newLine" = [
         "shift+enter"
         "ctrl+j"
       ];
-      submit = [ "enter" ];
-      tab = [ "tab" ];
+      "tui.input.submit" = [ "enter" ];
+      "tui.input.tab" = [ "tab" ];
 
       # Kill Ring (Emacs)
-      yank = [ "ctrl+y" ];
-      yankPop = [ "alt+y" ];
-      undo = [
+      "tui.editor.yank" = [ "ctrl+y" ];
+      "tui.editor.yankPop" = [ "alt+y" ];
+      "tui.editor.undo" = [
         "ctrl+_"
         "ctrl+/"
       ];
 
       # Application
-      interrupt = [ "escape" ];
-      clear = [ "ctrl+c" ];
-      exit = [ "ctrl+d" ];
-      externalEditor = [ "ctrl+g" ];
+      "app.interrupt" = [ "escape" ];
+      "app.clear" = [ "ctrl+c" ];
+      "app.exit" = [ "ctrl+d" ];
+      "app.editor.external" = [ "ctrl+g" ];
 
-      # Session
-      selectModel = [ "ctrl+l" ];
-      cycleModelForward = [ "ctrl+period" ];
-      cycleModelBackward = [ "ctrl+comma" ];
-      cycleThinkingLevel = [ "shift+tab" ];
+      # Models and Thinking
+      "app.model.select" = [ "ctrl+l" ];
+      "app.model.cycleForward" = [ "ctrl+period" ];
+      "app.model.cycleBackward" = [ "ctrl+comma" ];
+      "app.thinking.cycle" = [ "shift+tab" ];
 
       # Display
-      expandTools = [ "ctrl+o" ];
-      toggleThinking = [ "ctrl+t" ];
+      "app.tools.expand" = [ "ctrl+o" ];
+      "app.thinking.toggle" = [ "ctrl+t" ];
 
       # Message Queue
-      followUp = [ "alt+enter" ];
-      dequeue = [ "alt+up" ];
+      "app.message.followUp" = [ "alt+enter" ];
+      "app.message.dequeue" = [ "alt+up" ];
     };
   };
 
