@@ -228,6 +228,7 @@ in
     rules = instructionText + ''
 
       ## Skill Execution (Subagent Enhancement)
+
       When executing a skill, if a `SUBAGENT.md` file exists alongside `SKILL.md` in the skill directory, read and follow `SUBAGENT.md` instead of `SKILL.md`. The subagent version uses specialized agents for higher-quality results.
     '';
 

@@ -17,27 +17,28 @@ let
 
   # Commands to ignore (not proxy commands)
   ignoreCommands = [
+    "cc-economics"
+    "config"
+    "deps"
+    "diff"
+    "discover"
+    "env"
     "err"
-    "test"
-    "summary"
-    "smart"
+    "gain"
+    "help"
+    "hook"
+    "hook-audit"
+    "init"
+    "json"
+    "learn"
+    "log"
     "proxy"
     "read"
-    "json"
-    "deps"
-    "env"
-    "log"
-    "gain"
-    "diff"
-    "init"
-    "discover"
-    "learn"
-    "verify"
-    "hook-audit"
     "rewrite"
-    "help"
-    "config"
-    "cc-economics"
+    "smart"
+    "summary"
+    "test"
+    "verify"
   ]
   ++ rtkConfig.hooks.exclude_commands;
 
@@ -52,7 +53,11 @@ let
         cat > $out << 'HEADER'
         ## RTK (Shell Output Optimization)
 
-        RTK (`rtk`) is available for compact shell output. Use `rtk --help` to see all available commands. The following commands are automatically rewritten by RTK and should NOT be additionally filtered/parsed with tail, head, jq, etc.:
+        RTK (`rtk`) is available for compact shell output. Use `rtk --help` to see all available commands.
+
+        ### Rewrite mode
+
+        The following commands are automatically rewritten by RTK (e.g. calling `ls` with bash tool will be automatically rewritten to use `rtk ls`) and should NOT be additionally filtered/parsed with `tail`, `head`, `jq`, etc. You do not typically need to call `rtk ...` on your own. If you MUST call the original command, use `command ...` (e.g. `command ls`):
 
         HEADER
 
