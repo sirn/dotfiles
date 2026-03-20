@@ -455,6 +455,16 @@ in
       "tui.input.submit" = [ "enter" ];
       "tui.input.tab" = [ "tab" ];
 
+      # Selection (for ctx.ui.select dialogs)
+      "tui.select.up" = [ "up" "ctrl+p" ];
+      "tui.select.down" = [ "down" "ctrl+n" ];
+      "tui.select.confirm" = [ "enter" ];
+      "tui.select.cancel" = [ "escape" "ctrl+c" ];
+
+      # Tree Navigation (session tree view)
+      "app.tree.foldOrUp" = [ "ctrl+left" "alt+left" ];
+      "app.tree.unfoldOrDown" = [ "ctrl+right" "alt+right" ];
+
       # Kill Ring (Emacs)
       "tui.editor.yank" = [ "ctrl+y" ];
       "tui.editor.yankPop" = [ "alt+y" ];
