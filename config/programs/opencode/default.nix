@@ -14,12 +14,47 @@ let
 
   permissionsPolicy = builtins.fromTOML (builtins.readFile ../../../var/agents/permissions.toml);
 
+  modelsData = builtins.fromTOML (builtins.readFile ../../../var/agents/models.toml);
+
   agentPermissionsPath = ../../../var/agents/permissions.opencode.toml;
   agentPermissions =
     if builtins.pathExists agentPermissionsPath then
       builtins.fromTOML (builtins.readFile agentPermissionsPath)
     else
       { };
+
+  # Transform TOML model to OpenCode format
+  toOpenCodeModel = m: {
+    id = m.id;
+    name = m.name;
+    family = m.family;
+    attachment = m.attachment;
+    reasoning = m.reasoning;
+    tool_call = m.tool_call;
+    temperature = m.temperature;
+    modalities = {
+      input = m.input;
+      output = [ "text" ];
+    };
+    limit = {
+      context = m.context_window;
+      output = m.max_tokens;
+    };
+    options = {
+      reasoningEffort = m.reasoning_effort;
+    };
+  };
+
+  # Build OpenCode provider config from models.toml (all providers use openai-compatible)
+  mkOpenCodeProvider = name: p: {
+    npm = "@ai-sdk/openai-compatible";
+    name = p.name;
+    options = {
+      baseURL = "${p.base_url}/v1";
+      apiKey = "{env:${p.env_var}}";
+    };
+    models = builtins.listToAttrs (map (m: lib.nameValuePair m.id (toOpenCodeModel m)) p.models);
+  };
 
   effectivePolicy =
     mode:
@@ -241,114 +276,7 @@ in
       };
       permission = toOpencodePermissions "build";
       tools = opencodeMcpPermissions;
-      provider = {
-        synthetic = {
-          models = {
-            "hf:moonshotai/Kimi-K2.5" = {
-              options = {
-                reasoningEffort = "medium";
-              };
-            };
-          };
-        };
-        fireworks-ai = {
-          models = {
-            "accounts/fireworks/routers/kimi-k2p5-turbo" = {
-              id = "accounts/fireworks/routers/kimi-k2p5-turbo";
-              name = "Kimi K2.5 Turbo (Developer Pass)";
-              family = "kimi";
-              attachment = false;
-              reasoning = true;
-              tool_call = true;
-              temperature = true;
-              modalities = {
-                input = [
-                  "text"
-                  "image"
-                ];
-                output = [ "text" ];
-              };
-              limit = {
-                context = 256000;
-                output = 256000;
-              };
-            };
-          };
-        };
-        openai = {
-          models = {
-            "gpt-5.4" = {
-              id = "gpt-5.4";
-              name = "GPT-5.4";
-              family = "openai";
-              attachment = false;
-              reasoning = true;
-              tool_call = true;
-              temperature = true;
-              modalities = {
-                input = [
-                  "text"
-                  "image"
-                ];
-                output = [ "text" ];
-              };
-              limit = {
-                context = 1050000;
-                output = 128000;
-              };
-              options = {
-                reasoningEffort = "medium";
-              };
-            };
-            "gpt-5.4-mini" = {
-              id = "gpt-5.4-mini";
-              name = "GPT-5.4 Mini";
-              family = "openai";
-              attachment = false;
-              reasoning = true;
-              tool_call = true;
-              temperature = true;
-              modalities = {
-                input = [
-                  "text"
-                  "image"
-                ];
-                output = [ "text" ];
-              };
-              limit = {
-                context = 400000;
-                output = 128000;
-              };
-              options = {
-                reasoningEffort = "medium";
-              };
-            };
-            "gpt-5.4-nano" = {
-              id = "gpt-5.4-nano";
-              name = "GPT-5.4 Nano";
-              family = "openai";
-              attachment = false;
-              reasoning = true;
-              tool_call = true;
-              temperature = true;
-              modalities = {
-                input = [
-                  "text"
-                  "image"
-                ];
-                output = [ "text" ];
-              };
-              limit = {
-                context = 400000;
-                output = 128000;
-              };
-              options = {
-                reasoningEffort = "high";
-              };
-            };
-          };
-        };
-      };
+      provider = lib.mkForce (lib.mapAttrs mkOpenCodeProvider modelsData.providers);
     };
   };
 
