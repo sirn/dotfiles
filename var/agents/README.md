@@ -75,7 +75,6 @@ These are for lookup only — do not "execute" them.
 
 ## Agent Categories
 
-- **Planners** (3): `opus-plan`, `gemini-plan`, `gpt-plan` — Read-only planning agents
 - **Researchers** (4): `code-researcher`, `code-debug-researcher`, `security-researcher`, `code-architect` — Analysis and research
 - **Reviewers** (3): `quality-reviewer`, `convention-reviewer`, `simplicity-reviewer` — Analysis-only reviewers
 
