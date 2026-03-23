@@ -9,8 +9,6 @@ let
   claudeCfg = config.programs.claude-code;
   piCfg = config.programs.pi-coding-agent;
   opencodeCfg = config.programs.opencode;
-  codexCfg = config.programs.codex;
-  geminiCfg = config.programs.gemini-cli;
 
   rtkBin = lib.getExe pkgs.local.rtk;
   tomlFormat = pkgs.formats.toml { };
@@ -144,9 +142,107 @@ in
     };
   };
 
-  programs.claude-code.memory.text = lib.mkIf claudeCfg.enable (lib.mkAfter rtkInstructionText);
-  programs.opencode.rules = lib.mkIf opencodeCfg.enable (lib.mkAfter rtkInstructionText);
-  programs.pi-coding-agent.instructionText = lib.mkIf piCfg.enable (lib.mkAfter rtkInstructionText);
-  programs.codex.custom-instructions = lib.mkIf codexCfg.enable (lib.mkAfter rtkInstructionText);
-  programs.gemini-cli.context.AGENTS = lib.mkIf geminiCfg.enable (lib.mkAfter rtkInstructionText);
+  agents.instructionText = lib.mkAfter rtkInstructionText;
+
+  # OpenCode evaluates permissions on the rewritten command (after tool.execute.before hook),
+  # not the original. These entries allow RTK-rewritten commands to pass permission checks.
+  # Deny/ask rules use substring mode and already match RTK-prefixed commands
+  # (e.g., "* git push *" matches "rtk git push origin main"), so only allow entries are needed.
+  #
+  # TODO: Remove once permission.ask plugin hook is implemented upstream:
+  # https://github.com/anomalyco/opencode/issues/7006
+  agents.permissions.default.commands.allow = lib.mkIf opencodeCfg.enable (
+    lib.mkAfter [
+      # cat/head/tail → rtk read
+      "rtk read"
+      # cargo → rtk cargo
+      "rtk cargo"
+      "rtk cargo check"
+      "rtk cargo clippy"
+      "rtk cargo fmt --check"
+      "rtk cargo test"
+      "rtk cargo tree"
+      # curl → rtk curl
+      "rtk curl"
+      # docker → rtk docker
+      "rtk docker images"
+      "rtk docker inspect"
+      "rtk docker ps"
+      "rtk docker ps -a"
+      # eslint → rtk lint
+      "rtk lint"
+      # find → rtk find
+      "rtk find"
+      # gh → rtk gh
+      "rtk gh api --method GET"
+      "rtk gh api -X GET"
+      "rtk gh cache list"
+      "rtk gh issue list"
+      "rtk gh issue status"
+      "rtk gh issue view"
+      "rtk gh pr checks"
+      "rtk gh pr diff"
+      "rtk gh pr list"
+      "rtk gh pr status"
+      "rtk gh pr view"
+      "rtk gh release list"
+      "rtk gh release view"
+      "rtk gh repo list"
+      "rtk gh repo view"
+      "rtk gh run list"
+      "rtk gh run view"
+      "rtk gh search code"
+      "rtk gh search commits"
+      "rtk gh search issues"
+      "rtk gh search prs"
+      "rtk gh search repos"
+      "rtk gh status"
+      "rtk gh workflow list"
+      "rtk gh workflow view"
+      # git → rtk git (only the specific allowed subcommands, not config/remote/rev-parse)
+      "rtk git branch"
+      "rtk git diff"
+      "rtk git log"
+      "rtk git status"
+      # go → rtk go (only build/test/vet, not fmt/mod)
+      "rtk go build"
+      "rtk go test"
+      "rtk go vet"
+      # golangci-lint → rtk golangci-lint
+      "rtk golangci-lint"
+      # grep/rg → rtk grep
+      "rtk grep"
+      # kubectl → rtk kubectl
+      "rtk kubectl describe"
+      "rtk kubectl get"
+      "rtk kubectl logs"
+      # ls → rtk ls
+      "rtk ls"
+      # mypy → rtk mypy
+      "rtk mypy"
+      # pip → rtk pip
+      "rtk pip freeze"
+      "rtk pip list"
+      # pnpm → rtk pnpm
+      "rtk pnpm list"
+      # prettier → rtk prettier
+      "rtk prettier --check"
+      # psql → rtk psql
+      "rtk psql --command=\\dt"
+      "rtk psql -c \\dt"
+      # pytest/python -m pytest → rtk pytest
+      "rtk pytest"
+      # ruff → rtk ruff
+      "rtk ruff"
+      "rtk ruff check"
+      "rtk ruff format --check"
+      # tree → rtk tree
+      "rtk tree"
+      # tsc → rtk tsc
+      "rtk tsc --noEmit"
+      "rtk tsc -p . --noEmit"
+      # wget → rtk wget
+      "rtk wget"
+    ]
+  );
 }

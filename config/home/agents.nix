@@ -1,5 +1,6 @@
 {
   imports = [
+    ../agents
     ../programs/claude-code
     ../programs/codex
     ../programs/gemini

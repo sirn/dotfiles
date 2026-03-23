@@ -1,5 +1,6 @@
 {
   imports = [
+    ./agents.nix
     ./flatpak.nix
     ./machine.nix
     ./programs/claude-code.nix

@@ -7,57 +7,14 @@
 
 let
   cfg = config.programs.gemini-cli;
+  agentsCfg = config.agents;
 
-  instructionText = builtins.readFile ../../../var/agents/instruction.md;
-
-  skillsDir = ../../../var/agents/skills;
-
-  permissionsPolicy = builtins.fromTOML (builtins.readFile ../../../var/agents/permissions.toml);
-
-  agentPermissionsPath = ../../../var/agents/permissions.gemini.toml;
-  agentPermissions =
-    if builtins.pathExists agentPermissionsPath then
-      builtins.fromTOML (builtins.readFile agentPermissionsPath)
-    else
-      { };
-
-  effectivePolicy =
-    mode:
-    let
-      default = permissionsPolicy.default or { };
-      modePolicy = permissionsPolicy.mode.${mode} or { };
-      mergeLists = lists: lib.unique (lib.concatLists (lib.filter (l: l != null) lists));
-      mergeCmds =
-        section:
-        let
-          defaultShell = (default.commands.${section} or { }).shell or [ ];
-          modeShell = ((modePolicy.commands or { }).${section} or { }).shell or [ ];
-          agentShell = (((agentPermissions.default or { }).commands or { }).${section} or { }).shell or [ ];
-        in
-        {
-          shell = mergeLists [
-            defaultShell
-            modeShell
-            agentShell
-          ];
-        };
-    in
-    {
-      tools = default.tools // (modePolicy.tools or { });
-      commands = {
-        allow = mergeCmds "allow";
-        ask = mergeCmds "ask";
-        deny = mergeCmds "deny";
-      };
-      paths = default.paths;
-    };
+  policy = agentsCfg.permissions.effective.build;
 
   tomlFormat = pkgs.formats.toml { };
 
   toGeminiPolicyRules =
-    mode:
     let
-      policy = effectivePolicy mode;
       inherit (policy) tools commands paths;
 
       globToRegex =
@@ -159,9 +116,9 @@ let
       decision = "allow";
       priority = 100;
     }
-    ++ (map (mkShellRule "allow" 150) (commands.allow.shell or [ ]))
-    ++ (map (mkShellRule "ask_user" 150) (commands.ask.shell or [ ]))
-    ++ (map (mkShellRule "deny" 150) (commands.deny.shell or [ ]))
+    ++ (map (mkShellRule "allow" 150) (commands.allow or [ ]))
+    ++ (map (mkShellRule "ask_user" 150) (commands.ask or [ ]))
+    ++ (map (mkShellRule "deny" 150) (commands.deny or [ ]))
     # We map path rules specifically for each tool
     ++ (lib.concatMap (glob: [
       (mkPathRule "deny" 200 "read_file" glob)
@@ -174,7 +131,7 @@ let
       (mkPathRule "allow" 250 "write_file" glob)
     ]) (paths.allow.read or [ ]));
 
-  policyRules = toGeminiPolicyRules "build";
+  policyRules = toGeminiPolicyRules;
   policyFile = tomlFormat.generate "gemini-policy.toml" { rule = policyRules; };
 
   isStdioServer = server: server ? command || server ? package;
@@ -198,9 +155,9 @@ let
 
   # Link individual skills rather than the entire directory,
   # allowing users to add custom skills alongside managed ones
-  skillsDirContents = builtins.readDir skillsDir;
+  skillsDirContents = builtins.readDir agentsCfg.skillsDir;
   skillDirs = lib.filterAttrs (_: type: type == "directory") skillsDirContents;
-  mkGeminiSkillLink = name: { ".gemini/skills/${name}".source = skillsDir + "/${name}"; };
+  mkGeminiSkillLink = name: { ".gemini/skills/${name}".source = agentsCfg.skillsDir + "/${name}"; };
   geminiSkillLinks = lib.foldl' (acc: name: acc // mkGeminiSkillLink name) { } (
     builtins.attrNames skillDirs
   );
@@ -224,7 +181,7 @@ in
     # TODO: switch to null, >25.11
     defaultModel = "";
 
-    context.AGENTS = instructionText;
+    context.AGENTS = agentsCfg.instructionText;
 
     settings = {
       mcpServers = toGeminiMcpServers config.programs.mcp.servers;

@@ -7,55 +7,12 @@
 
 let
   cfg = config.programs.codex;
+  agentsCfg = config.agents;
 
-  instructionText = builtins.readFile ../../../var/agents/instruction.md;
-
-  skillsDir = ../../../var/agents/skills;
-
-  permissionsPolicy = builtins.fromTOML (builtins.readFile ../../../var/agents/permissions.toml);
-
-  agentPermissionsPath = ../../../var/agents/permissions.codex.toml;
-  agentPermissions =
-    if builtins.pathExists agentPermissionsPath then
-      builtins.fromTOML (builtins.readFile agentPermissionsPath)
-    else
-      { };
-
-  effectivePolicy =
-    mode:
-    let
-      default = permissionsPolicy.default or { };
-      modePolicy = permissionsPolicy.mode.${mode} or { };
-      mergeLists = lists: lib.unique (lib.concatLists (lib.filter (l: l != null) lists));
-      mergeCmds =
-        section:
-        let
-          defaultShell = (default.commands.${section} or { }).shell or [ ];
-          modeShell = ((modePolicy.commands or { }).${section} or { }).shell or [ ];
-          agentShell = (((agentPermissions.default or { }).commands or { }).${section} or { }).shell or [ ];
-        in
-        {
-          shell = mergeLists [
-            defaultShell
-            modeShell
-            agentShell
-          ];
-        };
-    in
-    {
-      tools = default.tools // (modePolicy.tools or { });
-      commands = {
-        allow = mergeCmds "allow";
-        ask = mergeCmds "ask";
-        deny = mergeCmds "deny";
-      };
-      paths = default.paths;
-    };
+  policy = agentsCfg.permissions.effective.build;
 
   toCodexConfig =
-    mode:
     let
-      policy = effectivePolicy mode;
       inherit (policy) tools;
     in
     {
@@ -66,9 +23,7 @@ let
     };
 
   toCodexRules =
-    mode:
     let
-      policy = effectivePolicy mode;
       inherit (policy) commands;
       mkRule =
         decision: entry:
@@ -86,8 +41,8 @@ let
                 pattern = ["${lib.concatStringsSep ''", "'' (lib.splitString " " m)}"],
                 decision = "${decision}",
             )'';
-      forbiddenRules = map (mkRule "forbidden") (commands.deny.shell or [ ]);
-      promptRules = map (mkRule "prompt") (commands.ask.shell or [ ]);
+      forbiddenRules = map (mkRule "forbidden") (commands.deny or [ ]);
+      promptRules = map (mkRule "prompt") (commands.ask or [ ]);
     in
     lib.concatStringsSep "\n\n" (forbiddenRules ++ promptRules);
 
@@ -105,8 +60,8 @@ let
 
   tomlFormat = pkgs.formats.toml { };
 
-  codexConfig = toCodexConfig "build";
-  rulesContent = toCodexRules "build";
+  codexConfig = toCodexConfig;
+  rulesContent = toCodexRules;
 
   baseSettings = {
     inherit (codexConfig)
@@ -133,14 +88,14 @@ in
           -- "${lib.getExe pkgs.local.codex-bin}" "$@"
       ''
     );
-    custom-instructions = instructionText;
+    custom-instructions = agentsCfg.instructionText;
   };
 
   programs.git = {
     ignores = [ ".codex/" ];
   };
 
-  home.file.".codex/skills/home-manager".source = skillsDir;
+  home.file.".codex/skills/home-manager".source = agentsCfg.skillsDir;
   home.file.".codex/rules/default.rules".text = rulesContent;
 
   # Codex rewrites config.toml every time it's run in a new directory,

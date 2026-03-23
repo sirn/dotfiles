@@ -6,91 +6,47 @@
 }:
 
 let
-  instructionText = builtins.readFile ../../../var/agents/instruction.md;
-
-  skillsDir = ../../../var/agents/skills;
+  agentsCfg = config.agents;
 
   agentsDir = ../../../var/agents/agents;
 
-  permissionsPolicy = builtins.fromTOML (builtins.readFile ../../../var/agents/permissions.toml);
-
-  modelsData = builtins.fromTOML (builtins.readFile ../../../var/agents/models.toml);
-
-  agentPermissionsPath = ../../../var/agents/permissions.opencode.toml;
-  agentPermissions =
-    if builtins.pathExists agentPermissionsPath then
-      builtins.fromTOML (builtins.readFile agentPermissionsPath)
-    else
-      { };
-
-  # Transform TOML model to OpenCode format
+  # Transform module model to OpenCode format
   toOpenCodeModel = m: {
     id = m.id;
     name = m.name;
     family = m.family;
     attachment = m.attachment;
     reasoning = m.reasoning;
-    tool_call = m.tool_call;
+    tool_call = m.toolCall;
     temperature = m.temperature;
     modalities = {
       input = m.input;
       output = [ "text" ];
     };
     limit = {
-      context = m.context_window;
-      output = m.max_tokens;
+      context = m.contextWindow;
+      output = m.maxTokens;
     };
     options = {
-      reasoningEffort = m.reasoning_effort;
+      reasoningEffort = m.reasoningEffort;
     };
   };
 
-  # Build OpenCode provider config from models.toml (all providers use openai-compatible)
+  # Build OpenCode provider config from agents.models (all providers use openai-compatible)
   mkOpenCodeProvider = name: p: {
     npm = "@ai-sdk/openai-compatible";
     name = p.name;
     options = {
-      baseURL = "${p.base_url}/v1";
-      apiKey = "{env:${p.env_var}}";
+      baseURL = "${p.baseUrl}/v1";
+      apiKey = "{env:${p.envVar}}";
     };
     models = builtins.listToAttrs (map (m: lib.nameValuePair m.id (toOpenCodeModel m)) p.models);
   };
 
-  effectivePolicy =
-    mode:
-    let
-      default = permissionsPolicy.default or { };
-      modePolicy = permissionsPolicy.mode.${mode} or { };
-      mergeLists = lists: lib.unique (lib.concatLists (lib.filter (l: l != null) lists));
-      mergeCmds =
-        section:
-        let
-          defaultShell = (default.commands.${section} or { }).shell or [ ];
-          modeShell = ((modePolicy.commands or { }).${section} or { }).shell or [ ];
-          agentShell = (((agentPermissions.default or { }).commands or { }).${section} or { }).shell or [ ];
-        in
-        {
-          shell = mergeLists [
-            defaultShell
-            modeShell
-            agentShell
-          ];
-        };
-    in
-    {
-      tools = default.tools // (modePolicy.tools or { });
-      commands = {
-        allow = mergeCmds "allow";
-        ask = mergeCmds "ask";
-        deny = mergeCmds "deny";
-      };
-      paths = default.paths;
-    };
+  policy = agentsCfg.permissions.effective.build;
 
   toOpencodePermissions =
-    mode:
     let
-      policy = effectivePolicy mode;
       inherit (policy) tools commands paths;
 
       mkPathRules =
@@ -124,9 +80,9 @@ let
               }
               .${entry.mode or "prefix"}
             ) cmds;
-          allows = mkEntries "allow" (commands.allow.shell or [ ]);
-          asks = mkEntries "ask" (commands.ask.shell or [ ]);
-          denies = mkEntries "deny" (commands.deny.shell or [ ]);
+          allows = mkEntries "allow" (commands.allow or [ ]);
+          asks = mkEntries "ask" (commands.ask or [ ]);
+          denies = mkEntries "deny" (commands.deny or [ ]);
         in
         lib.listToAttrs (allows ++ asks ++ denies) // { "*" = "ask"; };
     in
@@ -141,51 +97,17 @@ let
       websearch = "allow";
     };
 
-  agentFiles = builtins.filter (name: lib.hasSuffix ".toml" name) (
-    builtins.attrNames (builtins.readDir agentsDir)
-  );
-
-  loadAgent =
-    tomlFile:
-    let
-      name = lib.removeSuffix ".toml" tomlFile;
-      agentConfig = builtins.fromTOML (builtins.readFile (agentsDir + "/${tomlFile}"));
-      prompt = builtins.readFile (agentsDir + "/${name}.md");
-      mode = agentConfig.mode or "plan";
-    in
-    {
-      inherit name;
-      value = agentConfig // {
-        inherit prompt mode;
-      };
-    };
-
-  agents = builtins.listToAttrs (map loadAgent agentFiles);
-
-  # Filter agents that have opencode configuration
-  opencodeAgents = lib.filterAttrs (name: agent: agent ? opencode) agents;
-
-  validateOpencodeAgent =
-    name: agent:
-    let
-      valid = if !(agent ? description) then throw "Agent ${name}: missing 'description'" else agent;
-    in
-    valid;
-
-  validOpencodeAgents = lib.mapAttrs validateOpencodeAgent opencodeAgents;
-
   mkOpencodeAgent =
     name: agent:
     let
-      isPrimary = (agent.opencode.primary or false);
-      modelLine = lib.optionalString (
-        isPrimary && agent.opencode ? model
-      ) "model: ${agent.opencode.model}\n";
-      modeVal = if !isPrimary then "subagent" else (agent.opencode.mode or "primary");
+      oc = agent.opencode;
+      isPrimary = (oc.primary or false);
+      modelLine = lib.optionalString (isPrimary && oc.model != "") "model: ${oc.model}\n";
+      modeVal = if !isPrimary then "subagent" else (oc.mode or "primary");
       modeLine = lib.optionalString (modeVal != "") "mode: ${modeVal}\n";
       permissionLine = lib.optionalString (
-        agent.opencode ? permission
-      ) "permission: ${builtins.toJSON agent.opencode.permission}\n";
+        oc.permission != null
+      ) "permission: ${builtins.toJSON oc.permission}\n";
     in
     ''
       ---
@@ -193,6 +115,13 @@ let
       ${modelLine}${modeLine}${permissionLine}---
       ${agent.prompt}
     '';
+
+  opencodeAgents = lib.filterAttrs (name: agent: agent.opencode != null) agentsCfg.subagents;
+
+  validateOpencodeAgent =
+    name: agent: if !(agent ? description) then throw "Agent ${name}: missing 'description'" else agent;
+
+  validOpencodeAgents = lib.mapAttrs validateOpencodeAgent opencodeAgents;
 
   isStdioServer = server: server ? command || server ? package;
 
@@ -260,7 +189,7 @@ in
     );
 
     agents = lib.mapAttrs mkOpencodeAgent validOpencodeAgents;
-    rules = instructionText + ''
+    rules = agentsCfg.instructionText + ''
 
       ## Skill Execution (Subagent Enhancement)
 
@@ -271,14 +200,14 @@ in
       theme = "system";
       mcp = toOpencodeMcpServers config.programs.mcp.servers;
       mode = {
-        plan.model = "fireworks-ai/accounts/fireworks/routers/kimi-k2p5-turbo";
-        build.model = "fireworks-ai/accounts/fireworks/routers/kimi-k2p5-turbo";
+        plan.model = "${agentsCfg.models.default.provider}/${agentsCfg.models.default.model}";
+        build.model = "${agentsCfg.models.default.provider}/${agentsCfg.models.default.model}";
       };
-      permission = toOpencodePermissions "build";
+      permission = toOpencodePermissions;
       tools = opencodeMcpPermissions;
-      provider = lib.mkForce (lib.mapAttrs mkOpenCodeProvider modelsData.providers);
+      provider = lib.mapAttrs mkOpenCodeProvider agentsCfg.models.providers;
     };
   };
 
-  xdg.configFile."opencode/skill/home-manager".source = skillsDir;
+  xdg.configFile."opencode/skill/home-manager".source = agentsCfg.skillsDir;
 }

@@ -7,61 +7,15 @@
 
 let
   cfg = config.programs.claude-code;
+  agentsCfg = config.agents;
 
-  instructionText = builtins.readFile ../../../var/agents/instruction.md;
-
-  skillsDir = ../../../var/agents/skills;
-
-  agentsDir = ../../../var/agents/agents;
-
-  permissionsPolicy = builtins.fromTOML (builtins.readFile ../../../var/agents/permissions.toml);
-  domainsPolicy = builtins.fromTOML (builtins.readFile ../../../var/agents/domains.toml);
-
-  agentPermissionsPath = ../../../var/agents/permissions.claude-code.toml;
-  agentPermissions =
-    if builtins.pathExists agentPermissionsPath then
-      builtins.fromTOML (builtins.readFile agentPermissionsPath)
-    else
-      { };
-
-  effectivePolicy =
-    mode:
-    let
-      default = permissionsPolicy.default or { };
-      modePolicy = permissionsPolicy.mode.${mode} or { };
-      mergeLists = lists: lib.unique (lib.concatLists (lib.filter (l: l != null) lists));
-      mergeCmds =
-        section:
-        let
-          defaultShell = (default.commands.${section} or { }).shell or [ ];
-          modeShell = ((modePolicy.commands or { }).${section} or { }).shell or [ ];
-          agentShell = (((agentPermissions.default or { }).commands or { }).${section} or { }).shell or [ ];
-        in
-        {
-          shell = mergeLists [
-            defaultShell
-            modeShell
-            agentShell
-          ];
-        };
-    in
-    {
-      tools = default.tools // (modePolicy.tools or { });
-      commands = {
-        allow = mergeCmds "allow";
-        ask = mergeCmds "ask";
-        deny = mergeCmds "deny";
-      };
-      paths = default.paths;
-    };
+  policy = agentsCfg.permissions.effective.build;
 
   toClaudePermissions =
-    mode:
     let
-      policy = effectivePolicy mode;
       inherit (policy) tools commands paths;
 
-      webFetchRules = map (d: "WebFetch(domain:${d})") (domainsPolicy.allowed or [ ]);
+      webFetchRules = map (d: "WebFetch(domain:${d})") agentsCfg.domains.allowed;
       mkToolPerm =
         tool: if cfg.sandbox.enabled && pkgs.stdenv.hostPlatform.isLinux then tool else "${tool}(**)";
       baseTools = [
@@ -101,11 +55,11 @@ let
           }
           .${entry.mode or "prefix"}
         ) cmds;
-      bashAllows = mkBashPatterns (commands.allow.shell or [ ]);
+      bashAllows = mkBashPatterns (commands.allow or [ ]);
       mcpAllows = claudeCodeMcpPermissions;
       allow = baseTools ++ pathAllows ++ bashAllows ++ mcpAllows;
 
-      ask = mkBashPatterns (commands.ask.shell or [ ]);
+      ask = mkBashPatterns (commands.ask or [ ]);
 
       pathDenies = lib.optionals (!cfg.sandbox.enabled) (
         map (p: "Read(${p})") (paths.deny.read or [ ])
@@ -113,48 +67,27 @@ let
         ++ lib.optionals tools.write (map (p: "Write(${p})") (paths.deny.write or [ ]))
       );
 
-      bashDenies = mkBashPatterns (commands.deny.shell or [ ]);
+      bashDenies = mkBashPatterns (commands.deny or [ ]);
       deny = pathDenies ++ bashDenies;
     in
     {
       inherit allow ask deny;
     };
 
-  agentFiles = builtins.filter (name: lib.hasSuffix ".toml" name) (
-    builtins.attrNames (builtins.readDir agentsDir)
-  );
-
-  loadAgent =
-    tomlFile:
-    let
-      name = lib.removeSuffix ".toml" tomlFile;
-      agentConfig = builtins.fromTOML (builtins.readFile (agentsDir + "/${tomlFile}"));
-      prompt = builtins.readFile (agentsDir + "/${name}.md");
-      mode = agentConfig.mode or "plan";
-    in
-    {
-      inherit name;
-      value = agentConfig // {
-        inherit prompt mode;
-      };
-    };
-
-  agents = builtins.listToAttrs (map loadAgent agentFiles);
-
-  # Filter agents that have claude-code configuration
-  claudeCodeAgents = lib.filterAttrs (name: agent: agent ? claude-code) agents;
+  claudeCodeAgents = lib.filterAttrs (name: agent: agent.claude-code != null) agentsCfg.subagents;
 
   validateClaudeCodeAgent =
     name: agent:
     let
+      cc = agent.claude-code;
       valid =
         if !(agent ? description) then
           throw "Agent ${name}: missing 'description'"
-        else if !(agent.claude-code ? allowedTools) then
+        else if !(cc ? allowedTools) then
           throw "Agent ${name}: missing 'claude-code.allowedTools'"
-        else if !(agent.claude-code ? color) then
+        else if !(cc ? color) then
           throw "Agent ${name}: missing 'claude-code.color'"
-        else if !(agent.claude-code ? model) then
+        else if !(cc ? model) then
           throw "Agent ${name}: missing 'claude-code.model'"
         else
           agent;
@@ -216,9 +149,9 @@ let
 
   # Link individual skills rather than the entire directory,
   # allowing users to add custom skills alongside managed ones
-  skillsDirContents = builtins.readDir skillsDir;
+  skillsDirContents = builtins.readDir agentsCfg.skillsDir;
   skillDirs = lib.filterAttrs (_: type: type == "directory") skillsDirContents;
-  mkClaudeSkillLink = name: { ".claude/skills/${name}".source = skillsDir + "/${name}"; };
+  mkClaudeSkillLink = name: { ".claude/skills/${name}".source = agentsCfg.skillsDir + "/${name}"; };
   claudeSkillLinks = lib.foldl' (acc: name: acc // mkClaudeSkillLink name) { } (
     builtins.attrNames skillDirs
   );
@@ -238,7 +171,7 @@ in
     );
 
     agents = lib.mapAttrs mkClaudeCodeAgent validClaudeCodeAgents;
-    memory.text = instructionText + ''
+    memory.text = agentsCfg.instructionText + ''
 
       ## Skill Execution (Subagent Enhancement)
 
@@ -256,7 +189,7 @@ in
         type = "command";
         command = lib.getExe statusLineScript;
       };
-      permissions = toClaudePermissions "build";
+      permissions = toClaudePermissions;
     };
   };
 

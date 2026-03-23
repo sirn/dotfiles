@@ -7,38 +7,30 @@
 
 let
   cfg = config.programs.pi-coding-agent;
+  agentsCfg = config.agents;
 
-  skillsDir = ../../../var/agents/skills;
-  instructionText = builtins.readFile ../../../var/agents/instruction.md;
-  permissionsToml = lib.importTOML ../../../var/agents/permissions.toml;
-  modelsData = builtins.fromTOML (builtins.readFile ../../../var/agents/models.toml);
-
-  agentPermissionsPath = ../../../var/agents/permissions.pi.toml;
-  agentPermissions =
-    if builtins.pathExists agentPermissionsPath then lib.importTOML agentPermissionsPath else { };
-
-  # Transform TOML model to Pi format (snake_case -> camelCase)
+  # Transform module model to Pi format
   toPiModel = m: {
     id = m.id;
     name = m.name;
     reasoning = m.reasoning;
     input = m.input;
-    contextWindow = m.context_window;
-    maxTokens = m.max_tokens;
+    contextWindow = m.contextWindow;
+    maxTokens = m.maxTokens;
     cost = {
-      input = m.cost_input;
-      output = m.cost_output;
-      cacheRead = m.cost_cache_read;
-      cacheWrite = m.cost_cache_write;
+      input = m.costInput;
+      output = m.costOutput;
+      cacheRead = m.costCacheRead;
+      cacheWrite = m.costCacheWrite;
     };
   };
 
-  # Build provider config from models.toml
+  # Build provider config from agents.models
   mkPiProvider = name: p: {
-    baseUrl = p.base_url;
-    apiKey = p.env_var;
+    baseUrl = p.baseUrl;
+    apiKey = p.envVar;
     api = p.api;
-    defaultThinkingLevel = p.reasoning_effort;
+    defaultThinkingLevel = p.reasoningEffort;
     models = map toPiModel p.models;
   };
 
@@ -50,7 +42,7 @@ let
   '';
 
   agentsMdText = ''
-    ${instructionText}
+    ${agentsCfg.instructionText}
     ## Safety Guidelines (Pi-specific)
 
     - When running destructive commands (`rm`, etc.), you must first ask the user.
@@ -58,49 +50,30 @@ let
     - Do not squash commit unless being told explicitly by the user.
   '';
 
+  perms = agentsCfg.permissions;
+
   # Generate unified policy JSON for all extensions
   policyJson = builtins.toJSON {
     default = {
       commands = {
-        allow =
-          permissionsToml.default.commands.allow.shell
-          ++ ((agentPermissions.default or { }).commands.allow.shell or [ ]);
-        ask =
-          permissionsToml.default.commands.ask.shell
-          ++ ((agentPermissions.default or { }).commands.ask.shell or [ ]);
-        deny =
-          permissionsToml.default.commands.deny.shell
-          ++ ((agentPermissions.default or { }).commands.deny.shell or [ ]);
+        allow = perms.default.commands.allow;
+        ask = perms.default.commands.ask;
+        deny = perms.default.commands.deny;
       };
-      wrappers = (permissionsToml.default.commands.wrappers or [ ]);
-      redirects = permissionsToml.default.redirects or { action = "allow"; };
-      heredocs = permissionsToml.default.heredocs or { action = "ask"; };
+      wrappers = perms.default.wrappers;
+      redirects = perms.default.redirects;
+      heredocs = perms.default.heredocs;
     };
     modes.plan = {
-      tools =
-        permissionsToml.mode.plan.tools or {
-          edit = false;
-          write = false;
-        };
+      tools = perms.modes.plan.tools;
       commands = {
-        deny = (permissionsToml.mode.plan.commands or { }).deny.shell or [ ];
-        ask = (permissionsToml.mode.plan.commands or { }).ask.shell or [ ];
-        allow = (permissionsToml.mode.plan.commands or { }).allow.shell or [ ];
+        deny = perms.modes.plan.commands.deny;
+        ask = perms.modes.plan.commands.ask;
+        allow = perms.modes.plan.commands.allow;
       };
-      wrappers =
-        (permissionsToml.default.commands.wrappers or [ ])
-        ++ (permissionsToml.mode.plan.commands.wrappers or [ ]);
-      redirects =
-        permissionsToml.mode.plan.redirects or {
-          action = "deny";
-          safeTargets = [
-            "/dev/null"
-            "/dev/stderr"
-            "/dev/stdout"
-          ];
-          allowFdDup = true;
-        };
-      heredocs = permissionsToml.mode.plan.heredocs or { action = "ask"; };
+      wrappers = perms.default.wrappers ++ perms.modes.plan.wrappers;
+      redirects = perms.modes.plan.redirects;
+      heredocs = perms.modes.plan.heredocs;
     };
   };
 
@@ -128,40 +101,20 @@ in
 
     settings = {
       quietStartup = true;
-      defaultProvider = "fireworks-ai";
-      defaultModel = "accounts/fireworks/routers/kimi-k2p5-turbo";
+      defaultProvider = agentsCfg.models.default.provider;
+      defaultModel = agentsCfg.models.default.model;
       defaultThinkingLevel = "high";
       hideThinkingBlock = false;
-      enabledModels = [
-        # Fireworks
-        "accounts/fireworks/models/*"
-        "accounts/fireworks/routers/*"
-
-        # Synthetic
-        "hf:zai-org/*"
-        "hf:moonshotai/*"
-        "hf:MiniMaxAI/*"
-
-        # Anthropic Claude
-        "claude-opus-4-6"
-        "claude-sonnet-4-6"
-
-        # OpenAI
-        "gpt-5.4"
-        "gpt-5.4-mini"
-        "gpt-5.4-nano"
-
-        # Google Gemini
-        "gemini-3.1-pro-preview"
-        "gemini-3.1-flash-lite-preview"
-      ];
+      enabledModels = lib.concatMap (p: map (m: m.id) p.models) (
+        builtins.attrValues agentsCfg.models.providers
+      );
       retry = {
         maxRetries = 10;
         maxDelayMs = 0;
       };
     };
 
-    providers = lib.mkForce (lib.mapAttrs mkPiProvider modelsData.providers);
+    providers = lib.mapAttrs mkPiProvider agentsCfg.models.providers;
 
     keybindings = {
       # Cursor Movement (Emacs)
@@ -284,7 +237,7 @@ in
   };
 
   home.file = {
-    ".pi/agent/skills/home-manager".source = skillsDir;
+    ".pi/agent/skills/home-manager".source = agentsCfg.skillsDir;
     ".pi/agent/extensions/home-manager".source = "${bundledAgent}/extensions/home-manager";
     ".pi/agent/policy.json".source = "${bundledAgent}/policy.json";
   };
