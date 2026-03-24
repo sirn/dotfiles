@@ -363,6 +363,7 @@
         "doas"
         "sudo"
         "systemctl"
+        "find /nix/store"
       ];
 
       wrappers = [
