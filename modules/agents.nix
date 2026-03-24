@@ -122,6 +122,19 @@ let
         type = lib.types.str;
         default = "medium";
       };
+      compatibility = lib.mkOption {
+        type = lib.types.submodule {
+          options = {
+            developerRole = lib.mkOption {
+              type = lib.types.bool;
+              default = true;
+              description = "Whether the provider supports the developer role (vs system).";
+            };
+          };
+        };
+        default = { };
+        description = "Provider compatibility flags consumed by tools that need them.";
+      };
       models = lib.mkOption {
         type = lib.types.listOf modelType;
         default = [ ];

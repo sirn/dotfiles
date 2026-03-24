@@ -26,13 +26,17 @@ let
   };
 
   # Build provider config from agents.models
-  mkPiProvider = name: p: {
-    baseUrl = p.baseUrl;
-    apiKey = p.envVar;
-    api = p.api;
-    defaultThinkingLevel = p.reasoningEffort;
-    models = map toPiModel p.models;
-  };
+  mkPiProvider = name: p:
+    {
+      baseUrl = p.baseUrl;
+      apiKey = p.envVar;
+      api = p.api;
+      defaultThinkingLevel = p.reasoningEffort;
+      models = map toPiModel p.models;
+    }
+    // lib.optionalAttrs (!p.compatibility.developerRole) {
+      compat.supportsDeveloperRole = false;
+    };
 
   wrappedPi = pkgs.writeScriptBin "pi" ''
     #!${pkgs.runtimeShell}
