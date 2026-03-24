@@ -10,20 +10,23 @@ let
   agentsCfg = config.agents;
 
   # Transform module model to Pi format
-  toPiModel = m: {
-    id = m.id;
-    name = m.name;
-    reasoning = m.reasoning;
-    input = m.input;
-    contextWindow = m.contextWindow;
-    maxTokens = m.maxTokens;
-    cost = {
-      input = m.costInput;
-      output = m.costOutput;
-      cacheRead = m.costCacheRead;
-      cacheWrite = m.costCacheWrite;
-    };
-  };
+  toPiModel =
+    m:
+    {
+      id = m.id;
+      name = m.name;
+      reasoning = m.reasoning;
+      input = m.input;
+      contextWindow = m.contextWindow;
+      maxTokens = m.maxTokens;
+      cost = {
+        input = m.costInput;
+        output = m.costOutput;
+        cacheRead = m.costCacheRead;
+        cacheWrite = m.costCacheWrite;
+      };
+    }
+    // lib.optionalAttrs (m.api != null) { api = m.api; };
 
   # Build provider config from agents.models
   mkPiProvider = name: p:

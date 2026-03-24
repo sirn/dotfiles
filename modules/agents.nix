@@ -65,6 +65,11 @@ let
   modelType = lib.types.submodule {
     options = {
       id = lib.mkOption { type = lib.types.str; };
+      api = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "API type override for this model (defaults to provider's api).";
+      };
       name = lib.mkOption { type = lib.types.str; };
       family = lib.mkOption { type = lib.types.str; };
       reasoning = lib.mkOption {
