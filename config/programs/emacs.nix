@@ -159,12 +159,12 @@ in
         el-patch
         general
         no-littering
-        pkgs.local.emacsPackages.sqlite3
+        pkgs.emacsPackages.sqlite3
         s
         use-package
 
         # AI packages
-        pi-coding-agent
+        pkgs.unstable.emacsPackages.pi-coding-agent
         pkgs.local.emacsPackages.phscroll
 
         # Org packages

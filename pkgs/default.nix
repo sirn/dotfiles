@@ -11,7 +11,6 @@ in
     ;
 
   emacsPackages = {
-    sqlite3 = (callPackage ./by-name/emacs/elisp-packages/sqlite3/package.nix { });
     phscroll = (callPackage ./by-name/emacs/elisp-packages/phscroll/package.nix { });
   };
 
