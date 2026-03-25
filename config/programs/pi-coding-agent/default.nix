@@ -42,6 +42,7 @@ let
 
   wrappedPi = pkgs.writeScriptBin "pi" ''
     #!${pkgs.runtimeShell}
+    export PI_SKIP_VERSION_CHECK=1
     exec "${lib.getExe pkgs.local.envWrapper}" \
       -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
       -- "${lib.getExe pkgs.unstable.pi-coding-agent}" "$@"
