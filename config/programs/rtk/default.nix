@@ -10,7 +10,7 @@ let
   piCfg = config.programs.pi-coding-agent;
   opencodeCfg = config.programs.opencode;
 
-  rtkBin = lib.getExe pkgs.local.rtk;
+  rtkBin = lib.getExe pkgs.unstable.rtk;
   tomlFormat = pkgs.formats.toml { };
 
   # Commands to ignore (not proxy commands)
@@ -44,7 +44,7 @@ let
   rtkInstructionTextFile =
     pkgs.runCommand "rtk-instructions.md"
       {
-        nativeBuildInputs = [ pkgs.local.rtk ];
+        nativeBuildInputs = [ pkgs.unstable.rtk ];
         ignore = lib.concatStringsSep " " ignoreCommands;
       }
       ''
@@ -90,7 +90,7 @@ let
     name = "rtk-rewrite-claude";
     runtimeInputs = [
       pkgs.jq
-      pkgs.local.rtk
+      pkgs.unstable.rtk
     ];
     text = builtins.readFile ./rtk-rewrite-claude.sh;
   };
@@ -110,7 +110,7 @@ let
   };
 in
 {
-  home.packages = [ pkgs.local.rtk ];
+  home.packages = [ pkgs.unstable.rtk ];
 
   home.file = {
     "Library/Application Support/rtk/config.toml" = lib.mkIf pkgs.stdenv.isDarwin {

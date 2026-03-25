@@ -29,7 +29,8 @@ let
     // lib.optionalAttrs (m.api != null) { api = m.api; };
 
   # Build provider config from agents.models
-  mkPiProvider = name: p:
+  mkPiProvider =
+    name: p:
     {
       baseUrl = p.baseUrl;
       apiKey = p.envVar;
@@ -37,15 +38,13 @@ let
       defaultThinkingLevel = p.reasoningEffort;
       models = map toPiModel p.models;
     }
-    // lib.optionalAttrs (!p.compatibility.developerRole) {
-      compat.supportsDeveloperRole = false;
-    };
+    // lib.optionalAttrs (!p.compatibility.developerRole) { compat.supportsDeveloperRole = false; };
 
   wrappedPi = pkgs.writeScriptBin "pi" ''
     #!${pkgs.runtimeShell}
     exec "${lib.getExe pkgs.local.envWrapper}" \
       -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
-      -- "${lib.getExe pkgs.local.pi-coding-agent-bin}" "$@"
+      -- "${lib.getExe pkgs.unstable.pi-coding-agent}" "$@"
   '';
 
   agentsMdText = ''

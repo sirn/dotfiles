@@ -23,17 +23,5 @@ in
 
   repoman = (callPackage ./by-name/repoman/package.nix { });
 
-  claude-code-bin = (callPackage ./by-name/claude-code-bin/package.nix { });
-
   claude-code-seccomp = (callPackage ./by-name/claude-code-seccomp/package.nix { });
-
-  codex-bin = (callPackage ./by-name/codex-bin/package.nix { });
-
-  gemini-cli-bin = (callPackage ./by-name/gemini-cli-bin/package.nix { });
-
-  opencode-bin = (callPackage ./by-name/opencode-bin/package.nix { });
-
-  pi-coding-agent-bin = (callPackage ./by-name/pi-coding-agent-bin/package.nix { });
-
-  rtk = (callPackage ./by-name/rtk/package.nix { });
 }
