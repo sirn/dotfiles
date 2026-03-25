@@ -40,12 +40,16 @@ let
     }
     // lib.optionalAttrs (!p.compatibility.developerRole) { compat.supportsDeveloperRole = false; };
 
+  piPackage = pkgs.unstable.pi-coding-agent;
+  piVersion = piPackage.version or "0.0.0";
+  isPi061orLater = lib.versionAtLeast piVersion "0.61.0";
+
   wrappedPi = pkgs.writeScriptBin "pi" ''
     #!${pkgs.runtimeShell}
     export PI_SKIP_VERSION_CHECK=1
     exec "${lib.getExe pkgs.local.envWrapper}" \
       -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
-      -- "${lib.getExe pkgs.unstable.pi-coding-agent}" "$@"
+      -- "${lib.getExe piPackage}" "$@"
   '';
 
   agentsMdText = ''
@@ -95,10 +99,21 @@ let
     mkdir -p $out/extensions/home-manager
     cp -r ${./extensions}/. $out/extensions/home-manager/
     cp ${policyJsonFile} $out/policy.json
-  '';
 
+    # Substitute keybinding names based on Pi version
+    ${lib.optionalString (!isPi061orLater) ''
+      substituteInPlace $out/extensions/home-manager/extensions/plan-mode.ts \
+        --replace-fail '"__KEYBINDING_EXPAND_TOOLS__"' '"expandTools"'
+    ''}
+    ${lib.optionalString isPi061orLater ''
+      substituteInPlace $out/extensions/home-manager/extensions/plan-mode.ts \
+        --replace-fail '"__KEYBINDING_EXPAND_TOOLS__"' '"app.tools.expand"'
+    ''}
+  '';
 in
 {
+  imports = [ ./keybindings.nix ];
+
   programs.pi-coding-agent = {
     enable = true;
 
@@ -122,130 +137,16 @@ in
     };
 
     providers = lib.mapAttrs mkPiProvider agentsCfg.models.providers;
-
-    keybindings = {
-      # Cursor Movement (Emacs)
-      "tui.editor.cursorUp" = [
-        "up"
-        "ctrl+p"
-      ];
-      "tui.editor.cursorDown" = [
-        "down"
-        "ctrl+n"
-      ];
-      "tui.editor.cursorLeft" = [
-        "left"
-        "ctrl+b"
-      ];
-      "tui.editor.cursorRight" = [
-        "right"
-        "ctrl+f"
-      ];
-      "tui.editor.cursorWordLeft" = [
-        "alt+left"
-        "ctrl+left"
-        "alt+b"
-      ];
-      "tui.editor.cursorWordRight" = [
-        "alt+right"
-        "ctrl+right"
-        "alt+f"
-      ];
-      "tui.editor.cursorLineStart" = [
-        "home"
-        "ctrl+a"
-      ];
-      "tui.editor.cursorLineEnd" = [
-        "end"
-        "ctrl+e"
-      ];
-
-      # Deletion (Emacs)
-      "tui.editor.deleteCharBackward" = [
-        "backspace"
-        "ctrl+h"
-      ];
-      "tui.editor.deleteCharForward" = [
-        "delete"
-        "ctrl+d"
-      ];
-      "tui.editor.deleteWordBackward" = [
-        "ctrl+w"
-        "alt+backspace"
-      ];
-      "tui.editor.deleteWordForward" = [
-        "alt+d"
-        "alt+delete"
-      ];
-      "tui.editor.deleteToLineStart" = [ "ctrl+u" ];
-      "tui.editor.deleteToLineEnd" = [ "ctrl+k" ];
-
-      # Text Input
-      "tui.input.newLine" = [
-        "shift+enter"
-        "ctrl+j"
-      ];
-      "tui.input.submit" = [ "enter" ];
-      "tui.input.tab" = [ "tab" ];
-
-      # Selection (for ctx.ui.select dialogs)
-      "tui.select.up" = [
-        "up"
-        "ctrl+p"
-      ];
-      "tui.select.down" = [
-        "down"
-        "ctrl+n"
-      ];
-      "tui.select.confirm" = [ "enter" ];
-      "tui.select.cancel" = [
-        "escape"
-        "ctrl+c"
-      ];
-
-      # Tree Navigation (session tree view)
-      "app.tree.foldOrUp" = [
-        "ctrl+left"
-        "alt+left"
-      ];
-      "app.tree.unfoldOrDown" = [
-        "ctrl+right"
-        "alt+right"
-      ];
-
-      # Kill Ring (Emacs)
-      "tui.editor.yank" = [ "ctrl+y" ];
-      "tui.editor.yankPop" = [ "alt+y" ];
-      "tui.editor.undo" = [
-        "ctrl+_"
-        "ctrl+/"
-      ];
-
-      # Application
-      "app.interrupt" = [ "escape" ];
-      "app.clear" = [ "ctrl+c" ];
-      "app.exit" = [ "ctrl+d" ];
-      "app.editor.external" = [ "ctrl+g" ];
-
-      # Models and Thinking
-      "app.model.select" = [ "ctrl+l" ];
-      "app.model.cycleForward" = [ "ctrl+period" ];
-      "app.model.cycleBackward" = [ "ctrl+comma" ];
-      "app.thinking.cycle" = [ "shift+tab" ];
-
-      # Display
-      "app.tools.expand" = [ "ctrl+o" ];
-      "app.thinking.toggle" = [ "ctrl+t" ];
-
-      # Message Queue
-      "app.message.followUp" = [ "alt+enter" ];
-      "app.message.dequeue" = [ "alt+up" ];
-    };
   };
 
   home.file = {
     ".pi/agent/skills/home-manager".source = agentsCfg.skillsDir;
     ".pi/agent/extensions/home-manager".source = "${bundledAgent}/extensions/home-manager";
     ".pi/agent/policy.json".source = "${bundledAgent}/policy.json";
+  };
+
+  # Pass the version check to the keybindings module
+  _module.args = {
+    inherit isPi061orLater;
   };
 }

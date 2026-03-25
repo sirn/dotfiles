@@ -83,7 +83,7 @@ export default function (pi: ExtensionAPI) {
         box.addChild(new Spacer(1));
         box.addChild(
           new Text(
-            theme.fg("muted", `(${keyHint("app.tools.expand", "to expand")})`),
+            theme.fg("muted", `(${keyHint("__KEYBINDING_EXPAND_TOOLS__", "to expand")})`),
             0,
             0,
           ),
