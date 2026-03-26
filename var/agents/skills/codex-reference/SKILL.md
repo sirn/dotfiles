@@ -25,7 +25,11 @@ Use Codex when you need:
   - `brave-search`: Web search (Brave).
 - **Specialty**: High-speed code generation and review. Good for "apply this change" tasks.
 
-## Calling from Another Agent
+## Non-Interactive Mode
+
+For batch or programmatic use, invoke Codex with JSONL output and explicit session management.
+
+### Calling from Another Agent
 
 Use `codex exec` to spawn Codex as a sub-agent:
 
@@ -415,3 +419,102 @@ echo "$output" | grep '"type":"error"' | jq -r '.error.message'
 # Filter specific item types (command_execution, file_change, etc.)
 echo "$output" | grep '"type":"item.completed"' | jq 'select(.item.type == "file_change")'
 ```
+
+---
+
+## Interactive Mode
+
+Codex starts in interactive mode by default — run `codex` with no subcommand. To drive Codex from another agent via tmux, see the **tmux** skill.
+
+### Launching
+
+```bash
+# Default interactive session
+codex
+
+# With a starting prompt (stays interactive)
+codex "Fix the linting errors in src/"
+
+# Full-auto mode (workspace-write + on-request approval)
+codex --full-auto
+
+# With specific sandbox and approval settings
+codex --sandbox workspace-write --ask-for-approval on-request
+
+# Inline mode for terminal multiplexers (disables alternate screen)
+codex --no-alt-screen
+
+# Enable web search
+codex --search
+```
+
+**Sandbox Policies for Interactive Use:**
+
+| Mode                 | Description                                     |
+| -------------------- | ----------------------------------------------- |
+| `read-only`          | **Default.** Cannot modify files or network     |
+| `workspace-write`    | Can edit files in the workspace                 |
+| `danger-full-access` | Full system access (isolated environments only) |
+
+**Approval Policies:**
+
+| Mode         | Description                                |
+| ------------ | ------------------------------------------ |
+| `untrusted`  | Only "trusted" commands run without asking |
+| `on-request` | Model decides when to ask for approval     |
+| `on-failure` | Ask only when command fails (deprecated)   |
+| `never`      | Never ask for approval                     |
+
+### Session Resume
+
+Resume previous interactive sessions:
+
+```bash
+# Open interactive session picker
+codex resume
+
+# Resume a specific session by UUID or thread name
+codex resume "$SESSION_ID"
+codex resume "auth-refactor"
+
+# Resume the most recent session
+codex resume --last
+
+# Resume most recent from any directory
+codex resume --last --all
+
+# Resume with an additional prompt
+codex resume --last "Continue where you left off"
+
+# Fork a previous session (new session, same history)
+codex fork
+
+# Fork a specific session by ID
+codex fork "$SESSION_ID"
+codex fork --last
+
+# Fork from any directory's recent sessions
+codex fork --last --all
+```
+
+**Tips:**
+
+- Session IDs are UUIDs; thread names are human-readable identifiers.
+- `--last` always picks the most recent session in the current directory unless `--all` is added.
+- `codex fork` creates a new session branching from the original conversation.
+
+### Model Selection
+
+Override the model for the interactive session:
+
+```bash
+# Use a specific model
+codex --model o3
+codex --model o4-mini
+codex --model codex-mini
+
+# Via config override
+codex -c model="o3"
+```
+
+The default model is configured in `~/.codex/config.toml`. Use `-m` to override per-session.

@@ -25,7 +25,11 @@ Use Gemini when you need:
   - `brave-search`: Web search (Brave).
 - **Specialty**: General purpose, large context window.
 
-## Calling from Another Agent
+## Non-Interactive Mode
+
+For batch or programmatic use, invoke Gemini with JSON output and explicit session management.
+
+### Calling from Another Agent
 
 Use `gemini "prompt"` to spawn Gemini as a sub-agent:
 
@@ -385,3 +389,100 @@ gemini "Extract project metadata from @package.json" \
   -o /tmp/result.json \
   --output-format json
 ```
+
+---
+
+## Interactive Mode
+
+Gemini starts in interactive mode by default — run `gemini` with no `-p` flag. To drive Gemini from another agent via tmux, see the **tmux** skill.
+
+### Launching
+
+```bash
+# Default interactive session
+gemini
+
+# With a starting prompt (stays interactive)
+gemini "Explore @src/ and explain the architecture"
+
+# Execute a prompt then continue interactively
+gemini -i "Analyze @src/auth/ for vulnerabilities"
+
+# YOLO mode (auto-approve all actions) — deprecated, use --approval-mode=yolo
+gemini --yolo
+
+# Preferred: use --approval-mode instead
+gemini --approval-mode yolo
+
+# With specific approval mode
+gemini --approval-mode auto_edit
+
+# Sandboxed
+gemini --sandbox
+
+# With additional workspace directories
+gemini --include-directories ../shared-lib,../common
+```
+
+**Approval Modes for Interactive Use:**
+
+| Mode        | Description                                                          |
+| ----------- | -------------------------------------------------------------------- |
+| `default`   | Prompt for permission on sensitive actions                           |
+| `auto_edit` | Automatically approve file edits only                                |
+| `yolo`      | Auto-approve all tool actions                                        |
+| `plan`      | Read-only exploration mode (experimental, requires planning support) |
+
+### Session Resume
+
+Resume previous interactive sessions:
+
+```bash
+# Resume most recent session
+gemini --resume latest
+
+# Resume by session index number
+gemini --resume 5
+
+# Resume a specific session by ID
+gemini --resume "$SESSION_ID"
+
+# List available sessions for the current project
+gemini --list-sessions
+
+# Delete a session by index
+gemini --delete-session 3
+```
+
+**Tips:**
+
+- Use `--list-sessions` to see available sessions before resuming.
+- Session indices are project-scoped — the same index refers to different sessions in different directories.
+- `--resume latest` always picks the most recent session in the current project.
+
+### Model Selection
+
+Select a model for the interactive session:
+
+```bash
+# Quick analysis
+gemini --model flash
+
+# Complex reasoning
+gemini --model pro
+
+# Fastest for simple tasks
+gemini --model flash-lite
+
+# Let Gemini decide
+gemini --model auto
+```
+
+**Available Models:**
+
+| Alias        | Description                                                 |
+| ------------ | ----------------------------------------------------------- |
+| `auto`       | **Default.** Resolves to preview model if enabled, else pro |
+| `pro`        | Complex reasoning tasks                                     |
+| `flash`      | Fast, balanced for most tasks                               |
+| `flash-lite` | Fastest for simple tasks                                    |

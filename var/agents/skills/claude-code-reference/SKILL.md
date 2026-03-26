@@ -26,7 +26,11 @@ Use Claude Code when you need:
   - `brave-search`: Web search (Brave).
 - **Specialty**: Excellent at planning, reasoning, and complex refactoring. Uses `opusplan` model.
 
-## Calling from Another Agent
+## Non-Interactive Mode
+
+For batch or programmatic use, invoke Claude Code with JSON output and explicit session management.
+
+### Calling from Another Agent
 
 Use `claude -p "prompt"` to spawn Claude as a sub-agent for delegated tasks:
 
@@ -314,3 +318,105 @@ echo "$response"
 # 8. Clean up
 rm -rf tmp
 ```
+
+---
+
+## Interactive Mode
+
+Claude Code starts in interactive mode by default — run `claude` with no `-p` flag. To drive Claude Code from another agent via tmux, see the **tmux** skill.
+
+### Launching
+
+```bash
+# Default interactive session
+claude
+
+# With specific permission mode
+claude --permission-mode acceptEdits
+
+# With a starting prompt (stays interactive)
+claude "Explore @src/ and explain the architecture"
+
+# With allowed tools pre-configured
+claude --allowedTools "Read,Edit,Bash(git *)"
+```
+
+**Permission Modes for Interactive Use:**
+
+| Mode                | Description                                |
+| ------------------- | ------------------------------------------ |
+| `default`           | Prompt for permission on sensitive actions |
+| `acceptEdits`       | Automatically accept file edits            |
+| `plan`              | Read-only exploration mode                 |
+| `dontAsk`           | Don't ask for permissions (still checks)   |
+| `auto`              | Let Claude decide based on context         |
+| `bypassPermissions` | Skip all permission checks (use with care) |
+
+**Other useful launch flags:**
+
+| Flag                | Description                                       |
+| ------------------- | ------------------------------------------------- |
+| `--effort <level>`  | Effort level: `low`, `medium`, `high`, `max`      |
+| `-n, --name <name>` | Display name for the session (shown in `/resume`) |
+| `--add-dir <dirs>`  | Additional directories for tool access            |
+| `--verbose`         | Full turn-by-turn output                          |
+
+### Session Resume
+
+Resume previous interactive sessions by session ID or interactively:
+
+```bash
+# Open interactive session picker (with optional search term)
+claude --resume
+claude --resume "auth refactor"
+
+# Resume a specific session by ID
+claude --resume "$SESSION_ID"
+
+# Continue the most recent conversation in the current directory
+claude --continue
+
+# Fork a session (resume with a new session ID, preserving original)
+claude --resume "$SESSION_ID" --fork-session
+
+# Resume a session linked to a pull request
+claude --from-pr 42
+claude --from-pr "https://github.com/org/repo/pull/42"
+
+# Open PR picker (interactively select a PR)
+claude --from-pr
+
+# Open PR picker with search term
+claude --from-pr "auth refactor"
+```
+
+**Tips:**
+
+- Use `--name "descriptive name"` when starting sessions to make `/resume` picker easier to navigate.
+- `--continue` always picks the most recent session in the current directory.
+- `--fork-session` is useful when you want to explore a different approach without losing the original conversation.
+
+### Model Selection
+
+Select a model for the interactive session:
+
+```bash
+# Use model alias (recommended)
+claude --model sonnet
+claude --model opus
+claude --model haiku
+
+# Use full model name
+claude --model claude-sonnet-4-6
+```
+
+**Available Aliases:**
+
+| Alias        | Description                                        |
+| ------------ | -------------------------------------------------- |
+| `default`    | Uses your configured default model                 |
+| `sonnet`     | Balanced — good for most tasks                     |
+| `sonnet[1m]` | Sonnet with 1M token context window                |
+| `opus`       | Complex reasoning, planning, and multi-step tasks  |
+| `opusplan`   | Planning-optimized Opus variant                    |
+| `haiku`      | Fast, lightweight — simple tasks and quick answers |
