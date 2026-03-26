@@ -43,6 +43,60 @@ Working copy is always a commit. Changes are first-class with stable IDs across 
 | Resolve      | `jj resolve -r <id>`                                        |
 | Undo         | `jj undo`                                                   |
 
+### Interactive Mode
+
+Use `jj split` interactively when you need to review changes visually or when split boundaries aren't clear in advance. To drive `jj split` programmatically from another agent, see the **tmux** skill.
+
+**Launching interactive split:**
+
+```bash
+# Split a specific commit interactively
+jj split -r <change-id>
+
+# Split the working copy interactively
+jj split
+
+# Split with a starting message (still interactive for file selection)
+jj split -m "Extract auth utilities"
+```
+
+**Interactive behavior:**
+
+When run without `-- <paths>`, `jj split` enters interactive mode where you can:
+
+- Review each changed file interactively
+- Choose which changes go into the first commit vs. second
+- Edit commit messages in your configured editor
+- View diffs before confirming
+
+**What you'll see:**
+
+| Prompt                       | Meaning                      | Response                  |
+| ---------------------------- | ---------------------------- | ------------------------- |
+| `Include this change? [y/n]` | Include file in first commit | `y` (yes) or `n` (no)     |
+| `(END)` in pager             | Diff viewer (less) is open   | `q` to quit               |
+| Editor opens                 | Writing commit message       | Write message, save, quit |
+| `Continue? [y/n]`            | Proceed with second commit   | `y` to continue           |
+
+**When to use interactive vs. non-interactive:**
+
+| Scenario                     | Approach        | Command                               |
+| ---------------------------- | --------------- | ------------------------------------- |
+| Clear file boundaries        | Non-interactive | `jj split -r <id> -m "msg" -- <path>` |
+| Need to review diff visually | Interactive     | `jj split -r <id>`                    |
+| Mixed changes in single file | Interactive     | `jj split`                            |
+| Automated scripts            | Non-interactive | `jj split -r <id> -m "msg" -- <path>` |
+
+**After splitting:**
+
+```bash
+# Check the resulting commits
+jj log -r "<original-id>::"
+
+# Verify the split was correct
+jj diff -r <new-commit-id>
+```
+
 ### Limiting Output
 
 | Goal                    | Option                   | Example                                |
@@ -131,8 +185,12 @@ jj squash --from <change-id> --to <target-id>
 #### Feature branch
 
 ```bash
-jj new <main-id>
-jj describe <id> -m "feat: add feature"
+# Simple: create and describe in one command
+jj new <main-id> -m "feat: add feature"
+
+# Or if already on the commit
+jj commit -m "feat: add feature"
+
 jj bookmark create <name> -r <id>
 jj git push --bookmark <name> --allow-new
 ```
