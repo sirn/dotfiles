@@ -186,6 +186,7 @@
         "staticcheck"
         "tail"
         "test"
+        "tmux capture-pane"
         "tr"
         "tree"
         "tsc --noEmit"

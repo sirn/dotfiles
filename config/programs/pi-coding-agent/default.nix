@@ -146,7 +146,5 @@ in
   };
 
   # Pass the version check to the keybindings module
-  _module.args = {
-    inherit isPi061orLater;
-  };
+  _module.args = { inherit isPi061orLater; };
 }
