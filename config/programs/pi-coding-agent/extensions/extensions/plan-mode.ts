@@ -12,6 +12,18 @@ import { Container, Text, Box, Spacer } from "@mariozechner/pi-tui";
 
 export default function (pi: ExtensionAPI) {
   const PLAN_DIR = path.join(os.homedir(), ".pi/agent/plans");
+  const planModePromptTemplate = fs.readFileSync(
+    path.join(__dirname, "plan-mode-prompt.md"),
+    "utf-8",
+  );
+  const planModeAcceptTemplate = fs.readFileSync(
+    path.join(__dirname, "plan-mode-accept.md"),
+    "utf-8",
+  );
+  const planModeSubsequentTemplate = fs.readFileSync(
+    path.join(__dirname, "plan-mode.md"),
+    "utf-8",
+  );
 
   // --- Mode state management ---
 
@@ -36,6 +48,17 @@ export default function (pi: ExtensionAPI) {
     });
   }
 
+  function getPlanContextSent(ctx: ExtensionContext): boolean {
+    let sent = false;
+    for (const entry of ctx.sessionManager.getEntries()) {
+      if (entry.type === "custom" && entry.customType === "plan-context-sent") {
+        const data = entry.data as { sent?: boolean };
+        sent = data?.sent ?? false;
+      }
+    }
+    return sent;
+  }
+
   function getPlanPath(
     projectDir: string,
     sessionFile: string | undefined,
@@ -56,6 +79,23 @@ export default function (pi: ExtensionAPI) {
     } else {
       ctx.ui.setWidget("plan-mode", undefined);
     }
+  }
+
+  function sendPlanModePrompt(ctx: ExtensionContext, userPrompt: string) {
+    const planPath = getPlanPath(ctx.cwd, ctx.sessionManager.getSessionFile());
+    fs.mkdirSync(path.dirname(planPath), { recursive: true });
+    pi.appendEntry("plan-context-sent", { sent: true });
+    pi.sendMessage(
+      {
+        customType: "plan-mode-prompt",
+        content: planModePromptTemplate
+          .replaceAll("{PLAN_PATH}", planPath)
+          .replaceAll("{USER_PROMPT}", userPrompt),
+        display: true,
+        details: { userInstruction: userPrompt },
+      },
+      { triggerTurn: true },
+    );
   }
 
   function createMessageRenderer(
@@ -106,6 +146,7 @@ export default function (pi: ExtensionAPI) {
     "plan-mode-prompt",
     createMessageRenderer("󰏯 plan mode", "accent", "Plan requested."),
   );
+
   pi.registerMessageRenderer(
     "plan-mode-execute",
     createMessageRenderer("󰏫 plan approved", "success", "Plan accepted."),
@@ -115,18 +156,10 @@ export default function (pi: ExtensionAPI) {
     pi.sendMessage(
       {
         customType: "plan-mode-execute",
-        content: `The plan has been approved. Execute the implementation plan step by step.
-
-## Rules
-- Execute ONE step at a time. Verify success before proceeding. Do NOT combine steps.
-- If a step fails, analyze the error. If it fails twice, STOP and wait for user input.
-- Keep changes minimal and idiomatic. Only modify in-scope files.
-- Verify *results*, not *actions*: validate outcomes (e.g., "test passes", "service works"), not that you performed the step.
-- Do not over-verify or verify trivial things (e.g., checking if text exists in a source file you just edited).
-- Run the verification checklist after all steps complete.
-
-## Plan content
-${planContent}`,
+        content: planModeAcceptTemplate.replaceAll(
+          "{PLAN_CONTENT}",
+          planContent,
+        ),
         display: true,
       },
       { triggerTurn: true },
@@ -134,100 +167,30 @@ ${planContent}`,
   }
 
   pi.registerCommand("plan", {
-    description: "Create an implementation plan for review",
+    description: "Enter plan mode for creating implementation plans",
     handler: async (args, ctx) => {
-      const planPath = getPlanPath(
-        ctx.cwd,
-        ctx.sessionManager.getSessionFile(),
-      );
-      fs.mkdirSync(path.dirname(planPath), { recursive: true });
+      const sessionId = ctx.sessionManager.getSessionFile() ?? "ephemeral";
+      const wasAlreadyInPlanMode = getMode(ctx) === "plan";
 
       setMode(ctx, "plan");
       updatePlanWidget(ctx);
 
-      // If no args and plan file exists, enter plan mode silently
-      if (!args && fs.existsSync(planPath)) {
-        ctx.ui.notify("Plan mode active. Existing plan loaded.", "info");
-        return;
+      // Only reset context flag if we're entering plan mode fresh (not re-entering)
+      // If we were already in plan mode, don't reset - continue with existing state
+      if (!wasAlreadyInPlanMode) {
+        pi.appendEntry("plan-context-sent", { sent: false });
       }
 
-      pi.sendMessage(
-        {
-          customType: "plan-mode-prompt",
-          content: `Create a detailed implementation/execution plan based on the user instruction.
-Write the plan to: ${planPath}
-
-## Pre-Planning Phase (REQUIRED — complete ALL steps in order before writing the plan)
-
-### Step 1: Evaluate Existing Plan
-Check whether a plan file already exists at: ${planPath}
-- If it exists: read it and evaluate whether it is relevant to the current user request.
-  - If relevant: acknowledge it and build on or refine it.
-  - If not relevant: discard it (overwrite with a fresh plan).
-- If it does not exist: proceed to step 2.
-
-### Step 2: Gather Context
-Collect all context necessary to successfully accomplish the request:
-- Read the project README and any relevant configuration or source files.
-- **Perform a web search**: load the relevant search skill and execute it. Do not guess or assume.
-- **Research official documentation** for every library, tool, or API involved. Look up exact call conventions, flags, and return types — do not infer from memory.
-- If any requirement is ambiguous or information is missing, **ask the user** before proceeding.
-
-### Step 3: Define Success Criteria
-Derive explicit, measurable success criteria from the user request:
-- What does "done" look like? (e.g., "tests pass", "command exits 0", "output matches expected format")
-- If the criteria are non-obvious or involve tradeoffs, **confirm them with the user** before writing the plan.
-
-### Step 4: Write the Plan
-Only after completing steps 1–3, write the plan to: ${planPath}
-
-### Step 5: Verify the Plan
-Before finalising, validate the plan's correctness:
-- **Re-consult official documentation** to confirm every call convention, option, and API contract used in the plan.
-- **Run ad-hoc read-only probes** where helpful (e.g., \`ls\`, \`cat\`, \`--help\`, dry-runs, \`tsc --noEmit\`) to verify assumptions without modifying the system.
-
-## Rules
-- CRITICAL: Use ONLY read-only commands for context gathering and verification. Do NOT execute changes.
-- Use the \`write\` tool to write the plan file. Do NOT use bash to write files (they will be blocked).
-- **Always cite documentation**: include a URL or reference for every external tool, API, or convention referenced in the plan.
-- Do NOT write any code yet. Just create the plan file.
-- You MUST use only the provided plan file path. Any attempt to write elsewhere will be blocked.
-
-## User instruction
-${args || "The requested feature"}
-
-## Plan structure
-
-### Overview
-What needs to be built/fixed, why, and how success is measured. What is OUT of scope. Keep the solution minimal.
-
-### Success Criteria
-Explicit, measurable criteria that define when the implementation is complete.
-
-### Context
-Read-only exploration findings: key files, existing patterns, dependencies, non-obvious details, and relevant URLs.
-Example: "\`src/auth.ts\` exports \`createSession(userId)\`; sessions stored in Redis with 24h TTL"
-
-### Implementation Steps
-Ordered, atomic, verifiable steps. Each step needs: a clear goal, specific files/changes, and a concrete success criterion (e.g., test command, linter run).
-Describe non-trivial changes in sufficient detail to prevent guesswork. Show before/after with ±5 lines of context if helpful.
-Example: "Step 1: Add Session type to types.ts — Success: tsc --noEmit passes"
-
-### Verification Checklist
-How to verify the complete implementation after all steps are done.
-
-### References
-Documentation URLs and sources consulted during planning.
-
-## Policy footer
-- Once the plan is written, present a concise summarisation of the plan to the user.`,
-          display: true,
-          details: {
-            userInstruction: args || "The requested feature",
-          },
-        },
-        { triggerTurn: true },
-      );
+      // If user provided a message, send it as a regular user message
+      // The before_agent_start hook will inject planning context on the first message
+      if (args) {
+        sendPlanModePrompt(ctx, args);
+      } else {
+        ctx.ui.notify(
+          "Plan mode active. Type your request to create a plan.",
+          "info",
+        );
+      }
     },
   });
 
@@ -272,6 +235,7 @@ Documentation URLs and sources consulted during planning.
 
       setMode(ctx, "edit");
       updatePlanWidget(ctx);
+      pi.appendEntry("plan-context-sent", { sent: false });
       const planContent = fs.readFileSync(planPath, "utf-8");
 
       if (choice === "Accept plan and clear context") {
@@ -370,6 +334,7 @@ Documentation URLs and sources consulted during planning.
 
       setMode(ctx, "edit");
       updatePlanWidget(ctx);
+      pi.appendEntry("plan-context-sent", { sent: false });
 
       if (choice === "Leave plan mode and clear plan file") {
         try {
@@ -394,6 +359,16 @@ Documentation URLs and sources consulted during planning.
     },
   });
 
+  pi.on("input", async (event, ctx) => {
+    if (getMode(ctx) !== "plan") return { action: "continue" };
+    if (getPlanContextSent(ctx)) return { action: "continue" };
+    // Skip interception for extension-sourced messages
+    if (event.source === "extension") return { action: "continue" };
+
+    sendPlanModePrompt(ctx, event.text);
+    return { action: "handled" };
+  });
+
   pi.on("turn_end", async (_event, ctx) => {
     updatePlanWidget(ctx);
   });
@@ -401,14 +376,14 @@ Documentation URLs and sources consulted during planning.
   pi.on("before_agent_start", async (event, ctx) => {
     if (getMode(ctx) !== "plan") return;
 
-    // Inject plan mode reminder as a hidden message (AI sees it, user doesn't)
     const planPath = getPlanPath(ctx.cwd, ctx.sessionManager.getSessionFile());
+
     return {
       message: {
         customType: "plan-mode-context",
-        content: `[Plan mode active - do NOT execute any changes, only read-only exploration and planning; only write a plan to ${planPath}]
-
-User instruction: ${event.prompt}`,
+        content: planModeSubsequentTemplate
+          .replaceAll("{PLAN_PATH}", planPath)
+          .replaceAll("{USER_PROMPT}", event.prompt),
         display: false,
       },
     };
