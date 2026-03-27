@@ -37,6 +37,7 @@ For each setup type selected:
 5. If machine-local: Create `.my/.gitignore` with content `*`
 
 6. Create wrapper scripts with template:
+   - **Minimalism and Pruning**: Only include commands that are strictly necessary. Avoid generic boilerplate that isn't actively used in the project.
 
 ```bash
 #!/usr/bin/env bash
@@ -63,6 +64,7 @@ set -euo pipefail
    - Other: check for Makefile, CMakeLists.txt, etc.
 
 4. Generate flake using the template in [templates/flake.nix](templates/flake.nix)
+   - **Template Pruning**: Actively remove inputs, packages, or settings from the template that the project doesn't strictly need (YAGNI).
    - Use `buildInputs` (not `packages`) for dependencies
    - No shellHook unless absolutely necessary
    - Keep it simple and minimal

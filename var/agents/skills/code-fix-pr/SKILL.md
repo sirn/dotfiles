@@ -50,6 +50,7 @@ Evaluate and address PR review comments by classifying them and creating a concr
    - Research idiomatic solutions for the language/project
 
 7. **Create fix plan**:
+   - **Simplicity First**: Prioritize the simplest possible change that satisfies the reviewer's concern. Avoid large-scale refactoring unless it is the only way to address the issue.
    - Prioritize critical/security issues first
    - Group related fixes for efficiency
    - Provide specific file:line references

@@ -45,9 +45,10 @@ Generate a comprehensive implementation plan based on task analysis.
    - Common pitfalls to avoid
 
 4. **Simplicity Constraint**
-   - "Keep it simple" guidelines
-   - Over-engineering risk to avoid
-   - Pragmatic vs ideal tradeoffs
+   - **The "No Code" mindset**: Question if the feature or fix is truly necessary or if a simpler alternative exists.
+   - **Pragmatic vs. Ideal**: Prioritize boring, obvious solutions over "elegant" but complex abstractions.
+   - **Identify over-engineering**: Flag areas where the proposed design might be too generalized for current needs.
+   - **Start small**: Plan for minimal, incremental changes; only introduce new modules or layers if the task strictly requires them.
 
 5. **Architectural Guidance**
    - High-level design approach

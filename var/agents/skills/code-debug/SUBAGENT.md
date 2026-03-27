@@ -8,12 +8,11 @@ Troubleshoot a problem by delegating research to the code-debug-researcher agent
 ## Process
 
 1. Identify the error message, log, or failure symptom from the user's request or context
-2. Spawn the `code-debug-researcher` agent using the Task tool
+2. Spawn agents:
+   - `code-debug-researcher`: "Investigate the error or failure in {context} and propose a minimal fix with sources"
+   - `simplicity-reviewer`: "Ensure the proposed fix is minimal and avoids adding unnecessary complexity or abstractions"
+
 3. Synthesize findings into actionable steps
-
-## Agent Invocation
-
-- `code-debug-researcher`: "Investigate the error or failure in {context} and propose a minimal fix with sources"
 
 ## Output
 

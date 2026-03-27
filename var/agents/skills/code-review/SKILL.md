@@ -25,7 +25,7 @@ Run a code review.
    - **Quality**: Check for bugs, logic errors, error handling issues, and edge cases
    - **Security**: Check for OWASP risks, injection vulnerabilities, auth issues, data exposure
    - **Conventions**: Check naming consistency, code organization, and style adherence
-   - **Simplicity**: Check for over-engineering, unnecessary abstractions, and dead code
+   - **Simplicity**: Check for over-engineering, unnecessary abstractions, and indirection. Question every layer: "Does it earn its complexity?" Look for "clever" code that obscures intent and suggest "boring" alternatives. Identify and recommend deleting dead code or unused generalizations. Remember: the best code is code that doesn't need to exist. Prefer simple duplication over a wrong abstraction.
    - **Best practices**: Research patterns and idioms for the libraries/frameworks in use (use WebSearch/WebFetch as needed)
 
    **Fast Mode**:

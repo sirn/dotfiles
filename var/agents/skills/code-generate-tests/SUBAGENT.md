@@ -25,6 +25,7 @@ Generate tests for untested functions and edge cases, then verify they pass.
 4. Spawn research agents in parallel:
    - Use `code-researcher` agent: Research testing best practices for the language/framework
    - Use `code-architect` agent: Identify critical paths, edge cases, and error handling scenarios
+   - Use `simplicity-reviewer` agent: Ensure tests are minimal, boring, and avoid over-engineering or complex helpers
 
 5. Generate test code:
    - Match existing test conventions (naming, structure, fixtures)

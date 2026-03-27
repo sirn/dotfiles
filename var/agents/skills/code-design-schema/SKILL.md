@@ -13,6 +13,7 @@ Design data models, database schemas, and ORM definitions.
    - Understand the entity relationships (1:1, 1:N, M:N)
 
 2. Research and design:
+   - **Data Minimalism**: Only define fields and tables that the current task requires. Avoid "generic" or "flexible" schemas that add indirection without value (YAGNI). Favor simple 1:N relationships over complex M:N if the requirement doesn't strictly demand it.
    - Lookup framework best practices for defining models and relationships (use WebSearch/WebFetch)
    - Design the schema/entity relationship considering scalability and normalization
 

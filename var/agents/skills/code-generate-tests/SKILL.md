@@ -27,6 +27,7 @@ Generate tests for untested functions and edge cases, then verify they pass.
    - Identify critical paths, edge cases, and error handling scenarios
 
 5. Generate test code:
+   - **Simplicity and Pruning**: Keep tests simple, boring, and obvious. Avoid complex test helpers or unnecessary abstractions. Focus on essential behaviors.
    - Match existing test conventions (naming, structure, fixtures)
    - Cover happy path, edge cases, and error scenarios
    - Include proper assertions and test organization

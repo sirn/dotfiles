@@ -14,6 +14,7 @@ Design API contracts, schemas, and specifications before implementation.
 2. Spawn agents:
    - `code-architect`: "Design the API resources, endpoints, and data shapes for {requirements}"
    - `code-researcher`: "Lookup best practices for {protocol} API design (versioning, pagination, errors)"
+   - `simplicity-reviewer`: "Audit the proposed design for over-engineering; prioritize flat structures and minimal surface area"
 
 3. Output the design:
    - **Endpoints/Operations**: Method, Path, Name

@@ -15,6 +15,7 @@ Design data models, database schemas, and ORM definitions.
 2. Spawn agents:
    - `code-architect`: "Design the schema/entity relationship for {requirements} considering scalability and normalization"
    - `code-researcher`: "Lookup {framework} best practices for defining models and relationships"
+   - `simplicity-reviewer`: "Audit the schema design for over-engineering and premature generalization; prefer simple relationships and minimal fields"
 
 3. Execute based on goal:
    - **New Schema**: Generate SQL DDL or ORM model definitions

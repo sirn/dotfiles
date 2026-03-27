@@ -12,6 +12,7 @@ Design API contracts, schemas, and specifications before implementation.
    - Format: OpenAPI/Swagger, Protocol Buffers, Zod/TypeBox schemas
 
 2. Research and design:
+   - **Simplicity and Minimalism**: Prioritize flat data structures over deeply nested ones. Expose only the fields and endpoints strictly required for the current task (YAGNI).
    - Lookup best practices for the protocol (use WebSearch/WebFetch)
    - Design the API resources, endpoints, and data shapes
    - Consider versioning, pagination, error handling patterns

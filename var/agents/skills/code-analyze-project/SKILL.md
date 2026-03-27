@@ -14,6 +14,13 @@ Analyze project structure to identify tooling and workflows.
 5. **Package managers**: package.json, pyproject.toml, go.mod, Cargo.toml, Gemfile
 6. **CI/CD**: .github/workflows/, .gitlab-ci.yml, Jenkinsfile
 
+## Complexity Audit (Simplicity First)
+
+During analysis, identify:
+1. **Complexity Hotspots**: Modules with excessive indirection, over-engineering, or deep nesting.
+2. **Boilerplate Overload**: Areas where tooling or patterns have added unnecessary noise.
+3. **Native Alternatives**: Check if suggested libraries/tools could be replaced by simpler, native language features (e.g., using `fetch` instead of `axios`, or standard library instead of utility packages).
+
 ## Output
 
 Return findings as:

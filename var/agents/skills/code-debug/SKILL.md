@@ -13,7 +13,8 @@ Troubleshoot a problem by researching the error and proposing a minimal fix.
    - Check documentation for the libraries/frameworks involved (use WebSearch/WebFetch)
    - Search the web for known issues, fixes, or similar error reports
 3. Analyze the root cause based on research findings
-4. Propose a minimal fix
+4. Propose a minimal fix:
+   - **Pragmatism and Simplicity**: Prefer deleting or simplifying existing code over adding new logic. Ensure the fix addresses only the root cause without introducing new abstractions.
 
 ## Output
 

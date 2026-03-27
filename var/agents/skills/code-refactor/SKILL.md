@@ -24,14 +24,16 @@ Execute safe, targeted refactoring by analyzing code and providing actionable st
 Present a refactoring plan with:
 
 1. **Identified Refactorings** - Each refactoring opportunity with rationale
+   - **Simplification**: Inlining where it improves readability; removing indirection.
+   - **Deletions**: Dead code, unused generalization, and patterns that add cost without benefit.
+   - **Boring Code**: Replacing "clever" logic with obvious alternatives.
    - Function extraction
    - Variable renaming
-   - Dead code removal
-   - Complexity reduction
 
 2. **Complexity Analysis**
+   - **Abstraction Audit**: Does each abstraction earn its keep?
    - Over-engineered areas
-   - Unnecessary abstractions
+   - Unnecessary indirection
    - Dead code identified
 
 3. **Best Practices Alignment**
