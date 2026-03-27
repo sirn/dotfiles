@@ -125,7 +125,7 @@ in
       quietStartup = true;
       defaultProvider = agentsCfg.models.default.provider;
       defaultModel = agentsCfg.models.default.model;
-      defaultThinkingLevel = "high";
+      defaultThinkingLevel = "medium";
       hideThinkingBlock = false;
       enabledModels = lib.concatMap (p: map (m: m.id) p.models) (
         builtins.attrValues agentsCfg.models.providers

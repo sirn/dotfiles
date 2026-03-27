@@ -11,7 +11,7 @@
         baseUrl = "https://api.synthetic.new/openai/v1";
         envVar = "SYNTHETIC_API_KEY";
         api = "openai-completions";
-        reasoningEffort = "high";
+        reasoningEffort = "medium";
         models = [
           {
             id = "hf:moonshotai/Kimi-K2.5";
@@ -27,7 +27,7 @@
             attachment = false;
             toolCall = true;
             temperature = true;
-            reasoningEffort = "high";
+            reasoningEffort = "medium";
           }
           {
             id = "hf:zai-org/GLM-4.7";
@@ -43,7 +43,7 @@
             attachment = false;
             toolCall = true;
             temperature = true;
-            reasoningEffort = "high";
+            reasoningEffort = "medium";
           }
           {
             id = "hf:MiniMaxAI/MiniMax-M2.5";
@@ -59,7 +59,7 @@
             attachment = false;
             toolCall = true;
             temperature = true;
-            reasoningEffort = "high";
+            reasoningEffort = "medium";
           }
         ];
       };
@@ -69,7 +69,7 @@
         baseUrl = "https://api.fireworks.ai/inference/v1";
         envVar = "FIREWORKS_API_KEY";
         api = "openai-completions";
-        reasoningEffort = "high";
+        reasoningEffort = "medium";
         models = [
           {
             id = "accounts/fireworks/models/kimi-k2p5";
@@ -87,7 +87,7 @@
             attachment = false;
             toolCall = true;
             temperature = true;
-            reasoningEffort = "high";
+            reasoningEffort = "medium";
           }
           {
             id = "accounts/fireworks/routers/kimi-k2p5-turbo";
@@ -103,7 +103,7 @@
             attachment = false;
             toolCall = true;
             temperature = true;
-            reasoningEffort = "high";
+            reasoningEffort = "medium";
           }
           {
             id = "accounts/fireworks/models/glm-5";
@@ -121,7 +121,7 @@
             attachment = false;
             toolCall = true;
             temperature = true;
-            reasoningEffort = "high";
+            reasoningEffort = "medium";
           }
         ];
       };
@@ -131,7 +131,7 @@
         baseUrl = "https://api.anthropic.com";
         envVar = "ANTHROPIC_API_KEY";
         api = "anthropic-messages";
-        reasoningEffort = "high";
+        reasoningEffort = "medium";
         models = [
           {
             id = "claude-opus-4-6";
@@ -151,7 +151,7 @@
             attachment = false;
             toolCall = true;
             temperature = true;
-            reasoningEffort = "high";
+            reasoningEffort = "medium";
           }
           {
             id = "claude-sonnet-4-6";
@@ -171,7 +171,7 @@
             attachment = false;
             toolCall = true;
             temperature = true;
-            reasoningEffort = "high";
+            reasoningEffort = "medium";
           }
         ];
       };
@@ -181,7 +181,7 @@
         baseUrl = "https://api.openai.com/v1";
         envVar = "OPENAI_API_KEY";
         api = "openai-responses";
-        reasoningEffort = "high";
+        reasoningEffort = "medium";
         models = [
           {
             id = "gpt-5.4";
@@ -200,7 +200,7 @@
             attachment = false;
             toolCall = true;
             temperature = true;
-            reasoningEffort = "high";
+            reasoningEffort = "medium";
           }
           {
             id = "gpt-5.4-mini";
@@ -219,7 +219,7 @@
             attachment = false;
             toolCall = true;
             temperature = true;
-            reasoningEffort = "high";
+            reasoningEffort = "medium";
           }
           {
             id = "gpt-5.4-nano";
@@ -238,7 +238,7 @@
             attachment = false;
             toolCall = true;
             temperature = true;
-            reasoningEffort = "high";
+            reasoningEffort = "medium";
           }
         ];
       };
@@ -248,7 +248,7 @@
         baseUrl = "https://generativelanguage.googleapis.com/v1beta";
         envVar = "GEMINI_API_KEY";
         api = "google-generative-ai";
-        reasoningEffort = "high";
+        reasoningEffort = "medium";
         models = [
           {
             id = "gemini-3.1-pro-preview";
@@ -267,7 +267,7 @@
             attachment = false;
             toolCall = true;
             temperature = true;
-            reasoningEffort = "high";
+            reasoningEffort = "medium";
           }
           {
             id = "gemini-3.1-flash-lite-preview";
@@ -286,7 +286,7 @@
             attachment = false;
             toolCall = true;
             temperature = true;
-            reasoningEffort = "high";
+            reasoningEffort = "medium";
           }
         ];
       };

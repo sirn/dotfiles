@@ -227,7 +227,7 @@ in
             modelConfig = {
               generateContentConfig = {
                 thinkingConfig = {
-                  thinkingLevel = "HIGH";
+                  thinkingLevel = "MEDIUM";
                   includeThoughts = true;
                 };
               };
