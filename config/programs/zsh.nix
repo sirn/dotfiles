@@ -7,6 +7,7 @@
 
 let
   cfg = config.programs.zsh;
+  tmuxcfg = config.programs.tmux;
 in
 {
   programs.zsh = {
@@ -110,6 +111,21 @@ in
 
               builtin cd "$dir" || return 1
             }
+
+            ${lib.optionalString tmuxcfg.enable ''
+              # Open workspace in a tmux session.
+              ggt() {
+                local dir name
+
+                dir=$(repoman workspace list | "${fzyCmd}" -q "$*")
+                if [ -z "$dir" ]; then
+                    return
+                fi
+
+                name=$(basename "$dir")
+                builtin cd "$dir" && exec "$HOME/.tmux_init" "$name"
+              }
+            ''}
           '';
       in
       ''

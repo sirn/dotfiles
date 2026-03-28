@@ -7,6 +7,7 @@
 
 let
   cfg = config.programs.fish;
+  tmuxcfg = config.programs.tmux;
 in
 {
   programs.fish = {
@@ -85,6 +86,18 @@ in
 
       fish_greeting = {
         body = "";
+      };
+    }
+    // lib.optionalAttrs tmuxcfg.enable {
+      ggt = {
+        body = ''
+          set -l dir (repoman workspace list | ${pkgs.fzy}/bin/fzy -q "$argv")
+          if test -z "$dir"
+            return
+          end
+          set -l name (basename $dir)
+          cd $dir; and exec $HOME/.tmux_init $name
+        '';
       };
     };
 
