@@ -48,30 +48,6 @@ in
               builtin cd "$dir" || return 1
             }
 
-            # Quickly jump into dev project directory.
-            ggd() {
-              local dir
-
-              dir=$(repoman list | "${fzyCmd}" -q "$*")
-              if [ -z "$dir" ]; then
-                  return
-              fi
-
-              builtin cd "$dir" || return 1
-            }
-
-            # Quickly jump into workspace directory.
-            ggw() {
-              local dir
-
-              dir=$(repoman workspace list | "${fzyCmd}" -q "$*")
-              if [ -z "$dir" ]; then
-                  return
-              fi
-
-              builtin cd "$dir" || return 1
-            }
-
             # Change directory in a project directory.
             ggp() {
               local dir
@@ -111,21 +87,6 @@ in
 
               builtin cd "$dir" || return 1
             }
-
-            ${lib.optionalString tmuxcfg.enable ''
-              # Open workspace in a tmux session.
-              ggt() {
-                local dir name
-
-                dir=$(repoman workspace list | "${fzyCmd}" -q "$*")
-                if [ -z "$dir" ]; then
-                    return
-                fi
-
-                name=$(basename "$dir")
-                builtin cd "$dir" && exec "$HOME/.tmux_init" "$name"
-              }
-            ''}
           '';
       in
       ''
