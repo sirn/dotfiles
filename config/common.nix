@@ -29,6 +29,7 @@
     ./programs/htop.nix
     ./programs/jq.nix
     ./programs/jujutsu.nix
+    ./programs/jjui.nix
     ./programs/lstr.nix
     ./programs/less.nix
     ./programs/nix-index.nix
