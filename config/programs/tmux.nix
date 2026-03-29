@@ -88,6 +88,12 @@ in
         # Update SSH_TTY for new panes
         export SSH_TTY=$(tty)
 
+        # If already in a tmux session, create detached and switch
+        if [ -n "$TMUX" ]; then
+          ${cfg.package}/bin/tmux new-session -d -s "$SESSION" 2>/dev/null || true
+          exec ${cfg.package}/bin/tmux switch-client -t "$SESSION"
+        fi
+
         ${
           if pkgs.stdenv.isLinux then
             ''
