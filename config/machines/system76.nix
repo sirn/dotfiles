@@ -31,6 +31,8 @@
     ../services/swww.nix
   ];
 
+  home.colors.themeName = "modus-operandi";
+
   services.kanshi = lib.mkIf config.services.kanshi.enable {
     settings = [
       {

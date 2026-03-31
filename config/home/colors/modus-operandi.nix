@@ -44,11 +44,6 @@ in
     selection = base16Colors.selection;
     scrollbar = base16Colors.scrollbar;
 
-    primaryText = base16Colors.foreground;
-    inactiveBg = base16Colors.bright.black;
-    inactiveFg = base16Colors.bright.white;
-    accentText = base16Colors.bright.white;
-
     focus = base16Colors.normal.blue;
     hover = base16Colors.normal.cyan;
     urgent = base16Colors.normal.red;
@@ -56,14 +51,27 @@ in
     success = base16Colors.normal.green;
     vcs = base16Colors.normal.magenta;
 
-    # Light theme: light bg with dark fg
+    primary = {
+      text = base16Colors.foreground;
+    };
+
+    accent = {
+      text = base16Colors.bright.white;
+    };
+
+    inactive = {
+      bg = base16Colors.bright.black;
+      text = base16Colors.bright.white;
+    };
+
+    # Light theme: light bg with dark text
     battery = {
       charging.bg = getColor 46;
-      charging.fg = getColor 28;
+      charging.text = getColor 28;
       low.bg = base16Colors.normal.yellow;
-      low.fg = base16Colors.bright.white;
+      low.text = base16Colors.bright.white;
       critical.bg = base16Colors.normal.red;
-      critical.fg = base16Colors.bright.white;
+      critical.text = base16Colors.bright.white;
     };
   };
 }
