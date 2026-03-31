@@ -14,6 +14,8 @@ let
 
   fuzzelcfg = config.programs.fuzzel;
 
+  fontcfg = config.home.fonts;
+
   footLauncher = config.lib.home.wrapLauncher cfg.package;
 in
 {
@@ -24,7 +26,7 @@ in
       main = {
         shell = config.home.shell.interactiveShell;
         term = "xterm-256color";
-        font = "PragmataPro Mono Liga:size=12";
+        font = "${fontcfg.terminal.monospace}:size=${toString fontcfg.terminal.size}";
         bold-text-in-bright = "yes";
         dpi-aware = "no";
       };

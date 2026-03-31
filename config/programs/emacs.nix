@@ -14,6 +14,13 @@ let
 
   niricfg = config.programs.niri;
 
+  # Emacs font size: use 1.33x on Linux for better readability (16 vs 12)
+  emacsFontSize =
+    if pkgs.stdenv.isDarwin then
+      config.home.fonts.editor.size
+    else
+      builtins.floor (config.home.fonts.editor.size * 1.33 + 0.5);
+
   # Wrap tenv to auto-install appropriate terraform version
   tenvWrapped = pkgs.tenv.overrideDerivation (attrs: {
     nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
@@ -103,6 +110,11 @@ let
     (setq inhibit-startup-screen t)
     (defvar gemacs-nix-config-directory user-emacs-directory)
     (defvar gemacs-default-shell "${config.home.shell.interactiveShell}")
+
+    ;; Font configuration (from home.fonts module)
+    ;; Emacs uses 1.25x the editor font size on Linux for better readability
+    (defvar gemacs-font "${config.home.fonts.editor.monospace}")
+    (defvar gemacs-font-size ${toString emacsFontSize})
 
     ;; Redirect writable state to ~/.emacs.d/ since user-emacs-directory
     ;; points to the read-only Nix store

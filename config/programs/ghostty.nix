@@ -14,6 +14,8 @@ let
 
   fuzzelcfg = config.programs.fuzzel;
 
+  fontcfg = config.home.fonts;
+
   ghosttyLauncher = config.lib.home.wrapLauncher cfg.package;
 in
 {
@@ -24,7 +26,7 @@ in
 
     settings = lib.mkMerge [
       {
-        font-family = "PragmataPro Mono Liga";
+        font-family = fontcfg.terminal.monospace;
 
         # Ctrl+[ traditionally sends ESC; fixterm disambiguates it,
         # breaking Evil insert-mode escape in Emacs.
@@ -35,7 +37,7 @@ in
         );
       }
       (lib.mkIf pkgs.stdenv.isLinux {
-        font-size = 12;
+        font-size = fontcfg.terminal.size;
 
         window-theme = "auto";
 
@@ -48,7 +50,7 @@ in
         window-decoration = "server";
       })
       (lib.mkIf pkgs.stdenv.isDarwin {
-        font-size = 14;
+        font-size = fontcfg.terminal.size;
 
         window-theme = "auto";
 

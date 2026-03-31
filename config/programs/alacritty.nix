@@ -14,6 +14,8 @@ let
 
   fuzzelcfg = config.programs.fuzzel;
 
+  fontcfg = config.home.fonts;
+
   alacrittyLauncher = config.lib.home.wrapLauncher cfg.package;
 in
 {
@@ -28,10 +30,10 @@ in
       window = if pkgs.stdenv.isDarwin then { option_as_alt = "Both"; } else { };
 
       font = {
-        size = if pkgs.stdenv.isDarwin then 14.0 else 12.0;
+        size = fontcfg.terminal.size;
 
         normal = {
-          family = "PragmataPro Mono Liga";
+          family = fontcfg.terminal.monospace;
         };
       };
 

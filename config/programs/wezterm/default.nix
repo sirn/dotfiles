@@ -16,6 +16,8 @@ let
 
   swaycfg = config.wayland.windowManager.sway;
 
+  fontcfg = config.home.fonts;
+
   weztermLauncher = config.lib.home.wrapLauncher cfg.package;
 in
 {
@@ -30,7 +32,43 @@ in
   };
 
   xdg.configFile = {
-    "wezterm/modules/fonts.lua".text = builtins.readFile ./fonts.lua;
+    "wezterm/modules/fonts.lua".text = ''
+      local wezterm = require 'wezterm'
+      local config = wezterm.config_builder()
+
+      local is_darwin <const> = wezterm.target_triple:find("darwin") ~= nil
+
+      local font = wezterm.font_with_fallback({
+        '${fontcfg.terminal.monospace}',
+        'Source Han Code JP',
+      })
+
+      config.font = font
+      config.command_palette_font = font
+      config.pane_select_font = font
+      config.char_select_font = font
+      config.warn_about_missing_glyphs = false
+
+      local font_size = ${toString fontcfg.terminal.size}
+
+      if is_darwin then
+        config.font_size = font_size
+        config.command_palette_font_size = font_size
+        config.pane_select_font_size = font_size
+        config.char_select_font_size = font_size
+      else
+        config.font_size = font_size
+        config.command_palette_font_size = font_size
+        config.pane_select_font_size = font_size
+        config.char_select_font_size = font_size
+      end
+
+      config.use_ime = true
+      config.freetype_load_target = 'Light'
+      config.freetype_load_flags = 'NO_HINTING'
+
+      return config
+    '';
 
     "wezterm/modules/term.lua" = {
       text = ''
