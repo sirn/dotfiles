@@ -10,5 +10,12 @@
     ../programs/rtk
   ];
 
-  programs.git.ignores = [ ".my/" ];
+  programs.git.ignores = [
+    ".my/"
+
+    # Agent files
+    "HANDOFF.md"
+    "LOCAL.md"
+    "TODO.md"
+  ];
 }
