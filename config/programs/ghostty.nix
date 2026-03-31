@@ -14,7 +14,7 @@ let
 
   fuzzelcfg = config.programs.fuzzel;
 
-  ghosttyLauncher = config.lib.machine.wrapLauncher cfg.package;
+  ghosttyLauncher = config.lib.home.wrapLauncher cfg.package;
 in
 {
   programs.ghostty = {
@@ -31,7 +31,7 @@ in
         keybind = [ "ctrl+bracket_left=text:\\x1b" ];
 
         command = builtins.concatStringsSep " " (
-          [ config.machine.interactiveShell ] ++ lib.optional pkgs.stdenv.isDarwin "--login"
+          [ config.home.shell.interactiveShell ] ++ lib.optional pkgs.stdenv.isDarwin "--login"
         );
       }
       (lib.mkIf pkgs.stdenv.isLinux {

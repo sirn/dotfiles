@@ -102,7 +102,7 @@ let
   earlyInitEl = pkgs.writeText "early-init.el" ''
     (setq inhibit-startup-screen t)
     (defvar gemacs-nix-config-directory user-emacs-directory)
-    (defvar gemacs-default-shell "${config.machine.interactiveShell}")
+    (defvar gemacs-default-shell "${config.home.shell.interactiveShell}")
 
     ;; Redirect writable state to ~/.emacs.d/ since user-emacs-directory
     ;; points to the read-only Nix store

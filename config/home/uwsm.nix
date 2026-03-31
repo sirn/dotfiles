@@ -37,7 +37,7 @@ let
     '';
 in
 {
-  machine.wrapLauncher = wrapLauncher;
+  home.wrapLauncher = wrapLauncher;
 
   home.packages = with pkgs; [ app2unit ];
 

@@ -14,7 +14,7 @@ let
 
   fuzzelcfg = config.programs.fuzzel;
 
-  alacrittyLauncher = config.lib.machine.wrapLauncher cfg.package;
+  alacrittyLauncher = config.lib.home.wrapLauncher cfg.package;
 in
 {
   programs.alacritty = {
@@ -60,7 +60,7 @@ in
       };
 
       shell = {
-        program = config.machine.interactiveShell;
+        program = config.home.shell.interactiveShell;
         args = if pkgs.stdenv.isDarwin then [ "--login" ] else [ ];
       };
     };

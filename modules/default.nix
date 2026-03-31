@@ -2,7 +2,7 @@
   imports = [
     ./agents.nix
     ./flatpak.nix
-    ./machine.nix
+    ./home.nix
     ./programs/claude-code.nix
     ./programs/codex.nix
     ./programs/niri.nix

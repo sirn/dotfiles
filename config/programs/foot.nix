@@ -14,7 +14,7 @@ let
 
   fuzzelcfg = config.programs.fuzzel;
 
-  footLauncher = config.lib.machine.wrapLauncher cfg.package;
+  footLauncher = config.lib.home.wrapLauncher cfg.package;
 in
 {
   programs.foot = {
@@ -22,7 +22,7 @@ in
 
     settings = {
       main = {
-        shell = config.machine.interactiveShell;
+        shell = config.home.shell.interactiveShell;
         term = "xterm-256color";
         font = "PragmataPro Mono Liga:size=12";
         bold-text-in-bright = "yes";

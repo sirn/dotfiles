@@ -16,7 +16,7 @@ let
 
   swaycfg = config.wayland.windowManager.sway;
 
-  weztermLauncher = config.lib.machine.wrapLauncher cfg.package;
+  weztermLauncher = config.lib.home.wrapLauncher cfg.package;
 in
 {
   programs.wezterm = {
@@ -45,7 +45,7 @@ in
       text = ''
         return {
           default_prog = {
-            "${config.machine.interactiveShell}",
+            "${config.home.shell.interactiveShell}",
             ${lib.optionalString pkgs.stdenv.isDarwin ''
               "--login",
             ''}
