@@ -40,23 +40,9 @@ in
   inherit base16Colors palette256;
 
   semantic = {
-    background = base16Colors.background;
-    selection = base16Colors.selection;
-    scrollbar = base16Colors.scrollbar;
-
-    focus = base16Colors.normal.blue;
-    hover = base16Colors.normal.cyan;
-    urgent = base16Colors.normal.red;
-    warning = base16Colors.normal.yellow;
-    success = base16Colors.normal.green;
-    vcs = base16Colors.normal.magenta;
-
     primary = {
+      bg = base16Colors.background;
       text = base16Colors.foreground;
-    };
-
-    accent = {
-      text = base16Colors.bright.white;
     };
 
     inactive = {
@@ -64,14 +50,59 @@ in
       text = base16Colors.bright.white;
     };
 
-    # Light theme: light bg with dark text
+    selection = {
+      bg = base16Colors.selection;
+      text = base16Colors.bright.white;
+    };
+
+    scrollbar = {
+      bg = base16Colors.scrollbar;
+      text = base16Colors.bright.white;
+    };
+
+    focus = {
+      bg = base16Colors.normal.blue;
+      text = base16Colors.bright.white;
+    };
+
+    hover = {
+      bg = base16Colors.normal.cyan;
+      text = base16Colors.bright.white;
+    };
+
+    urgent = {
+      bg = base16Colors.normal.red;
+      text = base16Colors.bright.white;
+    };
+
+    warning = {
+      bg = base16Colors.normal.yellow;
+      text = base16Colors.bright.white;
+    };
+
+    success = {
+      bg = base16Colors.normal.green;
+      text = base16Colors.bright.white;
+    };
+
+    important = {
+      bg = base16Colors.normal.magenta;
+      text = base16Colors.bright.white;
+    };
+
     battery = {
-      charging.bg = getColor 46;
-      charging.text = getColor 28;
-      low.bg = base16Colors.normal.yellow;
-      low.text = base16Colors.bright.white;
-      critical.bg = base16Colors.normal.red;
-      critical.text = base16Colors.bright.white;
+      charging = {
+        bg = getColor 46;
+        text = getColor 28;
+      };
+      low = {
+        bg = base16Colors.normal.yellow;
+        text = base16Colors.bright.white;
+      };
+      critical = {
+        bg = base16Colors.normal.red;
+        text = base16Colors.bright.white;
+      };
     };
   };
 }

@@ -138,14 +138,14 @@ in
         color_scheme = 'modus-vivendi',
         colors = {
           tab_bar = {
-            background = '${semantic.background}',
+            background = '${semantic.primary.bg}',
             new_tab = {
-              bg_color = '${semantic.background}',
+              bg_color = '${semantic.primary.bg}',
               fg_color = '${semantic.primary.text}',
             },
             new_tab_hover = {
-              bg_color = '${semantic.background}',
-              fg_color = '${semantic.hover}',
+              bg_color = '${semantic.primary.bg}',
+              fg_color = '${semantic.hover.bg}',
             },
           },
         },
@@ -157,20 +157,20 @@ in
     text = ''
       return {
         tab_colors = {
-          active_index_bg = '${semantic.focus}',
-          active_index_fg = '${semantic.accent.text}',
-          active_title_bg = '${semantic.selection}',
+          active_index_bg = '${semantic.focus.bg}',
+          active_index_fg = '${semantic.focus.text}',
+          active_title_bg = '${semantic.selection.bg}',
           active_title_fg = '${semantic.primary.text}',
 
           inactive_index_bg = '${semantic.inactive.bg}',
           inactive_index_fg = '${semantic.inactive.text}',
-          inactive_title_bg = '${semantic.background}',
+          inactive_title_bg = '${semantic.primary.bg}',
           inactive_title_fg = '${semantic.primary.text}',
 
           status_bg = '${semantic.inactive.bg}',
           status_fg = '${semantic.inactive.text}',
-          status_icon_bg = '${semantic.background}',
-          status_icon_fg = '${semantic.focus}',
+          status_icon_bg = '${semantic.primary.bg}',
+          status_icon_fg = '${semantic.focus.bg}',
         },
       }
     '';
@@ -191,11 +191,11 @@ in
   wayland.windowManager.sway = lib.mkIf config.wayland.windowManager.sway.enable {
     config.colors = {
       focused = {
-        background = "${semantic.focus}99";
-        border = "${semantic.focus}99";
-        childBorder = "${semantic.focus}99";
-        indicator = "${semantic.focus}a5";
-        text = semantic.accent.text;
+        background = "${semantic.focus.bg}99";
+        border = "${semantic.focus.bg}99";
+        childBorder = "${semantic.focus.bg}99";
+        indicator = "${semantic.focus.bg}a5";
+        text = semantic.focus.text;
       };
       focusedInactive = {
         background = "${semantic.inactive.bg}99";
@@ -205,46 +205,46 @@ in
         text = semantic.inactive.text;
       };
       unfocused = {
-        background = "${semantic.background}99";
-        border = "${semantic.background}a5";
-        childBorder = "${semantic.background}66";
-        indicator = "${semantic.background}ff";
+        background = "${semantic.primary.bg}99";
+        border = "${semantic.primary.bg}a5";
+        childBorder = "${semantic.primary.bg}66";
+        indicator = "${semantic.primary.bg}ff";
         text = semantic.primary.text;
       };
       placeholder = {
-        background = semantic.warning;
-        border = semantic.warning;
-        childBorder = semantic.warning;
-        indicator = semantic.warning;
-        text = semantic.primary.text;
+        background = semantic.warning.bg;
+        border = semantic.warning.bg;
+        childBorder = semantic.warning.bg;
+        indicator = semantic.warning.bg;
+        text = semantic.warning.text;
       };
       urgent = {
-        background = semantic.urgent;
-        border = semantic.urgent;
-        childBorder = semantic.urgent;
-        indicator = semantic.urgent;
-        text = semantic.accent.text;
+        background = semantic.urgent.bg;
+        border = semantic.urgent.bg;
+        childBorder = semantic.urgent.bg;
+        indicator = semantic.urgent.bg;
+        text = semantic.urgent.text;
       };
     };
   };
 
   programs.niri = lib.mkIf config.programs.niri.enable {
     settings.layout.focus-ring = {
-      active.color = "${semantic.focus}99";
+      active.color = "${semantic.focus.bg}99";
       inactive.color = "${semantic.inactive.bg}99";
-      urgent.color = semantic.urgent;
+      urgent.color = semantic.urgent.bg;
     };
   };
 
   programs.waybar = lib.mkIf config.programs.waybar.enable {
     style = lib.mkDefault ''
-      @define-color default_bg_solid ${semantic.background};
+      @define-color default_bg_solid ${semantic.primary.bg};
       @define-color default_bg alpha(@default_bg_solid, 0.6);
       @define-color default_text ${semantic.primary.text};
-      @define-color highlight_bg ${semantic.focus};
-      @define-color highlight_text ${semantic.background};
-      @define-color alert_bg ${semantic.urgent};
-      @define-color alert_text ${semantic.accent.text};
+      @define-color highlight_bg ${semantic.focus.bg};
+      @define-color highlight_text ${semantic.focus.text};
+      @define-color alert_bg ${semantic.urgent.bg};
+      @define-color alert_text ${semantic.urgent.text};
       @define-color battery_charging_bg ${semantic.battery.charging.bg};
       @define-color battery_charging_text ${semantic.battery.charging.text};
       @define-color battery_warning_bg ${semantic.battery.low.bg};
@@ -259,9 +259,9 @@ in
 
   programs.fuzzel = lib.mkIf config.programs.fuzzel.enable {
     settings.colors = {
-      background = "${semantic.background}fa";
-      selection = "${semantic.selection}ff";
-      border = "${semantic.scrollbar}ff";
+      background = "${semantic.primary.bg}fa";
+      selection = "${semantic.selection.bg}ff";
+      border = "${semantic.scrollbar.bg}ff";
       text = "${semantic.inactive.text}ff";
       match = "${semantic.primary.text}ff";
       selection-text = "${semantic.primary.text}ff";
@@ -270,17 +270,17 @@ in
   };
 
   programs.swaylock = lib.mkIf config.programs.swaylock.enable {
-    settings.color = semantic.background;
+    settings.color = semantic.primary.bg;
   };
 
   programs.starship.settings = lib.mkIf config.programs.starship.enable {
     hostname.style = semantic.primary.text;
-    directory.style = semantic.hover;
-    git_branch.style = semantic.vcs;
-    git_status.style = semantic.vcs;
-    custom.jj.style = semantic.vcs;
-    nix_shell.style = semantic.success;
-    status.style = semantic.urgent;
+    directory.style = semantic.hover.bg;
+    git_branch.style = semantic.important.bg;
+    git_status.style = semantic.important.bg;
+    custom.jj.style = semantic.important.bg;
+    nix_shell.style = semantic.success.bg;
+    status.style = semantic.urgent.bg;
     character = {
       success_symbol = "[\\$](bold ${semantic.primary.text})";
       error_symbol = "[\\$](bold ${semantic.primary.text})";
