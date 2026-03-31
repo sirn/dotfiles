@@ -29,16 +29,6 @@ in
         match-workers = 4;
       };
 
-      colors = {
-        background = "1e2225fa";
-        selection = "285577ff";
-        border = "494e52ff";
-        text = "999999ff";
-        match = "ffffffff";
-        selection-text = "ddddddff";
-        selection-match = "ffffffff";
-      };
-
       border = {
         radius = "0";
       };

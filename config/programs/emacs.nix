@@ -111,6 +111,9 @@ let
     (defvar gemacs-nix-config-directory user-emacs-directory)
     (defvar gemacs-default-shell "${config.home.shell.interactiveShell}")
 
+    ;; Theme from Home Manager
+    (defvar gemacs-theme-name "${config.home.colors.themeName}")
+
     ;; Font configuration (from home.fonts module)
     ;; Emacs uses 1.25x the editor font size on Linux for better readability
     (defvar gemacs-font "${config.home.fonts.editor.monospace}")

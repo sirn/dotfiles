@@ -3,6 +3,7 @@
     ./agents.nix
     ./flatpak.nix
     ./home.nix
+    ./home/colors.nix
     ./home/fonts.nix
     ./programs/claude-code.nix
     ./programs/codex.nix

@@ -72,6 +72,7 @@ let
       ;
     model_reasoning_effort = "medium";
     mcp_servers = toCodexMcpServers config.programs.mcp.servers;
+    theme = if config.home.colors.variant == "dark" then "dark" else "light";
   }
   // cfg.settingsOverride;
 

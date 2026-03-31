@@ -127,6 +127,7 @@ in
       defaultModel = agentsCfg.models.default.model;
       defaultThinkingLevel = "medium";
       hideThinkingBlock = false;
+      theme = config.home.colors.variant;
       enabledModels = lib.concatMap (p: map (m: m.id) p.models) (
         builtins.attrValues agentsCfg.models.providers
       );

@@ -19,7 +19,6 @@ in
     enable = pkgs.stdenv.isLinux && !config.targets.genericLinux.enable;
 
     settings = {
-      color = "#000000";
       daemonize = true;
     };
   };

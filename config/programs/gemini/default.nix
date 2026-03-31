@@ -199,7 +199,6 @@ in
         };
       };
       ui = {
-        theme = "ANSI";
         autoThemeSwitching = true;
         inlineThinkingMode = "full";
       };

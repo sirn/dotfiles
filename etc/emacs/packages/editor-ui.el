@@ -53,13 +53,8 @@
 
 ;; Accessible and customizable color themes
 (use-package modus-themes
-  :custom
-  (modus-themes-common-palette-overrides
-    '((border-mode-line-active bg-mode-line-active)
-      (border-mode-line-inactive bg-mode-line-inactive)))
-
   :config
-  (load-theme 'modus-vivendi t))
+  (load-theme (intern gemacs-theme-name) t))
 
 
 ;; macOS clipboard integration
