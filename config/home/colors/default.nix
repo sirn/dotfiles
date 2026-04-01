@@ -55,9 +55,24 @@ let
     in
     base16List ++ palette240;
 
-  # Import theme with palette generator
+  # Auto-discover theme files from this directory
+  themeFiles = builtins.readDir ./.;
+  themeNames = builtins.map (lib.removeSuffix ".nix") (
+    builtins.attrNames (
+      lib.filterAttrs (
+        name: type: type == "regular" && lib.hasSuffix ".nix" name && name != "default.nix"
+      ) themeFiles
+    )
+  );
+
+  # Import all discovered themes
+  themes = lib.genAttrs themeNames (
+    name: import (./. + "/${name}.nix") { inherit lib generatePalette; }
+  );
+
+  # Selected theme for single-active consumers
   themeName = config.home.colors.themeName;
-  theme = import ./${themeName}.nix { inherit lib generatePalette; };
+  theme = themes.${themeName};
 
   base16Colors = theme.base16Colors;
   variant = theme.variant;
@@ -66,6 +81,54 @@ let
 
   stripHash = color: builtins.substring 1 6 color;
   colorScheme = base16Colors;
+
+  # Helper to convert a theme record to a WezTerm color scheme
+  weztermColorScheme = t: {
+    ansi = [
+      t.base16Colors.normal.black
+      t.base16Colors.normal.red
+      t.base16Colors.normal.green
+      t.base16Colors.normal.yellow
+      t.base16Colors.normal.blue
+      t.base16Colors.normal.magenta
+      t.base16Colors.normal.cyan
+      t.base16Colors.normal.white
+    ];
+    brights = [
+      t.base16Colors.bright.black
+      t.base16Colors.bright.red
+      t.base16Colors.bright.green
+      t.base16Colors.bright.yellow
+      t.base16Colors.bright.blue
+      t.base16Colors.bright.magenta
+      t.base16Colors.bright.cyan
+      t.base16Colors.bright.white
+    ];
+    indexed = lib.listToAttrs (
+      lib.imap0 (i: c: {
+        name = toString i;
+        value = c;
+      }) t.palette256
+    );
+    background = t.base16Colors.background;
+    cursor_bg = t.base16Colors.foreground;
+    cursor_border = t.base16Colors.foreground;
+    cursor_fg = t.base16Colors.background;
+    foreground = t.base16Colors.foreground;
+    scrollbar_thumb = t.base16Colors.scrollbar;
+    selection_bg = t.base16Colors.selection;
+    selection_fg = t.base16Colors.background;
+  };
+
+  # Helper to convert a theme record to a Ghostty theme
+  ghosttyTheme = t: {
+    background = stripHash t.base16Colors.background;
+    cursor-color = stripHash t.base16Colors.foreground;
+    foreground = stripHash t.base16Colors.foreground;
+    palette = lib.imap0 (i: c: "${toString i}=${stripHash c}") t.palette256;
+    selection-background = stripHash t.base16Colors.selection;
+    selection-foreground = stripHash t.base16Colors.background;
+  };
 in
 {
   home.colors.variant = variant;
@@ -95,42 +158,7 @@ in
   };
 
   programs.wezterm = lib.mkIf config.programs.wezterm.enable {
-    colorSchemes."${themeName}" = {
-      ansi = [
-        colorScheme.normal.black
-        colorScheme.normal.red
-        colorScheme.normal.green
-        colorScheme.normal.yellow
-        colorScheme.normal.blue
-        colorScheme.normal.magenta
-        colorScheme.normal.cyan
-        colorScheme.normal.white
-      ];
-      brights = [
-        colorScheme.bright.black
-        colorScheme.bright.red
-        colorScheme.bright.green
-        colorScheme.bright.yellow
-        colorScheme.bright.blue
-        colorScheme.bright.magenta
-        colorScheme.bright.cyan
-        colorScheme.bright.white
-      ];
-      indexed = lib.listToAttrs (
-        lib.imap0 (i: c: {
-          name = toString i;
-          value = c;
-        }) palette256
-      );
-      background = colorScheme.background;
-      cursor_bg = colorScheme.foreground;
-      cursor_border = colorScheme.foreground;
-      cursor_fg = colorScheme.background;
-      foreground = colorScheme.foreground;
-      scrollbar_thumb = colorScheme.scrollbar;
-      selection_bg = colorScheme.selection;
-      selection_fg = colorScheme.background;
-    };
+    colorSchemes = lib.mapAttrs (name: weztermColorScheme) themes;
   };
 
   xdg.configFile."wezterm/modules/colors.lua" = lib.mkIf config.programs.wezterm.enable {
@@ -179,14 +207,7 @@ in
 
   programs.ghostty = lib.mkIf config.programs.ghostty.enable {
     settings.theme = themeName;
-    themes."${themeName}" = {
-      background = stripHash colorScheme.background;
-      cursor-color = stripHash colorScheme.foreground;
-      foreground = stripHash colorScheme.foreground;
-      palette = lib.imap0 (i: c: "${toString i}=${stripHash c}") palette256;
-      selection-background = stripHash colorScheme.selection;
-      selection-foreground = stripHash colorScheme.background;
-    };
+    themes = lib.mapAttrs (name: ghosttyTheme) themes;
   };
 
   wayland.windowManager.sway = lib.mkIf config.wayland.windowManager.sway.enable {

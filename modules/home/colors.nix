@@ -13,7 +13,7 @@ in
     themeName = mkOption {
       type = types.str;
       default = "modus-vivendi";
-      description = "Name of the Emacs theme to load.";
+      description = "Name of the color theme to use by default.";
     };
 
     variant = mkOption {
