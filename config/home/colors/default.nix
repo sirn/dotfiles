@@ -56,7 +56,8 @@ let
     base16List ++ palette240;
 
   # Import theme with palette generator
-  theme = import ./${config.home.colors.themeName}.nix { inherit lib generatePalette; };
+  themeName = config.home.colors.themeName;
+  theme = import ./${themeName}.nix { inherit lib generatePalette; };
 
   base16Colors = theme.base16Colors;
   variant = theme.variant;
@@ -94,7 +95,7 @@ in
   };
 
   programs.wezterm = lib.mkIf config.programs.wezterm.enable {
-    colorSchemes.modus-vivendi = {
+    colorSchemes."${themeName}" = {
       ansi = [
         colorScheme.normal.black
         colorScheme.normal.red
@@ -135,7 +136,7 @@ in
   xdg.configFile."wezterm/modules/colors.lua" = lib.mkIf config.programs.wezterm.enable {
     text = ''
       return {
-        color_scheme = 'modus-vivendi',
+        color_scheme = '${themeName}',
         colors = {
           tab_bar = {
             background = '${semantic.primary.bg}',
@@ -177,8 +178,8 @@ in
   };
 
   programs.ghostty = lib.mkIf config.programs.ghostty.enable {
-    settings.theme = "modus-vivendi";
-    themes.modus-vivendi = {
+    settings.theme = themeName;
+    themes."${themeName}" = {
       background = stripHash colorScheme.background;
       cursor-color = stripHash colorScheme.foreground;
       foreground = stripHash colorScheme.foreground;
