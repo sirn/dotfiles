@@ -1,4 +1,5 @@
 # Modus Vivendi theme - dark theme from Emacs
+# https://github.com/protesilaos/modus-themes
 { lib, generatePalette }:
 
 let
