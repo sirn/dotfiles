@@ -52,13 +52,13 @@ in
       set -g status-left ""
 
       set -g status-left-length 24
-      set -g status-right "#[fg=colour6,bg=colour235]┃ #S@#h #[fg=colour250,bg=colour238] %H:%M "
+      set -g status-right "#[fg=#{@color_inactive_text},bg=#{@color_inactive_bg}]┃ #S @ #h #[fg=#{@color_primary_text},bg=#{@color_selection_bg}] %H:%M "
       set -g status-right-style ""
       set -g status-style bg=default
-      set -wg window-status-current-format "#[fg=colour6]┃#[fg=black,bg=colour6] #I #[fg=colour255,bg=colour240] #{window_name} "
+      set -wg window-status-current-format "#[fg=#{@color_focus_bg}]┃#[fg=#{@color_focus_text},bg=#{@color_focus_bg}] #I #[fg=#{@color_primary_text},bg=#{@color_selection_bg}] #{window_name} "
       set -wg window-status-current-style ""
       set -g window-status-separator ""
-      set -wg window-status-format " #[fg=colour245,bg=colour238] #I #[fg=colour250,bg=colour235] #{window_name} "
+      set -wg window-status-format " #[fg=#{@color_inactive_text},bg=#{@color_inactive_bg}] #I #[fg=#{@color_primary_text},bg=#{@color_primary_bg}] #{window_name} "
       set -wg window-status-style ""
 
       bind -T prefix r source-file "${config.home.homeDirectory}/.config/tmux/tmux.conf"

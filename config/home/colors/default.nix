@@ -242,9 +242,9 @@ in
       @define-color default_bg alpha(@default_bg_solid, 0.6);
       @define-color default_text ${semantic.primary.text};
       @define-color highlight_bg ${semantic.focus.bg};
-      @define-color highlight_text ${semantic.focus.text};
+      @define-color highlight_text ${semantic.primary.text};
       @define-color alert_bg ${semantic.urgent.bg};
-      @define-color alert_text ${semantic.urgent.text};
+      @define-color alert_text ${semantic.primary.text};
       @define-color battery_charging_bg ${semantic.battery.charging.bg};
       @define-color battery_charging_text ${semantic.battery.charging.text};
       @define-color battery_warning_bg ${semantic.battery.low.bg};
@@ -260,14 +260,26 @@ in
   programs.fuzzel = lib.mkIf config.programs.fuzzel.enable {
     settings.colors = {
       background = "${semantic.primary.bg}fa";
-      selection = "${semantic.selection.bg}ff";
+      selection = "${semantic.focus.bg}ff";
       border = "${semantic.scrollbar.bg}ff";
-      text = "${semantic.inactive.text}ff";
+      text = "${semantic.primary.text}ff";
       match = "${semantic.primary.text}ff";
-      selection-text = "${semantic.primary.text}ff";
-      selection-match = "${semantic.primary.text}ff";
+      selection-text = "${semantic.focus.text}ff";
+      selection-match = "${semantic.focus.text}ff";
     };
   };
+
+  programs.tmux.extraConfig = lib.mkIf config.programs.tmux.enable (
+    lib.mkBefore ''
+      set -g @color_primary_bg "${semantic.primary.bg}"
+      set -g @color_primary_text "${semantic.primary.text}"
+      set -g @color_inactive_bg "${semantic.inactive.bg}"
+      set -g @color_inactive_text "${semantic.inactive.text}"
+      set -g @color_selection_bg "${semantic.selection.bg}"
+      set -g @color_focus_bg "${semantic.focus.bg}"
+      set -g @color_focus_text "${semantic.focus.text}"
+    ''
+  );
 
   programs.swaylock = lib.mkIf config.programs.swaylock.enable {
     settings.color = semantic.primary.bg;
