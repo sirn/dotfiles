@@ -62,6 +62,15 @@ in
         }
       '';
     };
+
+    custom = lib.mkOption {
+      type = lib.types.attrs;
+      default = { };
+      description = ''
+        Custom configuration for Pi extensions.
+        Written to custom.json and can be read by extensions at runtime.
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -76,6 +85,9 @@ in
     }
     // lib.optionalAttrs (cfg.keybindings != { }) {
       ".pi/agent/keybindings.json".text = builtins.toJSON cfg.keybindings;
+    }
+    // lib.optionalAttrs (cfg.custom != { }) {
+      ".pi/agent/custom.json".text = builtins.toJSON cfg.custom;
     };
   };
 }

@@ -6,7 +6,8 @@
   "pi": {
     "extensions": [
       "./extensions/plan-mode.ts",
-      "./extensions/shell-policy.ts"
+      "./extensions/shell-policy.ts",
+      "./extensions/smart-compact.ts"
     ]
   }
 }

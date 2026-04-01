@@ -121,6 +121,11 @@ in
 
     instructionText = agentsMdText;
 
+    custom.compactionModel = {
+      provider = "google";
+      model = "gemini-3.1-flash-lite-preview";
+    };
+
     settings = {
       quietStartup = true;
       defaultProvider = agentsCfg.models.default.provider;
