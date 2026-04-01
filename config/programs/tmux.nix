@@ -88,10 +88,14 @@ in
         # Update SSH_TTY for new panes
         export SSH_TTY=$(tty)
 
-        # If already in a tmux session, create detached and switch
+        # If already in a tmux session, create detached and switch.
+        # Note: switch-client just tells the server to switch and exits immediately,
+        # so we must not exec here or the pane will close. The caller decides whether
+        # to exec this script based on $TMUX.
         if [ -n "$TMUX" ]; then
           ${cfg.package}/bin/tmux new-session -d -s "$SESSION" 2>/dev/null || true
-          exec ${cfg.package}/bin/tmux switch-client -t "$SESSION"
+          ${cfg.package}/bin/tmux switch-client -t "$SESSION"
+          return
         fi
 
         ${
