@@ -242,7 +242,7 @@ in
       @define-color default_bg alpha(@default_bg_solid, 0.6);
       @define-color default_text ${semantic.primary.text};
       @define-color highlight_bg ${semantic.focus.bg};
-      @define-color highlight_text ${semantic.primary.text};
+      @define-color highlight_text ${semantic.focus.text};
       @define-color alert_bg ${semantic.urgent.bg};
       @define-color alert_text ${semantic.primary.text};
       @define-color battery_charging_bg ${semantic.battery.charging.bg};
