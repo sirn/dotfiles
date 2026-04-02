@@ -95,7 +95,7 @@ in
         if [ -n "$TMUX" ]; then
           ${cfg.package}/bin/tmux new-session -d -s "$SESSION" 2>/dev/null || true
           ${cfg.package}/bin/tmux switch-client -t "$SESSION"
-          return
+          exit 0
         fi
 
         ${
