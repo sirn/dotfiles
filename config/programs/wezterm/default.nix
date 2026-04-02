@@ -41,6 +41,7 @@ in
       local font = wezterm.font_with_fallback({
         '${fontcfg.terminal.monospace}',
         'Source Han Code JP',
+        'Symbols Nerd Font',
       })
 
       config.font = font
@@ -99,6 +100,8 @@ in
     "wezterm/modules/window.lua".text = builtins.readFile ./window.lua;
 
     "wezterm/modules/keybindings.lua".text = builtins.readFile ./keybindings.lua;
+
+    "wezterm/modules/theme-switcher.lua".text = builtins.readFile ./theme-switcher.lua;
 
     # Workaround for https://github.com/wezterm/wezterm/issues/6685
     # Clipboard not working between terminals on Wayland
