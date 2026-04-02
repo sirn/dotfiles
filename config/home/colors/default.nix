@@ -304,18 +304,4 @@ in
   programs.swaylock = lib.mkIf config.programs.swaylock.enable {
     settings.color = semantic.primary.bg;
   };
-
-  programs.starship.settings = lib.mkIf config.programs.starship.enable {
-    hostname.style = semantic.primary.text;
-    directory.style = semantic.hover.bg;
-    git_branch.style = semantic.important.bg;
-    git_status.style = semantic.important.bg;
-    custom.jj.style = semantic.important.bg;
-    nix_shell.style = semantic.success.bg;
-    status.style = semantic.urgent.bg;
-    character = {
-      success_symbol = "[\\$](bold ${semantic.primary.text})";
-      error_symbol = "[\\$](bold ${semantic.primary.text})";
-    };
-  };
 }

@@ -80,16 +80,6 @@ in
       text = base16Colors.bright.white;
     };
 
-    success = {
-      bg = base16Colors.normal.green;
-      text = base16Colors.bright.white;
-    };
-
-    important = {
-      bg = base16Colors.normal.magenta;
-      text = base16Colors.bright.white;
-    };
-
     battery = {
       charging = {
         bg = getColor 46;

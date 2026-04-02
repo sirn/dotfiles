@@ -31,18 +31,24 @@ in
       hostname = {
         ssh_only = false;
         format = "[$hostname]($style) ";
+        style = "default";
       };
 
       directory = {
         truncate_to_repo = false;
         fish_style_pwd_dir_length = 1;
+        style = "cyan";
       };
 
-      git_branch.format = "git:[$branch]($style)";
+      git_branch = {
+        format = "git:[$branch]($style)";
+        style = "purple";
+      };
 
       git_status = {
         format = "[($conflicted$untracked$modified$staged$renamed$deleted)]($style) ";
         modified = "*";
+        style = "purple";
       };
 
       git_state.disabled = true;
@@ -53,13 +59,23 @@ in
         '';
         when = "${lib.getExe jjcfg.package} root --quiet";
         format = "jj:[$output]($style) ";
+        style = "purple";
       };
 
-      nix_shell.format = "nix-shell:[$state]($style) ";
+      nix_shell = {
+        format = "nix-shell:[$state]($style) ";
+        style = "green";
+      };
 
       status = {
         disabled = false;
         format = "[$status]($style) ";
+        style = "red";
+      };
+
+      character = {
+        success_symbol = "[\\$](bold)";
+        error_symbol = "[\\$](bold)";
       };
     };
   };
