@@ -55,19 +55,17 @@ let
     in
     base16List ++ palette240;
 
-  # Auto-discover theme files from this directory
-  themeFiles = builtins.readDir ./.;
+  # Auto-discover theme files from schemes directory
+  themeFiles = builtins.readDir ./schemes;
   themeNames = builtins.map (lib.removeSuffix ".nix") (
     builtins.attrNames (
-      lib.filterAttrs (
-        name: type: type == "regular" && lib.hasSuffix ".nix" name && name != "default.nix"
-      ) themeFiles
+      lib.filterAttrs (name: type: type == "regular" && lib.hasSuffix ".nix" name) themeFiles
     )
   );
 
   # Import all discovered themes
   themes = lib.genAttrs themeNames (
-    name: import (./. + "/${name}.nix") { inherit lib generatePalette; }
+    name: import (./schemes + "/${name}.nix") { inherit lib generatePalette; }
   );
 
   # Selected theme for single-active consumers
