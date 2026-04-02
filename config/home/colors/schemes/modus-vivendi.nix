@@ -62,7 +62,7 @@ in
 
     focus = {
       bg = base16Colors.normal.blue;
-      text = base16Colors.bright.black;
+      text = base16Colors.bright.white;
     };
 
     hover = {
