@@ -6,8 +6,8 @@ let
   base16Colors = {
     background = "#ffffff";
     foreground = "#000000";
-    selection = "#bdbdbd";
-    scrollbar = "#9f9f9f";
+    selection = "#bbbbbb"; # color 237
+    scrollbar = "#919191"; # color 241
 
     normal = {
       black = "#000000";

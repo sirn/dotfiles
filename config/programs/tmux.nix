@@ -17,6 +17,15 @@ in
     mouse = true;
 
     extraConfig = ''
+      set -g @color_primary_bg "default"
+      set -g @color_primary_text "default"
+      set -g @color_accent_bg "blue"
+      set -g @color_accent_text "brightwhite"
+      set -g @color_muted_bg "brightblack"
+      set -g @color_muted_text "brightwhite"
+      set -g @color_focus_bg "blue"
+      set -g @color_focus_text "brightwhite"
+
       set -ga update-environment " SSH_TTY"
       set -g default-command "exec ${cfg.shell}"
       set -g set-clipboard on
@@ -52,13 +61,13 @@ in
       set -g status-left ""
 
       set -g status-left-length 24
-      set -g status-right "#[fg=#{@color_inactive_text},bg=#{@color_inactive_bg}]┃ #S @ #h #[fg=#{@color_primary_text},bg=#{@color_selection_bg}] %H:%M "
+      set -g status-right "#[fg=#{@color_muted_text},bg=#{@color_muted_bg}]┃ #S @ #h #[fg=#{@color_accent_text},bg=#{@color_accent_bg}] %H:%M "
       set -g status-right-style ""
       set -g status-style bg=default
-      set -wg window-status-current-format "#[fg=#{@color_focus_bg}]┃#[fg=#{@color_focus_text},bg=#{@color_focus_bg}] #I #[fg=#{@color_primary_text},bg=#{@color_selection_bg}] #{window_name} "
+      set -wg window-status-current-format "#[fg=#{@color_focus_bg}]┃#[fg=#{@color_focus_text},bg=#{@color_focus_bg}] #I #[fg=#{@color_muted_text},bg=#{@color_muted_bg}] #{window_name} "
       set -wg window-status-current-style ""
       set -g window-status-separator ""
-      set -wg window-status-format " #[fg=#{@color_inactive_text},bg=#{@color_inactive_bg}] #I #[fg=#{@color_primary_text},bg=#{@color_primary_bg}] #{window_name} "
+      set -wg window-status-format " #[fg=#{@color_muted_text},bg=#{@color_muted_bg}] #I #[fg=#{@color_primary_text},bg=#{@color_primary_bg}] #{window_name} "
       set -wg window-status-style ""
 
       bind -T prefix r source-file "${config.home.homeDirectory}/.config/tmux/tmux.conf"

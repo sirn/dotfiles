@@ -289,18 +289,6 @@ in
     };
   };
 
-  programs.tmux.extraConfig = lib.mkIf config.programs.tmux.enable (
-    lib.mkBefore ''
-      set -g @color_primary_bg "${semantic.primary.bg}"
-      set -g @color_primary_text "${semantic.primary.text}"
-      set -g @color_inactive_bg "${semantic.inactive.bg}"
-      set -g @color_inactive_text "${semantic.inactive.text}"
-      set -g @color_selection_bg "${semantic.selection.bg}"
-      set -g @color_focus_bg "${semantic.focus.bg}"
-      set -g @color_focus_text "${semantic.focus.text}"
-    ''
-  );
-
   programs.swaylock = lib.mkIf config.programs.swaylock.enable {
     settings.color = semantic.primary.bg;
   };
