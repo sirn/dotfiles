@@ -50,11 +50,6 @@ in
       text = base16Colors.bright.white;
     };
 
-    selection = {
-      bg = base16Colors.selection;
-      text = base16Colors.bright.white;
-    };
-
     scrollbar = {
       bg = base16Colors.scrollbar;
       text = base16Colors.bright.white;
@@ -63,11 +58,6 @@ in
     focus = {
       bg = base16Colors.normal.blue;
       text = base16Colors.bright.white;
-    };
-
-    hover = {
-      bg = base16Colors.normal.cyan;
-      text = base16Colors.bright.black;
     };
 
     urgent = {

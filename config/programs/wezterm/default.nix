@@ -93,6 +93,12 @@ in
       '';
     };
 
+    "wezterm/modules/colors.lua".text = lib.mkIf config.programs.wezterm.enable ''
+      return {
+        color_scheme = '${config.home.colors.themeName}',
+      }
+    '';
+
     "wezterm/modules/tabbar.lua".text = builtins.readFile ./tabbar.lua;
 
     "wezterm/modules/mux.lua".text = builtins.readFile ./mux.lua;

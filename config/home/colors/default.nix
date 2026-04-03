@@ -159,50 +159,6 @@ in
     colorSchemes = lib.mapAttrs (name: weztermColorScheme) themes;
   };
 
-  xdg.configFile."wezterm/modules/colors.lua" = lib.mkIf config.programs.wezterm.enable {
-    text = ''
-      return {
-        color_scheme = '${themeName}',
-        colors = {
-          tab_bar = {
-            background = '${semantic.primary.bg}',
-            new_tab = {
-              bg_color = '${semantic.primary.bg}',
-              fg_color = '${semantic.primary.text}',
-            },
-            new_tab_hover = {
-              bg_color = '${semantic.primary.bg}',
-              fg_color = '${semantic.hover.bg}',
-            },
-          },
-        },
-      }
-    '';
-  };
-
-  xdg.configFile."wezterm/hm_colors.lua" = lib.mkIf config.programs.wezterm.enable {
-    text = ''
-      return {
-        tab_colors = {
-          active_index_bg = '${semantic.focus.bg}',
-          active_index_fg = '${semantic.focus.text}',
-          active_title_bg = '${semantic.selection.bg}',
-          active_title_fg = '${semantic.primary.text}',
-
-          inactive_index_bg = '${semantic.inactive.bg}',
-          inactive_index_fg = '${semantic.inactive.text}',
-          inactive_title_bg = '${semantic.primary.bg}',
-          inactive_title_fg = '${semantic.primary.text}',
-
-          status_bg = '${semantic.inactive.bg}',
-          status_fg = '${semantic.inactive.text}',
-          status_icon_bg = '${semantic.primary.bg}',
-          status_icon_fg = '${semantic.focus.bg}',
-        },
-      }
-    '';
-  };
-
   programs.ghostty = lib.mkIf config.programs.ghostty.enable {
     settings.theme = themeName;
     themes = lib.mapAttrs (name: ghosttyTheme) themes;
