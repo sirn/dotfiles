@@ -89,6 +89,7 @@ in
       text = ''
         #!/bin/sh -l
         SESSION=$1
+        WORKDIR=$2
 
         if [ -z "$SESSION" ]; then
           SESSION=main
@@ -102,7 +103,7 @@ in
         # so we must not exec here or the pane will close. The caller decides whether
         # to exec this script based on $TMUX.
         if [ -n "$TMUX" ]; then
-          ${cfg.package}/bin/tmux new-session -d -s "$SESSION" 2>/dev/null || true
+          ${cfg.package}/bin/tmux new-session -d -s "$SESSION" ''${WORKDIR:+-c "$WORKDIR"} 2>/dev/null || true
           ${cfg.package}/bin/tmux switch-client -t "$SESSION"
           exit 0
         fi
@@ -115,11 +116,11 @@ in
                 --scope \
                 --slice=app.slice \
                 --setenv=SSH_TTY="$SSH_TTY" \
-                ${cfg.package}/bin/tmux new-session -A -s "$SESSION"
+                ${cfg.package}/bin/tmux new-session -A -s "$SESSION" ''${WORKDIR:+-c "$WORKDIR"}
             ''
           else
             ''
-              exec ${cfg.package}/bin/tmux new-session -A -s "$SESSION"
+              exec ${cfg.package}/bin/tmux new-session -A -s "$SESSION" ''${WORKDIR:+-c "$WORKDIR"}
             ''
         }
       '';

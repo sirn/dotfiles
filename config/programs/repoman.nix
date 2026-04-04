@@ -72,11 +72,10 @@ in
         fi
 
         name=$(basename "$dir")
-        builtin cd "$dir"
         if [ -n "$TMUX" ]; then
-          "$HOME/.tmux_init" "$name"
+          "$HOME/.tmux_init" "$name" "$dir"
         else
-          exec "$HOME/.tmux_init" "$name"
+          exec "$HOME/.tmux_init" "$name" "$dir"
         fi
       }
     ''}
@@ -124,11 +123,10 @@ in
             return
           end
           set -l name (basename $dir)
-          cd $dir
           if set -q TMUX
-            $HOME/.tmux_init $name
+            $HOME/.tmux_init $name $dir
           else
-            exec $HOME/.tmux_init $name
+            exec $HOME/.tmux_init $name $dir
           end
         '';
       };
