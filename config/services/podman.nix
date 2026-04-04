@@ -11,10 +11,6 @@ in
 {
   services.podman = {
     enable = pkgs.stdenv.isLinux;
-
-    settings.storage = {
-      storage.options.overlay.mount_program = lib.mkDefault "${pkgs.fuse-overlayfs}/bin/fuse-overlayfs";
-    };
   };
 
   home.packages =
