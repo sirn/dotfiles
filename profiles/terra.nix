@@ -6,7 +6,6 @@
 
       # profiles
       ../nixos/config/system/microvm.nix
-      ../nixos/config/system/nvidia.nix
       ../nixos/config/system/pcie-aspm.nix
       ../nixos/config/system/vfio.nix
 
@@ -14,7 +13,6 @@
       ../nixos/config/services/fwupd.nix
       ../nixos/config/services/libvirtd.nix
       ../nixos/config/services/node-exporter-ipmitool.nix
-      ../nixos/config/services/node-exporter-nvidia-gpu.nix
       ../nixos/config/services/node-exporter.nix
       ../nixos/config/services/podman.nix
       ../nixos/config/services/prometheus-agent.nix
@@ -57,6 +55,11 @@
     systemd.network.wait-online.enable = true;
 
     vfio.iommuType = "intel_sm";
+    vfio.devices = [
+      "10de:2684" # RTX 4090 GPU
+      "10de:22ba" # RTX 4090 Audio
+    ];
+
     vfio.udev-forwarder.config.domain = [
       {
         name = "lunar";
