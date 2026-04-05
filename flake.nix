@@ -122,31 +122,18 @@
         })
       ];
 
-      mkModules =
+      mkHomeManagerModule =
         { hostname }:
         [
           inputs.sops-nix.homeManagerModules.sops
           inputs.niri.homeModules.niri
-          ./modules
-          ./config/machines/${hostname}.nix
+          ./home-manager/modules
+          ./home-manager/config/machines/${hostname}.nix
           (if builtins.pathExists ./local.nix then ./local.nix else { })
           inputs.nix-index-database.homeModules.nix-index
         ];
 
-      mkDefaultConfig =
-        { username, homeDirectory }:
-        { pkgs, ... }:
-        {
-          nixpkgs.overlays = overlays;
-          nixpkgs.config = config;
-          programs.home-manager.enable = true;
-          home.username = username;
-          home.homeDirectory = homeDirectory;
-          home.stateVersion = "25.11";
-          news.display = "silent";
-        };
-
-      mkHomeConfig =
+      mkHomeManagerConfig =
         {
           hostname,
           username,
@@ -163,9 +150,17 @@
           # home-manager/modules/misc/nixpkgs.nix (`import pkgPath ...;')
           pkgs = nixpkgs.legacyPackages.${system};
           modules = [
-            (mkDefaultConfig { inherit username homeDirectory; })
+            {
+              nixpkgs.overlays = overlays;
+              nixpkgs.config = config;
+              programs.home-manager.enable = true;
+              home.username = username;
+              home.homeDirectory = homeDirectory;
+              home.stateVersion = "25.11";
+              news.display = "silent";
+            }
           ]
-          ++ (mkModules { inherit hostname; });
+          ++ (mkHomeManagerModule { inherit hostname; });
         };
 
       mkNixOSConfig =
@@ -180,13 +175,12 @@
           home-manager.backupFileExtension = "backup";
           home-manager.users.${username} = {
             imports = [
-              (mkDefaultConfig { inherit username homeDirectory; })
-            ]
-            ++ (mkModules { inherit hostname; });
+              (mkHomeManagerConfig { inherit username hostname homeDirectory; })
+            ];
           };
         };
 
-      mkLinuxConfig =
+      mkHomeManagerLinuxConfig =
         {
           hostname,
           username ? "sirn",
@@ -194,7 +188,7 @@
           homeDirectory ? "/home/${username}",
           ...
         }:
-        mkHomeConfig {
+        mkHomeManagerConfig {
           inherit
             hostname
             username
@@ -203,7 +197,7 @@
             ;
         };
 
-      mkDarwinConfig =
+      mkHomeManagerDarwinConfig =
         {
           hostname,
           username ? "sirn",
@@ -211,7 +205,7 @@
           homeDirectory ? "/Users/${username}",
           ...
         }:
-        mkHomeConfig {
+        mkHomeManagerConfig {
           inherit
             hostname
             username
@@ -258,12 +252,12 @@
     {
       # Home Manager module to be included by a standalnoe Home Manager
       homeConfigurations = {
-        phoebe = mkLinuxConfig { hostname = "phoebe"; };
-        polaris = mkLinuxConfig { hostname = "polaris"; };
-        system76 = mkLinuxConfig { hostname = "system76"; };
-        terra = mkLinuxConfig { hostname = "terra"; };
-        theia = mkDarwinConfig { hostname = "theia"; };
-        ws = mkLinuxConfig { hostname = "ws"; };
+        phoebe = mkHomeManagerLinuxConfig { hostname = "phoebe"; };
+        polaris = mkHomeManagerLinuxConfig { hostname = "polaris"; };
+        system76 = mkHomeManagerLinuxConfig { hostname = "system76"; };
+        terra = mkHomeManagerLinuxConfig { hostname = "terra"; };
+        theia = mkHomeManagerDarwinConfig { hostname = "theia"; };
+        ws = mkHomeManagerLinuxConfig { hostname = "ws"; };
       };
 
       # NixOS module to be included by NixOS configuration

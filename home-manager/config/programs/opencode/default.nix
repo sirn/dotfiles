@@ -8,7 +8,7 @@
 let
   agentsCfg = config.agents;
 
-  agentsDir = ../../../var/agents/agents;
+  agentsDir = ../../../../var/agents/agents;
 
   # Transform module model to OpenCode format
   toOpenCodeModel = m: {

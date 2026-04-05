@@ -30,7 +30,7 @@ in
     )
   ) cfg.agents
   // {
-    "${configDir}/skills".source = ../var/agents/skills;
+    "${configDir}/skills".source = ../../var/agents/skills;
   };
 
   wrapper = pkgs.writeScriptBin "claude-${name}" ''

@@ -5,10 +5,11 @@ Dotfiles repository for managing configurations across Linux and macOS machines.
 ## Project Structure
 
 - `flake.nix`: The entry point defining Home Manager configurations and NixOS modules.
-- `config/`: Home Manager configuration files organized by program or service.
-- `modules/`: NixOS modules for system-level integration.
+- `home-manager/`: Home Manager configuration and modules.
+  - `config/`: Configuration files organized by program or service.
+  - `modules/`: Home Manager module definitions.
+  - `lib/`: Helper functions and utilities.
 - `pkgs/`: Custom package definitions and overlays.
-- `lib/`: Helper functions and utilities.
 - `local.nix`: A machine-specific configuration file (gitignored) for local overrides.
 - `secrets/`: Secrets managed with sops-nix.
 
@@ -100,8 +101,8 @@ Create a file named `local.nix` to have a machine-specific configuration that is
 ```nix
 {
   imports = [
-    ./config/programs/bitwarden.nix
-    ./config/services/languagetool.nix
+    ./home-manager/config/programs/bitwarden.nix
+    ./home-manager/config/services/languagetool.nix
   ];
 
   # When running on a non-NixOS Linux:
@@ -117,8 +118,8 @@ For NixOS, this needs to be done as part of the system's `configuration.nix` ins
 
   home-manager.users.sirn = {
     imports = [
-      "${dotfiles}/config/programs/bitwarden.nix"
-      "${dotfiles}/config/programs/languagetool.nix"
+      "${dotfiles}/home-manager/config/programs/bitwarden.nix"
+      "${dotfiles}/home-manager/config/services/languagetool.nix"
     ];
   };
 }

@@ -129,9 +129,9 @@ let
     mkdir -p $out/{packages,var}
 
     cp ${earlyInitEl} $out/early-init.el
-    cp ${../../etc/emacs/init.el} $out/init.el
+    cp ${../../../etc/emacs/init.el} $out/init.el
 
-    for f in ${../../etc/emacs/packages}/*.el; do
+    for f in ${../../../etc/emacs/packages}/*.el; do
       cp "$f" $out/packages/
     done
 
@@ -140,7 +140,7 @@ let
     ln -s ${pkgs.scowl} $out/var/scowl
     ln -s ${emacsBinDeps} $out/var/emacs-bin-deps
 
-    cp -r ${../../etc/emacs/templates} $out/var/templates
+    cp -r ${../../../etc/emacs/templates} $out/var/templates
   '';
 
   wrappedEmacs = pkgs.symlinkJoin {
