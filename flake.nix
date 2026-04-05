@@ -136,6 +136,9 @@
       # Returns a list of Home Manager modules
       mkHomeManagerModules =
         { hostname }:
+        let
+          profile = import ./profiles/${hostname}.nix;
+        in
         [
           # Home Manager modules
           inputs.niri.homeModules.niri
@@ -144,13 +147,13 @@
 
           # Configurations
           ./home-manager/modules
-          ./home-manager/config/machines/${hostname}.nix
           (
             if builtins.pathExists ./home-manager-configuration.nix then
               ./home-manager-configuration.nix
             else
               { }
           )
+          profile.home
         ];
 
       # Returns the base Home Manager configuration module
@@ -197,6 +200,9 @@
           system ? "x86_64-linux",
           homeDirectory ? "/home/${username}",
         }:
+        let
+          profile = import ./profiles/${hostname}.nix;
+        in
         nixpkgs.lib.nixosSystem {
           inherit system;
 
@@ -224,7 +230,7 @@
             ./nixos/modules
             ./configuration.nix
             ./hardware-configuration.nix
-            ./nixos/config/machines/${hostname}.nix
+            profile.nixos
 
             # Home Manager
             inputs.home-manager.nixosModules.home-manager
