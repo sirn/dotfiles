@@ -1,0 +1,5 @@
+{
+  programs.uwsm = {
+    enable = true;
+  };
+}

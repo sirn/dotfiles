@@ -1,0 +1,5 @@
+{
+  services.chrony = {
+    enable = true;
+  };
+}

@@ -1,0 +1,5 @@
+{
+  services.prometheus = {
+    enable = true;
+  };
+}
