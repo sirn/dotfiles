@@ -4,11 +4,9 @@ let
   inherit (prev.lib) recurseIntoAttrs;
 in
 {
-  inherit (recurseIntoAttrs (callPackage ./by-name/ia-fonts/package.nix { }))
-    ia-writer-duo-static
-    ia-writer-mono-static
-    ia-writer-quattro-static
-    ;
+  asdcontrol = (callPackage ./by-name/asdcontrol { });
+
+  claude-code-seccomp = (callPackage ./by-name/claude-code-seccomp/package.nix { });
 
   emacsPackages = {
     phscroll = (callPackage ./by-name/emacs/elisp-packages/phscroll/package.nix { });
@@ -16,11 +14,25 @@ in
 
   envWrapper = (callPackage ./by-name/env-wrapper/package.nix { });
 
-  wrapped-uv = (callPackage ./by-name/wrapped-uv/wrapped.nix { });
+  inherit (recurseIntoAttrs (callPackage ./by-name/ia-fonts/package.nix { }))
+    ia-writer-duo-static
+    ia-writer-mono-static
+    ia-writer-quattro-static
+    ;
 
-  tincan = (callPackage ./by-name/tincan/package.nix { });
+  nvidia-gpu-exporter = (callPackage ./by-name/prometheus/nvidia-gpu-exporter.nix { });
+
+  node-textfile-collector-scripts = (
+    callPackage ./by-name/prometheus/node-textfile-collector-scripts.nix { }
+  );
 
   repoman = (callPackage ./by-name/repoman/package.nix { });
 
-  claude-code-seccomp = (callPackage ./by-name/claude-code-seccomp/package.nix { });
+  tincan = (callPackage ./by-name/tincan/package.nix { });
+
+  udev-forwarder = (callPackage ./by-name/udev-forwarder { });
+
+  vulkan-hdr-layer = (callPackage ./by-name/vulkan-hdr-layer { });
+
+  wrapped-uv = (callPackage ./by-name/wrapped-uv/wrapped.nix { });
 }
