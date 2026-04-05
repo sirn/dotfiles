@@ -1,8 +1,3 @@
-# Dotfiles-specific
-files/
-local/
-secrets/
-
 # Nasty system caches
 .DS_Store
 Thumbs.db
