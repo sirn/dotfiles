@@ -7,6 +7,7 @@
 
 let
   hasGui = config.services.xserver.enable || config.programs.uwsm.enable;
+  hasContainers = config.virtualisation.docker.enable || config.virtualisation.podman.enable;
 in
 {
   hardware.nvidia = {
@@ -20,6 +21,8 @@ in
 
     nvidiaPersistenced = !hasGui;
   };
+
+  hardware.nvidia-container-toolkit.enable = hasContainers;
 
   services.xserver.videoDrivers = [
     "nvidia"
