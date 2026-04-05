@@ -147,12 +147,7 @@
 
           # Configurations
           ./home-manager/modules
-          (
-            if builtins.pathExists ./home-manager-configuration.nix then
-              ./home-manager-configuration.nix
-            else
-              { }
-          )
+          (if builtins.pathExists ./local/home.nix then ./local/home.nix else { })
           profile.home
         ];
 

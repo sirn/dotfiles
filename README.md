@@ -107,13 +107,13 @@ $ nix build "path:.#homeConfigurations.$HM_PROFILE.activationPackage"
 
 ### Local Home Manager Configuration
 
-Create a file named `home-manager-configuration.nix` to have a machine-specific configuration that is not committed to the repository.
+Create a file named `local/home.nix` to have a machine-specific configuration that is not committed to the repository.
 
 ```nix
 {
   imports = [
-    ./home-manager/config/programs/bitwarden.nix
-    ./home-manager/config/services/languagetool.nix
+    ../home-manager/config/programs/bitwarden.nix
+    ../home-manager/config/services/languagetool.nix
   ];
 
   # When running on a non-NixOS Linux:
