@@ -74,7 +74,7 @@
   };
 
   outputs =
-    { self, nixpkgs, ... }@inputs:
+    { nixpkgs, ... }@inputs:
     let
       config = {
         allowUnfree = true;
@@ -154,7 +154,6 @@
       # Returns the base Home Manager configuration module
       mkHomeManagerBaseModule =
         { username, homeDirectory }:
-        { pkgs, ... }:
         {
           nixpkgs.overlays = overlays;
           nixpkgs.config = config;
@@ -208,6 +207,8 @@
               sops-nix
               home-manager
               dotfiles
+              niri
+              nix-index-database
               ;
           };
 

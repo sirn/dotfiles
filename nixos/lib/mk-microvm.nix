@@ -1,7 +1,9 @@
 {
   microvm,
-  sops-nix,
   home-manager,
+  sops-nix,
+  niri,
+  nix-index-database,
   overlays,
   stateVersion,
 }:
@@ -48,36 +50,62 @@
 
 {
   config =
-    {
-      config,
-      pkgs,
-      lib,
-      ...
-    }:
+    { lib, ... }:
     {
       imports = [
         microvm.nixosModules.microvm
         sops-nix.nixosModules.sops
       ]
       ++ lib.optionals (profile != "") [
-        (let p = import ../../profiles/${profile}.nix; in p.nixos)
+        (
+          let
+            p = import ../../profiles/${profile}.nix;
+          in
+          p.nixos
+        )
       ]
       ++ extraModules
-      ++ lib.optionals (useHomeManager) [ home-manager.nixosModules.home-manager ]
+      ++ lib.optionals useHomeManager [
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.users.${hmUsername} = {
+            nixpkgs.overlays = overlays;
+            nixpkgs.config.allowUnfree = true;
+            home.stateVersion = stateVersion;
+          };
+        }
+      ]
       ++ lib.optionals (useHomeManager && hmProfile != "") [
         {
-          home-manager.users.${hmUsername}.imports = [
-            (let p = import ../../profiles/${hmProfile}.nix; in p.home)
-          ];
+          home-manager.users.${hmUsername} = {
+            imports = [
+              niri.homeModules.niri
+              nix-index-database.homeModules.nix-index
+              sops-nix.homeManagerModules.sops
+              ../../home-manager/modules
+              (
+                let
+                  p = import ../../profiles/${hmProfile}.nix;
+                in
+                p.home
+              )
+            ];
+          };
         }
       ]
       ++ lib.optionals (useHomeManager && extraHomeModules != [ ]) [
-        { home-manager.users.${hmUsername}.imports = extraHomeModules; }
+        {
+          home-manager.users.${hmUsername} = {
+            imports = extraHomeModules;
+          };
+        }
       ]
       ++ lib.optionals (useHomeManager && useContainersVolume) [
         {
-          home-manager.users.${hmUsername}.services.podman.settings.storage = {
-            storage.graphroot = "/var/lib/containers/user/${hmUsername}/storage";
+          home-manager.users.${hmUsername} = {
+            services.podman.settings.storage = {
+              storage.graphroot = "/var/lib/containers/user/${hmUsername}/storage";
+            };
           };
         }
       ];
