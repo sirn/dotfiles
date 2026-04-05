@@ -8,7 +8,7 @@
 
 let
   fhsUv = buildFHSEnv {
-    name = "uvx-fhs-base";
+    name = "uv";
     runScript = "uv";
     targetPkgs =
       pkgs': with pkgs'; [
