@@ -78,18 +78,18 @@ home-manager switch --flake path:.#<hostname>
 
 Keep commit messages concise. Use the following format for the scope prefix:
 
-| Files Changed                                | Format                                     | Example                                  |
-| -------------------------------------------- | ------------------------------------------ | ---------------------------------------- |
-| `profiles/<hostname>.nix`                    | `profiles/<hostname>`                      | `profiles/terra: add service`            |
-| `nixos/config/<dir1>/<dir2>`                 | `nixos/<dir1>/<dir2>`                      | `nixos/system/nvidia: enable nvidia`     |
-| `nixos/modules/<dir1>/<dir2>`                | `nixos/<dir1>/<dir2>`                      | `nixos/system/vfio: fix option`          |
-| `nixos/lib/<dir>`                            | `nixos/lib/<dir>`                          | `nixos/lib/mk-microvm: fix`              |
-| `home-manager/config/<dir1>/<dir2>`          | `home-manager/<dir1>/<dir2>`               | `home-manager/programs/bash: add alias`  |
-| `home-manager/modules/<dir1>/<dir2>`         | `home-manager/<dir1>/<dir2>`               | `home-manager/programs/bash: add option` |
-| `home-manager/lib/<dir>`                     | `home-manager/lib/<dir>`                   | `home-manager/lib/helpers: fix`          |
-| `pkgs/<dir1>/<dir2>`                         | Omit `<dir1>`, use `pkgs/<dir2>`           | `pkgs/gemini-cli-bin: update`            |
-| Top-level (`flake.nix`, `README.md`)         | Use as-is                                  | `README.md: update install`              |
-| Other directories (`etc`, `var`, etc.)       | Use as-is                                  | `etc/emacs: fix path`                    |
+| Files Changed                          | Format                           | Example                                  |
+| -------------------------------------- | -------------------------------- | ---------------------------------------- |
+| `profiles/<hostname>.nix`              | `profiles/<hostname>`            | `profiles/terra: add service`            |
+| `nixos/config/<dir1>/<dir2>`           | `nixos/<dir1>/<dir2>`            | `nixos/system/nvidia: enable nvidia`     |
+| `nixos/modules/<dir1>/<dir2>`          | `nixos/<dir1>/<dir2>`            | `nixos/system/vfio: fix option`          |
+| `nixos/lib/<dir>`                      | `nixos/lib/<dir>`                | `nixos/lib/mk-microvm: fix`              |
+| `home-manager/config/<dir1>/<dir2>`    | `home-manager/<dir1>/<dir2>`     | `home-manager/programs/bash: add alias`  |
+| `home-manager/modules/<dir1>/<dir2>`   | `home-manager/<dir1>/<dir2>`     | `home-manager/programs/bash: add option` |
+| `home-manager/lib/<dir>`               | `home-manager/lib/<dir>`         | `home-manager/lib/helpers: fix`          |
+| `pkgs/<dir1>/<dir2>`                   | Omit `<dir1>`, use `pkgs/<dir2>` | `pkgs/gemini-cli-bin: update`            |
+| Top-level (`flake.nix`, `README.md`)   | Use as-is                        | `README.md: update install`              |
+| Other directories (`etc`, `var`, etc.) | Use as-is                        | `etc/emacs: fix path`                    |
 
 Multiple files:
 
