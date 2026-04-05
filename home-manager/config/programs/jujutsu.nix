@@ -27,6 +27,7 @@ in
         behavior = "own";
         backend = "gpg";
         "backend.gpg.program" = "${gpgcfg.package}/bin/gpg";
+        "backend.gpg.allow-expired-keys" = true;
       };
 
       ui = {
