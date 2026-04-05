@@ -206,7 +206,6 @@
               microvm
               sops-nix
               home-manager
-              dotfiles
               niri
               nix-index-database
               ;
