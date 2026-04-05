@@ -1,26 +1,27 @@
 # Dotfiles-specific
-config.override.nix
-secrets
+secrets/
+local/
 
 # Nasty system caches
 .DS_Store
 Thumbs.db
 
 # Other VCS
-.hg
-.svn
+.hg/
+.svn/
 
-# Runtime-generated files
+# Runtime files
 *.elc
 *.log
 *.swp
 *~
-
-# Runtime
 .config
 .sops.yaml
-local.nix
-nix.generic
-nix.profile
-result
-results
+result/
+
+# Home Manager
+home-manager-configuration.nix
+
+# NixOS (host-specific)
+configuration.nix
+hardware-configuration.nix

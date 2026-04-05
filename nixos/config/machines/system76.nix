@@ -1,4 +1,9 @@
-{ nixos-hardware, pkgs, lib, ... }:
+{
+  nixos-hardware,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
   systemdRun = lib.getExe' pkgs.systemd "systemd-run";

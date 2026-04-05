@@ -9,8 +9,11 @@ Dotfiles repository for managing configurations across Linux and macOS machines.
   - `config/`: Configuration files organized by program or service.
   - `modules/`: Home Manager module definitions.
   - `lib/`: Helper functions and utilities.
+- `nixos/`: NixOS configuration and modules.
+  - `config/`: Configuration files organized by program or service.
+  - `modules/`: NixOS module definitions.
+  - `lib/`: Helper functions and utilities.
 - `pkgs/`: Custom package definitions and overlays.
-- `local.nix`: A machine-specific configuration file (gitignored) for local overrides.
 - `secrets/`: Secrets managed with sops-nix.
 
 ## Machine Profiles
@@ -24,9 +27,9 @@ The following hostnames are defined as machine profiles in `flake.nix`:
 - `theia` (macOS - `aarch64-darwin`)
 - `ws` (Linux)
 
-## Getting Started
+## Setting Up
 
-### Verify Nix Installation
+### Standalone Home Manager
 
 Ensure Nix is installed. If not, install it with:
 
@@ -40,15 +43,13 @@ Configure nix, edit `~/.config/nix/nix.conf` to enable flakes:
 experimental-features = nix-command flakes
 ```
 
-### Clone the Repository
+Clone the Repository:
 
 ```shell
 $ git clone git@git.sr.ht:~sirn/dotfiles ~/.dotfiles
 ```
 
-### Setup Home Manager (Standalone)
-
-For macOS or generic Linux (non-NixOS), apply the Home Manager configuration using the machine profile name.
+Setup Home Manager:
 
 ```shell
 $ HM_PROFILE=$(hostname -s)
@@ -62,15 +63,25 @@ On subsequent updates, use:
 $ home-manager switch --flake path:.#$HM_PROFILE
 ```
 
-### Setup as NixOS Module
+### NixOS
 
-This repository provides a module to be used directly with the Home Manager NixOS module. In your NixOS configuration (`configuration.nix`), add:
+On a NixOS system, clone this repository into `/etc/nixos`:
 
-```nix
-modules = [
-  inputs.home-manager.nixosModules.home-manager
-  inputs.dotfiles.nixosModules.${hostname}
-];
+```shell
+$ git clone git@git.sr.ht:~sirn/nixos /etc/nixos
+```
+
+Generate hardware-configuration:
+
+```shell
+$ nixos-generate-config --root /etc/nixos
+```
+
+Edit `configuration.nix` and get rid of most configurations as the actual configuration belongs in the machine profiles. After done, rebuild NixOS with `nixos-rebuild`:
+
+```shell
+$ PROFILE=$(hostname -s)
+$ nixos-rebuild --flake path:.#$PROFILE boot
 ```
 
 ## Development & Maintenance
@@ -83,9 +94,9 @@ To format all files consistently:
 nix run path:.#treefmt
 ```
 
-### Testing Builds Locally
+### Testing Home Manager Locally
 
-Test a build locally without applying the configuration:
+Test a Home Manager build locally without applying the configuration:
 
 ```shell
 $ HM_PROFILE=$(hostname -s)
@@ -94,9 +105,9 @@ $ nix build "path:.#homeConfigurations.$HM_PROFILE.activationPackage"
 
 ## Configuration
 
-### Local Configuration
+### Local Home Manager Configuration
 
-Create a file named `local.nix` to have a machine-specific configuration that is not committed to the repository.
+Create a file named `home-manager-configuration.nix` to have a machine-specific configuration that is not committed to the repository.
 
 ```nix
 {
@@ -109,40 +120,3 @@ Create a file named `local.nix` to have a machine-specific configuration that is
   targets.genericLinux.enable = true;
 }
 ```
-
-For NixOS, this needs to be done as part of the system's `configuration.nix` instead:
-
-```nix
-{
-  # ...
-
-  home-manager.users.sirn = {
-    imports = [
-      "${dotfiles}/home-manager/config/programs/bitwarden.nix"
-      "${dotfiles}/home-manager/config/services/languagetool.nix"
-    ];
-  };
-}
-```
-
-## Application-specific Notes
-
-### Firefox
-
-Application launchers are automatically generated for each Firefox profile defined in `programs.firefox.profiles`.
-
-**macOS**: Proper `.app` bundles are created for each profile (e.g., "Firefox (main).app") and copied to `~/Applications/Home Manager Apps/`. These appear in Spotlight, Dock, and LaunchServices. Raycast scripts are also generated as a secondary option (see Raycast section).
-
-**Linux**: An XDG desktop entry named "Firefox (profile)" is automatically generated.
-
-### Raycast
-
-Generated scripts are stored at `~/.local/libexec/raycast`.
-
-To use Raycast script commands:
-
-1. Apply configuration: `home-manager switch --flake .#$HM_PROFILE`
-2. Open Raycast Preferences (⌘ + ,)
-3. Go to Extensions → Script Commands
-4. Click "Add Directories" and add `~/.local/libexec/raycast`
-5. Search "Firefox" in Raycast to launch profiles

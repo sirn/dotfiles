@@ -10,6 +10,9 @@
       url = "github:nixos/nixpkgs/nixos-unstable";
     };
 
+    ## Home Manager
+    ##
+
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -42,6 +45,19 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Hardware presets for NixOS
+    nixos-hardware = {
+      url = "github:NixOS/nixos-hardware/master";
+    };
+
+    ## MicroVM
+    ##
+
+    microvm = {
+      url = "github:astro/microvm.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     ## Package overlays
     ##
 
@@ -58,12 +74,7 @@
   };
 
   outputs =
-    {
-      self,
-      nixpkgs,
-      home-manager,
-      ...
-    }@inputs:
+    { self, nixpkgs, ... }@inputs:
     let
       config = {
         allowUnfree = true;
@@ -122,25 +133,49 @@
         })
       ];
 
-      mkHomeManagerModule =
+      # Returns a list of Home Manager modules
+      mkHomeManagerModules =
         { hostname }:
         [
-          inputs.sops-nix.homeManagerModules.sops
+          # Home Manager modules
           inputs.niri.homeModules.niri
+          inputs.nix-index-database.homeModules.nix-index
+          inputs.sops-nix.homeManagerModules.sops
+
+          # Configurations
           ./home-manager/modules
           ./home-manager/config/machines/${hostname}.nix
-          (if builtins.pathExists ./local.nix then ./local.nix else { })
-          inputs.nix-index-database.homeModules.nix-index
+          (
+            if builtins.pathExists ./home-manager-configuration.nix then
+              ./home-manager-configuration.nix
+            else
+              { }
+          )
         ];
 
-      mkHomeManagerConfig =
+      # Returns the base Home Manager configuration module
+      mkHomeManagerBaseModule =
+        { username, homeDirectory }:
+        { pkgs, ... }:
+        {
+          nixpkgs.overlays = overlays;
+          nixpkgs.config = config;
+          programs.home-manager.enable = true;
+          home.username = username;
+          home.homeDirectory = homeDirectory;
+          home.stateVersion = "25.11";
+          news.display = "silent";
+        };
+
+      # Builds a standalone Home Manager configuration
+      mkHomeManager =
         {
           hostname,
           username,
           system,
           homeDirectory,
         }:
-        home-manager.lib.homeManagerConfiguration {
+        inputs.home-manager.lib.homeManagerConfiguration {
           # home-manager will be responsible for evaluating the nixpkgs.overlays.
           # We're passing legacyPackages here to avoid nixpkgs from being
           # evaluated twice.
@@ -150,37 +185,62 @@
           # home-manager/modules/misc/nixpkgs.nix (`import pkgPath ...;')
           pkgs = nixpkgs.legacyPackages.${system};
           modules = [
-            {
-              nixpkgs.overlays = overlays;
-              nixpkgs.config = config;
-              programs.home-manager.enable = true;
-              home.username = username;
-              home.homeDirectory = homeDirectory;
-              home.stateVersion = "25.11";
-              news.display = "silent";
-            }
+            (mkHomeManagerBaseModule { inherit username homeDirectory; })
           ]
-          ++ (mkHomeManagerModule { inherit hostname; });
+          ++ (mkHomeManagerModules { inherit hostname; });
         };
 
-      mkNixOSConfig =
+      mkNixOS =
         {
           hostname,
           username ? "sirn",
+          system ? "x86_64-linux",
           homeDirectory ? "/home/${username}",
         }:
-        {
-          home-manager.useGlobalPkgs = false;
-          home-manager.useUserPackages = true;
-          home-manager.backupFileExtension = "backup";
-          home-manager.users.${username} = {
-            imports = [
-              (mkHomeManagerConfig { inherit username hostname homeDirectory; })
-            ];
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+
+          specialArgs = {
+            inherit (inputs)
+              nixos-hardware
+              microvm
+              sops-nix
+              home-manager
+              dotfiles
+              ;
           };
+
+          modules = [
+            {
+              nixpkgs.overlays = overlays;
+              nixpkgs.config.allowUnfree = true;
+              system.stateVersion = "25.11";
+            }
+
+            # NixOS modules
+            inputs.sops-nix.nixosModules.sops
+
+            # Configurations
+            ./nixos/modules
+            ./configuration.nix
+            ./hardware-configuration.nix
+            ./nixos/config/machines/${hostname}.nix
+
+            # Home Manager
+            inputs.home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = false;
+              home-manager.useUserPackages = true;
+              home-manager.backupFileExtension = "backup";
+              home-manager.users.${username}.imports = [
+                (mkHomeManagerBaseModule { inherit username homeDirectory; })
+              ]
+              ++ (mkHomeManagerModules { inherit hostname; });
+            }
+          ];
         };
 
-      mkHomeManagerLinuxConfig =
+      mkHomeManagerLinux =
         {
           hostname,
           username ? "sirn",
@@ -188,7 +248,7 @@
           homeDirectory ? "/home/${username}",
           ...
         }:
-        mkHomeManagerConfig {
+        mkHomeManager {
           inherit
             hostname
             username
@@ -197,7 +257,7 @@
             ;
         };
 
-      mkHomeManagerDarwinConfig =
+      mkHomeManagerDarwin =
         {
           hostname,
           username ? "sirn",
@@ -205,7 +265,7 @@
           homeDirectory ? "/Users/${username}",
           ...
         }:
-        mkHomeManagerConfig {
+        mkHomeManager {
           inherit
             hostname
             username
@@ -252,21 +312,21 @@
     {
       # Home Manager module to be included by a standalnoe Home Manager
       homeConfigurations = {
-        phoebe = mkHomeManagerLinuxConfig { hostname = "phoebe"; };
-        polaris = mkHomeManagerLinuxConfig { hostname = "polaris"; };
-        system76 = mkHomeManagerLinuxConfig { hostname = "system76"; };
-        terra = mkHomeManagerLinuxConfig { hostname = "terra"; };
-        theia = mkHomeManagerDarwinConfig { hostname = "theia"; };
-        ws = mkHomeManagerLinuxConfig { hostname = "ws"; };
+        phoebe = mkHomeManagerLinux { hostname = "phoebe"; };
+        polaris = mkHomeManagerLinux { hostname = "polaris"; };
+        system76 = mkHomeManagerLinux { hostname = "system76"; };
+        terra = mkHomeManagerLinux { hostname = "terra"; };
+        theia = mkHomeManagerDarwin { hostname = "theia"; };
+        ws = mkHomeManagerLinux { hostname = "ws"; };
       };
 
-      # NixOS module to be included by NixOS configuration
-      nixosModules = {
-        phoebe = mkNixOSConfig { hostname = "phoebe"; };
-        polaris = mkNixOSConfig { hostname = "polaris"; };
-        system76 = mkNixOSConfig { hostname = "system76"; };
-        terra = mkNixOSConfig { hostname = "terra"; };
-        ws = mkNixOSConfig { hostname = "ws"; };
+      # NixOS configuration for NixOS
+      nixosConfigurations = {
+        phoebe = mkNixOS { hostname = "phoebe"; };
+        polaris = mkNixOS { hostname = "polaris"; };
+        system76 = mkNixOS { hostname = "system76"; };
+        terra = mkNixOS { hostname = "terra"; };
+        ws = mkNixOS { hostname = "ws"; };
       };
 
       # Apps output for nix run path:.#treefmt
