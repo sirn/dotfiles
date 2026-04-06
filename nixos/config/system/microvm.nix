@@ -1,4 +1,4 @@
-{ config, microvm, ... }:
+{ microvm, ... }:
 
 {
   imports = [ microvm.nixosModules.host ];

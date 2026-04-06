@@ -76,8 +76,17 @@
   outputs =
     { nixpkgs, ... }@inputs:
     let
-      config = {
+      nixpkgsConfig = {
         allowUnfree = true;
+      };
+
+      stateVersion = "25.11";
+
+      optionalPath = p: if builtins.pathExists p then p else { };
+
+      mkMicroVM = import ./nixos/lib/mk-microvm.nix {
+        inherit (inputs) microvm home-manager sops-nix niri nix-index-database;
+        inherit overlays stateVersion;
       };
 
       compatOverlays = [
@@ -120,7 +129,7 @@
         (final: prev: {
           unstable = import inputs.nixpkgs-unstable {
             system = final.stdenv.hostPlatform.system;
-            config = config;
+            config = nixpkgsConfig;
             overlays = compatOverlays;
           };
 
@@ -135,7 +144,7 @@
 
       # Returns a list of Home Manager modules
       mkHomeManagerModules =
-        { hostname }:
+        hostname:
         let
           profile = import ./profiles/${hostname}.nix;
         in
@@ -147,7 +156,7 @@
 
           # Configurations
           ./home-manager/modules
-          (if builtins.pathExists ./local/home.nix then ./local/home.nix else { })
+          (optionalPath ./local/home.nix)
           profile.home
         ];
 
@@ -156,11 +165,11 @@
         { username, homeDirectory }:
         {
           nixpkgs.overlays = overlays;
-          nixpkgs.config = config;
+          nixpkgs.config = nixpkgsConfig;
           programs.home-manager.enable = true;
           home.username = username;
           home.homeDirectory = homeDirectory;
-          home.stateVersion = "25.11";
+          home.stateVersion = stateVersion;
           news.display = "silent";
         };
 
@@ -184,7 +193,7 @@
           modules = [
             (mkHomeManagerBaseModule { inherit username homeDirectory; })
           ]
-          ++ (mkHomeManagerModules { inherit hostname; });
+          ++ (mkHomeManagerModules hostname);
         };
 
       mkNixOS =
@@ -201,21 +210,15 @@
           inherit system;
 
           specialArgs = {
-            inherit (inputs)
-              nixos-hardware
-              microvm
-              sops-nix
-              home-manager
-              niri
-              nix-index-database
-              ;
+            inherit (inputs) nixos-hardware microvm;
+            inherit mkMicroVM;
           };
 
           modules = [
             {
               nixpkgs.overlays = overlays;
-              nixpkgs.config.allowUnfree = true;
-              system.stateVersion = "25.11";
+              nixpkgs.config = nixpkgsConfig;
+              system.stateVersion = stateVersion;
             }
 
             # NixOS modules
@@ -227,7 +230,7 @@
 
             # Configurations
             ./nixos/modules
-            (if builtins.pathExists ./local/nixos.nix then ./local/nixos.nix else { })
+            (optionalPath ./local/nixos.nix)
             profile.nixos
 
             # Home Manager
@@ -239,7 +242,7 @@
               home-manager.users.${username}.imports = [
                 (mkHomeManagerBaseModule { inherit username homeDirectory; })
               ]
-              ++ (mkHomeManagerModules { inherit hostname; });
+              ++ (mkHomeManagerModules hostname);
             }
           ];
         };
@@ -314,7 +317,7 @@
       );
     in
     {
-      # Home Manager module to be included by a standalnoe Home Manager
+      # Home Manager module to be included by a standalone Home Manager
       homeConfigurations = {
         phoebe = mkHomeManagerLinux { hostname = "phoebe"; };
         polaris = mkHomeManagerLinux { hostname = "polaris"; };
