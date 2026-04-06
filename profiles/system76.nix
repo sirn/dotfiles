@@ -94,6 +94,11 @@
           "default.clock.quantum" = 1024;
         };
       };
+
+      # Set Prometheus retention
+      services.prometheus.extraFlags = [
+        "--storage.tsdb.retention.size=16GB"
+      ];
     };
 
   home =
