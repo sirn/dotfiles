@@ -96,9 +96,7 @@
       };
 
       # Set Prometheus retention
-      services.prometheus.extraFlags = [
-        "--storage.tsdb.retention.size=16GB"
-      ];
+      services.prometheus.extraFlags = [ "--storage.tsdb.retention.size=16GB" ];
     };
 
   home =

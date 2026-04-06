@@ -85,7 +85,13 @@
       optionalPath = p: if builtins.pathExists p then p else { };
 
       mkMicroVM = import ./nixos/lib/mk-microvm.nix {
-        inherit (inputs) microvm home-manager sops-nix niri nix-index-database;
+        inherit (inputs)
+          microvm
+          home-manager
+          sops-nix
+          niri
+          nix-index-database
+          ;
         inherit overlays stateVersion;
       };
 
