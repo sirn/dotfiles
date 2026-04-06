@@ -221,10 +221,13 @@
             # NixOS modules
             inputs.sops-nix.nixosModules.sops
 
-            # Configurations
-            ./nixos/modules
+            # NixOS Generate Config
             ./configuration.nix
             ./hardware-configuration.nix
+
+            # Configurations
+            ./nixos/modules
+            (if builtins.pathExists ./local/nixos.nix then ./local/nixos.nix else { })
             profile.nixos
 
             # Home Manager
