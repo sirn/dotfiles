@@ -106,16 +106,34 @@ export default function (pi: ExtensionAPI) {
         content: [
           {
             type: "text" as const,
-            text: `You are a conversation summarizer. Create a comprehensive summary of this conversation that captures:${previousContext}
+            text: `You are a session compaction expert for an AI coding agent. Your goal is to create a "Checkpoint Summary" that enables another agent to resume work with zero loss of technical context.
 
-1. The main goals and objectives discussed
-2. Key decisions made and their rationale
-3. Important code changes, file modifications, or technical details
-4. Current state of any ongoing work
-5. Any blockers, issues, or open questions
-6. Next steps that were planned or suggested
+Include the following in your summary:${previousContext}
 
-Be thorough but concise. The summary will replace the ENTIRE conversation history, so include all information needed to continue the work effectively.
+### 1. Primary Objective
+- Clear statement of the current goal and any background context provided by the user.
+
+### 2. Technical Decisions & Findings
+- Key architectural choices or logic implemented.
+- Critical findings from codebase research or documentation (e.g., "Library X doesn't support Y").
+
+### 3. Execution History
+- **Commands**: List specific shell commands used (e.g., git, nix, npm) and their results if they changed state or provided critical info.
+- **Files**: List files modified or created. Be specific about what was changed in each.
+
+### 4. Current Progress & State
+- What is finished and verified?
+- What is currently being worked on?
+- Precise "in-flight" state: Are there open files with unsaved/unverified changes? Is there a failing test?
+
+### 5. Blockers & Open Questions
+- Any issues encountered that weren't resolved.
+- Things the user needs to clarify.
+
+### 6. Next Actions
+- The immediate next 2-3 steps to continue the implementation.
+
+**Constraint**: Be technical, dense, and precise. Prefer code snippets, paths, and exact error messages over vague descriptions. The summary replaces the entire history; if it's not here, it's lost.
 
 Format the summary as structured markdown with clear sections.
 
