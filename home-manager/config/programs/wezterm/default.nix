@@ -74,7 +74,7 @@ in
     "wezterm/modules/term.lua" = {
       text = ''
         return {
-          term = "wezterm",
+          term = "xterm-256color",
           enable_kitty_keyboard = true,
         }
       '';
