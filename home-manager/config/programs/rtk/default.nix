@@ -105,7 +105,11 @@ let
 
   rtkConfig = {
     hooks = {
-      exclude_commands = [ "curl" ];
+      exclude_commands = [
+        "curl"
+        "find"
+        "rg"
+      ];
     };
   };
 in
