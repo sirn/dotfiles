@@ -35,7 +35,6 @@
         ../nixos/config/services/greetd.nix
         ../nixos/config/services/node-exporter.nix
         ../nixos/config/services/podman.nix
-        ../nixos/config/services/prometheus.nix
         ../nixos/config/services/udisks2.nix
         ../nixos/config/services/upower.nix
 
@@ -94,9 +93,6 @@
           "default.clock.quantum" = 1024;
         };
       };
-
-      # Set Prometheus retention
-      services.prometheus.extraFlags = [ "--storage.tsdb.retention.size=16GB" ];
     };
 
   home =
