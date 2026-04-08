@@ -1,3 +1,7 @@
+@define-color default_bg_opacity alpha(@default_bg, 0.6);
+@define-color default_bg_overlay alpha(@default_bg, 0.3);
+@define-color default_text_muted alpha(@default_text, 0.3);
+
 * {
   border-radius: 0;
   border: none;
@@ -8,7 +12,7 @@
 }
 
 window#waybar {
-  background-color: @default_bg;
+  background-color: @default_bg_opacity;
   color: @default_text;
 }
 
@@ -64,11 +68,11 @@ window#waybar.hidden {
   padding: 0 10px;
 }
 #pulseaudio.muted {
-  color: @muted_text;
+  color: @default_text_muted;
 }
 
 #tray {
-  background-color: alpha(@default_text, 0.1);
+  background-color: @default_bg_overlay;
   border-radius: 5px;
   padding: 0 10px;
 }
@@ -82,7 +86,7 @@ window#waybar.hidden {
 }
 
 #battery {
-  background-color: alpha(@default_text, 0.1);
+  background-color: @default_bg_overlay;
   border-radius: 5px;
   padding: 0 10px;
 }
@@ -117,7 +121,8 @@ window#waybar.hidden {
 }
 
 #scratchpad {
-  background-color: alpha(@default_bg_solid, 0.2);
+  background-color: @default_bg_overlay;
+  border-radius: 5px;
   padding: 0 10px;
 }
 

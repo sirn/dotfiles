@@ -214,8 +214,7 @@ in
 
   programs.waybar = lib.mkIf config.programs.waybar.enable {
     style = lib.mkDefault ''
-      @define-color default_bg_solid ${semantic.primary.bg};
-      @define-color default_bg alpha(@default_bg_solid, 0.6);
+      @define-color default_bg ${semantic.primary.bg};
       @define-color default_text ${semantic.primary.text};
       @define-color highlight_bg ${semantic.focus.bg};
       @define-color highlight_text ${semantic.focus.text};
@@ -227,7 +226,8 @@ in
       @define-color battery_warning_text ${semantic.battery.low.text};
       @define-color battery_critical_bg ${semantic.battery.critical.bg};
       @define-color battery_critical_text ${semantic.battery.critical.text};
-      @define-color muted_text ${semantic.inactive.text};
+      @define-color inactive_bg ${semantic.inactive.bg};
+      @define-color inactive_text ${semantic.inactive.text};
 
       ${builtins.readFile ./waybar.css}
     '';
