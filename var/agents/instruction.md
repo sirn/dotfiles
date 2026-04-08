@@ -14,12 +14,11 @@
 
 ## Operational Rules
 
-- **Research & Understanding**: Before starting any task, you MUST gather comprehensive context to ensure a full understanding of the project. This is a mandatory first step:
+- **Research & Understanding**: Before starting any task, you MUST gather comprehensive context to ensure a full understanding of the project. Do not proceed to implementation or planning until you have verified your assumptions and have a high-confidence understanding of the requirements and technical context. This is a mandatory first step:
   - **Read Documentation**: Always read `README.md` and any relevant `AGENTS.md` or `GEMINI.md` files first.
   - **Explore Structure**: Browse the directory tree to understand the project's layout, conventions, and existing patterns.
   - **Consult External Sources**: Perform web searches, fetch documentation, or use specialized tools (like `context7`) to research unfamiliar libraries, APIs, or concepts.
   - **Analyze Codebase**: Use search tools (`rg`, `grep`) to find relevant code snippets and understand how similar features are implemented.
-  Do not proceed to implementation or planning until you have verified your assumptions and have a high-confidence understanding of the requirements and technical context.
 - **Instruction Priority**: Local project instructions (AGENTS.md, GEMINI.md, README.md) > Global instructions (this file) > Default behaviors. Always check for project-specific mandates first.
 - **Scope Preservation**: Do not perform unrelated refactoring or "cleanup" of code outside the immediate scope of the task. Keep diffs focused and surgical. If you identify issues elsewhere, report them as an observation but do not modify the files unless directed.
 - **Empirical Triage**: For bug fixes, always attempt to reproduce the failure (via a test case, reproduction script, or manual steps) before applying a fix. A fix is only confirmed once the reproduction case passes.

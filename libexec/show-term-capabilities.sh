@@ -83,20 +83,20 @@ echo ""
 
 # Screen modes (just show, don't actually change)
 echo "Screen Modes (informational):"
-echo "  Alternate screen: \\033[?1049h (enable) / \\033[?1049l (disable)"
-echo "  Cursor visible:   \\033[?25h (show) / \\033[?25l (hide)"
+echo '  Alternate screen: \033[?1049h (enable) / \033[?1049l (disable)'
+echo '  Cursor visible:   \033[?25h (show) / \033[?25l (hide)'
 echo ""
 
 # Bracketed paste (informational)
 echo "Bracketed Paste Mode (informational):"
-echo "  Enable:  \\033[?2004h"
-echo "  Disable: \\033[?2004l"
+echo '  Enable:  \033[?2004h'
+echo '  Disable: \033[?2004l'
 echo ""
 
 # Mouse tracking (informational)
 echo "Mouse Tracking (informational):"
-echo "  Enable:  \\033[?1000h (basic) / \\033[?1002h (drag) / \\033[?1006h (SGR)"
-echo "  Disable: \\033[?1000l"
+echo '  Enable:  \033[?1000h (basic) / \033[?1002h (drag) / \033[?1006h (SGR)'
+echo '  Disable: \033[?1000l'
 echo ""
 
 echo "=========================="
