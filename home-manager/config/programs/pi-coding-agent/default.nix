@@ -9,7 +9,6 @@ let
   cfg = config.programs.pi-coding-agent;
   agentsCfg = config.agents;
 
-  # Third-party plugins with bundled dependencies
   betterMessagesCache = pkgs.local.pi-better-messages-cache;
 
   # Transform module model to Pi format
@@ -98,24 +97,18 @@ let
     text = policyJson;
   };
 
-  # Combine bundled extensions with generated JSON config into a single derivation
-  bundledAgent = pkgs.runCommand "pi-bundled-agent" { } ''
-    mkdir -p $out/better-messages-cache
-    cp -r ${./extensions}/. $out/
-    cp ${policyJsonFile} $out/policy.json
+  # Plan mode templates
+  planModeTemplates = {
+    prompt = builtins.readFile ./plan-mode-prompt.md;
+    accept = builtins.readFile ./plan-mode-accept.md;
+    subsequent = builtins.readFile ./plan-mode-inject.md;
+  };
 
-    # Copy better-messages-cache plugin with its node_modules
-    cp -r ${betterMessagesCache}/* $out/better-messages-cache/
-
-    # Substitute keybinding names based on Pi version
-    ${lib.optionalString (!isPi061orLater) ''
-      substituteInPlace $out/extensions/plan-mode.ts \
-        --replace-fail '"__KEYBINDING_EXPAND_TOOLS__"' '"expandTools"'
-    ''}
-    ${lib.optionalString isPi061orLater ''
-      substituteInPlace $out/extensions/plan-mode.ts \
-        --replace-fail '"__KEYBINDING_EXPAND_TOOLS__"' '"app.tools.expand"'
-    ''}
+  executionPolicyDir = pkgs.runCommand "pi-execution-policy" { } ''
+    cp -r ${./extensions/home-manager/execution-policy}/. $out/
+    substituteInPlace $out/plan-mode.ts \
+      --replace-fail '"__KEYBINDING_EXPAND_TOOLS__"' \
+      '"${if isPi061orLater then "app.tools.expand" else "expandTools"}"'
   '';
 in
 {
@@ -152,11 +145,22 @@ in
     providers = lib.mapAttrs mkPiProvider agentsCfg.models.providers;
   };
 
-  home.file = {
-    ".pi/agent/skills/home-manager".source = agentsCfg.skillsDir;
-    ".pi/agent/extensions/home-manager".source = bundledAgent;
-    ".pi/agent/policy.json".source = "${bundledAgent}/policy.json";
-  };
+  home.file =
+    lib.mapAttrs' (
+      name: _:
+      lib.nameValuePair ".pi/agent/extensions/hm-${name}" {
+        source =
+          if name == "execution-policy" then executionPolicyDir else ./extensions/home-manager + "/${name}";
+      }
+    ) (builtins.readDir ./extensions/home-manager)
+    // {
+      ".pi/agent/skills/home-manager".source = agentsCfg.skillsDir;
+      ".pi/agent/extensions/mcowger-better-messages-cache".source = betterMessagesCache;
+      ".pi/agent/policy.json".source = policyJsonFile;
+      ".pi/agent/plan-mode-prompt.md".text = planModeTemplates.prompt;
+      ".pi/agent/plan-mode-accept.md".text = planModeTemplates.accept;
+      ".pi/agent/plan-mode-inject.md".text = planModeTemplates.subsequent;
+    };
 
   # Pass the version check to the keybindings module
   _module.args = { inherit isPi061orLater; };

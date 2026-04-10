@@ -3,7 +3,7 @@ import {
   type ExtensionAPI,
   type ExtensionContext,
 } from "@mariozechner/pi-coding-agent";
-import { getExecutionMode } from "../lib/execution-mode.js";
+import { getExecutionMode } from "./lib/execution-mode.js";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -11,17 +11,19 @@ import * as path from "node:path";
 import { Container, Text, Box, Spacer } from "@mariozechner/pi-tui";
 
 export default function (pi: ExtensionAPI) {
-  const PLAN_DIR = path.join(os.homedir(), ".pi/agent/plans");
+  const PI_AGENT_DIR = path.join(os.homedir(), ".pi/agent");
+  const PLAN_DIR = path.join(PI_AGENT_DIR, "plans");
+
   const planModePromptTemplate = fs.readFileSync(
-    path.join(__dirname, "plan-mode-prompt.md"),
+    path.join(PI_AGENT_DIR, "plan-mode-prompt.md"),
     "utf-8",
   );
   const planModeAcceptTemplate = fs.readFileSync(
-    path.join(__dirname, "plan-mode-accept.md"),
+    path.join(PI_AGENT_DIR, "plan-mode-accept.md"),
     "utf-8",
   );
   const planModeSubsequentTemplate = fs.readFileSync(
-    path.join(__dirname, "plan-mode.md"),
+    path.join(PI_AGENT_DIR, "plan-mode-inject.md"),
     "utf-8",
   );
 

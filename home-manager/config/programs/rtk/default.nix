@@ -95,10 +95,6 @@ let
     text = builtins.readFile ./rtk-rewrite-claude.sh;
   };
 
-  rtkRewritePiTs = builtins.replaceStrings [ "__RTK_BIN__" ] [ rtkBin ] (
-    builtins.readFile ./rtk-rewrite-pi.ts
-  );
-
   rtkRewriteOpencodeTs = builtins.replaceStrings [ "__RTK_BIN__" ] [ rtkBin ] (
     builtins.readFile ./rtk-rewrite-opencode.ts
   );
@@ -120,7 +116,11 @@ in
     "Library/Application Support/rtk/config.toml" = lib.mkIf pkgs.stdenv.isDarwin {
       source = tomlFormat.generate "rtk-config" rtkConfig;
     };
-    ".pi/agent/extensions/rtk-rewrite.ts" = lib.mkIf piCfg.enable { text = rtkRewritePiTs; };
+    ".pi/agent/extensions/hm-rtk-rewrite/index.ts" = lib.mkIf piCfg.enable {
+      text = builtins.replaceStrings [ "\"__RTK_BIN__\"" ] [ "\"${rtkBin}\"" ] (
+        builtins.readFile ./rtk-rewrite-pi.ts
+      );
+    };
   };
 
   xdg.configFile = {

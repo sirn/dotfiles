@@ -16,7 +16,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 // Load compaction model config at extension load time
-// Extensions are at ~/.pi/agent/extensions/home-manager/extensions/
+// Extensions are at ~/.pi/agent/extensions/home-manager/smart-compact/
 // custom.json is at ~/.pi/agent/custom.json
 const configPath = join(import.meta.dirname, "../../../custom.json");
 

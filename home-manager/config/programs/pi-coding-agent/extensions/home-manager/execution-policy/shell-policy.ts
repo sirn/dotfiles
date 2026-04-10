@@ -11,10 +11,10 @@
  */
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { getExecutionMode } from "../lib/execution-mode.js";
+import { getExecutionMode } from "./lib/execution-mode.js";
 import { readFileSync, existsSync } from "node:fs";
-import path, { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import path, { join } from "node:path";
+import { homedir } from "node:os";
 import {
   evaluate,
   mergePolicies,
@@ -25,14 +25,12 @@ import {
   type EvalResult,
   type EvaluationPolicy,
   type PolicyCommands,
-  type HeredocPolicy,
   type WrapperRuleConfig,
-} from "../lib/shell-policy.js";
+} from "./lib/shell-policy.js";
 
-// Load global config from unified policy.json
-const __dirname = dirname(fileURLToPath(import.meta.url));
+// Load global config from unified policy.json at ~/.pi/agent/policy.json
 const globalConfigRaw = JSON.parse(
-  readFileSync(join(__dirname, "../../../policy.json"), "utf-8"),
+  readFileSync(join(homedir(), ".pi/agent/policy.json"), "utf-8"),
 );
 
 const globalUnified = normalizeUnifiedPolicyConfig(globalConfigRaw);
