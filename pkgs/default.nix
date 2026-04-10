@@ -26,6 +26,8 @@ in
     callPackage ./by-name/prometheus/node-textfile-collector-scripts.nix { }
   );
 
+  pi-better-messages-cache = (callPackage ./by-name/pi-better-messages-cache/package.nix { });
+
   repoman = (callPackage ./by-name/repoman/package.nix { });
 
   tincan = (callPackage ./by-name/tincan/package.nix { });

@@ -9,6 +9,9 @@ let
   cfg = config.programs.pi-coding-agent;
   agentsCfg = config.agents;
 
+  # Third-party plugins with bundled dependencies
+  betterMessagesCache = pkgs.local.pi-better-messages-cache;
+
   # Transform module model to Pi format
   toPiModel =
     m:
@@ -96,17 +99,20 @@ let
 
   # Combine bundled extensions with generated JSON config into a single derivation
   bundledAgent = pkgs.runCommand "pi-bundled-agent" { } ''
-    mkdir -p $out/extensions/home-manager
-    cp -r ${./extensions}/. $out/extensions/home-manager/
+    mkdir -p $out/better-messages-cache
+    cp -r ${./extensions}/. $out/
     cp ${policyJsonFile} $out/policy.json
+
+    # Copy better-messages-cache plugin with its node_modules
+    cp -r ${betterMessagesCache}/* $out/better-messages-cache/
 
     # Substitute keybinding names based on Pi version
     ${lib.optionalString (!isPi061orLater) ''
-      substituteInPlace $out/extensions/home-manager/extensions/plan-mode.ts \
+      substituteInPlace $out/extensions/plan-mode.ts \
         --replace-fail '"__KEYBINDING_EXPAND_TOOLS__"' '"expandTools"'
     ''}
     ${lib.optionalString isPi061orLater ''
-      substituteInPlace $out/extensions/home-manager/extensions/plan-mode.ts \
+      substituteInPlace $out/extensions/plan-mode.ts \
         --replace-fail '"__KEYBINDING_EXPAND_TOOLS__"' '"app.tools.expand"'
     ''}
   '';
@@ -147,7 +153,7 @@ in
 
   home.file = {
     ".pi/agent/skills/home-manager".source = agentsCfg.skillsDir;
-    ".pi/agent/extensions/home-manager".source = "${bundledAgent}/extensions/home-manager";
+    ".pi/agent/extensions/home-manager".source = bundledAgent;
     ".pi/agent/policy.json".source = "${bundledAgent}/policy.json";
   };
 

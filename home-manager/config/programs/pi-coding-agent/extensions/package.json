@@ -7,7 +7,8 @@
     "extensions": [
       "./extensions/plan-mode.ts",
       "./extensions/shell-policy.ts",
-      "./extensions/smart-compact.ts"
+      "./extensions/smart-compact.ts",
+      "./better-messages-cache/index.ts"
     ]
   }
 }
