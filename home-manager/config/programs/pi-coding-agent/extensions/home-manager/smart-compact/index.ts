@@ -13,12 +13,10 @@ import {
   serializeConversation,
 } from "@mariozechner/pi-coding-agent";
 import { existsSync, readFileSync } from "node:fs";
+import { homedir } from "node:os";
 import { join } from "node:path";
 
-// Load compaction model config at extension load time
-// Extensions are at ~/.pi/agent/extensions/home-manager/smart-compact/
-// custom.json is at ~/.pi/agent/custom.json
-const configPath = join(import.meta.dirname, "../../../custom.json");
+const configPath = join(homedir(), ".pi/agent/custom.json");
 
 interface CompactionModelConfig {
   provider: string;
