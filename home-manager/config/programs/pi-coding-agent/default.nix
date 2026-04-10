@@ -29,7 +29,8 @@ let
         cacheWrite = m.costCacheWrite;
       };
     }
-    // lib.optionalAttrs (m.api != null) { api = m.api; };
+    // lib.optionalAttrs (m.api != null) { api = m.api; }
+    // lib.optionalAttrs (m.baseUrl != null) { baseUrl = m.baseUrl; };
 
   # Build provider config from agents.models
   mkPiProvider =
