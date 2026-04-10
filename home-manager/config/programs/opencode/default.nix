@@ -10,7 +10,36 @@ let
 
   agentsDir = ../../../../var/agents/agents;
 
-  # Transform module model to OpenCode format
+  # Map API types to npm package for the SDK
+  apiToNpm = api: {
+    "anthropic-messages" = "@ai-sdk/anthropic";
+    "openai-completions" = "@ai-sdk/openai-compatible";
+    "openai-responses" = "@ai-sdk/openai";
+    "google-generative-ai" = "@ai-sdk/google";
+  }.${api} or "@ai-sdk/openai-compatible";
+
+  # Map API types to provider name suffix
+  apiToSuffix = api: {
+    "anthropic-messages" = "messages";
+    "openai-completions" = "completions";
+    "openai-responses" = "responses";
+    "google-generative-ai" = "generative-ai";
+  }.${api} or api;
+
+  # Resolve model's effective API and baseURL for OpenCode
+  # Priority: model.opengode > model > provider.opengode > provider
+  getModelApiAndUrl = p: defaultApi: m:
+    let
+      api = if m.api != null then m.api else defaultApi;
+      url =
+        if m.opencode != null && m.opencode.baseUrl != null then m.opencode.baseUrl
+        else if m.baseUrl != null then m.baseUrl
+        else if p.opencode != null && p.opencode.baseUrl != null then p.opencode.baseUrl
+        else p.baseUrl;
+    in
+    { inherit api url; };
+
+  # Transform module model to OpenCode format (without baseURL)
   toOpenCodeModel = m: {
     id = m.id;
     name = m.name;
@@ -32,16 +61,65 @@ let
     };
   };
 
-  # Build OpenCode provider config from agents.models (all providers use openai-compatible)
-  mkOpenCodeProvider = name: p: {
-    npm = "@ai-sdk/openai-compatible";
-    name = p.name;
-    options = {
-      baseURL = "${p.baseUrl}/v1";
-      apiKey = "{env:${p.envVar}}";
-    };
-    models = builtins.listToAttrs (map (m: lib.nameValuePair m.id (toOpenCodeModel m)) p.models);
-  };
+  # Group models by (api, url) combination
+  groupModelsByApiAndUrl = p:
+    let
+      defaultApi = if p.api != null then p.api else "openai-completions";
+      withApiAndUrl = map (m: getModelApiAndUrl p defaultApi m // { model = m; }) p.models;
+    in
+    lib.groupBy (item: "${item.api}::${item.url}") withApiAndUrl;
+
+  # Generate provider key suffix for uniqueness (URL hash when different from base)
+  getUrlSuffix = url: baseUrl:
+    if url != baseUrl then "-${lib.substring 0 4 (builtins.hashString "md5" url)}" else "";
+
+  # Generate display name with API type suffix for non-default APIs
+  getProviderDisplayName = name: api: defaultApi:
+    let
+      suffixes = {
+        "anthropic-messages" = "(Messages)";
+        "openai-completions" = "(Completions)";
+        "openai-responses" = "(Responses)";
+        "google-generative-ai" = "(Generative AI)";
+      };
+      suffix = suffixes.${api} or "(${api})";
+    in
+    if api == defaultApi then name else "${name} ${suffix}";
+
+  # Build OpenCode providers from agents.models provider
+  # Uses npm field to specify which SDK, allows custom provider names
+  mkOpenCodeProviders = providerId: p:
+    let
+      groups = groupModelsByApiAndUrl p;
+      defaultApi = if p.api != null then p.api else "openai-completions";
+    in
+    lib.mapAttrs' (key: items:
+      let
+        first = lib.head items;
+        api = first.api;
+        url = first.url;
+        apiSuffix = apiToSuffix api;
+        urlSuffix = getUrlSuffix url p.baseUrl;
+        # Provider name: {providerId}-{apiSuffix}{-urlHash if different}
+        providerName = "${providerId}-${apiSuffix}${urlSuffix}";
+        displayName = getProviderDisplayName p.name api defaultApi;
+        npm = apiToNpm api;
+      in
+      lib.nameValuePair providerName {
+        npm = npm;
+        name = displayName;
+        options = {
+          baseURL = url;
+          apiKey = "{env:${p.envVar}}";
+        };
+        models = builtins.listToAttrs (map (item: lib.nameValuePair item.model.id (toOpenCodeModel item.model)) items);
+      }
+    ) groups;
+
+  # Flatten all providers from all agent providers
+  allOpenCodeProviders = lib.foldl' (acc: name:
+    acc // (mkOpenCodeProviders name config.agents.models.providers.${name})
+  ) { } (lib.attrNames config.agents.models.providers);
 
   policy = agentsCfg.permissions.effective.build;
 
@@ -205,7 +283,7 @@ in
       };
       permission = toOpencodePermissions;
       tools = opencodeMcpPermissions;
-      provider = lib.mapAttrs mkOpenCodeProvider agentsCfg.models.providers;
+      provider = allOpenCodeProviders;
     };
   };
 

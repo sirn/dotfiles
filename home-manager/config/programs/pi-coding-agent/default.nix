@@ -11,9 +11,16 @@ let
 
   betterMessagesCache = pkgs.local.pi-better-messages-cache;
 
+  # Resolve baseUrl override for Pi: model.pi > model > provider.pi
+  # Returns null if no override is set (falls back to provider default)
+  resolvePiBaseUrl = p: m:
+    if m.pi != null && m.pi.baseUrl != null then m.pi.baseUrl
+    else if m.baseUrl != null then m.baseUrl
+    else if p.pi != null && p.pi.baseUrl != null then p.pi.baseUrl
+    else null;
+
   # Transform module model to Pi format
-  toPiModel =
-    m:
+  toPiModel = p: m:
     {
       id = m.id;
       name = m.name;
@@ -29,7 +36,7 @@ let
       };
     }
     // lib.optionalAttrs (m.api != null) { api = m.api; }
-    // lib.optionalAttrs (m.baseUrl != null) { baseUrl = m.baseUrl; };
+    // lib.optionalAttrs (resolvePiBaseUrl p m != null) { baseUrl = resolvePiBaseUrl p m; };
 
   # Build provider config from agents.models
   mkPiProvider =
@@ -39,7 +46,7 @@ let
       apiKey = p.envVar;
       api = p.api;
       defaultThinkingLevel = p.reasoningEffort;
-      models = map toPiModel p.models;
+      models = map (toPiModel p) p.models;
     }
     // lib.optionalAttrs (!p.compatibility.developerRole) { compat.supportsDeveloperRole = false; };
 

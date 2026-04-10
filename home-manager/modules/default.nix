@@ -1,6 +1,6 @@
 {
   imports = [
-    ./agents.nix
+    ./agents
     ./flatpak.nix
     ./home.nix
     ./home/colors.nix
