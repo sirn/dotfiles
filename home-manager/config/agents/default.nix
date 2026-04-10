@@ -6,6 +6,6 @@
     ./subagents
   ];
 
-  agents.instructionText = builtins.readFile ../../../var/agents/instruction.md;
+  agents.instructionText = builtins.readFile ../../../var/agents/AGENTS.md;
   agents.skillsDir = ../../../var/agents/skills;
 }

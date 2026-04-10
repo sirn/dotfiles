@@ -15,15 +15,15 @@ export default function (pi: ExtensionAPI) {
   const PLAN_DIR = path.join(PI_AGENT_DIR, "plans");
 
   const planModePromptTemplate = fs.readFileSync(
-    path.join(PI_AGENT_DIR, "plan-mode-prompt.md"),
+    path.join(PI_AGENT_DIR, "PLAN_PROMPT.md"),
     "utf-8",
   );
   const planModeAcceptTemplate = fs.readFileSync(
-    path.join(PI_AGENT_DIR, "plan-mode-accept.md"),
+    path.join(PI_AGENT_DIR, "PLAN_ACCEPT.md"),
     "utf-8",
   );
   const planModeSubsequentTemplate = fs.readFileSync(
-    path.join(PI_AGENT_DIR, "plan-mode-inject.md"),
+    path.join(PI_AGENT_DIR, "PLAN_INJECT.md"),
     "utf-8",
   );
 

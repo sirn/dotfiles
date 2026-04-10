@@ -99,9 +99,9 @@ let
 
   # Plan mode templates
   planModeTemplates = {
-    prompt = builtins.readFile ./plan-mode-prompt.md;
-    accept = builtins.readFile ./plan-mode-accept.md;
-    subsequent = builtins.readFile ./plan-mode-inject.md;
+    prompt = builtins.readFile ./PLAN_PROMPT.md;
+    accept = builtins.readFile ./PLAN_ACCEPT.md;
+    subsequent = builtins.readFile ./PLAN_INJECT.md;
   };
 
   executionPolicyDir = pkgs.runCommand "pi-execution-policy" { } ''
@@ -157,9 +157,9 @@ in
       ".pi/agent/skills/home-manager".source = agentsCfg.skillsDir;
       ".pi/agent/extensions/mcowger-better-messages-cache".source = betterMessagesCache;
       ".pi/agent/policy.json".source = policyJsonFile;
-      ".pi/agent/plan-mode-prompt.md".text = planModeTemplates.prompt;
-      ".pi/agent/plan-mode-accept.md".text = planModeTemplates.accept;
-      ".pi/agent/plan-mode-inject.md".text = planModeTemplates.subsequent;
+      ".pi/agent/PLAN_PROMPT.md".text = planModeTemplates.prompt;
+      ".pi/agent/PLAN_ACCEPT.md".text = planModeTemplates.accept;
+      ".pi/agent/PLAN_INJECT.md".text = planModeTemplates.subsequent;
     };
 
   # Pass the version check to the keybindings module

@@ -5,21 +5,21 @@ This directory contains the shared instruction system for multiple AI coding too
 ## Architecture
 
 ```
-instruction.md   → Global rules (shared by all tools)
-skills/          → SOP-style skill definitions (34 total)
-agents/          → Sub-agent definitions for Claude Code + OpenCode
+AGENTS.md   → Global rules (shared by all tools)
+skills/     → SOP-style skill definitions (34 total)
+agents/     → Sub-agent definitions for Claude Code + OpenCode
 ```
 
 ## How It Works
 
 Each AI tool consumes these files differently:
 
-| Tool            | Receives                                 | Consumption                                                           |
-| --------------- | ---------------------------------------- | --------------------------------------------------------------------- |
-| **Claude Code** | `instruction.md` + `skills/` + `agents/` | Skills in `~/.claude/skills/`, agents registered                      |
-| **OpenCode**    | `instruction.md` + `skills/` + `agents/` | Skills in `~/.config/opencode/skill/home-manager/`, agents registered |
-| **Gemini CLI**  | `instruction.md` + `skills/`             | Skills in `~/.gemini/skills/`, no sub-agents                          |
-| **Codex**       | `instruction.md` + `skills/`             | Skills in `~/.codex/skills/home-manager/`, no sub-agents              |
+| Tool            | Receives                            | Consumption                                                           |
+| --------------- | ----------------------------------- | --------------------------------------------------------------------- |
+| **Claude Code** | `AGENTS.md` + `skills/` + `agents/` | Skills in `~/.claude/skills/`, agents registered                      |
+| **OpenCode**    | `AGENTS.md` + `skills/` + `agents/` | Skills in `~/.config/opencode/skill/home-manager/`, agents registered |
+| **Gemini CLI**  | `AGENTS.md` + `skills/`             | Skills in `~/.gemini/skills/`, no sub-agents                          |
+| **Codex**       | `AGENTS.md` + `skills/`             | Skills in `~/.codex/skills/home-manager/`, no sub-agents              |
 
 ## File Types
 
@@ -82,14 +82,14 @@ These are for lookup only — do not "execute" them.
 
 The Home Manager modules in `modules/programs/*.nix` handle deployment:
 
-- `claude-code.nix`: Loads `instruction.md` as memory, skills to `~/.claude/skills/`, agents from `.toml`
-- `opencode.nix`: Loads `instruction.md` as rules, skills to `~/.config/opencode/skill/home-manager/`, agents from `.toml`
-- `gemini.nix`: Loads `instruction.md` as context, skills to `~/.gemini/skills/`
-- `codex.nix`: Loads `instruction.md` as custom-instructions, skills to `~/.codex/skills/home-manager/`
+- `claude-code.nix`: Loads `AGENTS.md` as memory, skills to `~/.claude/skills/`, agents from `.toml`
+- `opencode.nix`: Loads `AGENTS.md` as rules, skills to `~/.config/opencode/skill/home-manager/`, agents from `.toml`
+- `gemini.nix`: Loads `AGENTS.md` as context, skills to `~/.gemini/skills/`
+- `codex.nix`: Loads `AGENTS.md` as custom-instructions, skills to `~/.codex/skills/home-manager/`
 
 ## Maintenance Notes
 
-- Keep tool-specific references out of `instruction.md`
+- Keep tool-specific references out of `AGENTS.md`
 - Avoid hardcoding model names in agent `.md` files (configure in `.toml`)
 - Use generic language like "the user" instead of `$ARGUMENTS`
 - When updating skills that check for project instructions, include all possible instruction filenames
