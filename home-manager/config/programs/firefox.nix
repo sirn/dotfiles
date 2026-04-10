@@ -220,7 +220,7 @@ in
           "privacy.clearOnShutdown.cookies" = false;
           "privacy.clearOnShutdown.downloads" = true;
           "privacy.clearOnShutdown.formdata" = true;
-          "privacy.clearOnShutdown.history" = true;
+          "privacy.clearOnShutdown.history" = false;
           "privacy.clearOnShutdown.sessions" = false;
 
           # Additional AI features
