@@ -12,9 +12,9 @@
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { getExecutionMode } from "./lib/execution-mode.js";
-import { readFileSync, existsSync } from "node:fs";
-import path, { join } from "node:path";
-import { homedir } from "node:os";
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
 import {
   evaluate,
   mergePolicies,
@@ -30,7 +30,7 @@ import {
 
 // Load global config from unified policy.json at ~/.pi/agent/policy.json
 const globalConfigRaw = JSON.parse(
-  readFileSync(join(homedir(), ".pi/agent/policy.json"), "utf-8"),
+  fs.readFileSync(path.join(os.homedir(), ".pi/agent/policy.json"), "utf-8"),
 );
 
 const globalUnified = normalizeUnifiedPolicyConfig(globalConfigRaw);
@@ -47,12 +47,12 @@ function getProjectPolicy(cwd: string): ProjectPolicyCache {
   const cached = projectPolicyCache.get(cwd);
   if (cached) return cached;
 
-  const policyPath = join(cwd, ".pi", "policy.json");
+  const policyPath = path.join(cwd, ".pi", "policy.json");
   let commands: PolicyCommands = { allow: [], ask: [], deny: [] };
   let wrappers: WrapperRuleConfig[] = [];
-  if (existsSync(policyPath)) {
+  if (fs.existsSync(policyPath)) {
     try {
-      const raw = JSON.parse(readFileSync(policyPath, "utf-8"));
+      const raw = JSON.parse(fs.readFileSync(policyPath, "utf-8"));
       const parsed =
         "default" in raw
           ? normalizeUnifiedPolicyConfig(raw).default

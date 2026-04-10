@@ -12,11 +12,11 @@ import {
   convertToLlm,
   serializeConversation,
 } from "@mariozechner/pi-coding-agent";
-import { existsSync, readFileSync } from "node:fs";
-import { homedir } from "node:os";
-import { join } from "node:path";
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
 
-const configPath = join(homedir(), ".pi/agent/custom.json");
+const configPath = path.join(os.homedir(), ".pi/agent/custom.json");
 
 interface CompactionModelConfig {
   provider: string;
@@ -30,9 +30,9 @@ interface CustomConfig {
 let compactionConfig: CompactionModelConfig | null = null;
 
 try {
-  if (existsSync(configPath)) {
+  if (fs.existsSync(configPath)) {
     const customConfig: CustomConfig = JSON.parse(
-      readFileSync(configPath, "utf-8"),
+      fs.readFileSync(configPath, "utf-8"),
     );
     if (customConfig.compactionModel) {
       compactionConfig = customConfig.compactionModel;
