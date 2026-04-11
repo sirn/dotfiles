@@ -86,9 +86,10 @@ in
       };
 
   home.file.".pi/agent/extensions/hm-notify-turn-complete/index.ts" =
-    lib.mkIf config.programs.pi-coding-agent.enable {
-      text = builtins.replaceStrings [ "\"__TOASTIFY_BIN__\"" ] [ "\"${lib.getExe pkgs.toastify}\"" ] (
-        builtins.readFile ./notification-pi.ts
-      );
-    };
+    lib.mkIf config.programs.pi-coding-agent.enable
+      {
+        text = builtins.replaceStrings [ "\"__TOASTIFY_BIN__\"" ] [ "\"${lib.getExe pkgs.toastify}\"" ] (
+          builtins.readFile ./notification-pi.ts
+        );
+      };
 }

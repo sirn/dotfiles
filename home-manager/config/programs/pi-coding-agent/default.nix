@@ -13,14 +13,20 @@ let
 
   # Resolve baseUrl override for Pi: model.pi > model > provider.pi
   # Returns null if no override is set (falls back to provider default)
-  resolvePiBaseUrl = p: m:
-    if m.pi != null && m.pi.baseUrl != null then m.pi.baseUrl
-    else if m.baseUrl != null then m.baseUrl
-    else if p.pi != null && p.pi.baseUrl != null then p.pi.baseUrl
-    else null;
+  resolvePiBaseUrl =
+    p: m:
+    if m.pi != null && m.pi.baseUrl != null then
+      m.pi.baseUrl
+    else if m.baseUrl != null then
+      m.baseUrl
+    else if p.pi != null && p.pi.baseUrl != null then
+      p.pi.baseUrl
+    else
+      null;
 
   # Transform module model to Pi format
-  toPiModel = p: m:
+  toPiModel =
+    p: m:
     {
       id = m.id;
       name = m.name;

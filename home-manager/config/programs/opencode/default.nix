@@ -11,33 +11,46 @@ let
   agentsDir = ../../../../var/agents/agents;
 
   # Map API types to npm package for the SDK
-  apiToNpm = api: {
-    "anthropic-messages" = "@ai-sdk/anthropic";
-    "openai-completions" = "@ai-sdk/openai-compatible";
-    "openai-responses" = "@ai-sdk/openai";
-    "google-generative-ai" = "@ai-sdk/google";
-  }.${api} or "@ai-sdk/openai-compatible";
+  apiToNpm =
+    api:
+    {
+      "anthropic-messages" = "@ai-sdk/anthropic";
+      "openai-completions" = "@ai-sdk/openai-compatible";
+      "openai-responses" = "@ai-sdk/openai";
+      "google-generative-ai" = "@ai-sdk/google";
+    }
+    .${api} or "@ai-sdk/openai-compatible";
 
   # Map API types to provider name suffix
-  apiToSuffix = api: {
-    "anthropic-messages" = "messages";
-    "openai-completions" = "completions";
-    "openai-responses" = "responses";
-    "google-generative-ai" = "generative-ai";
-  }.${api} or api;
+  apiToSuffix =
+    api:
+    {
+      "anthropic-messages" = "messages";
+      "openai-completions" = "completions";
+      "openai-responses" = "responses";
+      "google-generative-ai" = "generative-ai";
+    }
+    .${api} or api;
 
   # Resolve model's effective API and baseURL for OpenCode
   # Priority: model.opengode > model > provider.opengode > provider
-  getModelApiAndUrl = p: defaultApi: m:
+  getModelApiAndUrl =
+    p: defaultApi: m:
     let
       api = if m.api != null then m.api else defaultApi;
       url =
-        if m.opencode != null && m.opencode.baseUrl != null then m.opencode.baseUrl
-        else if m.baseUrl != null then m.baseUrl
-        else if p.opencode != null && p.opencode.baseUrl != null then p.opencode.baseUrl
-        else p.baseUrl;
+        if m.opencode != null && m.opencode.baseUrl != null then
+          m.opencode.baseUrl
+        else if m.baseUrl != null then
+          m.baseUrl
+        else if p.opencode != null && p.opencode.baseUrl != null then
+          p.opencode.baseUrl
+        else
+          p.baseUrl;
     in
-    { inherit api url; };
+    {
+      inherit api url;
+    };
 
   # Transform module model to OpenCode format (without baseURL)
   toOpenCodeModel = m: {
@@ -62,7 +75,8 @@ let
   };
 
   # Group models by (api, url) combination
-  groupModelsByApiAndUrl = p:
+  groupModelsByApiAndUrl =
+    p:
     let
       defaultApi = if p.api != null then p.api else "openai-completions";
       withApiAndUrl = map (m: getModelApiAndUrl p defaultApi m // { model = m; }) p.models;
@@ -70,11 +84,13 @@ let
     lib.groupBy (item: "${item.api}::${item.url}") withApiAndUrl;
 
   # Generate provider key suffix for uniqueness (URL hash when different from base)
-  getUrlSuffix = url: baseUrl:
+  getUrlSuffix =
+    url: baseUrl:
     if url != baseUrl then "-${lib.substring 0 4 (builtins.hashString "md5" url)}" else "";
 
   # Generate display name with API type suffix for non-default APIs
-  getProviderDisplayName = name: api: defaultApi:
+  getProviderDisplayName =
+    name: api: defaultApi:
     let
       suffixes = {
         "anthropic-messages" = "(Messages)";
@@ -88,12 +104,14 @@ let
 
   # Build OpenCode providers from agents.models provider
   # Uses npm field to specify which SDK, allows custom provider names
-  mkOpenCodeProviders = providerId: p:
+  mkOpenCodeProviders =
+    providerId: p:
     let
       groups = groupModelsByApiAndUrl p;
       defaultApi = if p.api != null then p.api else "openai-completions";
     in
-    lib.mapAttrs' (key: items:
+    lib.mapAttrs' (
+      key: items:
       let
         first = lib.head items;
         api = first.api;
@@ -112,13 +130,15 @@ let
           baseURL = url;
           apiKey = "{env:${p.envVar}}";
         };
-        models = builtins.listToAttrs (map (item: lib.nameValuePair item.model.id (toOpenCodeModel item.model)) items);
+        models = builtins.listToAttrs (
+          map (item: lib.nameValuePair item.model.id (toOpenCodeModel item.model)) items
+        );
       }
     ) groups;
 
   # Flatten all providers from all agent providers
-  allOpenCodeProviders = lib.foldl' (acc: name:
-    acc // (mkOpenCodeProviders name config.agents.models.providers.${name})
+  allOpenCodeProviders = lib.foldl' (
+    acc: name: acc // (mkOpenCodeProviders name config.agents.models.providers.${name})
   ) { } (lib.attrNames config.agents.models.providers);
 
   policy = agentsCfg.permissions.effective.build;
