@@ -166,6 +166,7 @@ in
         export DISABLE_INSTALLATION_CHECKS=1
         exec "${lib.getExe pkgs.local.envWrapper}" \
           -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
+          -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env.local" \
           -- "${lib.getExe pkgs.unstable.claude-code}" "$@"
       ''
     );
