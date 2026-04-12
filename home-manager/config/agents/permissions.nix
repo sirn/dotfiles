@@ -43,8 +43,7 @@
         "find"
         "flake8"
         "gem list"
-        "gh api --method GET"
-        "gh api -X GET"
+        "gh api"
         "gh cache list"
         "gh issue list"
         "gh issue status"
@@ -225,61 +224,6 @@
         "rm"
         "rtk env"
         "shred"
-      ];
-
-      commands.deny = [
-        {
-          match = "--method DELETE";
-          mode = "substring";
-        }
-        {
-          match = "--method=DELETE";
-          mode = "substring";
-        }
-        {
-          match = "--method PATCH";
-          mode = "substring";
-        }
-        {
-          match = "--method=PATCH";
-          mode = "substring";
-        }
-        {
-          match = "--method POST";
-          mode = "substring";
-        }
-        {
-          match = "--method=POST";
-          mode = "substring";
-        }
-        {
-          match = "--method PUT";
-          mode = "substring";
-        }
-        {
-          match = "--method=PUT";
-          mode = "substring";
-        }
-        "gh api --input"
-        "gh api -f"
-        "gh api --field"
-        "gh api -F"
-        "gh api --raw-field"
-        "gh issue create"
-        "gh issue close"
-        "gh issue delete"
-        "gh issue edit"
-        "gh issue reopen"
-        "gh pr create"
-        "gh pr close"
-        "gh pr edit"
-        "gh pr merge"
-        "gh pr reopen"
-        "gh release create"
-        "gh release delete"
-        "gh repo create"
-        "gh repo delete"
-        "gh repo fork"
         {
           match = "-X POST";
           mode = "substring";
@@ -344,6 +288,61 @@
           match = "--request=PATCH";
           mode = "substring";
         }
+        {
+          match = "--method DELETE";
+          mode = "substring";
+        }
+        {
+          match = "--method=DELETE";
+          mode = "substring";
+        }
+        {
+          match = "--method PATCH";
+          mode = "substring";
+        }
+        {
+          match = "--method=PATCH";
+          mode = "substring";
+        }
+        {
+          match = "--method POST";
+          mode = "substring";
+        }
+        {
+          match = "--method=POST";
+          mode = "substring";
+        }
+        {
+          match = "--method PUT";
+          mode = "substring";
+        }
+        {
+          match = "--method=PUT";
+          mode = "substring";
+        }
+        "gh api --input"
+        "gh api -f"
+        "gh api --field"
+        "gh api -F"
+        "gh api --raw-field"
+      ];
+
+      commands.deny = [
+        "gh issue create"
+        "gh issue close"
+        "gh issue delete"
+        "gh issue edit"
+        "gh issue reopen"
+        "gh pr create"
+        "gh pr close"
+        "gh pr edit"
+        "gh pr merge"
+        "gh pr reopen"
+        "gh release create"
+        "gh release delete"
+        "gh repo create"
+        "gh repo delete"
+        "gh repo fork"
         "git push"
         "jj git push"
         "kill"
