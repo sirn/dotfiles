@@ -66,7 +66,7 @@ in
   wayland.windowManager.sway = lib.mkIf (cfg.enable && swaycfg.enable) {
     config = {
       keybindings = {
-        "${swaycfg.config.modifier}+Alt+L" = "exec pkill -USR1 -f ${lib.getExe cfg.package}";
+        "${swaycfg.config.modifier}+Alt+L" = "exec loginctl lock-session";
       };
     };
   };
@@ -74,12 +74,7 @@ in
   programs.niri = lib.mkIf (cfg.enable && niricfg.enable) {
     settings = {
       binds = {
-        "Mod+Alt+L".action.spawn = [
-          "pkill"
-          "-USR1"
-          "-f"
-          "${lib.getExe cfg.package}"
-        ];
+        "Mod+Alt+L".action.spawn = [ "loginctl" "lock-session" ];
       };
     };
   };

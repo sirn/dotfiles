@@ -32,6 +32,10 @@ in
     ];
     events = [
       {
+        event = "lock";
+        command = "${swaylockBin}";
+      }
+      {
         event = "before-sleep";
         command = "${swaylockBin}";
       }
