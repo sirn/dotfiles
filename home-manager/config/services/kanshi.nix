@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 
@@ -9,8 +8,6 @@ let
   cfg = config.services.kanshi;
 
   swaycfg = config.wayland.windowManager.sway;
-
-  swaymsgBin = if swaycfg.package != null then "${swaycfg.package}/bin/swaymsg" else "swaymsg";
 
   niricfg = config.programs.niri;
 in
@@ -57,7 +54,7 @@ in
   wayland.windowManager.sway = lib.mkIf (cfg.enable && swaycfg.enable) {
     config = {
       keybindings = {
-        "${swaycfg.config.modifier}+Alt+F10" = "exec pkill -INT -f ${lib.getExe cfg.package}";
+        "${swaycfg.config.modifier}+Alt+F10" = "${lib.getExe' cfg.package "kanshictl"} reload";
       };
     };
   };
@@ -66,10 +63,8 @@ in
     settings = {
       binds = {
         "Mod+Alt+F10".action.spawn = [
-          "pkill"
-          "-INT"
-          "-f"
-          "${lib.getExe cfg.package}"
+          "${lib.getExe' cfg.package "kanshictl"}"
+          "reload"
         ];
       };
     };
