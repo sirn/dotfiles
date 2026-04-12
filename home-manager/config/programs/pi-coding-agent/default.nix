@@ -9,8 +9,6 @@ let
   cfg = config.programs.pi-coding-agent;
   agentsCfg = config.agents;
 
-  betterMessagesCache = pkgs.local.pi-better-messages-cache;
-
   # Resolve baseUrl override for Pi: model.pi > model > provider.pi
   # Returns null if no override is set (falls back to provider default)
   resolvePiBaseUrl =
@@ -159,7 +157,6 @@ in
     ) (builtins.readDir ./extensions/home-manager)
     // {
       ".pi/agent/skills/home-manager".source = agentsCfg.skillsDir;
-      ".pi/agent/extensions/mcowger-better-messages-cache".source = betterMessagesCache;
       ".pi/agent/policy.json".source = policyJsonFile;
       ".pi/agent/PLAN_PROMPT.md".text = planModeTemplates.prompt;
       ".pi/agent/PLAN_ACCEPT.md".text = planModeTemplates.accept;
