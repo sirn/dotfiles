@@ -6,7 +6,6 @@
 }:
 
 let
-  firefoxProfiles = config.programs.firefox.profiles;
   firefoxExec =
     if pkgs.stdenv.isDarwin then
       "/Applications/Firefox.app/Contents/MacOS/firefox"
@@ -14,74 +13,6 @@ let
       "flatpak run org.mozilla.firefox"
     else
       lib.getExe config.programs.firefox.finalPackage;
-
-  # Create a macOS app bundle for a Firefox profile
-  mkFirefoxProfileApp =
-    name:
-    let
-      bundleId = "org.nix-community.home.firefox.${name}";
-      appName = "Firefox (${name})";
-      execName = "firefox-${name}";
-    in
-    pkgs.runCommand "firefox-${name}-app"
-      {
-        meta = {
-          platforms = lib.platforms.darwin;
-        };
-      }
-      ''
-        appDir="$out/Applications/${appName}.app"
-        mkdir -p "$appDir/Contents/MacOS"
-        mkdir -p "$appDir/Contents/Resources"
-
-        # Create the launcher script
-        cat > "$appDir/Contents/MacOS/${execName}" << 'EOF'
-        #!/bin/bash
-        exec open -n -a /Applications/Firefox.app --args -P "${name}" -no-remote
-        EOF
-        chmod +x "$appDir/Contents/MacOS/${execName}"
-
-        # Try to copy Firefox icon from system Firefox
-        if [ -f "/Applications/Firefox.app/Contents/Resources/firefox.icns" ]; then
-          cp "/Applications/Firefox.app/Contents/Resources/firefox.icns" "$appDir/Contents/Resources/"
-        fi
-
-        # Create Info.plist
-        cat > "$appDir/Contents/Info.plist" << 'PLISTEOF'
-        <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-        <plist version="1.0">
-        <dict>
-          <key>CFBundleInfoDictionaryVersion</key>
-          <string>6.0</string>
-          <key>CFBundleDevelopmentRegion</key>
-          <string>en</string>
-          <key>CFBundlePackageType</key>
-          <string>APPL</string>
-          <key>CFBundleIdentifier</key>
-          <string>${bundleId}</string>
-          <key>CFBundleExecutable</key>
-          <string>${execName}</string>
-          <key>CFBundleName</key>
-          <string>${appName}</string>
-          <key>CFBundleDisplayName</key>
-          <string>${appName}</string>
-          <key>CFBundleVersion</key>
-          <string>1.0</string>
-          <key>CFBundleShortVersionString</key>
-          <string>1.0</string>
-          <key>CFBundleIconFile</key>
-          <string>firefox</string>
-          <key>LSUIElement</key>
-          <false/>
-          <key>NSHighResolutionCapable</key>
-          <true/>
-          <key>NSSupportsAutomaticGraphicsSwitching</key>
-          <true/>
-        </dict>
-        </plist>
-        PLISTEOF
-      '';
 in
 {
   programs.firefox = {
@@ -226,57 +157,4 @@ in
       };
     };
   };
-
-  # macOS: Raycast script commands
-  home.file = lib.mkIf (config.programs.firefox.enable && pkgs.stdenv.isDarwin) (
-    lib.mapAttrs' (name: profile: {
-      name = ".local/libexec/raycast/firefox-${name}.sh";
-      value = {
-        executable = true;
-        text = ''
-          #!/bin/bash
-
-          # @raycast.schemaVersion 1
-          # @raycast.title Firefox - ${name}
-          # @raycast.mode silent
-          # @raycast.icon 🦊
-          # @raycast.packageName Firefox Profiles
-
-          ${firefoxExec} -P "${name}" -no-remote &
-          echo "Launched Firefox with profile ${name}"
-        '';
-      };
-    }) firefoxProfiles
-  );
-
-  # Linux: XDG desktop entries
-  xdg.desktopEntries = lib.mkIf (config.programs.firefox.enable && pkgs.stdenv.isLinux) (
-    lib.mapAttrs' (name: profile: {
-      name = "firefox-${name}";
-      value = {
-        name = "Firefox (${name})";
-        genericName = "Web Browser";
-        exec = "${firefoxExec} -P ${name} %U";
-        icon = "firefox";
-        terminal = false;
-        categories = [
-          "Network"
-          "WebBrowser"
-        ];
-        mimeType = [
-          "text/html"
-          "text/xml"
-          "application/xhtml+xml"
-        ];
-        startupNotify = true;
-      };
-    }) firefoxProfiles
-  );
-
-  # macOS: Application bundles for each profile
-  # These are copied to ~/Applications/Home Manager Apps/ by Home Manager's
-  # copyApps feature, making them available in Spotlight, Dock, etc.
-  home.packages = lib.mkIf (config.programs.firefox.enable && pkgs.stdenv.isDarwin) (
-    map (name: mkFirefoxProfileApp name) (builtins.attrNames firefoxProfiles)
-  );
 }

@@ -50,7 +50,6 @@
       # programs
       ../home-manager/config/programs/1password.nix
       ../home-manager/config/programs/ffmpeg.nix
-      ../home-manager/config/programs/firefox.nix
       ../home-manager/config/programs/imagemagick.nix
       ../home-manager/config/programs/intellij.nix
       ../home-manager/config/programs/mpv.nix
