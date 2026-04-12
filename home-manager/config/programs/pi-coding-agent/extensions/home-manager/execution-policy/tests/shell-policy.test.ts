@@ -1019,6 +1019,349 @@ test("${VAR} as command returns ask", () => {
   assertEquals(evaluate("${CMD}", { commands: samplePolicy }).action, "ask");
 });
 
+// Args match mode
+test("args match - wildcard program, required arg present", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "*:-X POST", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("curl -X POST https://example.com", { commands: policy }).action,
+    "ask",
+  );
+});
+
+test("args match - wildcard program, arg anywhere in command", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "*:-X POST", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate(
+      'curl -H "Content-Type: application/json" -X POST https://example.com',
+      { commands: policy },
+    ).action,
+    "ask",
+  );
+});
+
+test("args match - wildcard program, required arg absent", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "*:-X POST", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("curl https://example.com", { commands: policy }).action,
+    "default",
+  );
+});
+
+test("args match - wildcard program, different flag value", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "*:-X POST", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("curl -X GET https://example.com", { commands: policy }).action,
+    "default",
+  );
+});
+
+test("args match - program prefix matches", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "gh api:-f", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("gh api --paginate -f key=val /repos", { commands: policy })
+      .action,
+    "ask",
+  );
+});
+
+test("args match - program prefix mismatch", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "gh api:-f", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("gh foo bar -f x", { commands: policy }).action,
+    "default",
+  );
+});
+
+test("args match - required arg absent for prefix pattern", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "gh api:-f", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("gh api /repos", { commands: policy }).action,
+    "default",
+  );
+});
+
+test("args match - multiple required args, all present", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "*:--request POST", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("curl --request POST https://example.com", { commands: policy })
+      .action,
+    "ask",
+  );
+});
+
+test("args match - multiple required args, one missing", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "*:--request POST", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("curl --request GET https://example.com", { commands: policy })
+      .action,
+    "default",
+  );
+});
+
+test("args match - case insensitive program prefix", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "GH API:-f", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("gh api -f key=val", { commands: policy }).action,
+    "ask",
+  );
+});
+
+test("args match - case insensitive required arg", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "*:-X POST", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("curl -x post https://example.com", { commands: policy }).action,
+    "ask",
+  );
+});
+
+test("args match - no colon is pure prefix match", () => {
+  const policy: PolicyCommands = {
+    allow: [{ match: "gh api", mode: "args" }],
+    ask: [],
+    deny: [],
+  };
+  assertEquals(evaluate("gh api /repos", { commands: policy }).action, "allow");
+  assertEquals(evaluate("gh foo", { commands: policy }).action, "default");
+});
+
+test("args match - allow curl read, ask on curl mutation", () => {
+  const policy: PolicyCommands = {
+    allow: [{ match: "curl", mode: "prefix" }],
+    ask: [{ match: "*:-X POST", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("curl https://example.com", { commands: policy }).action,
+    "allow",
+  );
+  assertEquals(
+    evaluate("curl -X POST https://example.com", { commands: policy }).action,
+    "ask",
+  );
+});
+
+test("args match - prefix words excluded from arg search", () => {
+  // 'api' is the 2nd word of prefix 'gh api'; without -f in the trailing
+  // args, the rule must not fire
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "gh api:-f", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("gh api /repos", { commands: policy }).action,
+    "default",
+  );
+});
+
+// Args match - implicit curl mutation flags
+test("args match - curl -d implicitly POSTs", () => {
+  const policy: PolicyCommands = {
+    allow: [{ match: "curl", mode: "prefix" }],
+    ask: [{ match: "curl:-d", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate('curl -d \'{"key":"val"}\' https://example.com', {
+      commands: policy,
+    }).action,
+    "ask",
+  );
+  assertEquals(
+    evaluate("curl https://example.com", { commands: policy }).action,
+    "allow",
+  );
+});
+
+test("args match - curl --data implicitly POSTs", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "curl:--data", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("curl --data 'payload' https://example.com", { commands: policy })
+      .action,
+    "ask",
+  );
+});
+
+test("args match - curl --data-binary", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "curl:--data-binary", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("curl --data-binary @file.bin https://example.com", {
+      commands: policy,
+    }).action,
+    "ask",
+  );
+});
+
+test("args match - curl --data-raw", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "curl:--data-raw", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("curl --data-raw 'data' https://example.com", { commands: policy })
+      .action,
+    "ask",
+  );
+});
+
+test("args match - curl --data-urlencode", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "curl:--data-urlencode", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("curl --data-urlencode 'key=val' https://example.com", {
+      commands: policy,
+    }).action,
+    "ask",
+  );
+});
+
+test("args match - curl -F implicitly POSTs", () => {
+  const policy: PolicyCommands = {
+    allow: [{ match: "curl", mode: "prefix" }],
+    ask: [{ match: "curl:-F", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("curl -F file=@photo.jpg https://example.com/upload", {
+      commands: policy,
+    }).action,
+    "ask",
+  );
+  assertEquals(
+    evaluate("curl https://example.com", { commands: policy }).action,
+    "allow",
+  );
+});
+
+test("args match - curl --form", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "curl:--form", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("curl --form file=@photo.jpg https://example.com", {
+      commands: policy,
+    }).action,
+    "ask",
+  );
+});
+
+test("args match - curl --form-string", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "curl:--form-string", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("curl --form-string name=value https://example.com", {
+      commands: policy,
+    }).action,
+    "ask",
+  );
+});
+
+test("args match - curl -T implicitly PUTs", () => {
+  const policy: PolicyCommands = {
+    allow: [{ match: "curl", mode: "prefix" }],
+    ask: [{ match: "curl:-T", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("curl -T file.tar.gz https://example.com/upload", {
+      commands: policy,
+    }).action,
+    "ask",
+  );
+  assertEquals(
+    evaluate("curl https://example.com", { commands: policy }).action,
+    "allow",
+  );
+});
+
+test("args match - curl --upload-file implicitly PUTs", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "curl:--upload-file", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("curl --upload-file file.bin https://example.com", {
+      commands: policy,
+    }).action,
+    "ask",
+  );
+});
+
+test("args match - curl prefix rejects non-curl commands", () => {
+  const policy: PolicyCommands = {
+    allow: [],
+    ask: [{ match: "curl:-d", mode: "args" }],
+    deny: [],
+  };
+  assertEquals(
+    evaluate("some-tool -d payload https://example.com", { commands: policy })
+      .action,
+    "default",
+  );
+});
+
 // ==================== END POLICY MATCHING TESTS ====================
 
 // ==================== MERGE POLICIES TESTS ====================

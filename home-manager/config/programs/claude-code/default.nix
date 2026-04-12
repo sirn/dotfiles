@@ -52,6 +52,16 @@ let
               "Bash(${m} *)"
               "Bash(* ${m})"
             ];
+            args =
+              let
+                parts = lib.splitString ":" m;
+                argsStr = lib.concatStringsSep ":" (builtins.tail parts);
+              in
+              [
+                "Bash(* ${argsStr} *)"
+                "Bash(${argsStr} *)"
+                "Bash(* ${argsStr})"
+              ];
           }
           .${entry.mode or "prefix"}
         ) cmds;

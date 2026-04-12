@@ -21,9 +21,10 @@ let
                 "exact"
                 "prefix"
                 "substring"
+                "args"
               ];
               default = "prefix";
-              description = "Match mode: exact, prefix, or substring.";
+              description = "Match mode: exact, prefix, substring, or args.";
             };
           };
         }

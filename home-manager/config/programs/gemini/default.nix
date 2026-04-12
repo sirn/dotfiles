@@ -76,6 +76,18 @@ let
             { commandRegex = "^${escapeRegex entry.match}$"; }
           else if entry.mode == "substring" then
             { commandRegex = "(?:^|\\s)${escapeRegex entry.match}(?:\\s|$)"; }
+          else if entry.mode == "args" then
+            let
+              parts = lib.splitString ":" entry.match;
+              program = builtins.head parts;
+              argsStr = lib.concatStringsSep ":" (builtins.tail parts);
+              argParts = lib.filter (s: s != "") (lib.splitString " " argsStr);
+              programPrefix = if program == "*" then "" else "^${escapeRegex program}\\s";
+              argLookaheads = lib.concatMapStrings (a: "(?=.*(?:^|\\s)${escapeRegex a}(?:\\s|$))") argParts;
+            in
+            {
+              commandRegex = "${programPrefix}${argLookaheads}";
+            }
           else
             { commandPrefix = entry.match; }
         );

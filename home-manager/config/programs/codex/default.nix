@@ -31,10 +31,10 @@ let
           m = entry.match;
           mode = entry.mode or "prefix";
         in
-        if mode == "substring" then
+        if mode == "substring" || mode == "args" then
           ''
-            # NOTE: Cannot express substring match "${m}" as prefix_rule.
-            # Blocked at sandbox level (network = false) or by agent instructions.''
+            # NOTE: Cannot express ${mode} match "${m}" as prefix_rule.
+            # Matched at Pi/shell-policy level; not enforceable in Codex.''
         else
           ''
             prefix_rule(

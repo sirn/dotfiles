@@ -175,6 +175,16 @@ let
                   (lib.nameValuePair "${m} *" decision)
                   (lib.nameValuePair "* ${m}" decision)
                 ];
+                args =
+                  let
+                    parts = lib.splitString ":" m;
+                    argsStr = lib.concatStringsSep ":" (builtins.tail parts);
+                  in
+                  [
+                    (lib.nameValuePair "* ${argsStr} *" decision)
+                    (lib.nameValuePair "${argsStr} *" decision)
+                    (lib.nameValuePair "* ${argsStr}" decision)
+                  ];
               }
               .${entry.mode or "prefix"}
             ) cmds;

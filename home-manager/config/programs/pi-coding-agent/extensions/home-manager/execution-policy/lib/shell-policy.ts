@@ -10,7 +10,7 @@
 
 export interface CommandEntry {
   match: string;
-  mode: "exact" | "prefix" | "substring";
+  mode: "exact" | "prefix" | "substring" | "args";
 }
 
 export interface PolicyCommands {
@@ -1011,6 +1011,46 @@ export function buildWrapperRuleMap(
 
 // --- Policy Matching ---
 
+interface ArgsPattern {
+  programPrefix: string;
+  requiredArgs: string[];
+}
+
+function parseArgsPattern(pattern: string): ArgsPattern {
+  const colonIdx = pattern.indexOf(":");
+  if (colonIdx === -1) {
+    return { programPrefix: pattern, requiredArgs: [] };
+  }
+  const programPrefix = pattern.substring(0, colonIdx);
+  const argsStr = pattern.substring(colonIdx + 1);
+  const tokens = tokenize(argsStr);
+  const requiredArgs = tokens
+    .filter((t): t is WordToken => t.type === "word")
+    .map((t) => t.value);
+  return { programPrefix, requiredArgs };
+}
+
+function matchArgs(cmd: ExtractedCommand, pattern: ArgsPattern): boolean {
+  if (pattern.programPrefix !== "*") {
+    if (
+      !cmd.fullText
+        .trimStart()
+        .toLowerCase()
+        .startsWith(pattern.programPrefix.toLowerCase())
+    ) {
+      return false;
+    }
+  }
+  const prefixWordCount =
+    pattern.programPrefix === "*"
+      ? 0
+      : pattern.programPrefix.split(/\s+/).filter(Boolean).length;
+  const cmdArgs = cmd.words.slice(prefixWordCount).map((w) => w.toLowerCase());
+  return pattern.requiredArgs.every((req) =>
+    cmdArgs.some((arg) => arg.toLowerCase() === req.toLowerCase()),
+  );
+}
+
 function matchTokenSubstring(
   cmdWords: string[],
   matchTokens: string[],
@@ -1039,6 +1079,10 @@ function matchEntry(cmd: ExtractedCommand, entry: CommandEntry): boolean {
     case "substring": {
       const matchTokens = match.split(/\s+/).filter(Boolean);
       return matchTokenSubstring(cmd.words, matchTokens);
+    }
+    case "args": {
+      const pattern = parseArgsPattern(match);
+      return matchArgs(cmd, pattern);
     }
     default: {
       const _exhaustive: never = mode;
