@@ -1,11 +1,7 @@
 # Keybindings configuration for Pi coding agent
 # Uses namespaced ids (Pi >= 0.61.0 format)
 
-{
-  config,
-  lib,
-  ...
-}:
+{ config, lib, ... }:
 
 let
   cfg = config.programs.pi-coding-agent;
@@ -130,7 +126,5 @@ let
   };
 in
 {
-  programs.pi-coding-agent = lib.mkIf cfg.enable {
-    inherit keybindings;
-  };
+  programs.pi-coding-agent = lib.mkIf cfg.enable { inherit keybindings; };
 }

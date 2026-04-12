@@ -10,7 +10,10 @@
  * Per-project overrides can be placed in .pi/policy.json relative to the project root.
  */
 
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type {
+  ExtensionAPI,
+  ExtensionContext,
+} from "@mariozechner/pi-coding-agent";
 import { getExecutionMode } from "./lib/execution-mode.js";
 import * as fs from "node:fs";
 import * as os from "node:os";
