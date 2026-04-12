@@ -6,11 +6,9 @@
 }:
 
 let
-  cfg = config.services.swww;
+  awwwPkg = pkgs.unstable.awww;
 
-  swwwPkg = pkgs.swww;
-
-  wallpaperScript = pkgs.writeScriptBin "swww-wallpaper" ''
+  wallpaperScript = pkgs.writeScriptBin "awww-wallpaper" ''
     #!${pkgs.python3}/bin/python3
     import os
     import random
@@ -43,7 +41,7 @@ let
         choice = random.choice(candidates)
         try:
             subprocess.run(
-                ["${lib.getExe swwwPkg}", "img", choice],
+                ["${lib.getExe awwwPkg}", "img", choice],
                 check=True,
             )
             sys.exit(0)
@@ -59,26 +57,39 @@ let
 
   swaylockcfg = config.programs.swaylock;
 
-  getSwwwImage = pkgs.writeScriptBin "get-swww-image" ''
+  getAwwwImage = pkgs.writeScriptBin "get-awww-image" ''
     #!${pkgs.runtimeShell}
-    ${lib.getExe swwwPkg} query | ${lib.getExe pkgs.gawk} -F 'image: ' '{ print $2 }' | ${lib.getExe' pkgs.coreutils "tail"} -n1
+    ${lib.getExe awwwPkg} query -j | ${lib.getExe pkgs.jaq} -r '.[][].displaying.image // empty' | ${lib.getExe' pkgs.coreutils "tail"} -n1
   '';
 in
 {
-  services.swww = {
-    enable = true;
-    extraArgs = [
-      "--format"
-      "xrgb"
-    ];
+  # awww-daemon systemd service
+  systemd.user.services."awww-daemon" = {
+    Unit = {
+      Description = "awww-daemon";
+      After = [ config.wayland.systemd.target ];
+      PartOf = [ config.wayland.systemd.target ];
+      ConditionEnvironment = "WAYLAND_DISPLAY";
+    };
+
+    Service = {
+      Type = "simple";
+      ExecStart = "${lib.getExe' awwwPkg "awww-daemon"}";
+      ExecStartPost = "${pkgs.bash}/bin/bash -c 'for i in 1 2 3 4 5; do ${lib.getExe awwwPkg} restore && break; sleep 1; done'";
+      Restart = "always";
+      RestartSec = 10;
+      Slice = lib.mkDefault "app.slice";
+    };
+
+    Install.WantedBy = [ config.wayland.systemd.target ];
   };
 
-  systemd.user.services."swww-wallpaper" = lib.mkIf cfg.enable {
+  systemd.user.services."awww-wallpaper" = {
     Unit = {
-      Description = "Update wallpaper with swww";
+      Description = "Update wallpaper with awww";
       After = [
         config.wayland.systemd.target
-        "swww.service"
+        "awww-daemon.service"
       ];
       PartOf = [ config.wayland.systemd.target ];
       ConditionEnvironment = "WAYLAND_DISPLAY";
@@ -87,11 +98,11 @@ in
     Service = {
       Type = "oneshot";
       Slice = lib.mkDefault "app.slice";
-      ExecStart = "-${wallpaperScript}/bin/swww-wallpaper";
+      ExecStart = "-${wallpaperScript}/bin/awww-wallpaper";
     };
   };
 
-  systemd.user.timers."swww-wallpaper" = lib.mkIf cfg.enable {
+  systemd.user.timers."awww-wallpaper" = {
     Unit = {
       Description = "Rotate wallpaper hourly";
       PartOf = [ config.wayland.systemd.target ];
@@ -100,7 +111,7 @@ in
     Timer = {
       OnCalendar = "hourly";
       RandomizedDelaySec = "5min";
-      Unit = "swww-wallpaper.service";
+      Unit = "awww-wallpaper.service";
       Persistent = true;
     };
 
@@ -111,6 +122,6 @@ in
   };
 
   programs.swaylock.settings = lib.mkIf swaylockcfg.enable {
-    image = "$(${lib.getExe getSwwwImage})";
+    image = "$(${lib.getExe getAwwwImage})";
   };
 }

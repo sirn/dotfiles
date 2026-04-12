@@ -123,9 +123,6 @@
         ../home-manager/config/programs/obsidian.nix
         ../home-manager/config/programs/sublime-text.nix
         ../home-manager/config/programs/wezterm
-
-        # services
-        ../home-manager/config/services/swww.nix
       ];
 
       home.colors.themeName = "modus-operandi";

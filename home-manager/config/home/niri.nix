@@ -19,7 +19,7 @@
     ../services/sway-audio-idle-inhibit.nix
     ../services/swayidle.nix
     ../services/swaylock.nix
-    ../services/swww.nix
+    ../services/awww.nix
     ../services/udiskie.nix
     ../services/wlsunset.nix
   ];
