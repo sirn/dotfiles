@@ -427,7 +427,6 @@
         "sops"
         "doas"
         "sudo"
-        "systemctl"
         "find /nix/store"
       ];
 
