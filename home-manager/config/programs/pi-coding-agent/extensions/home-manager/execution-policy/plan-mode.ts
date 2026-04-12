@@ -127,7 +127,7 @@ export default function (pi: ExtensionAPI) {
           new Text(
             theme.fg(
               "muted",
-              `(${keyHint("__KEYBINDING_EXPAND_TOOLS__", "to expand")})`,
+              `(${keyHint("app.tools.expand", "to expand")})`,
             ),
             0,
             0,

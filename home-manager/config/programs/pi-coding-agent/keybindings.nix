@@ -1,141 +1,16 @@
 # Keybindings configuration for Pi coding agent
-# Format changed in Pi 0.61.0 (2026-03-20):
-# - < 0.61.0: simple names like "newLine", "cursorUp"
-# - >= 0.61.0: namespaced ids like "tui.input.newLine", "tui.editor.cursorUp"
+# Uses namespaced ids (Pi >= 0.61.0 format)
 
 {
   config,
   lib,
-  pkgs,
-  isPi061orLater,
   ...
 }:
 
 let
   cfg = config.programs.pi-coding-agent;
 
-  # Pre-0.61.0 format (simple names)
-  keybindingsV58 = {
-    # Cursor Movement (Emacs)
-    "cursorUp" = [
-      "up"
-      "ctrl+p"
-    ];
-    "cursorDown" = [
-      "down"
-      "ctrl+n"
-    ];
-    "cursorLeft" = [
-      "left"
-      "ctrl+b"
-    ];
-    "cursorRight" = [
-      "right"
-      "ctrl+f"
-    ];
-    "cursorWordLeft" = [
-      "alt+left"
-      "ctrl+left"
-      "alt+b"
-    ];
-    "cursorWordRight" = [
-      "alt+right"
-      "ctrl+right"
-      "alt+f"
-    ];
-    "cursorLineStart" = [
-      "home"
-      "ctrl+a"
-    ];
-    "cursorLineEnd" = [
-      "end"
-      "ctrl+e"
-    ];
-
-    # Deletion (Emacs)
-    "deleteCharBackward" = [
-      "backspace"
-      "ctrl+h"
-    ];
-    "deleteCharForward" = [
-      "delete"
-      "ctrl+d"
-    ];
-    "deleteWordBackward" = [
-      "ctrl+w"
-      "alt+backspace"
-    ];
-    "deleteWordForward" = [
-      "alt+d"
-      "alt+delete"
-    ];
-    "deleteToLineStart" = [ "ctrl+u" ];
-    "deleteToLineEnd" = [ "ctrl+k" ];
-
-    # Text Input
-    "newLine" = [
-      "shift+enter"
-      "ctrl+j"
-    ];
-    "submit" = [ "enter" ];
-    "tab" = [ "tab" ];
-
-    # Selection (for ctx.ui.select dialogs)
-    "selectUp" = [
-      "up"
-      "ctrl+p"
-    ];
-    "selectDown" = [
-      "down"
-      "ctrl+n"
-    ];
-    "selectConfirm" = [ "enter" ];
-    "selectCancel" = [
-      "escape"
-      "ctrl+c"
-    ];
-
-    # Tree Navigation (session tree view)
-    "treeFoldOrUp" = [
-      "ctrl+left"
-      "alt+left"
-    ];
-    "treeUnfoldOrDown" = [
-      "ctrl+right"
-      "alt+right"
-    ];
-
-    # Kill Ring (Emacs)
-    "yank" = [ "ctrl+y" ];
-    "yankPop" = [ "alt+y" ];
-    "undo" = [
-      "ctrl+_"
-      "ctrl+/"
-    ];
-
-    # Application
-    "interrupt" = [ "escape" ];
-    "clear" = [ "ctrl+c" ];
-    "exit" = [ "ctrl+d" ];
-    "externalEditor" = [ "ctrl+g" ];
-
-    # Models and Thinking
-    "selectModel" = [ "ctrl+l" ];
-    "cycleModelForward" = [ "ctrl+period" ];
-    "cycleModelBackward" = [ "ctrl+comma" ];
-    "cycleThinkingLevel" = [ "shift+tab" ];
-
-    # Display
-    "expandTools" = [ "ctrl+o" ];
-    "toggleThinking" = [ "ctrl+t" ];
-
-    # Message Queue
-    "followUp" = [ "alt+enter" ];
-    "dequeue" = [ "alt+up" ];
-  };
-
-  # 0.61.0+ format (namespaced ids)
-  keybindingsV061 = {
+  keybindings = {
     # Cursor Movement (Emacs)
     "tui.editor.cursorUp" = [
       "up"
@@ -256,6 +131,6 @@ let
 in
 {
   programs.pi-coding-agent = lib.mkIf cfg.enable {
-    keybindings = if isPi061orLater then keybindingsV061 else keybindingsV58;
+    inherit keybindings;
   };
 }

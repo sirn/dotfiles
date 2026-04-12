@@ -57,8 +57,6 @@ let
     // lib.optionalAttrs (!p.compatibility.developerRole) { compat.supportsDeveloperRole = false; };
 
   piPackage = pkgs.unstable.pi-coding-agent;
-  piVersion = piPackage.version or "0.0.0";
-  isPi061orLater = lib.versionAtLeast piVersion "0.61.0";
 
   wrappedPi = pkgs.writeScriptBin "pi" ''
     #!${pkgs.runtimeShell}
@@ -117,13 +115,6 @@ let
     accept = builtins.readFile ./PLAN_ACCEPT.md;
     subsequent = builtins.readFile ./PLAN_INJECT.md;
   };
-
-  executionPolicyDir = pkgs.runCommand "pi-execution-policy" { } ''
-    cp -r ${./extensions/home-manager/execution-policy}/. $out/
-    substituteInPlace $out/plan-mode.ts \
-      --replace-fail '"__KEYBINDING_EXPAND_TOOLS__"' \
-      '"${if isPi061orLater then "app.tools.expand" else "expandTools"}"'
-  '';
 in
 {
   imports = [ ./keybindings.nix ];
@@ -163,8 +154,7 @@ in
     lib.mapAttrs' (
       name: _:
       lib.nameValuePair ".pi/agent/extensions/hm-${name}" {
-        source =
-          if name == "execution-policy" then executionPolicyDir else ./extensions/home-manager + "/${name}";
+        source = ./extensions/home-manager + "/${name}";
       }
     ) (builtins.readDir ./extensions/home-manager)
     // {
@@ -175,7 +165,4 @@ in
       ".pi/agent/PLAN_ACCEPT.md".text = planModeTemplates.accept;
       ".pi/agent/PLAN_INJECT.md".text = planModeTemplates.subsequent;
     };
-
-  # Pass the version check to the keybindings module
-  _module.args = { inherit isPi061orLater; };
 }
