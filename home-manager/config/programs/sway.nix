@@ -8,6 +8,7 @@
 
 let
   swayopts = options.wayland.windowManager.sway;
+  swayPkg = pkgs.local.sway-git;
 in
 {
   wayland.windowManager.sway = {
@@ -23,7 +24,7 @@ in
     #
     # We have to use options.wayland.windowManager.sway here
     # in order to get set the overrides.
-    package = config.lib.nixGL.wrap swayopts.package.default;
+    package = config.lib.nixGL.wrap swayPkg;
 
     config =
       let
