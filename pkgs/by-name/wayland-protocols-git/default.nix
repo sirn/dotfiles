@@ -17,10 +17,8 @@ stdenv.mkDerivation (finalAttrs: {
 
   doCheck =
     stdenv.hostPlatform == stdenv.buildPlatform
-    &&
-      stdenv.hostPlatform.linker == "bfd"
-    &&
-      !(stdenv.hostPlatform.isPower64 && stdenv.hostPlatform.isBigEndian)
+    && stdenv.hostPlatform.linker == "bfd"
+    && !(stdenv.hostPlatform.isPower64 && stdenv.hostPlatform.isBigEndian)
     && lib.meta.availableOn stdenv.hostPlatform wayland;
 
   src = fetchurl {
@@ -56,7 +54,5 @@ stdenv.mkDerivation (finalAttrs: {
   };
 
   passthru.version = finalAttrs.version;
-  passthru.tests.pkg-config = testers.hasPkgConfigModules {
-    package = finalAttrs.finalPackage;
-  };
+  passthru.tests.pkg-config = testers.hasPkgConfigModules { package = finalAttrs.finalPackage; };
 })

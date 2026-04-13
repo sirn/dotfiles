@@ -38,17 +38,17 @@ in
 
   wayland-protocols-git = (callPackage ./by-name/wayland-protocols-git { });
 
-  wlroots-git = (callPackage ./by-name/wlroots-git {
-    wayland-protocols = final.local.wayland-protocols-git;
-  });
+  wlroots-git = (
+    callPackage ./by-name/wlroots-git { wayland-protocols = final.local.wayland-protocols-git; }
+  );
 
-  sway-unwrapped-git = (callPackage ./by-name/sway-unwrapped-git {
-    wlroots = final.local.wlroots-git;
-    wayland-protocols = final.local.wayland-protocols-git;
-    nixpkgsPath = inputs.nixpkgs;
-  });
+  sway-unwrapped-git = (
+    callPackage ./by-name/sway-unwrapped-git {
+      wlroots = final.local.wlroots-git;
+      wayland-protocols = final.local.wayland-protocols-git;
+      nixpkgsPath = inputs.nixpkgs;
+    }
+  );
 
-  sway-git = prev.sway.override {
-    sway-unwrapped = final.local.sway-unwrapped-git;
-  };
+  sway-git = prev.sway.override { sway-unwrapped = final.local.sway-unwrapped-git; };
 }

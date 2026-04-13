@@ -82,9 +82,13 @@ in
       config.systemd.user.services ? sway-audio-idle-inhibit
     ) { Slice = appGraphicalSlice; };
 
-    awww-daemon.Service = { Slice = appGraphicalSlice; };
+    awww-daemon.Service = {
+      Slice = appGraphicalSlice;
+    };
 
-    awww-wallpaper.Service = { Slice = appGraphicalSlice; };
+    awww-wallpaper.Service = {
+      Slice = appGraphicalSlice;
+    };
 
     waybar.Service = lib.mkIf config.programs.waybar.enable { Slice = appGraphicalSlice; };
 

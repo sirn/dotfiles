@@ -57,9 +57,7 @@ stdenv.mkDerivation (finalAttrs: {
   patches = [
     (nixpkgsPath + "/pkgs/by-name/sw/sway-unwrapped/load-configuration-from-etc.patch")
 
-    (replaceVars (nixpkgsPath + "/pkgs/by-name/sw/sway-unwrapped/fix-paths.patch") {
-      inherit swaybg;
-    })
+    (replaceVars (nixpkgsPath + "/pkgs/by-name/sw/sway-unwrapped/fix-paths.patch") { inherit swaybg; })
   ]
   ++ lib.optionals (!finalAttrs.isNixOS) [
     (nixpkgsPath + "/pkgs/by-name/sw/sway-unwrapped/sway-config-no-nix-store-references.patch")
@@ -95,9 +93,7 @@ stdenv.mkDerivation (finalAttrs: {
     libdrm
     (wlroots.override { inherit (finalAttrs) enableXWayland; })
   ]
-  ++ lib.optionals finalAttrs.enableXWayland [
-    xorg.xcbutilwm
-  ];
+  ++ lib.optionals finalAttrs.enableXWayland [ xorg.xcbutilwm ];
 
   mesonFlags =
     let

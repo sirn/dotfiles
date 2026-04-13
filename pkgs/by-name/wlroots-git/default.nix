@@ -81,7 +81,8 @@ stdenv.mkDerivation (finalAttrs: {
     xorg.xcbutilwm
     lcms2
     wayland-protocols
-  ] ++ lib.optional finalAttrs.enableXWayland xwayland;
+  ]
+  ++ lib.optional finalAttrs.enableXWayland xwayland;
 
   mesonFlags = lib.optional (!finalAttrs.enableXWayland) "-Dxwayland=disabled";
 

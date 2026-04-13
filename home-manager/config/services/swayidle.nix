@@ -76,7 +76,10 @@ in
   programs.niri = lib.mkIf (cfg.enable && niricfg.enable) {
     settings = {
       binds = {
-        "Mod+Alt+L".action.spawn = [ loginctlBin "lock-session" ];
+        "Mod+Alt+L".action.spawn = [
+          loginctlBin
+          "lock-session"
+        ];
       };
     };
   };
