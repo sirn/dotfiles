@@ -6,7 +6,7 @@ This directory contains the shared instruction system for multiple AI coding too
 
 ```
 AGENTS.md   → Global rules (shared by all tools)
-skills/     → SOP-style skill definitions (34 total)
+skills/     → SOP-style skill definitions (35 total)
 agents/     → Sub-agent definitions for Claude Code + OpenCode
 ```
 
