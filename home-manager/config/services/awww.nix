@@ -57,9 +57,16 @@ let
 
   swaylockcfg = config.programs.swaylock;
 
+  nixWallpaper = "${pkgs.nixos-artwork.wallpapers.nineish-catppuccin-mocha}/share/backgrounds/nixos/nix-wallpaper-nineish-catppuccin-mocha.png";
+
   getAwwwImage = pkgs.writeScriptBin "get-awww-image" ''
     #!${pkgs.runtimeShell}
-    ${lib.getExe awwwPkg} query -j | ${lib.getExe pkgs.jaq} -r '.[][].displaying.image // empty' | ${lib.getExe' pkgs.coreutils "tail"} -n1
+    img=$(${lib.getExe awwwPkg} query -j | ${lib.getExe pkgs.jaq} -r '.[][].displaying.image // empty' | ${lib.getExe' pkgs.coreutils "tail"} -n1)
+    if [ -n "$img" ] && [ -f "$img" ]; then
+      printf '%s' "$img"
+    else
+      printf '%s' "${nixWallpaper}"
+    fi
   '';
 in
 {
