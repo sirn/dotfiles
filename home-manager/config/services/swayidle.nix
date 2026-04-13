@@ -16,6 +16,8 @@ let
 
   niriBin = "${niricfg.package}/bin/niri";
 
+  loginctlBin = "${pkgs.systemd}/bin/loginctl";
+
   displayControl = pkgs.writeScriptBin "display-control" ''
     #!${pkgs.runtimeShell}
 
@@ -66,7 +68,7 @@ in
   wayland.windowManager.sway = lib.mkIf (cfg.enable && swaycfg.enable) {
     config = {
       keybindings = {
-        "${swaycfg.config.modifier}+Alt+L" = "exec loginctl lock-session";
+        "${swaycfg.config.modifier}+Alt+L" = "exec ${loginctlBin} lock-session";
       };
     };
   };
@@ -74,7 +76,7 @@ in
   programs.niri = lib.mkIf (cfg.enable && niricfg.enable) {
     settings = {
       binds = {
-        "Mod+Alt+L".action.spawn = [ "loginctl" "lock-session" ];
+        "Mod+Alt+L".action.spawn = [ loginctlBin "lock-session" ];
       };
     };
   };

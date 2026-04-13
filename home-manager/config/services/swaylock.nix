@@ -12,6 +12,8 @@ let
 
   swaylockBin =
     if swaylockcfg.enable then "${lib.getExe swaylockcfg.package}" else "/usr/bin/swaylock"; # no relative path here due to systemd unit setting PATH=
+
+  loginctlBin = "${pkgs.systemd}/bin/loginctl";
 in
 {
   programs.swaylock = {
@@ -27,7 +29,7 @@ in
     timeouts = [
       {
         timeout = 120;
-        command = "${swaylockBin}";
+        command = "${loginctlBin} lock-session";
       }
     ];
     events = [
@@ -37,7 +39,7 @@ in
       }
       {
         event = "before-sleep";
-        command = "${swaylockBin}";
+        command = "${loginctlBin} lock-session";
       }
     ];
   };
