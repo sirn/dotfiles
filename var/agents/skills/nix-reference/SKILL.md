@@ -93,13 +93,23 @@ print(requests.get("https://api.example.com").json())
 - `mkShell` - When you need C compiler (native extensions)
 - `mkShellNoCC` - Pure scripting (Python, Node.js, Go)
 
-#### Basic flake template (recommended)
+#### Basic flake template
 
 See [examples/flake-basic.nix](examples/flake-basic.nix)
 
-#### Python with uv (recommended)
+Use this template for basic Flake setup.
+
+#### inputsFrom flake template
+
+See [examples/flake-inputs-from](examples/flake-inputs-from.nix)
+
+Use this template when you're working in a workspace and needs to combine project-specific devShells.
+
+#### Python with uv
 
 See [examples/flake-python-uv.nix](examples/flake-python-uv.nix)
+
+Use this template when you need `uv` and/or `poetry`.
 
 ### Overlay Pattern
 
