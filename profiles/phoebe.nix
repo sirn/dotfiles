@@ -55,7 +55,7 @@
       ../home-manager/config/programs/mpv.nix
       ../home-manager/config/programs/sublime-text.nix
       ../home-manager/config/programs/virt-manager.nix
-      ../home-manager/config/programs/wezterm
+      ../home-manager/config/programs/ghostty.nix
       ../home-manager/config/programs/yt-dlp.nix
     ];
   };

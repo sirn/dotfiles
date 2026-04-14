@@ -11,7 +11,7 @@
     ./programs/intellij.nix
     ./programs/mpv.nix
     ./programs/sublime-text.nix
-    ./programs/wezterm
+    ./programs/ghostty.nix
     ./programs/yt-dlp.nix
   ];
 }

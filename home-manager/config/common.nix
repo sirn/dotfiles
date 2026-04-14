@@ -43,6 +43,7 @@
     ./programs/tincan.nix
     ./programs/tmux.nix
     ./programs/tree.nix
+    ./programs/ghostty-terminfo.nix
     ./programs/wezterm-terminfo.nix
     ./programs/zsh.nix
 
