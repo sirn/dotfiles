@@ -26,6 +26,7 @@
 
         # services
         ../nixos/config/services/flatpak.nix
+        ../nixos/config/services/geoclue2.nix
         ../nixos/config/services/fwupd.nix
         ../nixos/config/services/greetd.nix
         ../nixos/config/services/node-exporter.nix
