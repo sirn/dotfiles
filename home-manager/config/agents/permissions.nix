@@ -147,6 +147,7 @@
         "nix-linter"
         "nix-prefetch-git"
         "nixfmt"
+        "nix-instantiate"
         "node --version"
         "npm --version"
         "npm list"
