@@ -45,6 +45,9 @@ in
         # under fractional scaling (e.g. 1.25x, 1.5x), preventing jerky rendering.
         freetype-load-flags = "no-hinting";
 
+        # Disable "Copied to clipboard" pill notification (GTK only).
+        app-notifications = "no-clipboard-copy";
+
         # Use compositor server-side decorations to avoid libadwaita CSD artifacts
         # at fractional scales on Wayland.
         window-decoration = "server";
