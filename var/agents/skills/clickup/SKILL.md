@@ -34,21 +34,6 @@ curl -fsS \
   "https://api.clickup.com/api/v2/user" | jq .
 ```
 
-## Reusable shell helpers
-
-```bash
-cu() {
-  curl -fsS -H "Authorization: $CLICKUP_PAT" "$@"
-}
-
-cu_json() {
-  curl -fsS \
-    -H "Authorization: $CLICKUP_PAT" \
-    -H "Content-Type: application/json" \
-    "$@"
-}
-```
-
 ## API coverage map
 
 ClickUp currently exposes two public API surfaces:
@@ -104,25 +89,33 @@ When IDs are unknown, discover them in this order:
 ### Get authorized user
 
 ```bash
-cu "https://api.clickup.com/api/v2/user" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/user" | jq .
 ```
 
 ### List authorized workspaces
 
 ```bash
-cu "https://api.clickup.com/api/v2/team" | jq '.teams'
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team" | jq '.teams'
 ```
 
 ### Get workspace plan
 
 ```bash
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/plan" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/plan" | jq .
 ```
 
 ### Get workspace seats
 
 ```bash
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/seats" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/seats" | jq .
 ```
 
 ## Hierarchy: spaces, folders, lists, views
@@ -130,66 +123,92 @@ cu "https://api.clickup.com/api/v2/team/TEAM_ID/seats" | jq .
 ### List spaces in a workspace
 
 ```bash
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/space?archived=false" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/space?archived=false" | jq .
 ```
 
 ### Get a space
 
 ```bash
-cu "https://api.clickup.com/api/v2/space/SPACE_ID" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/space/SPACE_ID" | jq .
 ```
 
 ### List folders in a space
 
 ```bash
-cu "https://api.clickup.com/api/v2/space/SPACE_ID/folder?archived=false" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/space/SPACE_ID/folder?archived=false" | jq .
 ```
 
 ### Get a folder
 
 ```bash
-cu "https://api.clickup.com/api/v2/folder/FOLDER_ID" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/folder/FOLDER_ID" | jq .
 ```
 
 ### List folderless lists in a space
 
 ```bash
-cu "https://api.clickup.com/api/v2/space/SPACE_ID/list?archived=false" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/space/SPACE_ID/list?archived=false" | jq .
 ```
 
 ### List lists in a folder
 
 ```bash
-cu "https://api.clickup.com/api/v2/folder/FOLDER_ID/list?archived=false" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/folder/FOLDER_ID/list?archived=false" | jq .
 ```
 
 ### Get a list
 
 ```bash
-cu "https://api.clickup.com/api/v2/list/LIST_ID" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/list/LIST_ID" | jq .
 ```
 
 ### List views
 
 ```bash
 # Workspace / Everything views
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/view" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/view" | jq .
 
 # Space views
-cu "https://api.clickup.com/api/v2/space/SPACE_ID/view" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/space/SPACE_ID/view" | jq .
 
 # Folder views
-cu "https://api.clickup.com/api/v2/folder/FOLDER_ID/view" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/folder/FOLDER_ID/view" | jq .
 
 # List views
-cu "https://api.clickup.com/api/v2/list/LIST_ID/view" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/list/LIST_ID/view" | jq .
 ```
 
 ### Get a view or its tasks
 
 ```bash
-cu "https://api.clickup.com/api/v2/view/VIEW_ID" | jq .
-cu "https://api.clickup.com/api/v2/view/VIEW_ID/task" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/view/VIEW_ID" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/view/VIEW_ID/task" | jq .
 ```
 
 ## Tasks
@@ -197,7 +216,9 @@ cu "https://api.clickup.com/api/v2/view/VIEW_ID/task" | jq .
 ### Get a task
 
 ```bash
-cu "https://api.clickup.com/api/v2/task/TASK_ID" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/task/TASK_ID" | jq .
 ```
 
 Useful query parameters:
@@ -210,13 +231,17 @@ Useful query parameters:
 Example:
 
 ```bash
-cu "https://api.clickup.com/api/v2/task/TASK_ID?include_subtasks=true&include_markdown_description=true" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/task/TASK_ID?include_subtasks=true&include_markdown_description=true" | jq .
 ```
 
 ### List tasks in a list
 
 ```bash
-cu "https://api.clickup.com/api/v2/list/LIST_ID/task?archived=false&subtasks=true&include_closed=false" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/list/LIST_ID/task?archived=false&subtasks=true&include_closed=false" | jq .
 ```
 
 Common filters supported by `GET /list/{list_id}/task`:
@@ -243,7 +268,9 @@ This is the main workspace-level task query in v2.
 It filters tasks across spaces, folders, and lists.
 
 ```bash
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/task?include_closed=false&page=0" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/task?include_closed=false&page=0" | jq .
 ```
 
 Common filters supported by `GET /team/{team_Id}/task`:
@@ -272,12 +299,18 @@ Common filters supported by `GET /team/{team_Id}/task`:
 
 ```bash
 # Create task in a list
-cu_json -X POST \
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  -H "Content-Type: application/json" \
+  -X POST \
   "https://api.clickup.com/api/v2/list/LIST_ID/task" \
   -d '{"name":"New task"}' | jq .
 
 # Update task
-cu_json -X PUT \
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  -H "Content-Type: application/json" \
+  -X PUT \
   "https://api.clickup.com/api/v2/task/TASK_ID" \
   -d '{"name":"Updated task name"}' | jq .
 ```
@@ -286,19 +319,27 @@ cu_json -X PUT \
 
 ```bash
 # Add dependency
-cu_json -X POST \
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  -H "Content-Type: application/json" \
+  -X POST \
   "https://api.clickup.com/api/v2/task/TASK_ID/dependency" \
   -d '{"depends_on":"OTHER_TASK_ID"}' | jq .
 
 # Link tasks
-cu -X POST "https://api.clickup.com/api/v2/task/TASK_ID/link/OTHER_TASK_ID" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  -X POST "https://api.clickup.com/api/v2/task/TASK_ID/link/OTHER_TASK_ID" | jq .
 ```
 
 ### Checklists
 
 ```bash
 # Create checklist
-cu_json -X POST \
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  -H "Content-Type: application/json" \
+  -X POST \
   "https://api.clickup.com/api/v2/task/TASK_ID/checklist" \
   -d '{"name":"Checklist"}' | jq .
 ```
@@ -306,8 +347,12 @@ cu_json -X POST \
 ### Task members
 
 ```bash
-cu "https://api.clickup.com/api/v2/task/TASK_ID/member" | jq .
-cu "https://api.clickup.com/api/v2/list/LIST_ID/member" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/task/TASK_ID/member" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/list/LIST_ID/member" | jq .
 ```
 
 ### Task attachment upload (v2)
@@ -324,7 +369,9 @@ curl -fsS \
 ### Get task comments
 
 ```bash
-cu "https://api.clickup.com/api/v2/task/TASK_ID/comment" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/task/TASK_ID/comment" | jq .
 ```
 
 Optional pagination-style params:
@@ -336,31 +383,43 @@ Optional pagination-style params:
 ### Get list comments
 
 ```bash
-cu "https://api.clickup.com/api/v2/list/LIST_ID/comment" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/list/LIST_ID/comment" | jq .
 ```
 
 ### Get view comments
 
 ```bash
-cu "https://api.clickup.com/api/v2/view/VIEW_ID/comment" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/view/VIEW_ID/comment" | jq .
 ```
 
 ### Get threaded replies for a comment
 
 ```bash
-cu "https://api.clickup.com/api/v2/comment/COMMENT_ID/reply" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/comment/COMMENT_ID/reply" | jq .
 ```
 
 ### Create comments
 
 ```bash
 # Task comment
-cu_json -X POST \
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  -H "Content-Type: application/json" \
+  -X POST \
   "https://api.clickup.com/api/v2/task/TASK_ID/comment" \
   -d '{"comment_text":"Hello from the API","notify_all":true}' | jq .
 
 # Threaded reply
-cu_json -X POST \
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  -H "Content-Type: application/json" \
+  -X POST \
   "https://api.clickup.com/api/v2/comment/COMMENT_ID/reply" \
   -d '{"comment_text":"Replying in thread","notify_all":true}' | jq .
 ```
@@ -370,10 +429,18 @@ cu_json -X POST \
 ### Custom fields
 
 ```bash
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/field" | jq .
-cu "https://api.clickup.com/api/v2/space/SPACE_ID/field" | jq .
-cu "https://api.clickup.com/api/v2/folder/FOLDER_ID/field" | jq .
-cu "https://api.clickup.com/api/v2/list/LIST_ID/field" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/field" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/space/SPACE_ID/field" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/folder/FOLDER_ID/field" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/list/LIST_ID/field" | jq .
 ```
 
 ### Set a task custom field value
@@ -381,7 +448,10 @@ cu "https://api.clickup.com/api/v2/list/LIST_ID/field" | jq .
 The body shape depends on the field type. For simple text-like fields:
 
 ```bash
-cu_json -X POST \
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  -H "Content-Type: application/json" \
+  -X POST \
   "https://api.clickup.com/api/v2/task/TASK_ID/field/FIELD_ID" \
   -d '{"value":"example"}' | jq .
 ```
@@ -389,27 +459,37 @@ cu_json -X POST \
 ### Tags
 
 ```bash
-cu "https://api.clickup.com/api/v2/space/SPACE_ID/tag" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/space/SPACE_ID/tag" | jq .
 ```
 
 ```bash
 # Add tag to task
-cu -X POST "https://api.clickup.com/api/v2/task/TASK_ID/tag/TAG_NAME" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  -X POST "https://api.clickup.com/api/v2/task/TASK_ID/tag/TAG_NAME" | jq .
 
 # Remove tag from task
-cu -X DELETE "https://api.clickup.com/api/v2/task/TASK_ID/tag/TAG_NAME" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  -X DELETE "https://api.clickup.com/api/v2/task/TASK_ID/tag/TAG_NAME" | jq .
 ```
 
 ### Custom task types
 
 ```bash
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/custom_item" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/custom_item" | jq .
 ```
 
 ### Custom roles
 
 ```bash
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/customroles?include_members=true" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/customroles?include_members=true" | jq .
 ```
 
 ## Goals
@@ -417,19 +497,25 @@ cu "https://api.clickup.com/api/v2/team/TEAM_ID/customroles?include_members=true
 ### List goals
 
 ```bash
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/goal?include_completed=false" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/goal?include_completed=false" | jq .
 ```
 
 ### Get a goal
 
 ```bash
-cu "https://api.clickup.com/api/v2/goal/GOAL_ID" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/goal/GOAL_ID" | jq .
 ```
 
 ### Key results
 
 ```bash
-cu "https://api.clickup.com/api/v2/key_result/KEY_RESULT_ID" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/key_result/KEY_RESULT_ID" | jq .
 ```
 
 ## Time tracking
@@ -437,7 +523,9 @@ cu "https://api.clickup.com/api/v2/key_result/KEY_RESULT_ID" | jq .
 ### Get time entries in a date range
 
 ```bash
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries?start_date=START_MS&end_date=END_MS" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries?start_date=START_MS&end_date=END_MS" | jq .
 ```
 
 Useful filters:
@@ -456,24 +544,36 @@ Useful filters:
 ### Get the currently running time entry
 
 ```bash
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries/current" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries/current" | jq .
 ```
 
 ### Get a single time entry or its history
 
 ```bash
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries/TIMER_ID" | jq .
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries/TIMER_ID/history" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries/TIMER_ID" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries/TIMER_ID/history" | jq .
 ```
 
 ### Start or stop a timer
 
 ```bash
-cu_json -X POST \
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  -H "Content-Type: application/json" \
+  -X POST \
   "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries/start" \
   -d '{"description":"Working on task"}' | jq .
 
-cu_json -X POST \
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  -H "Content-Type: application/json" \
+  -X POST \
   "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries/stop" \
   -d '{}' | jq .
 ```
@@ -481,7 +581,9 @@ cu_json -X POST \
 ### Legacy task time tracking endpoints
 
 ```bash
-cu "https://api.clickup.com/api/v2/task/TASK_ID/time" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/task/TASK_ID/time" | jq .
 ```
 
 ## Templates, shared hierarchy, members, users, guests, groups
@@ -489,28 +591,42 @@ cu "https://api.clickup.com/api/v2/task/TASK_ID/time" | jq .
 ### Shared hierarchy
 
 ```bash
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/shared" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/shared" | jq .
 ```
 
 ### Templates
 
 ```bash
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/taskTemplate?page=0" | jq .
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/list_template" | jq .
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/folder_template" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/taskTemplate?page=0" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/list_template" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/folder_template" | jq .
 ```
 
 ### Users, guests, groups
 
 ```bash
 # User details in workspace
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/user/USER_ID" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/user/USER_ID" | jq .
 
 # Guest details in workspace
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/guest/GUEST_ID" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/guest/GUEST_ID" | jq .
 
 # List user groups
-cu "https://api.clickup.com/api/v2/group" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/group" | jq .
 ```
 
 ## Webhooks
@@ -518,13 +634,18 @@ cu "https://api.clickup.com/api/v2/group" | jq .
 ### List workspace webhooks
 
 ```bash
-cu "https://api.clickup.com/api/v2/team/TEAM_ID/webhook" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v2/team/TEAM_ID/webhook" | jq .
 ```
 
 ### Create a webhook
 
 ```bash
-cu_json -X POST \
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  -H "Content-Type: application/json" \
+  -X POST \
   "https://api.clickup.com/api/v2/team/TEAM_ID/webhook" \
   -d '{"endpoint":"https://example.com/clickup-webhook","events":["taskCreated"]}' | jq .
 ```
@@ -537,7 +658,9 @@ Use workspace-scoped v3 endpoints instead.
 ### Search docs in a workspace
 
 ```bash
-cu "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs?archived=false&deleted=false&limit=50" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs?archived=false&deleted=false&limit=50" | jq .
 ```
 
 Useful filters:
@@ -555,13 +678,17 @@ Useful filters:
 ### Fetch a doc
 
 ```bash
-cu "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs/DOC_ID" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs/DOC_ID" | jq .
 ```
 
 ### Get doc page listing
 
 ```bash
-cu "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs/DOC_ID/page_listing?max_page_depth=10" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs/DOC_ID/page_listing?max_page_depth=10" | jq .
 ```
 
 ### Get doc pages
@@ -569,25 +696,35 @@ cu "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs/DOC_ID/page_list
 `content_format` supports `text/md` and `text/plain`.
 
 ```bash
-cu "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs/DOC_ID/pages?content_format=text/md" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs/DOC_ID/pages?content_format=text/md" | jq .
 ```
 
 ### Get a specific page
 
 ```bash
-cu "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs/DOC_ID/pages/PAGE_ID?content_format=text/md" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs/DOC_ID/pages/PAGE_ID?content_format=text/md" | jq .
 ```
 
 ### Create docs/pages
 
 ```bash
 # Create a doc
-cu_json -X POST \
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  -H "Content-Type: application/json" \
+  -X POST \
   "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs" \
   -d '{"name":"New doc"}' | jq .
 
 # Create a page
-cu_json -X POST \
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  -H "Content-Type: application/json" \
+  -X POST \
   "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs/DOC_ID/pages" \
   -d '{"name":"New page"}' | jq .
 ```
@@ -597,7 +734,9 @@ cu_json -X POST \
 ### List chat channels
 
 ```bash
-cu "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels?limit=50" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels?limit=50" | jq .
 ```
 
 Useful filters:
@@ -613,14 +752,20 @@ Useful filters:
 ### Get a channel
 
 ```bash
-cu "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels/CHANNEL_ID" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels/CHANNEL_ID" | jq .
 ```
 
 ### Get channel followers or members
 
 ```bash
-cu "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels/CHANNEL_ID/followers" | jq .
-cu "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels/CHANNEL_ID/members" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels/CHANNEL_ID/followers" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels/CHANNEL_ID/members" | jq .
 ```
 
 ### Get channel messages
@@ -628,21 +773,32 @@ cu "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels/CHANNEL
 `content_format` supports `text/md` and `text/plain`.
 
 ```bash
-cu "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels/CHANNEL_ID/messages?limit=50&content_format=text/md" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels/CHANNEL_ID/messages?limit=50&content_format=text/md" | jq .
 ```
 
 ### Get replies or reactions for a message
 
 ```bash
-cu "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/messages/MESSAGE_ID/replies?content_format=text/md" | jq .
-cu "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/messages/MESSAGE_ID/reactions" | jq .
-cu "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/messages/MESSAGE_ID/tagged_users" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/messages/MESSAGE_ID/replies?content_format=text/md" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/messages/MESSAGE_ID/reactions" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/messages/MESSAGE_ID/tagged_users" | jq .
 ```
 
 ### Send a message
 
 ```bash
-cu_json -X POST \
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  -H "Content-Type: application/json" \
+  -X POST \
   "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels/CHANNEL_ID/messages" \
   -d '{"type":"message","content":"Hello from the API","content_format":"text/plain"}' | jq .
 ```
@@ -652,7 +808,9 @@ cu_json -X POST \
 ### List attachments for a supported entity
 
 ```bash
-cu "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/ENTITY_TYPE/ENTITY_ID/attachments?limit=50" | jq .
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/ENTITY_TYPE/ENTITY_ID/attachments?limit=50" | jq .
 ```
 
 ### Upload an attachment to a supported entity
@@ -671,7 +829,10 @@ curl -fsS \
 The v3 schema supports `private` and `entries`.
 
 ```bash
-cu_json -X PATCH \
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  -H "Content-Type: application/json" \
+  -X PATCH \
   "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/OBJECT_TYPE/OBJECT_ID/acls" \
   -d '{"private":true}' | jq .
 ```
@@ -685,7 +846,10 @@ See the v3 spec for the exact body shape for the target object type.
 The audit logs endpoint is a `POST` in v3.
 
 ```bash
-cu_json -X POST \
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  -H "Content-Type: application/json" \
+  -X POST \
   "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/auditlogs" \
   -d '{}' | jq .
 ```
