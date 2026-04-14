@@ -775,6 +775,28 @@ export interface EvalResult {
 
 const EMPTY_WRAPPER_RULES: WrapperRuleMap = new Map();
 
+// Keywords that consume the entire segment (no embedded command)
+const SHELL_KEYWORDS_SKIP_SEGMENT = new Set([
+  "for",
+  "case",
+  "select",
+  "in",
+  "done",
+  "fi",
+  "esac",
+]);
+
+// Keywords to strip from the front of a segment to reach the actual command
+const SHELL_KEYWORDS_STRIP = new Set([
+  "while",
+  "until",
+  "if",
+  "elif",
+  "do",
+  "then",
+  "else",
+]);
+
 function isAssignmentToken(word: string): boolean {
   const eq = word.indexOf("=");
   return eq > 0;
@@ -957,11 +979,18 @@ export function extractCommands(
       }
     }
 
-    // Find the command name: first non-group word token
-    const wordTokens = seg.filter((t): t is WordToken => t.type === "word");
+    // Find the command name: first non-keyword, non-group word token
+    let wordTokens = seg.filter((t): t is WordToken => t.type === "word");
     const redirectTokens = seg.filter(
       (t): t is RedirectToken => t.type === "redirect",
     );
+    if (wordTokens.length === 0) continue;
+    // Skip segments that are entirely shell compound-command syntax
+    if (SHELL_KEYWORDS_SKIP_SEGMENT.has(wordTokens[0].value)) continue;
+    // Strip keywords that precede a command (while, if, do, then, etc.)
+    if (SHELL_KEYWORDS_STRIP.has(wordTokens[0].value)) {
+      wordTokens = wordTokens.slice(1);
+    }
     if (wordTokens.length === 0) continue;
 
     const cmdName = wordTokens[0].value;

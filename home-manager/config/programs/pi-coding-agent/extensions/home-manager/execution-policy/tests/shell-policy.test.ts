@@ -515,6 +515,58 @@ test("nested substitution", () => {
   assertTrue(cmds.some((c) => c.name === "date"));
 });
 
+// Shell keywords are skipped
+test("for loop keywords are skipped", () => {
+  const tokens = tokenize(
+    'for repo in a b c; do echo $repo; done',
+  );
+  const cmds = extractCommands(tokens);
+  assertEquals(
+    cmds.map((c) => c.name),
+    ["echo"],
+  );
+});
+
+test("while loop keywords are skipped", () => {
+  const tokens = tokenize("while true; do echo hi; done");
+  const cmds = extractCommands(tokens);
+  assertEquals(
+    cmds.map((c) => c.name),
+    ["true", "echo"],
+  );
+});
+
+test("if/then/else/fi keywords are skipped", () => {
+  const tokens = tokenize(
+    "if test -f foo; then echo yes; else echo no; fi",
+  );
+  const cmds = extractCommands(tokens);
+  assertEquals(
+    cmds.map((c) => c.name),
+    ["test", "echo", "echo"],
+  );
+});
+
+test("case/esac keywords are skipped", () => {
+  const tokens = tokenize("case $x in; echo matched; esac");
+  const cmds = extractCommands(tokens);
+  assertEquals(
+    cmds.map((c) => c.name),
+    ["echo"],
+  );
+});
+
+test("nested for with pipes", () => {
+  const tokens = tokenize(
+    'for f in *.txt; do cat $f | grep hi; done',
+  );
+  const cmds = extractCommands(tokens);
+  assertEquals(
+    cmds.map((c) => c.name),
+    ["cat", "grep"],
+  );
+});
+
 // Wrapper commands
 test("bash -c wrapper", () => {
   const tokens = tokenize("bash -c 'echo hi'");
