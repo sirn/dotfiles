@@ -185,7 +185,10 @@ export default function (pi: ExtensionAPI) {
       if (args) {
         sendPlanModePrompt(ctx, args);
       } else {
-        const planPath = getPlanPath(ctx.cwd, ctx.sessionManager.getSessionFile());
+        const planPath = getPlanPath(
+          ctx.cwd,
+          ctx.sessionManager.getSessionFile(),
+        );
         const hasExistingPlan = fs.existsSync(planPath);
         ctx.ui.notify(
           hasExistingPlan
