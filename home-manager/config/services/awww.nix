@@ -70,7 +70,6 @@ let
   '';
 in
 {
-  # awww-daemon systemd service
   systemd.user.services."awww-daemon" = {
     Unit = {
       Description = "awww-daemon";
@@ -82,8 +81,7 @@ in
     Service = {
       Type = "simple";
       ExecStart = "${lib.getExe' awwwPkg "awww-daemon"}";
-      ExecStartPost = "${pkgs.bash}/bin/bash -c 'for i in 1 2 3 4 5; do ${lib.getExe awwwPkg} restore && break; sleep 1; done'";
-      Restart = "always";
+      Restart = "on-failure";
       RestartSec = 10;
       Slice = lib.mkDefault "app.slice";
     };
@@ -107,6 +105,8 @@ in
       Slice = lib.mkDefault "app.slice";
       ExecStart = "-${wallpaperScript}/bin/awww-wallpaper";
     };
+
+    Install.WantedBy = [ config.wayland.systemd.target ];
   };
 
   systemd.user.timers."awww-wallpaper" = {
