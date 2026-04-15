@@ -8,8 +8,6 @@
 let
   agentsCfg = config.agents;
 
-  agentsDir = ../../../../var/agents/agents;
-
   # Map API types to npm package for the SDK
   apiToNpm =
     api:
@@ -83,10 +81,7 @@ let
     in
     lib.groupBy (item: "${item.api}::${item.url}") withApiAndUrl;
 
-  # Generate provider key suffix for uniqueness (URL hash when different from base)
-  getUrlSuffix =
-    url: baseUrl:
-    if url != baseUrl then "-${lib.substring 0 4 (builtins.hashString "md5" url)}" else "";
+  getUrlHash = url: lib.substring 0 4 (builtins.hashString "md5" url);
 
   # Generate display name with API type suffix for non-default APIs
   getProviderDisplayName =
@@ -109,6 +104,10 @@ let
     let
       groups = groupModelsByApiAndUrl p;
       defaultApi = if p.api != null then p.api else "openai-completions";
+      apiSuffixes = map (items: apiToSuffix (lib.head items).api) (lib.attrValues groups);
+      duplicateApiSuffixes = builtins.filter (
+        apiSuffix: lib.length (builtins.filter (value: value == apiSuffix) apiSuffixes) > 1
+      ) (lib.unique apiSuffixes);
     in
     lib.mapAttrs' (
       key: items:
@@ -117,8 +116,8 @@ let
         api = first.api;
         url = first.url;
         apiSuffix = apiToSuffix api;
-        urlSuffix = getUrlSuffix url p.baseUrl;
-        # Provider name: {providerId}-{apiSuffix}{-urlHash if different}
+        urlSuffix = lib.optionalString (lib.elem apiSuffix duplicateApiSuffixes) "-${getUrlHash url}";
+        # Provider name: {providerId}-{apiSuffix}{-urlHash when needed for uniqueness}
         providerName = "${providerId}-${apiSuffix}${urlSuffix}";
         displayName = getProviderDisplayName p.name api defaultApi;
         npm = apiToNpm api;
