@@ -27,7 +27,7 @@
     ./programs/git.nix
     ./programs/gpg.nix
     ./programs/htop.nix
-    ./programs/jq.nix
+    ./programs/jaq.nix
     ./programs/jujutsu.nix
     ./programs/jjui.nix
     ./programs/lstr.nix

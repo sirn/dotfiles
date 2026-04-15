@@ -149,7 +149,7 @@ let
   statusLineScript = pkgs.writeShellApplication {
     name = "claude-statusline";
     runtimeInputs = [
-      pkgs.jq
+      pkgs.jaq
       pkgs.git
       pkgs.gawk
       config.programs.jujutsu.package

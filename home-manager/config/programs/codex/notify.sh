@@ -7,9 +7,9 @@ else
   INPUT="$1"
 fi
 
-TYPE=$(echo "$INPUT" | jq -r '.type // empty' 2>/dev/null)
+TYPE=$(echo "$INPUT" | jaq -r '.type // empty' 2>/dev/null)
 if [ "$TYPE" = "agent-turn-complete" ]; then
-  last_msg=$(echo "$INPUT" | jq -r '."last-assistant-message" // empty' 2>/dev/null | tr '\n' ' ' | head -c 200)
+  last_msg=$(echo "$INPUT" | jaq -r '."last-assistant-message" // empty' 2>/dev/null | tr '\n' ' ' | head -c 200)
   body="${last_msg:-Codex has finished their turn}"
   toastify send "Codex" "$body"
 fi

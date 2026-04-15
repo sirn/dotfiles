@@ -121,6 +121,7 @@
         "jj log"
         "jj show"
         "jj status"
+        "jaq"
         "jq"
         "just"
         "ktlint"

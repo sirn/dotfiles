@@ -1592,7 +1592,7 @@ test("sudo denied", () => {
 });
 test("quoted > not redirect", () => {
   assertEquals(
-    evaluate("jq '.x > .y' file.json", { commands: productionPolicy }).action,
+    evaluate("jaq '.x > .y' file.json", { commands: productionPolicy }).action,
     "default",
   );
 });

@@ -10,7 +10,7 @@ let
   claudeNotify = pkgs.writeShellApplication {
     name = "claude-code-notify";
     runtimeInputs = [
-      pkgs.jq
+      pkgs.jaq
       pkgs.toastify
     ];
     text = builtins.readFile ../../programs/claude-code/notify.sh;
@@ -20,7 +20,7 @@ let
   geminiNotify = pkgs.writeShellApplication {
     name = "gemini-cli-notify";
     runtimeInputs = [
-      pkgs.jq
+      pkgs.jaq
       pkgs.toastify
     ];
     text = builtins.readFile ../../programs/gemini/notify.sh;
@@ -30,7 +30,7 @@ let
   codexNotify = pkgs.writeShellApplication {
     name = "codex-notify";
     runtimeInputs = [
-      pkgs.jq
+      pkgs.jaq
       pkgs.toastify
     ];
     text = builtins.readFile ../../programs/codex/notify.sh;

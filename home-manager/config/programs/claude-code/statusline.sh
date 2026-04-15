@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 input=$(cat)
-cwd=$(echo "$input" | jq -r '.workspace.current_dir')
+cwd=$(echo "$input" | jaq -r '.workspace.current_dir')
 
 # Git/Jujutsu info
 vcs_info=""
@@ -22,14 +22,14 @@ if [ -d "$cwd/.git" ] || git -C "$cwd" rev-parse --git-dir &>/dev/null; then
 fi
 
 # Model info
-model=$(echo "$input" | jq -r '.model.id // .model.name // empty')
+model=$(echo "$input" | jaq -r '.model.id // .model.name // empty')
 model_info=""
 if [ -n "$model" ]; then
   model_info=$(printf '\033[34m◆ %s\033[0m ' "$model")
 fi
 
 # Cost info (only if cost > 0)
-total_cost=$(echo "$input" | jq -r '.cost.total_cost_usd // empty')
+total_cost=$(echo "$input" | jaq -r '.cost.total_cost_usd // empty')
 cost_info=""
 if [ -n "$total_cost" ] && [ "$total_cost" != "0" ] && [ "$total_cost" != "0.0" ]; then
   # Round to 2 decimal places
@@ -38,7 +38,7 @@ if [ -n "$total_cost" ] && [ "$total_cost" != "0" ] && [ "$total_cost" != "0.0" 
 fi
 
 # Session time (convert from milliseconds to days/hours/minutes/seconds)
-session_duration_ms=$(echo "$input" | jq -r '.cost.total_duration_ms // empty')
+session_duration_ms=$(echo "$input" | jaq -r '.cost.total_duration_ms // empty')
 session_info=""
 if [ -n "$session_duration_ms" ]; then
   session_duration=$((session_duration_ms / 1000))
@@ -56,7 +56,7 @@ if [ -n "$session_duration_ms" ]; then
 fi
 
 # Context window info
-used_pct=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
+used_pct=$(echo "$input" | jaq -r '.context_window.used_percentage // empty')
 context_info=""
 if [ -n "$used_pct" ]; then
   # Create visual bar (10 blocks total, each represents 10%)

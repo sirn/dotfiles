@@ -3,7 +3,7 @@
 set -euo pipefail
 
 INPUT=$(cat)
-CMD=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
+CMD=$(echo "$INPUT" | jaq -r '.tool_input.command // empty')
 
 if [ -z "$CMD" ]; then
   exit 0
@@ -19,7 +19,7 @@ if [ "$CMD" = "$REWRITTEN" ]; then
   exit 0
 fi
 
-echo "$INPUT" | jq -c --arg cmd "$REWRITTEN" \
+echo "$INPUT" | jaq -c --arg cmd "$REWRITTEN" \
   '{hookSpecificOutput: {
      hookEventName: "PreToolUse",
      permissionDecision: "allow",

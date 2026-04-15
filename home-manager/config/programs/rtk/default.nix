@@ -88,8 +88,9 @@ let
 
   rtkRewriteClaudeSh = pkgs.writeShellApplication {
     name = "rtk-rewrite-claude";
+    excludeShellChecks = [ "SC2016" ];
     runtimeInputs = [
-      pkgs.jq
+      pkgs.jaq
       pkgs.unstable.rtk
     ];
     text = builtins.readFile ./rtk-rewrite-claude.sh;

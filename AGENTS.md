@@ -77,6 +77,8 @@ home-manager switch --flake path:.#<hostname>
 ## Environment & Tooling
 
 - **Ad-hoc Python**: Use `nix run nixpkgs#python3 -- ...` instead of `python3 ...` to run Python scripts without a global installation.
+- **JSON/YAML parsing**: `jaq` is installed in this environment; prefer it over `jq`. It also supports YAML, CBOR, TOML, and XML via `--from <format>` (e.g., `jaq --from yaml '...' < file.yaml`). A `jq` → `jaq` alias is provided for compatibility.
+
 ## Commit Messages
 
 Keep commit messages concise. Use the following format for the scope prefix:
