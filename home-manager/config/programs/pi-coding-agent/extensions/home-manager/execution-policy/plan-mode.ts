@@ -185,8 +185,12 @@ export default function (pi: ExtensionAPI) {
       if (args) {
         sendPlanModePrompt(ctx, args);
       } else {
+        const planPath = getPlanPath(ctx.cwd, ctx.sessionManager.getSessionFile());
+        const hasExistingPlan = fs.existsSync(planPath);
         ctx.ui.notify(
-          "Plan mode active. Type your request to create a plan.",
+          hasExistingPlan
+            ? "Plan mode active. Continue refining your plan."
+            : "Plan mode active. Type your request to create a plan.",
           "info",
         );
       }
