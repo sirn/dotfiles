@@ -74,6 +74,9 @@ nix build --no-link path:.#nixosConfigurations.<hostname>.config.system.build.to
 home-manager switch --flake path:.#<hostname>
 ```
 
+## Environment & Tooling
+
+- **Ad-hoc Python**: Use `nix run nixpkgs#python3 -- ...` instead of `python3 ...` to run Python scripts without a global installation.
 ## Commit Messages
 
 Keep commit messages concise. Use the following format for the scope prefix:
