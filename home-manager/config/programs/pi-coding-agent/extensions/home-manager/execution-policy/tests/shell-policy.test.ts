@@ -517,9 +517,7 @@ test("nested substitution", () => {
 
 // Shell keywords are skipped
 test("for loop keywords are skipped", () => {
-  const tokens = tokenize(
-    'for repo in a b c; do echo $repo; done',
-  );
+  const tokens = tokenize("for repo in a b c; do echo $repo; done");
   const cmds = extractCommands(tokens);
   assertEquals(
     cmds.map((c) => c.name),
@@ -537,9 +535,7 @@ test("while loop keywords are skipped", () => {
 });
 
 test("if/then/else/fi keywords are skipped", () => {
-  const tokens = tokenize(
-    "if test -f foo; then echo yes; else echo no; fi",
-  );
+  const tokens = tokenize("if test -f foo; then echo yes; else echo no; fi");
   const cmds = extractCommands(tokens);
   assertEquals(
     cmds.map((c) => c.name),
@@ -557,9 +553,7 @@ test("case/esac keywords are skipped", () => {
 });
 
 test("nested for with pipes", () => {
-  const tokens = tokenize(
-    'for f in *.txt; do cat $f | grep hi; done',
-  );
+  const tokens = tokenize("for f in *.txt; do cat $f | grep hi; done");
   const cmds = extractCommands(tokens);
   assertEquals(
     cmds.map((c) => c.name),

@@ -739,17 +739,17 @@ echo "https://app.asana.com/0/123456789/9876543210" | awk -F'/' '{print $(NF-1)}
 
 ## Error handling
 
-| Status | Meaning |
-| ------ | ------- |
-| `200`  | Success |
-| `201`  | Created |
-| `400`  | Bad request |
-| `401`  | Unauthorized / invalid PAT |
-| `403`  | Forbidden |
-| `404`  | Not found |
+| Status | Meaning                                  |
+| ------ | ---------------------------------------- |
+| `200`  | Success                                  |
+| `201`  | Created                                  |
+| `400`  | Bad request                              |
+| `401`  | Unauthorized / invalid PAT               |
+| `403`  | Forbidden                                |
+| `404`  | Not found                                |
 | `412`  | Invalid or expired sync token for events |
-| `429`  | Rate limited |
-| `5xx`  | Server error |
+| `429`  | Rate limited                             |
+| `5xx`  | Server error                             |
 
 Use `curl -fsS` so HTTP failures surface immediately.
 

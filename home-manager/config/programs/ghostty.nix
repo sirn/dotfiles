@@ -22,7 +22,11 @@ in
   programs.ghostty = {
     enable = true;
 
-    package = if pkgs.stdenv.isLinux then config.lib.nixGL.wrap pkgs.unstable.ghostty else pkgs.unstable.ghostty-bin;
+    package =
+      if pkgs.stdenv.isLinux then
+        config.lib.nixGL.wrap pkgs.unstable.ghostty
+      else
+        pkgs.unstable.ghostty-bin;
 
     settings = lib.mkMerge [
       {

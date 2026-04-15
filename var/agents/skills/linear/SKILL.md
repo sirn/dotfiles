@@ -388,15 +388,15 @@ echo "https://linear.app/workspace/issue/ENG-123/fix-api-bug" | awk -F'/' '{prin
 
 ## Error Handling
 
-| Status | Meaning |
-| ------ | ------- |
-| `200`  | Success or partial GraphQL success |
-| `400`  | Bad request / invalid GraphQL |
-| `401`  | Unauthorized (invalid token) |
+| Status | Meaning                              |
+| ------ | ------------------------------------ |
+| `200`  | Success or partial GraphQL success   |
+| `400`  | Bad request / invalid GraphQL        |
+| `401`  | Unauthorized (invalid token)         |
 | `403`  | Forbidden (insufficient permissions) |
-| `404`  | Not found |
-| `429`  | Rate limit exceeded |
-| `5xx`  | Server error |
+| `404`  | Not found                            |
+| `429`  | Rate limit exceeded                  |
+| `5xx`  | Server error                         |
 
 Also inspect `.errors` in the JSON body, even when HTTP status is `200`.
 

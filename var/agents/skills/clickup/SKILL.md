@@ -889,16 +889,16 @@ v3 commonly uses cursor pagination:
 
 ## Error handling
 
-| Status | Meaning |
-| ------ | ------- |
-| `200`  | Success |
-| `201`  | Created |
+| Status | Meaning                      |
+| ------ | ---------------------------- |
+| `200`  | Success                      |
+| `201`  | Created                      |
 | `400`  | Bad request / invalid params |
-| `401`  | Unauthorized / invalid PAT |
-| `403`  | Forbidden |
-| `404`  | Not found |
-| `429`  | Rate limited |
-| `5xx`  | Server error |
+| `401`  | Unauthorized / invalid PAT   |
+| `403`  | Forbidden                    |
+| `404`  | Not found                    |
+| `429`  | Rate limited                 |
+| `5xx`  | Server error                 |
 
 Prefer `curl -fsS` so HTTP failures surface immediately.
 
