@@ -102,8 +102,11 @@ let
   rtkConfig = {
     hooks = {
       exclude_commands = [
+        "cat"
         "curl"
         "find"
+        "git"
+        "grep"
         "rg"
       ];
     };
