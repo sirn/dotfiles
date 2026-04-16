@@ -130,8 +130,8 @@ in
     instructionText = agentsMdText;
 
     custom.compactionModel = {
-      provider = "google";
-      model = "gemini-3.1-flash-lite-preview";
+      provider = "synthetic";
+      model = "hf:moonshotai/Kimi-K2.5";
     };
 
     settings = {
