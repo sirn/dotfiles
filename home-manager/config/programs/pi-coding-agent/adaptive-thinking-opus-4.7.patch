@@ -1,0 +1,24 @@
+--- a/node_modules/@mariozechner/pi-ai/dist/providers/anthropic.js
++++ b/node_modules/@mariozechner/pi-ai/dist/providers/anthropic.js
+@@ -352,9 +352,11 @@ export const streamAnthropic = (model, context, options) => {
+  * Check if a model supports adaptive thinking (Opus 4.6 and Sonnet 4.6)
+  */
+ function supportsAdaptiveThinking(modelId) {
+-    // Opus 4.6 and Sonnet 4.6 model IDs (with or without date suffix)
++    // Opus 4.6/4.7 and Sonnet 4.6 model IDs (with or without date suffix)
+     return (modelId.includes("opus-4-6") ||
++        modelId.includes("opus-4-7") ||
+         modelId.includes("opus-4.6") ||
++        modelId.includes("opus-4.7") ||
+         modelId.includes("sonnet-4-6") ||
+         modelId.includes("sonnet-4.6"));
+ }
+/**
+@@ -373,7 +375,7 @@ function mapThinkingLevelToEffort(level, modelId) {
+        case "high":
+            return "high";
+        case "xhigh":
+-            return modelId.includes("opus-4-6") || modelId.includes("opus-4.6") ? "max" : "high";
++            return modelId.includes("opus-4-6") || modelId.includes("opus-4-7") || modelId.includes("opus-4.6") || modelId.includes("opus-4.7") ? "max" : "high";
+        default:
+            return "high";

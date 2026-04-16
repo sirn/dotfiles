@@ -54,7 +54,12 @@ let
     }
     // lib.optionalAttrs (!p.compatibility.developerRole) { compat.supportsDeveloperRole = false; };
 
-  piPackage = pkgs.unstable.pi-coding-agent;
+  # TODO: remove after upgrading to pi-coding-agent >=0.67.4
+  piPackage = pkgs.unstable.pi-coding-agent.overrideAttrs (prev: {
+    postInstall = (prev.postInstall or "") + ''
+      patch -p1 -d "$out/lib/node_modules/pi-monorepo" < ${./adaptive-thinking-opus-4.7.patch}
+    '';
+  });
 
   wrappedPi = pkgs.writeScriptBin "pi" ''
     #!${pkgs.runtimeShell}
