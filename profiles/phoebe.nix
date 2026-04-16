@@ -43,7 +43,6 @@
       ../home-manager/config/home/fonts.nix
       ../home-manager/config/home/i18n.nix
       ../home-manager/config/home/niri.nix
-      ../home-manager/config/home/notification
       ../home-manager/config/home/sway.nix
       ../home-manager/config/home/uwsm.nix
 

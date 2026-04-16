@@ -203,6 +203,7 @@ in
         "GEMINI.md"
       ];
       general = {
+        enableNotifications = true;
         enablePromptCompletion = true;
         previewFeatures = true;
         sessionRetention = {
