@@ -49,7 +49,6 @@ let
       baseUrl = p.baseUrl;
       apiKey = p.envVar;
       api = p.api;
-      defaultThinkingLevel = p.reasoningEffort;
       models = map (toPiModel p) p.models;
     }
     // lib.optionalAttrs (!p.compatibility.developerRole) { compat.supportsDeveloperRole = false; };
@@ -138,7 +137,8 @@ in
       quietStartup = true;
       defaultProvider = agentsCfg.models.default.provider;
       defaultModel = agentsCfg.models.default.model;
-      defaultThinkingLevel = "medium";
+      defaultThinkingLevel =
+        agentsCfg.models.providers.${agentsCfg.models.default.provider}.reasoningEffort;
       hideThinkingBlock = false;
       theme = config.home.colors.variant;
       enabledModels = lib.concatMap (p: map (m: m.id) p.models) (
