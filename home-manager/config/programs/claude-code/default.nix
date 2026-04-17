@@ -195,7 +195,7 @@ in
       autoUpdaterStatus = "disabled";
       includeCoAuthoredBy = true;
       cleanupPeriodDays = 7;
-      effortLevel = "medium";
+      effortLevel = "high";
       theme = config.home.colors.variant;
       statusLine = {
         type = "command";

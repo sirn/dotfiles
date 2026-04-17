@@ -11,7 +11,7 @@
         baseUrl = "https://api.synthetic.new/openai/v1";
         envVar = "SYNTHETIC_API_KEY";
         api = "openai-completions";
-        reasoningEffort = "medium";
+        reasoningEffort = "high";
         models = [
           {
             id = "hf:moonshotai/Kimi-K2.5";
@@ -27,7 +27,7 @@
             attachment = false;
             toolCall = true;
             temperature = true;
-            reasoningEffort = "medium";
+            reasoningEffort = "high";
           }
         ];
       };
