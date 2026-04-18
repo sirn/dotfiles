@@ -174,6 +174,7 @@ in
         #!${pkgs.runtimeShell}
         export DISABLE_AUTOUPDATER=1
         export DISABLE_INSTALLATION_CHECKS=1
+        export ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-7
         exec "${lib.getExe pkgs.local.envWrapper}" \
           -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
           -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env.local" \
