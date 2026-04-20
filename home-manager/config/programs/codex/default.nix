@@ -70,6 +70,7 @@ let
       allow_login_shell
       network
       ;
+    check_for_update_on_startup = false;
     model_reasoning_effort = "high";
     mcp_servers = toCodexMcpServers config.programs.mcp.servers;
     theme = if config.home.colors.variant == "dark" then "dark" else "light";
@@ -104,6 +105,7 @@ in
   # Codex rewrites config.toml every time it's run in a new directory,
   # so we need to merge the local config with Nix-generated config on activation.
   # https://github.com/openai/codex/issues/5160
+  # https://github.com/openai/codex/issues/14601
   home.activation.mergeCodexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     mergeCodexConfig() {
       localConfig="$HOME/.codex/config.toml"
