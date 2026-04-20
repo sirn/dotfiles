@@ -177,7 +177,7 @@ in
         exec "${lib.getExe pkgs.local.envWrapper}" \
           -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
           -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env.local" \
-          -- "${lib.getExe pkgs.unstable.claude-code}" "$@"
+          -- "${lib.getExe pkgs.unstable.claude-code-bin}" "$@"
       ''
     );
 
@@ -229,18 +229,5 @@ in
       };
     }
     // claudeSkillLinks
-    // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux (
-      let
-        arch = if pkgs.stdenv.hostPlatform.isx86_64 then "x64" else "arm64";
-        seccompDir = ".npm/lib/node_modules/@anthropic-ai/sandbox-runtime/vendor/seccomp/${arch}";
-      in
-      {
-        # Workaround for Claude Code not respecting sandbox.seccomp.bpfPath and applyPath
-        # https://github.com/anthropics/claude-code/issues/24238
-        "${seccompDir}/apply-seccomp".source = "${pkgs.local.claude-code-seccomp}/bin/apply-seccomp";
-        "${seccompDir}/unix-block.bpf".source =
-          "${pkgs.local.claude-code-seccomp}/share/claude-code-seccomp/unix-block.bpf";
-      }
-    )
   );
 }

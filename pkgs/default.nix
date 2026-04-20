@@ -6,8 +6,6 @@ in
 {
   asdcontrol = (callPackage ./by-name/asdcontrol { });
 
-  claude-code-seccomp = (callPackage ./by-name/claude-code-seccomp/package.nix { });
-
   emacsPackages = {
     phscroll = (callPackage ./by-name/emacs/elisp-packages/phscroll/package.nix { });
   };
