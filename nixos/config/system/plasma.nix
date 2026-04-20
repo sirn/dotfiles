@@ -37,7 +37,7 @@
     xsettingsd
 
     # required for plasma to display HDR content in supported apps
-    local.vulkan-hdr-layer
+    vulkan-hdr-layer-kwin6
   ];
 
   environment.variables = {

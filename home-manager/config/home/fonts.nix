@@ -46,9 +46,9 @@ in
     tlwg
     ubuntu-classic
 
-    local.ia-writer-duo-static
-    local.ia-writer-mono-static
-    local.ia-writer-quattro-static
+    ia-writer-duospace
+    ia-writer-mono
+    ia-writer-quattro
   ];
 
   # https://wiki.archlinux.org/title/Font_configuration

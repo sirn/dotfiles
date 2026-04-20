@@ -14,14 +14,6 @@ in
 
   envWrapper = (callPackage ./by-name/env-wrapper/package.nix { });
 
-  inherit (recurseIntoAttrs (callPackage ./by-name/ia-fonts/package.nix { }))
-    ia-writer-duo-static
-    ia-writer-mono-static
-    ia-writer-quattro-static
-    ;
-
-  nvidia-gpu-exporter = (callPackage ./by-name/prometheus/nvidia-gpu-exporter.nix { });
-
   node-textfile-collector-scripts = (
     callPackage ./by-name/prometheus/node-textfile-collector-scripts.nix { }
   );
@@ -31,8 +23,6 @@ in
   tincan = (callPackage ./by-name/tincan/package.nix { });
 
   udev-forwarder = (callPackage ./by-name/udev-forwarder { });
-
-  vulkan-hdr-layer = (callPackage ./by-name/vulkan-hdr-layer { });
 
   wrapped-uv = (callPackage ./by-name/wrapped-uv/wrapped.nix { });
 

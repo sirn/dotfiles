@@ -12,7 +12,7 @@
       wantedBy = [ "multi-user.target" ];
 
       serviceConfig = {
-        ExecStart = "${pkgs.local.nvidia-gpu-exporter}/bin/nvidia_gpu_exporter";
+        ExecStart = "${pkgs.prometheus-nvidia-gpu-exporter}/bin/nvidia_gpu_exporter";
         Restart = "always";
         RestartSec = 1;
       };
