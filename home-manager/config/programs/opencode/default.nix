@@ -140,6 +140,22 @@ let
     acc: name: acc // (mkOpenCodeProviders name config.agents.models.providers.${name})
   ) { } (lib.attrNames config.agents.models.providers);
 
+  # Resolve a raw "provider/modelId" reference to the transformed
+  # "openCodeProviderName/modelId" format, accounting for API/URL suffixes.
+  resolveOpenCodeModel =
+    providerId: modelId:
+    let
+      # Find the OpenCode provider name that contains this model
+      match = lib.findFirst (
+        name:
+        let
+          p = allOpenCodeProviders.${name};
+        in
+        p.models ? ${modelId}
+      ) null (lib.attrNames allOpenCodeProviders);
+    in
+    if match != null then "${match}/${modelId}" else "${providerId}/${modelId}";
+
   policy = agentsCfg.permissions.effective.build;
 
   toOpencodePermissions =
@@ -209,7 +225,14 @@ let
     let
       oc = agent.opencode;
       isPrimary = (oc.primary or false);
-      modelLine = lib.optionalString (isPrimary && oc.model != "") "model: ${oc.model}\n";
+      resolvedModel =
+        let
+          parts = lib.splitString "/" oc.model;
+          provId = lib.head parts;
+          modId = lib.concatStringsSep "/" (lib.tail parts);
+        in
+        resolveOpenCodeModel provId modId;
+      modelLine = lib.optionalString (isPrimary && oc.model != "") "model: ${resolvedModel}\n";
       modeVal = if !isPrimary then "subagent" else (oc.mode or "primary");
       modeLine = lib.optionalString (modeVal != "") "mode: ${modeVal}\n";
       permissionLine = lib.optionalString (
@@ -308,8 +331,8 @@ in
       theme = "system";
       mcp = toOpencodeMcpServers config.programs.mcp.servers;
       mode = {
-        plan.model = "${agentsCfg.models.default.provider}/${agentsCfg.models.default.model}";
-        build.model = "${agentsCfg.models.default.provider}/${agentsCfg.models.default.model}";
+        plan.model = resolveOpenCodeModel agentsCfg.models.default.provider agentsCfg.models.default.model;
+        build.model = resolveOpenCodeModel agentsCfg.models.default.provider agentsCfg.models.default.model;
       };
       permission = toOpencodePermissions;
       tools = opencodeMcpPermissions;
