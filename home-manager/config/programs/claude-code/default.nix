@@ -193,6 +193,7 @@ in
     settings = {
       autoUpdaterStatus = "disabled";
       includeCoAuthoredBy = true;
+      showClearContextOnPlanAccept = true;
       cleanupPeriodDays = 7;
       effortLevel = "high";
       theme = config.home.colors.variant;
