@@ -47,10 +47,10 @@ let
     name: p:
     {
       baseUrl = p.baseUrl;
-      apiKey = p.envVar;
       api = p.api;
       models = map (toPiModel p) p.models;
     }
+    // lib.optionalAttrs (p.envVar != null) { apiKey = p.envVar; }
     // lib.optionalAttrs (!p.compatibility.developerRole) { compat.supportsDeveloperRole = false; };
 
   # TODO: remove after upgrading to pi-coding-agent >=0.67.4

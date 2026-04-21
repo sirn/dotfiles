@@ -117,8 +117,9 @@ let
         description = "Base URL for the provider API.";
       };
       envVar = lib.mkOption {
-        type = lib.types.str;
-        description = "Environment variable name for the API key.";
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Environment variable name for the API key. Null for OAuth-only providers.";
       };
       api = lib.mkOption {
         type = lib.types.str;

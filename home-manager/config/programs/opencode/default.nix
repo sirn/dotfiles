@@ -127,7 +127,7 @@ let
         name = displayName;
         options = {
           baseURL = url;
-          apiKey = "{env:${p.envVar}}";
+          apiKey = if p.envVar != null then "{env:${p.envVar}}" else null;
         };
         models = builtins.listToAttrs (
           map (item: lib.nameValuePair item.model.id (toOpenCodeModel item.model)) items
