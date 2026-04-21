@@ -61,6 +61,54 @@ export default function (pi: ExtensionAPI) {
     return sent;
   }
 
+  function getPendingPlanExecution(ctx: ExtensionContext): string | undefined {
+    let planContent: string | undefined;
+    for (const entry of ctx.sessionManager.getEntries()) {
+      if (
+        entry.type === "custom" &&
+        entry.customType === "plan-execution-pending"
+      ) {
+        const data = entry.data as {
+          status?: "pending" | "processed";
+          planContent?: string;
+        };
+        if (data?.status === "processed") {
+          planContent = undefined;
+        } else if (
+          data?.status === "pending" &&
+          typeof data.planContent === "string"
+        ) {
+          planContent = data.planContent;
+        }
+      }
+    }
+    return planContent;
+  }
+
+  function movePlanToSession(
+    projectDir: string,
+    sessionFile: string | undefined,
+    sourcePlanPath: string,
+    planContent: string,
+  ) {
+    const targetPlanPath = getPlanPath(projectDir, sessionFile);
+    fs.mkdirSync(path.dirname(targetPlanPath), { recursive: true });
+
+    if (sourcePlanPath === targetPlanPath) {
+      if (!fs.existsSync(targetPlanPath)) {
+        fs.writeFileSync(targetPlanPath, planContent, "utf-8");
+      }
+      return;
+    }
+
+    if (fs.existsSync(sourcePlanPath)) {
+      fs.renameSync(sourcePlanPath, targetPlanPath);
+      return;
+    }
+
+    fs.writeFileSync(targetPlanPath, planContent, "utf-8");
+  }
+
   function getPlanPath(
     projectDir: string,
     sessionFile: string | undefined,
@@ -250,8 +298,21 @@ export default function (pi: ExtensionAPI) {
           "success",
         );
 
+        const parentSession = ctx.sessionManager.getSessionFile();
         const result = await ctx.newSession({
-          parentSession: ctx.sessionManager.getSessionFile(),
+          parentSession,
+          setup: async (sessionManager) => {
+            movePlanToSession(
+              ctx.cwd,
+              sessionManager.getSessionFile(),
+              planPath,
+              planContent,
+            );
+            sessionManager.appendCustomEntry("plan-execution-pending", {
+              status: "pending",
+              planContent,
+            });
+          },
         });
 
         if (result.cancelled) {
@@ -259,18 +320,10 @@ export default function (pi: ExtensionAPI) {
           return;
         }
 
-        const newPlanPath = getPlanPath(
-          ctx.cwd,
-          ctx.sessionManager.getSessionFile(),
-        );
-        fs.mkdirSync(path.dirname(newPlanPath), { recursive: true });
-        fs.renameSync(planPath, newPlanPath);
-
         ctx.ui.notify(
           "New session created. Starting plan execution...",
           "success",
         );
-        sendExecutionMessage(planContent);
       } else if (choice === "Accept plan and compact") {
         ctx.ui.notify(
           "Plan accepted! Compacting context for execution...",
@@ -373,6 +426,16 @@ export default function (pi: ExtensionAPI) {
 
     sendPlanModePrompt(ctx, event.text);
     return { action: "handled" };
+  });
+
+  pi.on("session_start", async (_event, ctx) => {
+    updatePlanWidget(ctx);
+
+    const pendingPlanExecution = getPendingPlanExecution(ctx);
+    if (!pendingPlanExecution) return;
+
+    pi.appendEntry("plan-execution-pending", { status: "processed" });
+    sendExecutionMessage(pendingPlanExecution);
   });
 
   pi.on("turn_end", async (_event, ctx) => {
