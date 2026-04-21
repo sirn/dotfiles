@@ -195,7 +195,7 @@ in
       includeCoAuthoredBy = true;
       showClearContextOnPlanAccept = true;
       cleanupPeriodDays = 7;
-      effortLevel = "high";
+      effortLevel = "xhigh";
       theme = config.home.colors.variant;
       statusLine = {
         type = "command";
