@@ -82,6 +82,7 @@ let
     in
     {
       inherit allow ask deny;
+      defaultMode = "auto";
     };
 
   claudeCodeAgents = lib.filterAttrs (name: agent: agent.claude-code != null) agentsCfg.subagents;
@@ -194,6 +195,7 @@ in
       autoUpdaterStatus = "disabled";
       includeCoAuthoredBy = true;
       showClearContextOnPlanAccept = true;
+      skipAutoPermissionPrompt = true;
       cleanupPeriodDays = 7;
       effortLevel = "xhigh";
       theme = config.home.colors.variant;
