@@ -117,6 +117,8 @@ let
     accept = builtins.readFile ./PLAN_ACCEPT.md;
     subsequent = builtins.readFile ./PLAN_INJECT.md;
   };
+
+  policyAutoModePrompt = builtins.readFile ./POLICY_AUTO_MODE.md;
 in
 {
   imports = [ ./keybindings.nix ];
@@ -166,5 +168,6 @@ in
       ".pi/agent/PLAN_PROMPT.md".text = planModeTemplates.prompt;
       ".pi/agent/PLAN_ACCEPT.md".text = planModeTemplates.accept;
       ".pi/agent/PLAN_INJECT.md".text = planModeTemplates.subsequent;
+      ".pi/agent/POLICY_AUTO_MODE.md".text = policyAutoModePrompt;
     };
 }
