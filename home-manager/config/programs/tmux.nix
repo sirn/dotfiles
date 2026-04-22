@@ -15,6 +15,11 @@ in
     shell = config.home.shell.interactiveShell;
     terminal = "tmux-256color";
     mouse = true;
+    historyLimit = 50000;
+    baseIndex = 1;
+    focusEvents = true;
+    aggressiveResize = true;
+    keyMode = "vi";
 
     extraConfig = ''
       set -g @color_primary_bg "default"
@@ -60,6 +65,11 @@ in
       set -ga terminal-features ",wezterm:usstyle"
       set -g allow-passthrough on
       set -wg automatic-rename off
+
+      set -g pane-base-index 1
+      set -g renumber-windows on
+      set -g display-time 4000
+      set -g status-interval 5
 
       set -g status-left ""
 
