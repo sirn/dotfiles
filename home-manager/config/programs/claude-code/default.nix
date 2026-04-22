@@ -193,6 +193,7 @@ in
 
     settings = {
       autoUpdaterStatus = "disabled";
+      autoMemoryEnabled = false;
       includeCoAuthoredBy = true;
       showClearContextOnPlanAccept = true;
       skipAutoPermissionPrompt = true;
