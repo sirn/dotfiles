@@ -236,15 +236,17 @@ async function confirmCommand(
   ctx: ExtensionContext,
   result: EvalResult,
 ): Promise<{ block: boolean; reason?: string }> {
+  let autoModeReason: string | undefined;
   if (autoModeConfig) {
     const decision = await evaluateAutoMode(command, ctx);
     if (decision?.decision === "allow") {
       ctx.ui.notify(
-        `Auto-approved: ${getCommandSummary(command)}${decision.reason ? ` — ${decision.reason}` : ""}`,
+        `Auto-approved${decision.reason ? `: ${decision.reason}` : ""}`,
         "info",
       );
       return { block: false };
     }
+    autoModeReason = decision?.reason;
   }
 
   if (!ctx.hasUI) {
@@ -255,8 +257,9 @@ async function confirmCommand(
   }
 
   const trigger = formatTriggerReason(result);
+  const suffix = autoModeReason ? ` -- ${autoModeReason}` : "";
   const choice = await ctx.ui.select(
-    `Confirm${trigger}: ${getCommandSummary(command)}`,
+    `Confirm${trigger}${suffix}:\n${getCommandSummary(command)}`,
     ["Yes, proceed", "No, cancel"],
   );
 
