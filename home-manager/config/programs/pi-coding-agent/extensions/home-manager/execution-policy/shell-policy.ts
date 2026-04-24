@@ -174,8 +174,9 @@ async function evaluateAutoMode(
       {
         apiKey: auth.apiKey,
         headers: auth.headers,
-        maxTokens: 2048,
+        maxTokens: 128,
         temperature: 0,
+        thinkingEnabled: false,
         signal,
       },
     );
