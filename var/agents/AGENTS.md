@@ -113,10 +113,10 @@
 ## Version Control
 
 - **Policy**: ALWAYS use `jj` (Jujutsu) for all version control operations. Do NOT use `git` unless explicitly requested by the user or if `jj` is functionally unavailable.
-- **Policy**: Do NOT create, modify, squash, or push commits on your own unless explicitly instructed by the user. You are NOT authorized to manage version control history autonomously.
+- **Policy**: Local Jujutsu commit-shaping commands (`jj describe`, `jj commit`, `jj new`) are allowed when they are part of the current requested task. Do not otherwise rewrite, move, delete, or push commits unless explicitly instructed by the user.
 - **Push Authorization**: NEVER push to remote repositories (`jj git push`, `git push`, etc.) unless the user explicitly requests it. This includes pushing to any branch, creating pull requests, or modifying remote history.
-- **Commit Messages**: When asked to commit, keep messages concise, consistent, and following existing patterns.
-- **Commit Authorization**: You must only commit, or split, when explicitly told to do so.
+- **Destructive History Operations**: Ask for confirmation before `jj edit`, `jj squash`, `jj split`, `jj rebase`, `jj abandon`, `jj undo`, `jj op restore`, bookmark moves/deletes, or any operation that could rewrite, move, or discard work.
+- **Commit Messages**: Keep messages concise, consistent, and following existing patterns.
 - **Attribution**: When committing, use the `Assisted-by:` trailer (aligned with Linux kernel policy) to attribute the AI's contribution. The format should be `Assisted-by: AGENT_NAME:MODEL_VERSION [TOOL1] [TOOL2]`.
   - `AGENT_NAME` is the name of the AI tool or framework
   - `MODEL_VERSION` is the specific model version used
@@ -128,11 +128,12 @@
     - `Assisted-by: Pi:glm-5.1`
 - **Responsibility**: You MUST NOT add `Co-Authored-By:` or `Signed-off-by:` tags. The human developer is responsible for reviewing all AI-generated code and taking full responsibility for the contribution.
 - **Jujutsu Reference**: See "Reference Skills First" rule above. Key patterns from `jj-reference`:
-  - Use explicit change IDs: `jj describe <id>`, `jj squash --from <id> --to <id>`
-  - Use `jj split -r <id> -m "msg" -- <file>` (non-interactive)
+  - Prefer `jj commit -m "msg"` to finalize the current working-copy commit and move on
+  - Use `jj describe <id> -m "msg"` when updating a description without moving on
+  - Use `jj split -r <id> -m "msg" -- <file>` (non-interactive, after confirmation)
   - Use `jj new <parent-id>` to create commits on specific parents
   - Use `jj log -r ::@ -n 10` to view recent history
-  - Never use `@` or `@-` in scripts or operations - always use explicit change IDs
+  - `@`, `@-`, and revsets are fine for clear one-off commands; use explicit change IDs for scripts, multi-step instructions, destructive operations, or ambiguous targets
 
 ## Policy Footer
 

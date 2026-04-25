@@ -74,8 +74,8 @@ let
     ## Safety Guidelines (Pi-specific)
 
     - When running destructive commands (`rm`, etc.), you must first ask the user.
-    - When doing a commit, ask user for confirmation first.
-    - Do not squash commit unless being told explicitly by the user.
+    - Local Jujutsu commit-shaping commands (`jj describe`, `jj commit`, `jj new`) are allowed for the current requested task.
+    - Ask before destructive history operations (`jj edit`, `jj squash`, `jj split`, `jj rebase`, `jj abandon`, etc.) or any push.
   '';
 
   perms = agentsCfg.permissions;

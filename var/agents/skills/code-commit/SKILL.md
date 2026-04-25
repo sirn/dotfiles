@@ -1,6 +1,6 @@
 ---
 name: code-commit
-description: Commit current changes using jj. Analyzes changes, suggests commit messages following repository conventions, proposes splits if needed, and creates commits. Use ONLY when user explicitly asks to commit changes or create commits.
+description: Commit current changes using jj. Analyzes changes, suggests commit messages following repository conventions, proposes splits if needed, and creates commits when finalizing requested work.
 ---
 
 Commit current changes using Jujutsu (jj).
@@ -8,7 +8,7 @@ Commit current changes using Jujutsu (jj).
 ## Important
 
 **IMPORTANT**: Always use `jj` (Jujutsu) commands. Only fall back to `git` if jj is not available.
-Refer to the `jj-reference` skill for command syntax and **Best Practices** (explicit change IDs, logical grouping, etc.).
+Refer to the `jj-reference` skill for command syntax and **Best Practices** (local commit autonomy, revision references, logical grouping, etc.).
 
 ## Process
 
@@ -25,15 +25,16 @@ Refer to the `jj-reference` skill for command syntax and **Best Practices** (exp
    - Present the plan (messages, which files in each commit) to the user for approval before executing
 
 3. **Execute the commit**:
-   - For a single commit: `jj describe <id> -m "<message>"`
-   - For splits: use `jj split -r <id> -m "<commit-message>" -- <file>` for each commit; do not use interactive `jj split`
+   - For a single commit: `jj commit -m "<message>"`
+   - Use `jj describe <id> -m "<message>"` only when updating a description without moving on
+   - For splits: get user approval, then use `jj split -r <id> -m "<commit-message>" -- <file>` for each commit; do not use interactive `jj split`
    - Keep commit messages concise:
      - Subject line: 50-72 characters max (Git standard)
      - Use imperative mood ("add feature" not "added feature")
      - Body: explain "what" and "why", not "how"
    - Try to include a short summary of the change in the commit description, including "why" if available.
-   - After the last commit is described/split, create a new empty commit with `jj new` so the working copy (`@`) is ready for new changes.
-   - After committing, run `jj log -r @` to confirm
+   - After `jj commit`, the new working copy (`@`) is ready for new changes.
+   - After committing, run `jj log -r @- -n 1` to confirm
 
 ## Output Format
 

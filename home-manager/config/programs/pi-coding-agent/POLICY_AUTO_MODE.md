@@ -21,7 +21,7 @@ Auto-approve (`allow`) ONLY if ALL of the following hold:
 - The command does not touch files outside the working directory except for `~/.cache` and temp directories. Writes to `$HOME` (other than `~/.cache`), `/etc`, `/nix`, etc. still require confirmation.
 - The command does not perform network writes (no `push`, no `POST/PUT/DELETE` to external services unless it is a read-only GraphQL query, no `curl`/`wget` uploads). GraphQL uses POST for all requests including read-only queries — allow GraphQL POST if the operation is a query (read-only), but ask if it is a mutation or subscription (mutable).
 - The command does not install, upgrade, or remove system packages.
-- The command does not modify version control history (no `git push`, `git reset --hard`, `git rebase`, `jj push`, `jj abandon`, etc.).
+- The command does not perform remote version-control writes or destructive/history-rewriting operations. Local Jujutsu commit-shaping (`jj describe`, `jj commit`, `jj new`) is allowed, but ask for `git push`, `jj git push`, `git reset --hard`, `git rebase`, `jj edit`, `jj squash`, `jj split`, `jj rebase`, `jj abandon`, `jj undo`, bookmark moves/deletes, etc.
 - The command does not spawn long-lived background daemons or open new network listeners.
 - The command does not pipe untrusted content into a shell interpreter (e.g. `curl ... | sh`).
 - The command does not contain credentials, tokens, or secrets.

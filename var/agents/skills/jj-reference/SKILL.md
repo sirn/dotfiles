@@ -10,12 +10,13 @@ Working copy is always a commit. Changes are first-class with stable IDs across 
 
 ### Best Practices
 
-- **User Authorization**: NEVER commit (`jj describe`, `jj commit`), squash (`jj squash`), split (`jj split`), or push (`jj git push`) without explicit user confirmation. Always ask before modifying version control history.
+- **Local Commit Autonomy**: `jj describe`, `jj commit`, and `jj new` are allowed when they are part of the current requested task and stay local.
+- **User Authorization**: NEVER push (`jj git push`) or run destructive/history-rewriting operations (`jj edit`, `jj squash`, `jj split`, `jj rebase`, `jj abandon`, `jj undo`, `jj op restore`, bookmark moves/deletes) without explicit user confirmation.
 - **Logical Commits**: Group changes into logical steps; try to make each commit "usable" on its own.
-- **Explicit Operations**: Always use explicit change IDs for all operations (e.g., `abandon`, `describe`, `edit`, `new`, `squash`, `split`, `rebase`, `bookmark`).
+- **Commit + Advance**: Prefer `jj commit -m "msg"` when finalizing the current working-copy commit and moving on. This replaces the common `jj describe <id> -m "msg"` followed by `jj new <id>` sequence.
+- **Revision References**: Use `@`, `@-`, and revsets for immediate one-off commands when they are clear. Use explicit change IDs for scripts, multi-step instructions, destructive operations, and commands where the target could become ambiguous.
 - **Splitting**: Use `jj split -r <change-id> -m "<commit-message>" -- <file>`; do not use interactive `jj split`.
 - **Squashing**: Use `jj squash --from <from-id> --to <to-id>` instead of implicit `jj squash`.
-- **Direct Referencing**: Reference change-id directly (or unique prefix) instead of using `@-` or `@` to avoid ambiguity.
 
 ### Key Concepts
 
@@ -25,23 +26,23 @@ Working copy is always a commit. Changes are first-class with stable IDs across 
 
 ### Day-to-Day Commands
 
-| Task         | Command                                                     |
-| ------------ | ----------------------------------------------------------- |
-| Status       | `jj status` (Repo status) / `jj show <id>` (Change summary) |
-| Diff         | `jj diff -r <id>`                                           |
-| Log          | `jj log -r <revset>`                                        |
-| New commit   | `jj new <parent-id> -m "msg"`                               |
-| Describe     | `jj describe <id> -m "msg"`                                 |
-| Commit + new | `jj commit -m "msg"`                                        |
-| Navigate     | `jj edit <id>`                                              |
-| Abandon      | `jj abandon <id>`                                           |
-| Squash       | `jj squash --from <from-id> --to <target-id>`               |
-| Split commit | `jj split -r <id> -m "msg" -- <path>`                       |
-| Rebase       | `jj rebase -r <id> -d <dest>`                               |
-| Show file    | `jj file show <path> -r <id>`                               |
-| Blame        | `jj file annotate <path> -r <id>`                           |
-| Resolve      | `jj resolve -r <id>`                                        |
-| Undo         | `jj undo`                                                   |
+| Task                         | Command                                                     |
+| ---------------------------- | ----------------------------------------------------------- |
+| Status                       | `jj status` (Repo status) / `jj show <id>` (Change summary) |
+| Diff                         | `jj diff -r <id>`                                           |
+| Log                          | `jj log -r <revset>`                                        |
+| Finalize current + move on   | `jj commit -m "msg"`                                        |
+| New working commit on parent | `jj new <parent-id> -m "msg"`                               |
+| Describe without moving      | `jj describe <id> -m "msg"`                                 |
+| Navigate                     | `jj edit <id>`                                              |
+| Abandon                      | `jj abandon <id>`                                           |
+| Squash                       | `jj squash --from <from-id> --to <target-id>`               |
+| Split commit                 | `jj split -r <id> -m "msg" -- <path>`                       |
+| Rebase                       | `jj rebase -r <id> -d <dest>`                               |
+| Show file                    | `jj file show <path> -r <id>`                               |
+| Blame                        | `jj file annotate <path> -r <id>`                           |
+| Resolve                      | `jj resolve -r <id>`                                        |
+| Undo                         | `jj undo`                                                   |
 
 ### Interactive Mode
 
@@ -185,11 +186,11 @@ jj squash --from <change-id> --to <target-id>
 #### Feature branch
 
 ```bash
-# Simple: create and describe in one command
-jj new <main-id> -m "feat: add feature"
-
-# Or if already on the commit
+# If changes are in the current working-copy commit, finalize it and move on
 jj commit -m "feat: add feature"
+
+# If starting from a specific parent before making changes
+jj new <main-id> -m "feat: add feature"
 
 jj bookmark create <name> -r <id>
 jj git push --bookmark <name> --allow-new

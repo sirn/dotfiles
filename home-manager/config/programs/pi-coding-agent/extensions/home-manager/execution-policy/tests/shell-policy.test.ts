@@ -1494,6 +1494,9 @@ const productionPolicy: PolicyCommands = {
     { match: "grep", mode: "prefix" },
     { match: "rg", mode: "prefix" },
     { match: "find", mode: "prefix" },
+    { match: "jj commit", mode: "prefix" },
+    { match: "jj describe", mode: "prefix" },
+    { match: "jj new", mode: "prefix" },
   ],
   ask: [
     { match: "chmod", mode: "substring" },
@@ -1501,7 +1504,8 @@ const productionPolicy: PolicyCommands = {
     { match: "rm", mode: "substring" },
     { match: "docker exec", mode: "substring" },
     { match: "nix run", mode: "substring" },
-    { match: "jj describe", mode: "substring" },
+    { match: "jj edit", mode: "substring" },
+    { match: "jj squash", mode: "substring" },
   ],
   deny: [
     { match: "sudo", mode: "prefix" },
@@ -1565,9 +1569,33 @@ test("nix run asks", () => {
     "ask",
   );
 });
-test("jj describe asks", () => {
+test("jj describe allowed", () => {
   assertEquals(
     evaluate("jj describe -m 'update'", { commands: productionPolicy }).action,
+    "allow",
+  );
+});
+test("jj commit allowed", () => {
+  assertEquals(
+    evaluate("jj commit -m 'update'", { commands: productionPolicy }).action,
+    "allow",
+  );
+});
+test("jj new allowed", () => {
+  assertEquals(
+    evaluate("jj new -m 'next'", { commands: productionPolicy }).action,
+    "allow",
+  );
+});
+test("jj edit asks", () => {
+  assertEquals(
+    evaluate("jj edit abc123", { commands: productionPolicy }).action,
+    "ask",
+  );
+});
+test("jj squash asks", () => {
+  assertEquals(
+    evaluate("jj squash", { commands: productionPolicy }).action,
     "ask",
   );
 });
