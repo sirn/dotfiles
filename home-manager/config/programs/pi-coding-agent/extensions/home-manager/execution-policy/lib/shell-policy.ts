@@ -1103,8 +1103,11 @@ function matchEntry(cmd: ExtractedCommand, entry: CommandEntry): boolean {
   switch (mode) {
     case "exact":
       return text.trim().toLowerCase() === match.toLowerCase();
-    case "prefix":
-      return text.trimStart().toLowerCase().startsWith(match.toLowerCase());
+    case "prefix": {
+      const lower = text.trimStart().toLowerCase();
+      const lowerMatch = match.toLowerCase();
+      return lower === lowerMatch || lower.startsWith(lowerMatch + " ");
+    }
     case "substring": {
       const matchTokens = match.split(/\s+/).filter(Boolean);
       return matchTokenSubstring(cmd.words, matchTokens);

@@ -764,6 +764,92 @@ test("prefix match - no match when pattern longer", () => {
   assertEquals(evaluate("l", { commands: samplePolicy }).action, "default");
 });
 
+// Word-boundary-aware prefix tests
+test("prefix match - word boundary: no match on longer token", () => {
+  const policy: PolicyCommands = {
+    allow: [{ match: "ls", mode: "prefix" }],
+    ask: [],
+    deny: [],
+  };
+  assertEquals(evaluate("lsof", { commands: policy }).action, "default");
+});
+
+test("prefix match - word boundary: space-separated args match", () => {
+  const policy: PolicyCommands = {
+    allow: [{ match: "ls", mode: "prefix" }],
+    ask: [],
+    deny: [],
+  };
+  assertEquals(evaluate("ls -la", { commands: policy }).action, "allow");
+});
+
+test("prefix match - word boundary: find / blocks root scan", () => {
+  const policy: PolicyCommands = {
+    allow: [{ match: "find", mode: "prefix" }],
+    ask: [],
+    deny: [{ match: "find /", mode: "prefix" }],
+  };
+  assertEquals(evaluate("find /", { commands: policy }).action, "deny");
+  assertEquals(
+    evaluate("find / -name foo", { commands: policy }).action,
+    "deny",
+  );
+});
+
+test("prefix match - word boundary: find / does not block find /etc", () => {
+  const policy: PolicyCommands = {
+    allow: [{ match: "find", mode: "prefix" }],
+    ask: [],
+    deny: [{ match: "find /", mode: "prefix" }],
+  };
+  assertEquals(
+    evaluate("find /etc/hosts", { commands: policy }).action,
+    "allow",
+  );
+});
+
+test("prefix match - word boundary: find /nix does not match find /nix/store", () => {
+  const policy: PolicyCommands = {
+    allow: [{ match: "find", mode: "prefix" }],
+    ask: [],
+    deny: [{ match: "find /nix", mode: "prefix" }],
+  };
+  assertEquals(
+    evaluate("find /nix/store", { commands: policy }).action,
+    "allow",
+  );
+  assertEquals(
+    evaluate("find /nix -type f", { commands: policy }).action,
+    "deny",
+  );
+});
+
+test("prefix match - word boundary: find /nix/store matches exact path", () => {
+  const policy: PolicyCommands = {
+    allow: [{ match: "find", mode: "prefix" }],
+    ask: [],
+    deny: [{ match: "find /nix/store", mode: "prefix" }],
+  };
+  assertEquals(
+    evaluate("find /nix/store", { commands: policy }).action,
+    "deny",
+  );
+  assertEquals(
+    evaluate("find /nix/store -name foo", { commands: policy }).action,
+    "deny",
+  );
+});
+
+test("prefix match - word boundary: multi-word last part is one token", () => {
+  const policy: PolicyCommands = {
+    allow: [{ match: "cat", mode: "prefix" }],
+    ask: [],
+    deny: [],
+  };
+  assertEquals(evaluate("catalog", { commands: policy }).action, "default");
+  assertEquals(evaluate("cat file.txt", { commands: policy }).action, "allow");
+});
+
 // Substring match mode
 test("substring match - exact", () => {
   const policy: PolicyCommands = {
