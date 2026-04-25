@@ -114,9 +114,9 @@
 ## Version Control
 
 - **Policy**: ALWAYS use `jj` (Jujutsu) for all version control operations. Do NOT use `git` unless explicitly requested by the user or if `jj` is functionally unavailable.
-- **Policy**: Local Jujutsu commit-shaping commands (`jj describe`, `jj commit`, `jj new`) are allowed when they are part of the current requested task. Do not otherwise rewrite, move, delete, or push commits unless explicitly instructed by the user.
+- **Policy**: Local Jujutsu commit-shaping commands (`jj describe`, `jj commit`, `jj new`, `jj split`) are allowed when they are part of the current requested task. Do not otherwise rewrite, move, delete, or push commits unless explicitly instructed by the user. `jj split` may only be used on the current working-copy commit (`@`); never split existing (parent) commits.
 - **Push Authorization**: NEVER push to remote repositories (`jj git push`, `git push`, etc.) unless the user explicitly requests it. This includes pushing to any branch, creating pull requests, or modifying remote history.
-- **Destructive History Operations**: Ask for confirmation before `jj edit`, `jj squash`, `jj split`, `jj rebase`, `jj abandon`, `jj undo`, `jj op restore`, bookmark moves/deletes, or any operation that could rewrite, move, or discard work.
+- **Destructive History Operations**: Ask for confirmation before `jj edit`, `jj squash`, `jj rebase`, `jj abandon`, `jj undo`, `jj op restore`, bookmark moves/deletes, or any operation that could rewrite, move, or discard work.
 - **Commit Messages**: Keep messages concise, consistent, and following existing patterns.
 - **Attribution**: When committing, use the `Assisted-by:` trailer (aligned with Linux kernel policy) to attribute the AI's contribution. The format should be `Assisted-by: AGENT_NAME:MODEL_VERSION [TOOL1] [TOOL2]`.
   - `AGENT_NAME` is the name of the AI tool or framework
@@ -131,7 +131,7 @@
 - **Jujutsu Reference**: See "Reference Skills First" rule above. Key patterns from `jj-reference`:
   - Prefer `jj commit -m "msg"` to finalize the current working-copy commit and move on
   - Use `jj describe <id> -m "msg"` when updating a description without moving on
-  - Use `jj split -r <id> -m "msg" -- <file>` (non-interactive, after confirmation)
+  - Use `jj split -r <id> -m "msg" -- <file>` (non-interactive)
   - Use `jj new <parent-id>` to create commits on specific parents
   - Use `jj log -r ::@ -n 10` to view recent history
   - `@`, `@-`, and revsets are fine for clear one-off commands; use explicit change IDs for scripts, multi-step instructions, destructive operations, or ambiguous targets
