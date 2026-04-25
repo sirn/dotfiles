@@ -99,6 +99,7 @@
   - **Long-running Processes**: Use the tool's native backgrounding functionality if available. Avoid manually appending `&` to shell commands. If no tool-provided backgrounding exists or you are unsure, ask the user to run the process.
   - **Timeouts**: Ensure proper timeouts for commands that are expected to eventually terminate.
   - Prefer modern tools: `rg` > `grep`, `fd` > `find`, `podman` > `docker`.
+  - **`find` scoping**: `find` must be scoped to the current project directory (e.g., `find .`, `find ./src`). NEVER run `find` against `/`, `/nix`, `/nix/store`, or the home directory (`~`, `$HOME`). These paths are blocked by the permission system; attempting them will fail.
   - Use project task runners (`make`, `task`) if present.
   - If a command fails, try `--help` to debug.
 

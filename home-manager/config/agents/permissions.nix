@@ -1,3 +1,4 @@
+{ config, ... }:
 {
   agents.permissions = {
     default = {
@@ -435,7 +436,10 @@
         "sops"
         "doas"
         "sudo"
+        "find /"
+        "find /nix"
         "find /nix/store"
+        "find ${config.home.homeDirectory}"
       ];
 
       wrappers = [
