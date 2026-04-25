@@ -248,4 +248,22 @@ in
   programs.swaylock = lib.mkIf config.programs.swaylock.enable {
     settings.color = semantic.primary.bg;
   };
+
+  services.mako = lib.mkIf config.services.mako.enable {
+    settings = {
+      background-color = semantic.primary.bg;
+      text-color = semantic.primary.text;
+      border-color = semantic.focus.bg;
+      progress-color = "${semantic.focus.bg}55";
+
+      "urgency=low" = {
+        border-color = semantic.inactive.bg;
+      };
+
+      "urgency=critical" = {
+        border-color = semantic.urgent.bg;
+        default-timeout = 0;
+      };
+    };
+  };
 }
