@@ -57,6 +57,7 @@ let
   piPackage = pkgs.unstable.pi-coding-agent.overrideAttrs (prev: {
     postInstall = (prev.postInstall or "") + ''
       patch -p1 -d "$out/lib/node_modules/pi-monorepo" < ${./adaptive-thinking-opus-4.7.patch}
+      patch -p1 -d "$out/lib/node_modules/pi-monorepo" < ${./supports-xhigh-opus-4.7.patch}
     '';
   });
 
