@@ -432,6 +432,18 @@
         "gh repo fork"
         "git push"
         "jj git push"
+        {
+          match = "jj:--ignore-immutable";
+          mode = "args";
+        }
+        {
+          match = "jj:--ignore-working-copy";
+          mode = "args";
+        }
+        {
+          match = "jj:--at-operation";
+          mode = "args";
+        }
         "kill"
         "sops"
         "doas"
