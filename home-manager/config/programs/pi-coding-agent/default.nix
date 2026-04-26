@@ -53,21 +53,13 @@ let
     // lib.optionalAttrs (p.envVar != null) { apiKey = p.envVar; }
     // lib.optionalAttrs (!p.compatibility.developerRole) { compat.supportsDeveloperRole = false; };
 
-  # TODO: remove after upgrading to pi-coding-agent >=0.67.4
-  piPackage = pkgs.unstable.pi-coding-agent.overrideAttrs (prev: {
-    postInstall = (prev.postInstall or "") + ''
-      patch -p1 -d "$out/lib/node_modules/pi-monorepo" < ${./adaptive-thinking-opus-4.7.patch}
-      patch -p1 -d "$out/lib/node_modules/pi-monorepo" < ${./supports-xhigh-opus-4.7.patch}
-    '';
-  });
-
   wrappedPi = pkgs.writeScriptBin "pi" ''
     #!${pkgs.runtimeShell}
     export PI_SKIP_VERSION_CHECK=1
     exec "${lib.getExe pkgs.local.envWrapper}" \
       -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
       -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env.local" \
-      -- "${lib.getExe piPackage}" "$@"
+      -- "${lib.getExe pkgs.unstable.pi-coding-agent}" "$@"
   '';
 
   agentsMdText = ''
