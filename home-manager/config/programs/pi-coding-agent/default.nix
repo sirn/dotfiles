@@ -123,27 +123,36 @@ in
 
     instructionText = agentsMdText;
 
-    custom.compactionModel = {
-      provider = "synthetic";
-      model = "hf:moonshotai/Kimi-K2.5";
-    };
-
-    settings = {
-      quietStartup = true;
-      defaultProvider = agentsCfg.models.default.provider;
-      defaultModel = agentsCfg.models.default.model;
-      defaultThinkingLevel =
-        agentsCfg.models.providers.${agentsCfg.models.default.provider}.reasoningEffort;
-      hideThinkingBlock = false;
-      theme = config.home.colors.variant;
-      enabledModels = lib.concatMap (p: map (m: m.id) p.models) (
-        builtins.attrValues agentsCfg.models.providers
-      );
-      retry = {
-        maxRetries = 10;
-        maxDelayMs = 0;
-      };
-    };
+    settings = lib.mkMerge [
+      {
+        quietStartup = true;
+        hideThinkingBlock = false;
+        theme = config.home.colors.variant;
+        enabledModels = lib.concatMap (p: map (m: m.id) p.models) (
+          builtins.attrValues agentsCfg.models.providers
+        );
+        retry = {
+          maxRetries = 10;
+          maxDelayMs = 0;
+        };
+      }
+      (lib.mkIf (agentsCfg.models.default ? provider && agentsCfg.models.default ? model) {
+        defaultProvider = agentsCfg.models.default.provider;
+        defaultModel = agentsCfg.models.default.model;
+      })
+      (lib.mkIf
+        (
+          agentsCfg.models.default ? provider
+          && agentsCfg.models.default ? model
+          && agentsCfg.models.providers ? agentsCfg.models.default.provider
+          && agentsCfg.models.providers.${agentsCfg.models.default.provider} ? reasoningEffort
+        )
+        {
+          defaultThinkingLevel =
+            agentsCfg.models.providers.${agentsCfg.models.default.provider}.reasoningEffort;
+        }
+      )
+    ];
 
     providers = lib.mapAttrs mkPiProvider agentsCfg.models.providers;
   };

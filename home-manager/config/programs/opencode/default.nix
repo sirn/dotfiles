@@ -327,17 +327,21 @@ in
       When executing a skill, if a `SUBAGENT.md` file exists alongside `SKILL.md` in the skill directory, read and follow `SUBAGENT.md` instead of `SKILL.md`. The subagent version uses specialized agents for higher-quality results.
     '';
 
-    settings = {
-      theme = "system";
-      mcp = toOpencodeMcpServers config.programs.mcp.servers;
-      mode = {
-        plan.model = resolveOpenCodeModel agentsCfg.models.default.provider agentsCfg.models.default.model;
-        build.model = resolveOpenCodeModel agentsCfg.models.default.provider agentsCfg.models.default.model;
-      };
-      permission = toOpencodePermissions;
-      tools = opencodeMcpPermissions;
-      provider = allOpenCodeProviders;
-    };
+    settings = lib.mkMerge [
+      {
+        theme = "system";
+        mcp = toOpencodeMcpServers config.programs.mcp.servers;
+        permission = toOpencodePermissions;
+        tools = opencodeMcpPermissions;
+        provider = allOpenCodeProviders;
+      }
+      (lib.mkIf (agentsCfg.models.default ? provider && agentsCfg.models.default ? model) {
+        mode = {
+          plan.model = resolveOpenCodeModel agentsCfg.models.default.provider agentsCfg.models.default.model;
+          build.model = resolveOpenCodeModel agentsCfg.models.default.provider agentsCfg.models.default.model;
+        };
+      })
+    ];
   };
 
   xdg.configFile."opencode/skill/home-manager".source = agentsCfg.skillsDir;

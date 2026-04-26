@@ -233,19 +233,25 @@ let
       };
     };
   };
+
+  defaultType = lib.types.submodule {
+    provider = lib.mkOption {
+      type = lib.types.str;
+      description = "Default provider name.";
+    };
+    model = lib.mkOption {
+      type = lib.types.str;
+      description = "Default model ID.";
+    };
+  };
 in
 {
   options.agents = {
     models = {
-      default = {
-        provider = lib.mkOption {
-          type = lib.types.str;
-          description = "Default provider name.";
-        };
-        model = lib.mkOption {
-          type = lib.types.str;
-          description = "Default model ID.";
-        };
+      default = lib.mkOption {
+        type = lib.types.attrsOf defaultType;
+        default = { };
+        description = "Default provider configuration";
       };
 
       providers = lib.mkOption {
