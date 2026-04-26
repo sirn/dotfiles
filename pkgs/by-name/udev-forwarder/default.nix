@@ -9,16 +9,16 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "udev-forwarder";
-  version = "0.1.1";
+  version = "0.2.0";
 
   src = fetchFromSourcehut {
     owner = "~sirn";
     repo = "udev-forwarder";
     rev = "v${version}";
-    hash = "sha256-ZOLVTLKUFzmQ41bGBp7mm3u4cm+tkz9648kFneXEZ9c=";
+    hash = "sha256-hy7o1qOL970Dfhy4NDNYv1i4CnUiD0bbjkR9iSb/Jkc=";
   };
 
-  cargoHash = "sha256-ILrkx6JaI69tBRLZNA5X/blO3KKqJVunLk1OWiUINHw=";
+  cargoHash = "sha256-N+HEC4gQ6w2bRWwnmUUrOcnqDeMguw8hKUKA0HrWWBY=";
 
   buildInputs = [
     libvirt
