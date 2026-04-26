@@ -18,6 +18,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # TODO: remove after Home Manager > 25.11
+    home-manager-unstable = {
+      url = "github:nix-community/home-manager/master";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
     ## Nix quality of life
     ##
 
@@ -182,6 +188,10 @@
           inputs.niri.homeModules.niri
           inputs.nix-index-database.homeModules.nix-index
           inputs.sops-nix.homeManagerModules.sops
+
+          # TODO: remove after Home Manager > 25.11
+          { disabledModules = [ "services/swww.nix" ]; }
+          "${inputs.home-manager-unstable}/modules/services/awww.nix"
 
           # Configurations
           ./home-manager/modules

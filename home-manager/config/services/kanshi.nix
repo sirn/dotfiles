@@ -2,6 +2,8 @@
 
 let
   cfg = config.services.kanshi;
+  awwwCfg = config.services.awww;
+  defaultExec = lib.optional awwwCfg.enable "${lib.getExe awwwCfg.package} restore";
 
   swaycfg = config.wayland.windowManager.sway;
 
@@ -34,12 +36,14 @@ in
         profile = {
           name = "aw3225qf";
           outputs = [ { criteria = "$aw3225qf"; } ];
+          exec = defaultExec;
         };
       }
       {
         profile = {
           name = "pa148";
           outputs = [ { criteria = "$pa148"; } ];
+          exec = defaultExec;
         };
       }
     ];

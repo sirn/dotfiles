@@ -86,6 +86,9 @@
 
   home =
     { lib, config, ... }:
+    let
+      defaultExec = lib.optional config.services.awww.enable "${lib.getExe config.services.awww.package} restore";
+    in
     {
       flatpak.enable = true;
 
@@ -132,6 +135,7 @@
             profile = {
               name = "only_internal";
               outputs = [ { criteria = "$internal"; } ];
+              exec = defaultExec;
             };
           }
           {
@@ -144,6 +148,7 @@
                   status = "disable";
                 }
               ];
+              exec = defaultExec;
             };
           }
         ];

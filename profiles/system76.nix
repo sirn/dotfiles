@@ -98,6 +98,9 @@
 
   home =
     { lib, config, ... }:
+    let
+      defaultExec = lib.optional config.services.awww.enable "${lib.getExe config.services.awww.package} restore";
+    in
     {
       flatpak.enable = true;
 
@@ -162,6 +165,7 @@
                   status = "disable";
                 }
               ];
+              exec = defaultExec;
             };
           }
           {
@@ -181,6 +185,7 @@
                   scale = 1.0;
                 }
               ];
+              exec = defaultExec;
             };
           }
           {
@@ -192,6 +197,7 @@
                   status = "enable";
                 }
               ];
+              exec = defaultExec;
             };
           }
         ];

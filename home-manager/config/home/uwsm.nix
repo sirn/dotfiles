@@ -82,9 +82,7 @@ in
       config.systemd.user.services ? sway-audio-idle-inhibit
     ) { Slice = appGraphicalSlice; };
 
-    awww-daemon.Service = {
-      Slice = appGraphicalSlice;
-    };
+    awww.Service = lib.mkIf config.services.awww.enable { Slice = appGraphicalSlice; };
 
     awww-wallpaper.Service = {
       Slice = appGraphicalSlice;

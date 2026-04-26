@@ -6,7 +6,7 @@
 }:
 
 let
-  awwwPkg = pkgs.unstable.awww;
+  awwwPkg = config.services.awww.package;
 
   wallpaperScript = pkgs.writeScriptBin "awww-wallpaper" ''
     #!${pkgs.python3}/bin/python3
@@ -70,31 +70,20 @@ let
   '';
 in
 {
-  systemd.user.services."awww-daemon" = {
-    Unit = {
-      Description = "awww-daemon";
-      After = [ config.wayland.systemd.target ];
-      PartOf = [ config.wayland.systemd.target ];
-      ConditionEnvironment = "WAYLAND_DISPLAY";
-    };
-
-    Service = {
-      Type = "simple";
-      ExecStart = "${lib.getExe' awwwPkg "awww-daemon"}";
-      Restart = "on-failure";
-      RestartSec = 10;
-      Slice = lib.mkDefault "app.slice";
-    };
-
-    Install.WantedBy = [ config.wayland.systemd.target ];
+  services.awww = {
+    enable = true;
+    package = pkgs.unstable.awww;
   };
+
+  # The awww-daemon service is provided by the upstream home-manager module.
+  systemd.user.services.awww.Service.Slice = lib.mkDefault "app.slice";
 
   systemd.user.services."awww-wallpaper" = {
     Unit = {
       Description = "Update wallpaper with awww";
       After = [
         config.wayland.systemd.target
-        "awww-daemon.service"
+        "awww.service"
       ];
       PartOf = [ config.wayland.systemd.target ];
       ConditionEnvironment = "WAYLAND_DISPLAY";
@@ -103,7 +92,7 @@ in
     Service = {
       Type = "oneshot";
       Slice = lib.mkDefault "app.slice";
-      ExecStart = "-${wallpaperScript}/bin/awww-wallpaper";
+      ExecStart = "${lib.getExe awwwPkg} restore";
     };
 
     Install.WantedBy = [ config.wayland.systemd.target ];
