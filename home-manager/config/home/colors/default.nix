@@ -127,6 +127,7 @@ let
     selection-background = stripHash t.base16Colors.selection;
     selection-foreground = stripHash t.base16Colors.background;
   };
+
 in
 {
   home.colors.variant = variant;
@@ -265,5 +266,9 @@ in
         default-timeout = 0;
       };
     };
+  };
+
+  programs.omniwm = lib.mkIf config.programs.omniwm.enable {
+    borders.color = "${semantic.focus.bg}99";
   };
 }

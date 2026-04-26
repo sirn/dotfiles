@@ -12,6 +12,8 @@ in
 
   envWrapper = (callPackage ./by-name/env-wrapper/package.nix { });
 
+  omniwm = (callPackage ./by-name/omniwm/package.nix { });
+
   node-textfile-collector-scripts = (
     callPackage ./by-name/prometheus/node-textfile-collector-scripts.nix { }
   );

@@ -15,7 +15,7 @@
         ../home-manager/config/home/xdg.nix
 
         # programs
-        ../home-manager/config/programs/aerospace.nix
+        ../home-manager/config/programs/omniwm.nix
       ];
     };
 }
