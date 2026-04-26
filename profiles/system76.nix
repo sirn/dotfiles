@@ -128,7 +128,7 @@
         ../home-manager/config/programs/ghostty.nix
       ];
 
-      home.colors.themeName = "modus-operandi";
+      home.colors.themeName = "nord-polar-night";
 
       services.kanshi = lib.mkIf config.services.kanshi.enable {
         settings = [
