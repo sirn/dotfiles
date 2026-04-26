@@ -136,14 +136,13 @@ in
           maxDelayMs = 0;
         };
       }
-      (lib.mkIf (agentsCfg.models.default ? provider && agentsCfg.models.default ? model) {
+      (lib.mkIf (agentsCfg.models.default != null) {
         defaultProvider = agentsCfg.models.default.provider;
         defaultModel = agentsCfg.models.default.model;
       })
       (lib.mkIf
         (
-          agentsCfg.models.default ? provider
-          && agentsCfg.models.default ? model
+          agentsCfg.models.default != null
           && agentsCfg.models.providers ? agentsCfg.models.default.provider
           && agentsCfg.models.providers.${agentsCfg.models.default.provider} ? reasoningEffort
         )

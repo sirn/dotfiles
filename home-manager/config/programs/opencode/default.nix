@@ -335,7 +335,7 @@ in
         tools = opencodeMcpPermissions;
         provider = allOpenCodeProviders;
       }
-      (lib.mkIf (agentsCfg.models.default ? provider && agentsCfg.models.default ? model) {
+      (lib.mkIf (agentsCfg.models.default != null) {
         mode = {
           plan.model = resolveOpenCodeModel agentsCfg.models.default.provider agentsCfg.models.default.model;
           build.model = resolveOpenCodeModel agentsCfg.models.default.provider agentsCfg.models.default.model;
