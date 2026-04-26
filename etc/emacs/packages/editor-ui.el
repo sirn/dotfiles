@@ -51,10 +51,11 @@
 (use-package nerd-icons)
 
 
-;; Accessible and customizable color themes
-(use-package modus-themes
-  :config
-  (load-theme (intern gemacs-theme-name) t))
+;; Load theme from Home Manager configuration
+(defvar gemacs-theme-custom-elisp)
+(when (and (boundp 'gemacs-theme-custom-elisp)
+           (not (string-empty-p gemacs-theme-custom-elisp)))
+  (eval (read gemacs-theme-custom-elisp)))
 
 
 ;; macOS clipboard integration
@@ -205,5 +206,4 @@ This avoids leaving xterm mouse reporting enabled after emacsclient exits."
 
   (add-hook 'gemacs-after-init-hook
     `(lambda ()
-       (require 'doom-modeline)
-       (require 'modus-themes))))
+       (require 'doom-modeline))))

@@ -24,5 +24,19 @@ in
       default = "dark";
       description = "Theme variant - determines if theme is dark or light.";
     };
+
+    emacsTheme = {
+      packages = mkOption {
+        type = types.functionTo (types.listOf types.package);
+        default = epkgs: [ ];
+        description = "Emacs packages required for this theme.";
+      };
+
+      customElisp = mkOption {
+        type = types.str;
+        default = "";
+        description = "Custom Elisp to load and configure the Emacs theme.";
+      };
+    };
   };
 }

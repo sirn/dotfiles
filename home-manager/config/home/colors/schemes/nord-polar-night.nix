@@ -37,6 +37,11 @@ in
   variant = "dark";
   inherit base16Colors palette256;
 
+  emacsTheme = {
+    packages = epkgs: [ epkgs.nord-theme ];
+    customElisp = "(load-theme 'nord t)";
+  };
+
   semantic = {
     primary = {
       bg = base16Colors.background;

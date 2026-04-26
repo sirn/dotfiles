@@ -131,6 +131,7 @@ let
 in
 {
   home.colors.variant = variant;
+  home.colors.emacsTheme = theme.emacsTheme;
 
   programs.alacritty = lib.mkIf config.programs.alacritty.enable {
     settings.colors = {

@@ -112,7 +112,7 @@ let
     (defvar gemacs-default-shell "${config.home.shell.interactiveShell}")
 
     ;; Theme from Home Manager
-    (defvar gemacs-theme-name "${config.home.colors.themeName}")
+    (defvar gemacs-theme-custom-elisp "${config.home.colors.emacsTheme.customElisp}")
 
     ;; Font configuration (from home.fonts module)
     ;; Emacs uses 1.25x the editor font size on Linux for better readability
@@ -220,7 +220,6 @@ in
         helpful
         magit
         marginalia
-        modus-themes
         nerd-icons
         nerd-icons-dired
         nix-ts-mode
@@ -321,6 +320,7 @@ in
           ]
         else
           [ ]
-      );
+      )
+      ++ (config.home.colors.emacsTheme.packages epkgs);
   };
 }

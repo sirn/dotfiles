@@ -65,15 +65,7 @@
 
   :hook
   ((org-mode . org-modern-mode)
-   (org-agenda-finalize . org-modern-agenda))
-
-  :config
-  (with-eval-after-load 'modus-themes
-    (modus-themes-with-colors
-      (setq org-modern-todo-faces
-        `(("CURRENT" . (:inherit org-modern-todo :foreground ,yellow-warmer))
-          ("WAITING" . (:inherit org-modern-todo :foreground ,cyan-faint))
-          ("ONHOLD" . (:inherit org-modern-todo :foreground ,fg-dim)))))))
+   (org-agenda-finalize . org-modern-agenda)))
 
 
 ;; Query language for org-mode
@@ -88,30 +80,4 @@
   :custom
   (org-super-agenda-header-map nil)
 
-  :hook (after-init . org-super-agenda-mode)
-
-  :config
-  (with-eval-after-load 'modus-themes
-    (modus-themes-with-colors
-      (setq org-super-agenda-groups
-        `((:name "Current"
-           :todo "CURRENT"
-           :order 1
-           :face (:foreground ,yellow-faint))
-          (:name "Prioritized"
-           :and (:priority "A" :date today)
-           :order 2)
-          (:name "Waiting"
-           :todo "WAITING"
-           :face (:foreground ,cyan-faint)
-           :order 10)
-          (:name "Past Due"
-           :scheduled past
-           :deadline past
-           :order 4)
-          (:name "Due"
-           :time-grid t
-           :order 9)
-          (:name "Today"
-           :date t
-           :order 5))))))
+  :hook (after-init . org-super-agenda-mode))

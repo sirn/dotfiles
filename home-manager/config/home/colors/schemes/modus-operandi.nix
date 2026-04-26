@@ -39,6 +39,11 @@ in
   variant = "light";
   inherit base16Colors palette256;
 
+  emacsTheme = {
+    packages = epkgs: [ epkgs.modus-themes ];
+    customElisp = "(load-theme 'modus-operandi t)";
+  };
+
   semantic = {
     primary = {
       bg = base16Colors.background;
