@@ -1,7 +1,5 @@
 { lib, ... }:
 
 {
-  agents.models = lib.mkDefault {
-    providers = { };
-  };
+  agents.models = lib.mkDefault { providers = { }; };
 }
