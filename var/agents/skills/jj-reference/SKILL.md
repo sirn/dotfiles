@@ -16,7 +16,7 @@ Working copy is always a commit. Changes are first-class with stable IDs across 
 - **Commit + Advance**: Prefer `jj commit -m "msg"` when finalizing the current working-copy commit and moving on. This replaces the common `jj describe <id> -m "msg"` followed by `jj new <id>` sequence.
 - **Revision References**: Use `@`, `@-`, and revsets for immediate one-off commands when they are clear. Use explicit change IDs for scripts, multi-step instructions, destructive operations, and commands where the target could become ambiguous.
 - **Splitting**: Use `jj split -r <change-id> -m "<commit-message>" -- <file>`; do not use interactive `jj split`.
-- **Squashing**: Use `jj squash --from <from-id> --to <to-id>` instead of implicit `jj squash`.
+- **Squashing**: Use `jj squash --from <from-id> --to <to-id>` instead of implicit `jj squash`. Always squash **from newer to older** (descendant into ancestor) to avoid conflicts. Squashing older into newer (e.g. `--from <base> --to <head>`) rewrites the head's ancestors while descendants still reference the old state, causing conflicts in every downstream commit.
 
 ### Key Concepts
 
@@ -177,11 +177,20 @@ jj git push --bookmark new --allow-new  # Push new bookmark
 
 #### Squash workflow (recommended)
 
+Always squash from newer (descendant) into older (ancestor) to avoid conflicts:
+
 ```bash
-jj new <parent-id>
-# ... make changes ...
-jj squash --from <change-id> --to <target-id>
+# Correct: newer into older — no conflicts
+jj squash --from @- --to @--
+jj squash --from <child-id> --to <parent-id>
+
+# Wrong: older into newer — causes conflicts on all descendants
+jj squash --from <parent-id> --to <child-id>
 ```
+
+When squashing older into newer, jj rewrites the target's parent commit.
+All descendant commits still reference the old parent, so every file that
+differs between old and new parent becomes a conflict.
 
 #### Feature branch
 
