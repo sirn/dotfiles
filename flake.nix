@@ -64,6 +64,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    ## LibVirt
+    ##
+
+    nixvirt = {
+      url = "github:AshleyYakeley/NixVirt";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     ## Package overlays
     ##
 
@@ -249,7 +257,7 @@
           inherit system;
 
           specialArgs = {
-            inherit (inputs) nixos-hardware microvm;
+            inherit (inputs) nixos-hardware microvm nixvirt;
             inherit mkMicroVM;
           };
 
@@ -262,6 +270,7 @@
 
             # NixOS modules
             inputs.sops-nix.nixosModules.sops
+            inputs.nixvirt.nixosModules.default
 
             # NixOS Generate Config
             ./configuration.nix

@@ -16,11 +16,13 @@
     extraOptions = [ "--verbose" ];
 
     qemu = {
-      swtpm = {
-        enable = true;
-      };
-
+      swtpm.enable = true;
       vhostUserPackages = [ pkgs.virtiofsd ];
     };
+  };
+
+  virtualisation.libvirt = {
+    enable = true;
+    swtpm.enable = true;
   };
 }
