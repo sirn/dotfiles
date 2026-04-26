@@ -15,6 +15,7 @@ in
     Unit = {
       After = [ config.wayland.systemd.target ];
       PartOf = [ config.wayland.systemd.target ];
+      ConditionEnvironment = "WAYLAND_DISPLAY";
     };
 
     Service = {

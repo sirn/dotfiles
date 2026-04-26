@@ -17,5 +17,8 @@ in
     };
   };
 
-  systemd.user.services.wlsunset.Service = lib.mkIf cfg.enable { Slice = lib.mkDefault "app.slice"; };
+  systemd.user.services.wlsunset = lib.mkIf cfg.enable {
+    Unit.ConditionEnvironment = "WAYLAND_DISPLAY";
+    Service.Slice = lib.mkDefault "app.slice";
+  };
 }
