@@ -114,7 +114,6 @@
       "cycleColumnWidthForward" = "Command+Control+.";
       "cycleColumnWidthBackward" = "Command+Control+,";
 
-
       # UI
       "openCommandPalette" = "Command+Control+Space";
       "openMenuAnywhere" = "Command+Control+M";
