@@ -238,7 +238,7 @@ in
     settings.colors = {
       background = "${semantic.primary.bg}fa";
       selection = "${semantic.focus.bg}ff";
-      border = "${semantic.scrollbar.bg}ff";
+      border = "${semantic.focus.bg}99";
       text = "${semantic.primary.text}ff";
       match = "${semantic.primary.text}ff";
       selection-text = "${semantic.focus.text}ff";
@@ -252,9 +252,9 @@ in
 
   services.mako = lib.mkIf config.services.mako.enable {
     settings = {
-      background-color = semantic.primary.bg;
+      background-color = "${semantic.primary.bg}fa";
       text-color = semantic.primary.text;
-      border-color = semantic.focus.bg;
+      border-color = "${semantic.focus.bg}99";
       progress-color = "${semantic.focus.bg}55";
 
       "urgency=low" = {

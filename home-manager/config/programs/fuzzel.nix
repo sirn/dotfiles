@@ -30,7 +30,8 @@ in
       };
 
       border = {
-        radius = "0";
+        radius = "4";
+        width = "4";
       };
     };
   };
