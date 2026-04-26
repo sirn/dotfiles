@@ -93,5 +93,9 @@ in
     vicinae.Service = lib.mkIf config.programs.vicinae.enable { Slice = appGraphicalSlice; };
 
     wlsunset.Service = lib.mkIf config.services.wlsunset.enable { Slice = appGraphicalSlice; };
+
+    kwallet-pam.Unit = lib.mkIf (config.systemd.user.services ? kwallet-pam) {
+      After = [ "wayland-session-waitenv.service" ];
+    };
   };
 }

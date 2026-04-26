@@ -12,6 +12,7 @@ let
 in
 {
   home.packages = with pkgs; [
+    kdePackages.kwallet
     kdePackages.xdg-desktop-portal-kde
     xdg-desktop-portal
     xdg-desktop-portal-gtk
@@ -24,6 +25,7 @@ in
         preferred = {
           default = "kde";
           "org.freedesktop.impl.portal.Inhibit" = "none";
+          "org.freedesktop.impl.portal.Secret" = "kwallet";
           "org.freedesktop.impl.portal.AppChooser" = "gtk";
           "org.freedesktop.impl.portal.Settings" = "gtk;kde";
         }
