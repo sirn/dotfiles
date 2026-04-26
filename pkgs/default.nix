@@ -25,20 +25,4 @@ in
   udev-forwarder = (callPackage ./by-name/udev-forwarder { });
 
   wrapped-uv = (callPackage ./by-name/wrapped-uv/wrapped.nix { });
-
-  wayland-protocols-git = (callPackage ./by-name/wayland-protocols-git { });
-
-  wlroots-git = (
-    callPackage ./by-name/wlroots-git { wayland-protocols = final.local.wayland-protocols-git; }
-  );
-
-  sway-unwrapped-git = (
-    callPackage ./by-name/sway-unwrapped-git {
-      wlroots = final.local.wlroots-git;
-      wayland-protocols = final.local.wayland-protocols-git;
-      nixpkgsPath = inputs.nixpkgs;
-    }
-  );
-
-  sway-git = prev.sway.override { sway-unwrapped = final.local.sway-unwrapped-git; };
 }

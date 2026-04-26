@@ -8,7 +8,7 @@
 
 let
   swayopts = options.wayland.windowManager.sway;
-  swayPkg = pkgs.local.sway-git;
+  swayPkg = pkgs.sway;
 in
 {
   wayland.windowManager.sway = {
