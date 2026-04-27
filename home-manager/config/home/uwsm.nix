@@ -12,6 +12,8 @@ let
 
   fuzzelcfg = config.programs.fuzzel;
 
+  noctaliaShellCfg = config.programs.noctalia-shell;
+
   # Slice assignment based on:
   # https://github.com/Vladimir-csp/uwsm/
 
@@ -68,6 +70,15 @@ in
   programs.fuzzel.settings = lib.mkIf fuzzelcfg.enable {
     main = {
       launch-prefix = "${lib.getExe pkgs.app2unit} --fuzzel-compat --";
+    };
+  };
+
+  programs.noctalia-shell = lib.mkIf noctaliaShellCfg.enable {
+    settings = {
+      appLauncher = {
+        customLaunchPrefixEnabled = true;
+        customLaunchPrefix = "${lib.getExe pkgs.app2unit} --";
+      };
     };
   };
 

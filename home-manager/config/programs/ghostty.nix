@@ -16,6 +16,8 @@ let
 
   fontcfg = config.home.fonts;
 
+  noctaliaShellCfg = config.programs.noctalia-shell;
+
   ghosttyLauncher = config.lib.home.wrapLauncher cfg.package;
 in
 {
@@ -89,6 +91,14 @@ in
     settings = {
       main = {
         terminal = lib.getExe cfg.package;
+      };
+    };
+  };
+
+  programs.noctalia-shell = lib.mkIf noctaliaShellCfg.enable {
+    settings = {
+      appLauncher = {
+        terminalCommand = lib.getExe cfg.package;
       };
     };
   };

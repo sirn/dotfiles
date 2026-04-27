@@ -73,6 +73,24 @@ in
       text = base16Colors.bright.white;
     };
 
+    secondary = {
+      bg = base16Colors.normal.cyan;
+      text = base16Colors.bright.white;
+    };
+
+    tertiary = {
+      bg = base16Colors.normal.magenta;
+      text = base16Colors.bright.white;
+    };
+
+    hover = {
+      bg = base16Colors.bright.black;
+      text = base16Colors.foreground;
+    };
+
+    outline = base16Colors.selection;
+    shadow = base16Colors.normal.black;
+
     battery = {
       charging = {
         bg = getColor 46;

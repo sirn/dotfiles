@@ -22,7 +22,7 @@ let
         ".bmp", ".farbfeld", ".avif", ".svg"
     }
 
-    wallpapers = os.path.expanduser("~/.local/wallpapers")
+    wallpapers = os.path.expanduser("~/Pictures/Wallpapers")
     if not os.path.isdir(wallpapers):
         sys.exit(0)
 

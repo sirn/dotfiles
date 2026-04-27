@@ -9,8 +9,8 @@ in
 
     systemdTarget = config.wayland.systemd.target;
 
-    latitude = lib.mkDefault 35.67;
-    longitude = lib.mkDefault 139.77;
+    sunrise = lib.mkDefault "06:30";
+    sunset = lib.mkDefault "18:30";
 
     temperature = {
       night = 4500;

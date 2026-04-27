@@ -97,6 +97,7 @@ lib.mkMerge [
   (import ./ghostty.nix args)
   (import ./mako.nix args)
   (import ./niri.nix args)
+  (import ./noctalia-shell.nix args)
   (import ./omniwm.nix args)
   (import ./sway.nix args)
   (import ./swaylock.nix args)

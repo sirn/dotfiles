@@ -6,6 +6,8 @@ let
   swayidlecfg = config.services.swayidle;
 
   niricfg = config.programs.niri;
+
+  noctaliaShellCfg = config.programs.noctalia-shell;
 in
 {
   services.swayidle = lib.mkIf swayidlecfg.enable {
@@ -15,6 +17,14 @@ in
         command = "${config.systemd.user.systemctlPath} suspend";
       }
     ];
+  };
+
+  programs.noctalia-shell = lib.mkIf noctaliaShellCfg.enable {
+    settings = {
+      idle = {
+        suspendTimeout = "300";
+      };
+    };
   };
 
   wayland.windowManager.sway = lib.mkIf swaycfg.enable {

@@ -231,19 +231,13 @@ in
       };
 
       window-rules = [
-        {
-          clip-to-geometry = true;
-          geometry-corner-radius = {
-            bottom-left = 4.0;
-            bottom-right = 4.0;
-            top-left = 4.0;
-            top-right = 4.0;
-          };
-        }
+        # MPV
         {
           matches = [ { app-id = "mpv"; } ];
           open-floating = true;
         }
+
+        # PAVUcontrol
         {
           matches = [ { app-id = "pavucontrol"; } ];
           open-floating = true;

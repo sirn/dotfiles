@@ -43,6 +43,7 @@
     nixgl = {
       url = "github:nix-community/nixGL";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
     };
 
     # Multi-file formatting with Nix
@@ -54,6 +55,21 @@
     # Hardware presets for NixOS
     nixos-hardware = {
       url = "github:NixOS/nixos-hardware/master";
+    };
+
+    # Definition of Nix systems
+    systems = {
+      url = "github:nix-systems/default-linux";
+    };
+
+    # Definition of Linux Nix systems
+    systems-linux = {
+      url = "github:nix-systems/default-linux";
+    };
+
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+      inputs.systems.follows = "systems";
     };
 
     ## MicroVM
@@ -84,6 +100,15 @@
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
       inputs.nixpkgs-stable.follows = "nixpkgs";
+    };
+
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.noctalia-qs = {
+        inputs.treefmt-nix.follows = "treefmt-nix";
+        inputs.systems.follows = "systems-linux";
+      };
     };
   };
 
@@ -195,6 +220,7 @@
           # Home Manager modules
           inputs.niri.homeModules.niri
           inputs.nix-index-database.homeModules.nix-index
+          inputs.noctalia.homeModules.default
           inputs.sops-nix.homeManagerModules.sops
 
           # TODO: remove after Home Manager > 25.11
@@ -378,12 +404,15 @@
 
       nixConfig = {
         extra-substituters = [
+          "https://noctalia.cachix.org"
           "https://microvm.cachix.org"
         ];
         extra-trusted-public-keys = [
+          "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
           "microvm.cachix.org-1:oXnBc6hRE3eX5rSYdRyMYXnfzcCxC7yKPTbZXALsqys="
         ];
       };
+
       # NixOS configuration for NixOS
       nixosConfigurations = {
         phoebe = mkNixOS { hostname = "phoebe"; };
