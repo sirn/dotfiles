@@ -14,18 +14,18 @@ in
     enable = true;
     settings = {
       appLauncher = {
-        position = "follow_bar";
-        iconMode = "native";
+        position = "center";
       };
       bar = {
         density = "default";
         position = "left";
-        showCapsule = true;
+        showCapsule = false;
         widgets = {
           left = [
             {
               id = "Launcher";
               useDistroLogo = true;
+              enableColorization = true;
             }
           ];
           center = [
@@ -43,6 +43,9 @@ in
               warningThreshold = 30;
             }
             {
+              id = "ControlCenter";
+            }
+            {
               formatHorizontal = "HH:mm";
               formatVertical = "HH mm";
               id = "Clock";
@@ -54,6 +57,50 @@ in
       };
       colorSchemes = {
         syncGsettings = false;
+      };
+      controlCenter = {
+        position = "close_to_bar_button";
+        diskPath = "/";
+        shortcuts = {
+          left = [
+            { id = "Network"; }
+            { id = "Bluetooth"; }
+            { id = "WallpaperSelector"; }
+            { id = "NoctaliaPerformance"; }
+          ];
+          right = [
+            { id = "Notifications"; }
+            { id = "PowerProfile"; }
+            { id = "KeepAwake"; }
+            { id = "NightLight"; }
+          ];
+        };
+        cards = [
+          {
+            enabled = true;
+            id = "profile-card";
+          }
+          {
+            enabled = true;
+            id = "shortcuts-card";
+          }
+          {
+            enabled = true;
+            id = "audio-card";
+          }
+          {
+            enabled = false;
+            id = "brightness-card";
+          }
+          {
+            enabled = true;
+            id = "weather-card";
+          }
+          {
+            enabled = true;
+            id = "media-sysmon-card";
+          }
+        ];
       };
       dock = {
         enabled = false;
