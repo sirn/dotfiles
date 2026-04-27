@@ -106,52 +106,56 @@ let
     '';
   };
 
-  earlyInitEl = pkgs.writeText "early-init.el" (''
-    (setq inhibit-startup-screen t)
-    (defvar gemacs-nix-config-directory user-emacs-directory)
-    (defvar gemacs-default-shell "${config.home.shell.interactiveShell}")
+  earlyInitEl = pkgs.writeText "early-init.el" (
+    ''
+      (setq inhibit-startup-screen t)
+      (defvar gemacs-nix-config-directory user-emacs-directory)
+      (defvar gemacs-default-shell "${config.home.shell.interactiveShell}")
 
-    ;; Font configuration (from home.fonts module)
-    ;; Emacs uses 1.25x the editor font size on Linux for better readability
-    (defvar gemacs-font "${config.home.fonts.editor.monospace}")
-    (defvar gemacs-font-size ${toString emacsFontSize})
+      ;; Font configuration (from home.fonts module)
+      ;; Emacs uses 1.25x the editor font size on Linux for better readability
+      (defvar gemacs-font "${config.home.fonts.editor.monospace}")
+      (defvar gemacs-font-size ${toString emacsFontSize})
 
-    ;; Redirect writable state to ~/.emacs.d/ since user-emacs-directory
-    ;; points to the read-only Nix store
-    (defvar no-littering-etc-directory (expand-file-name "etc/" "~/.emacs.d/"))
-    (defvar no-littering-var-directory (expand-file-name "var/" "~/.emacs.d/"))
-  ''
-  + lib.optionalString (cfg.afterInitExtra != "") ''
+      ;; Redirect writable state to ~/.emacs.d/ since user-emacs-directory
+      ;; points to the read-only Nix store
+      (defvar no-littering-etc-directory (expand-file-name "etc/" "~/.emacs.d/"))
+      (defvar no-littering-var-directory (expand-file-name "var/" "~/.emacs.d/"))
+    ''
+    + lib.optionalString (cfg.afterInitExtra != "") ''
 
-    ;; Load after-init extras via gemacs-after-init-hook
-    (add-hook 'gemacs-after-init-hook
-      (lambda () (load (expand-file-name "after-init-extra.el" gemacs-nix-config-directory))))
-  '');
+      ;; Load after-init extras via gemacs-after-init-hook
+      (add-hook 'gemacs-after-init-hook
+        (lambda () (load (expand-file-name "after-init-extra.el" gemacs-nix-config-directory))))
+    ''
+  );
 
   afterInitExtraEl = pkgs.writeText "after-init-extra.el" cfg.afterInitExtra;
 
-  emacsConfigDir = pkgs.runCommand "emacs-config" { } (''
-    mkdir -p $out/{packages,var}
+  emacsConfigDir = pkgs.runCommand "emacs-config" { } (
+    ''
+      mkdir -p $out/{packages,var}
 
-    cp ${earlyInitEl} $out/early-init.el
-    cp ${../../../etc/emacs/init.el} $out/init.el
-  ''
-  + lib.optionalString (cfg.afterInitExtra != "") ''
-    cp ${afterInitExtraEl} $out/after-init-extra.el
-  ''
-  + ''
+      cp ${earlyInitEl} $out/early-init.el
+      cp ${../../../etc/emacs/init.el} $out/init.el
+    ''
+    + lib.optionalString (cfg.afterInitExtra != "") ''
+      cp ${afterInitExtraEl} $out/after-init-extra.el
+    ''
+    + ''
 
-    for f in ${../../../etc/emacs/packages}/*.el; do
-      cp "$f" $out/packages/
-    done
+      for f in ${../../../etc/emacs/packages}/*.el; do
+        cp "$f" $out/packages/
+      done
 
-    ln -s ${pkgs.parinfer-rust-emacs} $out/var/parinfer-rust
-    ln -s ${(pkgs.emacsPackagesFor baseEmacs).treesit-grammars.with-all-grammars} $out/var/treesit-grammars
-    ln -s ${pkgs.scowl} $out/var/scowl
-    ln -s ${emacsBinDeps} $out/var/emacs-bin-deps
+      ln -s ${pkgs.parinfer-rust-emacs} $out/var/parinfer-rust
+      ln -s ${(pkgs.emacsPackagesFor baseEmacs).treesit-grammars.with-all-grammars} $out/var/treesit-grammars
+      ln -s ${pkgs.scowl} $out/var/scowl
+      ln -s ${emacsBinDeps} $out/var/emacs-bin-deps
 
-    cp -r ${../../../etc/emacs/templates} $out/var/templates
-  '');
+      cp -r ${../../../etc/emacs/templates} $out/var/templates
+    ''
+  );
 
   wrappedEmacs = pkgs.symlinkJoin {
     name = "emacs-wrapped";
