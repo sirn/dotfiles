@@ -131,7 +131,11 @@ let
 in
 {
   home.colors.variant = variant;
-  home.colors.emacsTheme = theme.emacsTheme;
+
+  programs.emacs = lib.mkIf config.programs.emacs.enable {
+    afterInitExtra = theme.emacsTheme.customElisp;
+    themePackages = theme.emacsTheme.packages;
+  };
 
   programs.alacritty = lib.mkIf config.programs.alacritty.enable {
     settings.colors = {

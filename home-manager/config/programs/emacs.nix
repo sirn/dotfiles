@@ -111,9 +111,6 @@ let
     (defvar gemacs-nix-config-directory user-emacs-directory)
     (defvar gemacs-default-shell "${config.home.shell.interactiveShell}")
 
-    ;; Theme from Home Manager
-    (defvar gemacs-theme-custom-elisp "${config.home.colors.emacsTheme.customElisp}")
-
     ;; Font configuration (from home.fonts module)
     ;; Emacs uses 1.25x the editor font size on Linux for better readability
     (defvar gemacs-font "${config.home.fonts.editor.monospace}")
@@ -123,13 +120,20 @@ let
     ;; points to the read-only Nix store
     (defvar no-littering-etc-directory (expand-file-name "etc/" "~/.emacs.d/"))
     (defvar no-littering-var-directory (expand-file-name "var/" "~/.emacs.d/"))
+
+    ;; Load after-init extras via gemacs-after-init-hook
+    (add-hook 'gemacs-after-init-hook
+      (lambda () (load (expand-file-name "after-init-extra.el" gemacs-nix-config-directory))))
   '';
+
+  afterInitExtraEl = pkgs.writeText "after-init-extra.el" cfg.afterInitExtra;
 
   emacsConfigDir = pkgs.runCommand "emacs-config" { } ''
     mkdir -p $out/{packages,var}
 
     cp ${earlyInitEl} $out/early-init.el
     cp ${../../../etc/emacs/init.el} $out/init.el
+    cp ${afterInitExtraEl} $out/after-init-extra.el
 
     for f in ${../../../etc/emacs/packages}/*.el; do
       cp "$f" $out/packages/
@@ -321,6 +325,6 @@ in
         else
           [ ]
       )
-      ++ (config.home.colors.emacsTheme.packages epkgs);
+      ++ (cfg.themePackages epkgs);
   };
 }

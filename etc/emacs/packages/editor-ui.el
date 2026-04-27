@@ -51,11 +51,6 @@
 (use-package nerd-icons)
 
 
-;; Load theme from Home Manager configuration
-(defvar gemacs-theme-custom-elisp)
-(when (and (boundp 'gemacs-theme-custom-elisp)
-           (not (string-empty-p gemacs-theme-custom-elisp)))
-  (eval (read gemacs-theme-custom-elisp)))
 
 
 ;; macOS clipboard integration
