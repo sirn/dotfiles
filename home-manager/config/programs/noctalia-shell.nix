@@ -45,9 +45,7 @@ in
               id = "Battery";
               warningThreshold = 30;
             }
-            {
-              id = "ControlCenter";
-            }
+            { id = "ControlCenter"; }
             {
               formatHorizontal = "HH:mm";
               formatVertical = "HH mm";

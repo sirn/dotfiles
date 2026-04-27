@@ -1,9 +1,7 @@
 { config, lib, ... }:
 
 {
-  networking.wireless.iwd = lib.mkIf config.systemd.network.enable {
-    enable = true;
-  };
+  networking.wireless.iwd = lib.mkIf config.systemd.network.enable { enable = true; };
 
   systemd.network.networks = lib.mkIf config.systemd.network.enable {
     "wlan0" = {
