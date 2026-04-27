@@ -10,23 +10,12 @@
   };
 
   networking = {
-    useDHCP = false;
-    useNetworkd = true;
-
     nftables = {
       enable = true;
     };
 
     firewall = {
       enable = true;
-    };
-  };
-
-  systemd.network = {
-    enable = true;
-
-    wait-online = {
-      enable = lib.mkDefault false;
     };
   };
 }

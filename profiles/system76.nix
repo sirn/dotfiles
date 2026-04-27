@@ -13,6 +13,7 @@
     {
       imports = [
         ../nixos/config/common.nix
+        ../nixos/config/system/network/networkmanager.nix
 
         # profiles
         ../nixos/config/system/bluetooth.nix

@@ -2,6 +2,7 @@
   nixos = {
     imports = [
       ../nixos/config/common.nix
+      ../nixos/config/system/network/networkd.nix
       ../nixos/config/services/podman.nix
     ];
 

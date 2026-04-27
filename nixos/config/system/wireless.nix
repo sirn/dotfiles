@@ -1,13 +1,11 @@
+{ config, lib, ... }:
+
 {
-  networking = {
-    wireless = {
-      iwd = {
-        enable = true;
-      };
-    };
+  networking.wireless.iwd = lib.mkIf config.systemd.network.enable {
+    enable = true;
   };
 
-  systemd.network.networks = {
+  systemd.network.networks = lib.mkIf config.systemd.network.enable {
     "wlan0" = {
       matchConfig.Name = "wlan0";
       networkConfig = {

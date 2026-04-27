@@ -4,7 +4,6 @@
     ./system/apparmor.nix
     ./system/doas.nix
     ./system/locale.nix
-    ./system/network.nix
     ./system/nix.nix
     ./system/sudo.nix
     ./system/system.nix

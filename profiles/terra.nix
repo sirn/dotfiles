@@ -3,6 +3,7 @@
     imports = [
       ../nixos/config/common.nix
       ../nixos/config/common-zfs.nix
+      ../nixos/config/system/network/networkd.nix
 
       # profiles
       ../nixos/config/system/pcie-aspm.nix

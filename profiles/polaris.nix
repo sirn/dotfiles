@@ -5,6 +5,7 @@
       imports = [
         ../nixos/config/common.nix
         ../nixos/config/common-zfs.nix
+        ../nixos/config/system/network/networkmanager.nix
 
         # machine
         nixos-hardware.nixosModules.lenovo-thinkpad-x1-13th-gen
