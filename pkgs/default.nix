@@ -14,6 +14,8 @@ in
 
   omniwm = (callPackage ./by-name/omniwm/package.nix { });
 
+  pi-hashline-edit = (callPackage ./by-name/pi-hashline-edit/package.nix { });
+
   node-textfile-collector-scripts = (
     callPackage ./by-name/prometheus/node-textfile-collector-scripts.nix { }
   );

@@ -163,6 +163,7 @@ in
       }
     ) (builtins.readDir ./extensions/home-manager)
     // {
+      ".pi/agent/extensions/rimuruw-pi-hashline-edit".source = pkgs.local.pi-hashline-edit;
       ".pi/agent/skills/home-manager".source = agentsCfg.skillsDir;
       ".pi/agent/policy.json".source = policyJsonFile;
       ".pi/agent/PLAN_PROMPT.md".text = planModeTemplates.prompt;
