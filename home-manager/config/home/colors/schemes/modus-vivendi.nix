@@ -76,7 +76,7 @@ in
     };
 
     secondary = {
-      bg = base16Colors.normal.cyan;
+      bg = getColor 25;
       text = base16Colors.bright.white;
     };
 
@@ -86,8 +86,8 @@ in
     };
 
     hover = {
-      bg = base16Colors.bright.black;
-      text = base16Colors.foreground;
+      bg = getColor 19;
+      text = base16Colors.bright.white;
     };
 
     outline = base16Colors.selection;
