@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   assertions = [
@@ -10,9 +10,15 @@
 
   services.tlp = {
     enable = true;
+    # TODO: move back to stable > 25.11
+    package = pkgs.unstable.tlp;
+    pd = {
+      enable = true;
+      package = pkgs.unstable.tlp-pd;
+    };
     settings = {
-      CPU_BOOST_ON_BAT = 0;
       CPU_ENERGY_PERF_POLICY_ON_BAT = "balance_power";
+      CPU_HWP_DYN_BOOST_ON_SAV = 0;
       RUNTIME_PM_ON_BAT = "auto";
       SATA_LINKPWR_ON_BAT = "min_power";
       USB_AUTOSUSPEND = 1;

@@ -299,6 +299,10 @@
             inputs.nixvirt.nixosModules.default
             inputs.sops-nix.nixosModules.sops
 
+            # TODO: remove after NixOS > 25.11
+            { disabledModules = [ "services/hardware/tlp.nix" ]; }
+            "${inputs.nixpkgs-unstable}/nixos/modules/services/hardware/tlp.nix"
+
             # NixOS Generate Config
             ./configuration.nix
             ./hardware-configuration.nix
