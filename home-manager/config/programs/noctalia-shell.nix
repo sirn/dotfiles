@@ -123,7 +123,7 @@ in
         dayTemp = "6500";
         enabled = true;
         manualSunrise = "06:30";
-        manualSunset = "08:30";
+        manualSunset = "18:30";
         nightTemp = "4500";
       };
       wallpaper = {
