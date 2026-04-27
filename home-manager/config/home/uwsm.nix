@@ -84,6 +84,10 @@ in
 
     awww.Service = lib.mkIf config.services.awww.enable { Slice = appGraphicalSlice; };
 
+    awww-restore.Service = {
+      Slice = appGraphicalSlice;
+    };
+
     awww-wallpaper.Service = {
       Slice = appGraphicalSlice;
     };

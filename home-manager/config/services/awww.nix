@@ -78,9 +78,9 @@ in
   # The awww-daemon service is provided by the upstream home-manager module.
   systemd.user.services.awww.Service.Slice = lib.mkDefault "app.slice";
 
-  systemd.user.services."awww-wallpaper" = {
+  systemd.user.services."awww-restore" = {
     Unit = {
-      Description = "Update wallpaper with awww";
+      Description = "Restore wallpaper with awww";
       After = [
         config.wayland.systemd.target
         "awww.service"
@@ -98,6 +98,24 @@ in
     Install.WantedBy = [ config.wayland.systemd.target ];
   };
 
+  systemd.user.services."awww-wallpaper" = {
+    Unit = {
+      Description = "Update wallpaper with awww";
+      After = [
+        config.wayland.systemd.target
+        "awww.service"
+      ];
+      PartOf = [ config.wayland.systemd.target ];
+      ConditionEnvironment = "WAYLAND_DISPLAY";
+    };
+
+    Service = {
+      Type = "oneshot";
+      Slice = lib.mkDefault "app.slice";
+      ExecStart = "-${wallpaperScript}/bin/awww-wallpaper";
+    };
+  };
+
   systemd.user.timers."awww-wallpaper" = {
     Unit = {
       Description = "Rotate wallpaper hourly";
@@ -108,7 +126,6 @@ in
       OnCalendar = "hourly";
       RandomizedDelaySec = "5min";
       Unit = "awww-wallpaper.service";
-      Persistent = true;
     };
 
     Install.WantedBy = [
