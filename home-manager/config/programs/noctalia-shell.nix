@@ -36,7 +36,10 @@ in
             }
           ];
           right = [
-            { id = "Tray"; }
+            {
+              hidePassive = true;
+              id = "Tray";
+            }
             {
               alwaysShowPercentage = false;
               id = "Battery";
