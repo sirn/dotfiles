@@ -143,8 +143,7 @@ in
       (lib.mkIf
         (
           agentsCfg.models.default != null
-          && agentsCfg.models.providers ? agentsCfg.models.default.provider
-          && agentsCfg.models.providers.${agentsCfg.models.default.provider} ? reasoningEffort
+          && builtins.hasAttr agentsCfg.models.default.provider agentsCfg.models.providers
         )
         {
           defaultThinkingLevel =
