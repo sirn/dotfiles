@@ -4,6 +4,7 @@
   sops-nix,
   niri,
   nix-index-database,
+  noctalia,
   overlays,
   stateVersion,
 }:
@@ -81,6 +82,7 @@
             imports = [
               niri.homeModules.niri
               nix-index-database.homeModules.nix-index
+              noctalia.homeModules.default
               sops-nix.homeManagerModules.sops
               ../../home-manager/modules
               (

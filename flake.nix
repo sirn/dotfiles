@@ -130,6 +130,7 @@
           sops-nix
           niri
           nix-index-database
+          noctalia
           ;
         inherit overlays stateVersion;
       };
