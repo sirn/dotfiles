@@ -165,13 +165,14 @@ let
       baseConfig // trustConfig
     ) servers;
 
-  # Link individual skills rather than the entire directory,
-  # allowing users to add custom skills alongside managed ones
-  skillsDirContents = builtins.readDir agentsCfg.skillsDir;
-  skillDirs = lib.filterAttrs (_: type: type == "directory") skillsDirContents;
-  mkGeminiSkillLink = name: { ".gemini/skills/${name}".source = agentsCfg.skillsDir + "/${name}"; };
-  geminiSkillLinks = lib.foldl' (acc: name: acc // mkGeminiSkillLink name) { } (
-    builtins.attrNames skillDirs
+  # Gemini only discovers immediate children of ~/.gemini/skills.
+  # Link each rendered skill individually so grouped vendored skill sets are flattened
+  # into the shape Gemini expects while still allowing unmanaged local skills.
+  geminiSkillLinks = lib.listToAttrs (
+    map (skill: {
+      name = ".gemini/skills/${skill.name}";
+      value.source = agentsCfg.skillTrees.default + "/${skill.name}";
+    }) agentsCfg.discoveredSkills
   );
 in
 {

@@ -4,6 +4,10 @@ let
   inherit (prev.lib) recurseIntoAttrs;
 in
 {
+  mitsuhiko-agent-stuff = (callPackage ./by-name/mitsuhiko-agent-stuff { });
+  skill-ast-grep = (callPackage ./by-name/skill-ast-grep { });
+  skill-brave-search = (callPackage ./by-name/skill-brave-search { });
+
   asdcontrol = (callPackage ./by-name/asdcontrol { });
 
   emacsPackages = {

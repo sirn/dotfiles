@@ -158,13 +158,14 @@ let
     text = builtins.readFile ./statusline.sh;
   };
 
-  # Link individual skills rather than the entire directory,
-  # allowing users to add custom skills alongside managed ones
-  skillsDirContents = builtins.readDir agentsCfg.skillsDir;
-  skillDirs = lib.filterAttrs (_: type: type == "directory") skillsDirContents;
-  mkClaudeSkillLink = name: { ".claude/skills/${name}".source = agentsCfg.skillsDir + "/${name}"; };
-  claudeSkillLinks = lib.foldl' (acc: name: acc // mkClaudeSkillLink name) { } (
-    builtins.attrNames skillDirs
+  # Claude Code only discovers immediate children of ~/.claude/skills.
+  # Link each rendered skill individually so grouped vendored skill sets are flattened
+  # into the shape Claude expects while still allowing unmanaged local skills.
+  claudeSkillLinks = lib.listToAttrs (
+    map (skill: {
+      name = ".claude/skills/${skill.name}";
+      value.source = agentsCfg.skillTrees.subagent + "/${skill.name}";
+    }) agentsCfg.discoveredSkills
   );
 in
 {
@@ -183,12 +184,7 @@ in
     );
 
     agents = lib.mapAttrs mkClaudeCodeAgent validClaudeCodeAgents;
-    memory.text = agentsCfg.instructionText + ''
-
-      ## Skill Execution (Subagent Enhancement)
-
-      When executing a skill, if a `SUBAGENT.md` file exists alongside `SKILL.md` in the skill directory, read and follow `SUBAGENT.md` instead of `SKILL.md`. The subagent version uses specialized agents via the Task tool for higher-quality results.
-    '';
+    memory.text = agentsCfg.instructionText;
     mcpServers = toClaudeCodeMcpServers config.programs.mcp.servers;
 
     settings = {

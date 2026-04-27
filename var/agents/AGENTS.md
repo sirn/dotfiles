@@ -23,30 +23,28 @@
   - **Read Documentation**: Always read `README.md` and any relevant `AGENTS.md` or `GEMINI.md` files first.
   - **Explore Structure**: Browse the directory tree to understand the project's layout, conventions, and existing patterns.
   - **Consult External Sources**: Perform web searches, fetch documentation, or use specialized tools (like `context7`) to research unfamiliar libraries, APIs, or concepts.
-  - **Analyze Codebase**: Use search tools (`rg`, `grep`) to find relevant code snippets and understand how similar features are implemented.
+  - **Analyze Codebase**: Prefer `ast-grep` for structural code searches, then `rg` for text searches, then `grep` only as a fallback. Use these tools to find relevant code snippets and understand how similar features are implemented.
 - **Instruction Priority**: Local project instructions (AGENTS.md, GEMINI.md, README.md) > Global instructions (this file) > Default behaviors. Always check for project-specific mandates first.
 - **Scope Preservation**: Do not perform unrelated refactoring or "cleanup" of code outside the immediate scope of the task. Keep diffs focused and surgical. If you identify issues elsewhere, report them as an observation but do not modify the files unless directed.
 - **Empirical Triage**: For bug fixes, always attempt to reproduce the failure (via a test case, reproduction script, or manual steps) before applying a fix. A fix is only confirmed once the reproduction case passes.
-- **Planning**: Do NOT make code changes when asked to plan. Provide an outline first. For plan files: always include sufficient context on what the project does, tooling to use, and what we're implementing; always clear the plan file when moving on to the next task. **Exception**: Analysis/inspection skills (code-quality, code-review, code-test, code-lint, code-verify, code-explain, code-analyze-project) should be executed immediately even during planning, as they provide read-only context needed for creating accurate plans.
+- **Planning**: Do NOT make code changes when asked to plan. Provide an outline first. For plan files: always include sufficient context on what the project does, tooling to use, and what we're implementing; always clear the plan file when moving on to the next task. **Exception**: Analysis/inspection skills (code-review, code-test, code-explain, code-setup) should be executed immediately even during planning, as they provide read-only context needed for creating accurate plans.
 - **Clarification**: Ask when requirements, success criteria, or target files are unclear.
 - **URLs**: You MUST follow any URL presented to you (especially in error messages).
 - **Temporary Files**: Use the `tmp/` directory. Prefix temp files with the agent's name or a unique ID (e.g., `tmp/pi_analysis.md`). Create a `.gitignore` ignoring everything inside it. Clean up when done.
-- **Anti-Loop**: If a fix fails twice, STOP modifying code. Use read/grep tools to gather more context, output a root cause analysis, and explicitly wait for user confirmation before making another attempt.
+- **Anti-Loop**: If a fix fails twice, STOP modifying code. Use search/read tools to gather more context, output a root cause analysis, and explicitly wait for user confirmation before making another attempt.
 - **Agent Compatibility**: Be aware of which harness you are running in (Pi, OpenCode, Claude Code, etc.). If a tool (like MCP) is unavailable, fallback to shell scripts or explicit API calls.
 - **Context Management**:
-  - Never read entire files over 500 lines if you only need a specific function. Use `rg`, `grep`, or `sed -n` to extract relevant portions.
+  - Never read entire files over 500 lines if you only need a specific function. Use `ast-grep` for structural searches, `rg` for text searches, or `sed -n` to extract relevant portions.
   - When editing large files, ensure you've read the surrounding context (±10 lines) to avoid indentation or syntax errors.
 - **Large Refactors**: For structural changes affecting multiple files, outline the plan first. Execute changes ONE file at a time, running verification commands between each step to catch failures early.
-- **Skill Execution**: Skills (located in `~/.gemini/skills/`, `~/.claude/skills/`, `~/.config/opencode/skill/home-manager/`, or `~/.codex/skills/home-manager/`) are NOT automated tools. They are textual Standard Operating Procedures (SOPs). You MUST read the skill's `SKILL.md` and actively EXECUTE the steps defined therein using your tools. **Skills do NOT execute automatically - you MUST execute them yourself.** Do not assume they run themselves.
-- **Skills During Planning**: Analysis/inspection skills (code-quality, code-review, code-test, code-lint, code-verify, code-explain, code-analyze-project) are read-only operations. Execute them immediately even when in Plan mode - they do NOT modify code and provide essential context for accurate planning.
+- **Skill Execution**: Skills (located under `~/.gemini/skills/`, `~/.claude/skills/`, `~/.config/opencode/skill/`, `~/.codex/skills/`, or `~/.pi/agent/skills/`) are NOT automated tools. They are textual Standard Operating Procedures (SOPs). You MUST read the skill's `SKILL.md` and actively EXECUTE the steps defined therein using your tools. **Skills do NOT execute automatically - you MUST execute them yourself.** Do not assume they run themselves.
+- **Skills During Planning**: Analysis/inspection skills (code-review, code-test, code-explain, code-setup) are read-only operations. Execute them immediately even when in Plan mode - they do NOT modify code and provide essential context for accurate planning.
 - **Reference Skills**: Skills with `type: reference` are documentation-only. Read them when you need the information, but do not "execute" them.
-- **Reference Skills First**: **ALWAYS** read the corresponding `*-reference` skill **before** performing operations with tools that have one. For example:
-  - Before any `nix` command (e.g., `nix build`, `nix develop`, `nix shell`) → read `nix-reference`
-  - Before any `jj` operation (e.g., `jj commit`, `jj squash`, `jj rebase`) → read `jj-reference`
-  - Before any `gh` command → read `gh-reference`
-  - Before invoking Claude Code → read `claude-code-reference`
-  - Before invoking Codex → read `codex-reference`
-  - Before invoking Gemini → read `gemini-reference`
+- **Skill Independence**: Skills must not invoke, call, or depend on other skills. If a workflow needs behavior from another skill, inline the relevant procedure. Subagent-capable skill variants may spawn configured subagents, but must not spawn or invoke skills.
+- **Reference Skills First**: **ALWAYS** read the corresponding reference skill **before** performing operations with tools that have one. For example:
+  - Before any `nix` command (e.g., `nix build`, `nix develop`, `nix shell`) → read `nix`; for flake operations or `flake.nix`, also read `flake`
+  - Before any `jj` operation (e.g., `jj commit`, `jj squash`, `jj rebase`) → read `jujutsu`
+  - Before any `gh` command → read `github-cli`
 
 ## Project Directories
 
@@ -98,7 +96,7 @@
 - **Command Execution**:
   - **Long-running Processes**: Use the tool's native backgrounding functionality if available. Avoid manually appending `&` to shell commands. If no tool-provided backgrounding exists or you are unsure, ask the user to run the process.
   - **Timeouts**: Ensure proper timeouts for commands that are expected to eventually terminate.
-  - Prefer modern tools: `rg` > `grep`, `fd` > `find`, `podman` > `docker`.
+  - Prefer modern search tools in this order: `ast-grep` for structural code search, `rg` for text search, `grep` only as a fallback. Prefer `fd` over `find`, and `podman` over `docker`.
   - **`find` scoping**: `find` must be scoped to the current project directory (e.g., `find .`, `find ./src`). NEVER run `find` against `/`, `/nix`, `/nix/store`, or the home directory (`~`, `$HOME`). These paths are blocked by the permission system; attempting them will fail.
   - Use project task runners (`make`, `task`) if present.
   - If a command fails, try `--help` to debug.
@@ -108,8 +106,7 @@
 - **WebSearch**: Native tool for general **web searches**. Use for finding documentation, tutorials, best practices, and current information.
 - **WebFetch**: Native tool to **fetch and analyze** specific web pages. Use for retrieving content from URLs.
 - **context7** (skill): Retrieve **library documentation**. Read the skill file and execute the documented steps.
-- **brave-search** (skill): General web search via Brave API. Read the skill file and execute curl commands.
-- **synthetic-search** (skill): Web search for **privacy-sensitive queries** (zero-data-retention). Read the skill file and execute curl commands.
+- **brave-search** skills: General web search via Brave API. Read the relevant `brave-search-*` skill file and execute the documented steps.
 
 ## Version Control
 
@@ -128,7 +125,7 @@
     - `Assisted-by: OpenCode:claude-sonnet-4.6`
     - `Assisted-by: Pi:glm-5.1`
 - **Responsibility**: You MUST NOT add `Co-Authored-By:` or `Signed-off-by:` tags. The human developer is responsible for reviewing all AI-generated code and taking full responsibility for the contribution.
-- **Jujutsu Reference**: See "Reference Skills First" rule above. Key patterns from `jj-reference`:
+- **Jujutsu Reference**: See "Reference Skills First" rule above. Key patterns from `jujutsu`:
   - Prefer `jj commit -m "msg"` to finalize the current working-copy commit and move on
   - Use `jj describe <id> -m "msg"` when updating a description without moving on
   - Use `jj split -r <id> -m "msg" -- <file>` (non-interactive)

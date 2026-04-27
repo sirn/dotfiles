@@ -320,12 +320,7 @@ in
     );
 
     agents = lib.mapAttrs mkOpencodeAgent validOpencodeAgents;
-    rules = agentsCfg.instructionText + ''
-
-      ## Skill Execution (Subagent Enhancement)
-
-      When executing a skill, if a `SUBAGENT.md` file exists alongside `SKILL.md` in the skill directory, read and follow `SUBAGENT.md` instead of `SKILL.md`. The subagent version uses specialized agents for higher-quality results.
-    '';
+    rules = agentsCfg.instructionText;
 
     settings = lib.mkMerge [
       {
@@ -344,5 +339,5 @@ in
     ];
   };
 
-  xdg.configFile."opencode/skill/home-manager".source = agentsCfg.skillsDir;
+  xdg.configFile."opencode/skill".source = agentsCfg.skillTrees.subagent;
 }

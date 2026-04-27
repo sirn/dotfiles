@@ -99,7 +99,7 @@ in
     ignores = [ ".codex/" ];
   };
 
-  home.file.".codex/skills/home-manager".source = agentsCfg.skillsDir;
+  home.file.".codex/skills".source = agentsCfg.skillTrees.default;
   home.file.".codex/rules/default.rules".text = rulesContent;
 
   # Codex rewrites config.toml every time it's run in a new directory,
