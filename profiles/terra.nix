@@ -5,7 +5,6 @@
       ../nixos/config/common-zfs.nix
 
       # profiles
-      ../nixos/config/system/microvm.nix
       ../nixos/config/system/pcie-aspm.nix
       ../nixos/config/system/vfio.nix
 

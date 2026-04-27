@@ -19,7 +19,6 @@
         ../nixos/config/system/desktop.nix
         ../nixos/config/system/game.nix
         ../nixos/config/system/intel-gpu.nix
-        ../nixos/config/system/microvm.nix
         ../nixos/config/system/niri.nix
         ../nixos/config/system/pcie-aspm.nix
         ../nixos/config/system/plymouth.nix

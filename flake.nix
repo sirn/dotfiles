@@ -269,8 +269,9 @@
             }
 
             # NixOS modules
-            inputs.sops-nix.nixosModules.sops
+            inputs.microvm.nixosModules.host
             inputs.nixvirt.nixosModules.default
+            inputs.sops-nix.nixosModules.sops
 
             # NixOS Generate Config
             ./configuration.nix
@@ -375,6 +376,14 @@
         ws = mkHomeManagerLinux { hostname = "ws"; };
       };
 
+      nixConfig = {
+        extra-substituters = [
+          "https://microvm.cachix.org"
+        ];
+        extra-trusted-public-keys = [
+          "microvm.cachix.org-1:oXnBc6hRE3eX5rSYdRyMYXnfzcCxC7yKPTbZXALsqys="
+        ];
+      };
       # NixOS configuration for NixOS
       nixosConfigurations = {
         phoebe = mkNixOS { hostname = "phoebe"; };
