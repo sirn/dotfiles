@@ -2,27 +2,55 @@
   lib,
   stdenv,
   fetchFromGitHub,
-  bun,
-  cacert,
+  fetchNpmDeps,
+  nodejs,
+  npmHooks,
 }:
+
+let
+  sources = lib.importJSON ./sources.json;
+  inherit (sources) version;
+
+  stripPeerAndDevDeps = ''
+    ${lib.getExe nodejs} -e "
+      const pj = JSON.parse(require('fs').readFileSync('package.json','utf8'));
+      delete pj.peerDependencies;
+      delete pj.devDependencies;
+      require('fs').writeFileSync('package.json', JSON.stringify(pj, null, 2) + '\n');
+    "
+  '';
+in
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "pi-hashline-edit";
-  version = "0.6.0";
+  inherit version;
 
   src = fetchFromGitHub {
     owner = "RimuruW";
     repo = "pi-hashline-edit";
     rev = "refs/tags/v${finalAttrs.version}";
-    hash = "sha256-ylpq7+rXDk2+c0Lvd73D1rkJ6onHo+1QiCiEbFA8MKY=";
+    hash = sources.srcHash;
+  };
+
+  npmDeps = fetchNpmDeps {
+    inherit (finalAttrs) src;
+    hash = sources.npmDepsHash;
+    postPatch = ''
+      cp ${./package-lock.json} package-lock.json
+      ${stripPeerAndDevDeps}
+    '';
   };
 
   nativeBuildInputs = [
-    bun
-    cacert
+    nodejs
+    npmHooks.npmConfigHook
   ];
 
-  dontConfigure = true;
+  postPatch = ''
+    cp ${./package-lock.json} package-lock.json
+    ${stripPeerAndDevDeps}
+  '';
+
   dontBuild = true;
   dontPatchELF = true;
   dontStrip = true;
@@ -30,17 +58,13 @@ stdenv.mkDerivation (finalAttrs: {
   installPhase = ''
     runHook preInstall
 
-    # Install production dependencies only
-    bun install --frozen-lockfile --production --no-cache
-
-    # Remove Bun's .cache directory (contains broken symlinks to build dir)
-    rm -rf node_modules/.cache
-
     mkdir -p $out
     cp -r index.ts package.json src prompts node_modules $out/
 
     runHook postInstall
   '';
+
+  passthru.updateScript = ./update.sh;
 
   meta = with lib; {
     description = "Hashline read/edit tool override for pi-coding-agent";
