@@ -106,7 +106,7 @@ let
     '';
   };
 
-  earlyInitEl = pkgs.writeText "early-init.el" ''
+  earlyInitEl = pkgs.writeText "early-init.el" (''
     (setq inhibit-startup-screen t)
     (defvar gemacs-nix-config-directory user-emacs-directory)
     (defvar gemacs-default-shell "${config.home.shell.interactiveShell}")
@@ -126,16 +126,20 @@ let
     ;; Load after-init extras via gemacs-after-init-hook
     (add-hook 'gemacs-after-init-hook
       (lambda () (load (expand-file-name "after-init-extra.el" gemacs-nix-config-directory))))
-  '';
+  '');
 
   afterInitExtraEl = pkgs.writeText "after-init-extra.el" cfg.afterInitExtra;
 
-  emacsConfigDir = pkgs.runCommand "emacs-config" { } ''
+  emacsConfigDir = pkgs.runCommand "emacs-config" { } (''
     mkdir -p $out/{packages,var}
 
     cp ${earlyInitEl} $out/early-init.el
     cp ${../../../etc/emacs/init.el} $out/init.el
-    ${lib.optionalString (cfg.afterInitExtra != "") "cp ${afterInitExtraEl} $out/after-init-extra.el"}
+  ''
+  + lib.optionalString (cfg.afterInitExtra != "") ''
+    cp ${afterInitExtraEl} $out/after-init-extra.el
+  ''
+  + ''
 
     for f in ${../../../etc/emacs/packages}/*.el; do
       cp "$f" $out/packages/
@@ -147,7 +151,7 @@ let
     ln -s ${emacsBinDeps} $out/var/emacs-bin-deps
 
     cp -r ${../../../etc/emacs/templates} $out/var/templates
-  '';
+  '');
 
   wrappedEmacs = pkgs.symlinkJoin {
     name = "emacs-wrapped";
