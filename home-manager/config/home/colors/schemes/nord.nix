@@ -30,7 +30,7 @@ let
     };
   };
 
-  palette256 = generatePalette "nord-polar-night" base16Colors;
+  palette256 = generatePalette "nord" base16Colors;
   getColor = idx: builtins.elemAt palette256 idx;
 in
 {

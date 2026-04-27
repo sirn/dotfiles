@@ -120,6 +120,8 @@ let
     ;; points to the read-only Nix store
     (defvar no-littering-etc-directory (expand-file-name "etc/" "~/.emacs.d/"))
     (defvar no-littering-var-directory (expand-file-name "var/" "~/.emacs.d/"))
+  ''
+  + lib.optionalString (cfg.afterInitExtra != "") ''
 
     ;; Load after-init extras via gemacs-after-init-hook
     (add-hook 'gemacs-after-init-hook
@@ -133,7 +135,7 @@ let
 
     cp ${earlyInitEl} $out/early-init.el
     cp ${../../../etc/emacs/init.el} $out/init.el
-    cp ${afterInitExtraEl} $out/after-init-extra.el
+    ${lib.optionalString (cfg.afterInitExtra != "") "cp ${afterInitExtraEl} $out/after-init-extra.el"}
 
     for f in ${../../../etc/emacs/packages}/*.el; do
       cp "$f" $out/packages/
