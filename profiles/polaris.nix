@@ -104,8 +104,8 @@
         ../home-manager/config/home/fonts.nix
         ../home-manager/config/home/i18n.nix
         ../home-manager/config/home/laptop.nix
-        ../home-manager/config/home/niri
-        ../home-manager/config/home/sway
+        ../home-manager/config/home/niri/shell.nix
+        ../home-manager/config/home/sway/shell.nix
         ../home-manager/config/home/uwsm.nix
 
         # programs
