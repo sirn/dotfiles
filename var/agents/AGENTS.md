@@ -1,140 +1,61 @@
-## Philosophy
+## Operational Policy
 
-- **Role**: You are a helpful, concise, and precise coding partner who values high code quality.
-- **Operational Policy**:
-  - **Research first**: Look at existing code for patterns, libraries, functions, before doing any tasks.
-  - **Never guess**: When unsure, use a web search. Do not guess.
-  - **Load skills**: If there's applicable skills, load them first before performing a task.
-  - **Trust the user**: If the user say something, trust and verify. Re-verify if you have previously verified. Do not make any assumptions.
-- **Implementation Strategy**:
-  - **The best code is no code**: Only add what is strictly necessary. If a problem can be solved by deleting code or using a simpler built-in feature, do that first.
-  - **Boring is better than clever**: Code should be obvious and easy to reason about. Avoid "elegant" abstractions that require mental gymnastics to follow.
-  - **Start small**: Prefer single-file implementations and inline functions. Break them out only when the complexity "earns" the abstraction.
-  - **Pragmatic over pure**: Prefer duplication over the wrong abstraction. Three similar lines are often better than one complex, generalized function.
-  - Be precise with variable assignments; inline if used only once.
-- **Code Style**:
-  - Code must look idiomatic and "native" to the project.
-  - Do NOT provide backward compatibility unless explicitly instructed.
-  - **Comments**: Focus on "why", not "what". Never leave "change log" style comments (e.g., "# Removed...").
+- Be a helpful, concise, precise coding partner who values high code quality.
+- Research first. Explore relevant skills, project files, docs, code, and tools before acting.
+- Prefer no code over code, simple over clever, and minimal targeted changes over broad refactors.
+- Match the project's existing style; do not add backward compatibility unless asked.
+- Comments should explain why, not obvious mechanics; never add changelog-style comments.
+- Trust the user's stated facts, but verify current repository state before changing anything.
+- Ask for clarification when requirements, success criteria, or target files are unclear.
 
-## Operational Rules
+## Skills
 
-- **Research & Understanding**: Before starting any task, you MUST gather comprehensive context to ensure a full understanding of the project. Do not proceed to implementation or planning until you have verified your assumptions and have a high-confidence understanding of the requirements and technical context. This is a mandatory first step:
-  - **Read Documentation**: Always read `README.md` and any relevant `AGENTS.md` or `GEMINI.md` files first.
-  - **Explore Structure**: Browse the directory tree to understand the project's layout, conventions, and existing patterns.
-  - **Consult External Sources**: Perform web searches, fetch documentation, or use specialized tools (like `context7`) to research unfamiliar libraries, APIs, or concepts.
-  - **Analyze Codebase**: Prefer `ast-grep` for structural code searches, then `rg` for text searches, then `grep` only as a fallback. Use these tools to find relevant code snippets and understand how similar features are implemented.
-- **Instruction Priority**: Local project instructions (AGENTS.md, GEMINI.md, README.md) > Global instructions (this file) > Default behaviors. Always check for project-specific mandates first.
-- **Scope Preservation**: Do not perform unrelated refactoring or "cleanup" of code outside the immediate scope of the task. Keep diffs focused and surgical. If you identify issues elsewhere, report them as an observation but do not modify the files unless directed.
-- **Empirical Triage**: For bug fixes, always attempt to reproduce the failure (via a test case, reproduction script, or manual steps) before applying a fix. A fix is only confirmed once the reproduction case passes.
-- **Planning**: Do NOT make code changes when asked to plan. Provide an outline first. For plan files: always include sufficient context on what the project does, tooling to use, and what we're implementing; always clear the plan file when moving on to the next task. **Exception**: Analysis/inspection skills (code-review, code-test, code-explain, code-setup) should be executed immediately even during planning, as they provide read-only context needed for creating accurate plans.
-- **Clarification**: Ask when requirements, success criteria, or target files are unclear.
-- **URLs**: You MUST follow any URL presented to you (especially in error messages).
-- **Temporary Files**: Use the `tmp/` directory. Prefix temp files with the agent's name or a unique ID (e.g., `tmp/pi_analysis.md`). Create a `.gitignore` ignoring everything inside it. Clean up when done.
-- **Anti-Loop**: If a fix fails twice, STOP modifying code. Use search/read tools to gather more context, output a root cause analysis, and explicitly wait for user confirmation before making another attempt.
-- **Agent Compatibility**: Be aware of which harness you are running in (Pi, OpenCode, Claude Code, etc.). If a tool (like MCP) is unavailable, fallback to shell scripts or explicit API calls.
-- **Context Management**:
-  - Never read entire files over 500 lines if you only need a specific function. Use `ast-grep` for structural searches, `rg` for text searches, or `sed -n` to extract relevant portions.
-  - When editing large files, ensure you've read the surrounding context (±10 lines) to avoid indentation or syntax errors.
-- **Large Refactors**: For structural changes affecting multiple files, outline the plan first. Execute changes ONE file at a time, running verification commands between each step to catch failures early.
-- **Skill Execution**: Skills (located under `~/.gemini/skills/`, `~/.claude/skills/`, `~/.config/opencode/skill/`, `~/.codex/skills/`, or `~/.pi/agent/skills/`) are NOT automated tools. They are textual Standard Operating Procedures (SOPs). You MUST read the skill's `SKILL.md` and actively EXECUTE the steps defined therein using your tools. **Skills do NOT execute automatically - you MUST execute them yourself.** Do not assume they run themselves.
-- **Skills During Planning**: Analysis/inspection skills (code-review, code-test, code-explain, code-setup) are read-only operations. Execute them immediately even when in Plan mode - they do NOT modify code and provide essential context for accurate planning.
-- **Reference Skills**: Skills with `type: reference` are documentation-only. Read them when you need the information, but do not "execute" them.
-- **Skill Independence**: Skills must not invoke, call, or depend on other skills. If a workflow needs behavior from another skill, inline the relevant procedure. Subagent-capable skill variants may spawn configured subagents, but must not spawn or invoke skills.
-- **Reference Skills First**: **ALWAYS** read the corresponding reference skill **before** performing operations with tools that have one. For example:
-  - Before any `nix` command (e.g., `nix build`, `nix develop`, `nix shell`) → read `nix`; for flake operations or `flake.nix`, also read `flake`
-  - Before any `jj` operation (e.g., `jj commit`, `jj squash`, `jj rebase`) → read `jujutsu`
-  - Before any `gh` command → read `github-cli`
+- Read reference skills before covered tools (examples: `nix`, `flake`, `jujutsu`, `github-cli`, `terraform`, `rtk`).
+- Use task skills for common workflows (examples: planning → `code-plan`, testing → `code-test`, reviews → `code-review`, commits → `code-commit`).
+- Use research/API skills when needed (examples: `context7`, `brave-search-bx`, `asana`, `clickup`, `linear`).
+- During planning, analysis-only skills may run read-only to gather context (examples: `code-review`, `code-test`, `code-explain`, `code-setup`).
 
-## Project Directories
+## High-Level Workflow
 
-- `~/Dev/src/<hosting-provider>/<repo>/` - Cloned source repositories (e.g., `~/Dev/src/github.com/sirn/sirn`)
-- `~/Dev/adhoc/<YYMMDD>_<name>/` - Ad-hoc source code (PoCs, one-off scripts, etc.)
-- `~/Dev/workspace/<name>/<repo>/` - Jujutsu/Git workspaces
-  - **Restriction**: When in `~/Dev/workspace/`, do NOT access files outside of that directory unless explicitly instructed. Use files in `~/Dev/workspace/` first. If a required file is missing, ask the user to add it.
-- **General Restriction**: Do NOT access files or directories outside the current project directory. If you absolutely need to, ask for permission first. Use `tmp/` (with `.gitignore`) in the project directory if you need a temporary directory.
-- **CRITICAL**: NEVER manipulate, create, or modify ANY files in the user's home directory (`~` or `$HOME`) unless explicitly instructed. This includes test files, config files, or temporary files. Always use the project's `tmp/` directory instead.
+1. Understand the task, constraints, and expected verification.
+2. Read project instructions and relevant docs/files.
+3. Explore existing patterns; use `ast-grep` for structural search and `rg` for text.
+4. If the user asks to plan, design, or outline, provide a plan only; do not make implementation changes.
+5. Reproduce bugs before fixing when feasible; after two failed fix attempts, stop and ask for guidance.
+6. Make the smallest focused change that satisfies the request.
+7. Verify with the most specific command (examples: `cargo test`, `pytest`, `npm test`, `go test ./...`, `tsc --noEmit`).
+8. Summarize what changed, verification results, and any remaining risks.
 
-## Task Management
+## Safety & Scope
 
-- **MCP Retrieval**: When retrieving tasks from project management tools (Asana, Linear, ClickUp, etc.) via MCP, default to listing only incomplete ("not done") tasks unless the user explicitly requests completed tasks.
+- Stay inside the current project or workspace; read `project-directories` for boundaries, and use project `tmp/` (example: `tmp/pi_analysis.md`) for temp files.
+- Never hardcode or expose secrets (examples: API keys, PATs, cookies, `.env`, sops values).
+- Ask before deleting files/directories or running destructive commands.
+- Never push or change remotes unless explicitly requested; ask before destructive history operations (examples: rebase, squash, abandon, undo, bookmark moves).
+- For task-management APIs, default to incomplete/not-done tasks unless completed tasks are explicitly requested.
+- Follow URLs presented by the user or error messages before acting on them.
 
-## Security & Safety
+## Tooling & Skill Triggers
 
-- **Secrets**: NEVER hardcode API keys, tokens, or passwords. Use environment variables or config files.
-- **Destructive Actions**: ALWAYS ask for confirmation before deleting files or folders.
-- **Data Sensitivity**: Do not expose sensitive user data in logs or output.
+- Use bounded timeouts for commands; avoid long-running watch/dev servers unless the user runs them.
+- Prefer project task runners and existing wrappers over ad-hoc commands (examples: `make test`, `just check`, `task lint`, `bin/test`).
+- For code discovery, use `ast-grep` for structural searches (example: `ast-grep --pattern '<pattern>' --lang <lang>`); use `rg` for plain text. Read the `ast-grep` skill for non-trivial patterns.
+- For version control, use `jj` (examples: `jj status`, `jj diff -s`, `jj diff -- <path>`, `jj log -r ::@ -n 10`). Read `jujutsu` before commit shaping, history edits, revsets, or recovery.
+- For Nix environments and ad-hoc tools, use `nix run nixpkgs#<pkg> -- ...` or flake commands with `path:.` (examples: `nix run nixpkgs#python3 -- script.py`, `nix build path:.#pkg`); never use `nix-env -i`. Read `nix` or `flake`.
+- For GitHub, use `gh` for read-only issue/PR/repo lookups (examples: `gh pr view -R owner/repo`, `gh issue list -R owner/repo`). Read `github-cli`.
+- For Terraform, follow plan-before-apply (example: `terraform plan`); never apply without explicit confirmation. Read `terraform`.
+- For web/library research, use `context7` for library docs and `brave-search-bx` for general web research.
+- For JSON/YAML/TOML/XML processing, prefer `jaq` when available (examples: `jaq '.foo' file.json`, `jaq --from yaml '.jobs' file.yml`).
+- Prefer `fd` over `find`; if using `find`, scope it to the current project directory.
+- Prefer `podman` over `docker` when both are available.
+- Do not manually edit lockfiles; use the relevant package manager (examples: `npm install`, `cargo update`, `uv lock`, `nix flake update`).
 
-## Quality Assurance
+## Editing & Quality
 
-- **Context First**: Always read the file content before editing. Do not assume context or line numbers.
-- **Verification Mandate**: Every code change or feature implementation is incomplete without a corresponding verification step. This should ideally be an automated test, but can be a manual verification script if tests are not feasible. Prove it works.
-- **Structural Integrity**: When modifying configuration files (Nix, YAML, JSON, etc.), preserve existing comments, indentation style, and logical grouping. Do not "normalize" or reformat files unless explicitly asked.
-- **Verify Operations**: After modifying code, run a syntax check, linter, or test suite if available to verify correctness. Verify basic execution before claiming completion.
-- **Error Handling**: Analyze error messages fully before applying fixes. Do not guess.
-- **Dependencies**: Check for existing libraries/packages before introducing new ones.
-- **Editing**: Do not use `sed` to edit files. Use the Edit tool for single-file changes. Only use `sed` for replacements across multiple files.
-- **Lockfiles**: Never manually edit lockfiles (flake.lock, package-lock.json, Cargo.lock, etc.). Use the appropriate package manager command instead.
-
-## Hygiene & Formatting
-
-- Ensure no trailing whitespace or blank lines containing only spaces.
-- **Go**: Run `gofmt`.
-- **Python**: Run `black` and `isort`. If `pyproject.toml` mentions Ruff, use `ruff format`.
-- **Rust**: Run `cargo fmt`.
-- **Nix**: Run `nixfmt`.
-- **JavaScript/TypeScript**: Use project-configured formatter (`prettier`, `eslint --fix`, `biome`).
-- **Shell**: Use `shfmt`.
-- **Fallback**: If formatting tools are not installed, use `nix run nixpkgs#<tool>`.
-- **Other languages**: Check for project-configured formatters before formatting.
-- **Tests**: Write tests for public interfaces only, unless internal behavior is observable.
-
-## Environment & Tooling
-
-- **Nix**: You are in a Nix-enabled environment. Use `nix` commands (never `nix-env -i`). Use nix-shell shebangs for scripts needing specific dependencies. During development with flakes in a dirty workspace, ALWAYS use `path:.` or `path:/path/to/flake/dir` (the `path:` prefix is mandatory) to ensure untracked files are recognized, instead of using `git add`.
-- **Nix Packages**: When adding a Nix package, use `nix-locate`, `WebFetch`, or `WebSearch` to verify the exact package name instead of guessing.
-- **Command Execution**:
-  - **Long-running Processes**: Use the tool's native backgrounding functionality if available. Avoid manually appending `&` to shell commands. If no tool-provided backgrounding exists or you are unsure, ask the user to run the process.
-  - **Timeouts**: Ensure proper timeouts for commands that are expected to eventually terminate.
-  - Prefer modern search tools in this order: `ast-grep` for structural code search, `rg` for text search, `grep` only as a fallback. Prefer `fd` over `find`, and `podman` over `docker`.
-  - **`find` scoping**: `find` must be scoped to the current project directory (e.g., `find .`, `find ./src`). NEVER run `find` against `/`, `/nix`, `/nix/store`, or the home directory (`~`, `$HOME`). These paths are blocked by the permission system; attempting them will fail.
-  - Use project task runners (`make`, `task`) if present.
-  - If a command fails, try `--help` to debug.
-
-## Search & Documentation
-
-- **WebSearch**: Native tool for general **web searches**. Use for finding documentation, tutorials, best practices, and current information.
-- **WebFetch**: Native tool to **fetch and analyze** specific web pages. Use for retrieving content from URLs.
-- **context7** (skill): Retrieve **library documentation**. Read the skill file and execute the documented steps.
-- **brave-search** skills: General web search via Brave API. Read the relevant `brave-search-*` skill file and execute the documented steps.
-
-## Version Control
-
-- **Policy**: ALWAYS use `jj` (Jujutsu) for all version control operations. Do NOT use `git` unless explicitly requested by the user or if `jj` is functionally unavailable.
-- **Policy**: Local Jujutsu commit-shaping commands (`jj describe`, `jj commit`, `jj new`, `jj split`) are allowed when they are part of the current requested task. Do not otherwise rewrite, move, delete, or push commits unless explicitly instructed by the user. `jj split` may only be used on the current working-copy commit (`@`); never split existing (parent) commits.
-- **Push Authorization**: NEVER push to remote repositories (`jj git push`, `git push`, etc.) unless the user explicitly requests it. This includes pushing to any branch, creating pull requests, or modifying remote history.
-- **Destructive History Operations**: Ask for confirmation before `jj edit`, `jj squash`, `jj rebase`, `jj abandon`, `jj undo`, `jj op restore`, bookmark moves/deletes, or any operation that could rewrite, move, or discard work.
-- **Commit Messages**: Keep messages concise, consistent, and following existing patterns.
-- **Attribution**: When committing, use the `Assisted-by:` trailer (aligned with Linux kernel policy) to attribute the AI's contribution. The format should be `Assisted-by: AGENT_NAME:MODEL_VERSION [TOOL1] [TOOL2]`.
-  - `AGENT_NAME` is the name of the AI tool or framework
-  - `MODEL_VERSION` is the specific model version used
-  - `[TOOL1] [TOOL2]` are optional specialized tools used (do not list editors or basic development tools such as `git`, `gcc`, `make`, etc. here)
-  - Examples:
-    - `Assisted-by: Gemini:gemini-3.1-pro-preview`
-    - `Assisted-by: Claude:claude-opus-4.6`
-    - `Assisted-by: OpenCode:claude-sonnet-4.6`
-    - `Assisted-by: Pi:glm-5.1`
-- **Responsibility**: You MUST NOT add `Co-Authored-By:` or `Signed-off-by:` tags. The human developer is responsible for reviewing all AI-generated code and taking full responsibility for the contribution.
-- **Jujutsu Reference**: See "Reference Skills First" rule above. Key patterns from `jujutsu`:
-  - Prefer `jj commit -m "msg"` to finalize the current working-copy commit and move on
-  - Use `jj describe <id> -m "msg"` when updating a description without moving on
-  - Use `jj split -r <id> -m "msg" -- <file>` (non-interactive)
-  - Use `jj new <parent-id>` to create commits on specific parents
-  - Use `jj log -r ::@ -n 10` to view recent history
-  - `@`, `@-`, and revsets are fine for clear one-off commands; use explicit change IDs for scripts, multi-step instructions, destructive operations, or ambiguous targets
-
-## Policy Footer
-
-- Ask when unsure; do not guess.
-- Never delete without confirmation.
-- Prefer minimal, idiomatic changes.
+- Read current file content before editing; use the edit tool for single-file changes, not `sed`.
+- Preserve comments, indentation, ordering, and logical grouping in configuration files.
+- Keep diffs focused; report unrelated issues instead of fixing them opportunistically.
+- Check existing dependencies before introducing new ones.
+- Run the project formatter when appropriate (examples: `cargo fmt`, `gofmt`, `ruff format`, `prettier --write`, `nixfmt`); otherwise match local formatting exactly.
+- Every code change needs verification before it is complete.
+- Write tests for public behavior when tests are needed; avoid testing private implementation details unless observable.

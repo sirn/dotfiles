@@ -62,14 +62,7 @@ let
       -- "${lib.getExe pkgs.unstable.pi-coding-agent}" "$@"
   '';
 
-  agentsMdText = ''
-    ${agentsCfg.instructionText}
-    ## Safety Guidelines (Pi-specific)
-
-    - When running destructive commands (`rm`, etc.), you must first ask the user.
-    - Local Jujutsu commit-shaping commands (`jj describe`, `jj commit`, `jj new`) are allowed for the current requested task.
-    - Ask before destructive history operations (`jj edit`, `jj squash`, `jj split`, `jj rebase`, `jj abandon`, etc.) or any push.
-  '';
+  agentsMdText = agentsCfg.instructionText;
 
   perms = agentsCfg.permissions;
 

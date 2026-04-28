@@ -16,9 +16,9 @@ Check whether a plan file already exists at: {PLAN_PATH}
 
 Collect all context necessary to successfully accomplish the request:
 
-- Read the project README and any relevant configuration or source files.
-- **Perform a web search**: load the relevant search skill and execute it. Do not guess or assume.
-- **Research official documentation** for every library, tool, or API involved. Look up exact call conventions, flags, and return types — do not infer from memory.
+- Read the project README, agent instructions, and relevant configuration or source files.
+- Use applicable skills immediately for read-only analysis (for example `code-review`, `code-test`, `code-explain`, or `code-setup`).
+- Research official documentation for unfamiliar libraries, tools, or APIs. Use `context7`, `brave-search-bx`, or other relevant research skills when needed; do not infer exact API contracts from memory.
 - If any requirement is ambiguous or information is missing, **ask the user** before proceeding.
 
 ### Step 3: Define Success Criteria
@@ -36,8 +36,8 @@ Only after completing steps 1–3, write the plan to: {PLAN_PATH}
 
 Before finalising, validate the plan's correctness:
 
-- **Re-consult official documentation** to confirm every call convention, option, and API contract used in the plan.
-- **Run ad-hoc read-only probes** where helpful (e.g., `ls`, `cat`, `--help`, dry-runs, `tsc --noEmit`) to verify assumptions without modifying the system.
+- Re-check official documentation for any non-obvious call convention, option, or API contract used in the plan.
+- Run ad-hoc read-only probes where helpful (e.g., file listing, reads, `--help`, dry-runs, typechecks) to verify assumptions without modifying the system.
 
 ## Rules
 

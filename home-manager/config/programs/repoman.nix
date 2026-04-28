@@ -8,12 +8,67 @@
 let
   tomlFormat = pkgs.formats.toml { };
 
+  repomanSkillSet = pkgs.writeTextDir "repoman/SKILL.md" ''
+    ---
+    name: repoman
+    type: reference
+    description: Reference for using repoman to locate, clone, sync, and manage local repository/workspace directories. Read when navigating or creating repos/workspaces under ~/Dev.
+    ---
+
+    ## Overview
+
+    Repoman organizes repositories under host/repo directory layouts and tracks named workspaces.
+
+    Configured roots:
+
+    - `${config.home.homeDirectory}/Dev/src`
+    - `${config.home.homeDirectory}/Dev/go/gopath/src`
+
+    Configured workspace roots:
+
+    - `${config.home.homeDirectory}/Dev/workspace`
+    - `${config.home.homeDirectory}/Dev/adhoc`
+
+    ## Common Commands
+
+    - `repoman sync` - refresh known repositories/workspaces.
+    - `repoman list` - list known repository directories.
+    - `repoman clone <url>` - clone into the configured host/repo layout.
+    - `repoman clone --backend jj <url>` - clone using Jujutsu.
+    - `repoman clone --backend git <url>` - clone using Git.
+    - `repoman pull-all` - update repositories on allowed branches.
+    - `repoman workspace add <name> <repo-path>` - create or extend a named workspace.
+    - `repoman workspace list` - list workspace directories.
+    - `repoman workspace list --repo` - list repositories inside workspaces.
+    - `repoman workspace delete <name>` - delete a workspace after confirmation.
+
+    ## Directory Layout
+
+    - Source repos: `${config.home.homeDirectory}/Dev/src/<host>/<repo>`
+    - Workspaces: `${config.home.homeDirectory}/Dev/workspace/<name>/<repo>`
+    - Ad-hoc projects: `${config.home.homeDirectory}/Dev/adhoc/<name>`
+
+    ## Safety
+
+    - Treat workspace deletion as destructive; ask before running `repoman workspace delete` unless the user explicitly requested it.
+    - Do not run `repoman pull-all` if unrelated repositories may be modified unless the user asked for a batch update.
+    - Stay inside the current project/workspace unless the user explicitly asks to navigate elsewhere.
+    - When you only need to locate a repository or workspace, prefer read-only commands: `repoman list` and `repoman workspace list`.
+  '';
+
+  repomanInstructionText = lib.strings.trim ''
+    - Use `repoman list` and `repoman workspace list` to locate project directories; read the `repoman` skill before clone, batch update, or workspace operations."
+  '';
+
   tmuxcfg = config.programs.tmux;
 
   fzyCmd = lib.getExe pkgs.fzy;
 in
 {
   home.packages = with pkgs; [ local.repoman ];
+
+  agents.skillSets.repoman = repomanSkillSet;
+  agents.instructionText = lib.mkAfter repomanInstructionText;
 
   xdg.configFile."repoman/config.toml".source = tomlFormat.generate "repoman-config" {
     roots = [

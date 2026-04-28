@@ -65,13 +65,18 @@ For vendored skills, package the upstream repository under `pkgs/by-name/skill-*
 ```nix
 {
   agents.skillSets = {
-    home-manager = ../../../var/agents/skills;
+    apis = ../../../var/agents/skills/apis;
+    coding = ../../../var/agents/skills/coding;
+    lifecycle = ../../../var/agents/skills/lifecycle;
+    references = ../../../var/agents/skills/references;
+
     ast-grep = "${pkgs.local.skill-ast-grep}/skills";
 
-    # Multi-skill bundles with generic skill names can be flattened with a prefix.
+    # Single vendored skill exposed as `brave-search-bx`.
     brave-search = {
       path = "${pkgs.local.skill-brave-search}/skills";
       prefix = "brave-search";
+      skills = [ "bx" ];
     };
 
     # Whole upstream repositories can be packaged and filtered at discovery time.
@@ -83,7 +88,7 @@ For vendored skills, package the upstream repository under `pkgs/by-name/skill-*
 }
 ```
 
-Each skill set is a directory whose immediate children are actual skill directories. Home Manager discovers those skills and renders each harness-specific layout from the same normalized skill list. If `prefix` is set, discovered skills are exposed as flat prefixed names like `brave-search-web-search`; the rendered `SKILL.md` frontmatter `name` is rewritten to match. If `skills` is set to a non-empty list, only those source skill directory names are discovered from that skill set; the default empty list discovers all skills.
+Each skill set is a directory whose immediate children are actual skill directories. Home Manager discovers those skills and renders each harness-specific layout from the same normalized skill list. If `prefix` is set, discovered skills are exposed as flat prefixed names like `brave-search-bx`; the rendered `SKILL.md` frontmatter `name` is rewritten to match. If `skills` is set to a non-empty list, only those source skill directory names are discovered from that skill set; the default empty list discovers all skills.
 
 ### Add a New Agent
 

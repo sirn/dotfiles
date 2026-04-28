@@ -40,22 +40,51 @@ let
   ]
   ++ rtkConfig.hooks.exclude_commands;
 
-  # Generate RTK instructions dynamically from `rtk --help` output
-  rtkInstructionTextFile =
-    pkgs.runCommand "rtk-instructions.md"
+  rtkSkillSet =
+    pkgs.runCommand "rtk-skill-set"
       {
         nativeBuildInputs = [ pkgs.unstable.rtk ];
         ignore = lib.concatStringsSep " " ignoreCommands;
       }
       ''
-        cat > $out << 'HEADER'
-        ## RTK (Shell Output Optimization)
+        mkdir -p $out/rtk
 
-        RTK (`rtk`) is available for compact shell output. Use `rtk --help` to see all available commands.
+        cat > $out/rtk/SKILL.md <<'HEADER'
+        ---
+        name: rtk
+        type: reference
+        description: Reference for RTK shell output optimization and command rewrite behavior. ALWAYS read when using, configuring, or reasoning about RTK-rewritten shell commands.
+        ---
 
-        ### Rewrite mode
+        ## Overview
 
-        The following commands are automatically rewritten by RTK (e.g. calling `ls` with bash tool will be automatically rewritten to use `rtk ls`) and should NOT be additionally filtered/parsed with `tail`, `head`, `jq`, etc. You do not typically need to call `rtk ...` on your own. If you MUST call the original command, use `command ...` (e.g. `command ls`):
+        RTK (`rtk`) optimizes shell output for agent sessions. It rewrites common commands to compact RTK subcommands and filters noisy output from tools such as test runners, package managers, cloud CLIs, and formatters.
+
+        ## Agent Behavior
+
+        - Shell commands may be automatically rewritten through `rtk rewrite` before execution.
+        - Prefer the normal command (`ls`, `pytest`, `cargo test`, etc.) and let the installed hook rewrite it.
+        - Do not add extra `head`, `tail`, `jq`, or similar filters just to reduce output when RTK already handles the command.
+        - If you must bypass rewrite behavior, prefix the command with `command`, for example: `command ls`.
+        - Use `rtk --help` to inspect the currently installed command list.
+        - Use `rtk rewrite '<command>'` to preview how a command will be transformed.
+
+        ## Direct RTK Commands
+
+        These are RTK-native utilities rather than transparent command rewrites:
+
+        - `rtk --help` - show available commands
+        - `rtk rewrite '<command>'` - preview rewrite behavior
+        - `rtk read <file>` - compact file reads
+        - `rtk json ...` - compact JSON processing helpers
+        - `rtk log ...` - inspect RTK logs
+        - `rtk env` - inspect RTK environment/debug state
+        - `rtk deps` - inspect RTK dependency information
+        - `rtk gain` - estimate output savings
+
+        ## Rewrite Mode
+
+        When rewrite hooks are installed, common commands are transformed automatically. The active installed RTK version reports these rewrite-capable commands:
 
         HEADER
 
@@ -70,21 +99,33 @@ let
 
         in_commands && /^  [a-z0-9-]+/ {
           cmd = $1;
-
-          # Skip ignored commands
           if (is_ignored[cmd]) next;
 
-          # Extract description
           desc = substr($0, index($0, $2));
           gsub(/^[ \t]+/, "", desc);
           gsub(/[ \t]+/, " ", desc);
 
           printf "- `rtk %s <args>` — %s (replaces `%s`)\n", cmd, desc, cmd;
         }
-        ' >> $out
+        ' >> $out/rtk/SKILL.md
+
+        cat >> $out/rtk/SKILL.md <<'FOOTER'
+
+        Do not rely on memory for this list. Check `rtk --help` or `rtk rewrite` for the active environment when behavior matters.
+
+        ## Debugging
+
+        1. Run `rtk rewrite '<command>'` to inspect rewrite output.
+        2. If rewritten output is inappropriate, retry with `command <original>` to bypass shell/function resolution.
+        3. If command permissions are involved, remember some harnesses evaluate the rewritten command rather than the original.
+        4. For local configuration, inspect the project's/Home Manager's RTK config before changing global instructions.
+        FOOTER
       '';
 
-  rtkInstructionText = builtins.readFile rtkInstructionTextFile;
+  rtkInstructionText = lib.strings.trim ''
+    - RTK may automatically rewrite shell commands for compact output; to call non-rewrite commands, use `command <command>`.
+    - Read the `rtk` skill for rewrite behavior, debugging, and direct RTK commands.
+  '';
 
   rtkRewriteClaudeSh = pkgs.writeShellApplication {
     name = "rtk-rewrite-claude";
@@ -150,6 +191,7 @@ in
     };
   };
 
+  agents.skillSets.rtk = rtkSkillSet;
   agents.instructionText = lib.mkAfter rtkInstructionText;
 
   # OpenCode evaluates permissions on the rewritten command (after tool.execute.before hook),

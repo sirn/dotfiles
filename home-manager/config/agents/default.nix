@@ -7,5 +7,9 @@
     ./subagents
   ];
 
-  agents.instructionText = builtins.readFile ../../../var/agents/AGENTS.md;
+  # Add additional tools section for additional insturction text injection
+  agents.instructionText = (builtins.readFile ../../../var/agents/AGENTS.md) + ''
+
+    ## Additional tools
+  '';
 }
