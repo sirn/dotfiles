@@ -315,15 +315,24 @@
 
             # Home Manager
             inputs.home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = false;
-              home-manager.useUserPackages = true;
-              home-manager.backupFileExtension = "backup";
-              home-manager.users.${username}.imports = [
-                (mkHomeManagerBaseModule { inherit username homeDirectory; })
-              ]
-              ++ (mkHomeManagerModules hostname);
-            }
+            (
+              { lib, pkgs, ... }:
+              let
+                hm-backup = pkgs.writeScriptBin "hm-backup" ''
+                  #!${pkgs.runtimeShell}
+                  mv "$1" "$1.backup.$(date +%s)"
+                '';
+              in
+              {
+                home-manager.useGlobalPkgs = false;
+                home-manager.useUserPackages = true;
+                home-manager.backupCommand = lib.getExe hm-backup;
+                home-manager.users.${username}.imports = [
+                  (mkHomeManagerBaseModule { inherit username homeDirectory; })
+                ]
+                ++ (mkHomeManagerModules hostname);
+              }
+            )
           ];
         };
 

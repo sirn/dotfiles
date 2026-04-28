@@ -68,13 +68,23 @@
       ++ extraModules
       ++ lib.optionals useHomeManager [
         home-manager.nixosModules.home-manager
-        {
-          home-manager.users.${hmUsername} = {
-            nixpkgs.overlays = overlays;
-            nixpkgs.config.allowUnfree = true;
-            home.stateVersion = stateVersion;
-          };
-        }
+        (
+          { lib, pkgs, ... }:
+          let
+            hm-backup = pkgs.writeScriptBin "hm-backup" ''
+              #!${pkgs.runtimeShell}
+              mv "$1" "$1.backup.$(date +%s)"
+            '';
+          in
+          {
+            home-manager.backupCommand = lib.getExe hm-backup;
+            home-manager.users.${hmUsername} = {
+              nixpkgs.overlays = overlays;
+              nixpkgs.config.allowUnfree = true;
+              home.stateVersion = stateVersion;
+            };
+          }
+        )
       ]
       ++ lib.optionals (useHomeManager && hmProfile != "") [
         {
