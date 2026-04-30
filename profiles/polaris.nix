@@ -61,6 +61,9 @@
       # Set default backlight
       services.udev.extraRules = ''
         SUBSYSTEM=="backlight", ACTION=="add", KERNEL=="intel_backlight", ATTR{brightness}="100"
+
+        # Prevent the internal I2C touchpad from waking the laptop repeatedly while suspended.
+        SUBSYSTEM=="i2c", ACTION=="add|change", KERNEL=="i2c-SNSL0028:00", ATTR{power/wakeup}="disabled"
       '';
 
       # Fix broken audio on Lunar Lake.
