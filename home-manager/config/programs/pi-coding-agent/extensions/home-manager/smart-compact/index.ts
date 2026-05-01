@@ -18,24 +18,25 @@ import * as path from "node:path";
 
 const configPath = path.join(os.homedir(), ".pi/agent/custom.json");
 
-interface CompactionModelConfig {
+interface SmartCompactConfig {
   provider: string;
   model: string;
+  maxTokens?: number;
 }
 
 interface CustomConfig {
-  compactionModel?: CompactionModelConfig | null;
+  smartCompact?: SmartCompactConfig | null;
 }
 
-let compactionConfig: CompactionModelConfig | null = null;
+let compactionConfig: SmartCompactConfig | null = null;
 
 try {
   if (fs.existsSync(configPath)) {
     const customConfig: CustomConfig = JSON.parse(
       fs.readFileSync(configPath, "utf-8"),
     );
-    if (customConfig.compactionModel) {
-      compactionConfig = customConfig.compactionModel;
+    if (customConfig.smartCompact) {
+      compactionConfig = customConfig.smartCompact;
     }
   }
 } catch {
@@ -159,7 +160,7 @@ ${conversationText}
         {
           apiKey: auth.apiKey,
           headers: auth.headers,
-          maxTokens: model.maxTokens,
+          maxTokens: compactionConfig!.maxTokens ?? model.maxTokens,
           signal,
         },
       );

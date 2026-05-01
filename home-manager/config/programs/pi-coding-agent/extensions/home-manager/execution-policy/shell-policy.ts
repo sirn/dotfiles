@@ -48,26 +48,36 @@ const globalUnified = normalizeUnifiedPolicyConfig(globalConfigRaw);
 
 // --- Auto mode config ---
 
-interface PolicyAutoModeConfig {
+interface AutoModeConfig {
   enable: boolean;
   provider: string;
   model: string;
+  thinkingEnabled?: boolean;
+  timeoutMs?: number;
+  maxTokens?: number;
 }
 
 interface CustomConfig {
-  policyAutoMode?: {
-    enable?: unknown;
-    provider?: unknown;
-    model?: unknown;
+  executionPolicy?: {
+    shellPolicy?: {
+      autoMode?: {
+        enable?: unknown;
+        provider?: unknown;
+        model?: unknown;
+        thinkingEnabled?: unknown;
+        timeoutMs?: unknown;
+        maxTokens?: unknown;
+      };
+    };
   };
 }
 
-function loadAutoModeConfig(): PolicyAutoModeConfig | null {
+function loadAutoModeConfig(): AutoModeConfig | null {
   const customPath = path.join(PI_AGENT_DIR, "custom.json");
   if (!fs.existsSync(customPath)) return null;
   try {
     const raw: CustomConfig = JSON.parse(fs.readFileSync(customPath, "utf-8"));
-    const cfg = raw.policyAutoMode;
+    const cfg = raw.executionPolicy?.shellPolicy?.autoMode;
     if (
       !cfg ||
       cfg.enable !== true ||
@@ -76,7 +86,14 @@ function loadAutoModeConfig(): PolicyAutoModeConfig | null {
     ) {
       return null;
     }
-    return { enable: true, provider: cfg.provider, model: cfg.model };
+    return {
+      enable: true,
+      provider: cfg.provider,
+      model: cfg.model,
+      thinkingEnabled: cfg.thinkingEnabled === true ? true : undefined,
+      timeoutMs: typeof cfg.timeoutMs === "number" ? cfg.timeoutMs : undefined,
+      maxTokens: typeof cfg.maxTokens === "number" ? cfg.maxTokens : undefined,
+    };
   } catch {
     return null;
   }
@@ -154,8 +171,8 @@ async function evaluateAutoMode(
     .replaceAll("{COMMAND}", command)
     .replaceAll("{CWD}", ctx.cwd);
 
-  // Cap the evaluation at 10s so a stalled model doesn't block the tool call.
-  const signals: AbortSignal[] = [AbortSignal.timeout(10_000)];
+  // Cap the evaluation so a stalled model doesn't block the tool call.
+  const signals: AbortSignal[] = [AbortSignal.timeout(autoModeConfig.timeoutMs ?? 30_000)];
   if (ctx.signal) signals.push(ctx.signal);
   const signal = AbortSignal.any(signals);
 
@@ -174,9 +191,9 @@ async function evaluateAutoMode(
       {
         apiKey: auth.apiKey,
         headers: auth.headers,
-        maxTokens: 3000,
+        maxTokens: autoModeConfig.maxTokens ?? model.maxTokens,
         temperature: 0,
-        thinkingEnabled: false,
+        thinkingEnabled: autoModeConfig.thinkingEnabled === true,
         signal,
       },
     );
