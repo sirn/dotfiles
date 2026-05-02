@@ -16,13 +16,31 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 
-const configPath = path.join(os.homedir(), ".pi/agent/custom/smart-compact/config.json");
+const configPath = path.join(
+  os.homedir(),
+  ".pi/agent/custom/smart-compact/config.json",
+);
+
+interface SmartCompactAutoConfig {
+  enable?: boolean;
+  maxContextTokens?: number;
+  contextRatio?: number;
+}
+
+interface NormalizedAutoCompactConfig {
+  maxContextTokens: number;
+  contextRatio: number;
+}
 
 interface SmartCompactConfig {
   provider: string;
   model: string;
   maxTokens?: number;
+  autoCompact?: SmartCompactAutoConfig;
 }
+
+const DEFAULT_AUTO_COMPACT_MAX_CONTEXT_TOKENS = 150_000;
+const DEFAULT_AUTO_COMPACT_CONTEXT_RATIO = 0.8;
 
 let compactionConfig: SmartCompactConfig | null = null;
 
@@ -39,11 +57,124 @@ try {
   // Config missing or invalid - extension will be a no-op
 }
 
+function getPositiveNumber(value: unknown, fallback: number): number {
+  return typeof value === "number" && Number.isFinite(value) && value > 0
+    ? value
+    : fallback;
+}
+
+function getRatio(value: unknown, fallback: number): number {
+  return typeof value === "number" &&
+    Number.isFinite(value) &&
+    value > 0 &&
+    value <= 1
+    ? value
+    : fallback;
+}
+
+function getAutoCompactConfig(): NormalizedAutoCompactConfig | undefined {
+  if (compactionConfig?.autoCompact?.enable !== true) {
+    return;
+  }
+
+  return {
+    maxContextTokens: getPositiveNumber(
+      compactionConfig.autoCompact.maxContextTokens,
+      DEFAULT_AUTO_COMPACT_MAX_CONTEXT_TOKENS,
+    ),
+    contextRatio: getRatio(
+      compactionConfig.autoCompact.contextRatio,
+      DEFAULT_AUTO_COMPACT_CONTEXT_RATIO,
+    ),
+  };
+}
+
+function getAutoCompactThreshold(
+  contextWindow: number,
+  autoConfig: NormalizedAutoCompactConfig,
+): number | undefined {
+  if (!Number.isFinite(contextWindow) || contextWindow <= 0) {
+    return;
+  }
+
+  const threshold = Math.min(
+    autoConfig.maxContextTokens,
+    Math.floor(contextWindow * autoConfig.contextRatio),
+  );
+
+  return Number.isFinite(threshold) && threshold > 0 ? threshold : undefined;
+}
+
 export default function (pi: ExtensionAPI) {
   // Skip if no config
   if (!compactionConfig) {
     return;
   }
+
+  let previousTokens: number | null | undefined;
+  let autoCompactionInProgress = false;
+
+  pi.on("turn_end", (_event, ctx) => {
+    const autoCompactConfig = getAutoCompactConfig();
+    if (!autoCompactConfig || autoCompactionInProgress) {
+      return;
+    }
+
+    const usage = ctx.getContextUsage();
+    if (!usage) {
+      return;
+    }
+
+    const currentTokens = usage.tokens;
+    if (currentTokens === null) {
+      return;
+    }
+
+    const contextWindow = usage.contextWindow || ctx.model?.contextWindow;
+    if (!contextWindow) {
+      return;
+    }
+
+    const threshold = getAutoCompactThreshold(contextWindow, autoCompactConfig);
+    if (!threshold) {
+      return;
+    }
+
+    const wasBelowOrAtThreshold =
+      previousTokens === undefined ||
+      previousTokens === null ||
+      previousTokens <= threshold;
+    previousTokens = currentTokens;
+    if (!wasBelowOrAtThreshold || currentTokens <= threshold) {
+      return;
+    }
+
+    autoCompactionInProgress = true;
+    if (ctx.hasUI) {
+      ctx.ui.notify(
+        `Auto-compacting ${currentTokens.toLocaleString()} tokens at threshold ${threshold.toLocaleString()}...`,
+        "info",
+      );
+    }
+
+    ctx.compact({
+      customInstructions:
+        "Auto-compaction triggered because context usage exceeded the configured threshold. Preserve current task state, decisions, modified files, verification results, blockers, and next actions.",
+      onComplete: () => {
+        autoCompactionInProgress = false;
+        previousTokens = null;
+        if (ctx.hasUI) {
+          ctx.ui.notify("Auto-compaction completed", "info");
+        }
+      },
+      onError: (error) => {
+        autoCompactionInProgress = false;
+        if (ctx.hasUI) {
+          ctx.ui.notify(`Auto-compaction failed: ${error.message}`, "error");
+        }
+      },
+    });
+  });
 
   pi.on("session_before_compact", async (event, ctx) => {
     const { preparation, signal } = event;
