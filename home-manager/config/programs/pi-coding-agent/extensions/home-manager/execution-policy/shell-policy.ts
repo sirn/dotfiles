@@ -172,7 +172,9 @@ async function evaluateAutoMode(
     .replaceAll("{CWD}", ctx.cwd);
 
   // Cap the evaluation so a stalled model doesn't block the tool call.
-  const signals: AbortSignal[] = [AbortSignal.timeout(autoModeConfig.timeoutMs ?? 30_000)];
+  const signals: AbortSignal[] = [
+    AbortSignal.timeout(autoModeConfig.timeoutMs ?? 30_000),
+  ];
   if (ctx.signal) signals.push(ctx.signal);
   const signal = AbortSignal.any(signals);
 
