@@ -10,6 +10,19 @@ import * as path from "node:path";
 
 import { Container, Text, Box, Spacer } from "@mariozechner/pi-tui";
 
+type ModelSelection = { provider: string; modelId: string };
+
+type PlanExecutionPendingData = {
+  status?: "pending" | "processed";
+  planContent?: string;
+  modelSelection?: ModelSelection;
+};
+
+type PendingPlanExecution = {
+  planContent: string;
+  modelSelection?: ModelSelection;
+};
+
 export default function (pi: ExtensionAPI) {
   const PI_AGENT_DIR = path.join(os.homedir(), ".pi/agent");
   const EXT_DIR = path.join(PI_AGENT_DIR, "custom/execution-policy");
@@ -62,28 +75,36 @@ export default function (pi: ExtensionAPI) {
     return sent;
   }
 
-  function getPendingPlanExecution(ctx: ExtensionContext): string | undefined {
-    let planContent: string | undefined;
+  function getPendingPlanExecution(
+    ctx: ExtensionContext,
+  ): PendingPlanExecution | undefined {
+    let pendingPlanExecution: PendingPlanExecution | undefined;
     for (const entry of ctx.sessionManager.getEntries()) {
       if (
         entry.type === "custom" &&
         entry.customType === "plan-execution-pending"
       ) {
-        const data = entry.data as {
-          status?: "pending" | "processed";
-          planContent?: string;
-        };
+        const data = entry.data as PlanExecutionPendingData;
         if (data?.status === "processed") {
-          planContent = undefined;
+          pendingPlanExecution = undefined;
         } else if (
           data?.status === "pending" &&
           typeof data.planContent === "string"
         ) {
-          planContent = data.planContent;
+          const modelSelection =
+            typeof data.modelSelection?.provider === "string" &&
+            typeof data.modelSelection?.modelId === "string"
+              ? data.modelSelection
+              : undefined;
+
+          pendingPlanExecution = {
+            planContent: data.planContent,
+            modelSelection,
+          };
         }
       }
     }
-    return planContent;
+    return pendingPlanExecution;
   }
 
   function movePlanToSession(
@@ -200,6 +221,33 @@ export default function (pi: ExtensionAPI) {
     createMessageRenderer("󰏫 plan approved", "success", "Plan accepted."),
   );
 
+  async function restorePendingModelSelection(
+    ctx: ExtensionContext,
+    modelSelection: ModelSelection | undefined,
+  ): Promise<void> {
+    if (!modelSelection) return;
+
+    const model = ctx.modelRegistry.find(
+      modelSelection.provider,
+      modelSelection.modelId,
+    );
+    if (!model) {
+      ctx.ui.notify(
+        `New session created, but failed to find previous model ${modelSelection.provider}/${modelSelection.modelId}.`,
+        "warning",
+      );
+      return;
+    }
+
+    const restored = await pi.setModel(model);
+    if (!restored) {
+      ctx.ui.notify(
+        `New session created, but failed to restore model ${modelSelection.provider}/${modelSelection.modelId}.`,
+        "warning",
+      );
+    }
+  }
+
   function sendExecutionMessage(planContent: string) {
     pi.sendMessage(
       {
@@ -277,8 +325,8 @@ export default function (pi: ExtensionAPI) {
       }
 
       const choice = await ctx.ui.select("Accept Plan?", [
-        "Accept plan and clear context",
         "Accept plan and compact",
+        "Accept plan and clear context",
         "Accept plan",
         "Cancel",
       ]);
@@ -299,6 +347,9 @@ export default function (pi: ExtensionAPI) {
           "success",
         );
 
+        const previousModelSelection = ctx.model
+          ? { provider: ctx.model.provider, modelId: ctx.model.id }
+          : undefined;
         const parentSession = ctx.sessionManager.getSessionFile();
         const result = await ctx.newSession({
           parentSession,
@@ -312,6 +363,7 @@ export default function (pi: ExtensionAPI) {
             sessionManager.appendCustomEntry("plan-execution-pending", {
               status: "pending",
               planContent,
+              modelSelection: previousModelSelection,
             });
           },
         });
@@ -435,8 +487,12 @@ export default function (pi: ExtensionAPI) {
     const pendingPlanExecution = getPendingPlanExecution(ctx);
     if (!pendingPlanExecution) return;
 
+    await restorePendingModelSelection(
+      ctx,
+      pendingPlanExecution.modelSelection,
+    );
     pi.appendEntry("plan-execution-pending", { status: "processed" });
-    sendExecutionMessage(pendingPlanExecution);
+    sendExecutionMessage(pendingPlanExecution.planContent);
   });
 
   pi.on("turn_end", async (_event, ctx) => {
