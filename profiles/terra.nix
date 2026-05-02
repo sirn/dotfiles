@@ -55,22 +55,6 @@
     systemd.network.wait-online.enable = true;
 
     vfio.iommuType = "intel_sm";
-    vfio.devices = [
-      "10de:2684" # RTX 4090 GPU
-      "10de:22ba" # RTX 4090 Audio
-    ];
-
-    vfio.udev-forwarder.config.domain = [
-      {
-        name = "lunar";
-        match = [
-          { devpath = "/devices/pci0000:00/0000:00:14.0/usb1/1-4/1-4.1/1-4.1.4"; }
-          { devpath = "/devices/pci0000:00/0000:00:14.0/usb1/1-4/1-4.2"; }
-          { devpath = "/devices/pci0000:00/0000:00:14.0/usb1/1-4/1-4.3"; }
-          { devpath = "/devices/pci0000:00/0000:00:14.0/usb1/1-4/1-4.4"; }
-        ];
-      }
-    ];
 
     services.sanoid.datasets."zroot/DATA" = {
       useTemplate = [ "daily" ];
