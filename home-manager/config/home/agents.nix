@@ -1,6 +1,7 @@
 {
   imports = [
     ../agents
+    ../programs/brave-search-cli.nix
     ../programs/claude-code
     ../programs/codex
     ../programs/gemini

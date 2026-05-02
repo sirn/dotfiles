@@ -17,7 +17,6 @@
     ./programs/atuin.nix
     ./programs/bash.nix
     ./programs/bat.nix
-    ./programs/brave-search-cli.nix
     ./programs/coreutils.nix
     ./programs/curl.nix
     ./programs/direnv.nix
