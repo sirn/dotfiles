@@ -3,9 +3,9 @@ import {
   type ExtensionAPI,
   type ExtensionContext,
 } from "@mariozechner/pi-coding-agent";
-import { getExecutionMode } from "./lib/execution-mode.js";
+import { getExecutionMode, clearModeCache } from "./lib/execution-mode.js";
+import { PI_AGENT_DIR, EXT_DIR, PLAN_DIR } from "./lib/paths.js";
 import * as fs from "node:fs";
-import * as os from "node:os";
 import * as path from "node:path";
 
 import { Container, Text, Box, Spacer } from "@mariozechner/pi-tui";
@@ -24,10 +24,6 @@ type PendingPlanExecution = {
 };
 
 export default function (pi: ExtensionAPI) {
-  const PI_AGENT_DIR = path.join(os.homedir(), ".pi/agent");
-  const EXT_DIR = path.join(PI_AGENT_DIR, "custom/execution-policy");
-  const PLAN_DIR = path.join(PI_AGENT_DIR, "plans");
-
   const planModePromptTemplate = fs.readFileSync(
     path.join(EXT_DIR, "PLAN_PROMPT.md"),
     "utf-8",
@@ -43,19 +39,13 @@ export default function (pi: ExtensionAPI) {
 
   // --- Mode state management ---
 
-  const modeCache = new Map<string, string>();
-
   function getMode(ctx: ExtensionContext): string {
-    const sessionId = ctx.sessionManager.getSessionFile() ?? "ephemeral";
-    if (modeCache.has(sessionId)) return modeCache.get(sessionId)!;
-    const mode = getExecutionMode(ctx).mode;
-    modeCache.set(sessionId, mode);
-    return mode;
+    return getExecutionMode(ctx).mode;
   }
 
   function setMode(ctx: ExtensionContext, mode: string) {
     const sessionId = ctx.sessionManager.getSessionFile() ?? "ephemeral";
-    modeCache.set(sessionId, mode);
+    clearModeCache(sessionId);
     const planPath = getPlanPath(ctx.cwd, ctx.sessionManager.getSessionFile());
     pi.appendEntry("execution-mode", {
       mode,
@@ -265,7 +255,6 @@ export default function (pi: ExtensionAPI) {
   pi.registerCommand("plan", {
     description: "Enter plan mode for creating implementation plans",
     handler: async (args, ctx) => {
-      const sessionId = ctx.sessionManager.getSessionFile() ?? "ephemeral";
       const wasAlreadyInPlanMode = getMode(ctx) === "plan";
 
       setMode(ctx, "plan");

@@ -154,6 +154,8 @@ in
       lib.nameValuePair ".pi/agent/extensions/hm-${name}" {
         source = ./extensions/home-manager + "/${name}";
       }
+      # Note: builtins.readDir ordering is non-deterministic per Nix spec,
+      # but home.file deployment order does not matter here.
     ) (builtins.readDir ./extensions/home-manager)
     // {
       ".pi/agent/extensions/rimuruw-pi-hashline-edit".source = pkgs.local.pi-hashline-edit;

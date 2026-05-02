@@ -1,12 +1,11 @@
 # Keybindings configuration for Pi coding agent
 # Uses namespaced ids (Pi >= 0.61.0 format)
 
-{ config, lib, ... }:
+{ ... }:
 
 let
-  cfg = config.programs.pi-coding-agent;
 
-  keybindings = {
+  keybindingMap = {
     # Cursor Movement (Emacs)
     "tui.editor.cursorUp" = [
       "up"
@@ -126,5 +125,7 @@ let
   };
 in
 {
-  programs.pi-coding-agent = lib.mkIf cfg.enable { inherit keybindings; };
+  programs.pi-coding-agent = {
+    keybindings = keybindingMap;
+  };
 }

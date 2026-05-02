@@ -589,7 +589,8 @@ export function tokenize(input: string): Token[] {
         continue;
       }
 
-      // Input: < (but not <( process substitution)
+      // Input: < (but not <( process substitution — not handled;
+      // unrecognized syntax falls through to "ask" in the caller)
       if (rch === "<" && (ri + 1 >= len || input[ri + 1] !== "(")) {
         i = ri + 1;
         const target = readRedirectTarget();

@@ -22,7 +22,7 @@ function extractLastAssistantText(messages: any[]): string {
 
 export default function (pi: ExtensionAPI) {
   pi.on("agent_end", (event) => {
-    const messages = (event as any).messages || [];
+    const messages = event.messages || [];
     const raw = extractLastAssistantText(messages);
     const truncated = raw.replace(/\n/g, " ").trim().slice(0, 200);
     const body = truncated || "Pi has finished their turn";

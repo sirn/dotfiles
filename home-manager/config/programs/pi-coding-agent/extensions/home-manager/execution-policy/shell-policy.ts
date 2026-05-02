@@ -21,8 +21,8 @@ import type {
   ExtensionContext,
 } from "@mariozechner/pi-coding-agent";
 import { getExecutionMode } from "./lib/execution-mode.js";
+import { EXT_DIR } from "./lib/paths.js";
 import * as fs from "node:fs";
-import * as os from "node:os";
 import * as path from "node:path";
 import {
   evaluate,
@@ -36,9 +36,6 @@ import {
   type PolicyCommands,
   type WrapperRuleConfig,
 } from "./lib/shell-policy.js";
-
-const PI_AGENT_DIR = path.join(os.homedir(), ".pi/agent");
-const EXT_DIR = path.join(PI_AGENT_DIR, "custom/execution-policy");
 
 // Load global config from unified policy.json at ~/.pi/agent/custom/execution-policy/policy.json
 const globalConfigRaw = JSON.parse(
@@ -75,7 +72,9 @@ function loadAutoModeConfig(): AutoModeConfig | null {
   const customPath = path.join(EXT_DIR, "config.json");
   if (!fs.existsSync(customPath)) return null;
   try {
-    const raw: ExtensionConfig = JSON.parse(fs.readFileSync(customPath, "utf-8"));
+    const raw: ExtensionConfig = JSON.parse(
+      fs.readFileSync(customPath, "utf-8"),
+    );
     const cfg = raw.shellPolicy?.autoMode;
     if (
       !cfg ||
@@ -166,9 +165,14 @@ async function evaluateAutoMode(
     return null;
   }
 
+  if (!command || !command.trim()) {
+    // Empty command — no point in LLM evaluation
+    return null;
+  }
+
   const promptText = autoModePromptTemplate
     .replaceAll("{COMMAND}", command)
-    .replaceAll("{CWD}", ctx.cwd);
+    .replaceAll("{CWD}", ctx.cwd || "(unknown)");
 
   // Cap the evaluation so a stalled model doesn't block the tool call.
   const signals: AbortSignal[] = [

@@ -5,7 +5,13 @@ export interface ExecutionModeState {
   policyOverride?: { write?: string[]; edit?: string[] };
 }
 
+const modeCache = new Map<string, ExecutionModeState>();
+
 export function getExecutionMode(ctx: ExtensionContext): ExecutionModeState {
+  const cacheKey = ctx.sessionManager.getSessionFile() ?? "ephemeral";
+  const cached = modeCache.get(cacheKey);
+  if (cached) return cached;
+
   let mode = "edit";
   let policyOverride: ExecutionModeState["policyOverride"];
   for (const entry of ctx.sessionManager.getEntries()) {
@@ -15,5 +21,15 @@ export function getExecutionMode(ctx: ExtensionContext): ExecutionModeState {
       policyOverride = data?.policyOverride;
     }
   }
-  return { mode, policyOverride };
+  const result = { mode, policyOverride };
+  modeCache.set(cacheKey, result);
+  return result;
+}
+
+export function clearModeCache(cacheKey?: string | null) {
+  if (cacheKey) {
+    modeCache.delete(cacheKey);
+  } else {
+    modeCache.clear();
+  }
 }
