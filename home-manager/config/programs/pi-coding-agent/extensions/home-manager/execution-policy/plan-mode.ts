@@ -12,18 +12,19 @@ import { Container, Text, Box, Spacer } from "@mariozechner/pi-tui";
 
 export default function (pi: ExtensionAPI) {
   const PI_AGENT_DIR = path.join(os.homedir(), ".pi/agent");
+  const EXT_DIR = path.join(PI_AGENT_DIR, "custom/execution-policy");
   const PLAN_DIR = path.join(PI_AGENT_DIR, "plans");
 
   const planModePromptTemplate = fs.readFileSync(
-    path.join(PI_AGENT_DIR, "PLAN_PROMPT.md"),
+    path.join(EXT_DIR, "PLAN_PROMPT.md"),
     "utf-8",
   );
   const planModeAcceptTemplate = fs.readFileSync(
-    path.join(PI_AGENT_DIR, "PLAN_ACCEPT.md"),
+    path.join(EXT_DIR, "PLAN_ACCEPT.md"),
     "utf-8",
   );
   const planModeSubsequentTemplate = fs.readFileSync(
-    path.join(PI_AGENT_DIR, "PLAN_INJECT.md"),
+    path.join(EXT_DIR, "PLAN_INJECT.md"),
     "utf-8",
   );
 

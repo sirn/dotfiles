@@ -158,10 +158,10 @@ in
     // {
       ".pi/agent/extensions/rimuruw-pi-hashline-edit".source = pkgs.local.pi-hashline-edit;
       ".pi/agent/skills".source = agentsCfg.skillTrees.default;
-      ".pi/agent/policy.json".source = policyJsonFile;
-      ".pi/agent/PLAN_PROMPT.md".text = planModeTemplates.prompt;
-      ".pi/agent/PLAN_ACCEPT.md".text = planModeTemplates.accept;
-      ".pi/agent/PLAN_INJECT.md".text = planModeTemplates.subsequent;
-      ".pi/agent/POLICY_AUTO_MODE.md".text = policyAutoModePrompt;
+      ".pi/agent/custom/execution-policy/policy.json".source = policyJsonFile;
+      ".pi/agent/custom/execution-policy/PLAN_PROMPT.md".text = planModeTemplates.prompt;
+      ".pi/agent/custom/execution-policy/PLAN_ACCEPT.md".text = planModeTemplates.accept;
+      ".pi/agent/custom/execution-policy/PLAN_INJECT.md".text = planModeTemplates.subsequent;
+      ".pi/agent/custom/execution-policy/POLICY_AUTO_MODE.md".text = policyAutoModePrompt;
     };
 }

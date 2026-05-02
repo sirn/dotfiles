@@ -9,7 +9,7 @@
  * Policy: Ask by default - any command not explicitly allowed or denied requires confirmation.
  * Per-project overrides can be placed in .pi/policy.json relative to the project root.
  *
- * Auto mode: when policyAutoMode is enabled in custom.json, commands that would
+ * Auto mode: when policyAutoMode is enabled in custom/execution-policy/config.json, commands that would
  * normally require user confirmation are first evaluated by a small LLM using
  * POLICY_AUTO_MODE.md. If the model returns "allow", the command runs without
  * prompting the user. Any other outcome falls back to human confirmation.
@@ -38,10 +38,11 @@ import {
 } from "./lib/shell-policy.js";
 
 const PI_AGENT_DIR = path.join(os.homedir(), ".pi/agent");
+const EXT_DIR = path.join(PI_AGENT_DIR, "custom/execution-policy");
 
-// Load global config from unified policy.json at ~/.pi/agent/policy.json
+// Load global config from unified policy.json at ~/.pi/agent/custom/execution-policy/policy.json
 const globalConfigRaw = JSON.parse(
-  fs.readFileSync(path.join(PI_AGENT_DIR, "policy.json"), "utf-8"),
+  fs.readFileSync(path.join(EXT_DIR, "policy.json"), "utf-8"),
 );
 
 const globalUnified = normalizeUnifiedPolicyConfig(globalConfigRaw);
@@ -57,27 +58,25 @@ interface AutoModeConfig {
   maxTokens?: number;
 }
 
-interface CustomConfig {
-  executionPolicy?: {
-    shellPolicy?: {
-      autoMode?: {
-        enable?: unknown;
-        provider?: unknown;
-        model?: unknown;
-        thinkingEnabled?: unknown;
-        timeoutMs?: unknown;
-        maxTokens?: unknown;
-      };
+interface ExtensionConfig {
+  shellPolicy?: {
+    autoMode?: {
+      enable?: unknown;
+      provider?: unknown;
+      model?: unknown;
+      thinkingEnabled?: unknown;
+      timeoutMs?: unknown;
+      maxTokens?: unknown;
     };
   };
 }
 
 function loadAutoModeConfig(): AutoModeConfig | null {
-  const customPath = path.join(PI_AGENT_DIR, "custom.json");
+  const customPath = path.join(EXT_DIR, "config.json");
   if (!fs.existsSync(customPath)) return null;
   try {
-    const raw: CustomConfig = JSON.parse(fs.readFileSync(customPath, "utf-8"));
-    const cfg = raw.executionPolicy?.shellPolicy?.autoMode;
+    const raw: ExtensionConfig = JSON.parse(fs.readFileSync(customPath, "utf-8"));
+    const cfg = raw.shellPolicy?.autoMode;
     if (
       !cfg ||
       cfg.enable !== true ||
@@ -100,7 +99,7 @@ function loadAutoModeConfig(): AutoModeConfig | null {
 }
 
 function loadAutoModePrompt(): string | null {
-  const promptPath = path.join(PI_AGENT_DIR, "POLICY_AUTO_MODE.md");
+  const promptPath = path.join(EXT_DIR, "POLICY_AUTO_MODE.md");
   try {
     return fs.readFileSync(promptPath, "utf-8");
   } catch {

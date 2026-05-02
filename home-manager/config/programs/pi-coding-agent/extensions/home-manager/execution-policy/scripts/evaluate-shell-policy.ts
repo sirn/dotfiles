@@ -58,7 +58,7 @@ function printUsage(): void {
   console.log();
   console.log("Options:");
   console.log(
-    "  -f, --file <path>  Use custom policy file (default: ~/.pi/agent/policy.json)",
+    "  -f, --file <path>  Use custom policy file (default: ~/.pi/agent/custom/execution-policy/policy.json)",
   );
   console.log(
     "  -m, --mode <mode>  Evaluate with mode merged on top of default (default: edit)",
@@ -85,7 +85,7 @@ function printUsage(): void {
   console.log(`  ${scriptName} -f ./policy.json -- rm -rf /tmp/test`);
 }
 
-const DEFAULT_POLICIES = ["~/.pi/agent/policy.json"];
+const DEFAULT_POLICIES = ["~/.pi/agent/custom/execution-policy/policy.json"];
 
 function parseArgs(): CliArgs | null {
   const args = process.argv.slice(2);

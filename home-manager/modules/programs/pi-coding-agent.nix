@@ -63,12 +63,23 @@ in
       '';
     };
 
-    custom = lib.mkOption {
-      type = lib.types.attrs;
+    extensionCustom = lib.mkOption {
+      type = lib.types.attrsOf (pkgs.formats.json { }).type;
       default = { };
       description = ''
-        Custom configuration for Pi extensions.
-        Written to custom.json and can be read by extensions at runtime.
+        Per-extension custom configuration.
+        Each attribute name becomes a directory under ~/.pi/agent/custom/<name>/
+        with the attribute value written as config.json.
+        Values may be any JSON-compatible value supported by builtins.toJSON.
+      '';
+      example = lib.literalExpression ''
+        {
+          "execution-policy" = { shellPolicy.autoMode.enable = true; };
+          "smart-compact" = {
+            model = "gemini-3-flash-preview";
+            provider = "plexus";
+          };
+        }
       '';
     };
   };
@@ -86,8 +97,9 @@ in
     // lib.optionalAttrs (cfg.keybindings != { }) {
       ".pi/agent/keybindings.json".text = builtins.toJSON cfg.keybindings;
     }
-    // lib.optionalAttrs (cfg.custom != { }) {
-      ".pi/agent/custom.json".text = builtins.toJSON cfg.custom;
-    };
+    // lib.mapAttrs' (
+      name: value:
+      lib.nameValuePair ".pi/agent/custom/${name}/config.json" { text = builtins.toJSON value; }
+    ) cfg.extensionCustom;
   };
 }
