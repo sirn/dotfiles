@@ -114,7 +114,7 @@ export default function (pi: ExtensionAPI) {
   let previousTokens: number | null | undefined;
   let autoCompactionInProgress = false;
 
-  pi.on("turn_end", (_event, ctx) => {
+  pi.on("agent_end", (_event, ctx) => {
     const autoCompactConfig = getAutoCompactConfig();
     if (!autoCompactConfig || autoCompactionInProgress) {
       return;
