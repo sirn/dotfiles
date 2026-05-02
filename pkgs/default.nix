@@ -30,5 +30,7 @@ in
 
   udev-forwarder = (callPackage ./by-name/udev-forwarder { });
 
+  web-cli = (callPackage ./by-name/web-cli/package.nix { });
+
   wrapped-uv = (callPackage ./by-name/wrapped-uv/wrapped.nix { });
 }

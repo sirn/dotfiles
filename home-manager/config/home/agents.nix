@@ -9,6 +9,7 @@
     ../programs/opencode
     ../programs/pi-coding-agent
     ../programs/rtk
+    ../programs/web-cli.nix
   ];
 
   programs.git.ignores = [
