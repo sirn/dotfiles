@@ -12,7 +12,7 @@ Another agent (the "primary agent") has requested to execute a shell command. Th
 {COMMAND}
 </command>
 
-## Context
+## Context Hint
 
 {CONTEXT_HINT}
 

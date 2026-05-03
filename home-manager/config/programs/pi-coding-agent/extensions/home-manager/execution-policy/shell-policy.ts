@@ -338,11 +338,11 @@ function formatTriggerReason(result: EvalResult): string {
 
 function buildContextHint(ctx: ExtensionContext): string {
   const { mode } = getExecutionMode(ctx);
-  if (!mode) return "";
-
   const template = loadContextTemplate(mode);
-  if (!template) return "";
-  return template.replaceAll("{CWD}", ctx.cwd ?? "(unknown)");
+  if (template) {
+    return template.replaceAll("{CWD}", ctx.cwd ?? "(unknown)");
+  }
+  return "No execution mode context hint. Evaluate the command against the general evaluation criteria only.";
 }
 
 function formatPolicyMatch(match: EvalResult["match"]): string {
