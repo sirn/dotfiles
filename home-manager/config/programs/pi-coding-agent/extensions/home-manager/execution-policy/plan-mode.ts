@@ -17,11 +17,13 @@ type PlanExecutionPendingData = {
   status?: "pending" | "processed";
   planContent?: string;
   modelSelection?: ModelSelection;
+  userMessage?: string;
 };
 
 type PendingPlanExecution = {
   planContent: string;
   modelSelection?: ModelSelection;
+  userMessage?: string;
 };
 
 export default function (pi: ExtensionAPI) {
@@ -116,6 +118,7 @@ export default function (pi: ExtensionAPI) {
           pendingPlanExecution = {
             planContent: data.planContent,
             modelSelection,
+            userMessage: typeof data.userMessage === "string" ? data.userMessage : undefined,
           };
         }
       }
@@ -264,14 +267,16 @@ export default function (pi: ExtensionAPI) {
     }
   }
 
-  function sendExecutionMessage(planContent: string) {
+  function sendExecutionMessage(planContent: string, userMessage?: string) {
+    const message = userMessage
+      ? userMessage.trim()
+      : "No additional user message. Proceed according to the plan.";
     pi.sendMessage(
       {
         customType: "plan-mode-execute",
-        content: planModeAcceptTemplate.replaceAll(
-          "{PLAN_CONTENT}",
-          planContent,
-        ),
+        content: planModeAcceptTemplate
+          .replaceAll("{PLAN_CONTENT}", planContent)
+          .replaceAll("{USER_MESSAGE}", message),
         display: true,
       },
       { triggerTurn: true },
@@ -314,7 +319,7 @@ export default function (pi: ExtensionAPI) {
 
   pi.registerCommand("plan-accept", {
     description: "Accept plan and trigger execution with context options",
-    handler: async (_args, ctx) => {
+    handler: async (args, ctx) => {
       if (getMode(ctx) !== "plan") {
         ctx.ui.notify("No active plan found. Use /plan first.", "error");
         return;
@@ -388,6 +393,7 @@ export default function (pi: ExtensionAPI) {
               status: "pending",
               planContent,
               modelSelection: previousModelSelection,
+              userMessage: args || undefined,
             });
           },
         });
@@ -418,12 +424,12 @@ export default function (pi: ExtensionAPI) {
             "User has accepted the implementation plan. Summarize the current conversation in a short, concise text focusing on the context needed for plan execution.",
           onComplete: () => {
             ctx.ui.notify("Context compacted. Ready for execution.", "success");
-            sendExecutionMessage(planContent);
+            sendExecutionMessage(planContent, args);
           },
         });
       } else if (choice === "Accept plan") {
         ctx.ui.notify("Plan accepted! Ready for execution.", "success");
-        sendExecutionMessage(planContent);
+        sendExecutionMessage(planContent, args);
       }
     },
   });
@@ -523,7 +529,10 @@ export default function (pi: ExtensionAPI) {
       pendingPlanExecution.modelSelection,
     );
     pi.appendEntry("plan-execution-pending", { status: "processed" });
-    sendExecutionMessage(pendingPlanExecution.planContent);
+    sendExecutionMessage(
+      pendingPlanExecution.planContent,
+      pendingPlanExecution.userMessage,
+    );
   });
 
   pi.on("turn_end", async (_event, ctx) => {

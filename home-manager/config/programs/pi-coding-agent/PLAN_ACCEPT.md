@@ -13,3 +13,7 @@ The plan has been approved. Execute the implementation plan step by step.
 ## Plan content
 
 {PLAN_CONTENT}
+
+## User Message
+
+{USER_MESSAGE}
