@@ -1,5 +1,6 @@
 import {
   keyHint,
+  getLatestCompactionEntry,
   type ExtensionAPI,
   type ExtensionContext,
 } from "@mariozechner/pi-coding-agent";
@@ -36,6 +37,31 @@ export default function (pi: ExtensionAPI) {
     path.join(EXT_DIR, "PLAN_INJECT.md"),
     "utf-8",
   );
+
+  // --- Recently-compacted detection ---
+
+  /**
+   * Returns true if the session context was recently compacted.
+   * "Recently" means the latest compaction entry is the last entry on the
+   * current branch, or there are only a few non-user entries between it and the leaf.
+   */
+  function isRecentlyCompacted(ctx: ExtensionContext): boolean {
+    const branch = ctx.sessionManager.getBranch();
+    const latestCompaction = getLatestCompactionEntry(branch);
+    if (!latestCompaction) return false;
+
+    // If the latest compaction is the very last entry, it's definitely recent
+    const leafEntry = branch[branch.length - 1];
+    if (leafEntry && leafEntry.id === latestCompaction.id) return true;
+
+    // Also consider it recent if the compaction is within the last few entries
+    // (there may be custom entries appended after compaction, e.g. execution-mode)
+    const compactionIndex = branch.lastIndexOf(latestCompaction);
+    if (compactionIndex >= 0 && branch.length - compactionIndex <= 3)
+      return true;
+
+    return false;
+  }
 
   // --- Mode state management ---
 
@@ -313,12 +339,21 @@ export default function (pi: ExtensionAPI) {
         return;
       }
 
-      const choice = await ctx.ui.select("Accept Plan?", [
-        "Accept plan and compact",
-        "Accept plan and clear context",
-        "Accept plan",
-        "Cancel",
-      ]);
+      const recentlyCompacted = isRecentlyCompacted(ctx);
+
+      const choice = recentlyCompacted
+        ? await ctx.ui.select("Accept Plan?", [
+            "Accept plan",
+            "Accept plan and clear context",
+            "Accept plan and compact",
+            "Cancel",
+          ])
+        : await ctx.ui.select("Accept Plan?", [
+            "Accept plan and compact",
+            "Accept plan and clear context",
+            "Accept plan",
+            "Cancel",
+          ]);
 
       if (choice === "Cancel" || choice === undefined) {
         ctx.ui.notify("Accept cancelled. Continue refining the plan.", "info");
@@ -367,10 +402,17 @@ export default function (pi: ExtensionAPI) {
           "success",
         );
       } else if (choice === "Accept plan and compact") {
-        ctx.ui.notify(
-          "Plan accepted! Compacting context for execution...",
-          "success",
-        );
+        if (recentlyCompacted) {
+          ctx.ui.notify(
+            "Context was recently compacted. Running compaction again...",
+            "info",
+          );
+        } else {
+          ctx.ui.notify(
+            "Plan accepted! Compacting context for execution...",
+            "success",
+          );
+        }
         ctx.compact({
           customInstructions:
             "User has accepted the implementation plan. Summarize the current conversation in a short, concise text focusing on the context needed for plan execution.",
