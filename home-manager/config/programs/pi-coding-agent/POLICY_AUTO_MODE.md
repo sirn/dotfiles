@@ -12,13 +12,17 @@ Another agent (the "primary agent") has requested to execute a shell command. Th
 {COMMAND}
 </command>
 
+## Context
+
+{CONTEXT_HINT}
+
 ## Evaluation Criteria
 
 Auto-approve (`allow`) ONLY if ALL of the following hold:
 
-- The command is read-only, or only writes within the current project working directory, `~/.cache`, or temporary directories (`/tmp`, `$TMPDIR`, `mktemp` output).
 - The command is idempotent or trivially reversible.
-- The command does not touch files outside the working directory except for `~/.cache` and temp directories. Writes to `$HOME` (other than `~/.cache`), `/etc`, `/nix`, etc. still require confirmation.
+- The command is read-only, or only writes within the current project working directory, cache locations (`~/.cache`, `~/.npm`, `~/.cargo`, etc.), or temporary directories (`/tmp`, `$TMPDIR`, `mktemp` output).
+- The command does not touch files outside the working directory except for cache locations and temp directories. Writes to `$HOME` (other than `~/.cache`), `/etc`, `/nix`, etc. still require confirmation.
 - The command does not perform network writes (no `push`, no `POST/PUT/DELETE` to external services unless it is a read-only GraphQL query, no `curl`/`wget` uploads). GraphQL uses POST for all requests including read-only queries — allow GraphQL POST if the operation is a query (read-only), but ask if it is a mutation or subscription (mutable).
 - The command does not install, upgrade, or remove system packages.
 - The command does not perform remote version-control writes or destructive/history-rewriting operations. Local Jujutsu commit-shaping (`jj describe`, `jj commit`, `jj new`) is allowed, but ask for `git push`, `jj git push`, `git reset --hard`, `git rebase`, `jj edit`, `jj squash`, `jj split`, `jj rebase`, `jj abandon`, `jj undo`, bookmark moves/deletes, etc.

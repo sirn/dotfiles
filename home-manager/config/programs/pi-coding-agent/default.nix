@@ -105,7 +105,9 @@ let
   };
 
   policyAutoModePrompt = builtins.readFile ./POLICY_AUTO_MODE.md;
+  policyAutoModePlanContext = builtins.readFile ./POLICY_AUTO_MODE.PLAN_CONTEXT.md;
 in
+
 {
   imports = [ ./keybindings.nix ];
 
@@ -165,5 +167,7 @@ in
       ".pi/agent/custom/execution-policy/PLAN_ACCEPT.md".text = planModeTemplates.accept;
       ".pi/agent/custom/execution-policy/PLAN_INJECT.md".text = planModeTemplates.subsequent;
       ".pi/agent/custom/execution-policy/POLICY_AUTO_MODE.md".text = policyAutoModePrompt;
+      ".pi/agent/custom/execution-policy/POLICY_AUTO_MODE.PLAN_CONTEXT.md".text =
+        policyAutoModePlanContext;
     };
 }

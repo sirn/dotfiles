@@ -105,6 +105,31 @@ function loadAutoModePrompt(): string | null {
     return null;
   }
 }
+const contextTemplateCache = new Map<string, string>();
+
+function loadContextTemplate(mode: string): string {
+  const suffix = mode
+    .replace(/([a-z])([A-Z])/g, "$1_$2")
+    .toUpperCase()
+    .replace(/\W/g, "_");
+  const cached = contextTemplateCache.get(suffix);
+  if (cached !== undefined) {
+    return cached;
+  }
+
+  const promptPath = path.join(
+    EXT_DIR,
+    `POLICY_AUTO_MODE.${suffix}_CONTEXT.md`,
+  );
+  let template: string;
+  try {
+    template = fs.readFileSync(promptPath, "utf-8");
+  } catch {
+    template = "";
+  }
+  contextTemplateCache.set(suffix, template);
+  return template;
+}
 
 const autoModeConfig = loadAutoModeConfig();
 const autoModePromptTemplate = autoModeConfig ? loadAutoModePrompt() : null;
@@ -170,7 +195,9 @@ async function evaluateAutoMode(
     return null;
   }
 
+  const contextHint = buildContextHint(ctx);
   const promptText = autoModePromptTemplate
+    .replaceAll("{CONTEXT_HINT}", contextHint)
     .replaceAll("{COMMAND}", command)
     .replaceAll("{CWD}", ctx.cwd || "(unknown)");
 
@@ -307,6 +334,15 @@ function formatTriggerReason(result: EvalResult): string {
     default:
       return result.match ? ` (${result.match.category})` : "";
   }
+}
+
+function buildContextHint(ctx: ExtensionContext): string {
+  const { mode } = getExecutionMode(ctx);
+  if (!mode) return "";
+
+  const template = loadContextTemplate(mode);
+  if (!template) return "";
+  return template.replaceAll("{CWD}", ctx.cwd ?? "(unknown)");
 }
 
 function formatPolicyMatch(match: EvalResult["match"]): string {
