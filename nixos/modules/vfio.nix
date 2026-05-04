@@ -151,8 +151,7 @@ in
         else
           [ "amd_iommu=on" ]
       )
-    ++
-    (lib.optionals cfg.hugepages.enable [
+    ++ (lib.optionals cfg.hugepages.enable [
       "default_hugepagesz=1G"
       "hugepagesz=1G"
       "hugepages=${builtins.toString cfg.hugepages.count}"

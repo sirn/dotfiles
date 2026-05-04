@@ -28,7 +28,10 @@ rustPlatform.buildRustPackage {
 
   cargoBuildFlags = [ "-p coincide-server" ];
   cargoInstallFlags = [ "-p coincide-server" ];
-  cargoTestFlags = [ "-p" "coincide-server" ];
+  cargoTestFlags = [
+    "-p"
+    "coincide-server"
+  ];
 
   nativeBuildInputs = [
     binaryen
