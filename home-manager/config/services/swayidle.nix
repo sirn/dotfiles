@@ -56,7 +56,7 @@ in
 
     timeouts = [
       {
-        timeout = 180;
+        timeout = 600;
         command = "${lib.getExe displayControl} off";
         resumeCommand = "${lib.getExe displayControl} on";
       }

@@ -28,7 +28,7 @@ in
   services.swayidle = {
     timeouts = [
       {
-        timeout = 120;
+        timeout = 300;
         command = "${loginctlBin} lock-session";
       }
     ];

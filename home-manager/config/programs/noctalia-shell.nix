@@ -112,8 +112,8 @@ in
       };
       idle = {
         enabled = true;
-        lockTimeout = "120";
-        screenOffTimeout = "180";
+        lockTimeout = "300";
+        screenOffTimeout = "600";
         suspendTimeout = lib.mkDefault "0";
       };
       nightLight = {

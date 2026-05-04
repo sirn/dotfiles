@@ -13,7 +13,7 @@ in
   services.swayidle = lib.mkIf swayidlecfg.enable {
     timeouts = [
       {
-        timeout = 300;
+        timeout = 900;
         command = "${config.systemd.user.systemctlPath} suspend";
       }
     ];
@@ -22,7 +22,7 @@ in
   programs.noctalia-shell = lib.mkIf noctaliaShellCfg.enable {
     settings = {
       idle = {
-        suspendTimeout = "300";
+        suspendTimeout = "900";
       };
     };
   };
