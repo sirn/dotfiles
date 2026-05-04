@@ -89,6 +89,24 @@ in
         };
       };
 
+      hugepages = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = ''
+            Reserve 1 GiB hugepages at boot for VMs.
+          '';
+        };
+
+        count = lib.mkOption {
+          type = lib.types.ints.positive;
+          default = 1;
+          description = ''
+            Number of 1 GiB hugepages to reserve.
+          '';
+        };
+      };
+
       udev-forwarder = {
         enable = lib.mkOption {
           type = lib.types.bool;
@@ -132,7 +150,13 @@ in
           [ "intel_iommu=on,sm_on" ]
         else
           [ "amd_iommu=on" ]
-      );
+      )
+    ++
+    (lib.optionals cfg.hugepages.enable [
+      "default_hugepagesz=1G"
+      "hugepagesz=1G"
+      "hugepages=${builtins.toString cfg.hugepages.count}"
+    ]);
 
     environment.etc = lib.mkMerge [
       {
