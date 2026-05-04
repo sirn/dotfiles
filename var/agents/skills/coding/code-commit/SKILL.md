@@ -14,8 +14,9 @@ Refer to the `jujutsu` skill for command syntax and **Best Practices** (local co
 
 - You may commit freely — no user approval needed before committing.
 - If a commit needs splitting, use `jj op` to identify the current operation, then attempt `jj split -r <id> -m "<msg>" -- <file>`. Only split the current working-copy commit (`@`); never split existing (parent) commits.
+- Only describe changes visible in `jj diff`. Never mention changes that are NOT in the diff (e.g., if something was removed in a prior commit and doesn't appear in the current diff, don't say "remove ...").
 - Show the user what action you have taken afterward.
-- Ask the user if you're unsure.
+- Confirm with the user if you're unsure.
 
 ## Process
 
@@ -25,7 +26,6 @@ Refer to the `jujutsu` skill for command syntax and **Best Practices** (local co
    - Run `jj log -r ::@ -n 20 --no-graph -T 'description ++ "\n---\n"'` for message style
    - Use `jj diff` for full diff view if needed
    - Analyze: Are changes logically related or distinct? Different subsystems/features? Mixed concerns (refactor + feature, fix + cleanup)?
-   - **IMPORTANT**: Only describe changes visible in `jj diff`. You may use conversation context to explain changes that ARE present in the diff, but never mention changes that are NOT in the diff (e.g., if something was removed in a prior commit and doesn't appear in the current diff, don't say "remove ...").
 
 2. **Determine if split is needed**:
    - If changes are logically distinct, split them
@@ -36,7 +36,7 @@ Refer to the `jujutsu` skill for command syntax and **Best Practices** (local co
 3. **Execute the commit**:
    - For a single commit: `jj commit -m "<message>"`
    - Use `jj describe <id> -m "<message>"` only when updating a description without moving on
-   - Keep commit messages concise:
+   - Keep commit messages short and concise:
      - Subject line: 50-72 characters max (Git standard)
      - Use imperative mood ("add feature" not "added feature")
      - Body: explain "what" and "why", not "how"
@@ -50,8 +50,7 @@ Refer to the `jujutsu` skill for command syntax and **Best Practices** (local co
 
 ## Output Format
 
-When analyzing, provide:
+For each commit:
 
-1. **Suggested commit message** following repo's existing style
-2. **Should split?** Yes/No with reasoning
-3. If split recommended: how to split (files/hunks per commit), message for each, `jj` commands
+1. **Commit message** following repo's existing style
+2. If the commit has been split: the reasoning and scope of the commit
