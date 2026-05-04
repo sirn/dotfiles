@@ -425,15 +425,15 @@ def _session_call(name: str, op: dict[str, Any], timeout_s: float = 60.0) -> Any
         )
     try:
         sock.sendall((json.dumps(op) + "\n").encode())
-        chunks: list[bytes] = []
+        buf = b""
         while True:
-            buf = sock.recv(65536)
-            if not buf:
+            chunk = sock.recv(65536)
+            if not chunk:
                 break
-            chunks.append(buf)
-            if buf.endswith(b"\n") and b"\n" in b"".join(chunks):
+            buf += chunk
+            if b"\n" in buf:
                 break
-        line = b"".join(chunks).split(b"\n", 1)[0]
+        line = buf.split(b"\n", 1)[0]
     finally:
         sock.close()
     resp = json.loads(line)
