@@ -16,6 +16,10 @@ Another agent (the "primary agent") has requested to execute a shell command. Th
 
 {CONTEXT_HINT}
 
+## Commands Context
+
+{COMMANDS_CONTEXT}
+
 ## Evaluation Criteria
 
 Auto-approve (`allow`) ONLY if ALL of the following hold:

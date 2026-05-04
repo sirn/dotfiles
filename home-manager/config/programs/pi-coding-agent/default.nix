@@ -106,6 +106,7 @@ let
 
   policyAutoModePrompt = builtins.readFile ./POLICY_AUTO_MODE.md;
   policyAutoModePlanContext = builtins.readFile ./POLICY_AUTO_MODE.PLAN_CONTEXT.md;
+  policyAutoModeExtraCommands = lib.strings.trim agentsCfg.commandContext;
 in
 
 {
@@ -169,5 +170,8 @@ in
       ".pi/agent/custom/execution-policy/POLICY_AUTO_MODE.md".text = policyAutoModePrompt;
       ".pi/agent/custom/execution-policy/POLICY_AUTO_MODE.PLAN_CONTEXT.md".text =
         policyAutoModePlanContext;
+      ".pi/agent/custom/execution-policy/POLICY_AUTO_MODE.COMMANDS_CONTEXT.md".text = lib.mkIf (
+        policyAutoModeExtraCommands != ""
+      ) policyAutoModeExtraCommands;
     };
 }

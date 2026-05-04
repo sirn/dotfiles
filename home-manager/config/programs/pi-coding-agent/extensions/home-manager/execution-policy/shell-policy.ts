@@ -134,6 +134,22 @@ function loadContextTemplate(mode: string): string {
 const autoModeConfig = loadAutoModeConfig();
 const autoModePromptTemplate = autoModeConfig ? loadAutoModePrompt() : null;
 
+const NO_COMMANDS_CONTEXT =
+  "No commands context available. Evaluate the command against the general evaluation criteria only.";
+const commandsContextText: string = (() => {
+  try {
+    const text = fs
+      .readFileSync(
+        path.join(EXT_DIR, "POLICY_AUTO_MODE.COMMANDS_CONTEXT.md"),
+        "utf-8",
+      )
+      .trim();
+    return text || NO_COMMANDS_CONTEXT;
+  } catch {
+    return NO_COMMANDS_CONTEXT;
+  }
+})();
+
 interface AutoModeDecision {
   decision: "allow" | "ask";
   reason: string;
@@ -199,7 +215,8 @@ async function evaluateAutoMode(
   const promptText = autoModePromptTemplate
     .replaceAll("{CONTEXT_HINT}", contextHint)
     .replaceAll("{COMMAND}", command)
-    .replaceAll("{CWD}", ctx.cwd || "(unknown)");
+    .replaceAll("{CWD}", ctx.cwd || "(unknown)")
+    .replaceAll("{COMMANDS_CONTEXT}", commandsContextText);
 
   // Cap the evaluation so a stalled model doesn't block the tool call.
   const signals: AbortSignal[] = [

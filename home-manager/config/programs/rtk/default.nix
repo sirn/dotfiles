@@ -192,7 +192,16 @@ in
   };
 
   agents.skillSets.rtk = rtkSkillSet;
+
   agents.instructionText = lib.mkAfter rtkInstructionText;
+
+  agents.commandContext = lib.mkAfter ''
+    `rtk` optimizes shell output for agent sessions by rewriting commands to compact subcommands.
+    - `rtk <subcommand> <args>` rewrites common commands (cat, ls, git, etc.) for compact output
+    - All `rtk` subcommands are read-only and idempotent — they do not modify files on disk
+    - RTK is transparent: `rtk grep` is equivalent to `grep` but with filtered output
+    - RTK commands are one-shot transformations; there is no background daemon
+  '';
 
   # OpenCode evaluates permissions on the rewritten command (after tool.execute.before hook),
   # not the original. These entries allow RTK-rewritten commands to pass permission checks.

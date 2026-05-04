@@ -133,6 +133,16 @@ in
       description = "Shared instruction text (AGENTS.md) for all agents.";
     };
 
+    commandContext = lib.mkOption {
+      type = lib.types.lines;
+      default = "";
+      description = ''
+        Safety and behavioral descriptions for allowed commands.
+        Each contribution describes what a command does, whether it is
+        read-only, and any side effects it may have.
+      '';
+    };
+
     skillSets = lib.mkOption {
       type = lib.types.attrsOf skillSetType;
       default = { };

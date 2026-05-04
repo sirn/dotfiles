@@ -118,7 +118,10 @@ export default function (pi: ExtensionAPI) {
           pendingPlanExecution = {
             planContent: data.planContent,
             modelSelection,
-            userMessage: typeof data.userMessage === "string" ? data.userMessage : undefined,
+            userMessage:
+              typeof data.userMessage === "string"
+                ? data.userMessage
+                : undefined,
           };
         }
       }
