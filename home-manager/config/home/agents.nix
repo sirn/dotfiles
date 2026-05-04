@@ -5,6 +5,7 @@
     ../programs/claude-code
     ../programs/codex
     ../programs/gemini
+    ../programs/lsp-cli.nix
     ../programs/mcp.nix
     ../programs/opencode
     ../programs/pi-coding-agent
