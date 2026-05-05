@@ -90,7 +90,7 @@ in
             id = "audio-card";
           }
           {
-            enabled = false;
+            enabled = true;
             id = "brightness-card";
           }
           {
@@ -129,6 +129,9 @@ in
         directory = "${config.home.homeDirectory}/Pictures/Wallpapers";
         randomIntervalSec = 1800;
         wallpaperChangeMode = "random";
+      };
+      brightness = {
+        enableDdcSupport = true;
       };
     };
   };
