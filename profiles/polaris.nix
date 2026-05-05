@@ -24,6 +24,7 @@
         # programs
         ../nixos/config/programs/1password.nix
         ../nixos/config/programs/appimage.nix
+        ../nixos/config/programs/ddcutil.nix
 
         # services
         ../nixos/config/services/flatpak.nix
