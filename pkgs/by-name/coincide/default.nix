@@ -14,7 +14,7 @@
 
 let
   pname = "coincide";
-  version = "0.1.1";
+  version = "0.1.2";
   wasm-bindgen-cli = buildWasmBindgenCli rec {
     src = fetchCrate {
       pname = "wasm-bindgen-cli";
@@ -35,7 +35,7 @@ rustPlatform.buildRustPackage {
     owner = "~sirn";
     repo = "coincide";
     rev = "v${version}";
-    hash = "sha256-rvg+9ljy+CeUSBJ+il9KiJ6ifdhdgFFjeFyAWO0Y0w8=";
+    hash = "sha256-6bU7qvuxC2+LdsTQsmx81HT2/ar07r0qLQpTlI3gr8Q=";
   };
 
   buildFeatures = [ "embed-assets" ];
