@@ -32,7 +32,8 @@ Clean up code by applying small, behavior-preserving fixes until additional chan
    - Prefer existing project patterns over external preferences.
 
 3. Establish safety baseline:
-   - Capture the current diff and run targeted tests or checks when feasible, so regressions can be detected.
+   - Read the `code-test` skill to detect the project's test/lint commands.
+   - Capture the current diff and run targeted tests or checks, so regressions can be detected.
 
 4. Find cleanup candidates:
    - Redundancies: duplicate logic, repeated conditions, unused imports, shadowed variables.
@@ -64,7 +65,7 @@ Clean up code by applying small, behavior-preserving fixes until additional chan
 - Do not fix unrelated issues outside the defined scope.
 - Do not delete code unless usage search and build evidence support removal, or the user explicitly asked.
 - Preserve public behavior and test outcomes.
-- Do not invoke, call, or depend on other skills from within this skill.
+- Do not invoke or call other skills from within this skill; reading `code-test` for command detection is allowed.
 
 ## Output
 

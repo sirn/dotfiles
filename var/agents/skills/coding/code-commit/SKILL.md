@@ -7,28 +7,32 @@ Commit current changes using Jujutsu (jj).
 
 ## Important
 
-**IMPORTANT**: Always use `jj` (Jujutsu) commands. Only fall back to `git` if jj is not available.
-Refer to the `jujutsu` skill for command syntax and **Best Practices** (local commit autonomy, revision references, logical grouping, etc.).
+**IMPORTANT**: Before running any `jj` command, read the `jujutsu` skill first for current command syntax,
+revision references, local commit autonomy rules, and logical grouping best practices.
 
-## Policy
-
-- You may commit freely — no user approval needed before committing.
-- If a commit needs splitting, use `jj op` to identify the current operation, then attempt `jj split -r <id> -m "<msg>" -- <file>`. Only split the current working-copy commit (`@`); never split existing (parent) commits.
-- Only describe changes visible in `jj diff`. Never mention changes that are NOT in the diff (e.g., if something was removed in a prior commit and doesn't appear in the current diff, don't say "remove ...").
-- Show the user what action you have taken afterward.
-- Confirm with the user if you're unsure.
+**IMPORTANT**: The commit message MUST be derived primarily from the diff itself (`jj diff`).
+The current conversation context (what the user asked for) is a secondary source only;
+it MUST NOT override or replace what the diff actually shows. If the diff contains
+changes not mentioned in the conversation, include them. If the conversation mentions
+changes NOT in the diff, DO NOT include them.
 
 ## Process
 
+0. **Load the jujutsu skill**:
+   - Read the `jujutsu` skill file before running any `jj` commands.
+   - Follow its Best Practices for local commit autonomy, revision references, and logical grouping.
+
 1. **Analyze changes**:
    - Run `jj diff -s` to see changed files
+   - Run `jj diff` for the full diff
    - If the user specified specific files or paths, focus on those
-   - Run `jj log -r ::@ -n 20 --no-graph -T 'description ++ "\n---\n"'` for message style
-   - Use `jj diff` for full diff view if needed
-   - Analyze: Are changes logically related or distinct? Different subsystems/features? Mixed concerns (refactor + feature, fix + cleanup)?
+   - Run `jj log -r ::@ -n 20 --no-graph -T 'description ++ "\n---\n"'` to extract the commit message CONVENTION:
+     - Identify the scope prefix pattern: analyze how existing commits structure their subject line — look for recurring prefixes (e.g., path-based like `<dir>/<name>:`, module names, component names, or conventional prefixes like `feat:`, `fix:`)
+     - Identify whether conventional commit prefixes (feat:, fix:, chore:) are used — if they are absent, DO NOT add them
+     - Note the mood and separator conventions from existing commits
 
 2. **Determine if split is needed**:
-   - If changes are logically distinct, split them
+   - If changes are logically distinct (different subsystems, features, or concerns), split them
    - Use `jj op` to note the current operation ID (for rollback if split goes wrong)
    - Execute `jj split -r <id> -m "<commit-message>" -- <file>` for each split
    - Do not use interactive `jj split`
@@ -36,21 +40,16 @@ Refer to the `jujutsu` skill for command syntax and **Best Practices** (local co
 3. **Execute the commit**:
    - For a single commit: `jj commit -m "<message>"`
    - Use `jj describe <id> -m "<message>"` only when updating a description without moving on
-   - Keep commit messages short and concise:
-     - Subject line: 50-72 characters max (Git standard)
-     - Use imperative mood ("add feature" not "added feature")
-     - Body: explain "what" and "why", not "how"
-   - Try to include a short summary of the change in the commit description, including "why" if available.
+   - Subject line: <= 70 characters
+   - Body (optional): explain "what" and "why" in <= 70 character lines
    - After `jj commit`, the new working copy (`@`) is ready for new changes.
-   - After committing, run `jj log -r @- -n 1` to confirm
+4. **Verify line lengths**:
+   - After committing, verify that every line in the commit message is <= 70 characters:
+     ```bash
+     jj log -r @- -n 1 --no-graph -T 'description' | awk '{ if (length($0) > 70) print "LINE TOO LONG (" length($0) "): " $0; else printf "%3d OK: %s\n", length($0), $0 }'
+     ```
+   - If any line exceeds 70 characters, immediately fix it with `jj describe @- -m "<fixed-message>"`
 
-4. **Report what you did**:
+5. **Report what you did**:
    - Show the resulting commit(s) with `jj log -r @- -n 1` (or more if split)
-   - Summarize the action taken (committed, split into N commits, etc.)
-
-## Output Format
-
-For each commit:
-
-1. **Commit message** following repo's existing style
-2. If the commit has been split: the reasoning and scope of the commit
+   - For each commit, show its message and, if split, the reasoning and scope

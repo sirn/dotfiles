@@ -21,4 +21,4 @@ Troubleshoot a problem by researching the error and proposing a minimal fix.
 1. **Likely cause**
 2. **Evidence** (links or doc references)
 3. **Fix**
-4. **Verify**
+4. **Verify** — use `code-test` skill to detect and run the project's test command.

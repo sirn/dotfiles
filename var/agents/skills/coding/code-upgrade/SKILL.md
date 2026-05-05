@@ -26,7 +26,7 @@ Ask the user to clarify what they want to upgrade if it is not already clear:
    - Rust: `Cargo.toml`, `Cargo.lock`.
    - Go: `go.mod`, `go.sum`.
    - Ruby: `Gemfile`, `Gemfile.lock`.
-   - Nix: `flake.nix`, `flake.lock`, `shell.nix`.
+   - Nix: `flake.nix`, `flake.lock`, `shell.nix`; read the `nix` and `flake` skills.
 2. Read dependency files and identify current versions.
 3. Identify existing test, lint/check, build, and formatter commands from instructions, task runners, wrappers, and package manager scripts.
 4. Note lockfiles but do not edit them manually.

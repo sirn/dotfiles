@@ -31,7 +31,7 @@ Run project validation commands and diagnose failures.
    - Go: `go test ./...`, `golangci-lint run`, `gofmt -w` only when formatting was requested.
    - Rust: `cargo test`, `cargo clippy`, `cargo fmt --check`.
    - Ruby: `bundle exec rake test`, `bundle exec rspec`, `bundle exec rubocop`.
-   - Nix: `nix flake check path:.` for flakes; use `path:.`.
+   - Nix: `nix flake check path:.` for flakes; use `path:`. Read the `flake` skill first.
 
 3. Run the selected command(s):
    - Prefer the most specific command that covers the requested files or changes.

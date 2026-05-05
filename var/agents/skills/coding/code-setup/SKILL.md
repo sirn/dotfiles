@@ -5,6 +5,13 @@ description: Analyze project tooling and set up development helpers such as wrap
 
 Set up or analyze a project development environment.
 
+## Prerequisites
+
+For **Flake** and **Add Nix Package** modes, reference these skills first:
+
+- Read `nix` skill for nix-shell, package lookup, and Nix string escaping.
+- Read `flake` skill for `path:.` usage, devShell patterns, and flake templates.
+
 ## Modes
 
 - **Analyze**: Detect project type, tooling, workflows, wrappers, and package managers.
