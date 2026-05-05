@@ -13,6 +13,7 @@
 
     # programs
     ./programs/aria2.nix
+    ./programs/coincide.nix
     ./programs/ast-grep.nix
     ./programs/atuin.nix
     ./programs/bash.nix

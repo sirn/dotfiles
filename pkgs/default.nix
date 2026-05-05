@@ -10,6 +10,8 @@ in
 
   asdcontrol = (callPackage ./by-name/asdcontrol { });
 
+  coincide = (callPackage ./by-name/coincide { });
+
   emacsPackages = {
     phscroll = (callPackage ./by-name/emacs/elisp-packages/phscroll/package.nix { });
   };
