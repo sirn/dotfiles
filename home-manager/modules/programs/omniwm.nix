@@ -640,6 +640,9 @@ in
           // lib.optionalAttrs (ws.displayName != null) { inherit (ws) displayName; }
         ) cfg.workspaces;
       };
+
+      # OmniWM loves writing to its own config. Please don't.
+      file.".config/omniwm/settings.toml".force = true;
     };
 
     launchd.agents.omniwm = {

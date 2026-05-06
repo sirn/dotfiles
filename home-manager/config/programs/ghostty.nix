@@ -102,4 +102,7 @@ in
       };
     };
   };
+
+  # Ghostty loves writing to its own config. Please don't.
+  xdg.configFile."ghostty/config".force = lib.mkIf cfg.enable true;
 }
