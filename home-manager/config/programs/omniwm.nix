@@ -19,7 +19,8 @@
     };
 
     focus = {
-      followsMouse = true;
+      # Focus Follows Mouse on OmniWM is weird can cause some menu to lose focus
+      followsMouse = false;
       followsWindowToMonitor = false;
       moveMouseToFocusedWindow = false;
     };
