@@ -20,7 +20,7 @@ changes NOT in the diff, DO NOT include them.
 
 0. **Load the jujutsu skill**:
    - Read the `jujutsu` skill file before running any `jj` commands.
-   - Follow its Best Practices for local commit autonomy, revision references, and logical grouping.
+   - Follow its Best Practices for local commit autonomy, revision references, logical grouping, and commit message style.
 
 1. **Analyze changes**:
    - Run `jj diff -s` to see changed files
@@ -40,8 +40,7 @@ changes NOT in the diff, DO NOT include them.
 3. **Execute the commit**:
    - For a single commit: `jj commit -m "<message>"`
    - Use `jj describe <id> -m "<message>"` only when updating a description without moving on
-   - Subject line: <= 70 characters
-   - Body (optional): explain "what" and "why" in <= 70 character lines
+   - Follow the `jujutsu` skill's **Commit Messages** best practice for line length and style.
    - After `jj commit`, the new working copy (`@`) is ready for new changes.
 4. **Verify line lengths**:
    - After committing, verify that every line in the commit message is <= 70 characters:

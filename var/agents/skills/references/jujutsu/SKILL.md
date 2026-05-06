@@ -17,6 +17,7 @@ Working copy is always a commit. Changes are first-class with stable IDs across 
 - **Revision References**: Use `@`, `@-`, and revsets for immediate one-off commands when they are clear. Use explicit change IDs for scripts, multi-step instructions, destructive operations, and commands where the target could become ambiguous.
 - **Splitting**: Use `jj split -r <change-id> -m "<commit-message>" -- <file>`; do not use interactive `jj split`.
 - **Squashing**: Use `jj squash --from <from-id> --to <to-id>` instead of implicit `jj squash`. Always squash **from newer to older** (descendant into ancestor) to avoid conflicts. Squashing older into newer (e.g. `--from <base> --to <head>`) rewrites the head's ancestors while descendants still reference the old state, causing conflicts in every downstream commit.
+- **Commit Messages**: Keep subject line <= 70 characters; body lines <= 70 characters. Use imperative mood ("add feature" not "added feature"). Explain "what" and "why", not "how".
 
 ### Key Concepts
 
