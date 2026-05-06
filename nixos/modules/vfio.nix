@@ -166,7 +166,7 @@ in
           '';
         };
       }
-      (lib.mkIf (cfg.nested.enable && cfg.iommuType == "intel") {
+      (lib.mkIf (cfg.nested.enable && lib.elem cfg.iommuType [ "intel" "intel_sm" ]) {
         "modprobe.d/kvm_intel.conf" = {
           text = ''
             options kvm_intel nested=1
