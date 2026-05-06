@@ -43,11 +43,11 @@ changes NOT in the diff, DO NOT include them.
    - Follow the `jujutsu` skill's **Commit Messages** best practice for line length and style.
    - After `jj commit`, the new working copy (`@`) is ready for new changes.
 4. **Verify line lengths**:
-   - After committing, verify that every line in the commit message is <= 70 characters:
+   - After committing, verify that every line in the commit message is <= 72 characters:
      ```bash
-     jj log -r @- -n 1 --no-graph -T 'description' | awk '{ if (length($0) > 70) print "LINE TOO LONG (" length($0) "): " $0; else printf "%3d OK: %s\n", length($0), $0 }'
+     jj log -r @- -n 1 --no-graph -T 'description' | awk '{ if (length($0) > 72) print "LINE TOO LONG (" length($0) "): " $0; else printf "%3d OK: %s\n", length($0), $0 }'
      ```
-   - If any line exceeds 70 characters, immediately fix it with `jj describe @- -m "<fixed-message>"`
+   - If any line exceeds 72 characters, immediately fix it with `jj describe @- -m "<fixed-message>"`
 
 5. **Report what you did**:
    - Show the resulting commit(s) with `jj log -r @- -n 1` (or more if split)
