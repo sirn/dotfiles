@@ -103,6 +103,21 @@ let
         default = null;
         description = "OpenCode-specific model overrides.";
       };
+      compatibility = lib.mkOption {
+        type = lib.types.nullOr (
+          lib.types.submodule {
+            options = {
+              developerRole = lib.mkOption {
+                type = lib.types.nullOr lib.types.bool;
+                default = null;
+                description = "Override provider developer role support for this model. Null inherits from provider.";
+              };
+            };
+          }
+        );
+        default = null;
+        description = "Model-level compatibility flags overriding provider defaults.";
+      };
     };
   };
 

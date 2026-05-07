@@ -22,6 +22,16 @@ let
     else
       null;
 
+  # Build model-level compat attrset (only when explicitly set)
+  mkModelCompat =
+    m:
+    let
+      c = m.compatibility;
+    in
+    lib.optionalAttrs (c != null) (
+      lib.optionalAttrs (c.developerRole != null) { supportsDeveloperRole = c.developerRole; }
+    );
+
   # Transform module model to Pi format
   toPiModel =
     p: m:
@@ -40,7 +50,8 @@ let
       };
     }
     // lib.optionalAttrs (m.api != null) { api = m.api; }
-    // lib.optionalAttrs (resolvePiBaseUrl p m != null) { baseUrl = resolvePiBaseUrl p m; };
+    // lib.optionalAttrs (resolvePiBaseUrl p m != null) { baseUrl = resolvePiBaseUrl p m; }
+    // lib.optionalAttrs (mkModelCompat m != { }) { compat = mkModelCompat m; };
 
   # Build provider config from agents.models
   mkPiProvider =
