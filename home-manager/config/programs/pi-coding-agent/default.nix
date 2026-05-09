@@ -75,31 +75,19 @@ in
 
     instructionText = agentsMdText;
 
-    settings = lib.mkMerge [
-      {
-        quietStartup = true;
-        hideThinkingBlock = false;
-        theme = config.home.colors.variant;
-        retry = {
-          maxRetries = 10;
-          maxDelayMs = 0;
-        };
-      }
-      (lib.mkIf (agentsCfg.models.default != null) {
-        defaultProvider = agentsCfg.models.default.provider;
-        defaultModel = agentsCfg.models.default.model;
-      })
-      (lib.mkIf
-        (
-          agentsCfg.models.default != null
-          && builtins.hasAttr agentsCfg.models.default.provider agentsCfg.models.providers
-        )
-        {
-          defaultThinkingLevel =
-            agentsCfg.models.providers.${agentsCfg.models.default.provider}.reasoningEffort;
-        }
-      )
-    ];
+    settings = {
+      quietStartup = true;
+      hideThinkingBlock = false;
+      theme = config.home.colors.variant;
+      retry = {
+        maxRetries = 10;
+        maxDelayMs = 0;
+      };
+    };
+
+    defaultProvider = lib.mkDefault "google";
+    defaultModel = lib.mkDefault "gemini-3-flash-preview";
+    defaultThinkingLevel = lib.mkDefault "high";
 
   };
 

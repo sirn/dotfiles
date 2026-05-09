@@ -12,8 +12,5 @@
       color = "green";
       model = "sonnet";
     };
-    opencode = {
-      model = "google/gemini-3-flash-preview";
-    };
   };
 }

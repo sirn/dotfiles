@@ -63,6 +63,30 @@ in
       '';
     };
 
+    defaultProvider = lib.mkOption {
+      type = lib.types.str;
+      default = "google";
+      description = ''
+        Default provider ID for Pi sessions.
+      '';
+    };
+
+    defaultModel = lib.mkOption {
+      type = lib.types.str;
+      default = "gemini-3-flash-preview";
+      description = ''
+        Default model ID for Pi sessions.
+      '';
+    };
+
+    defaultThinkingLevel = lib.mkOption {
+      type = lib.types.str;
+      default = "high";
+      description = ''
+        Default reasoning effort level (high, medium, low, off).
+      '';
+    };
+
     extensionCustom = lib.mkOption {
       type = lib.types.attrsOf (pkgs.formats.json { }).type;
       default = { };
@@ -90,7 +114,15 @@ in
     programs.git.ignores = [ ".pi/" ];
 
     home.file = {
-      ".pi/agent/settings.json".text = builtins.toJSON (cfg.settings // { extensions = cfg.extensions; });
+      ".pi/agent/settings.json".text = builtins.toJSON (
+        cfg.settings
+        // {
+          extensions = cfg.extensions;
+          defaultProvider = cfg.defaultProvider;
+          defaultModel = cfg.defaultModel;
+          defaultThinkingLevel = cfg.defaultThinkingLevel;
+        }
+      );
       ".pi/agent/AGENTS.md".text = cfg.instructionText;
     }
     // lib.optionalAttrs (cfg.providers != { }) {

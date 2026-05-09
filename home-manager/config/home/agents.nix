@@ -3,11 +3,9 @@
     ../agents
     ../programs/brave-search-cli.nix
     ../programs/claude-code
-    ../programs/codex
     ../programs/gemini
     ../programs/lsp-cli.nix
     ../programs/mcp.nix
-    ../programs/opencode
     ../programs/pi-coding-agent
     ../programs/rtk
     ../programs/web-cli.nix

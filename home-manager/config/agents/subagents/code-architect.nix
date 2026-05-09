@@ -16,8 +16,5 @@
       color = "orange";
       model = "opus";
     };
-    opencode = {
-      model = "google/gemini-3-pro-preview";
-    };
   };
 }

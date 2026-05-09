@@ -98,11 +98,6 @@ let
         default = null;
         description = "Pi-specific model overrides.";
       };
-      opencode = lib.mkOption {
-        type = lib.types.nullOr agentOverrideType;
-        default = null;
-        description = "OpenCode-specific model overrides.";
-      };
       compatibility = lib.mkOption {
         type = lib.types.nullOr (
           lib.types.submodule {
@@ -168,11 +163,6 @@ let
         default = null;
         description = "Pi-specific provider overrides.";
       };
-      opencode = lib.mkOption {
-        type = lib.types.nullOr agentOverrideType;
-        default = null;
-        description = "OpenCode-specific provider overrides.";
-      };
     };
   };
 
@@ -189,31 +179,6 @@ let
       model = lib.mkOption {
         type = lib.types.str;
         description = "Model ID to use for this subagent.";
-      };
-    };
-  };
-
-  opencodeAgentType = lib.types.submodule {
-    options = {
-      model = lib.mkOption {
-        type = lib.types.str;
-        default = "";
-        description = "Model ID to use for OpenCode subagent.";
-      };
-      primary = lib.mkOption {
-        type = lib.types.bool;
-        default = false;
-        description = "Whether this is the primary subagent.";
-      };
-      mode = lib.mkOption {
-        type = lib.types.nullOr lib.types.str;
-        default = null;
-        description = "Operating mode for the subagent.";
-      };
-      permission = lib.mkOption {
-        type = lib.types.nullOr lib.types.attrs;
-        default = null;
-        description = "Permission configuration for the subagent.";
       };
     };
   };
@@ -240,11 +205,6 @@ let
         type = lib.types.nullOr claudeCodeAgentType;
         default = null;
         description = "Claude Code-specific configuration.";
-      };
-      opencode = lib.mkOption {
-        type = lib.types.nullOr opencodeAgentType;
-        default = null;
-        description = "OpenCode-specific configuration.";
       };
     };
   };
