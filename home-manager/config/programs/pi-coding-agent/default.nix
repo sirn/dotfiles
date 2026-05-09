@@ -9,7 +9,6 @@ let
   cfg = config.programs.pi-coding-agent;
   agentsCfg = config.agents;
 
-
   wrappedPi = pkgs.writeScriptBin "pi" ''
     #!${pkgs.runtimeShell}
     export PI_SKIP_VERSION_CHECK=1

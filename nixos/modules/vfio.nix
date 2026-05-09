@@ -166,16 +166,25 @@ in
           '';
         };
       }
-      (lib.mkIf (cfg.nested.enable && lib.elem cfg.iommuType [ "intel" "intel_sm" ]) {
-        "modprobe.d/kvm_intel.conf" = {
-          text = ''
-            options kvm_intel nested=1
-            options kvm_intel enable_shadow_vmcs=1
-            options kvm_intel enable_apicv=1
-            options kvm_intel ept=1
-          '';
-        };
-      })
+      (lib.mkIf
+        (
+          cfg.nested.enable
+          && lib.elem cfg.iommuType [
+            "intel"
+            "intel_sm"
+          ]
+        )
+        {
+          "modprobe.d/kvm_intel.conf" = {
+            text = ''
+              options kvm_intel nested=1
+              options kvm_intel enable_shadow_vmcs=1
+              options kvm_intel enable_apicv=1
+              options kvm_intel ept=1
+            '';
+          };
+        }
+      )
       (lib.mkIf (cfg.nested.enable && cfg.iommuType == "amd") {
         "modprobe.d/kvm_amd.conf" = {
           text = ''
