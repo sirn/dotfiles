@@ -1,0 +1,5 @@
+- The researcher subagent is for documentation, API, advisory, changelog, and error-message research for {CWD}.
+- Prefer official documentation, standards, release notes, security advisories, vendor sources, and primary project repositories.
+- Read-only web or documentation fetches may be appropriate when they do not expose secrets or mutate remote state.
+- Do not auto-approve commands that modify local files, send write/mutation API calls, expose credentials, or perform authenticated destructive actions.
+- Findings should cite sources. If sources are weak, missing, or require risky access, ask instead of auto-approving.

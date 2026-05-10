@@ -34,17 +34,17 @@ let
       redirects = perms.default.redirects;
       heredocs = perms.default.heredocs;
     };
-    modes.plan = {
-      tools = perms.modes.plan.tools;
+    modes = lib.mapAttrs (_name: modePerms: {
+      tools = modePerms.tools;
       commands = {
-        deny = perms.modes.plan.commands.deny;
-        ask = perms.modes.plan.commands.ask;
-        allow = perms.modes.plan.commands.allow;
+        deny = modePerms.commands.deny;
+        ask = modePerms.commands.ask;
+        allow = modePerms.commands.allow;
       };
-      wrappers = perms.default.wrappers ++ perms.modes.plan.wrappers;
-      redirects = perms.modes.plan.redirects;
-      heredocs = perms.modes.plan.heredocs;
-    };
+      wrappers = perms.default.wrappers ++ modePerms.wrappers;
+      redirects = if modePerms.redirects != { } then modePerms.redirects else perms.default.redirects;
+      heredocs = if modePerms.heredocs != { } then modePerms.heredocs else perms.default.heredocs;
+    }) perms.modes;
   };
 
   # Write JSON file to store path (safer than echo in shell)
@@ -61,8 +61,17 @@ let
   };
 
   policyAutoModePrompt = builtins.readFile ./POLICY_AUTO_MODE.md;
-  policyAutoModePlanContext = builtins.readFile ./POLICY_AUTO_MODE.PLAN_CONTEXT.md;
   policyAutoModeExtraCommands = lib.strings.trim agentsCfg.commandContext;
+  policyAutoModeContextFiles = lib.filterAttrs (
+    name: type:
+    type == "regular" && lib.hasPrefix "POLICY_AUTO_MODE." name && lib.hasSuffix "_CONTEXT.md" name
+  ) (builtins.readDir ./.);
+  policyAutoModeContextFileEntries = lib.mapAttrs' (
+    name: _:
+    lib.nameValuePair ".pi/agent/custom/execution-policy/${name}" {
+      text = builtins.readFile (./. + "/${name}");
+    }
+  ) policyAutoModeContextFiles;
 
   # Generate pi-compatible agent markdown files from subagent configs
   piAgentMdFiles = builtins.listToAttrs (
@@ -140,11 +149,10 @@ in
       ".pi/agent/custom/execution-policy/PLAN_ACCEPT.md".text = planModeTemplates.accept;
       ".pi/agent/custom/execution-policy/PLAN_INJECT.md".text = planModeTemplates.subsequent;
       ".pi/agent/custom/execution-policy/POLICY_AUTO_MODE.md".text = policyAutoModePrompt;
-      ".pi/agent/custom/execution-policy/POLICY_AUTO_MODE.PLAN_CONTEXT.md".text =
-        policyAutoModePlanContext;
       ".pi/agent/custom/execution-policy/POLICY_AUTO_MODE.COMMANDS_CONTEXT.md".text = lib.mkIf (
         policyAutoModeExtraCommands != ""
       ) policyAutoModeExtraCommands;
     }
+    // policyAutoModeContextFileEntries
     // piAgentMdFiles;
 }

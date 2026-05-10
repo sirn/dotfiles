@@ -1,0 +1,4 @@
+- The command is being evaluated for a delegated subagent working in {CWD}.
+- Subagents inherit the parent execution mode stack and restrictions; do not treat delegation as broader permission.
+- Auto-approval should be conservative because the parent may not see every subagent detail.
+- Read-only inspection commands are usually safer. Mutation commands require a more specific subagent mode context and policy.

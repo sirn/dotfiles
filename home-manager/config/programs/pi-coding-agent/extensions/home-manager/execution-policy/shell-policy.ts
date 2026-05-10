@@ -26,13 +26,14 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import {
   evaluate,
-  mergePolicies,
-  mergeEvaluationPolicies,
+  mergePoliciesStrict,
+  mergeEvaluationPolicyStackStrict,
   normalizeUnifiedPolicyConfig,
   normalizeShellPolicyConfig,
   getCommandSummary,
   type EvalResult,
   type EvaluationPolicy,
+  type ModePolicy,
   type PolicyCommands,
   type WrapperRuleConfig,
 } from "./lib/shell-policy.js";
@@ -319,7 +320,7 @@ async function confirmCommand(
   if (!ctx.hasUI) {
     return {
       block: true,
-      reason: `Command blocked (no UI for confirmation): "${getCommandSummary(command)}"`,
+      reason: `Command blocked (no UI available)${formatTriggerReason(result)}`,
     };
   }
 
@@ -354,8 +355,11 @@ function formatTriggerReason(result: EvalResult): string {
 }
 
 function buildContextHint(ctx: ExtensionContext): string {
-  const { mode } = getExecutionMode(ctx);
-  const template = loadContextTemplate(mode);
+  let template = "";
+  for (const mode of getExecutionMode(ctx).modes) {
+    const candidate = loadContextTemplate(mode);
+    if (candidate.trim()) template = candidate;
+  }
   if (template) {
     return template.replaceAll("{CWD}", ctx.cwd ?? "(unknown)");
   }
@@ -383,25 +387,41 @@ export default function (pi: ExtensionAPI) {
     );
   }
 
-  pi.on("tool_call", async (event, ctx) => {
-    const { mode: currentMode, policyOverride } = getExecutionMode(ctx);
-    const modePolicy = globalUnified.modes?.[currentMode];
+  function mergeToolAllowedStrict(
+    toolName: string,
+    policies: ModePolicy[],
+  ): boolean | undefined {
+    let sawOpinion = false;
+    let allowed = true;
+    for (const policy of policies) {
+      const value = policy.tools?.[toolName];
+      if (value === undefined) continue;
+      sawOpinion = true;
+      if (value === false) allowed = false;
+    }
+    return sawOpinion ? allowed : undefined;
+  }
 
-    // --- Write/Edit tool blocking based on mode's tools config ---
+  pi.on("tool_call", async (event, ctx) => {
+    const executionMode = getExecutionMode(ctx);
+    const { policyOverride } = executionMode;
+    const modePolicies = executionMode.modes
+      .map((mode) => globalUnified.modes?.[mode])
+      .filter((policy): policy is ModePolicy => Boolean(policy));
+
+    // --- Write/Edit tool blocking based on mode stack's tools config ---
     if (event.toolName === "write" || event.toolName === "edit") {
-      if (modePolicy?.tools) {
-        const toolAllowed = modePolicy.tools[event.toolName] ?? true;
-        if (!toolAllowed) {
-          // Check if this path is explicitly allowed by policy override
-          const targetPath = event.input?.path as string | undefined;
-          if (isPathAllowed(event.toolName, targetPath, policyOverride)) {
-            return undefined; // Allow this specific path
-          }
-          return {
-            block: true,
-            reason: `Tool "${event.toolName}" blocked by "${currentMode}" mode policy`,
-          };
+      const toolAllowed = mergeToolAllowedStrict(event.toolName, modePolicies);
+      if (toolAllowed === false) {
+        // Check if this path is explicitly allowed by policy override
+        const targetPath = event.input?.path as string | undefined;
+        if (isPathAllowed(event.toolName, targetPath, policyOverride)) {
+          return undefined; // Allow this specific path
         }
+        return {
+          block: true,
+          reason: `Tool "${event.toolName}" blocked by execution mode policy`,
+        };
       }
       return undefined; // No opinion on write/edit otherwise
     }
@@ -413,13 +433,16 @@ export default function (pi: ExtensionAPI) {
     const command = event.input.command;
     const projectPolicy = getProjectPolicy(ctx.cwd);
 
-    // Merge: default + mode + project
-    const basePolicy = mergeEvaluationPolicies(
+    // Merge: default + mode stack + project
+    const basePolicy = mergeEvaluationPolicyStackStrict(
       globalUnified.default,
-      modePolicy,
+      modePolicies,
     );
     const mergedPolicy: EvaluationPolicy = {
-      commands: mergePolicies(basePolicy.commands!, projectPolicy.commands),
+      commands: mergePoliciesStrict(
+        basePolicy.commands!,
+        projectPolicy.commands,
+      ),
       redirects: basePolicy.redirects,
       heredocs: basePolicy.heredocs,
       wrappers: [...(basePolicy.wrappers ?? []), ...projectPolicy.wrappers],

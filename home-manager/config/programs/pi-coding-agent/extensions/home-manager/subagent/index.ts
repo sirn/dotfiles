@@ -17,9 +17,9 @@
  * Chain         = steps: [[t1], [t2], [t3]]
  * Fanout        = steps: [[t1, t2], [t3]]
  *
- * Uses JSON mode to capture structured output from subagents.
- * Subagent system prompts (persona) are surfaced back to the main agent
- * via custom message types and styled box renderers.
+ * Uses RPC mode to send tasks and capture structured output from subagents,
+ * including proxied extension UI requests. Subagent system prompts
+ * (persona) are surfaced back to the main agent
  */
 
 import { spawn } from "node:child_process";
@@ -30,6 +30,7 @@ import type { AgentToolResult } from "@mariozechner/pi-agent-core";
 import type { Message } from "@mariozechner/pi-ai";
 import {
   type ExtensionAPI,
+  type ExtensionContext,
   type Theme,
   type ThemeColor,
   keyHint,
@@ -37,9 +38,34 @@ import {
   parseFrontmatter,
   getMarkdownTheme,
   withFileMutationQueue,
+  DEFAULT_MAX_BYTES,
+  DEFAULT_MAX_LINES,
+  formatSize,
+  truncateHead,
 } from "@mariozechner/pi-coding-agent";
 import { Container, Markdown, Spacer, Text, Box } from "@mariozechner/pi-tui";
 import { Type } from "typebox";
+
+// Cross-process protocol shared with the execution-policy extension:
+// PI_EXECUTION_MODE (comma-separated stack) wins when set; otherwise the
+// latest execution-mode session entry wins. Kept inline so this extension
+// has no code-level dependency on execution-policy.
+function readParentExecutionModes(ctx: ExtensionContext): string[] {
+  const envModes = (process.env.PI_EXECUTION_MODE ?? "")
+    .split(",")
+    .map((m) => m.trim())
+    .filter(Boolean);
+  if (envModes.length > 0) return envModes;
+
+  let mode = "edit";
+  for (const entry of ctx.sessionManager.getEntries()) {
+    if (entry.type === "custom" && entry.customType === "execution-mode") {
+      const data = entry.data as { mode?: string } | undefined;
+      mode = data?.mode || "edit";
+    }
+  }
+  return [mode];
+}
 
 // ── Constants ────────────────────────────────────────────────
 
@@ -87,14 +113,38 @@ interface SubagentDetails {
   totalAgents?: number;
 }
 
-type JsonEvent =
+type RpcEvent =
   | { type: "message_end"; message?: Message }
   | {
       type: "tool_execution_end";
       isError?: boolean;
       result?: { content?: string };
     }
-  | { type: string };
+  | { type: "agent_end"; messages?: Message[] }
+  | {
+      type: "response";
+      id?: string;
+      command?: string;
+      success: boolean;
+      error?: string;
+    }
+  | {
+      type: "extension_ui_request";
+      id: string;
+      method: string;
+      title?: string;
+      message?: string;
+      options?: string[];
+      placeholder?: string;
+      prefill?: string;
+      notifyType?: "info" | "warning" | "error";
+      statusKey?: string;
+      statusText?: string;
+      widgetKey?: string;
+      widgetLines?: string[];
+      text?: string;
+    }
+  | { type: string; [key: string]: unknown };
 
 function createEmptyUsage(): UsageStats {
   return {
@@ -312,6 +362,40 @@ function getFinalOutput(messages: Message[]): string {
   return "";
 }
 
+function formatFinalOutput(result: SingleResult): string {
+  return getFinalOutput(result.messages) || "(no output)";
+}
+
+function formatStepHeading(stepIndex: number, result: SingleResult): string {
+  return `Step ${stepIndex + 1} [${result.agent}]`;
+}
+
+function buildStepsFinalOutput(results: SingleResult[]): string {
+  if (results.length === 0) return "(no output)";
+  if (results.length === 1) return formatFinalOutput(results[0]);
+
+  return results
+    .map((result) => {
+      const stepIndex = result.stepIndex ?? 0;
+      return `${formatStepHeading(stepIndex, result)}\n${formatFinalOutput(result)}`;
+    })
+    .join("\n\n");
+}
+
+function truncateFinalOutput(output: string): string {
+  const truncation = truncateHead(output, {
+    maxLines: DEFAULT_MAX_LINES,
+    maxBytes: DEFAULT_MAX_BYTES,
+  });
+
+  if (!truncation.truncated) return truncation.content;
+
+  return [
+    truncation.content,
+    `\n[Subagent final answer truncated: showing ${truncation.outputLines} of ${truncation.totalLines} lines (${formatSize(truncation.outputBytes)} of ${formatSize(truncation.totalBytes)}). Ask the subagent for a narrower/shorter answer if more detail is needed.]`,
+  ].join("\n");
+}
+
 type DisplayItem =
   | { type: "text"; text: string }
   | { type: "toolCall"; name: string; args: Record<string, unknown> };
@@ -321,8 +405,9 @@ function getDisplayItems(messages: Message[]): DisplayItem[] {
   for (const msg of messages) {
     if (msg.role === "assistant") {
       for (const part of msg.content) {
-        if (part.type === "text") items.push({ type: "text", text: part.text });
-        else if (part.type === "toolCall")
+        if (part.type === "text") {
+          if (part.text.trim()) items.push({ type: "text", text: part.text });
+        } else if (part.type === "toolCall")
           items.push({
             type: "toolCall",
             name: part.name,
@@ -440,12 +525,14 @@ type OnUpdateCallback = (partial: AgentToolResult<SubagentDetails>) => void;
 async function runSingleAgent(
   defaultCwd: string,
   agents: AgentConfig[],
+  parentModes: string[],
   agentName: string,
   task: string,
   cwd: string | undefined,
   signal: AbortSignal | undefined,
   onUpdate: OnUpdateCallback | undefined,
   makeDetails: (results: SingleResult[]) => SubagentDetails,
+  ctx: ExtensionContext,
 ): Promise<SingleResult> {
   const agent = agents.find((a) => a.name === agentName);
 
@@ -455,7 +542,7 @@ async function runSingleAgent(
     return createErrorResult(agentName, task, errorMessage);
   }
 
-  const args: string[] = ["--mode", "json", "-p", "--no-session"];
+  const args: string[] = ["--mode", "rpc", "--no-session"];
   if (agent.model) args.push("--model", agent.model);
   if (agent.tools && agent.tools.length > 0)
     args.push("--tools", agent.tools.join(","));
@@ -488,25 +575,45 @@ async function runSingleAgent(
       args.push("--append-system-prompt", tmpPromptPath);
     }
 
-    args.push(`Task: ${task}`);
+    const promptCommand = {
+      id: "subagent-prompt",
+      type: "prompt",
+      message: `Task: ${task}`,
+    };
     let wasAborted = false;
     let spawnErrorMessage: string | undefined;
 
+    const childModes = [...parentModes, "subagent", `subagent:${agent.name}`];
     const exitCode = await new Promise<number>((resolve) => {
       const invocation = getPiInvocation(args);
       const proc = spawn(invocation.command, invocation.args, {
         cwd: cwd ?? defaultCwd,
         shell: false,
-        stdio: ["ignore", "pipe", "pipe"],
+        stdio: ["pipe", "pipe", "pipe"],
+        env: {
+          ...process.env,
+          PI_EXECUTION_MODE: childModes.join(","),
+        },
       });
       let buffer = "";
       let killTimeout: ReturnType<typeof setTimeout> | undefined;
       let settled = false;
 
+      const sendRpc = (message: Record<string, unknown>) => {
+        if (!proc.stdin || proc.stdin.destroyed || proc.stdin.writableEnded)
+          return;
+        try {
+          proc.stdin.write(`${JSON.stringify(message)}\n`);
+        } catch {
+          /* ignore closed RPC stdin */
+        }
+      };
+
       const killProc = () => {
         wasAborted = true;
         currentResult.stopReason = "aborted";
         currentResult.errorMessage = "Subagent was aborted";
+        sendRpc({ type: "abort" });
         proc.kill("SIGTERM");
         killTimeout = setTimeout(() => {
           if (!proc.killed) proc.kill("SIGKILL");
@@ -525,9 +632,72 @@ async function runSingleAgent(
         resolve(code);
       };
 
-      const processLine = (line: string) => {
+      const finishSuccess = () => {
+        if (proc.stdin && !proc.stdin.destroyed && !proc.stdin.writableEnded) {
+          proc.stdin.end();
+        }
+        finish(0);
+        proc.kill("SIGTERM");
+      };
+
+      let lineQueue = Promise.resolve();
+
+      const handleExtensionUIRequest = async (
+        event: Extract<RpcEvent, { type: "extension_ui_request" }>,
+      ) => {
+        const { id, method } = event;
+        switch (method) {
+          case "select": {
+            const value = await ctx.ui.select(
+              event.title ?? event.message ?? "Select",
+              event.options ?? [],
+            );
+            sendRpc(
+              value === undefined
+                ? { type: "extension_ui_response", id, cancelled: true }
+                : { type: "extension_ui_response", id, value },
+            );
+            break;
+          }
+          case "confirm": {
+            const value = await ctx.ui.select(
+              event.message
+                ? `${event.title ?? "Confirm"}: ${event.message}`
+                : (event.title ?? "Confirm"),
+              ["Yes", "No"],
+            );
+            sendRpc(
+              value === undefined
+                ? { type: "extension_ui_response", id, cancelled: true }
+                : {
+                    type: "extension_ui_response",
+                    id,
+                    confirmed: value === "Yes",
+                  },
+            );
+            break;
+          }
+          case "input":
+          case "editor":
+            sendRpc({ type: "extension_ui_response", id, cancelled: true });
+            break;
+          case "notify":
+            if (event.message) {
+              const notifyType =
+                event.notifyType === "warning" || event.notifyType === "error"
+                  ? event.notifyType
+                  : "info";
+              ctx.ui.notify(event.message, notifyType);
+            }
+            break;
+          default:
+            break;
+        }
+      };
+
+      const processLine = async (line: string) => {
         if (!line.trim()) return;
-        let event: JsonEvent;
+        let event: RpcEvent;
         try {
           event = JSON.parse(line);
         } catch {
@@ -567,13 +737,26 @@ async function runSingleAgent(
                 : undefined,
           });
         }
+
+        if (event.type === "extension_ui_request") {
+          await handleExtensionUIRequest(event);
+        }
+
+        if (event.type === "agent_end") {
+          finishSuccess();
+        }
+      };
+
+      const enqueueLine = (line: string) => {
+        lineQueue = lineQueue.then(() => processLine(line));
+        return lineQueue;
       };
 
       proc.stdout.on("data", (data) => {
         buffer += data.toString();
         const lines = buffer.split("\n");
         buffer = lines.pop() || "";
-        for (const line of lines) processLine(line);
+        for (const line of lines) enqueueLine(line);
       });
 
       proc.stderr.on("data", (data) => {
@@ -581,10 +764,20 @@ async function runSingleAgent(
       });
 
       proc.on("close", (code, childSignal) => {
-        if (buffer.trim()) processLine(buffer);
-        if (typeof code === "number") finish(code);
-        else if (wasAborted || childSignal) finish(130);
-        else finish(spawnErrorMessage ? 1 : 1);
+        if (buffer.trim()) enqueueLine(buffer);
+        lineQueue.then(
+          () => {
+            if (typeof code === "number") finish(code);
+            else if (wasAborted || childSignal) finish(130);
+            else finish(spawnErrorMessage ? 1 : 1);
+          },
+          (error) => {
+            currentResult.errorMessage =
+              error instanceof Error ? error.message : String(error);
+            currentResult.stderr += `${currentResult.errorMessage}\n`;
+            finish(1);
+          },
+        );
       });
 
       proc.on("error", (error) => {
@@ -593,6 +786,8 @@ async function runSingleAgent(
         currentResult.stderr += `${spawnErrorMessage}\n`;
         finish(1);
       });
+
+      sendRpc(promptCommand);
 
       if (signal) {
         if (signal.aborted) killProc();
@@ -791,6 +986,7 @@ export default function (pi: ExtensionAPI) {
         }
       }
 
+      const parentModes = readParentExecutionModes(ctx);
       const allResults: SingleResult[] = [];
       let previousOutput = "";
 
@@ -833,6 +1029,7 @@ export default function (pi: ExtensionAPI) {
             const result = await runSingleAgent(
               ctx.cwd,
               agents,
+              parentModes,
               t.agent,
               t.task,
               t.cwd,
@@ -846,6 +1043,7 @@ export default function (pi: ExtensionAPI) {
                 }
               },
               makeDetails,
+              ctx,
             );
             result.stepIndex = stepIndex;
             stepResults[i] = result;
@@ -887,30 +1085,12 @@ export default function (pi: ExtensionAPI) {
 
       // ── All steps succeeded ─────────────────────────────
 
-      // Return combined output summary
-      const stepSummaries = [];
-      let resultIndex = 0;
-      for (let s = 0; s < steps.length; s++) {
-        const stepAgentCount = steps[s].length;
-        if (stepAgentCount === 1) {
-          const r = allResults[resultIndex];
-          const output = getFinalOutput(r.messages);
-          const preview =
-            output.slice(0, 100) + (output.length > 100 ? "..." : "");
-          stepSummaries.push(
-            `Step ${s + 1} [${r.agent}]: ${preview || "(no output)"}`,
-          );
-        } else {
-          const agentsList = steps[s].map((a) => a.agent).join(", ");
-          stepSummaries.push(
-            `Step ${s + 1} [${agentsList}]: ${stepAgentCount} agents completed`,
-          );
-        }
-        resultIndex += stepAgentCount;
-      }
+      const finalOutput = truncateFinalOutput(
+        buildStepsFinalOutput(allResults),
+      );
 
       return createTextResult(
-        stepSummaries.join("\n\n"),
+        finalOutput,
         makeDetails(allResults),
         "custom",
         "subagent-result-success",
@@ -972,12 +1152,16 @@ export default function (pi: ExtensionAPI) {
           limit && items.length > limit ? items.length - limit : 0;
         let text = "";
         if (skipped > 0)
-          text += theme.fg("muted", `... ${skipped} earlier items\n`);
+          text += theme.fg(
+            "muted",
+            `… ${skipped} earlier display items hidden\n`,
+          );
         for (const item of toShow) {
           if (item.type === "text") {
             const preview = expanded
               ? trimLines(item.text, 8)
               : trimInline(item.text, 160);
+            if (!preview.trim()) continue;
             text += `${theme.fg("toolOutput", preview)}\n`;
           } else {
             text += `${theme.fg("muted", "→ ") + formatToolCall(item.name, item.args, theme.fg.bind(theme))}\n`;

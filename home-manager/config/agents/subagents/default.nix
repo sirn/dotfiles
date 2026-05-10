@@ -5,5 +5,6 @@
     ./researcher.nix
     ./reviewer.nix
     ./scout.nix
+    ./worker.nix
   ];
 }

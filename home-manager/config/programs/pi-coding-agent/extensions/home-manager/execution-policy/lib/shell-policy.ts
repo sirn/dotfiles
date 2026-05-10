@@ -1564,10 +1564,76 @@ export function getCommandSummary(command: string): string {
 }
 
 export function mergePolicies(...policies: PolicyCommands[]): PolicyCommands {
+  return mergePoliciesStrict(...policies);
+}
+
+export function mergePoliciesStrict(
+  ...policies: PolicyCommands[]
+): PolicyCommands {
   return {
     allow: policies.flatMap((p) => p.allow),
     ask: policies.flatMap((p) => p.ask),
     deny: policies.flatMap((p) => p.deny),
+  };
+}
+
+const actionRank: Record<Action, number> = {
+  default: 0,
+  allow: 1,
+  ask: 2,
+  deny: 3,
+};
+
+function stricterAction(
+  a: Action | undefined,
+  b: Action | undefined,
+): Action | undefined {
+  if (!a) return b;
+  if (!b) return a;
+  return actionRank[a] >= actionRank[b] ? a : b;
+}
+
+function mergeRedirectPoliciesStrict(
+  ...policies: (RedirectPolicy | undefined)[]
+): RedirectPolicy | undefined {
+  return policies.reduce<RedirectPolicy | undefined>((acc, policy) => {
+    if (!policy) return acc;
+    if (!acc) return policy;
+    return {
+      ...acc,
+      ...policy,
+      action: stricterAction(acc.action, policy.action) ?? "allow",
+      safeTargets: policy.safeTargets ?? acc.safeTargets,
+      allowFdDup:
+        acc.allowFdDup === false || policy.allowFdDup === false
+          ? false
+          : (policy.allowFdDup ?? acc.allowFdDup),
+    };
+  }, undefined);
+}
+
+function mergeHeredocPoliciesStrict(
+  ...policies: (HeredocPolicy | undefined)[]
+): HeredocPolicy | undefined {
+  return policies.reduce<HeredocPolicy | undefined>((acc, policy) => {
+    if (!policy) return acc;
+    if (!acc) return policy;
+    return {
+      action: stricterAction(acc.action, policy.action) ?? "allow",
+    };
+  }, undefined);
+}
+
+export function mergeEvaluationPolicyStackStrict(
+  defaultPolicy: ModePolicy,
+  modePolicies: ModePolicy[],
+): EvaluationPolicy {
+  const policies = [defaultPolicy, ...modePolicies];
+  return {
+    commands: mergePoliciesStrict(...policies.map((p) => p.commands)),
+    redirects: mergeRedirectPoliciesStrict(...policies.map((p) => p.redirects)),
+    heredocs: mergeHeredocPoliciesStrict(...policies.map((p) => p.heredocs)),
+    wrappers: policies.flatMap((p) => p.wrappers ?? []),
   };
 }
 
@@ -1582,18 +1648,8 @@ export function mergeEvaluationPolicies(
   defaultPolicy: ModePolicy,
   modePolicy?: ModePolicy,
 ): EvaluationPolicy {
-  if (!modePolicy) {
-    return {
-      commands: defaultPolicy.commands,
-      redirects: defaultPolicy.redirects,
-      heredocs: defaultPolicy.heredocs,
-      wrappers: defaultPolicy.wrappers,
-    };
-  }
-  return {
-    commands: mergePolicies(defaultPolicy.commands, modePolicy.commands),
-    redirects: modePolicy.redirects ?? defaultPolicy.redirects,
-    heredocs: modePolicy.heredocs ?? defaultPolicy.heredocs,
-    wrappers: modePolicy.wrappers ?? defaultPolicy.wrappers,
-  };
+  return mergeEvaluationPolicyStackStrict(
+    defaultPolicy,
+    modePolicy ? [modePolicy] : [],
+  );
 }

@@ -23,6 +23,7 @@
         "grep"
         "find"
         "ls"
+        "bash"
       ];
       model = lib.mkDefault "gpt-5.5";
     };

@@ -1,0 +1,5 @@
+- The worker subagent is for focused implementation and editing tasks in {CWD}.
+- Auto-approve only narrow commands aligned with the assigned task and current project boundaries.
+- Prefer existing project wrappers and targeted verification commands over broad ad-hoc operations.
+- Do not auto-approve broad destructive operations, secret access, remote pushes, history rewrites, or unrelated rewrites.
+- Parent modes still apply. Worker context is not permission to bypass parent plan-mode or safety restrictions.
