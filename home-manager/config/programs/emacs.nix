@@ -67,9 +67,9 @@ let
       nixd
       pyright
       rubyPackages.ruby-lsp
-      nodePackages.bash-language-server
+      bash-language-server
       dockerfile-language-server
-      nodePackages.svelte-language-server
+      svelte-language-server
       vscode-langservers-extracted
       typescript-language-server
       yaml-language-server
@@ -268,7 +268,7 @@ in
 
           postInstall = ''
             wrapProgram $out/share/emacs/site-lisp/elpa/${attrs.pname}-${attrs.version}/scripts/formatters/apheleia-npx \
-              --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.nodePackages.prettier ]}
+              --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.prettier ]}
             wrapProgram $out/share/emacs/site-lisp/elpa/${attrs.pname}-${attrs.version}/scripts/formatters/apheleia-phpcs \
               --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.php83Packages.php-codesniffer ]}
           '';

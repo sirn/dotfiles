@@ -9,7 +9,7 @@
   nixd,
   pyright,
   rust-analyzer,
-  nodePackages,
+  bash-language-server,
   yaml-language-server,
   intelephense,
 }:
@@ -24,7 +24,7 @@ let
     nixd
     pyright
     rust-analyzer
-    nodePackages.bash-language-server
+    bash-language-server
     yaml-language-server
     intelephense
   ];
