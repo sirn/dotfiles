@@ -1,58 +1,30 @@
 ---
 name: code-review
-description: Review code for quality, security, API correctness, and overall health. Use when asked for code review, security audit, API verification, full quality checks, or to check code health.
+description: Review code for correctness, quality, conventions, simplicity, security, and overall health. Use when asked for a general or full code review.
 ---
 
-Run a code review or quality check.
-
-## Modes
-
-- **Full** (default): Review correctness, security, conventions, simplicity, and best practices.
-- **Fast**: Review correctness and simplicity only.
-- **Security**: Focus on security vulnerabilities and remediation.
-- **API Verify**: Verify API/library usage against authoritative documentation.
-- **Quality**: Full review plus direct test/lint/check command execution when requested.
-- **Performance**: Focus on performance bottlenecks, algorithmic complexity, and memory usage.
+Run a full code review or quality check.
 
 ## Process
 
 1. Identify context:
    - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
    - If the user specified files or paths, focus on those.
-   - Determine mode from the request; default to **Full**.
 
 2. Read relevant code and project guidance:
    - Check local instructions and conventions: `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `GEMINI.md`, `CODEX.md` when present.
    - Read relevant implementation and test files.
    - Prefer existing project patterns over external preferences.
 
-3. Review by mode:
-
-   **Full / Quality**:
-   - Correctness: bugs, logic errors, edge cases, missing error handling, resource leaks.
-   - Security: OWASP risks, injection flaws, auth/authz issues, sensitive data exposure, insecure dependencies.
-   - Conventions: naming, code organization, style consistency, documentation expectations.
-   - Simplicity: over-engineering, unnecessary abstractions, dead code, clever logic, avoidable indirection.
+3. Review the code:
+   - Correctness: bugs, logic errors, edge cases, missing error handling, resource leaks, concurrency risks, and state-management issues.
+   - Security: OWASP risks, injection flaws, auth/authz issues, sensitive data exposure, insecure dependencies, and unsafe defaults.
+   - Conventions: naming, code organization, style consistency, documentation expectations, and project consistency.
+   - Simplicity: over-engineering, unnecessary abstractions, dead code, clever logic, avoidable indirection, and no-code alternatives.
    - Best practices: verify framework/library/API usage with official documentation when uncertain.
+   - Performance: call out obvious hot paths, N+1 queries, blocking I/O, avoidable allocations, or poor algorithmic complexity when relevant.
 
-   **Fast**:
-   - Correctness and simplicity only.
-
-   **Security**:
-   - Check OWASP Top 10 risks, injection flaws, authentication and authorization, cryptography, sensitive data handling, dependency risks, and secure defaults.
-   - Distinguish exploitable issues from theoretical hardening suggestions.
-
-   **API Verify**:
-   - Identify APIs, versions, or libraries in use.
-   - Research official documentation with WebSearch/WebFetch.
-   - Check version-specific changes, parameter names, types, expected behavior, and deprecations.
-   - Compare usage against documentation.
-
-   **Performance**:
-   - Look for hot paths, unnecessary work, blocking I/O, N+1 queries, avoidable allocations, poor algorithmic complexity, and memory pressure.
-   - Suggest concrete optimizations and benchmarks when useful.
-
-4. For **Quality** mode only, run verification commands directly when the user requested full checks:
+4. Run verification commands only when the user requested full checks:
    - Detect test commands from project instructions, task runners (`Makefile`, `justfile`, `Taskfile.yml`), wrapper scripts (`bin/`, `.my/bin/`), package manager scripts, then common defaults.
    - Detect lint/check/format commands from the same sources.
    - Run the most appropriate non-destructive commands with timeouts.
@@ -67,11 +39,11 @@ Run a code review or quality check.
 
 1. **Executive Summary**
 2. **Critical Issues** (must fix)
-3. **Security Analysis** (Full, Security, or Quality mode)
-4. **API / Documentation Verification** (API Verify, Full when relevant, or Quality mode)
+3. **Security Analysis**
+4. **API / Documentation Verification**
 5. **Quality & Logic**
 6. **Simplicity & Convention**
 7. **Performance & Best Practices**
-8. **Test/Lint Results** (Quality mode only)
+8. **Test/Lint Results** (only when run)
 9. **Quick Wins**
 10. **Action Items** prioritized Critical > High > Medium > Low

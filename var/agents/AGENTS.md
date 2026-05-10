@@ -11,9 +11,9 @@
 ## Skills
 
 - Read reference skills before covered tools (examples: `nix`, `flake`, `jujutsu`, `github-cli`, `terraform`, `rtk`).
-- Use task skills for common workflows (examples: planning → `code-plan`, testing → `code-test`, reviews → `code-review`, commits → `code-commit`).
+- Use task skills for common workflows (examples: implementation planning → `code-plan-implementation`, API design → `code-plan-api`, tests → `code-test`, linting → `code-lint`, formatting → `code-format`, reviews → `code-review`, commits → `code-commit`).
 - Use research/API skills when needed (examples: `context7`, `brave-search-bx`, `asana`, `clickup`, `linear`).
-- During planning, analysis-only skills may run read-only to gather context (examples: `code-review`, `code-test`, `code-explain`, `code-setup`).
+- During planning, analysis-only skills may run read-only to gather context (examples: `code-review`, `code-test`, `code-explain`, `code-setup-analyze`).
 
 ## High-Level Workflow
 

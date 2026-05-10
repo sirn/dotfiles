@@ -1,9 +1,9 @@
 ---
-name: code-test
-description: Detect and run project tests. Use when asked to run tests, verify test results, or execute the relevant test command.
+name: code-lint
+description: Detect and run linting or static-analysis commands. Use when asked to lint, run static checks, check style, or run non-format code quality checks.
 ---
 
-Run project test commands and diagnose failures.
+Run project linting and static-analysis commands.
 
 ## Process
 
@@ -11,23 +11,24 @@ Run project test commands and diagnose failures.
    - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
    - If the user specified files or paths, focus on those.
 
-2. Detect test commands in this order:
+2. Detect lint/static-check commands in this order:
    a. Project instructions: `README.md`, `CONTRIBUTING.md`, `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, `CODEX.md`.
    b. Task runners: `Makefile`, `justfile`, `Taskfile.yml`.
-   c. Wrapper scripts: `bin/`, `.my/bin/` (`test`, `*-test`, etc.).
+   c. Wrapper scripts: `bin/`, `.my/bin/` (`lint`, `check`, `*-lint`, etc.).
    d. Package manager scripts: `package.json`, `pyproject.toml`, `Cargo.toml`, `go.mod`, `Gemfile`, etc.
    e. Common defaults:
-   - JavaScript/TypeScript: `npm test`.
-   - Python: `pytest`.
-   - Go: `go test ./...`.
-   - Rust: `cargo test`.
-   - Ruby: `bundle exec rake test`, `bundle exec rspec`.
+   - JavaScript/TypeScript: `npm run lint`, `npx tsc --noEmit`.
+   - Python: `ruff check .`, `mypy .` when configured.
+   - Go: `golangci-lint run`, `go vet ./...`.
+   - Rust: `cargo clippy`.
+   - Ruby: `bundle exec rubocop`.
+   - Nix: `nix flake check path:.` for flakes; use `path:` and read the `flake` skill first.
 
-3. Run the selected test command:
+3. Run the selected command:
    - Prefer the most specific command that covers the requested files or changes.
    - Use proper timeouts.
    - Do not use long-running watch modes.
-   - In read-only/planning contexts, report results only.
+   - Run autofix only when explicitly requested.
 
 4. Handle failures:
    - Read the full error message before changing anything.

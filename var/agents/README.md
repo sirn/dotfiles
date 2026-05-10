@@ -60,6 +60,14 @@ For first-party skills, add the skill under `skills/<name>/`:
 2. Optionally create `skills/<name>/SKILL.subagent.md` for subagent-capable harnesses
 3. Include any templates/examples in `skills/<name>/templates/` or `skills/<name>/examples/`
 
+Skill naming policy:
+
+- Skills are named for stable, user-facing tasks (for example `code-generate-tests`, `code-plan-api`, or `code-setup-flake`).
+- Create separate skill directories when workflows have distinct triggers, outputs, or verification steps.
+- Keep small local options such as scope, risk tolerance, or output detail inside a skill.
+- `SKILL.subagent.md` is a harness-specific variant for the same task, not a separate task.
+- Expose only canonical task-specific skill names; add aliases only when the alias is itself a supported workflow.
+
 For vendored skills, package the upstream repository under `pkgs/by-name/skill-*` and register it once in `home-manager/config/agents/skills.nix`:
 
 ```nix
