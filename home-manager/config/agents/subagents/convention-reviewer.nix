@@ -1,3 +1,4 @@
+{ lib, ... }:
 {
   agents.subagents.convention-reviewer = {
     description = "Meticulous reviewer for coding conventions and consistency";
@@ -11,6 +12,15 @@
       ];
       color = "blue";
       model = "sonnet";
+    };
+    pi = {
+      tools = [
+        "read"
+        "grep"
+        "find"
+        "ls"
+      ];
+      model = lib.mkDefault "gpt-5.5";
     };
   };
 }

@@ -206,6 +206,25 @@ let
         default = null;
         description = "Claude Code-specific configuration.";
       };
+      pi = lib.mkOption {
+        type = lib.types.nullOr (
+          lib.types.submodule {
+            options = {
+              tools = lib.mkOption {
+                type = lib.types.listOf lib.types.str;
+                default = [ ];
+                description = "Pi tools available to this subagent.";
+              };
+              model = lib.mkOption {
+                type = lib.types.str;
+                description = "Pi model ID for this subagent.";
+              };
+            };
+          }
+        );
+        default = null;
+        description = "Pi-specific subagent configuration.";
+      };
     };
   };
 

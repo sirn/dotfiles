@@ -1,3 +1,4 @@
+{ lib, ... }:
 {
   agents.subagents.code-debug-researcher = {
     description = "Debugs issues by researching errors, logs, and known fixes";
@@ -15,6 +16,15 @@
       ];
       color = "red";
       model = "sonnet";
+    };
+    pi = {
+      tools = [
+        "read"
+        "grep"
+        "find"
+        "ls"
+      ];
+      model = lib.mkDefault "gpt-5.5";
     };
   };
 }

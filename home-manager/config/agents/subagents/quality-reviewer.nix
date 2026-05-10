@@ -1,3 +1,4 @@
+{ lib, ... }:
 {
   agents.subagents.quality-reviewer = {
     description = "Expert code quality reviewer focusing on bugs and logic";
@@ -15,6 +16,15 @@
       ];
       color = "red";
       model = "sonnet";
+    };
+    pi = {
+      tools = [
+        "read"
+        "grep"
+        "find"
+        "ls"
+      ];
+      model = lib.mkDefault "gpt-5.5";
     };
   };
 }

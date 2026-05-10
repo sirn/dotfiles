@@ -1,3 +1,4 @@
+{ lib, ... }:
 {
   agents.subagents.security-researcher = {
     description = "Specialist in threat modeling, vulnerability research, and secure design";
@@ -15,6 +16,15 @@
       ];
       color = "yellow";
       model = "opus";
+    };
+    pi = {
+      tools = [
+        "read"
+        "grep"
+        "find"
+        "ls"
+      ];
+      model = lib.mkDefault "claude-opus-4.7";
     };
   };
 }

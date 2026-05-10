@@ -136,7 +136,6 @@ let
     text = builtins.readFile ./rtk-rewrite-claude.sh;
   };
 
-
   rtkConfig = {
     hooks = {
       exclude_commands = [

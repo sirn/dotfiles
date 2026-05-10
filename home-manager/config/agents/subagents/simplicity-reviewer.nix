@@ -1,3 +1,4 @@
+{ lib, ... }:
 {
   agents.subagents.simplicity-reviewer = {
     description = "Pragmatic reviewer prioritizing simplicity over abstraction";
@@ -11,6 +12,15 @@
       ];
       color = "green";
       model = "sonnet";
+    };
+    pi = {
+      tools = [
+        "read"
+        "grep"
+        "find"
+        "ls"
+      ];
+      model = lib.mkDefault "gpt-5.5";
     };
   };
 }

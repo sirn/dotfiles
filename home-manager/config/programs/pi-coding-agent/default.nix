@@ -63,6 +63,38 @@ let
   policyAutoModePrompt = builtins.readFile ./POLICY_AUTO_MODE.md;
   policyAutoModePlanContext = builtins.readFile ./POLICY_AUTO_MODE.PLAN_CONTEXT.md;
   policyAutoModeExtraCommands = lib.strings.trim agentsCfg.commandContext;
+
+  # Generate pi-compatible agent markdown files from subagent configs
+  piAgentMdFiles = builtins.listToAttrs (
+    builtins.filter (a: a != null) (
+      builtins.attrValues (
+        builtins.mapAttrs (
+          name: agentCfg:
+          if agentCfg ? pi then
+            let
+              piCfg = agentCfg.pi;
+              tools = builtins.concatStringsSep ", " piCfg.tools;
+              content = ''
+                ---
+                name: ${name}
+                description: ${agentCfg.description}
+                tools: ${tools}
+                model: ${piCfg.model}
+                ---
+                ${agentCfg.prompt}'';
+            in
+            {
+              name = ".pi/agent/agents/${name}.md";
+              value = {
+                text = content;
+              };
+            }
+          else
+            null
+        ) agentsCfg.subagents
+      )
+    )
+  );
 in
 
 {
@@ -102,7 +134,7 @@ in
     ) (builtins.readDir ./extensions/home-manager)
     // {
       ".pi/agent/extensions/rimuruw-pi-hashline-edit".source = pkgs.local.pi-hashline-edit;
-      ".pi/agent/skills".source = agentsCfg.skillTrees.default;
+      ".pi/agent/skills".source = agentsCfg.skillTrees.subagent;
       ".pi/agent/custom/execution-policy/policy.json".source = policyJsonFile;
       ".pi/agent/custom/execution-policy/PLAN_PROMPT.md".text = planModeTemplates.prompt;
       ".pi/agent/custom/execution-policy/PLAN_ACCEPT.md".text = planModeTemplates.accept;
@@ -113,5 +145,6 @@ in
       ".pi/agent/custom/execution-policy/POLICY_AUTO_MODE.COMMANDS_CONTEXT.md".text = lib.mkIf (
         policyAutoModeExtraCommands != ""
       ) policyAutoModeExtraCommands;
-    };
+    }
+    // piAgentMdFiles;
 }

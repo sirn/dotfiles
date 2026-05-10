@@ -1,3 +1,4 @@
+{ lib, ... }:
 {
   agents.subagents.code-researcher = {
     description = "Specialist in finding documentation, best practices, and patterns";
@@ -15,6 +16,15 @@
       ];
       color = "purple";
       model = "sonnet";
+    };
+    pi = {
+      tools = [
+        "read"
+        "grep"
+        "find"
+        "ls"
+      ];
+      model = lib.mkDefault "gpt-5.5";
     };
   };
 }
