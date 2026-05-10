@@ -135,62 +135,7 @@
         inherit overlays stateVersion;
       };
 
-      compatOverlays = [
-        (final: prev: {
-          # yt-dlp includes secretstorage (for Gnome keyring) which depends on jeepney.
-          # jeepney tests fail on Darwin due to missing D-Bus session bus.
-          # secretstorage is only needed for --cookies-from-browser on Linux.
-          # Remove once https://github.com/NixOS/nixpkgs/issues/493775 is in unstable.
-          yt-dlp =
-            if prev.stdenv.hostPlatform.isDarwin then
-              prev.yt-dlp.overridePythonAttrs (oldAttrs: {
-                dependencies = prev.lib.filter (
-                  p:
-                  !(prev.lib.elem (p.pname or "") [
-                    "cffi"
-                    "secretstorage"
-                  ])
-                ) oldAttrs.dependencies;
-              })
-            else
-              prev.yt-dlp;
-        })
-
-        (final: prev: {
-          # inetutils 2.7 has a format string bug that fails with strict compiler flags
-          # See: https://github.com/NixOS/nixpkgs/issues/488689
-          inetutils =
-            if prev.stdenv.hostPlatform.isDarwin then
-              prev.inetutils.overrideAttrs (oldAttrs: {
-                hardeningDisable = (oldAttrs.hardeningDisable or [ ]) ++ [ "format" ];
-              })
-            else
-              prev.inetutils;
-        })
-
-        (final: prev: {
-          # direnv tests fail on Darwin due to environment differences
-          direnv =
-            if prev.stdenv.hostPlatform.isDarwin then
-              prev.direnv.overrideAttrs (oldAttrs: {
-                doCheck = false;
-              })
-            else
-              prev.direnv;
-        })
-
-        (final: prev: {
-          # mpv version check fails on Darwin during installCheckPhase
-          # Need to override mpv-unwrapped since mpv is just a wrapper
-          mpv-unwrapped =
-            if prev.stdenv.hostPlatform.isDarwin then
-              prev.mpv-unwrapped.overrideAttrs (oldAttrs: {
-                doInstallCheck = false;
-              })
-            else
-              prev.mpv-unwrapped;
-        })
-      ];
+      compatOverlays = [ ];
 
       overlays = compatOverlays ++ [
         inputs.nixgl.overlay
