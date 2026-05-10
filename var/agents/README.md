@@ -80,12 +80,6 @@ For vendored skills, package the upstream repository under `pkgs/by-name/skill-*
 
     ast-grep = "${pkgs.local.skill-ast-grep}/skills";
 
-    # Single vendored skill exposed as `brave-search-bx`.
-    brave-search = {
-      path = "${pkgs.local.skill-brave-search}/skills";
-      prefix = "brave-search";
-      skills = [ "bx" ];
-    };
 
     # Whole upstream repositories can be packaged and filtered at discovery time.
     agent-stuff = {
@@ -96,7 +90,7 @@ For vendored skills, package the upstream repository under `pkgs/by-name/skill-*
 }
 ```
 
-Each skill set is a directory whose immediate children are actual skill directories. Home Manager discovers those skills and renders each harness-specific layout from the same normalized skill list. If `prefix` is set, discovered skills are exposed as flat prefixed names like `brave-search-bx`; the rendered `SKILL.md` frontmatter `name` is rewritten to match. If `skills` is set to a non-empty list, only those source skill directory names are discovered from that skill set; the default empty list discovers all skills.
+First-party skills (e.g., `apis/`, `coding/`, `lifecycle/`, `references/`) are auto-discovered with names matching their directory. Vendored skills use `prefix` to expose specific skill names from upstream repos (e.g., `prefix = "ast-grep"` with `skills = [ "default" ]` yields `ast-grep-default`). The rendered `SKILL.md` frontmatter `name` is rewritten to match. If `skills` is set to a non-empty list, only those source skill directory names are discovered from that skill set; the default empty list discovers all skills.
 
 ### Add a New Subagent
 

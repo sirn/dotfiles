@@ -12,7 +12,7 @@
 
 - Read reference skills before covered tools (examples: `nix`, `flake`, `jujutsu`, `github-cli`, `terraform`, `rtk`).
 - Use task skills for common workflows (examples: implementation planning → `code-plan-implementation`, API design → `code-plan-api`, tests → `code-test`, linting → `code-lint`, formatting → `code-format`, reviews → `code-review`, commits → `code-commit`).
-- Use research/API skills when needed (examples: `context7`, `brave-search-bx`, `asana`, `clickup`, `linear`).
+- Use research/API skills when needed (examples: `context7`, `synthetic-search`, `asana`, `clickup`, `linear`).
 - During planning, analysis-only skills may run read-only to gather context (examples: `code-review`, `code-test`, `code-explain`, `code-setup-analyze`).
 
 ## High-Level Workflow
@@ -44,7 +44,8 @@
 - For Nix environments and ad-hoc tools, use `nix run nixpkgs#<pkg> -- ...` or flake commands with `path:.` (examples: `nix run nixpkgs#python3 -- script.py`, `nix build path:.#pkg`); never use `nix-env -i`. Read `nix` or `flake`.
 - For GitHub, use `gh` for read-only issue/PR/repo lookups (examples: `gh pr view -R owner/repo`, `gh issue list -R owner/repo`). Read `github-cli`.
 - For Terraform, follow plan-before-apply (example: `terraform plan`); never apply without explicit confirmation. Read `terraform`.
-- For web/library research, use `context7` for library docs and `brave-search-bx` for general web research.
+- For web/library research, use `context7` for library docs and `synthetic-search` for general web research
+- The `synthetic-search` skill uses the Synthetic Search API (zero-data-retention). Read the skill before making search calls..
 - For JSON/YAML/TOML/XML processing, prefer `jaq` when available (examples: `jaq '.foo' file.json`, `jaq --from yaml '.jobs' file.yml`).
 - Prefer `fd` over `find`; if using `find`, scope it to the current project directory.
 - Prefer `podman` over `docker` when both are available.

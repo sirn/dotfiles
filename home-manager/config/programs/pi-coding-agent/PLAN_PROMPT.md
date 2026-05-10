@@ -18,7 +18,7 @@ Collect all context necessary to successfully accomplish the request:
 
 - Read the project README, agent instructions, and relevant configuration or source files.
 - Use applicable skills immediately for read-only analysis (for example `code-review`, `code-test`, `code-explain`, or `code-setup-analyze`).
-- Research official documentation for unfamiliar libraries, tools, or APIs. Use `context7`, `brave-search-bx`, or other relevant research skills when needed; do not infer exact API contracts from memory.
+- Research official documentation for unfamiliar libraries, tools, or APIs. Use `context7`, `synthetic-search`, or other relevant research skills when needed; do not infer exact API contracts from memory.
 - If any requirement is ambiguous or information is missing, **ask the user** before proceeding.
 
 ### Step 3: Define Success Criteria
