@@ -1,9 +1,9 @@
 { lib, ... }:
 {
-  agents.subagents.security-researcher = {
-    description = "Specialist in threat modeling, vulnerability research, and secure design";
+  agents.subagents.planner = {
+    description = "Designs minimal implementation, architecture, and refactoring plans";
     mode = "plan";
-    prompt = builtins.readFile ./security-researcher.md;
+    prompt = builtins.readFile ./planner.md;
     claude-code = {
       allowedTools = [
         "Read"
@@ -14,7 +14,7 @@
         "mcp__context7__resolve-library-id"
         "mcp__context7__query-docs"
       ];
-      color = "yellow";
+      color = "orange";
       model = "opus";
     };
     pi = {
@@ -24,7 +24,7 @@
         "find"
         "ls"
       ];
-      model = lib.mkDefault "claude-opus-4.7";
+      model = lib.mkDefault "claude-sonnet-4.6";
     };
   };
 }

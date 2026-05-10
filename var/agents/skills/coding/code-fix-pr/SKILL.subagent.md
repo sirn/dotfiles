@@ -3,7 +3,7 @@ name: code-fix-pr
 description: Evaluate PR review comments using specialized agents for parallel analysis of different comment categories.
 ---
 
-Evaluate and address PR review comments by delegating to specialized agents.
+Evaluate and address PR review comments by delegating to expert roles.
 
 ## Prerequisites
 
@@ -27,12 +27,15 @@ Evaluate and address PR review comments by delegating to specialized agents.
    **Important**: Always use `-X GET` to be explicit about read-only access.
 
 2. Spawn parallel agents for comment analysis:
-   - `quality-reviewer`: "Review these PR comments for bugs, logic errors, and quality issues. Classify each as: already-addressed, valid-fix-needed, invalid, or needs-discussion."
-   - `security-researcher`: "Review these PR comments for security-related feedback. Identify valid security concerns vs false positives."
-   - `simplicity-reviewer`: "Review these PR comments for complexity concerns. Prioritize the simplest possible change that satisfies the reviewer's concern. Avoid large-scale refactoring unless strictly necessary. Distinguish valid simplifications from over-engineering suggestions."
-   - `code-researcher`: "Research best practices for the fixes suggested in these PR comments. Provide authoritative sources."
+   - `reviewer`: "Review these PR comments with a correctness/quality lens. Classify each as: already-addressed, valid-fix-needed, invalid, or needs-discussion."
+   - `reviewer`: "Review these PR comments with a security lens. Identify valid security concerns vs false positives and assess severity."
+   - `reviewer`: "Review these PR comments with a simplicity/convention lens. Prioritize the simplest possible change that satisfies valid feedback, and distinguish valid simplifications from over-engineering suggestions."
+   - `researcher`: "Research best practices and official documentation for the fixes suggested in these PR comments. Provide authoritative sources."
 
-3. **Synthesize findings** into unified report
+3. Use `oracle` only for disputed comments or conflicting expert recommendations:
+   - `oracle`: "Adjudicate these disputed PR comments and conflicting recommendations. Decide which feedback should be fixed, discussed, or rejected, and explain why."
+
+4. **Synthesize findings** into unified report.
 
 ## Output
 
@@ -57,31 +60,25 @@ Evaluate and address PR review comments by delegating to specialized agents.
 
 ## Agent Roles
 
-**quality-reviewer**:
+**reviewer**:
 
-- Analyze each comment for bugs, logic errors, and quality issues
-- Determine if already addressed by existing changes
-- Validate technical accuracy of feedback
-- Flag unclear or ambiguous comments
+- Analyze comments through the requested lens: correctness, security, simplicity, convention, or plan/design.
+- Determine if feedback is already addressed by existing changes.
+- Validate technical accuracy of feedback.
+- Flag unclear or ambiguous comments.
+- Recommend pragmatic minimal fixes for valid feedback.
 
-**security-researcher**:
+**researcher**:
 
-- Identify security-related comments
-- Validate security concerns vs false positives
-- Assess severity of security issues
+- Use WebSearch/WebFetch to verify patterns.
+- Look up official documentation.
+- Research idiomatic solutions.
+- Provide authoritative sources.
 
-**simplicity-reviewer**:
+**oracle**:
 
-- Evaluate complexity-related comments
-- Distinguish valid simplifications from over-engineering suggestions
-- Recommend pragmatic approaches
-
-**code-researcher**:
-
-- Use WebSearch/WebFetch to verify patterns
-- Look up official documentation
-- Research idiomatic solutions
-- Provide authoritative sources
+- Resolve disputed comments or conflicting recommendations.
+- State assumptions, tradeoffs, and confidence.
 
 ## Important
 

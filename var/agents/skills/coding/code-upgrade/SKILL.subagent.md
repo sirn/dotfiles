@@ -33,7 +33,7 @@ Ask the user to clarify what they want to upgrade if it is not already clear:
 
 ### Step 3 - Research Changes
 
-Spawn `code-researcher` agent with detailed instructions:
+Spawn `researcher` with detailed instructions:
 
 - "Research breaking changes for upgrading {package} from {current_version} to {target_version}."
 - "Find official migration guides, changelogs, and deprecated API replacements."
@@ -43,7 +43,9 @@ Wait for the research agent to complete and synthesize findings. Prefer official
 
 ### Step 4 - Generate Plan
 
-Create an upgrade plan incorporating research findings:
+Create an upgrade plan incorporating research findings. For broad, major-version, or risky upgrades, spawn `reviewer` with a migration-risk lens before presenting the plan.
+
+Include:
 
 - Deprecated API replacements needed.
 - Breaking changes to address.

@@ -1,9 +1,9 @@
 { lib, ... }:
 {
-  agents.subagents.code-researcher = {
-    description = "Specialist in finding documentation, best practices, and patterns";
+  agents.subagents.oracle = {
+    description = "Adjudicates ambiguous, conflicting, or high-impact technical decisions";
     mode = "plan";
-    prompt = builtins.readFile ./code-researcher.md;
+    prompt = builtins.readFile ./oracle.md;
     claude-code = {
       allowedTools = [
         "Read"
@@ -14,8 +14,8 @@
         "mcp__context7__resolve-library-id"
         "mcp__context7__query-docs"
       ];
-      color = "purple";
-      model = "sonnet";
+      color = "yellow";
+      model = "opus";
     };
     pi = {
       tools = [
@@ -24,7 +24,7 @@
         "find"
         "ls"
       ];
-      model = lib.mkDefault "gpt-5.5";
+      model = lib.mkDefault "claude-opus-4.7";
     };
   };
 }

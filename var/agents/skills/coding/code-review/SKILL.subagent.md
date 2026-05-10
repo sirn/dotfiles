@@ -24,24 +24,25 @@ Run a code review or quality check using specialized agents.
 2. Spawn applicable agents in parallel:
 
    **Full / Quality**:
-   - `quality-reviewer`: "Review {files} for bugs, logic errors, edge cases, and error handling issues."
-   - `security-researcher`: "Review {files} for security vulnerabilities, OWASP risks, auth/authz issues, and sensitive data exposure."
-   - `convention-reviewer`: "Review {files} for naming, organization, documentation, and project consistency."
-   - `simplicity-reviewer`: "Review {files} for over-engineering, unnecessary abstractions, dead code, clever logic, and avoidable indirection."
-   - `code-researcher`: "Verify relevant API/library usage in {files} against official documentation and research best practices."
+   - `reviewer`: "Review {files} with a correctness/quality lens: bugs, logic errors, edge cases, error handling, resource leaks, concurrency, and performance traps."
+   - `reviewer`: "Review {files} with a security lens: OWASP risks, injection flaws, auth/authz, cryptography, sensitive data exposure, dependency risks, and secure defaults."
+   - `reviewer`: "Review {files} with a convention/simplicity lens: naming, organization, documentation, project consistency, over-engineering, unnecessary abstractions, dead code, and avoidable indirection."
+   - `researcher`: "Verify relevant API/library usage in {files} against official documentation and research best practices."
 
    **Fast**:
-   - `quality-reviewer`: "Review {files} for bugs, logic errors, edge cases, and error handling issues."
-   - `simplicity-reviewer`: "Review {files} for over-engineering, unnecessary complexity, and avoidable indirection."
+   - `reviewer`: "Review {files} with a correctness and simplicity lens: bugs, logic errors, edge cases, unnecessary complexity, and avoidable indirection."
 
    **Security**:
-   - `security-researcher`: "Perform a focused security audit of {files}: OWASP Top 10, injection flaws, auth/authz, cryptography, sensitive data exposure, dependency risks, and secure defaults."
+   - `reviewer`: "Perform a focused security audit of {files}: OWASP Top 10, injection flaws, auth/authz, cryptography, sensitive data exposure, dependency risks, and secure defaults."
+   - `researcher`: "Research official security guidance, advisories, and framework-specific secure implementation patterns relevant to {files}."
 
    **API Verify**:
-   - `code-researcher`: "Verify API/library usage in {files or context} against official documentation, including version-specific parameters, behavior, configuration, and deprecations."
+   - `researcher`: "Verify API/library usage in {files or context} against official documentation, including version-specific parameters, behavior, configuration, and deprecations."
+   - `reviewer`: "Review the API/library usage findings for correctness risk and minimal remediation."
 
    **Performance**:
-   - `code-researcher`: "Analyze {files} for performance bottlenecks, algorithmic complexity, memory usage, blocking I/O, N+1 queries, and concrete optimizations."
+   - `reviewer`: "Review {files} with a performance lens: bottlenecks, algorithmic complexity, memory usage, blocking I/O, N+1 queries, and concrete optimizations."
+   - `researcher`: "Research framework/runtime-specific performance guidance relevant to {files}."
 
 3. Read relevant code yourself to validate and synthesize agent findings.
 

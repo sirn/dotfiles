@@ -36,8 +36,9 @@ During detection, identify complexity hotspots, unnecessary tooling, and native 
 ## Process
 
 1. Spawn applicable agents when helpful:
-   - `code-researcher`: "Find exact package names, official setup guidance, and current Nix/nixpkgs recommendations for this project type."
-   - `simplicity-reviewer`: "Audit the proposed setup for unnecessary wrappers, boilerplate, shell hooks, extra flake inputs, and over-engineering."
+   - `scout`: "Detect project tooling, wrappers, task runners, package managers, existing Nix files, CI, and setup conventions."
+   - `researcher`: "Find exact package names, official setup guidance, and current Nix/nixpkgs recommendations for this project type."
+   - `reviewer`: "Audit the proposed setup with a simplicity lens: unnecessary wrappers, boilerplate, shell hooks, extra flake inputs, and over-engineering."
 
 2. Execute by mode:
 

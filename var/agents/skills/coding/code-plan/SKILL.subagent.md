@@ -20,14 +20,17 @@ Generate a comprehensive plan based on task analysis and research.
    - Understand the user's task/request and determine mode.
 
 2. Spawn applicable agents in parallel:
-   - `code-architect`: "Analyze affected code areas, existing patterns, architecture, integration points, and design options for {task}."
-   - `security-researcher`: "Identify security risks, threat model concerns, and secure implementation patterns for {task}."
-   - `simplicity-reviewer`: "Identify over-engineering risks, no-code alternatives, boring/simple approaches, and abstractions that do not earn their complexity for {task}."
-   - `code-researcher`: "Research official documentation, best practices, constraints, and migration considerations for {task}."
+   - `scout`: "Analyze affected code areas, existing patterns, tests, architecture, integration points, and local conventions for {task}."
+   - `researcher`: "Research official documentation, best practices, constraints, migration considerations, and security guidance relevant to {task}."
+   - `planner`: "Design a minimal implementation/refactoring/API/schema plan for {task}, including alternatives and tradeoffs."
+   - `reviewer`: "Review the proposed direction for security, correctness, simplicity, and project-convention risks for {task}."
 
-3. Read relevant code yourself and validate agent findings.
+3. Use `oracle` only for high-impact or conflicting design decisions:
+   - `oracle`: "Adjudicate the conflicting recommendations for {task}. Choose the safest minimal path and state assumptions, tradeoffs, and confidence."
 
-4. Execute by mode:
+4. Read relevant code yourself and validate agent findings.
+
+5. Execute by mode:
 
    **Implementation**:
    - Define the minimal design approach.

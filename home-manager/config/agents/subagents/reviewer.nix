@@ -1,9 +1,9 @@
 { lib, ... }:
 {
-  agents.subagents.quality-reviewer = {
-    description = "Expert code quality reviewer focusing on bugs and logic";
+  agents.subagents.reviewer = {
+    description = "Reviews correctness, security, conventions, simplicity, and quality";
     mode = "plan";
-    prompt = builtins.readFile ./quality-reviewer.md;
+    prompt = builtins.readFile ./reviewer.md;
     claude-code = {
       allowedTools = [
         "Read"

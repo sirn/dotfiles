@@ -3,16 +3,20 @@ name: code-debug
 description: Debug issues by researching errors and proposing minimal fixes. Use when user asks to troubleshoot or debug a failure.
 ---
 
-Troubleshoot a problem by delegating research to the code-debug-researcher agent.
+Troubleshoot a problem by delegating focused research and risk review.
 
 ## Process
 
-1. Identify the error message, log, or failure symptom from the user's request or context
+1. Identify the error message, log, or failure symptom from the user's request or context.
 2. Spawn agents:
-   - `code-debug-researcher`: "Investigate the error or failure in {context} and propose a minimal fix with sources"
-   - `simplicity-reviewer`: "Ensure the proposed fix is minimal and addresses only the root cause without introducing new abstractions. Prioritize deleting or simplifying existing code over adding new logic."
+   - `researcher`: "Investigate the error or failure in {context}. Find likely root causes, official docs or known issues, minimal fixes, and verification steps with sources."
+   - `reviewer`: "Review the likely fix for {context} with a minimal-fix risk lens. Ensure it addresses only the root cause, avoids new abstractions, and note edge cases or regressions."
+3. Synthesize findings into actionable steps.
+4. If fixing is requested, make the smallest change that addresses the likely root cause and verify with the most specific command.
 
-3. Synthesize findings into actionable steps
+## Stop Condition
+
+- If a proposed fix fails twice, stop, re-evaluate the diagnosis, and ask for guidance.
 
 ## Output
 

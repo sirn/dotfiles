@@ -1,16 +1,16 @@
 { lib, ... }:
 {
-  agents.subagents.simplicity-reviewer = {
-    description = "Pragmatic reviewer prioritizing simplicity over abstraction";
+  agents.subagents.scout = {
+    description = "Maps local code structure, patterns, and relevant files";
     mode = "plan";
-    prompt = builtins.readFile ./simplicity-reviewer.md;
+    prompt = builtins.readFile ./scout.md;
     claude-code = {
       allowedTools = [
         "Read"
         "Grep"
         "Glob"
       ];
-      color = "green";
+      color = "blue";
       model = "sonnet";
     };
     pi = {
@@ -20,7 +20,7 @@
         "find"
         "ls"
       ];
-      model = lib.mkDefault "gpt-5.5";
+      model = lib.mkDefault "gpt-5.4-mini";
     };
   };
 }

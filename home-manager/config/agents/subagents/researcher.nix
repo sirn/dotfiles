@@ -1,9 +1,9 @@
 { lib, ... }:
 {
-  agents.subagents.code-debug-researcher = {
-    description = "Debugs issues by researching errors, logs, and known fixes";
+  agents.subagents.researcher = {
+    description = "Finds authoritative docs, APIs, errors, migrations, and advisories";
     mode = "plan";
-    prompt = builtins.readFile ./code-debug-researcher.md;
+    prompt = builtins.readFile ./researcher.md;
     claude-code = {
       allowedTools = [
         "Read"
@@ -14,7 +14,7 @@
         "mcp__context7__resolve-library-id"
         "mcp__context7__query-docs"
       ];
-      color = "red";
+      color = "purple";
       model = "sonnet";
     };
     pi = {

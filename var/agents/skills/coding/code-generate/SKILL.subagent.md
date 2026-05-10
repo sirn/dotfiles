@@ -22,18 +22,19 @@ Generate project artifacts that match existing conventions.
 2. Spawn applicable agents in parallel:
 
    **Tests**:
-   - `code-architect`: "Identify critical public behavior, edge cases, and error paths in {files}."
-   - `code-researcher`: "Research idiomatic testing practices for the detected language/framework."
-   - `simplicity-reviewer`: "Ensure proposed tests are minimal, boring, explicit, and avoid unnecessary helpers or abstractions."
+   - `scout`: "Identify critical public behavior, neighboring tests, fixtures, naming conventions, edge cases, and error paths in {files}."
+   - `researcher`: "Research idiomatic testing practices for the detected language/framework."
+   - `reviewer`: "Review proposed tests with a simplicity and behavior-coverage lens; avoid unnecessary helpers or private-implementation assertions."
 
    **Docs / ADR**:
-   - `code-architect`: "Explain structure, data flow, design decisions, and architectural context for {files or requirements}."
-   - `convention-reviewer`: "Identify existing documentation style, naming, and ADR conventions."
+   - `scout`: "Identify existing documentation or ADR style, naming, structure, and relevant architectural context for {files or requirements}."
+   - `planner`: "Draft the minimal documentation or ADR structure needed to explain the decision, data flow, and tradeoffs."
+   - `reviewer`: "Review the proposed docs/ADR for clarity, convention fit, and unnecessary detail."
 
    **CI**:
-   - `code-researcher`: "Research current official CI provider syntax, action versions, and cache patterns for {provider}."
-   - `security-researcher`: "Review proposed CI design for secret leaks, script injection, unsafe permissions, and insecure pull-request handling."
-   - `simplicity-reviewer`: "Keep the CI pipeline minimal; remove jobs, matrices, and cache layers not required by the current project."
+   - `researcher`: "Research current official CI provider syntax, action versions, and cache patterns for {provider}."
+   - `planner`: "Design a minimal CI pipeline for the requested goal using the project's existing commands and conventions."
+   - `reviewer`: "Review the proposed CI design for secret leaks, script injection, unsafe permissions, insecure pull-request handling, and unnecessary complexity."
 
 3. Inspect existing conventions yourself:
    - Read relevant code and neighboring files.
