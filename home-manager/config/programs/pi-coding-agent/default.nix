@@ -20,6 +20,61 @@ let
 
   agentsMdText = agentsCfg.instructionText;
 
+  # Resolve baseUrl override for Pi: model.pi > model > provider.pi
+  # Returns null if no override is set (falls back to provider default)
+  resolvePiBaseUrl =
+    p: m:
+    if m.pi != null && m.pi.baseUrl != null then
+      m.pi.baseUrl
+    else if m.baseUrl != null then
+      m.baseUrl
+    else if p.pi != null && p.pi.baseUrl != null then
+      p.pi.baseUrl
+    else
+      null;
+
+  # Build model-level compat attrset (only when explicitly set)
+  mkModelCompat =
+    m:
+    let
+      c = m.compatibility;
+    in
+    lib.optionalAttrs (c != null) (
+      lib.optionalAttrs (c.developerRole != null) { supportsDeveloperRole = c.developerRole; }
+    );
+
+  # Transform module model to Pi format
+  toPiModel =
+    p: m:
+    {
+      id = m.id;
+      name = m.name;
+      reasoning = m.reasoning;
+      input = m.input;
+      contextWindow = m.contextWindow;
+      maxTokens = m.maxTokens;
+      cost = {
+        input = m.costInput;
+        output = m.costOutput;
+        cacheRead = m.costCacheRead;
+        cacheWrite = m.costCacheWrite;
+      };
+    }
+    // lib.optionalAttrs (m.api != null) { api = m.api; }
+    // lib.optionalAttrs (resolvePiBaseUrl p m != null) { baseUrl = resolvePiBaseUrl p m; }
+    // lib.optionalAttrs (mkModelCompat m != { }) { compat = mkModelCompat m; };
+
+  # Build provider config from agents.models
+  mkPiProvider =
+    name: p:
+    {
+      baseUrl = p.baseUrl;
+      api = p.api;
+      models = map (toPiModel p) p.models;
+    }
+    // lib.optionalAttrs (p.envVar != null) { apiKey = p.envVar; }
+    // lib.optionalAttrs (!p.compatibility.developerRole) { compat.supportsDeveloperRole = false; };
+
   perms = agentsCfg.permissions;
 
   # Generate unified policy JSON for all extensions
@@ -116,19 +171,36 @@ in
 
     instructionText = agentsMdText;
 
-    settings = {
-      quietStartup = true;
-      hideThinkingBlock = false;
-      theme = config.home.colors.variant;
-      retry = {
-        maxRetries = 10;
-        maxDelayMs = 0;
-      };
-    };
+    settings = lib.mkMerge [
+      {
+        quietStartup = true;
+        hideThinkingBlock = false;
+        theme = config.home.colors.variant;
+        enabledModels = lib.concatMap (p: map (m: m.id) p.models) (
+          builtins.attrValues agentsCfg.models.providers
+        );
+        retry = {
+          maxRetries = 10;
+          maxDelayMs = 0;
+        };
+      }
+      (lib.mkIf (agentsCfg.models.default != null) {
+        defaultProvider = agentsCfg.models.default.provider;
+        defaultModel = agentsCfg.models.default.model;
+      })
+      (lib.mkIf
+        (
+          agentsCfg.models.default != null
+          && builtins.hasAttr agentsCfg.models.default.provider agentsCfg.models.providers
+        )
+        {
+          defaultThinkingLevel =
+            agentsCfg.models.providers.${agentsCfg.models.default.provider}.reasoningEffort;
+        }
+      )
+    ];
 
-    defaultProvider = lib.mkDefault "google";
-    defaultModel = lib.mkDefault "gemini-3-flash-preview";
-    defaultThinkingLevel = lib.mkDefault "high";
+    providers = lib.mapAttrs mkPiProvider agentsCfg.models.providers;
 
   };
 
