@@ -183,6 +183,21 @@ let
     };
   };
 
+  geminiAgentType = lib.types.submodule {
+    options = {
+      tools = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ "*" ];
+        description = "List of allowed tools for Gemini subagent.";
+      };
+      model = lib.mkOption {
+        type = lib.types.str;
+        default = "inherit";
+        description = "Model ID to use for this subagent.";
+      };
+    };
+  };
+
   subagentType = lib.types.submodule {
     options = {
       description = lib.mkOption {
@@ -205,6 +220,11 @@ let
         type = lib.types.nullOr claudeCodeAgentType;
         default = null;
         description = "Claude Code-specific configuration.";
+      };
+      gemini = lib.mkOption {
+        type = lib.types.nullOr geminiAgentType;
+        default = null;
+        description = "Gemini CLI-specific configuration.";
       };
       pi = lib.mkOption {
         type = lib.types.nullOr (

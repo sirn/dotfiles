@@ -11,11 +11,19 @@
         "Glob"
         "WebSearch"
         "WebFetch"
-        "mcp__context7__resolve-library-id"
-        "mcp__context7__query-docs"
       ];
       color = "purple";
       model = "sonnet";
+    };
+    gemini = {
+      tools = [
+        "read_file"
+        "grep_search"
+        "glob"
+        "google_web_search"
+        "web_fetch"
+        "activate_skill"
+      ];
     };
     pi = {
       tools = [

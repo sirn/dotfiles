@@ -174,6 +174,44 @@ let
       value.source = agentsCfg.skillTrees.default + "/${skill.name}";
     }) agentsCfg.discoveredSkills
   );
+
+  # Generate gemini-compatible agent markdown files from subagent configs
+  geminiAgentFiles = builtins.listToAttrs (
+    builtins.filter (a: a != null) (
+      builtins.attrValues (
+        builtins.mapAttrs (
+          name: agentCfg:
+          if agentCfg.gemini != null then
+            let
+              geminiCfg = agentCfg.gemini;
+              tools = lib.concatMapStrings (t: "\n  - \"${t}\"") geminiCfg.tools;
+              content = ''
+                ---
+                name: ${name}
+                description: ${agentCfg.description}
+                kind: local
+                tools:${tools}
+                model: ${geminiCfg.model}
+                ---
+                ${agentCfg.prompt}'';
+            in
+            {
+              name = "${name}.md";
+              value = pkgs.writeText "${name}.md" content;
+            }
+          else
+            null
+        ) agentsCfg.subagents
+      )
+    )
+  );
+
+  geminiAgentsDir = pkgs.runCommand "gemini-agents" { } ''
+    mkdir -p $out
+    ${lib.concatStringsSep "\n" (
+      lib.mapAttrsToList (name: path: "cp ${path} $out/${name}") geminiAgentFiles
+    )}
+  '';
 in
 {
   programs.gemini-cli = {
@@ -255,6 +293,10 @@ in
   programs.git = lib.mkIf cfg.enable { ignores = [ ".gemini/" ]; };
 
   home.file = lib.mkIf cfg.enable (
-    geminiSkillLinks // { ".gemini/policies/nix-managed.toml".source = policyFile; }
+    geminiSkillLinks
+    // {
+      ".gemini/agents".source = geminiAgentsDir;
+      ".gemini/policies/nix-managed.toml".source = policyFile;
+    }
   );
 }

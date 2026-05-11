@@ -17,6 +17,9 @@
       color = "green";
       model = "sonnet";
     };
+    gemini = {
+      tools = [ "*" ];
+    };
     pi = {
       tools = [
         "read"

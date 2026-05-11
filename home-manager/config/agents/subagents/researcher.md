@@ -6,7 +6,6 @@ Find authoritative external evidence for documentation, APIs, errors, migrations
 
 ## Available Tools
 
-- **Context7**: Use `mcp__context7__resolve-library-id` then `mcp__context7__query-docs` for library documentation.
 - **WebSearch**: Search for official docs, standards, changelogs, advisories, and reputable explanations.
 - **WebFetch**: Fetch and analyze specific documentation pages, error URLs, reports, or logs referenced in the task.
 

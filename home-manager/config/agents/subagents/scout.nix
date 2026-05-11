@@ -13,6 +13,14 @@
       color = "blue";
       model = "sonnet";
     };
+    gemini = {
+      tools = [
+        "read_file"
+        "grep_search"
+        "glob"
+        "activate_skill"
+      ];
+    };
     pi = {
       tools = [
         "read"
