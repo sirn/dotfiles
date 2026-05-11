@@ -17,6 +17,8 @@ in
 
   envWrapper = (callPackage ./by-name/env-wrapper/package.nix { });
 
+  exa-cli = (callPackage ./by-name/exa-cli/package.nix { });
+
   omniwm = (callPackage ./by-name/omniwm/package.nix { });
 
   pi-hashline-edit = (callPackage ./by-name/pi-hashline-edit/package.nix { });
