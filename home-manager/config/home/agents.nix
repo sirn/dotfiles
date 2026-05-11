@@ -4,6 +4,7 @@
     ../programs/claude-code
     ../programs/gemini
     ../programs/lsp-cli.nix
+    ../programs/synthetic-search-cli.nix
     ../programs/mcp.nix
     ../programs/pi-coding-agent
     ../programs/rtk

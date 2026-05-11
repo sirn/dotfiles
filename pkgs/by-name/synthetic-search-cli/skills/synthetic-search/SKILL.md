@@ -17,26 +17,28 @@ Web search using the Synthetic Search API.
 
 **Note:** Never hardcode `SYNTHETIC_API_KEY`. Always use the environment variable.
 
-## API Endpoint
-
-```
-POST https://api.synthetic.new/v2/search
-```
-
 ## Web Search
 
 Perform a web search query. The API accepts natural language queries and returns results with URLs, titles, text snippets, and publication dates.
 
-**Request**:
-
 ```bash
-curl -s -X POST "https://api.synthetic.new/v2/search" \
-  -H "Authorization: Bearer $SYNTHETIC_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"query": "your search query here"}'
+# Basic search (pretty-printed JSON)
+synthetic-search "your search query here"
+
+# Compact output (for piping to jaq)
+synthetic-search --compact "rust async trait methods"
+
+# Custom timeout (seconds)
+synthetic-search --timeout 60 "svelte 5 runes $state"
+
+# Raw API response bytes
+synthetic-search --raw "python asyncio patterns"
+
+# Explicit subcommand form (equivalent)
+synthetic-search search "nix flake development shell"
 ```
 
-**Response**:
+## Response
 
 ```json
 {
@@ -54,30 +56,15 @@ curl -s -X POST "https://api.synthetic.new/v2/search" \
 ## Example Usage
 
 ```bash
-# Basic search
-curl -s -X POST "https://api.synthetic.new/v2/search" \
-  -H "Authorization: Bearer $SYNTHETIC_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"query": "rust async trait methods"}' | jq .
-
-# Search for current documentation
-curl -s -X POST "https://api.synthetic.new/v2/search" \
-  -H "Authorization: Bearer $SYNTHETIC_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"query": "svelte 5 runes $state"}' | jq .
-
-# Extract just URLs and titles
-curl -s -X POST "https://api.synthetic.new/v2/search" \
-  -H "Authorization: Bearer $SYNTHETIC_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"query": "python asyncio patterns"}' | \
-  jq -r '.results[] | "\(.title): \(.url)"'
+# Extract URLs and titles with jaq
+synthetic-search --compact "python asyncio patterns" | \
+  jaq -r '.results[] | "\(.title): \(.url)"'
 
 # Save results to a file
-curl -s -X POST "https://api.synthetic.new/v2/search" \
-  -H "Authorization: Bearer $SYNTHETIC_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"query": "nix flake development shell"}' > nix-results.json
+synthetic-search "nix flake development shell" > nix-results.json
+
+# Search with longer timeout for slow responses
+synthetic-search --timeout 60 "obscure technical topic"
 ```
 
 ## Response Fields
@@ -102,21 +89,21 @@ curl -s -X POST "https://api.synthetic.new/v2/search" \
 | Status | Meaning               | Action                                      |
 | ------ | --------------------- | ------------------------------------------- |
 | `200`  | Success               | Process results normally                    |
-| `400`  | Bad Request           | Check JSON body format and query content    |
+| `400`  | Bad Request           | Check query content                         |
 | `401`  | Unauthorized          | Verify `SYNTHETIC_API_KEY` is set and valid |
 | `429`  | Rate limit exceeded   | Wait and retry with exponential backoff     |
 | `500`  | Internal Server Error | Retry later                                 |
 
+Exit codes: `0` = success, `1` = error, `124` = timeout, `130` = interrupt.
+
 ## Best Practices
 
-1. **Check the key first**: Always verify `SYNTHETIC_API_KEY` is set before making requests.
+1. **Use natural language**: Write queries as plain English descriptions of what you're looking for.
 
-2. **Use natural language**: Write queries as plain English descriptions of what you're looking for.
+2. **Extract with jaq**: Use `--compact` and pipe to `jaq` for filtering relevant fields.
 
-3. **Extract with jq**: Use `jq` to filter relevant fields from results.
+3. **Cache responses**: Search results for stable topics can be reused for the duration of a session.
 
-4. **Cache responses**: Search results for stable topics can be reused for the duration of a session.
+4. **Handle errors gracefully**: Check the exit code and implement retry logic for transient failures.
 
-5. **Handle errors gracefully**: Check the HTTP status code and implement retry logic for `429` and `500` responses.
-
-6. **Respect zero data retention**: This API is designed for privacy-sensitive queries where data retention matters.
+5. **Respect zero data retention**: This API is designed for privacy-sensitive queries where data retention matters.
