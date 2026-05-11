@@ -176,9 +176,6 @@ in
         quietStartup = true;
         hideThinkingBlock = false;
         theme = config.home.colors.variant;
-        enabledModels = lib.concatMap (p: map (m: m.id) p.models) (
-          builtins.attrValues agentsCfg.models.providers
-        );
         retry = {
           maxRetries = 10;
           maxDelayMs = 0;
@@ -201,7 +198,6 @@ in
     ];
 
     providers = lib.mapAttrs mkPiProvider agentsCfg.models.providers;
-
   };
 
   home.file =
