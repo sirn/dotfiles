@@ -953,7 +953,7 @@ export default function (pi: ExtensionAPI) {
       const agents = discoverAgents(agentDir);
 
       const totalAgents = params.steps.reduce(
-        (sum, step) => sum + step.length,
+        (sum, step) => sum + (Array.isArray(step) ? step.length : 0),
         0,
       );
       const makeDetails = (results: SingleResult[]): SubagentDetails => ({
@@ -972,6 +972,12 @@ export default function (pi: ExtensionAPI) {
       }
 
       for (let s = 0; s < steps.length; s++) {
+        if (!Array.isArray(steps[s])) {
+          return createTextResult(
+            `Step ${s + 1} is not an array of agent tasks. Each step must be an array like [{agent: "name", task: "description"}, ...].`,
+            makeDetails([]),
+          );
+        }
         if (steps[s].length === 0) {
           return createTextResult(
             `Step ${s + 1} has no agents. Provide at least one agent per step.`,
@@ -1105,7 +1111,10 @@ export default function (pi: ExtensionAPI) {
       }
 
       // Count total agents
-      const totalAgents = steps.reduce((sum, s) => sum + s.length, 0);
+      const totalAgents = steps.reduce(
+        (sum, s) => sum + (Array.isArray(s) ? s.length : 0),
+        0,
+      );
 
       const text =
         theme.fg("toolTitle", theme.bold("subagent ")) +
