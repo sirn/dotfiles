@@ -7,6 +7,7 @@ import json
 import os
 import socket
 import sys
+import textwrap
 import urllib.error
 import urllib.request
 from typing import Any
@@ -22,21 +23,10 @@ def _get_api_key() -> str:
     return key
 
 
-def _emit(data: Any, *, raw_bytes: bytes | None, raw: bool, compact: bool) -> None:
-    if raw and raw_bytes is not None:
-        sys.stdout.buffer.write(raw_bytes)
-        if not raw_bytes.endswith(b"\n"):
-            sys.stdout.buffer.write(b"\n")
-        return
-    if compact:
-        print(json.dumps(data, separators=(",", ":")))
-    else:
-        print(json.dumps(data, indent=2))
-
-
-def cmd_search(args: argparse.Namespace) -> int:
+def _do_search(query: str, *, timeout: float) -> Any:
+    """POST a query and return parsed JSON, or sys.exit on error."""
     key = _get_api_key()
-    payload = json.dumps({"query": args.query}).encode("utf-8")
+    payload = json.dumps({"query": query}).encode("utf-8")
     req = urllib.request.Request(
         _API_URL,
         data=payload,
@@ -47,7 +37,7 @@ def cmd_search(args: argparse.Namespace) -> int:
         method="POST",
     )
     try:
-        with urllib.request.urlopen(req, timeout=args.timeout) as resp:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
             raw_bytes = resp.read()
     except urllib.error.HTTPError as exc:
         body = exc.read().decode("utf-8", errors="replace")
@@ -55,71 +45,102 @@ def cmd_search(args: argparse.Namespace) -> int:
             f"synthetic-search: HTTP {exc.code}: {body}",
             file=sys.stderr,
         )
-        return 1
+        sys.exit(1)
     except urllib.error.URLError as exc:
         if isinstance(exc.reason, socket.timeout):
             print("synthetic-search: request timed out", file=sys.stderr)
-            return 124
+            sys.exit(124)
         print(f"synthetic-search: request failed: {exc.reason}", file=sys.stderr)
-        return 1
+        sys.exit(1)
     except socket.timeout:
         print("synthetic-search: request timed out", file=sys.stderr)
-        return 124
+        sys.exit(124)
 
     try:
-        data = json.loads(raw_bytes)
+        return json.loads(raw_bytes)
     except json.JSONDecodeError as exc:
         print(f"synthetic-search: invalid JSON response: {exc}", file=sys.stderr)
-        return 1
+        sys.exit(1)
 
-    _emit(data, raw_bytes=raw_bytes, raw=args.raw, compact=args.compact)
-    return 0
 
+# --- Output modes -----------------------------------------------------------
+
+def _format_json(data: Any, *, compact: bool) -> None:
+    if compact:
+        print(json.dumps(data, separators=(",", ":")))
+    else:
+        print(json.dumps(data, indent=2))
+
+
+def _format_list(data: Any) -> None:
+    for r in data.get("results", []):
+        print(f"{r.get('title', '')}: {r.get('url', '')}")
+
+
+def _format_text(data: Any) -> None:
+    for i, r in enumerate(data.get("results", []), 1):
+        title = r.get("title", "")
+        url = r.get("url", "")
+        snippet = r.get("text", "")
+        published = r.get("published", "")
+        meta = f"  published: {published}" if published else ""
+        print(f"[{i}] {title}")
+        print(f"  url: {url}{meta}")
+        if snippet:
+            for line in textwrap.wrap(snippet, width=80, initial_indent="  ", subsequent_indent="  "):
+                print(line)
+        print()
+
+
+# --- CLI ---------------------------------------------------------------------
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="synthetic-search",
         description=__doc__,
     )
-    sub = parser.add_subparsers(dest="cmd", required=True)
-
-    p = sub.add_parser("search", help="search the web (default subcommand)")
-    p.add_argument("query", help="search query")
-    p.add_argument(
+    parser.add_argument("query", help="search query")
+    parser.add_argument(
         "--timeout",
         type=float,
         default=30.0,
         metavar="SECONDS",
         help="request timeout in seconds (default: 30)",
     )
-    p.add_argument(
-        "--raw",
-        action="store_true",
-        help="output raw API response bytes without decoding",
-    )
-    p.add_argument(
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
         "--compact",
         action="store_true",
         help="compact JSON output (no whitespace)",
     )
-    p.set_defaults(func=cmd_search)
-
+    group.add_argument(
+        "--list",
+        action="store_true",
+        help="output title and URL per line",
+    )
+    group.add_argument(
+        "--text",
+        action="store_true",
+        help="output readable results with snippets",
+    )
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     if argv is None:
         argv = sys.argv[1:]
-    # Default subcommand: treat bare args as `search QUERY`
-    known_subcommands = {"search"}
-    if not argv or argv[0] not in known_subcommands:
-        argv = ["search"] + list(argv)
     args = build_parser().parse_args(argv)
     try:
-        rc = args.func(args)
+        data = _do_search(args.query, timeout=args.timeout)
     except KeyboardInterrupt:
         return 130
-    return rc if isinstance(rc, int) else 0
+    if args.list:
+        _format_list(data)
+    elif args.text:
+        _format_text(data)
+    else:
+        _format_json(data, compact=args.compact)
+    return 0
 
 
 if __name__ == "__main__":

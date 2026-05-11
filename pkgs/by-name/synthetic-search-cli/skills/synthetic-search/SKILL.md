@@ -17,28 +17,35 @@ Web search using the Synthetic Search API.
 
 **Note:** Never hardcode `SYNTHETIC_API_KEY`. Always use the environment variable.
 
-## Web Search
+## Output Modes
 
-Perform a web search query. The API accepts natural language queries and returns results with URLs, titles, text snippets, and publication dates.
+| Flag | Output format | Use case |
+| ---- | ------------- | -------- |
+| *(default)* | JSON (pretty) | Programmatic use, saving to file |
+| `--compact` | JSON (no whitespace) | Piping to `jaq` |
+| `--list` | `Title: URL` per line | Quick scanning of result URLs |
+| `--text` | Numbered with title, URL, snippet | Human-readable review of results |
+
+Flags `--compact`, `--list`, and `--text` are mutually exclusive.
 
 ```bash
-# Basic search (pretty-printed JSON)
-synthetic-search "your search query here"
+# JSON output (default)
+synthetic-search "rust async trait methods"
 
-# Compact output (for piping to jaq)
+# Compact JSON for piping
 synthetic-search --compact "rust async trait methods"
 
-# Custom timeout (seconds)
-synthetic-search --timeout 60 "svelte 5 runes $state"
+# Title + URL per line
+synthetic-search --list "rust async trait methods"
 
-# Raw API response bytes
-synthetic-search --raw "python asyncio patterns"
+# Human-readable with snippets
+synthetic-search --text "rust async trait methods"
 
-# Explicit subcommand form (equivalent)
-synthetic-search search "nix flake development shell"
+# Custom timeout (any mode)
+synthetic-search --text --timeout 60 "obscure technical topic"
 ```
 
-## Response
+## Response (JSON modes)
 
 ```json
 {
@@ -56,15 +63,14 @@ synthetic-search search "nix flake development shell"
 ## Example Usage
 
 ```bash
-# Extract URLs and titles with jaq
-synthetic-search --compact "python asyncio patterns" | \
-  jaq -r '.results[] | "\(.title): \(.url)"'
+# Quick scan of result URLs
+synthetic-search --list "python asyncio patterns"
 
-# Save results to a file
+# Save JSON results to a file
 synthetic-search "nix flake development shell" > nix-results.json
 
-# Search with longer timeout for slow responses
-synthetic-search --timeout 60 "obscure technical topic"
+# Readable review with context
+synthetic-search --text "svelte 5 runes $state"
 ```
 
 ## Response Fields
@@ -100,7 +106,7 @@ Exit codes: `0` = success, `1` = error, `124` = timeout, `130` = interrupt.
 
 1. **Use natural language**: Write queries as plain English descriptions of what you're looking for.
 
-2. **Extract with jaq**: Use `--compact` and pipe to `jaq` for filtering relevant fields.
+2. **Choose the right mode**: `--list` for quick URL scanning, `--text` for reading snippets, `--compact | jaq` for custom filtering.
 
 3. **Cache responses**: Search results for stable topics can be reused for the duration of a session.
 

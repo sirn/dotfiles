@@ -11,7 +11,7 @@ in
   agents.instructionText = lib.mkAfter syntheticSearchInstructionText;
 
   agents.commandContext = lib.mkAfter ''
-    `synthetic-search QUERY` performs a stateless web search and prints JSON to stdout; `--compact` for piping, `--timeout N` for custom timeout. Read-only, requires `SYNTHETIC_API_KEY`.
+`synthetic-search QUERY` searches the web (default: JSON). Use `--list` for title+URL per line, `--text` for readable snippets, `--compact` for pipable JSON. Read-only, requires `SYNTHETIC_API_KEY`.
   '';
 
   agents.skillSets.synthetic-search = {
