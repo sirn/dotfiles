@@ -11,7 +11,7 @@ in
   agents.instructionText = lib.mkAfter syntheticSearchInstructionText;
 
   agents.commandContext = lib.mkAfter ''
-`synthetic-search QUERY` searches the web (default: JSON). Use `--list` for title+URL per line, `--text` for readable snippets, `--compact` for pipable JSON. Read-only, requires `SYNTHETIC_API_KEY`.
+    `synthetic-search QUERY` searches the web (default: JSON). Use `--output=list` for title+URL per line, `--output=text` for readable snippets, `--output=compact` for pipable JSON. Read-only.
   '';
 
   agents.skillSets.synthetic-search = {

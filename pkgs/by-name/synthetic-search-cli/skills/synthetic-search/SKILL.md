@@ -19,20 +19,30 @@ Web search using the Synthetic Search API.
 
 ## Output Modes
 
-| Flag | Output format | Use case |
-| ---- | ------------- | -------- |
-| *(default)* | JSON (pretty) | Programmatic use, saving to file |
-| `--compact` | JSON (no whitespace) | Piping to `jaq` |
-| `--list` | `Title: URL` per line | Quick scanning of result URLs |
-| `--text` | Numbered with title, URL, snippet | Human-readable review of results |
+| Flag       | Value              | Output format                     | Use case                         |
+| ---------- | ------------------ | --------------------------------- | -------------------------------- |
+| `--output` | `json` _(default)_ | JSON (pretty)                     | Programmatic use, saving to file |
+| `--output` | `compact`          | JSON (no whitespace)              | Piping to `jaq`                  |
+| `--output` | `list`             | `Title: URL` per line             | Quick scanning of result URLs    |
+| `--output` | `text`             | Numbered with title, URL, snippet | Human-readable review of results |
 
-Flags `--compact`, `--list`, and `--text` are mutually exclusive.
+The `--output` flag accepts one of `json`, `compact`, `list`, or `text`.
 
 ```bash
 # JSON output (default)
 synthetic-search "rust async trait methods"
 
 # Compact JSON for piping
+synthetic-search --output=compact "rust async trait methods"
+
+# Title + URL per line
+synthetic-search --output=list "rust async trait methods"
+
+# Human-readable with snippets
+synthetic-search --output=text "rust async trait methods"
+
+# Custom timeout (any mode)
+synthetic-search --output=text --timeout 60 "obscure technical topic"
 synthetic-search --compact "rust async trait methods"
 
 # Title + URL per line
@@ -64,13 +74,13 @@ synthetic-search --text --timeout 60 "obscure technical topic"
 
 ```bash
 # Quick scan of result URLs
-synthetic-search --list "python asyncio patterns"
+synthetic-search --output=list "python asyncio patterns"
 
 # Save JSON results to a file
 synthetic-search "nix flake development shell" > nix-results.json
 
 # Readable review with context
-synthetic-search --text "svelte 5 runes $state"
+synthetic-search --output=text "svelte 5 runes $state"
 ```
 
 ## Response Fields
@@ -106,7 +116,7 @@ Exit codes: `0` = success, `1` = error, `124` = timeout, `130` = interrupt.
 
 1. **Use natural language**: Write queries as plain English descriptions of what you're looking for.
 
-2. **Choose the right mode**: `--list` for quick URL scanning, `--text` for reading snippets, `--compact | jaq` for custom filtering.
+2. **Choose the right mode**: `--output=list` for quick URL scanning, `--output=text` for reading snippets, `--output=compact | jaq` for custom filtering.
 
 3. **Cache responses**: Search results for stable topics can be reused for the duration of a session.
 

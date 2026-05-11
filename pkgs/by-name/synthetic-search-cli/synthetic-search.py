@@ -107,21 +107,11 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="SECONDS",
         help="request timeout in seconds (default: 30)",
     )
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument(
-        "--compact",
-        action="store_true",
-        help="compact JSON output (no whitespace)",
-    )
-    group.add_argument(
-        "--list",
-        action="store_true",
-        help="output title and URL per line",
-    )
-    group.add_argument(
-        "--text",
-        action="store_true",
-        help="output readable results with snippets",
+    parser.add_argument(
+        "--output",
+        choices=["json", "compact", "list", "text"],
+        default="json",
+        help="output format (default: json)",
     )
     return parser
 
@@ -134,12 +124,12 @@ def main(argv: list[str] | None = None) -> int:
         data = _do_search(args.query, timeout=args.timeout)
     except KeyboardInterrupt:
         return 130
-    if args.list:
+    if args.output == "list":
         _format_list(data)
-    elif args.text:
+    elif args.output == "text":
         _format_text(data)
     else:
-        _format_json(data, compact=args.compact)
+        _format_json(data, compact=(args.output == "compact"))
     return 0
 
 
