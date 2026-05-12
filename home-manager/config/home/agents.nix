@@ -2,6 +2,7 @@
   imports = [
     ../agents
     ../programs/claude-code
+    ../programs/context7-cli.nix
     ../programs/exa-cli.nix
     ../programs/gemini
     ../programs/lsp-cli.nix

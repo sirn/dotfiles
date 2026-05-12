@@ -17,6 +17,7 @@ in
 
   envWrapper = (callPackage ./by-name/env-wrapper/package.nix { });
 
+  context7-cli = (callPackage ./by-name/context7-cli/package.nix { });
   exa-cli = (callPackage ./by-name/exa-cli/package.nix { });
 
   omniwm = (callPackage ./by-name/omniwm/package.nix { });
