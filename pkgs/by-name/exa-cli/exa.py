@@ -216,11 +216,15 @@ def cmd_contents(args: argparse.Namespace) -> int:
 
 
 def cmd_context(args: argparse.Namespace) -> int:
-    payload: dict[str, Any] = {"query": args.query}
+    tokens: Any = args.tokens
+    if isinstance(tokens, str) and tokens != "dynamic":
+        try:
+            tokens = int(tokens)
+        except ValueError:
+            print('exa: --tokens must be an integer or "dynamic"', file=sys.stderr)
+            return 2
 
-    if args.tokens is not None:
-        payload["tokensNum"] = args.tokens
-
+    payload: dict[str, Any] = {"query": args.query, "tokensNum": tokens}
     data = _request("POST", "/context", payload, timeout=args.timeout)
 
     if args.output == "text":
@@ -524,7 +528,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("query", help="natural language query")
     p.add_argument(
         "--tokens",
-        default=None,
+        default="dynamic",
         metavar="N",
         help='token budget: integer or "dynamic" (default: dynamic)',
     )
