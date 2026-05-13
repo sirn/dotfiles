@@ -123,6 +123,15 @@
 
       optionalPath = p: if builtins.pathExists p then p else { };
 
+      localCfg =
+        if builtins.pathExists ./local/default.nix then
+          import ./local/default.nix
+        else
+          {
+            nixos = { };
+            home = { };
+          };
+
       mkMicroVM = import ./nixos/lib/mk-microvm.nix {
         inherit (inputs)
           microvm
@@ -175,7 +184,7 @@
 
           # Configurations
           ./home-manager/modules
-          (optionalPath ./local/home.nix)
+          localCfg.home
           profile.home
         ];
 
@@ -255,7 +264,7 @@
 
             # Configurations
             ./nixos/modules
-            (optionalPath ./local/nixos.nix)
+            localCfg.nixos
             profile.nixos
 
             # Home Manager
