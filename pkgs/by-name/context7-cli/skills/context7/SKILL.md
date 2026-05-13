@@ -19,11 +19,11 @@ Requires `CONTEXT7_API_KEY` environment variable to be set. API keys start with 
 
 ## Output Modes
 
-| Flag       | Value              | Output format                   | Use case                         |
-| ---------- | ------------------ | ------------------------------- | -------------------------------- |
-| `--output` | `json` _(default)_ | JSON (pretty)                   | Programmatic use, saving to file |
-| `--output` | `compact`          | JSON (no whitespace)            | Piping to `jaq`                  |
-| `--output` | `text`             | Raw markdown from API           | Quick review of documentation    |
+| Flag       | Value              | Output format         | Use case                         |
+| ---------- | ------------------ | --------------------- | -------------------------------- |
+| `--output` | `json` _(default)_ | JSON (pretty)         | Programmatic use, saving to file |
+| `--output` | `compact`          | JSON (no whitespace)  | Piping to `jaq`                  |
+| `--output` | `text`             | Raw markdown from API | Quick review of documentation    |
 
 The `--output` flag accepts one of `json`, `compact`, or `text`.
 
@@ -36,14 +36,14 @@ context7 context [OPTIONS] LIBRARY_ID
 
 Retrieve documentation context for a specific library.
 
-| Flag               | API param     | Description                                              |
-| ------------------ | ------------- | -------------------------------------------------------- |
-| `LIBRARY_ID`       | `libraryId`   | **Required.** Library identifier (e.g., `/facebook/react`) |
-| `-q`, `--query`    | `query`       | **Required.** Natural language query about the topic     |
-| `-t`, `--tokens`   | `tokensNum`   | Token budget: integer or `"dynamic"` (default: dynamic)  |
-| `-v`, `--version`  | _(in path)_   | Pin to exact version (e.g., `v15.1.8`)                   |
-| `--timeout`        | _(client)_    | Request timeout in seconds (default: 30)                 |
-| `--output`         | _(client)_    | Output format: `json`, `compact`, or `text`              |
+| Flag              | API param   | Description                                                |
+| ----------------- | ----------- | ---------------------------------------------------------- |
+| `LIBRARY_ID`      | `libraryId` | **Required.** Library identifier (e.g., `/facebook/react`) |
+| `-q`, `--query`   | `query`     | **Required.** Natural language query about the topic       |
+| `-t`, `--tokens`  | `tokensNum` | Token budget: integer or `"dynamic"` (default: dynamic)    |
+| `-v`, `--version` | _(in path)_ | Pin to exact version (e.g., `v15.1.8`)                     |
+| `--timeout`       | _(client)_  | Request timeout in seconds (default: 30)                   |
+| `--output`        | _(client)_  | Output format: `json`, `compact`, or `text`                |
 
 ### Response (JSON modes)
 
@@ -60,7 +60,7 @@ Retrieve documentation context for a specific library.
 
 Plain markdown with code examples and source references:
 
-```markdown
+````markdown
 ### Perform Side Effects in React Function Components using useEffect Hook
 
 Source: https://context7.com/facebook/react/llms.txt
@@ -68,12 +68,13 @@ Source: https://context7.com/facebook/react/llms.txt
 The `useEffect` hook enables functional components to perform side effects...
 
 ```jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 function UserProfile({ userId }) {
   // ...
 }
 ```
+````
 
 ---
 
@@ -82,7 +83,8 @@ function UserProfile({ userId }) {
 Source: https://context7.com/facebook/react/llms.txt
 
 The `useEffect` hook performs side effects in function components...
-```
+
+````
 
 ## Library ID Format
 
@@ -118,23 +120,23 @@ context7 /rust-lang/rust -q "async trait" --timeout 60
 
 # Save documentation to file
 context7 /facebook/react -q "context API" --output=text > react-context.md
-```
+````
 
 ## Error Handling
 
-| Status | Meaning                                   | Action                            |
-| ------ | ----------------------------------------- | --------------------------------- |
-| `200`  | Success                                   | Process normally                  |
-| `202`  | Accepted - Library not finalized          | Wait and retry (handled automatically) |
-| `301`  | Moved - Library redirected                | Follow redirect (handled automatically) |
-| `400`  | Bad Request                               | Check query parameters            |
-| `401`  | Unauthorized - Invalid API key            | Verify key (starts with `ctx7sk`) |
-| `403`  | Forbidden                                 | Check library access permissions  |
-| `404`  | Not Found                                 | Verify the library ID             |
-| `422`  | Unprocessable - Library too large/no code | Try different library             |
+| Status | Meaning                                   | Action                                                |
+| ------ | ----------------------------------------- | ----------------------------------------------------- |
+| `200`  | Success                                   | Process normally                                      |
+| `202`  | Accepted - Library not finalized          | Wait and retry (handled automatically)                |
+| `301`  | Moved - Library redirected                | Follow redirect (handled automatically)               |
+| `400`  | Bad Request                               | Check query parameters                                |
+| `401`  | Unauthorized - Invalid API key            | Verify key (starts with `ctx7sk`)                     |
+| `403`  | Forbidden                                 | Check library access permissions                      |
+| `404`  | Not Found                                 | Verify the library ID                                 |
+| `422`  | Unprocessable - Library too large/no code | Try different library                                 |
 | `429`  | Too Many Requests                         | Wait for `Retry-After` header (handled automatically) |
-| `500`  | Internal Server Error                     | Retry with backoff                |
-| `503`  | Service Unavailable                       | Retry later                       |
+| `500`  | Internal Server Error                     | Retry with backoff                                    |
+| `503`  | Service Unavailable                       | Retry later                                           |
 
 Exit codes: `0` = success, `1` = error, `2` = invalid arguments, `124` = timeout, `130` = interrupt.
 
