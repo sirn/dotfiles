@@ -258,9 +258,9 @@
             { disabledModules = [ "services/hardware/tlp.nix" ]; }
             "${inputs.nixpkgs-unstable}/nixos/modules/services/hardware/tlp.nix"
 
-            # NixOS Generate Config
-            ./configuration.nix
-            ./hardware-configuration.nix
+            # NixOS Generate Config (per-machine, gitignored)
+            (optionalPath ./configuration.nix)
+            (optionalPath ./hardware-configuration.nix)
 
             # Configurations
             ./nixos/modules
