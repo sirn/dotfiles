@@ -281,6 +281,7 @@ export default function (pi: ExtensionAPI) {
           .replaceAll("{PLAN_CONTENT}", planContent)
           .replaceAll("{USER_MESSAGE}", message),
         display: true,
+        details: { userInstruction: userMessage?.trim() || undefined },
       },
       { triggerTurn: true },
     );
