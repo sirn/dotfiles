@@ -21,16 +21,16 @@ The default mode is `locked`, and most keybindings switch between modes.
 
 ## Mode Switching
 
-| Key      | Action                |
-| :------- | :-------------------- |
+| Key      | Action                  |
+| :------- | :---------------------- |
 | `Ctrl+q` | Switch from locked mode |
-| `Enter`  | Switch to locked mode |
-| `Esc`    | Switch to locked mode |
+| `Enter`  | Switch to locked mode   |
+| `Esc`    | Switch to locked mode   |
 
 ## Locked Mode
 
-| Key      | Action                  |
-| :------- | :---------------------- |
+| Key      | Action                |
+| :------- | :-------------------- |
 | `Ctrl+g` | Switch to locked mode |
 
 ## Pane Mode (`p`)
