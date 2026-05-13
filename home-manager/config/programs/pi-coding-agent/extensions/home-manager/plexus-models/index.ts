@@ -164,11 +164,11 @@ function toProviderModel(apiModel: PlexusApiModel): ProviderModelConfig {
 export default async function (pi: ExtensionAPI): Promise<void> {
   if (!baseUrl) return;
 
-  // Plexus proxies to multiple backends (Synthetic, Fireworks, etc.) that
-  // disagree on the reasoning-content field name: Synthetic uses `reasoning`,
-  // Fireworks uses `reasoning_content`. Fireworks rejects `reasoning` with
-  // "Extra inputs are not permitted". Both backends accept `reasoning_content`,
-  // so normalize outgoing requests to that field.
+  // Plexus proxies to multiple backends that disagree on field names and roles.
+  // Normalize outgoing openai-completions requests so every backend can handle them:
+  // 1. reasoning → reasoning_content: Fireworks rejects `reasoning` (400). Both accept `reasoning_content`.
+  // 2. developer → system: synthetic/neuralwatt Qwen reject `developer` (400). `system` is universal.
+  // 3. assistant.content: null → "": wafer-pass rejects `null` content on assistant messages (400).
   pi.on("before_provider_request", (event, ctx) => {
     const model = ctx.model;
     if (!model?.provider?.startsWith("plexus")) return;
@@ -192,6 +192,22 @@ export default async function (pi: ExtensionAPI): Promise<void> {
 
     let changed = false;
     for (const message of messages) {
+      // 1. developer → system
+      //    synthetic/neuralwatt Qwen: 400 "Unexpected message role."
+      if (message.role === "developer") {
+        message.role = "system";
+        changed = true;
+      }
+
+      // 2. assistant content: null → ""
+      //    wafer-pass: 400 "messages[N].content cannot be null"
+      if (message.role === "assistant" && message.content === null) {
+        message.content = "";
+        changed = true;
+      }
+
+      // 3. reasoning → reasoning_content
+      //    Fireworks: 400 "Extra inputs are not permitted"
       if (
         message.reasoning !== undefined &&
         message.reasoning_content === undefined
