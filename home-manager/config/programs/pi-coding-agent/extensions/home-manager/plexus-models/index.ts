@@ -164,6 +164,49 @@ function toProviderModel(apiModel: PlexusApiModel): ProviderModelConfig {
 export default async function (pi: ExtensionAPI): Promise<void> {
   if (!baseUrl) return;
 
+  // Plexus proxies to multiple backends (Synthetic, Fireworks, etc.) that
+  // disagree on the reasoning-content field name: Synthetic uses `reasoning`,
+  // Fireworks uses `reasoning_content`. Fireworks rejects `reasoning` with
+  // "Extra inputs are not permitted". Both backends accept `reasoning_content`,
+  // so normalize outgoing requests to that field.
+  pi.on("before_provider_request", (event, ctx) => {
+    const model = ctx.model;
+    if (!model?.provider?.startsWith("plexus")) return;
+    if (model.api !== "openai-completions") return;
+
+    const payload = event.payload;
+
+    if (
+      !payload ||
+      typeof payload !== "object" ||
+      !Array.isArray((payload as Record<string, unknown>).messages)
+    ) {
+      return;
+    }
+
+    const normalized = JSON.parse(JSON.stringify(payload)) as Record<
+      string,
+      unknown
+    >;
+    const messages = normalized.messages as Array<Record<string, unknown>>;
+
+    let changed = false;
+    for (const message of messages) {
+      if (
+        message.reasoning !== undefined &&
+        message.reasoning_content === undefined
+      ) {
+        message.reasoning_content = message.reasoning;
+        delete message.reasoning;
+        changed = true;
+      }
+    }
+
+    if (changed) {
+      return normalized;
+    }
+  });
+
   try {
     const response = await fetch(`${baseUrl}/v1/models`, {
       headers: { Authorization: `Bearer ${process.env.PLEXUS_API_KEY}` },
