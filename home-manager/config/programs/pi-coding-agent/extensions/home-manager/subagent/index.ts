@@ -1142,12 +1142,6 @@ export default function (pi: ExtensionAPI) {
         );
       }
 
-      const trimLines = (value: string, maxLines: number) => {
-        const lines = value.trim().split("\n");
-        const suffix = lines.length > maxLines ? "\n..." : "";
-        return lines.slice(0, maxLines).join("\n") + suffix;
-      };
-
       const trimInline = (value: string, maxLength: number) => {
         const compact = value.trim().replace(/\s+/g, " ");
         return compact.length > maxLength
@@ -1168,7 +1162,7 @@ export default function (pi: ExtensionAPI) {
         for (const item of toShow) {
           if (item.type === "text") {
             const preview = expanded
-              ? trimLines(item.text, 8)
+              ? item.text.trim()
               : trimInline(item.text, 160);
             if (!preview.trim()) continue;
             text += `${theme.fg("toolOutput", preview)}\n`;
@@ -1226,7 +1220,7 @@ export default function (pi: ExtensionAPI) {
               ? theme.fg("error", "✗")
               : theme.fg("success", "✓");
           const task = r.task
-            ? trimInline(r.task, expanded ? 160 : 100)
+            ? (expanded ? r.task.trim().replace(/\s+/g, " ") : trimInline(r.task, 100))
             : undefined;
           const displayItems = getDisplayItems(r.messages);
 
@@ -1275,7 +1269,7 @@ export default function (pi: ExtensionAPI) {
         }
       }
       if (!expanded)
-        text += `${hasTotal ? "\n" : "\n\n"}${theme.fg("muted", "(Ctrl+O to expand)")}`;
+        text += `${hasTotal ? "\n" : "\n\n"}${theme.fg("muted", `(${keyHint("app.tools.expand", "to expand")})`)}`;
       return new Text(text, 0, 0);
     },
   });
