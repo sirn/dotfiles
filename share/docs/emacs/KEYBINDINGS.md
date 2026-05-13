@@ -65,18 +65,18 @@ File finding and navigation commands.
 
 Project-specific commands and operations.
 
-| Key       | Command                                | Description                                     |
-| :-------- | :------------------------------------- | :---------------------------------------------- |
-| `SPC p`   | `(Prefix)`                             | Project-specific commands.                      |
-| `SPC p p` | `project-switch-project`               | Switch to another project.                      |
-| `SPC p '` | `eat-project`                          | Open a terminal in the project root.            |
-| `SPC p b` | `consult-project-buffer`               | Find a buffer belonging to the current project. |
-| `SPC p d` | `project-dired`                        | Open project root in Dired.                     |
-| `SPC p f` | `gemacs--project-fd`                   | Find file in project using `fd`.                |
-| `SPC p g` | `gemacs--project-gptel`                | Open GPTel in the project root.                 |
-| `SPC p m` | `magit-project-status`                 | Open Magit status for the project.              |
-| `SPC p s` | `consult-ripgrep`                      | Search project with `ripgrep`.                  |
-| `SPC p S` | `gemacs--project-sync`                 | Sync known projects from `repoman`.             |
+| Key       | Command                  | Description                                     |
+| :-------- | :----------------------- | :---------------------------------------------- |
+| `SPC p`   | `(Prefix)`               | Project-specific commands.                      |
+| `SPC p p` | `project-switch-project` | Switch to another project.                      |
+| `SPC p '` | `eat-project`            | Open a terminal in the project root.            |
+| `SPC p b` | `consult-project-buffer` | Find a buffer belonging to the current project. |
+| `SPC p d` | `project-dired`          | Open project root in Dired.                     |
+| `SPC p f` | `gemacs--project-fd`     | Find file in project using `fd`.                |
+| `SPC p g` | `gemacs--project-gptel`  | Open GPTel in the project root.                 |
+| `SPC p m` | `magit-project-status`   | Open Magit status for the project.              |
+| `SPC p s` | `consult-ripgrep`        | Search project with `ripgrep`.                  |
+| `SPC p S` | `gemacs--project-sync`   | Sync known projects from `repoman`.             |
 
 ### `SPC E` - Environment
 
@@ -91,15 +91,15 @@ Environment variable management commands.
 | Key   | Command  | Description                |
 | :---- | :------- | :------------------------- |
 | `' '` | `eat`    | Open a new `eat` terminal. |
-| `' v` | `vterm`    | Open `vterm`.              |
+| `' v` | `vterm`  | Open `vterm`.              |
 | `' e` | `eshell` | Open `eshell`.             |
 
 ### `a` - AI / LLM
 
-| Key   | Command                        | Description                    |
-| :---- | :----------------------------- | :----------------------------- |
-| `a p` | `pi-coding-agent`              | Open the Pi coding agent.      |
-| `a g` | `gemacs--gptel-transient-menu` | Show the GPTel menu.           |
+| Key   | Command                        | Description               |
+| :---- | :----------------------------- | :------------------------ |
+| `a p` | `pi-coding-agent`              | Open the Pi coding agent. |
+| `a g` | `gemacs--gptel-transient-menu` | Show the GPTel menu.      |
 
 ### `A` - Applications
 
@@ -239,12 +239,12 @@ Environment variable management commands.
 
 ### `z` - Code Folding (Outline)
 
-| Key   | Command                   | Description                                 |
-| :---- | :------------------------ | :------------------------------------------ |
-| `z z` | `outline-toggle-children` | Toggle fold at point (main folding action). |
-| `z c` | `outline-hide-subtree`      | Close fold at point.                        |
-| `z o` | `outline-show-subtree`       | Open fold at point.                         |
-| `z r` | `outline-show-all`           | Open all folds in buffer.                   |
-| `z m` | `outline-hide-body`          | Close all folds in buffer.                  |
-| `z n` | `outline-next-visible-heading` | Move to next fold.                          |
+| Key   | Command                            | Description                                 |
+| :---- | :--------------------------------- | :------------------------------------------ |
+| `z z` | `outline-toggle-children`          | Toggle fold at point (main folding action). |
+| `z c` | `outline-hide-subtree`             | Close fold at point.                        |
+| `z o` | `outline-show-subtree`             | Open fold at point.                         |
+| `z r` | `outline-show-all`                 | Open all folds in buffer.                   |
+| `z m` | `outline-hide-body`                | Close all folds in buffer.                  |
+| `z n` | `outline-next-visible-heading`     | Move to next fold.                          |
 | `z p` | `outline-previous-visible-heading` | Move to previous fold.                      |
