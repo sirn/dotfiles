@@ -71,7 +71,6 @@ Project-specific commands and operations.
 | `SPC p p` | `project-switch-project`               | Switch to another project.                      |
 | `SPC p '` | `eat-project`                          | Open a terminal in the project root.            |
 | `SPC p b` | `consult-project-buffer`               | Find a buffer belonging to the current project. |
-| `SPC p c` | `gemacs--project-claude-code-ide-menu` | Open Claude Code IDE menu in the project root.  |
 | `SPC p d` | `project-dired`                        | Open project root in Dired.                     |
 | `SPC p f` | `gemacs--project-fd`                   | Find file in project using `fd`.                |
 | `SPC p g` | `gemacs--project-gptel`                | Open GPTel in the project root.                 |
@@ -92,13 +91,14 @@ Environment variable management commands.
 | Key   | Command  | Description                |
 | :---- | :------- | :------------------------- |
 | `' '` | `eat`    | Open a new `eat` terminal. |
+| `' v` | `vterm`    | Open `vterm`.              |
 | `' e` | `eshell` | Open `eshell`.             |
 
 ### `a` - AI / LLM
 
 | Key   | Command                        | Description                    |
 | :---- | :----------------------------- | :----------------------------- |
-| `a c` | `claude-code-ide-menu`         | Show the Claude Code IDE menu. |
+| `a p` | `pi-coding-agent`              | Open the Pi coding agent.      |
 | `a g` | `gemacs--gptel-transient-menu` | Show the GPTel menu.           |
 
 ### `A` - Applications
@@ -212,7 +212,7 @@ Environment variable management commands.
 | `t T`   | `treemacs-select-window`            | Switch to Treemacs window.        |
 | `t p a` | `treemacs-add-project-to-workspace` | Add project to Treemacs workspace |
 | `t w c` | `treemacs-create-workspace`         | Create Treemacs workspace.        |
-| `t w e` | `treemacs-edit-workspace`           | Edit Treemacs workspace.          |
+| `t w e` | `treemacs-edit-workspaces`          | Edit Treemacs workspaces.         |
 | `t w r` | `treemacs-rename-workspace`         | Rename Treemacs workspace.        |
 | `t w w` | `treemacs-switch-workspace`         | Switch Treemacs workspace.        |
 
@@ -237,14 +237,14 @@ Environment variable management commands.
 | `w R` | `redraw-display`              | Redraw the display.           |
 | `w w` | `ace-window`                  | Select a window to switch to. |
 
-### `z` - Code Folding (Origami)
+### `z` - Code Folding (Outline)
 
 | Key   | Command                   | Description                                 |
 | :---- | :------------------------ | :------------------------------------------ |
-| `z z` | `origami-toggle-node`     | Toggle fold at point (main folding action). |
-| `z c` | `origami-close-node`      | Close fold at point.                        |
-| `z o` | `origami-open-node`       | Open fold at point.                         |
-| `z r` | `origami-open-all-nodes`  | Open all folds in buffer.                   |
-| `z m` | `origami-close-all-nodes` | Close all folds in buffer.                  |
-| `z n` | `origami-next-fold`       | Move to next fold.                          |
-| `z p` | `origami-previous-fold`   | Move to previous fold.                      |
+| `z z` | `outline-toggle-children` | Toggle fold at point (main folding action). |
+| `z c` | `outline-hide-subtree`      | Close fold at point.                        |
+| `z o` | `outline-show-subtree`       | Open fold at point.                         |
+| `z r` | `outline-show-all`           | Open all folds in buffer.                   |
+| `z m` | `outline-hide-body`          | Close all folds in buffer.                  |
+| `z n` | `outline-next-visible-heading` | Move to next fold.                          |
+| `z p` | `outline-previous-visible-heading` | Move to previous fold.                      |
