@@ -407,7 +407,7 @@ function getDisplayItems(messages: Message[]): DisplayItem[] {
       for (const part of msg.content) {
         if (part.type === "text") {
           if (part.text.trim()) items.push({ type: "text", text: part.text });
-        } else if (part.type === "toolCall")
+        } else if (part.type === "toolCall" && part.name)
           items.push({
             type: "toolCall",
             name: part.name,
