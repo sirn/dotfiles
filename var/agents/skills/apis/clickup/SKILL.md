@@ -297,22 +297,26 @@ Common filters supported by `GET /team/{team_Id}/task`:
 
 ### Create or update tasks
 
+> **Always use `markdown_content` (create) or `markdown_description` (update) for task descriptions** — the `description` field treats content as plain text and will not render Markdown. The `markdown_content`/`markdown_description` fields render Markdown as rich text in the ClickUp UI.
+>
+> If both `markdown_content` and `description` are provided, `markdown_content` takes precedence.
+
 ```bash
-# Create task in a list
+# Create task in a list (with Markdown description)
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
   -H "Content-Type: application/json" \
   -X POST \
   "https://api.clickup.com/api/v2/list/LIST_ID/task" \
-  -d '{"name":"New task"}' | jq .
+  -d '{"name":"New task","markdown_content":"## Overview\nDetails here."}' | jq .
 
-# Update task
+# Update task (with Markdown description)
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
   -H "Content-Type: application/json" \
   -X PUT \
   "https://api.clickup.com/api/v2/task/TASK_ID" \
-  -d '{"name":"Updated task name"}' | jq .
+  -d '{"name":"Updated task name","markdown_description":"## Updated\nNew details."}' | jq .
 ```
 
 ### Task relationships
@@ -912,4 +916,5 @@ Prefer `curl -fsS` so HTTP failures surface immediately.
 6. **When using custom task IDs**, add `custom_task_ids=true&team_id=TEAM_ID`
 7. **Free-text task search is not a general v2 endpoint**: use workspace/list filtering or fetch and filter client-side
 8. **Docs content and chat message content support `text/md` and `text/plain`**
-9. **Be careful with mutations**: creating, editing, deleting, ACL changes, and webhook changes should only be done when explicitly requested
+9. **Use `markdown_content` (create) or `markdown_description` (update) for task descriptions** — `description` is plain text only and will not render Markdown
+10. **Be careful with mutations**: creating, editing, deleting, ACL changes, and webhook changes should only be done when explicitly requested
