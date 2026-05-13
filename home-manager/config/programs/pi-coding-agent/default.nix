@@ -171,31 +171,24 @@ in
 
     instructionText = agentsMdText;
 
-    settings = lib.mkMerge [
-      {
-        quietStartup = true;
-        hideThinkingBlock = false;
-        theme = config.home.colors.variant;
-        retry = {
-          maxRetries = 10;
-          maxDelayMs = 0;
-        };
-      }
-      (lib.mkIf (agentsCfg.models.default != null) {
-        defaultProvider = agentsCfg.models.default.provider;
-        defaultModel = agentsCfg.models.default.model;
-      })
-      (lib.mkIf
-        (
-          agentsCfg.models.default != null
-          && builtins.hasAttr agentsCfg.models.default.provider agentsCfg.models.providers
-        )
-        {
-          defaultThinkingLevel =
-            agentsCfg.models.providers.${agentsCfg.models.default.provider}.reasoningEffort;
-        }
-      )
-    ];
+    defaultProvider = lib.mkIf (agentsCfg.models.default != null) agentsCfg.models.default.provider;
+
+    defaultModel = lib.mkIf (agentsCfg.models.default != null) agentsCfg.models.default.model;
+
+    defaultThinkingLevel = lib.mkIf (
+      agentsCfg.models.default != null
+      && builtins.hasAttr agentsCfg.models.default.provider agentsCfg.models.providers
+    ) agentsCfg.models.providers.${agentsCfg.models.default.provider}.reasoningEffort;
+
+    settings = {
+      quietStartup = true;
+      hideThinkingBlock = false;
+      theme = config.home.colors.variant;
+      retry = {
+        maxRetries = 10;
+        maxDelayMs = 0;
+      };
+    };
 
     providers = lib.mapAttrs mkPiProvider agentsCfg.models.providers;
   };
