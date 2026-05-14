@@ -38,9 +38,9 @@ This is a Nix/Home Manager dotfiles repository. Read `README.md` before doing an
 
 Keep messages concise and use these scope prefixes:
 
-- `profiles/<hostname>` for `profiles/<hostname>.nix`.
-- `nixos/<path>` for files under `nixos/config`, `nixos/modules`, or `nixos/lib`.
-- `home-manager/<path>` for files under `home-manager/config`, `home-manager/modules`, or `home-manager/lib`.
-- `pkgs/<package>` for packages under `pkgs/<group>/<package>`.
+- `profiles/<hostname>` for `profiles/<hostname>.nix`, e.g. `profiles/terra: ...`.
+- `nixos/<path>/<component>` for files under `nixos/config`, `nixos/modules`, or `nixos/lib`. Skip `modules/programs`, e.g. `nixos/system: ...`
+- `home-manager/<path>/<component>` for files under `home-manager/config`, `home-manager/modules`, or `home-manager/lib`, e.g. `home-manager/pi-coding-agent: ...`
+- `pkgs/<package>` for packages under `pkgs/<group>/<package>`, e.g. `pkgs/web-cli: ...`.
 - Use the top-level filename for top-level files, and the directory path for other areas.
 - For multiple areas, use brace scopes like `nixos/{system,services}: ...` or `{nixos,home-manager}/*: ...`.
