@@ -110,11 +110,14 @@ function getFamily(id: string): string {
   return "__default__";
 }
 
-/** Parse a pricing string like "7.5e-7" or "0.00000174" into a number. */
+/** Parse a per-token pricing string (e.g. "7.5e-7" or "0.00000174") and convert to per-million-token cost.
+ * Pi expects cost values in dollars per million tokens,
+ * but the Plexus/OpenRouter API returns dollars per token.
+ */
 function parsePricing(value: string | null | undefined): number {
   if (!value) return 0;
   const num = Number(value);
-  return Number.isFinite(num) ? num : 0;
+  return Number.isFinite(num) ? num * 1_000_000 : 0;
 }
 
 /**
