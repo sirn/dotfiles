@@ -20,6 +20,10 @@ in
       assertion = !config.services.tlp.enable;
       message = "services.power-profiles-daemon is enabled alongside services.tlp; choose only one.";
     }
+    {
+      assertion = !config.services.powerband.enable;
+      message = "services.power-profiles-daemon is enabled alongside services.powerband; choose only one.";
+    }
   ];
 
   services.power-profiles-daemon = {

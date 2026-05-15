@@ -11,6 +11,10 @@
       assertion = !config.services.power-profiles-daemon.enable;
       message = "services.tlp is enabled alongside services.power-profiles-daemon; choose only one.";
     }
+    {
+      assertion = !config.services.powerband.enable;
+      message = "services.tlp is enabled alongside services.powerband; choose only one.";
+    }
   ];
 
   services.tlp = {

@@ -22,6 +22,8 @@ in
 
   omniwm = (callPackage ./by-name/omniwm/package.nix { });
 
+  powerband = (callPackage ./by-name/powerband { });
+
   pi-hashline-edit = (callPackage ./by-name/pi-hashline-edit/package.nix { });
 
   node-textfile-collector-scripts = (

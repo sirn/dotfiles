@@ -15,6 +15,7 @@
       ../nixos/config/services/node-exporter-ipmitool.nix
       ../nixos/config/services/node-exporter.nix
       ../nixos/config/services/podman.nix
+      ../nixos/config/services/powerband.nix
       ../nixos/config/services/prometheus-agent.nix
       ../nixos/config/services/sanoid.nix
       ../nixos/config/services/syncoid.nix
@@ -68,29 +69,6 @@
       recursive = true;
     };
 
-    # Xeon w9-3400 does not allow clock frequency to spike too much when EPB is
-    # set to something other than 1 ("performance"). This is not to be confused with
-    # energy_performance_preference (EPP) which power-profiles-daemon uses to control
-    # its performance mode.
-    systemd.services = {
-      "configure-intel-epb" = {
-        enable = true;
-        wantedBy = [ "multi-user.target" ];
-        serviceConfig = {
-          Type = "oneshot";
-          RemainAfterExit = true;
-        };
-        script = ''
-          for n in /sys/devices/system/cpu/cpu*/power/energy_perf_bias; do
-            if ! [ -f "$n" ]; then
-              echo "Could not set Energy Performance Bias"
-              exit 1
-            fi
-            echo 0 > $n
-          done
-        '';
-      };
-    };
   };
 
   home = {
