@@ -9,7 +9,6 @@
     ../programs/mcp.nix
     ../programs/pi-coding-agent
     ../programs/rtk
-    ../programs/synthetic-search-cli.nix
     ../programs/web-cli.nix
   ];
 

@@ -38,8 +38,6 @@ in
 
   lsp-cli = (callPackage ./by-name/lsp-cli/package.nix { });
 
-  synthetic-search-cli = (callPackage ./by-name/synthetic-search-cli/package.nix { });
-
   web-cli = (callPackage ./by-name/web-cli/package.nix { });
 
   wrapped-uv = (callPackage ./by-name/wrapped-uv/wrapped.nix { });

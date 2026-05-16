@@ -13,7 +13,7 @@
 
 - Read reference skills before covered tools (examples: `nix`, `flake`, `jujutsu`, `github-cli`, `terraform`, `rtk`).
 - Use task skills for common workflows (examples: implementation planning → `code-plan-implementation`, API design → `code-plan-api`, tests → `code-test`, linting → `code-lint`, formatting → `code-format`, reviews → `code-review`, commits → `code-commit`).
-- Use research/API skills when needed (examples: `context7`, `synthetic-search`, `exa`, `asana`, `clickup`, `linear`).
+- Use research/API skills when needed (examples: `context7`, `exa`, `asana`, `clickup`, `linear`).
 - During planning, analysis-only skills may run read-only to gather context (examples: `code-review`, `code-test`, `code-explain`, `code-setup-analyze`).
 
 ## Subagents
@@ -63,8 +63,7 @@ Delegate specialized tasks to these experts to keep the main agent's context cle
 - For GitHub, use `gh` for read-only issue/PR/repo lookups (examples: `gh pr view -R owner/repo`, `gh issue list -R owner/repo`). Read `github-cli`.
 - For Terraform, follow plan-before-apply (example: `terraform plan`); never apply without explicit confirmation. Read `terraform`.
 - For library docs, use `context7` (example: `context7 --library react --topic hooks`). Read `context7`.
-- For general web research, use `synthetic-search` (example: `synthetic-search --output=text "nix flake patterns"`). Read `synthetic-search`.
-- For neural search, content extraction, code context, or websets, use `exa` (example: `exa search --highlights "python asyncio patterns"`). Read `exa`.
+- For general search, content extraction, code context, or websets, use `exa` (example: `exa search --highlights "python asyncio patterns"`). Read `exa`.
 - For JSON/YAML/TOML/XML processing, prefer `jaq` when available (examples: `jaq '.foo' file.json`, `jaq --from yaml '.jobs' file.yml`).
 - Prefer `fd` over `find`; if using `find`, scope it to the current project directory.
 - Prefer `podman` over `docker` when both are available.
