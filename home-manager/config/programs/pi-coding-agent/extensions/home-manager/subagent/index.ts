@@ -104,6 +104,8 @@ interface SingleResult {
   stopReason?: string;
   errorMessage?: string;
   stepIndex?: number;
+  autoRetrying?: boolean;
+  compacting?: boolean;
 }
 
 interface SubagentDetails {
@@ -114,12 +116,17 @@ interface SubagentDetails {
 }
 
 type RpcEvent =
+  | { type: "message_start" }
+  | { type: "message_delta" }
   | { type: "message_end"; message?: Message }
+  | { type: "tool_execution_start" }
   | {
       type: "tool_execution_end";
       isError?: boolean;
       result?: { content?: string };
     }
+  | { type: "turn_start" }
+  | { type: "turn_end" }
   | { type: "agent_end"; messages?: Message[] }
   | {
       type: "response";
@@ -143,6 +150,28 @@ type RpcEvent =
       widgetKey?: string;
       widgetLines?: string[];
       text?: string;
+    }
+  | {
+      type: "auto_retry_start";
+      attempt: number;
+      maxAttempts: number;
+      delayMs: number;
+      errorMessage: string;
+    }
+  | {
+      type: "auto_retry_end";
+      success: boolean;
+      attempt: number;
+      finalError?: string;
+    }
+  | { type: "compaction_start"; reason: string }
+  | {
+      type: "compaction_end";
+      reason: string;
+      result?: unknown;
+      aborted: boolean;
+      willRetry: boolean;
+      errorMessage?: string;
     }
   | { type: string; [key: string]: unknown };
 
@@ -598,6 +627,7 @@ async function runSingleAgent(
       let buffer = "";
       let killTimeout: ReturnType<typeof setTimeout> | undefined;
       let settled = false;
+      let agentEndTimer: ReturnType<typeof setTimeout> | undefined;
 
       const sendRpc = (message: Record<string, unknown>) => {
         if (!proc.stdin || proc.stdin.destroyed || proc.stdin.writableEnded)
@@ -622,6 +652,7 @@ async function runSingleAgent(
 
       const cleanup = () => {
         if (killTimeout) clearTimeout(killTimeout);
+        if (agentEndTimer !== undefined) clearTimeout(agentEndTimer);
         if (signal) signal.removeEventListener("abort", killProc);
       };
 
@@ -637,6 +668,14 @@ async function runSingleAgent(
           proc.stdin.end();
         }
         finish(0);
+        proc.kill("SIGTERM");
+      };
+
+      const finishFailure = () => {
+        if (proc.stdin && !proc.stdin.destroyed && !proc.stdin.writableEnded) {
+          proc.stdin.end();
+        }
+        finish(1);
         proc.kill("SIGTERM");
       };
 
@@ -704,6 +743,23 @@ async function runSingleAgent(
           return;
         }
 
+        // Work-producing events cancel the deferred finalization timer.
+        // Use a whitelist — not a blacklist — so side-channel events
+        // like extension_ui_request (compaction notifications) don't
+        // accidentally kill the timer and cause hangs.
+        const isWorkEvent =
+          event.type === "message_end" ||
+          event.type === "message_start" ||
+          event.type === "message_delta" ||
+          event.type === "tool_execution_start" ||
+          event.type === "tool_execution_end" ||
+          event.type === "turn_start" ||
+          event.type === "turn_end";
+        if (agentEndTimer !== undefined && isWorkEvent) {
+          clearTimeout(agentEndTimer);
+          agentEndTimer = undefined;
+        }
+
         if (event.type === "message_end" && event.message) {
           const msg = event.message as Message;
           currentResult.messages.push(msg);
@@ -743,7 +799,115 @@ async function runSingleAgent(
         }
 
         if (event.type === "agent_end") {
-          finishSuccess();
+          if (settled) return;
+          // Pi may auto-retry or compact-and-retry after agent_end.
+          // Defer finalization with a grace period so built-in
+          // continuation events can cancel the kill.
+          // 2s accommodates GC pauses and slow stdout flushes.
+          if (agentEndTimer !== undefined) clearTimeout(agentEndTimer);
+          agentEndTimer = setTimeout(() => {
+            agentEndTimer = undefined;
+            currentResult.autoRetrying = false;
+            currentResult.compacting = false;
+            finishSuccess();
+          }, 2000);
+          return;
+        }
+
+        // Built-in auto-retry
+        if (event.type === "auto_retry_start") {
+          if (settled) return;
+          if (agentEndTimer !== undefined) {
+            clearTimeout(agentEndTimer);
+            agentEndTimer = undefined;
+          }
+          currentResult.errorMessage = event.errorMessage;
+          currentResult.autoRetrying = true;
+          emitUpdate();
+        }
+
+        if (event.type === "auto_retry_end") {
+          if (settled) return;
+          if (event.success) {
+            if (agentEndTimer !== undefined) {
+              clearTimeout(agentEndTimer);
+              agentEndTimer = undefined;
+            }
+            currentResult.errorMessage = undefined;
+            currentResult.stopReason = undefined;
+            currentResult.autoRetrying = false;
+            // Retry succeeded — agent is still working.
+          } else {
+            currentResult.stopReason = "error";
+            currentResult.errorMessage =
+              event.finalError || currentResult.errorMessage;
+            if (agentEndTimer !== undefined) {
+              clearTimeout(agentEndTimer);
+              agentEndTimer = undefined;
+            }
+            finishFailure();
+          }
+          emitUpdate();
+        }
+
+        // Compaction (context overflow recovery)
+        if (event.type === "compaction_start") {
+          if (settled) return;
+          if (agentEndTimer !== undefined) {
+            clearTimeout(agentEndTimer);
+            agentEndTimer = undefined;
+          }
+          currentResult.compacting = true;
+          emitUpdate();
+        }
+
+        if (event.type === "compaction_end") {
+          if (settled) return;
+          currentResult.compacting = false;
+          if (!event.willRetry) {
+            const isOverflowRecovery =
+              event.reason !== "threshold";
+            if (isOverflowRecovery && (event.aborted || event.errorMessage)) {
+              currentResult.stopReason = "error";
+              currentResult.errorMessage =
+                event.errorMessage || currentResult.errorMessage;
+              if (agentEndTimer !== undefined) {
+                clearTimeout(agentEndTimer);
+                agentEndTimer = undefined;
+              }
+              finishFailure();
+            } else {
+              // Threshold compaction (post-success) or successful
+              // compaction — Pi may not emit another agent_end.
+              // Restart the grace timer so the process doesn't
+              // hang if no more events arrive.
+              if (agentEndTimer !== undefined) clearTimeout(agentEndTimer);
+              agentEndTimer = setTimeout(() => {
+                agentEndTimer = undefined;
+                currentResult.autoRetrying = false;
+                currentResult.compacting = false;
+                finishSuccess();
+              }, 2000);
+            }
+          }
+          emitUpdate();
+        }
+
+        // Prompt preflight failure (no agent_end will follow)
+        if (
+          event.type === "response" &&
+          event.id === "subagent-prompt" &&
+          !event.success
+        ) {
+          if (settled) return;
+          currentResult.errorMessage =
+            event.error || "Prompt preflight failed";
+          currentResult.stopReason = "error";
+          if (agentEndTimer !== undefined) {
+            clearTimeout(agentEndTimer);
+            agentEndTimer = undefined;
+          }
+          finishFailure();
         }
       };
 
@@ -1227,7 +1391,7 @@ export default function (pi: ExtensionAPI) {
           text += `${resultIndex > 0 ? "\n" : ""}\n  ${rIcon} ${theme.fg(
             "muted",
             `[${agentNumber}]`,
-          )} ${theme.fg("accent", r.agent)}`;
+          )} ${theme.fg("accent", r.agent)}${isPending && (r.autoRetrying || r.compacting) ? theme.fg("warning", r.compacting ? " ⤺" : " ↻") : ""}`;
           if (task)
             text += `\n    ${theme.fg("muted", "Task: ")}${theme.fg("dim", task)}`;
 
