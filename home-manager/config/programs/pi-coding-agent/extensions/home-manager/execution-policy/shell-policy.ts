@@ -11,7 +11,7 @@
  *
  * Auto mode: when policyAutoMode is enabled in custom/execution-policy/config.json, commands that would
  * normally require user confirmation are first evaluated by a small LLM using
- * POLICY_AUTO_MODE.md. If the model returns "allow", the command runs without
+ * policy_auto_mode.md. If the model returns "allow", the command runs without
  * prompting the user. Any other outcome falls back to human confirmation.
  */
 
@@ -99,7 +99,7 @@ function loadAutoModeConfig(): AutoModeConfig | null {
 }
 
 function loadAutoModePrompt(): string | null {
-  const promptPath = path.join(EXT_DIR, "POLICY_AUTO_MODE.md");
+  const promptPath = path.join(EXT_DIR, "policy_auto_mode.md");
   try {
     return fs.readFileSync(promptPath, "utf-8");
   } catch {
@@ -111,7 +111,7 @@ const contextTemplateCache = new Map<string, string>();
 function loadContextTemplate(mode: string): string {
   const suffix = mode
     .replace(/([a-z])([A-Z])/g, "$1_$2")
-    .toUpperCase()
+    .toLowerCase()
     .replace(/\W/g, "_");
   const cached = contextTemplateCache.get(suffix);
   if (cached !== undefined) {
@@ -120,7 +120,7 @@ function loadContextTemplate(mode: string): string {
 
   const promptPath = path.join(
     EXT_DIR,
-    `POLICY_AUTO_MODE.${suffix}_CONTEXT.md`,
+    `policy_auto_mode.${suffix}_context.md`,
   );
   let template: string;
   try {
@@ -141,7 +141,7 @@ const commandsContextText: string = (() => {
   try {
     const text = fs
       .readFileSync(
-        path.join(EXT_DIR, "POLICY_AUTO_MODE.COMMANDS_CONTEXT.md"),
+        path.join(EXT_DIR, "policy_auto_mode.commands_context.md"),
         "utf-8",
       )
       .trim();

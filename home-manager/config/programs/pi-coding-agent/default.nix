@@ -110,11 +110,11 @@ let
 
 
 
-  policyAutoModePrompt = builtins.readFile ./POLICY_AUTO_MODE.md;
+  policyAutoModePrompt = builtins.readFile ./policy_auto_mode.md;
   policyAutoModeExtraCommands = lib.strings.trim agentsCfg.commandContext;
   policyAutoModeContextFiles = lib.filterAttrs (
     name: type:
-    type == "regular" && lib.hasPrefix "POLICY_AUTO_MODE." name && lib.hasSuffix "_CONTEXT.md" name
+    type == "regular" && lib.hasPrefix "policy_auto_mode." name && lib.hasSuffix "_context.md" name
   ) (builtins.readDir ./.);
   policyAutoModeContextFileEntries = lib.mapAttrs' (
     name: _:
@@ -202,8 +202,8 @@ in
       ".pi/agent/skills".source = agentsCfg.skillTrees.subagent;
       ".pi/agent/custom/execution-policy/policy.json".source = policyJsonFile;
 
-      ".pi/agent/custom/execution-policy/POLICY_AUTO_MODE.md".text = policyAutoModePrompt;
-      ".pi/agent/custom/execution-policy/POLICY_AUTO_MODE.COMMANDS_CONTEXT.md".text = lib.mkIf (
+      ".pi/agent/custom/execution-policy/policy_auto_mode.md".text = policyAutoModePrompt;
+      ".pi/agent/custom/execution-policy/policy_auto_mode.commands_context.md".text = lib.mkIf (
         policyAutoModeExtraCommands != ""
       ) policyAutoModeExtraCommands;
     }
