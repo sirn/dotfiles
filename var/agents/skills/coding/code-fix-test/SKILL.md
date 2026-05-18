@@ -17,14 +17,15 @@ Diagnose and fix validation failures with minimal targeted changes.
    - If no command is provided, detect the relevant test/lint/check command from instructions, task runners, wrappers, package manager scripts, then common defaults.
    - Use proper timeouts and avoid watch modes.
 
-3. Diagnose root cause:
-   - Distinguish product-code bugs, test bugs, environment issues, and stale expectations.
-   - Prefer the smallest fix that addresses the real failure.
-   - Do not mask failures by weakening assertions, skipping tests, or broadening ignores unless the user explicitly approves and the rationale is sound.
+3. Spawn `researcher`:
+   - "Research the root cause of this failure: {error output}. Identify whether this is a product-code bug, test bug, environment issue, or stale expectation. Find relevant docs or known issues."
 
-4. Apply a minimal fix and rerun the relevant command.
+4. Review researcher findings. Delegate to `worker`:
+   - "Apply a minimal fix for {root cause} in {file}. Do not weaken assertions, skip tests, or broaden ignores unless explicitly approved with sound rationale."
 
-5. Stop condition:
+5. Rerun the failing command to verify the fix.
+
+6. Stop condition:
    - If a fix fails twice, stop, provide root-cause analysis, and ask for guidance.
 
 ## Output

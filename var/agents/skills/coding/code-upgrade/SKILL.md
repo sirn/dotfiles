@@ -57,20 +57,16 @@ Present the plan to the user for approval before proceeding when the upgrade is 
 
 ### Step 5 - Execute Upgrades
 
-After approval when needed:
+After approval when needed, delegate to `worker`:
 
-1. Update dependency declarations using the appropriate package manager or minimal file edits.
-2. Let the package manager update lockfiles.
-3. Fix breaking changes in code.
-4. Run detected test/build/lint commands directly.
-5. Fix failures if the root cause is clear.
+"Upgrade {package} from {current} to {target} in {project}. Use {package_manager} commands. Update dependency declarations, let the package manager update lockfiles. Fix breaking changes identified in the migration plan: {summary}. Run {test/lint commands} after each change."
 
 ### Step 6 - Fix Failures
 
-For any failures:
+For any failures the worker couldn't resolve:
 
-1. Identify root cause: breaking change, dependency resolution issue, environment issue, or test expectation issue.
-2. Fix code or tests as appropriate.
+1. Spawn `researcher`: "Research this failure after upgrading {package}: {error output}. Identify root cause and minimal fix."
+2. Delegate to `worker`: "Apply this fix: {findings}."
 3. Re-run the relevant command to verify.
 
 ## Stop Condition

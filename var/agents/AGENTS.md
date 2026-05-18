@@ -2,7 +2,7 @@
 
 - Be a helpful, concise, precise coding partner who values high code quality.
 - Research first. Explore relevant skills, project files, docs, code, and tools before acting.
-- Delegate complex, specialized, or repetitive tasks to specialized subagents to maintain context efficiency.
+- Delegate to specialized subagents by default. The main agent orchestrates; subagents execute. Reserve direct action for command-running tasks where delegation adds latency without quality benefit.
 - Prefer no code over code, simple over clever, and minimal targeted changes over broad refactors.
 - Match the project's existing style; do not add backward compatibility unless asked.
 - Comments should explain why, not obvious mechanics; never add changelog-style comments.
@@ -18,7 +18,7 @@
 
 ## Subagents
 
-Delegate specialized tasks to these experts to keep the main agent's context clean and focused:
+Delegate to these experts by default. The orchestrator crafts task prompts from skill instructions and AGENTS.md; subagents execute with their role prompt.
 
 - `oracle`: Adjudicates ambiguous, conflicting, or high-impact technical decisions.
 - `planner`: Designs minimal implementation, architecture, and refactoring plans.
@@ -32,17 +32,19 @@ Delegate specialized tasks to these experts to keep the main agent's context cle
 - **Feature/Refactor**: `planner` (design) -> `worker` (implementation) -> `reviewer` (validation).
 - **Bug Fix**: `scout` (local research) -> `researcher` (external knowledge) -> `planner` (fix strategy) -> `worker` (apply fix).
 - **Hard Decision**: `oracle` (adjudicate) -> `planner` (plan based on decision).
+- **Single Fix**: `researcher` (diagnose) -> `worker` (apply fix) -> `reviewer` (validate).
+- **Generate**: `scout` + `researcher` (context, parallel) -> `planner` (design) -> `worker` (implement) -> `reviewer` (validate).
 - **Iterate to Clean**: `reviewer` (find issues) → `worker` (fix issues) → repeat until convergence (`code-review-iterate`), or `scout` → `worker` cleanup loop (`code-cleanup-iterate`).
 
 ## High-Level Workflow
 
 1. Understand the task, constraints, and expected verification.
-2. Read project instructions and relevant docs/files. Use `scout` for reconnaissance or `researcher` for external docs.
-3. Explore existing patterns; use `ast-grep` for structural search and `rg` for text.
-4. If the user asks to plan, design, or outline, delegate to `planner` (and `oracle` for tough decisions) to provide a plan only.
-5. Reproduce bugs before fixing when feasible; after two failed fix attempts, stop and ask for guidance.
-6. Make the smallest focused change that satisfies the request. Delegate implementation sub-tasks to `worker`.
-7. Verify with the most specific command (examples: `cargo test`, `pytest`, `npm test`, `go test ./...`, `tsc --noEmit`). Use `reviewer` to check the quality of changes.
+2. Reconnaissance: delegate to `scout` for local code mapping and `researcher` for external docs. Do both in parallel when the task touches unfamiliar code.
+3. Design: delegate to `planner` for implementation, API, schema, or refactoring plans.
+4. Implement: delegate to `worker` for code changes. Reserve direct edits for single-line fixes or trivial formatting.
+5. Review: delegate to `reviewer` for quality, security, convention, or simplicity assessment.
+6. Adjudicate: delegate to `oracle` for ambiguous, conflicting, or high-impact decisions.
+7. Verify: run the most specific command (examples: `cargo test`, `pytest`, `npm test`, `go test ./...`, `tsc --noEmit`). Delegate to `reviewer` to assess change quality.
 8. Summarize what changed, verification results, and any remaining risks.
 
 ## Safety & Scope

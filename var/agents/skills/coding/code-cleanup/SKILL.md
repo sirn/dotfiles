@@ -26,38 +26,30 @@ Clean up code by applying small, behavior-preserving fixes until additional chan
    - If the user specified files or paths, focus on those.
    - Determine mode from the request; default to **Focused**.
 
-2. Read project instructions and relevant code/tests:
-   - Check local instructions and conventions: `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `GEMINI.md`, `CODEX.md` when present.
-   - Read relevant implementation and test files.
+2. Spawn `scout`:
+   - "Map cleanup opportunities in {scope}: redundancies, non-idiomatic code, dead code, simplification opportunities, and unnecessary complexity. Report file paths, line numbers, and evidence for each."
+   - Read the `code-test` skill to detect the project's test/lint commands.
+   - Capture the current diff and run targeted tests or checks as a safety baseline.
+
+3. Synthesize scout findings:
+   - Filter to safe, behavior-preserving improvements.
+   - Drop speculative items lacking clear evidence.
    - Prefer existing project patterns over external preferences.
 
-3. Establish safety baseline:
-   - Read the `code-test` skill to detect the project's test/lint commands.
-   - Capture the current diff and run targeted tests or checks, so regressions can be detected.
+4. Delegate to `worker`:
+   - "Apply these cleanup fixes in {files}: {prioritized findings list}. Apply one logical cleanup per step. Preserve public behavior, API signatures, and test expectations."
 
-4. Find cleanup candidates:
-   - Redundancies: duplicate logic, repeated conditions, unused imports, shadowed variables.
-   - Non-idiomatic code: patterns that contradict project conventions or language idioms.
-   - Dead code: unreachable branches, unused exports, stale comments referencing removed code.
-   - Simplification opportunities: unnecessary abstractions, overly complex conditionals, code that can be replaced with standard library or well-known utilities.
-   - Unnecessary complexity: over-engineered designs that can be collapsed without behavior change.
-
-5. Fix in small, behavior-preserving batches:
-   - Apply one logical cleanup per step or a tightly related set.
-   - Re-run relevant checks after each batch when practical.
-   - Preserve public behavior, API signatures, and test expectations.
-
-6. Stop at diminishing returns:
+5. Stop at diminishing returns:
    - Stop when remaining issues are speculative or lack clear evidence.
    - Stop when fixes would require risky cross-cutting refactors.
    - Stop when changes need product or API decisions beyond the user's request.
    - Stop when edits would produce churn without clear maintainability value.
 
-7. Verify targeted behavior and formatting:
+6. Verify targeted behavior and formatting:
    - Re-run the checks from the safety baseline.
    - Run the project formatter when applicable.
 
-8. Report changes and remaining deferred items.
+7. Report changes and remaining deferred items.
 
 ## Guardrails
 

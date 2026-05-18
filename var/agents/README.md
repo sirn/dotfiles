@@ -101,8 +101,9 @@ Skills are workflows/SOPs. Subagents are expert roles/lenses that skills can com
 - `planner`: design, architecture, refactoring, API, and schema planning with tradeoffs.
 - `reviewer`: correctness, security, convention, simplicity, and quality review using the lens requested by the task.
 - `oracle`: high-confidence adjudication for ambiguous, conflicting, or high-impact decisions.
+- `worker`: focused implementation of code and configuration changes delegated by the orchestrator.
 
-There is intentionally no `worker` subagent yet. Delegated writes need a separate safety model; the main agent remains responsible for mutations.
+The orchestrator delegates write operations to `worker` to keep its own context free for quality control. The orchestrator remains responsible for reviewing worker output and verifying changes before finalizing.
 
 ## Configuration Per Tool
 
