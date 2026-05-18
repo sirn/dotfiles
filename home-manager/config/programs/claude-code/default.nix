@@ -164,7 +164,7 @@ let
   claudeSkillLinks = lib.listToAttrs (
     map (skill: {
       name = ".claude/skills/${skill.name}";
-      value.source = agentsCfg.skillTrees.subagent + "/${skill.name}";
+      value.source = agentsCfg.skillTrees + "/${skill.name}";
     }) agentsCfg.discoveredSkills
   );
 in

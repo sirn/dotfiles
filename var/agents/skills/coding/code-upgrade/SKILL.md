@@ -33,19 +33,19 @@ Ask the user to clarify what they want to upgrade if it is not already clear:
 
 ### Step 3 - Research Changes
 
-Research using WebSearch/WebFetch:
+Spawn `researcher` with detailed instructions:
 
-- Official changelogs for the target version.
-- Breaking changes and deprecated APIs.
-- Migration guides and best practices.
-- Community migration experiences when official docs are incomplete.
-- Security advisories or CVEs relevant to the upgrade.
+- "Research breaking changes for upgrading {package} from {current_version} to {target_version}."
+- "Find official migration guides, changelogs, and deprecated API replacements."
+- "Identify common pitfalls, dependency manager commands, security advisories, and verification steps."
 
-Prefer official documentation. Record sources.
+Wait for the research agent to complete and synthesize findings. Prefer official documentation and record sources.
 
 ### Step 4 - Generate Plan
 
-Create an upgrade plan with:
+Create an upgrade plan incorporating research findings. For broad, major-version, or risky upgrades, spawn `reviewer` with a migration-risk lens before presenting the plan.
+
+Include:
 
 - Deprecated API replacements needed.
 - Breaking changes to address.

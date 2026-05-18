@@ -3,7 +3,7 @@ name: code-plan-api
 description: Design API contracts. Use when asked to plan REST, GraphQL, gRPC, TRPC, OpenAPI, protobuf, or schema contract changes.
 ---
 
-Generate an actionable API design plan based on task analysis.
+Generate an actionable API design plan based on task analysis and research.
 
 ## Process
 
@@ -12,13 +12,18 @@ Generate an actionable API design plan based on task analysis.
    - If the user specified files, endpoints, clients, protocols, or paths, focus on those.
    - Identify the protocol and format: REST, GraphQL, gRPC, TRPC, OpenAPI, protobuf, Zod/TypeBox, etc.
 
-2. Analyze the codebase:
-   - Read relevant API handlers, clients, schemas, validators, middleware, and tests.
-   - Understand existing resource naming, auth, errors, pagination, versioning, and compatibility patterns.
-   - Identify integration points and migration constraints.
+2. Spawn applicable agents in parallel:
+   - `scout`: "Analyze existing API handlers, clients, schemas, validators, middleware, tests, and local API conventions for {task}."
+   - `researcher`: "Research official protocol/framework documentation, constraints, security guidance, and compatibility considerations relevant to {task}."
+   - `planner`: "Design a minimal API contract for {task}, including request/response shapes, errors, validation, and tradeoffs."
+   - `reviewer`: "Review the proposed API for correctness, security, compatibility, simplicity, and project-convention risks."
 
-3. Research and design:
-   - Research official protocol/framework documentation when needed.
+3. Use `oracle` only for high-impact or conflicting API design decisions:
+   - `oracle`: "Adjudicate the conflicting API design recommendations for {task}. Choose the safest minimal contract and state assumptions, tradeoffs, and confidence."
+
+4. Read relevant code yourself and validate agent findings.
+
+5. Design the API:
    - Design only required resources, operations, fields, and data shapes.
    - Prefer flat, simple structures over deeply nested designs.
    - Consider versioning, pagination, error handling, auth, validation, and compatibility.

@@ -199,7 +199,7 @@ in
     ) (builtins.readDir ./extensions/home-manager)
     // {
       ".pi/agent/extensions/rimuruw-pi-hashline-edit".source = pkgs.local.pi-hashline-edit;
-      ".pi/agent/skills".source = agentsCfg.skillTrees.subagent;
+      ".pi/agent/skills".source = agentsCfg.skillTrees;
       ".pi/agent/custom/execution-policy/policy.json".source = policyJsonFile;
 
       ".pi/agent/custom/execution-policy/policy_auto_mode.md".text = policyAutoModePrompt;

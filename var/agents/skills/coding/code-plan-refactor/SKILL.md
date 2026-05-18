@@ -12,13 +12,19 @@ Generate a safe refactoring plan only; do not apply code changes.
    - If the user specified files, paths, abstractions, or pain points, focus on those.
    - Understand the desired outcome and non-goals.
 
-2. Analyze the codebase:
-   - Read relevant code areas, neighboring tests, and call sites.
+2. Spawn applicable agents in parallel:
+   - `scout`: "Analyze affected code areas, call sites, tests, abstractions, dependency edges, and local conventions for {task}."
+   - `planner`: "Design a minimal behavior-preserving refactoring plan for {task}, including ordering, stop points, alternatives, and tradeoffs."
+   - `reviewer`: "Review the proposed refactor for correctness, behavior preservation, simplicity, and project-convention risks."
+
+3. Use `oracle` only for high-impact or conflicting refactoring decisions:
+   - `oracle`: "Adjudicate the conflicting refactoring recommendations for {task}. Choose the safest minimal path and state assumptions, tradeoffs, and confidence."
+
+4. Read relevant code yourself and validate agent findings.
+
+5. Design the refactor:
    - Identify safe transformations: extraction, rename, simplification, deletion, inlining, or module movement.
    - Audit abstractions: does each abstraction earn its complexity?
-   - Identify behavior-preservation constraints and risky dependency edges.
-
-3. Design the refactor:
    - Prefer deletion and simplification over new layers.
    - Break the work into small behavior-preserving steps.
    - Include verification after each meaningful step.

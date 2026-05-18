@@ -12,7 +12,7 @@
 ## Skills
 
 - Read reference skills before covered tools (examples: `nix`, `flake`, `jujutsu`, `github-cli`, `terraform`, `rtk`).
-- Use task skills for common workflows (examples: implementation planning → `code-plan-implementation`, API design → `code-plan-api`, tests → `code-test`, linting → `code-lint`, formatting → `code-format`, reviews → `code-review`, commits → `code-commit`).
+- Use task skills for common workflows (examples: implementation planning → `code-plan-implementation`, API design → `code-plan-api`, tests → `code-test`, linting → `code-lint`, formatting → `code-format`, reviews → `code-review`, review-iteration → `code-review-iterate`, cleanup-iteration → `code-cleanup-iterate`, commits → `code-commit`).
 - Use research/API skills when needed (examples: `context7`, `exa`, `asana`, `clickup`, `linear`).
 - During planning, analysis-only skills may run read-only to gather context (examples: `code-review`, `code-test`, `code-explain`, `code-setup-analyze`).
 
@@ -32,6 +32,7 @@ Delegate specialized tasks to these experts to keep the main agent's context cle
 - **Feature/Refactor**: `planner` (design) -> `worker` (implementation) -> `reviewer` (validation).
 - **Bug Fix**: `scout` (local research) -> `researcher` (external knowledge) -> `planner` (fix strategy) -> `worker` (apply fix).
 - **Hard Decision**: `oracle` (adjudicate) -> `planner` (plan based on decision).
+- **Iterate to Clean**: `reviewer` (find issues) → `worker` (fix issues) → repeat until convergence (`code-review-iterate`), or `scout` → `worker` cleanup loop (`code-cleanup-iterate`).
 
 ## High-Level Workflow
 

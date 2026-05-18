@@ -23,14 +23,11 @@ Each AI tool consumes these files differently:
 
 ## File Types
 
-### SKILL.md vs SKILL.subagent.md
+### SKILL.md
 
-- **SKILL.md**: Standard Operating Procedure to be executed directly by the current agent
-- **SKILL.subagent.md**: Enhanced source-side variant for harnesses that support specialized sub-agents
+- **SKILL.md**: Standard Operating Procedure for the skill. May reference and spawn specialized sub-agents.
 
-Home Manager renders harness-specific skill trees. Subagent-capable harnesses receive a tree where `SKILL.subagent.md` is exposed as `SKILL.md` when present; other harnesses receive the original `SKILL.md`. The source-side `SKILL.subagent.md` file is hidden from rendered skill directories. Agents should always read `SKILL.md` from their configured skill directory.
-
-Skills must be self-contained: do not invoke, call, or depend on another skill from within a skill. If a workflow needs behavior from another skill, inline the relevant procedure. `SKILL.subagent.md` may spawn configured sub-agents, but must not spawn or invoke skills.
+Skills must be self-contained: do not invoke, call, or depend on another skill from within a skill. If a workflow needs behavior from another skill, inline the relevant procedure. Skills may spawn configured sub-agents, but must not spawn or invoke other skills.
 
 ### Reference Skills
 
@@ -57,16 +54,8 @@ For first-party skills, add the skill under `skills/<name>/`:
    description: What this skill does
    ---
    ```
-2. Optionally create `skills/<name>/SKILL.subagent.md` for subagent-capable harnesses
-3. Include any templates/examples in `skills/<name>/templates/` or `skills/<name>/examples/`
-
-Skill naming policy:
-
-- Skills are named for stable, user-facing tasks (for example `code-generate-tests`, `code-plan-api`, or `code-setup-flake`).
-- Create separate skill directories when workflows have distinct triggers, outputs, or verification steps.
-- Keep small local options such as scope, risk tolerance, or output detail inside a skill.
-- `SKILL.subagent.md` is a harness-specific variant for the same task, not a separate task.
 - Expose only canonical task-specific skill names; add aliases only when the alias is itself a supported workflow.
+
 
 For vendored skills, package the upstream repository under `pkgs/by-name/skill-*` and register it once in `home-manager/config/agents/skills.nix`:
 
@@ -101,7 +90,7 @@ Subagents are reusable expert roles, not workflow entry points. Workflows live i
 3. Import the new file from `home-manager/config/agents/subagents/default.nix`
 4. Keep public defaults provider-neutral; configure private provider-qualified model overrides privately
 
-Use `SKILL.subagent.md` to orchestrate existing roles for a workflow. Do not create a new subagent for every task-specific workflow.
+Skills may orchestrate existing subagent roles for a workflow. Do not create a new subagent for every task-specific workflow.
 
 ## Subagent Taxonomy
 

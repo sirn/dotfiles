@@ -3,7 +3,7 @@ name: code-review-performance
 description: Review code for performance bottlenecks, algorithmic complexity, memory usage, and unnecessary work. Use when asked for performance review or optimization opportunities.
 ---
 
-Run a focused performance review.
+Run a focused performance review using specialized agents.
 
 ## Process
 
@@ -12,19 +12,19 @@ Run a focused performance review.
    - If the user specified files, paths, workloads, benchmarks, or symptoms, focus on those.
    - Identify suspected hot paths and expected scale.
 
-2. Read relevant code and project guidance:
+2. Spawn applicable agents in parallel:
+   - `reviewer`: "Review {files} with a performance lens: bottlenecks, algorithmic complexity, memory usage, blocking I/O, N+1 queries, unnecessary work, and concrete optimizations."
+   - `researcher`: "Research framework/runtime/database-specific performance guidance relevant to {files}."
+
+3. Read relevant code yourself to validate and synthesize agent findings:
    - Check local instructions and conventions: `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `GEMINI.md`, `CODEX.md` when present.
    - Read relevant implementation, query, allocation-heavy, concurrency, I/O, and test/benchmark files.
    - Prefer existing project patterns over speculative rewrites.
 
-3. Review performance characteristics:
-   - Look for hot paths, unnecessary work, blocking I/O, N+1 queries, avoidable allocations, poor algorithmic complexity, memory pressure, unbounded concurrency, and cache misuse.
+4. Review performance characteristics:
    - Distinguish measured or highly plausible bottlenecks from premature optimization.
    - Suggest concrete optimizations, measurement approaches, and benchmarks when useful.
    - Call out tradeoffs, readability costs, and operational risks.
-
-4. Research when needed:
-   - Verify runtime, framework, database, or library-specific performance guidance with authoritative documentation.
 
 5. Synthesize findings:
    - Prioritize issues by likely impact and confidence.

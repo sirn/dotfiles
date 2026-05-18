@@ -171,7 +171,7 @@ let
   geminiSkillLinks = lib.listToAttrs (
     map (skill: {
       name = ".gemini/skills/${skill.name}";
-      value.source = agentsCfg.skillTrees.default + "/${skill.name}";
+      value.source = agentsCfg.skillTrees + "/${skill.name}";
     }) agentsCfg.discoveredSkills
   );
 

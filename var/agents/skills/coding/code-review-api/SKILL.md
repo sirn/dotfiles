@@ -3,7 +3,7 @@ name: code-review-api
 description: Verify API or library usage against authoritative documentation. Use when asked to check API correctness, integration correctness, or version-specific library behavior.
 ---
 
-Verify API and library usage against authoritative documentation.
+Verify API and library usage against authoritative documentation using specialized agents.
 
 ## Process
 
@@ -12,17 +12,21 @@ Verify API and library usage against authoritative documentation.
    - If the user specified APIs, libraries, versions, files, or paths, focus on those.
    - Identify APIs, versions, packages, generated clients, SDKs, or protocols in use.
 
-2. Read relevant code and project guidance:
+2. Spawn applicable agents in parallel:
+   - `researcher`: "Verify API/library usage in {files or context} against official documentation, including version-specific parameters, behavior, configuration, and deprecations."
+   - `reviewer`: "Review the API/library usage findings for correctness risk and minimal remediation."
+
+3. Read relevant code yourself to validate and synthesize agent findings:
    - Check local instructions and conventions: `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `GEMINI.md`, `CODEX.md` when present.
    - Read relevant implementation, dependency manifests, generated types, lockfiles when needed, and tests.
    - Prefer existing project patterns unless documentation proves they are incorrect.
 
-3. Verify against authoritative documentation:
+4. Verify against authoritative documentation:
    - Research official documentation with WebSearch/WebFetch or project-approved documentation tools when needed.
    - Check version-specific changes, parameter names, types, expected behavior, configuration, error handling, and deprecations.
    - Compare usage against documentation and identify correctness risks.
 
-4. Synthesize findings:
+5. Synthesize findings:
    - Prioritize issues that can cause incorrect behavior, incompatibility, data loss, or unsupported usage.
    - Include file paths and line references or quoted snippets.
    - Provide concrete fixes and verification steps.

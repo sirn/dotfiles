@@ -21,9 +21,12 @@ During detection, identify complexity hotspots, unnecessary tooling, and native 
 
 ## Process
 
-1. Read project instructions and repository structure.
-2. Detect project type, package managers, task runners, wrappers, containers, Nix files, and CI configuration.
-3. Identify existing commands for test, lint/check, format, build, and development.
+1. Spawn applicable agents in parallel:
+   - `scout`: "Detect project tooling, wrappers, task runners, package managers, existing Nix files, CI, setup conventions, and available commands."
+   - `reviewer`: "Audit the detected setup with a simplicity lens: unnecessary wrappers, duplicate tooling, boilerplate, shell hooks, extra flake inputs, and over-engineering."
+
+2. Read project instructions and repository structure yourself.
+3. Validate agent findings against actual files.
 4. Identify setup gaps or duplication, but do not change files unless the user explicitly asks for a follow-up implementation.
 
 ## Output

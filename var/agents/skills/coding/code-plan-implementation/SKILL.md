@@ -3,7 +3,7 @@ name: code-plan-implementation
 description: Generate implementation plans. Use when asked to plan how to implement a feature, fix, integration, or code change before modifying files.
 ---
 
-Generate an actionable implementation plan based on task analysis.
+Generate an actionable implementation plan based on task analysis and research.
 
 ## Process
 
@@ -12,17 +12,18 @@ Generate an actionable implementation plan based on task analysis.
    - If the user specified files or paths, focus on those.
    - Understand the user's requested behavior, constraints, and expected verification.
 
-2. Analyze the codebase:
-   - Read relevant code areas and identify existing patterns.
-   - Understand architectural decisions, module boundaries, and integration points.
-   - Identify over-engineering risks and simpler alternatives.
+2. Spawn applicable agents in parallel:
+   - `scout`: "Analyze affected code areas, existing patterns, tests, architecture, integration points, and local conventions for {task}."
+   - `researcher`: "Research official documentation, best practices, constraints, migration considerations, and security guidance relevant to {task}."
+   - `planner`: "Design a minimal implementation plan for {task}, including alternatives and tradeoffs."
+   - `reviewer`: "Review the proposed direction for security, correctness, simplicity, and project-convention risks for {task}."
 
-3. Research when needed:
-   - Research official documentation and best practices when the plan depends on external APIs, framework behavior, or unfamiliar tooling.
-   - Identify security risks and secure implementation patterns.
-   - Recommend libraries/tools only when they are necessary and research-backed.
+3. Use `oracle` only for high-impact or conflicting design decisions:
+   - `oracle`: "Adjudicate the conflicting recommendations for {task}. Choose the safest minimal path and state assumptions, tradeoffs, and confidence."
 
-4. Design the implementation:
+4. Read relevant code yourself and validate agent findings.
+
+5. Design the implementation:
    - Define the minimal design approach.
    - Identify files to modify and integration points.
    - Plan verification aligned with project tooling.

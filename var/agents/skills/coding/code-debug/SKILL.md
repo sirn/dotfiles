@@ -3,22 +3,24 @@ name: code-debug
 description: Debug issues by researching errors and proposing minimal fixes. Use when user asks to troubleshoot or debug a failure.
 ---
 
-Troubleshoot a problem by researching the error and proposing a minimal fix.
+Troubleshoot a problem by delegating focused research and risk review.
 
 ## Process
 
-1. Identify the error message, log, or failure symptom from the user's request or context
-2. Research the error:
-   - Search the codebase for related code paths and error handling
-   - Check documentation for the libraries/frameworks involved (use WebSearch/WebFetch)
-   - Search the web for known issues, fixes, or similar error reports
-3. Analyze the root cause based on research findings
-4. Propose a minimal fix:
-   - **Pragmatism and Simplicity**: Prefer deleting or simplifying existing code over adding new logic. Ensure the fix addresses only the root cause without introducing new abstractions.
+1. Identify the error message, log, or failure symptom from the user's request or context.
+2. Spawn agents:
+   - `researcher`: "Investigate the error or failure in {context}. Find likely root causes, official docs or known issues, minimal fixes, and verification steps with sources."
+   - `reviewer`: "Review the likely fix for {context} with a minimal-fix risk lens. Ensure it addresses only the root cause, avoids new abstractions, and note edge cases or regressions."
+3. Synthesize findings into actionable steps.
+4. If fixing is requested, make the smallest change that addresses the likely root cause and verify with the most specific command.
+
+## Stop Condition
+
+- If a proposed fix fails twice, stop, re-evaluate the diagnosis, and ask for guidance.
 
 ## Output
 
 1. **Likely cause**
 2. **Evidence** (links or doc references)
 3. **Fix**
-4. **Verify** — use `code-test` skill to detect and run the project's test command.
+4. **Verify**

@@ -70,9 +70,7 @@ let
         in
         isIncluded name
         && (type == "directory" || type == "symlink")
-        && (
-          builtins.pathExists (source + "/SKILL.md") || builtins.pathExists (source + "/SKILL.subagent.md")
-        );
+        && builtins.pathExists (source + "/SKILL.md");
     in
     map (sourceName: {
       name = renderName sourceName;
@@ -89,14 +87,14 @@ let
   );
 
   renderSkillTree =
-    name: useSubagents:
+    name:
     let
       skillLinks = lib.concatMap (
         skill:
         let
           entries = builtins.readDir skill.source;
           visibleEntries = lib.filterAttrs (
-            entryName: _: entryName != "SKILL.md" && entryName != "SKILL.subagent.md"
+            entryName: _: entryName != "SKILL.md"
           ) entries;
           entryLinks = lib.mapAttrsToList (entryName: _: {
             name = "${skill.name}/${entryName}";
@@ -106,12 +104,7 @@ let
         [
           {
             name = "${skill.name}/SKILL.md";
-            path = rewriteSkillFrontmatter skill (
-              if useSubagents && builtins.pathExists (skill.source + "/SKILL.subagent.md") then
-                skill.source + "/SKILL.subagent.md"
-              else
-                skill.source + "/SKILL.md"
-            );
+            path = rewriteSkillFrontmatter skill (skill.source + "/SKILL.md");
           }
         ]
         ++ entryLinks
@@ -165,18 +158,10 @@ in
       description = "Flattened list of discovered agent skill directories.";
     };
 
-    skillTrees = {
-      default = lib.mkOption {
-        type = lib.types.path;
-        readOnly = true;
-        description = "Rendered skill tree using each skill's SKILL.md.";
-      };
-
-      subagent = lib.mkOption {
-        type = lib.types.path;
-        readOnly = true;
-        description = "Rendered skill tree using SKILL.subagent.md as SKILL.md when available.";
-      };
+    skillTrees = lib.mkOption {
+      type = lib.types.path;
+      readOnly = true;
+      description = "Rendered skill tree.";
     };
   };
 
@@ -189,7 +174,7 @@ in
     ];
 
     agents.discoveredSkills = discoveredSkills;
-    agents.skillTrees.default = renderSkillTree "agent-skills" false;
-    agents.skillTrees.subagent = renderSkillTree "agent-skills-subagent" true;
+    agents.skillTrees = renderSkillTree "agent-skills";
+
   };
 }

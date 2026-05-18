@@ -1,9 +1,9 @@
 ---
 name: code-fix-pr
-description: Evaluate PR review comments, classify them by status, and create concrete fix plans. Use when user asks to address PR comments, fix review feedback, or handle code review comments.
+description: Evaluate PR review comments with parallel analysis across correctness, security, and convention lenses.
 ---
 
-Evaluate and address PR review comments by classifying them and creating a concrete fix plan.
+Evaluate and address PR review comments by delegating to expert roles.
 
 ## Prerequisites
 
@@ -14,46 +14,28 @@ Evaluate and address PR review comments by classifying them and creating a concr
 
 ## Process
 
-1. **Identify the PR context**:
-   - Get the PR number from user or infer from current branch
+1. **Gather PR data** (sequential):
+   - Get PR number from user or infer from branch
    - Determine repository: `gh repo view` or `jj git remote list`
-   - Use explicit `-R owner/repo` with all `gh` commands
-
-2. **Fetch PR data** (read-only GET requests only):
-   - Get PR details: `gh pr view <number> -R owner/repo --json number,title,state,url`
+   - Fetch PR comments: `gh api repos/owner/repo/pulls/<number>/comments -X GET --paginate`
+   - Fetch reviews: `gh api repos/owner/repo/pulls/<number>/reviews -X GET --paginate`
    - Get PR diff: `gh pr diff <number> -R owner/repo`
-   - Fetch review comments: `gh api repos/owner/repo/pulls/<number>/comments -X GET --paginate`
-   - Fetch review threads: `gh api repos/owner/repo/pulls/<number>/reviews -X GET --paginate`
-   - Check PR checks: `gh pr checks <number> -R owner/repo`
-
-   **Important**: Always use `-X GET` (or `--method GET`) to be explicit about read-only access. This ensures commands are allowed by the safety policy.
-
-3. **Check GitHub Actions** (if checks are failing):
-   - List workflow runs for PR branch: `gh run list -R owner/repo --branch <branch> -L 5`
-   - View failed run details: `gh run view <run-id> -R owner/repo --log-failed`
-   - View specific job logs: `gh run view <run-id> -R owner/repo --job <job-id> --log`
-
-4. **Analyze the codebase**:
-   - Read relevant files mentioned in comments
+   - Check PR status: `gh pr checks <number> -R owner/repo`
+   - If checks failing, fetch logs: `gh run view <run-id> -R owner/repo --log-failed`
    - Run `jj diff -s` to see current working copy changes
-   - Understand the current state of the code
 
-5. **Classify each comment**:
-   - **Already Addressed** - Changes in working copy or commits resolve the comment
-   - **Valid (Should Fix)** - Legitimate issue requiring a fix
-   - **Not Valid (Won't Fix)** - Incorrect or inapplicable feedback with reasoning
-   - **Needs Discussion** - Unclear or requires clarification from reviewer
+   **Important**: Always use `-X GET` to be explicit about read-only access.
 
-6. **Research best practices** (for valid comments):
-   - Use WebSearch/WebFetch or available documentation tools to verify patterns.
-   - Look up official documentation for APIs/frameworks involved.
-   - Research idiomatic solutions for the language/project.
+2. Spawn parallel agents for comment analysis:
+   - `reviewer`: "Review these PR comments with a correctness/quality lens. Classify each as: already-addressed, valid-fix-needed, invalid, or needs-discussion."
+   - `reviewer`: "Review these PR comments with a security lens. Identify valid security concerns vs false positives and assess severity."
+   - `reviewer`: "Review these PR comments with a simplicity/convention lens. Prioritize the simplest possible change that satisfies valid feedback, and distinguish valid simplifications from over-engineering suggestions."
+   - `researcher`: "Research best practices and official documentation for the fixes suggested in these PR comments. Provide authoritative sources."
 
-7. **Create fix plan**:
-   - **Simplicity First**: Prioritize the simplest possible change that satisfies the reviewer's concern. Avoid large-scale refactoring unless it is the only way to address the issue.
-   - Prioritize critical/security issues first
-   - Group related fixes for efficiency
-   - Provide specific file:line references
+3. Use `oracle` only for disputed comments or conflicting expert recommendations:
+   - `oracle`: "Adjudicate these disputed PR comments and conflicting recommendations. Decide which feedback should be fixed, discussed, or rejected, and explain why."
+
+4. **Synthesize findings** into unified report.
 
 ## Output
 
@@ -62,38 +44,44 @@ Evaluate and address PR review comments by classifying them and creating a concr
    - Total comments analyzed
 
 2. **Comment Classification**
-
-   **Already Addressed** (✓):
-   - List comments with evidence of resolution
-   - Reference commit or code state
-
-   **Valid - Should Fix** (!):
-   - List with severity (Critical/High/Low)
-   - Original comment text
-   - File:line location
-   - Why it's valid
-
-   **Not Valid - Won't Fix** (⊘):
-   - List with reasoning for each
-   - Why the feedback doesn't apply
-
-   **Needs Discussion** (?):
-   - List with specific questions to ask reviewer
+   - **Already Addressed**: List with resolution evidence
+   - **Valid - Should Fix**: List with severity and location
+   - **Not Valid - Won't Fix**: List with reasoning
+   - **Needs Discussion**: List with questions
 
 3. **Fix Plan**
    - Numbered steps with file:line targets
-   - Specific changes to make
-   - Best practice references (with sources)
+   - Best practice references
    - Estimated effort
 
 4. **Next Steps**
    - Immediate actions
    - Questions for reviewer
-   - Follow-up after fixes
+
+## Agent Roles
+
+**reviewer**:
+
+- Analyze comments through the requested lens: correctness, security, simplicity, convention, or plan/design.
+- Determine if feedback is already addressed by existing changes.
+- Validate technical accuracy of feedback.
+- Flag unclear or ambiguous comments.
+- Recommend pragmatic minimal fixes for valid feedback.
+
+**researcher**:
+
+- Use WebSearch/WebFetch to verify patterns.
+- Look up official documentation.
+- Research idiomatic solutions.
+- Provide authoritative sources.
+
+**oracle**:
+
+- Resolve disputed comments or conflicting recommendations.
+- State assumptions, tradeoffs, and confidence.
 
 ## Important
 
 - **Never** push fixes without explicit user confirmation
-- Ask before making destructive changes (deletions, major refactors)
-- Use `jj` commands for all VCS operations (refer to `jujutsu`)
-- For uncertain classifications, default to "Needs Discussion"
+- Ask before destructive changes
+- Use `jj` commands for VCS operations (refer to `jujutsu`)
