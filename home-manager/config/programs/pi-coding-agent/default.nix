@@ -108,12 +108,7 @@ let
     text = policyJson;
   };
 
-  # Plan mode templates
-  planModeTemplates = {
-    prompt = builtins.readFile ./PLAN_PROMPT.md;
-    accept = builtins.readFile ./PLAN_ACCEPT.md;
-    subsequent = builtins.readFile ./PLAN_INJECT.md;
-  };
+
 
   policyAutoModePrompt = builtins.readFile ./POLICY_AUTO_MODE.md;
   policyAutoModeExtraCommands = lib.strings.trim agentsCfg.commandContext;
@@ -206,9 +201,7 @@ in
       ".pi/agent/extensions/rimuruw-pi-hashline-edit".source = pkgs.local.pi-hashline-edit;
       ".pi/agent/skills".source = agentsCfg.skillTrees.subagent;
       ".pi/agent/custom/execution-policy/policy.json".source = policyJsonFile;
-      ".pi/agent/custom/execution-policy/PLAN_PROMPT.md".text = planModeTemplates.prompt;
-      ".pi/agent/custom/execution-policy/PLAN_ACCEPT.md".text = planModeTemplates.accept;
-      ".pi/agent/custom/execution-policy/PLAN_INJECT.md".text = planModeTemplates.subsequent;
+
       ".pi/agent/custom/execution-policy/POLICY_AUTO_MODE.md".text = policyAutoModePrompt;
       ".pi/agent/custom/execution-policy/POLICY_AUTO_MODE.COMMANDS_CONTEXT.md".text = lib.mkIf (
         policyAutoModeExtraCommands != ""

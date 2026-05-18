@@ -3,9 +3,10 @@ import {
   getLatestCompactionEntry,
   type ExtensionAPI,
   type ExtensionContext,
+  type ExtensionCommandContext,
 } from "@mariozechner/pi-coding-agent";
 import { getExecutionMode, clearModeCache } from "./lib/execution-mode.js";
-import { PI_AGENT_DIR, EXT_DIR, PLAN_DIR } from "./lib/paths.js";
+import { PLAN_DIR } from "./lib/paths.js";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
@@ -26,19 +27,9 @@ type PendingPlanExecution = {
   userMessage?: string;
 };
 
+const PLAN_MODE_PROMPT = "[Plan mode active - produce an implementation/execution plan. DO NOT execute any changes, only read-only exploration and planning; only write to {PLAN_PATH} using write/edit]";
+
 export default function (pi: ExtensionAPI) {
-  const planModePromptTemplate = fs.readFileSync(
-    path.join(EXT_DIR, "PLAN_PROMPT.md"),
-    "utf-8",
-  );
-  const planModeAcceptTemplate = fs.readFileSync(
-    path.join(EXT_DIR, "PLAN_ACCEPT.md"),
-    "utf-8",
-  );
-  const planModeSubsequentTemplate = fs.readFileSync(
-    path.join(EXT_DIR, "PLAN_INJECT.md"),
-    "utf-8",
-  );
 
   // --- Recently-compacted detection ---
 
@@ -74,59 +65,44 @@ export default function (pi: ExtensionAPI) {
   function setMode(ctx: ExtensionContext, mode: string) {
     const sessionId = ctx.sessionManager.getSessionFile() ?? "ephemeral";
     clearModeCache(sessionId);
-    const planPath = getPlanPath(ctx.cwd, ctx.sessionManager.getSessionFile());
+    const planPath = ctxPlanPath(ctx);
     pi.appendEntry("execution-mode", {
       mode,
       policyOverride:
         mode === "plan" ? { write: [planPath], edit: [planPath] } : undefined,
     });
+    updatePlanWidget(ctx);
   }
-
-  function getPlanContextSent(ctx: ExtensionContext): boolean {
-    let sent = false;
-    for (const entry of ctx.sessionManager.getEntries()) {
-      if (entry.type === "custom" && entry.customType === "plan-context-sent") {
-        const data = entry.data as { sent?: boolean };
-        sent = data?.sent ?? false;
-      }
-    }
-    return sent;
-  }
-
   function getPendingPlanExecution(
     ctx: ExtensionContext,
   ): PendingPlanExecution | undefined {
-    let pendingPlanExecution: PendingPlanExecution | undefined;
-    for (const entry of ctx.sessionManager.getEntries()) {
+    const entries = ctx.sessionManager.getEntries();
+    for (let i = entries.length - 1; i >= 0; i--) {
+      const entry = entries[i];
       if (
         entry.type === "custom" &&
         entry.customType === "plan-execution-pending"
       ) {
         const data = entry.data as PlanExecutionPendingData;
         if (data?.status === "processed") {
-          pendingPlanExecution = undefined;
-        } else if (
-          data?.status === "pending" &&
-          typeof data.planContent === "string"
-        ) {
+          return undefined;
+        }
+        if (data?.status === "pending" && typeof data.planContent === "string") {
           const modelSelection =
             typeof data.modelSelection?.provider === "string" &&
             typeof data.modelSelection?.modelId === "string"
               ? data.modelSelection
               : undefined;
-
-          pendingPlanExecution = {
+          return {
             planContent: data.planContent,
             modelSelection,
             userMessage:
-              typeof data.userMessage === "string"
-                ? data.userMessage
-                : undefined,
+              typeof data.userMessage === "string" ? data.userMessage : undefined,
           };
         }
       }
     }
-    return pendingPlanExecution;
+    return undefined;
   }
 
   function movePlanToSession(
@@ -167,6 +143,10 @@ export default function (pi: ExtensionAPI) {
     return path.join(PLAN_DIR, `--${normalized}--`, `${sessionId}.md`);
   }
 
+  function ctxPlanPath(ctx: ExtensionContext): string {
+    return getPlanPath(ctx.cwd, ctx.sessionManager.getSessionFile());
+  }
+
   function updatePlanWidget(ctx: ExtensionContext) {
     if (getMode(ctx) === "plan") {
       ctx.ui.setWidget("plan-mode", [ctx.ui.theme.fg("accent", "󰏯 plan mode")]);
@@ -175,73 +155,40 @@ export default function (pi: ExtensionAPI) {
     }
   }
 
-  function sendPlanModePrompt(ctx: ExtensionContext, userPrompt: string) {
-    const planPath = getPlanPath(ctx.cwd, ctx.sessionManager.getSessionFile());
-    fs.mkdirSync(path.dirname(planPath), { recursive: true });
-    pi.appendEntry("plan-context-sent", { sent: true });
-    pi.sendMessage(
-      {
-        customType: "plan-mode-prompt",
-        content: planModePromptTemplate
-          .replaceAll("{PLAN_PATH}", planPath)
-          .replaceAll("{USER_PROMPT}", userPrompt),
-        display: true,
-        details: { userInstruction: userPrompt },
-      },
-      { triggerTurn: true },
-    );
+  function requirePlanMode(ctx: ExtensionContext, message: string): boolean {
+    if (getMode(ctx) !== "plan") {
+      ctx.ui.notify(message, "error");
+      return false;
+    }
+    return true;
   }
-
-  function createMessageRenderer(
-    header: string,
-    colorKey: "accent" | "success",
-    fallback: string,
-  ) {
-    return (message: any, { expanded }: { expanded: boolean }, theme: any) => {
-      const container = new Container();
-
-      // Box(1, 1) provides the colored padding top and bottom automatically
-      const box = new Box(1, 1, (s: string) => theme.bg("customMessageBg", s));
-
-      if (expanded) {
-        box.addChild(new Text(theme.fg(colorKey, theme.bold(header)), 0, 0));
-        box.addChild(new Spacer(1)); // colored empty line between header and body
-        const text =
-          typeof message.content === "string" ? message.content : fallback;
-        box.addChild(new Text(text, 0, 0));
-      } else {
-        const userInstruction = message.details?.userInstruction || fallback;
-        box.addChild(new Text(theme.fg(colorKey, theme.bold(header)), 0, 0));
-        box.addChild(new Spacer(1));
-        box.addChild(new Text(userInstruction, 0, 0));
-        box.addChild(new Spacer(1));
-        box.addChild(
-          new Text(
-            theme.fg("muted", `(${keyHint("app.tools.expand", "to expand")})`),
-            0,
-            0,
-          ),
-        );
-      }
-
-      container.addChild(box);
-
-      return {
-        render: (width: number) => container.render(width),
-        invalidate: () => container.invalidate(),
-      };
+  pi.registerMessageRenderer("plan-mode-execute", (message: any, { expanded }: { expanded: boolean }, theme: any) => {
+    const container = new Container();
+    const box = new Box(1, 1, (s: string) => theme.bg("customMessageBg", s));
+    box.addChild(new Text(theme.fg("success", theme.bold("󰏫 plan approved")), 0, 0));
+    box.addChild(new Spacer(1));
+    if (expanded) {
+      const text =
+        typeof message.content === "string" ? message.content : "Plan accepted.";
+      box.addChild(new Text(text, 0, 0));
+    } else {
+      const userInstruction = message.details?.userInstruction || "Plan accepted.";
+      box.addChild(new Text(userInstruction, 0, 0));
+      box.addChild(new Spacer(1));
+      box.addChild(
+        new Text(
+          theme.fg("muted", `(${keyHint("app.tools.expand", "to expand")})`),
+          0,
+          0,
+        ),
+      );
+    }
+    container.addChild(box);
+    return {
+      render: (width: number) => container.render(width),
+      invalidate: () => container.invalidate(),
     };
-  }
-
-  pi.registerMessageRenderer(
-    "plan-mode-prompt",
-    createMessageRenderer("󰏯 plan mode", "accent", "Plan requested."),
-  );
-
-  pi.registerMessageRenderer(
-    "plan-mode-execute",
-    createMessageRenderer("󰏫 plan approved", "success", "Plan accepted."),
-  );
+  });
 
   async function restorePendingModelSelection(
     ctx: ExtensionContext,
@@ -277,9 +224,15 @@ export default function (pi: ExtensionAPI) {
     pi.sendMessage(
       {
         customType: "plan-mode-execute",
-        content: planModeAcceptTemplate
-          .replaceAll("{PLAN_CONTENT}", planContent)
-          .replaceAll("{USER_MESSAGE}", message),
+        content: `[Plan approved - execute the implementation plan. Execute one step at a time, verify success before proceeding. If a step fails, fix it before asking. Run the verification checklist after all steps complete.]
+
+## Plan
+
+${planContent}
+
+## User Message
+
+${message}`,
         display: true,
         details: { userInstruction: userMessage?.trim() || undefined },
       },
@@ -287,241 +240,218 @@ export default function (pi: ExtensionAPI) {
     );
   }
 
-  pi.registerCommand("plan", {
-    description: "Enter plan mode for creating implementation plans",
-    handler: async (args, ctx) => {
-      const wasAlreadyInPlanMode = getMode(ctx) === "plan";
+  async function handlePlanEnter(args: string, ctx: ExtensionContext): Promise<void> {
+    setMode(ctx, "plan");
 
-      setMode(ctx, "plan");
-      updatePlanWidget(ctx);
+    const planPath = ctxPlanPath(ctx);
+    fs.mkdirSync(path.dirname(planPath), { recursive: true });
 
-      // Only reset context flag if we're entering plan mode fresh (not re-entering)
-      // If we were already in plan mode, don't reset - continue with existing state
-      if (!wasAlreadyInPlanMode) {
-        pi.appendEntry("plan-context-sent", { sent: false });
-      }
+    // Treat whitespace-only args as no args (matches original /plan behavior where
+    // Pi passes undefined for empty, but unified dispatch passes raw string)
+    if (args?.trim()) {
+      pi.sendUserMessage(args);
+    } else {
+      const hasExistingPlan = fs.existsSync(planPath);
+      ctx.ui.notify(
+        hasExistingPlan
+          ? "Plan mode active. Continue refining your plan."
+          : "Plan mode active. Type your request to create a plan.",
+        "info",
+      );
+    }
+  }
 
-      // If user provided a message, send it as a regular user message
-      // The before_agent_start hook will inject planning context on the first message
-      if (args) {
-        sendPlanModePrompt(ctx, args);
-      } else {
-        const planPath = getPlanPath(
-          ctx.cwd,
-          ctx.sessionManager.getSessionFile(),
-        );
-        const hasExistingPlan = fs.existsSync(planPath);
-        ctx.ui.notify(
-          hasExistingPlan
-            ? "Plan mode active. Continue refining your plan."
-            : "Plan mode active. Type your request to create a plan.",
-          "info",
-        );
-      }
-    },
-  });
+  async function handlePlanAccept(args: string, ctx: ExtensionCommandContext): Promise<void> {
+    if (!requirePlanMode(ctx, "No active plan found. Use /plan first.")) return;
 
-  pi.registerCommand("plan-accept", {
-    description: "Accept plan and trigger execution with context options",
-    handler: async (args, ctx) => {
-      if (getMode(ctx) !== "plan") {
-        ctx.ui.notify("No active plan found. Use /plan first.", "error");
-        return;
-      }
+    const planPath = ctxPlanPath(ctx);
 
-      const planPath = getPlanPath(
-        ctx.cwd,
-        ctx.sessionManager.getSessionFile(),
+    if (!fs.existsSync(planPath)) {
+      ctx.ui.notify(`Plan file not found: ${planPath}`, "error");
+      return;
+    }
+
+    const stat = fs.statSync(planPath);
+    if (stat.size < 50) {
+      ctx.ui.notify(
+        "Plan file is too small or empty. Please write a detailed plan first.",
+        "error",
+      );
+      return;
+    }
+
+    const recentlyCompacted = isRecentlyCompacted(ctx);
+
+    const choice = recentlyCompacted
+      ? await ctx.ui.select("Accept Plan?", [
+          "Accept plan",
+          "Accept plan and clear context",
+          "Accept plan and compact",
+          "Cancel",
+        ])
+      : await ctx.ui.select("Accept Plan?", [
+          "Accept plan and compact",
+          "Accept plan and clear context",
+          "Accept plan",
+          "Cancel",
+        ]);
+
+    if (choice === "Cancel" || choice === undefined) {
+      ctx.ui.notify("Accept cancelled. Continue refining the plan.", "info");
+      return;
+    }
+
+    setMode(ctx, "edit");
+
+    const planContent = fs.readFileSync(planPath, "utf-8");
+
+    if (choice === "Accept plan and clear context") {
+      ctx.ui.notify(
+        "Plan accepted! Creating new session for fresh execution...",
+        "success",
       );
 
-      if (!fs.existsSync(planPath)) {
-        ctx.ui.notify(`Plan file not found: ${planPath}`, "error");
-        return;
-      }
-
-      const stat = fs.statSync(planPath);
-      if (stat.size < 50) {
-        ctx.ui.notify(
-          "Plan file is too small or empty. Please write a detailed plan first.",
-          "error",
-        );
-        return;
-      }
-
-      const recentlyCompacted = isRecentlyCompacted(ctx);
-
-      const choice = recentlyCompacted
-        ? await ctx.ui.select("Accept Plan?", [
-            "Accept plan",
-            "Accept plan and clear context",
-            "Accept plan and compact",
-            "Cancel",
-          ])
-        : await ctx.ui.select("Accept Plan?", [
-            "Accept plan and compact",
-            "Accept plan and clear context",
-            "Accept plan",
-            "Cancel",
-          ]);
-
-      if (choice === "Cancel" || choice === undefined) {
-        ctx.ui.notify("Accept cancelled. Continue refining the plan.", "info");
-        return;
-      }
-
-      setMode(ctx, "edit");
-      updatePlanWidget(ctx);
-      pi.appendEntry("plan-context-sent", { sent: false });
-      const planContent = fs.readFileSync(planPath, "utf-8");
-
-      if (choice === "Accept plan and clear context") {
-        ctx.ui.notify(
-          "Plan accepted! Creating new session for fresh execution...",
-          "success",
-        );
-
-        const previousModelSelection = ctx.model
-          ? { provider: ctx.model.provider, modelId: ctx.model.id }
-          : undefined;
-        const parentSession = ctx.sessionManager.getSessionFile();
-        const result = await ctx.newSession({
-          parentSession,
-          setup: async (sessionManager) => {
-            movePlanToSession(
-              ctx.cwd,
-              sessionManager.getSessionFile(),
-              planPath,
-              planContent,
-            );
-            sessionManager.appendCustomEntry("plan-execution-pending", {
-              status: "pending",
-              planContent,
-              modelSelection: previousModelSelection,
-              userMessage: args || undefined,
-            });
-          },
-        });
-
-        if (result.cancelled) {
-          ctx.ui.notify("Session creation cancelled.", "info");
-          return;
-        }
-
-        ctx.ui.notify(
-          "New session created. Starting plan execution...",
-          "success",
-        );
-      } else if (choice === "Accept plan and compact") {
-        if (recentlyCompacted) {
-          ctx.ui.notify(
-            "Context was recently compacted. Running compaction again...",
-            "info",
+      const previousModelSelection = ctx.model
+        ? { provider: ctx.model.provider, modelId: ctx.model.id }
+        : undefined;
+      const parentSession = ctx.sessionManager.getSessionFile();
+      const result = await ctx.newSession({
+        parentSession,
+        setup: async (sessionManager) => {
+          movePlanToSession(
+            ctx.cwd,
+            sessionManager.getSessionFile(),
+            planPath,
+            planContent,
           );
+          sessionManager.appendCustomEntry("plan-execution-pending", {
+            status: "pending",
+            planContent,
+            modelSelection: previousModelSelection,
+            userMessage: args || undefined,
+          });
+        },
+      });
+
+      if (result.cancelled) {
+        ctx.ui.notify("Session creation cancelled.", "info");
+        return;
+      }
+
+      ctx.ui.notify(
+        "New session created. Starting plan execution...",
+        "success",
+      );
+    } else if (choice === "Accept plan and compact") {
+      if (recentlyCompacted) {
+        ctx.ui.notify(
+          "Context was recently compacted. Running compaction again...",
+          "info",
+        );
+      } else {
+        ctx.ui.notify(
+          "Plan accepted! Compacting context for execution...",
+          "success",
+        );
+      }
+      ctx.compact({
+        customInstructions:
+          "User has accepted the implementation plan. Summarize the current conversation in a short, concise text focusing on the context needed for plan execution.",
+        onComplete: () => {
+          ctx.ui.notify("Context compacted. Ready for execution.", "success");
+          sendExecutionMessage(planContent, args);
+        },
+      });
+    } else if (choice === "Accept plan") {
+      ctx.ui.notify("Plan accepted! Ready for execution.", "success");
+      sendExecutionMessage(planContent, args);
+    }
+  }
+
+  async function handlePlanShow(ctx: ExtensionContext): Promise<void> {
+    const mode = getMode(ctx);
+    const planPath = ctxPlanPath(ctx);
+    if (mode !== "plan" || !fs.existsSync(planPath)) {
+      ctx.ui.notify("No plan found. Use /plan to create one.", "error");
+      return;
+    }
+
+    const content = fs.readFileSync(planPath, "utf-8");
+
+    const edited = await ctx.ui.editor("Plan", content);
+
+    if (edited && edited !== content) {
+      fs.writeFileSync(planPath, edited, "utf-8");
+      ctx.ui.notify("Plan updated manually.", "success");
+    }
+  }
+
+  async function handlePlanCancel(ctx: ExtensionContext): Promise<void> {
+    if (!requirePlanMode(ctx, "No active plan found.")) return;
+
+    const planPath = ctxPlanPath(ctx);
+    const choice = await ctx.ui.select("Cancel Plan?", [
+      "Leave plan mode",
+      "Leave plan mode and clear plan file",
+      "Cancel",
+    ]);
+
+    if (choice === "Cancel" || choice === undefined) {
+      ctx.ui.notify("Cancel aborted.", "info");
+      return;
+    }
+
+    setMode(ctx, "edit");
+
+    if (choice === "Leave plan mode and clear plan file") {
+      try {
+        if (fs.existsSync(planPath)) {
+          fs.unlinkSync(planPath);
+          ctx.ui.notify("Plan mode cancelled. Plan file deleted.", "success");
         } else {
           ctx.ui.notify(
-            "Plan accepted! Compacting context for execution...",
+            "Plan mode cancelled. Plan file already removed.",
             "success",
           );
         }
-        ctx.compact({
-          customInstructions:
-            "User has accepted the implementation plan. Summarize the current conversation in a short, concise text focusing on the context needed for plan execution.",
-          onComplete: () => {
-            ctx.ui.notify("Context compacted. Ready for execution.", "success");
-            sendExecutionMessage(planContent, args);
-          },
-        });
-      } else if (choice === "Accept plan") {
-        ctx.ui.notify("Plan accepted! Ready for execution.", "success");
-        sendExecutionMessage(planContent, args);
+      } catch (error) {
+        ctx.ui.notify(
+          `Plan cancelled but failed to delete file: ${error}`,
+          "warning",
+        );
+      }
+    } else {
+      ctx.ui.notify("Plan mode cancelled. Back to normal mode.", "success");
+    }
+  }
+
+  pi.registerCommand("plan", {
+    description: "Plan mode: enter, accept, show, or cancel",
+    getArgumentCompletions: (prefix: string) => {
+      const token = prefix.trimStart();
+      if (token.includes(" ")) return null;
+      const subcommands = [
+        { value: "accept", label: "accept", description: "Accept plan and trigger execution" },
+        { value: "show", label: "show", description: "Display and edit the plan" },
+        { value: "cancel", label: "cancel", description: "Cancel plan mode" },
+      ];
+      const filtered = subcommands.filter((s) => s.value.startsWith(token));
+      return filtered.length > 0 ? filtered : null;
+    },
+    handler: async (args, ctx) => {
+      const raw = args ?? "";
+      const dispatch = raw.trimStart();
+      const spaceIdx = dispatch.indexOf(" ");
+      const first = spaceIdx === -1 ? dispatch : dispatch.slice(0, spaceIdx);
+      const rest = spaceIdx === -1 ? "" : dispatch.slice(spaceIdx + 1);
+      switch (first) {
+        case "accept": return handlePlanAccept(rest, ctx as ExtensionCommandContext);
+        case "show":   return handlePlanShow(ctx);
+        case "cancel": return handlePlanCancel(ctx);
+        default:       return handlePlanEnter(raw, ctx);
       }
     },
   });
-
-  pi.registerCommand("plan-show", {
-    description: "Display and optionally edit the current plan",
-    handler: async (_args, ctx) => {
-      const mode = getMode(ctx);
-      const planPath = getPlanPath(
-        ctx.cwd,
-        ctx.sessionManager.getSessionFile(),
-      );
-      if (mode !== "plan" || !fs.existsSync(planPath)) {
-        ctx.ui.notify("No plan found. Use /plan to create one.", "error");
-        return;
-      }
-
-      const content = fs.readFileSync(planPath, "utf-8");
-
-      const edited = await ctx.ui.editor("Plan", content);
-
-      if (edited && edited !== content) {
-        fs.writeFileSync(planPath, edited, "utf-8");
-        ctx.ui.notify("Plan updated manually.", "success");
-      }
-    },
-  });
-
-  pi.registerCommand("plan-cancel", {
-    description: "Cancel plan mode and return to normal mode",
-    handler: async (_args, ctx) => {
-      if (getMode(ctx) !== "plan") {
-        ctx.ui.notify("No active plan found.", "error");
-        return;
-      }
-
-      const planPath = getPlanPath(
-        ctx.cwd,
-        ctx.sessionManager.getSessionFile(),
-      );
-      const choice = await ctx.ui.select("Cancel Plan?", [
-        "Leave plan mode",
-        "Leave plan mode and clear plan file",
-        "Cancel",
-      ]);
-
-      if (choice === "Cancel" || choice === undefined) {
-        ctx.ui.notify("Cancel aborted.", "info");
-        return;
-      }
-
-      setMode(ctx, "edit");
-      updatePlanWidget(ctx);
-      pi.appendEntry("plan-context-sent", { sent: false });
-
-      if (choice === "Leave plan mode and clear plan file") {
-        try {
-          if (fs.existsSync(planPath)) {
-            fs.unlinkSync(planPath);
-            ctx.ui.notify("Plan mode cancelled. Plan file deleted.", "success");
-          } else {
-            ctx.ui.notify(
-              "Plan mode cancelled. Plan file already removed.",
-              "success",
-            );
-          }
-        } catch (error) {
-          ctx.ui.notify(
-            `Plan cancelled but failed to delete file: ${error}`,
-            "warning",
-          );
-        }
-      } else {
-        ctx.ui.notify("Plan mode cancelled. Back to normal mode.", "success");
-      }
-    },
-  });
-
-  pi.on("input", async (event, ctx) => {
-    if (getMode(ctx) !== "plan") return { action: "continue" };
-    if (getPlanContextSent(ctx)) return { action: "continue" };
-    // Skip interception for extension-sourced messages
-    if (event.source === "extension") return { action: "continue" };
-
-    sendPlanModePrompt(ctx, event.text);
-    return { action: "handled" };
-  });
-
   pi.on("session_start", async (_event, ctx) => {
     updatePlanWidget(ctx);
 
@@ -543,17 +473,15 @@ export default function (pi: ExtensionAPI) {
     updatePlanWidget(ctx);
   });
 
-  pi.on("before_agent_start", async (event, ctx) => {
+  pi.on("before_agent_start", async (_event, ctx) => {
     if (getMode(ctx) !== "plan") return;
 
-    const planPath = getPlanPath(ctx.cwd, ctx.sessionManager.getSessionFile());
+    const planPath = ctxPlanPath(ctx);
 
     return {
       message: {
         customType: "plan-mode-context",
-        content: planModeSubsequentTemplate
-          .replaceAll("{PLAN_PATH}", planPath)
-          .replaceAll("{USER_PROMPT}", event.prompt),
+        content: PLAN_MODE_PROMPT.replaceAll("{PLAN_PATH}", planPath),
         display: false,
       },
     };
