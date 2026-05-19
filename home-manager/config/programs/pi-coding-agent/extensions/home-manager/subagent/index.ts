@@ -67,11 +67,69 @@ function readParentExecutionModes(ctx: ExtensionContext): string[] {
   return [mode];
 }
 
-// ── Constants ────────────────────────────────────────────────
+// ── Config & Constants ────────────────────────────────────────
 
-const MAX_CONCURRENCY = 4;
-const MAX_AGENTS_PER_STEP = 8;
-const COLLAPSED_ITEM_COUNT = 10;
+interface SubagentConfig {
+  maxConcurrency?: number;
+  maxAgentsPerStep?: number;
+  collapsedItemCount?: number;
+  agentConcurrency?: Record<string, number>;
+}
+
+const DEFAULT_CONFIG: SubagentConfig = {
+  maxConcurrency: 4,
+  maxAgentsPerStep: 8,
+  collapsedItemCount: 10,
+  agentConcurrency: {},
+};
+
+function isPositiveSafeInt(v: unknown): v is number {
+  return typeof v === "number" && Number.isSafeInteger(v) && v > 0;
+}
+
+function isNonNegSafeInt(v: unknown): v is number {
+  return typeof v === "number" && Number.isSafeInteger(v) && v >= 0;
+}
+
+const MAX_CONCURRENCY_CEILING = 16;
+const MAX_AGENTS_PER_STEP_CEILING = 32;
+
+function loadConfig(): SubagentConfig {
+  const configPath = path.join(
+    os.homedir(),
+    ".pi/agent/custom/subagent/config.json",
+  );
+  if (!fs.existsSync(configPath)) return { ...DEFAULT_CONFIG };
+  try {
+    const raw = fs.readFileSync(configPath, "utf-8");
+    const parsed = JSON.parse(raw);
+    const result = { ...DEFAULT_CONFIG };
+    if (isPositiveSafeInt(parsed.maxConcurrency))
+      result.maxConcurrency = Math.min(parsed.maxConcurrency, MAX_CONCURRENCY_CEILING);
+    if (isPositiveSafeInt(parsed.maxAgentsPerStep))
+      result.maxAgentsPerStep = Math.min(parsed.maxAgentsPerStep, MAX_AGENTS_PER_STEP_CEILING);
+    if (isPositiveSafeInt(parsed.collapsedItemCount))
+      result.collapsedItemCount = parsed.collapsedItemCount;
+    if (
+      typeof parsed.agentConcurrency === "object" &&
+      parsed.agentConcurrency !== null
+    ) {
+      const ac: Record<string, number> = {};
+      for (const [k, v] of Object.entries(parsed.agentConcurrency)) {
+        if (isNonNegSafeInt(v)) ac[k] = Math.min(v, MAX_CONCURRENCY_CEILING);
+      }
+      result.agentConcurrency = ac;
+    }
+    return result;
+  } catch {
+    return { ...DEFAULT_CONFIG };
+  }
+}
+
+const subagentConfig = loadConfig();
+const MAX_CONCURRENCY = subagentConfig.maxConcurrency ?? 4;
+const MAX_AGENTS_PER_STEP = subagentConfig.maxAgentsPerStep ?? 8;
+const COLLAPSED_ITEM_COUNT = subagentConfig.collapsedItemCount ?? 10;
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -80,6 +138,7 @@ interface AgentConfig {
   description: string;
   tools?: string[];
   model?: string;
+  concurrency?: number;
   systemPrompt: string;
 }
 
@@ -453,22 +512,62 @@ function getDisplayItems(messages: Message[]): DisplayItem[] {
   return items;
 }
 
-async function mapWithConcurrencyLimit<TIn, TOut>(
+
+async function mapWithAgentConcurrency<TIn, TOut>(
   items: TIn[],
-  concurrency: number,
+  globalConcurrency: number,
+  getAgentName: (item: TIn) => string,
+  agentConcurrencyMap: Map<string, number>,
   fn: (item: TIn, index: number) => Promise<TOut>,
 ): Promise<TOut[]> {
   if (items.length === 0) return [];
-  const limit = Math.max(1, Math.min(concurrency, items.length));
+
+  const limit = Math.max(1, Math.min(globalConcurrency, items.length));
   const results: TOut[] = new Array(items.length);
   let nextIndex = 0;
+
+  const agentSems = new Map<
+    string,
+    { running: number; waitQueue: (() => void)[] }
+  >();
+  for (const [name, max] of agentConcurrencyMap) {
+    agentSems.set(name, { running: 0, waitQueue: [] });
+  }
+
+  const acquireAgent = async (agentName: string): Promise<void> => {
+    const sem = agentSems.get(agentName);
+    if (!sem) return;
+    if (sem.running < (agentConcurrencyMap.get(agentName) ?? Infinity)) {
+      sem.running++;
+      return;
+    }
+    await new Promise<void>((resolve) => sem.waitQueue.push(resolve));
+  };
+
+  const releaseAgent = (agentName: string) => {
+    const sem = agentSems.get(agentName);
+    if (!sem) return;
+    if (sem.waitQueue.length > 0) {
+      sem.waitQueue.shift()!();
+    } else {
+      sem.running--;
+    }
+  };
+
   const workers = new Array(limit).fill(null).map(async () => {
     while (true) {
       const current = nextIndex++;
       if (current >= items.length) return;
-      results[current] = await fn(items[current], current);
+      const agentName = getAgentName(items[current]);
+      await acquireAgent(agentName);
+      try {
+        results[current] = await fn(items[current], current);
+      } finally {
+        releaseAgent(agentName);
+      }
     }
   });
+
   await Promise.all(workers);
   return results;
 }
@@ -533,19 +632,26 @@ function discoverAgents(agentDir: string): AgentConfig[] {
     }
 
     const { frontmatter, body } =
-      parseFrontmatter<Record<string, string>>(content);
+      parseFrontmatter<Record<string, unknown>>(content);
     if (!frontmatter.name || !frontmatter.description) continue;
 
-    const tools = frontmatter.tools
-      ?.split(",")
-      .map((t: string) => t.trim())
-      .filter(Boolean);
+    const tools = typeof frontmatter.tools === "string"
+      ? frontmatter.tools
+          .split(",")
+          .map((t: string) => t.trim())
+          .filter(Boolean)
+      : undefined;
 
     agents.push({
-      name: frontmatter.name,
-      description: frontmatter.description,
+      name: String(frontmatter.name),
+      description: String(frontmatter.description),
       tools: tools && tools.length > 0 ? tools : undefined,
-      model: frontmatter.model,
+      model: typeof frontmatter.model === "string" ? frontmatter.model : undefined,
+      concurrency:
+        typeof frontmatter.concurrency === "number" &&
+        isPositiveSafeInt(frontmatter.concurrency)
+          ? frontmatter.concurrency
+          : undefined,
       systemPrompt: body,
     });
   }
@@ -1082,12 +1188,14 @@ const TaskItem = Type.Object({
   ),
 });
 
+const STEPS_DESCRIPTION =
+  "2D array of {agent, task}. Inner arrays run in parallel; outer runs sequentially. " +
+  "Single: [[{agent, task}]]. Parallel: [[t1, t2, ...]]. Chain: [[t1], [t2], ...]. " +
+  `Task may contain {previous} which is replaced with the prior step's combined output. Max ${MAX_AGENTS_PER_STEP} agents per step.`;
+
 const SubagentParams = Type.Object({
   steps: Type.Array(Type.Array(TaskItem), {
-    description:
-      "2D array of {agent, task}. Inner arrays run in parallel; outer runs sequentially. " +
-      "Single: [[{agent, task}]]. Parallel: [[t1, t2, ...]]. Chain: [[t1], [t2], ...]. " +
-      "Task may contain {previous} which is replaced with the prior step's combined output. Max 8 agents per step.",
+    description: STEPS_DESCRIPTION,
   }),
 });
 
@@ -1120,6 +1228,20 @@ export default function (pi: ExtensionAPI) {
       // Discover agents from user directory
       const agentDir = path.join(getAgentDir(), "agents");
       const agents = discoverAgents(agentDir);
+
+      // Build per-agent concurrency map: frontmatter first, config overrides
+      const agentConcurrencyMap = new Map<string, number>();
+      for (const agent of agents) {
+        if (agent.concurrency !== undefined && agent.concurrency > 0) {
+          agentConcurrencyMap.set(agent.name, agent.concurrency);
+        }
+      }
+      for (const [name, limit] of Object.entries(
+        subagentConfig.agentConcurrency ?? {},
+      )) {
+        if (limit > 0) agentConcurrencyMap.set(name, limit);
+        else agentConcurrencyMap.delete(name); // 0 clears frontmatter limit
+      }
 
       const totalAgents = params.steps.reduce(
         (sum, step) => sum + (Array.isArray(step) ? step.length : 0),
@@ -1216,9 +1338,11 @@ export default function (pi: ExtensionAPI) {
         // Emit initial state so waiting steps are visible from the start
         emitStepUpdate();
 
-        await mapWithConcurrencyLimit(
+        await mapWithAgentConcurrency(
           stepTasks,
           MAX_CONCURRENCY,
+          (t) => t.agent,
+          agentConcurrencyMap,
           async (t, i) => {
             // Mark as started when the concurrency limiter actually begins execution
             planResults[stepStartIndex + i].started = true;
@@ -1453,7 +1577,7 @@ export default function (pi: ExtensionAPI) {
           } else {
             const rendered = renderDisplayItems(
               displayItems,
-              expanded ? undefined : 3,
+              expanded ? undefined : COLLAPSED_ITEM_COUNT,
             );
             if (rendered)
               text += `\n${rendered
