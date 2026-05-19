@@ -12,11 +12,11 @@
  * Only "text" and "image" input modalities are included.
  */
 
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import type {
   ProviderConfig,
   ProviderModelConfig,
-} from "@mariozechner/pi-coding-agent";
+} from "@earendil-works/pi-coding-agent";
 
 import * as fs from "node:fs";
 import * as os from "node:os";

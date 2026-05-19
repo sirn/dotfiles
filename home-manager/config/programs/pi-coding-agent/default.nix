@@ -15,7 +15,7 @@ let
     exec "${lib.getExe pkgs.local.envWrapper}" \
       -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
       -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env.local" \
-      -- "${lib.getExe pkgs.unstable.pi-coding-agent}" "$@"
+      -- "${lib.getExe pkgs.local.pi-coding-agent}" "$@"
   '';
 
   agentsMdText = agentsCfg.instructionText;

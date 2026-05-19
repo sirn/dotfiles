@@ -15,11 +15,11 @@
  * prompting the user. Any other outcome falls back to human confirmation.
  */
 
-import { complete } from "@mariozechner/pi-ai";
+import { complete } from "@earendil-works/pi-ai";
 import type {
   ExtensionAPI,
   ExtensionContext,
-} from "@mariozechner/pi-coding-agent";
+} from "@earendil-works/pi-coding-agent";
 import { getExecutionMode } from "./lib/execution-mode.js";
 import { EXT_DIR } from "./lib/paths.js";
 import * as fs from "node:fs";

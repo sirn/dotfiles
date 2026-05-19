@@ -5,7 +5,7 @@
  * See https://ghostty.org/docs/vt/osc/9.
  */
 
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 function extractLastAssistantText(messages: any[]): string {
   const lastAssistant = messages.filter((m) => m.role === "assistant").pop();

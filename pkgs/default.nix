@@ -25,6 +25,7 @@ in
   powerband = (callPackage ./by-name/powerband { });
 
   pi-hashline-edit = (callPackage ./by-name/pi-hashline-edit/package.nix { });
+  pi-coding-agent = (callPackage ./by-name/pi-coding-agent/package.nix { });
 
   node-textfile-collector-scripts = (
     callPackage ./by-name/prometheus/node-textfile-collector-scripts.nix { }

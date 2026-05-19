@@ -4,13 +4,13 @@ import {
   type ExtensionAPI,
   type ExtensionContext,
   type ExtensionCommandContext,
-} from "@mariozechner/pi-coding-agent";
+} from "@earendil-works/pi-coding-agent";
 import { getExecutionMode, clearModeCache } from "./lib/execution-mode.js";
 import { PLAN_DIR } from "./lib/paths.js";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-import { Container, Text, Box, Spacer } from "@mariozechner/pi-tui";
+import { Container, Text, Box, Spacer } from "@earendil-works/pi-tui";
 
 type ModelSelection = { provider: string; modelId: string };
 
