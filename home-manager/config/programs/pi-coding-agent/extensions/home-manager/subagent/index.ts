@@ -1133,7 +1133,11 @@ function createSubagentResultRenderer(
 
       const body =
         typeof message.content === "string" ? message.content : fallback;
-      box.addChild(new Markdown(body.trim(), 0, 0, getMarkdownTheme()));
+      box.addChild(
+        new Markdown(body.trim(), 0, 0, getMarkdownTheme(), {
+          color: (text: string) => theme.fg("customMessageText", text),
+        }),
+      );
     } else {
       box.addChild(new Text(theme.fg(colorKey, theme.bold(header)), 0, 0));
       box.addChild(new Spacer(1));
@@ -1156,11 +1160,11 @@ function createSubagentResultRenderer(
         typeof message.content === "string"
           ? message.content.split("\n").slice(0, 5).join("\n")
           : fallback;
-      box.addChild(new Text(preview, 0, 0));
+      box.addChild(new Text(theme.fg("customMessageText", preview), 0, 0));
       box.addChild(new Spacer(1));
       box.addChild(
         new Text(
-          theme.fg("muted", `(${keyHint("app.tools.expand", "to expand")})`),
+          `${theme.fg("muted", "(")}${keyHint("app.tools.expand", "to expand")}${theme.fg("muted", ")")}`,
           0,
           0,
         ),
@@ -1546,12 +1550,12 @@ export default function (pi: ExtensionAPI) {
           const rIcon = isWaiting
             ? theme.fg("dim", "○")
             : isPending
-              ? theme.fg("warning", "⏱")
+              ? theme.fg("warning", "")
             : isSkipped
               ? theme.fg("dim", "⊘")
               : hasFailed
-                ? theme.fg("error", "✗")
-                : theme.fg("success", "✓");
+                ? theme.fg("error", "")
+                : theme.fg("success", "");
           const task = r.task
             ? (expanded ? r.task.trim().replace(/\s+/g, " ") : trimInline(r.task, 100))
             : undefined;
@@ -1560,7 +1564,7 @@ export default function (pi: ExtensionAPI) {
           text += `${resultIndex > 0 ? "\n" : ""}\n  ${rIcon} ${theme.fg(
             "muted",
             `[${agentNumber}]`,
-          )} ${theme.fg("accent", r.agent)}${isPending && (r.autoRetrying || r.compacting) ? theme.fg("warning", r.compacting ? " ⤺" : " ↻") : ""}`;
+          )} ${theme.fg("accent", r.agent)}${isPending && (r.autoRetrying || r.compacting) ? theme.fg("warning", r.compacting ? " " : " ") : ""}`;
           if (task)
             text += `\n    ${theme.fg("muted", "Task: ")}${theme.fg("dim", task)}`;
 
@@ -1604,7 +1608,7 @@ export default function (pi: ExtensionAPI) {
         }
       }
       if (!expanded)
-        text += `${hasTotal ? "\n" : "\n\n"}${theme.fg("muted", `(${keyHint("app.tools.expand", "to expand")})`)}`;
+        text += `${hasTotal ? "\n" : "\n\n"}${theme.fg("muted", "(")}${keyHint("app.tools.expand", "to expand")}${theme.fg("muted", ")")}`;
       return new Text(text, 0, 0);
     },
   });

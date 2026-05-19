@@ -149,7 +149,7 @@ export default function (pi: ExtensionAPI) {
 
   function updatePlanWidget(ctx: ExtensionContext) {
     if (getMode(ctx) === "plan") {
-      ctx.ui.setWidget("plan-mode", [ctx.ui.theme.fg("accent", "󰏯 plan mode")]);
+      ctx.ui.setWidget("plan-mode", [ctx.ui.theme.fg("accent", " plan mode")]);
     } else {
       ctx.ui.setWidget("plan-mode", undefined);
     }
@@ -165,19 +165,19 @@ export default function (pi: ExtensionAPI) {
   pi.registerMessageRenderer("plan-mode-execute", (message: any, { expanded }: { expanded: boolean }, theme: any) => {
     const container = new Container();
     const box = new Box(1, 1, (s: string) => theme.bg("customMessageBg", s));
-    box.addChild(new Text(theme.fg("success", theme.bold("󰏫 plan approved")), 0, 0));
+    box.addChild(new Text(theme.fg("success", theme.bold(" plan approved")), 0, 0));
     box.addChild(new Spacer(1));
     if (expanded) {
       const text =
         typeof message.content === "string" ? message.content : "Plan accepted.";
-      box.addChild(new Text(text, 0, 0));
+      box.addChild(new Text(theme.fg("customMessageText", text), 0, 0));
     } else {
       const userInstruction = message.details?.userInstruction || "Plan accepted.";
-      box.addChild(new Text(userInstruction, 0, 0));
+      box.addChild(new Text(theme.fg("customMessageText", userInstruction), 0, 0));
       box.addChild(new Spacer(1));
       box.addChild(
         new Text(
-          theme.fg("muted", `(${keyHint("app.tools.expand", "to expand")})`),
+          `${theme.fg("muted", "(")}${keyHint("app.tools.expand", "to expand")}${theme.fg("muted", ")")}`,
           0,
           0,
         ),
