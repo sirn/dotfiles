@@ -11,8 +11,8 @@ if [ -n "${NIX_SSL_CERT_FILE:-}" ] && [ -f "${NIX_SSL_CERT_FILE}" ]; then
 fi
 
 current_version=$(jq -r '.version' "$sources_file")
-version=$(curl -s https://api.github.com/repos/earendil-works/pi/tags \
-  | jq -r '.[0].name' | sed 's/^v//')
+version=$(curl -s https://api.github.com/repos/earendil-works/pi/tags |
+  jq -r '.[0].name' | sed 's/^v//')
 
 if [ "$current_version" = "$version" ]; then
   echo "Already at latest version: $version"

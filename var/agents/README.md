@@ -54,8 +54,8 @@ For first-party skills, add the skill under `skills/<name>/`:
    description: What this skill does
    ---
    ```
-- Expose only canonical task-specific skill names; add aliases only when the alias is itself a supported workflow.
 
+- Expose only canonical task-specific skill names; add aliases only when the alias is itself a supported workflow.
 
 For vendored skills, package the upstream repository under `pkgs/by-name/skill-*` and register it once in `home-manager/config/agents/skills.nix`:
 

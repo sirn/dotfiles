@@ -108,8 +108,6 @@ let
     text = policyJson;
   };
 
-
-
   policyAutoModePrompt = builtins.readFile ./policy_auto_mode.md;
   policyAutoModeExtraCommands = lib.strings.trim agentsCfg.commandContext;
   policyAutoModeContextFiles = lib.filterAttrs (

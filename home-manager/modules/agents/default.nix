@@ -93,9 +93,7 @@ let
         skill:
         let
           entries = builtins.readDir skill.source;
-          visibleEntries = lib.filterAttrs (
-            entryName: _: entryName != "SKILL.md"
-          ) entries;
+          visibleEntries = lib.filterAttrs (entryName: _: entryName != "SKILL.md") entries;
           entryLinks = lib.mapAttrsToList (entryName: _: {
             name = "${skill.name}/${entryName}";
             path = skill.source + "/${entryName}";

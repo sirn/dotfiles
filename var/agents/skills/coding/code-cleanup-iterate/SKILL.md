@@ -37,18 +37,18 @@ Run a convergent cleanup loop: scout identifies cleanup opportunities, worker ap
 3. **Iteration loop** (max 5 iterations by default):
 
    a. **Find cleanup candidates** — spawn `scout`:
-      - `scout`: "Identify cleanup opportunities in {files}: redundancies, non-idiomatic code, dead code, simplification opportunities, and unnecessary complexity. Report each with file path, line, and what should change."
+   - `scout`: "Identify cleanup opportunities in {files}: redundancies, non-idiomatic code, dead code, simplification opportunities, and unnecessary complexity. Report each with file path, line, and what should change."
 
    b. **Filter findings**:
-      - Deduplicate: drop issues already addressed or explicitly deferred in a prior iteration.
-      - If no new cleanup opportunities remain → exit loop.
+   - Deduplicate: drop issues already addressed or explicitly deferred in a prior iteration.
+   - If no new cleanup opportunities remain → exit loop.
 
    c. **Fix** — delegate to `worker`:
-      - `worker`: "Apply these cleanup fixes in {files}: {opportunities list}. Use small, behavior-preserving changes. Preserve public behavior, API signatures, and test expectations."
+   - `worker`: "Apply these cleanup fixes in {files}: {opportunities list}. Use small, behavior-preserving changes. Preserve public behavior, API signatures, and test expectations."
 
    d. **Verify**:
-      - Re-run the checks from the safety baseline.
-      - If regressions appear, delegate to `worker` to fix regressions before continuing.
+   - Re-run the checks from the safety baseline.
+   - If regressions appear, delegate to `worker` to fix regressions before continuing.
 
 4. **Final verification**:
    - Re-run the full safety baseline checks.

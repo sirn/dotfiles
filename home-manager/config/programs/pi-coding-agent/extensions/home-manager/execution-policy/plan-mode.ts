@@ -27,10 +27,10 @@ type PendingPlanExecution = {
   userMessage?: string;
 };
 
-const PLAN_MODE_PROMPT = "[Plan mode active - produce an implementation/execution plan. DO NOT execute any changes, only read-only exploration and planning; only write to {PLAN_PATH} using write/edit]";
+const PLAN_MODE_PROMPT =
+  "[Plan mode active - produce an implementation/execution plan. DO NOT execute any changes, only read-only exploration and planning; only write to {PLAN_PATH} using write/edit]";
 
 export default function (pi: ExtensionAPI) {
-
   // --- Recently-compacted detection ---
 
   /**
@@ -87,7 +87,10 @@ export default function (pi: ExtensionAPI) {
         if (data?.status === "processed") {
           return undefined;
         }
-        if (data?.status === "pending" && typeof data.planContent === "string") {
+        if (
+          data?.status === "pending" &&
+          typeof data.planContent === "string"
+        ) {
           const modelSelection =
             typeof data.modelSelection?.provider === "string" &&
             typeof data.modelSelection?.modelId === "string"
@@ -97,7 +100,9 @@ export default function (pi: ExtensionAPI) {
             planContent: data.planContent,
             modelSelection,
             userMessage:
-              typeof data.userMessage === "string" ? data.userMessage : undefined,
+              typeof data.userMessage === "string"
+                ? data.userMessage
+                : undefined,
           };
         }
       }
@@ -162,33 +167,43 @@ export default function (pi: ExtensionAPI) {
     }
     return true;
   }
-  pi.registerMessageRenderer("plan-mode-execute", (message: any, { expanded }: { expanded: boolean }, theme: any) => {
-    const container = new Container();
-    const box = new Box(1, 1, (s: string) => theme.bg("customMessageBg", s));
-    box.addChild(new Text(theme.fg("success", theme.bold(" plan approved")), 0, 0));
-    box.addChild(new Spacer(1));
-    if (expanded) {
-      const text =
-        typeof message.content === "string" ? message.content : "Plan accepted.";
-      box.addChild(new Text(theme.fg("customMessageText", text), 0, 0));
-    } else {
-      const userInstruction = message.details?.userInstruction || "Plan accepted.";
-      box.addChild(new Text(theme.fg("customMessageText", userInstruction), 0, 0));
-      box.addChild(new Spacer(1));
+  pi.registerMessageRenderer(
+    "plan-mode-execute",
+    (message: any, { expanded }: { expanded: boolean }, theme: any) => {
+      const container = new Container();
+      const box = new Box(1, 1, (s: string) => theme.bg("customMessageBg", s));
       box.addChild(
-        new Text(
-          `${theme.fg("muted", "(")}${keyHint("app.tools.expand", "to expand")}${theme.fg("muted", ")")}`,
-          0,
-          0,
-        ),
+        new Text(theme.fg("success", theme.bold(" plan approved")), 0, 0),
       );
-    }
-    container.addChild(box);
-    return {
-      render: (width: number) => container.render(width),
-      invalidate: () => container.invalidate(),
-    };
-  });
+      box.addChild(new Spacer(1));
+      if (expanded) {
+        const text =
+          typeof message.content === "string"
+            ? message.content
+            : "Plan accepted.";
+        box.addChild(new Text(theme.fg("customMessageText", text), 0, 0));
+      } else {
+        const userInstruction =
+          message.details?.userInstruction || "Plan accepted.";
+        box.addChild(
+          new Text(theme.fg("customMessageText", userInstruction), 0, 0),
+        );
+        box.addChild(new Spacer(1));
+        box.addChild(
+          new Text(
+            `${theme.fg("muted", "(")}${keyHint("app.tools.expand", "to expand")}${theme.fg("muted", ")")}`,
+            0,
+            0,
+          ),
+        );
+      }
+      container.addChild(box);
+      return {
+        render: (width: number) => container.render(width),
+        invalidate: () => container.invalidate(),
+      };
+    },
+  );
 
   async function restorePendingModelSelection(
     ctx: ExtensionContext,
@@ -240,7 +255,10 @@ ${message}`,
     );
   }
 
-  async function handlePlanEnter(args: string, ctx: ExtensionContext): Promise<void> {
+  async function handlePlanEnter(
+    args: string,
+    ctx: ExtensionContext,
+  ): Promise<void> {
     setMode(ctx, "plan");
 
     const planPath = ctxPlanPath(ctx);
@@ -261,7 +279,10 @@ ${message}`,
     }
   }
 
-  async function handlePlanAccept(args: string, ctx: ExtensionCommandContext): Promise<void> {
+  async function handlePlanAccept(
+    args: string,
+    ctx: ExtensionCommandContext,
+  ): Promise<void> {
     if (!requirePlanMode(ctx, "No active plan found. Use /plan first.")) return;
 
     const planPath = ctxPlanPath(ctx);
@@ -431,8 +452,16 @@ ${message}`,
       const token = prefix.trimStart();
       if (token.includes(" ")) return null;
       const subcommands = [
-        { value: "accept", label: "accept", description: "Accept plan and trigger execution" },
-        { value: "show", label: "show", description: "Display and edit the plan" },
+        {
+          value: "accept",
+          label: "accept",
+          description: "Accept plan and trigger execution",
+        },
+        {
+          value: "show",
+          label: "show",
+          description: "Display and edit the plan",
+        },
         { value: "cancel", label: "cancel", description: "Cancel plan mode" },
       ];
       const filtered = subcommands.filter((s) => s.value.startsWith(token));
@@ -445,10 +474,14 @@ ${message}`,
       const first = spaceIdx === -1 ? dispatch : dispatch.slice(0, spaceIdx);
       const rest = spaceIdx === -1 ? "" : dispatch.slice(spaceIdx + 1);
       switch (first) {
-        case "accept": return handlePlanAccept(rest, ctx as ExtensionCommandContext);
-        case "show":   return handlePlanShow(ctx);
-        case "cancel": return handlePlanCancel(ctx);
-        default:       return handlePlanEnter(raw, ctx);
+        case "accept":
+          return handlePlanAccept(rest, ctx as ExtensionCommandContext);
+        case "show":
+          return handlePlanShow(ctx);
+        case "cancel":
+          return handlePlanCancel(ctx);
+        default:
+          return handlePlanEnter(raw, ctx);
       }
     },
   });

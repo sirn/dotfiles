@@ -105,9 +105,15 @@ function loadConfig(): SubagentConfig {
     const parsed = JSON.parse(raw);
     const result = { ...DEFAULT_CONFIG };
     if (isPositiveSafeInt(parsed.maxConcurrency))
-      result.maxConcurrency = Math.min(parsed.maxConcurrency, MAX_CONCURRENCY_CEILING);
+      result.maxConcurrency = Math.min(
+        parsed.maxConcurrency,
+        MAX_CONCURRENCY_CEILING,
+      );
     if (isPositiveSafeInt(parsed.maxAgentsPerStep))
-      result.maxAgentsPerStep = Math.min(parsed.maxAgentsPerStep, MAX_AGENTS_PER_STEP_CEILING);
+      result.maxAgentsPerStep = Math.min(
+        parsed.maxAgentsPerStep,
+        MAX_AGENTS_PER_STEP_CEILING,
+      );
     if (isPositiveSafeInt(parsed.collapsedItemCount))
       result.collapsedItemCount = parsed.collapsedItemCount;
     if (
@@ -512,7 +518,6 @@ function getDisplayItems(messages: Message[]): DisplayItem[] {
   return items;
 }
 
-
 async function mapWithAgentConcurrency<TIn, TOut>(
   items: TIn[],
   globalConcurrency: number,
@@ -635,18 +640,20 @@ function discoverAgents(agentDir: string): AgentConfig[] {
       parseFrontmatter<Record<string, unknown>>(content);
     if (!frontmatter.name || !frontmatter.description) continue;
 
-    const tools = typeof frontmatter.tools === "string"
-      ? frontmatter.tools
-          .split(",")
-          .map((t: string) => t.trim())
-          .filter(Boolean)
-      : undefined;
+    const tools =
+      typeof frontmatter.tools === "string"
+        ? frontmatter.tools
+            .split(",")
+            .map((t: string) => t.trim())
+            .filter(Boolean)
+        : undefined;
 
     agents.push({
       name: String(frontmatter.name),
       description: String(frontmatter.description),
       tools: tools && tools.length > 0 ? tools : undefined,
-      model: typeof frontmatter.model === "string" ? frontmatter.model : undefined,
+      model:
+        typeof frontmatter.model === "string" ? frontmatter.model : undefined,
       concurrency:
         typeof frontmatter.concurrency === "number" &&
         isPositiveSafeInt(frontmatter.concurrency)
@@ -976,8 +983,7 @@ async function runSingleAgent(
           if (settled) return;
           currentResult.compacting = false;
           if (!event.willRetry) {
-            const isOverflowRecovery =
-              event.reason !== "threshold";
+            const isOverflowRecovery = event.reason !== "threshold";
             if (isOverflowRecovery && (event.aborted || event.errorMessage)) {
               currentResult.stopReason = "error";
               currentResult.errorMessage =
@@ -1011,8 +1017,7 @@ async function runSingleAgent(
           !event.success
         ) {
           if (settled) return;
-          currentResult.errorMessage =
-            event.error || "Prompt preflight failed";
+          currentResult.errorMessage = event.error || "Prompt preflight failed";
           currentResult.stopReason = "error";
           if (agentEndTimer !== undefined) {
             clearTimeout(agentEndTimer);
@@ -1321,7 +1326,8 @@ export default function (pi: ExtensionAPI) {
               (r) => r.stepIndex === stepIndex && isPendingResult(r),
             ).length;
             const currentStepRunning = planResults.filter(
-              (r) => r.stepIndex === stepIndex && isPendingResult(r) && r.started,
+              (r) =>
+                r.stepIndex === stepIndex && isPendingResult(r) && r.started,
             ).length;
             const currentStepDone = stepTasks.length - currentStepPending;
             const msg =
@@ -1379,7 +1385,10 @@ export default function (pi: ExtensionAPI) {
           },
         );
 
-        const stepResults = planResults.slice(stepStartIndex, stepStartIndex + stepTasks.length);
+        const stepResults = planResults.slice(
+          stepStartIndex,
+          stepStartIndex + stepTasks.length,
+        );
 
         stepStartIndex += stepTasks.length;
 
@@ -1551,13 +1560,15 @@ export default function (pi: ExtensionAPI) {
             ? theme.fg("dim", "○")
             : isPending
               ? theme.fg("warning", "")
-            : isSkipped
-              ? theme.fg("dim", "⊘")
-              : hasFailed
-                ? theme.fg("error", "")
-                : theme.fg("success", "");
+              : isSkipped
+                ? theme.fg("dim", "⊘")
+                : hasFailed
+                  ? theme.fg("error", "")
+                  : theme.fg("success", "");
           const task = r.task
-            ? (expanded ? r.task.trim().replace(/\s+/g, " ") : trimInline(r.task, 100))
+            ? expanded
+              ? r.task.trim().replace(/\s+/g, " ")
+              : trimInline(r.task, 100)
             : undefined;
           const displayItems = getDisplayItems(r.messages);
 

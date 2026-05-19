@@ -27,22 +27,22 @@ Run a convergent review-fix loop: reviewer subagents find issues, worker fixes t
 2. **Iteration loop** (max 5 iterations by default):
 
    a. **Review** — spawn `reviewer` subagents in parallel:
-      - `reviewer`: "Review {files} with a correctness/quality lens: bugs, logic errors, edge cases, error handling, resource leaks, concurrency, and performance traps."
-      - `reviewer`: "Review {files} with a security lens: OWASP risks, injection flaws, auth/authz, cryptography, sensitive data exposure, dependency risks, and secure defaults."
-      - `reviewer`: "Review {files} with a convention/simplicity lens: naming, organization, documentation, project consistency, over-engineering, unnecessary abstractions, dead code, and avoidable indirection."
+   - `reviewer`: "Review {files} with a correctness/quality lens: bugs, logic errors, edge cases, error handling, resource leaks, concurrency, and performance traps."
+   - `reviewer`: "Review {files} with a security lens: OWASP risks, injection flaws, auth/authz, cryptography, sensitive data exposure, dependency risks, and secure defaults."
+   - `reviewer`: "Review {files} with a convention/simplicity lens: naming, organization, documentation, project consistency, over-engineering, unnecessary abstractions, dead code, and avoidable indirection."
 
    b. **Filter findings** — synthesize reviewer output:
-      - Deduplicate: drop issues already addressed or explicitly deferred in a prior iteration.
-      - Classify: critical/high (must fix), medium (should fix), low/speculative (defer).
-      - If no new actionable findings remain → exit loop.
+   - Deduplicate: drop issues already addressed or explicitly deferred in a prior iteration.
+   - Classify: critical/high (must fix), medium (should fix), low/speculative (defer).
+   - If no new actionable findings remain → exit loop.
 
    c. **Fix** — delegate to `worker`:
-      - `worker`: "Fix these issues in {files}: {prioritized findings list}. Apply minimal targeted changes. Do not refactor beyond what's needed to resolve each finding."
+   - `worker`: "Fix these issues in {files}: {prioritized findings list}. Apply minimal targeted changes. Do not refactor beyond what's needed to resolve each finding."
 
    d. **Verify** — run project checks:
-      - Read `code-test` skill to detect test/lint/format commands.
-      - Run the most specific applicable commands with timeouts.
-      - If regressions appear, delegate to `worker` to fix regressions before continuing.
+   - Read `code-test` skill to detect test/lint/format commands.
+   - Run the most specific applicable commands with timeouts.
+   - If regressions appear, delegate to `worker` to fix regressions before continuing.
 
 3. **Final verification**:
    - Run full project checks (test + lint + format).
