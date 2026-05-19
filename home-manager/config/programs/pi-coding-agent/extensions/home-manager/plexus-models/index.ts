@@ -2,12 +2,16 @@
  * Plexus Models Extension for Pi Coding Agent
  *
  * Fetches models dynamically from the Plexus API at startup and registers them
- * across 4 providers based on model ID prefix:
+ * across providers chosen by Plexus's `preferred_api` hint:
  *
- *   gpt-*     → plexus-responses  / openai-responses
- *   claude-*  → plexus-messages   / anthropic-messages
- *   gemini-*  → plexus-generative / google-generative-ai
- *   *other*   → plexus            / openai-completions (default)
+ *   chat_completions → plexus            / openai-completions (default)
+ *   messages         → plexus-messages   / anthropic-messages
+ *   responses        → plexus-responses  / openai-responses
+ *   gemini           → plexus-generative / google-generative-ai
+ *
+ * When Plexus advertises `pi_provider` / `pi_model`, the matching pi-ai model
+ * definition is used as the base config (input modalities, costs, compat),
+ * with Plexus-reported pricing taking precedence when non-zero.
  *
  * Only "text" and "image" input modalities are included.
  */
@@ -17,17 +21,19 @@ import type {
   ProviderConfig,
   ProviderModelConfig,
 } from "@earendil-works/pi-coding-agent";
+import { getModel } from "@earendil-works/pi-ai";
 
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
+
 // ---------------------------------------------------------------------------
 // API types
 // ---------------------------------------------------------------------------
 
 interface PlexusApiModel {
   id: string;
-  name: string;
+  name?: string;
   architecture?: {
     input_modalities?: string[];
   };
@@ -38,10 +44,14 @@ interface PlexusApiModel {
     input_cache_write?: string;
   };
   supported_parameters?: string[];
+  context_length?: number | null;
   top_provider?: {
-    max_completion_tokens?: number;
-    context_length?: number;
+    max_completion_tokens?: number | null;
+    context_length?: number | null;
   };
+  preferred_api?: string | string[];
+  pi_provider?: string;
+  pi_model?: string;
 }
 
 interface PlexusApiResponse {
@@ -49,22 +59,27 @@ interface PlexusApiResponse {
 }
 
 // ---------------------------------------------------------------------------
-// Family → (provider, api, baseUrl) mapping
+// preferred_api → (provider, api, baseUrl suffix) mapping
 // ---------------------------------------------------------------------------
 
-interface FamilyMapping {
+interface ApiMapping {
   provider: string;
-  api: string;
+  api: ProviderConfig["api"];
   suffix: string;
 }
 
-const FAMILY_MAP: Record<string, FamilyMapping> = {
-  claude: {
+const API_MAP: Record<string, ApiMapping> = {
+  chat_completions: {
+    provider: "plexus",
+    api: "openai-completions",
+    suffix: "/v1",
+  },
+  messages: {
     provider: "plexus-messages",
     api: "anthropic-messages",
     suffix: "",
   },
-  openai: {
+  responses: {
     provider: "plexus-responses",
     api: "openai-responses",
     suffix: "/v1",
@@ -76,11 +91,17 @@ const FAMILY_MAP: Record<string, FamilyMapping> = {
   },
 };
 
-const DEFAULT_MAPPING: FamilyMapping = {
-  provider: "plexus",
-  api: "openai-completions",
-  suffix: "/v1",
-};
+const DEFAULT_MAPPING = API_MAP.chat_completions;
+
+function resolveMapping(preferred: string | string[] | undefined): ApiMapping {
+  if (!preferred) return DEFAULT_MAPPING;
+  const candidates = Array.isArray(preferred) ? preferred : [preferred];
+  for (const candidate of candidates) {
+    const mapping = API_MAP[candidate];
+    if (mapping) return mapping;
+  }
+  return DEFAULT_MAPPING;
+}
 
 const configPath = path.join(
   os.homedir(),
@@ -102,15 +123,7 @@ try {
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** Derive family from model ID prefix (gpt-*, claude-*, gemini-*). */
-function getFamily(id: string): string {
-  if (id.startsWith("gpt-")) return "openai";
-  if (id.startsWith("claude-")) return "claude";
-  if (id.startsWith("gemini-")) return "gemini";
-  return "__default__";
-}
-
-/** Parse a per-token pricing string (e.g. "7.5e-7" or "0.00000174") and convert to per-million-token cost.
+/** Parse a per-token pricing string (e.g. "7.5e-7") and convert to per-million-token cost.
  * Pi expects cost values in dollars per million tokens,
  * but the Plexus/OpenRouter API returns dollars per token.
  */
@@ -120,10 +133,7 @@ function parsePricing(value: string | null | undefined): number {
   return Number.isFinite(num) ? num * 1_000_000 : 0;
 }
 
-/**
- * Filter input modalities to only "text" and "image"
- *
- */
+/** Filter input modalities to only "text" and "image", defaulting to ["text"]. */
 function filterInputModalities(
   modalities: string[] | undefined,
 ): ("text" | "image")[] {
@@ -132,31 +142,59 @@ function filterInputModalities(
     | "text"
     | "image"
   )[];
-  // Ensure at least "text" is present
   return filtered.length > 0 ? filtered : ["text"];
 }
 
-/** Convert a Plexus API model to Pi's ProviderModelConfig. */
+/** Convert a Plexus API model to Pi's ProviderModelConfig.
+ *  When pi_provider/pi_model hints are present, inherit defaults from pi-ai
+ *  and let Plexus-reported pricing override only when non-zero.
+ */
 function toProviderModel(apiModel: PlexusApiModel): ProviderModelConfig {
+  const piModel =
+    apiModel.pi_provider && apiModel.pi_model
+      ? (getModel(apiModel.pi_provider as any, apiModel.pi_model as any) ??
+        null)
+      : null;
+
+  const contextWindow =
+    apiModel.context_length ??
+    apiModel.top_provider?.context_length ??
+    piModel?.contextWindow ??
+    4096;
+  const maxTokens =
+    apiModel.top_provider?.max_completion_tokens ??
+    piModel?.maxTokens ??
+    contextWindow;
+
   return {
     id: apiModel.id,
-    name: apiModel.name,
-    reasoning: apiModel.supported_parameters?.includes("reasoning") ?? false,
-    input: filterInputModalities(apiModel.architecture?.input_modalities),
+    name: apiModel.name ?? piModel?.name ?? apiModel.id,
+    reasoning:
+      piModel?.reasoning ??
+      apiModel.supported_parameters?.includes("reasoning") ??
+      false,
+    ...(piModel?.thinkingLevelMap && {
+      thinkingLevelMap: piModel.thinkingLevelMap,
+    }),
+    input:
+      piModel?.input ??
+      filterInputModalities(apiModel.architecture?.input_modalities),
     cost: {
-      input: parsePricing(apiModel.pricing?.prompt),
-      output: parsePricing(apiModel.pricing?.completion),
-      cacheRead: parsePricing(apiModel.pricing?.input_cache_read),
-      cacheWrite: parsePricing(apiModel.pricing?.input_cache_write),
+      input: parsePricing(apiModel.pricing?.prompt) || piModel?.cost.input || 0,
+      output:
+        parsePricing(apiModel.pricing?.completion) || piModel?.cost.output || 0,
+      cacheRead:
+        parsePricing(apiModel.pricing?.input_cache_read) ||
+        piModel?.cost.cacheRead ||
+        0,
+      cacheWrite:
+        parsePricing(apiModel.pricing?.input_cache_write) ||
+        piModel?.cost.cacheWrite ||
+        0,
     },
-    contextWindow:
-      apiModel.top_provider?.context_length ??
-      apiModel.top_provider?.max_completion_tokens ??
-      4096,
-    maxTokens:
-      apiModel.top_provider?.max_completion_tokens ??
-      apiModel.top_provider?.context_length ??
-      4096,
+    contextWindow,
+    maxTokens,
+    ...(piModel?.compat && { compat: piModel.compat }),
   };
 }
 
@@ -232,9 +270,8 @@ export default async function (pi: ExtensionAPI): Promise<void> {
     });
 
     if (!response.ok) {
-      pi.ui.notify?.(
-        `Plexus API returned ${response.status}: ${response.statusText}`,
-        "warning",
+      console.warn(
+        `[plexus-models] Plexus API returned ${response.status}: ${response.statusText}`,
       );
       return;
     }
@@ -242,36 +279,30 @@ export default async function (pi: ExtensionAPI): Promise<void> {
     const payload = (await response.json()) as PlexusApiResponse;
 
     if (!payload.data || !Array.isArray(payload.data)) {
-      pi.ui.notify?.("Plexus API returned unexpected data format", "warning");
+      console.warn(
+        "[plexus-models] Plexus API returned unexpected data format",
+      );
       return;
     }
 
-    // Group models by provider
-    const groups = new Map<string, ProviderModelConfig[]>();
+    // Group models by their resolved provider mapping
+    const groups = new Map<ApiMapping, ProviderModelConfig[]>();
     for (const apiModel of payload.data) {
-      const family = getFamily(apiModel.id);
-      const mapping = FAMILY_MAP[family] ?? DEFAULT_MAPPING;
-
-      const existing = groups.get(mapping.provider) ?? [];
+      if (!apiModel.id) continue;
+      const mapping = resolveMapping(apiModel.preferred_api);
+      const existing = groups.get(mapping) ?? [];
       existing.push(toProviderModel(apiModel));
-      groups.set(mapping.provider, existing);
+      groups.set(mapping, existing);
     }
 
-    // Register each provider with its models
-    for (const [provider, models] of groups) {
-      // Determine the mapping for this provider (find first model's family mapping)
-      const firstModelId = models[0]?.id ?? "";
-      const family = getFamily(firstModelId);
-      const mapping = FAMILY_MAP[family] ?? DEFAULT_MAPPING;
-
+    for (const [mapping, models] of groups) {
       const config: ProviderConfig = {
         baseUrl: `${baseUrl}${mapping.suffix}`,
         apiKey: "PLEXUS_API_KEY",
-        api: mapping.api as ProviderConfig["api"],
+        api: mapping.api,
         models,
       };
-
-      pi.registerProvider(provider, config);
+      pi.registerProvider(mapping.provider, config);
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
