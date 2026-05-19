@@ -104,6 +104,7 @@ interface SingleResult {
   stopReason?: string;
   errorMessage?: string;
   stepIndex?: number;
+  started?: boolean;
   autoRetrying?: boolean;
   compacting?: boolean;
 }
@@ -226,6 +227,10 @@ function createErrorResult(
 
 function isPendingResult(result: SingleResult): boolean {
   return result.exitCode === -1;
+}
+
+function isSkippedResult(result: SingleResult): boolean {
+  return result.stopReason === "skipped";
 }
 
 function isFailedResult(result: SingleResult): boolean {
@@ -1157,8 +1162,18 @@ export default function (pi: ExtensionAPI) {
       }
 
       const parentModes = readParentExecutionModes(ctx);
-      const allResults: SingleResult[] = [];
       let previousOutput = "";
+
+      // Pre-populate pending results for ALL steps so the TUI shows
+      // the full plan from the start, with future steps as "waiting".
+      const planResults: SingleResult[] = [];
+      for (let si = 0; si < steps.length; si++) {
+        for (const t of steps[si]) {
+          planResults.push(createPendingResult(t.agent, t.task, si));
+        }
+      }
+
+      let stepStartIndex = 0;
 
       for (let stepIndex = 0; stepIndex < steps.length; stepIndex++) {
         const stepAgents = steps[stepIndex];
@@ -1169,22 +1184,28 @@ export default function (pi: ExtensionAPI) {
           task: a.task.replace(/\{previous\}/g, previousOutput),
         }));
 
-        const stepResults = stepTasks.map((t) =>
-          createPendingResult(t.agent, t.task, stepIndex),
-        );
+        // Update task text for this step's agents (replacing {previous})
+        for (let i = 0; i < stepTasks.length; i++) {
+          planResults[stepStartIndex + i].task = stepTasks[i].task;
+        }
 
         const emitStepUpdate = () => {
           if (onUpdate) {
-            const running = stepResults.filter(isPendingResult).length;
-            const done = stepResults.length - running;
+            const currentStepPending = planResults.filter(
+              (r) => r.stepIndex === stepIndex && isPendingResult(r),
+            ).length;
+            const currentStepRunning = planResults.filter(
+              (r) => r.stepIndex === stepIndex && isPendingResult(r) && r.started,
+            ).length;
+            const currentStepDone = stepTasks.length - currentStepPending;
             const msg =
               steps.length === 1
-                ? `Step 1/1: ${done}/${stepTasks.length} done, ${running} running...`
-                : `Step ${stepIndex + 1}/${steps.length}: ${done}/${stepTasks.length} done, ${running} running...`;
+                ? `Step 1/1: ${currentStepDone}/${stepTasks.length} done, ${currentStepRunning} running...`
+                : `Step ${stepIndex + 1}/${steps.length}: ${currentStepDone}/${stepTasks.length} done, ${currentStepRunning} running...`;
             onUpdate(
               createTextResult(
                 msg,
-                makeDetails([...allResults, ...stepResults]),
+                makeDetails([...planResults]),
                 "custom",
                 "subagent-result-running",
               ),
@@ -1192,10 +1213,16 @@ export default function (pi: ExtensionAPI) {
           }
         };
 
+        // Emit initial state so waiting steps are visible from the start
+        emitStepUpdate();
+
         await mapWithConcurrencyLimit(
           stepTasks,
           MAX_CONCURRENCY,
           async (t, i) => {
+            // Mark as started when the concurrency limiter actually begins execution
+            planResults[stepStartIndex + i].started = true;
+            emitStepUpdate();
             const result = await runSingleAgent(
               ctx.cwd,
               agents,
@@ -1208,7 +1235,8 @@ export default function (pi: ExtensionAPI) {
                 if (partial.details?.results[0]) {
                   const partialResult = partial.details.results[0];
                   partialResult.stepIndex = stepIndex;
-                  stepResults[i] = partialResult;
+                  partialResult.started = true;
+                  planResults[stepStartIndex + i] = partialResult;
                   emitStepUpdate();
                 }
               },
@@ -1216,14 +1244,16 @@ export default function (pi: ExtensionAPI) {
               ctx,
             );
             result.stepIndex = stepIndex;
-            stepResults[i] = result;
+            result.started = true;
+            planResults[stepStartIndex + i] = result;
             emitStepUpdate();
             return result;
           },
         );
 
-        // Store completed step results
-        allResults.push(...stepResults);
+        const stepResults = planResults.slice(stepStartIndex, stepStartIndex + stepTasks.length);
+
+        stepStartIndex += stepTasks.length;
 
         const anyFailed = stepResults.some(isFailedResult);
         if (anyFailed) {
@@ -1236,9 +1266,18 @@ export default function (pi: ExtensionAPI) {
             .map((r) => `[${r.agent}] ${getResultErrorMessage(r)}`)
             .join("\n");
 
+          // Mark future steps as skipped so the renderer doesn't treat them as running
+          for (let si = stepStartIndex; si < planResults.length; si++) {
+            if (isPendingResult(planResults[si])) {
+              planResults[si].exitCode = 1;
+              planResults[si].stopReason = "skipped";
+              planResults[si].errorMessage = "Skipped: earlier step failed";
+            }
+          }
+
           return createTextResult(
             `Stopped at step ${stepIndex + 1}/${steps.length} (${failedAgents}):\n${errorMsg}`,
-            makeDetails(allResults),
+            makeDetails([...planResults]),
             "custom",
             "subagent-result-error",
           );
@@ -1256,12 +1295,12 @@ export default function (pi: ExtensionAPI) {
       // ── All steps succeeded ─────────────────────────────
 
       const finalOutput = truncateFinalOutput(
-        buildStepsFinalOutput(allResults),
+        buildStepsFinalOutput(planResults),
       );
 
       return createTextResult(
         finalOutput,
-        makeDetails(allResults),
+        makeDetails([...planResults]),
         "custom",
         "subagent-result-success",
       );
@@ -1378,11 +1417,17 @@ export default function (pi: ExtensionAPI) {
         for (const [resultIndex, r] of results.entries()) {
           const isPending = isPendingResult(r);
           const hasFailed = isFailedResult(r);
-          const rIcon = isPending
-            ? theme.fg("warning", "")
-            : hasFailed
-              ? theme.fg("error", "✗")
-              : theme.fg("success", "✓");
+          const isSkipped = isSkippedResult(r);
+          const isWaiting = isPending && !r.started;
+          const rIcon = isWaiting
+            ? theme.fg("dim", "○")
+            : isPending
+              ? theme.fg("warning", "⏱")
+            : isSkipped
+              ? theme.fg("dim", "⊘")
+              : hasFailed
+                ? theme.fg("error", "✗")
+                : theme.fg("success", "✓");
           const task = r.task
             ? (expanded ? r.task.trim().replace(/\s+/g, " ") : trimInline(r.task, 100))
             : undefined;
@@ -1396,13 +1441,15 @@ export default function (pi: ExtensionAPI) {
             text += `\n    ${theme.fg("muted", "Task: ")}${theme.fg("dim", task)}`;
 
           if (displayItems.length === 0) {
-            const fallback = hasFailed
-              ? getResultErrorMessage(r)
-              : isPending
-                ? ""
-                : "(no output)";
+            const fallback = isSkipped
+              ? "Skipped: earlier step failed"
+              : hasFailed
+                ? getResultErrorMessage(r)
+                : isPending
+                  ? ""
+                  : "(no output)";
             if (fallback)
-              text += `\n    ${theme.fg(hasFailed ? "error" : "muted", fallback)}`;
+              text += `\n    ${theme.fg(isSkipped ? "muted" : hasFailed ? "error" : "muted", fallback)}`;
           } else {
             const rendered = renderDisplayItems(
               displayItems,
