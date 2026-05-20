@@ -15,16 +15,6 @@
       color = "yellow";
       model = "opus";
     };
-    gemini = {
-      tools = [
-        "read_file"
-        "grep_search"
-        "glob"
-        "google_web_search"
-        "web_fetch"
-        "activate_skill"
-      ];
-    };
     pi = {
       tools = [
         "read"
