@@ -67,11 +67,9 @@ let
   # Build provider config from agents.models
   mkPiProvider =
     name: p:
-    {
-      baseUrl = p.baseUrl;
-      api = p.api;
-      models = map (toPiModel p) p.models;
-    }
+    lib.optionalAttrs (p.baseUrl != null) { baseUrl = p.baseUrl; }
+    // lib.optionalAttrs (p.api != null) { api = p.api; }
+    // { models = map (toPiModel p) p.models; }
     // lib.optionalAttrs (p.envVar != null) { apiKey = p.envVar; }
     // lib.optionalAttrs (!p.compatibility.developerRole) { compat.supportsDeveloperRole = false; };
 

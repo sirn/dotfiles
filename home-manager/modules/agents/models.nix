@@ -119,12 +119,14 @@ let
   providerType = lib.types.submodule {
     options = {
       name = lib.mkOption {
-        type = lib.types.str;
-        description = "Human-readable name for the provider.";
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Human-readable name for the provider. Omit when extending a built-in provider.";
       };
       baseUrl = lib.mkOption {
-        type = lib.types.str;
-        description = "Base URL for the provider API.";
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Base URL for the provider API. Omit when extending a built-in provider.";
       };
       envVar = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
@@ -132,8 +134,9 @@ let
         description = "Environment variable name for the API key. Null for OAuth-only providers.";
       };
       api = lib.mkOption {
-        type = lib.types.str;
-        description = "API type for the provider (e.g., anthropic-messages, openai-completions).";
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "API type for the provider (e.g., anthropic-messages, openai-completions). Omit when extending a built-in provider.";
       };
       reasoningEffort = lib.mkOption {
         type = lib.types.str;
