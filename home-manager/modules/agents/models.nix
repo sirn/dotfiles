@@ -138,6 +138,11 @@ let
         default = null;
         description = "API type for the provider (e.g., anthropic-messages, openai-completions). Omit when extending a built-in provider.";
       };
+      headers = lib.mkOption {
+        type = lib.types.attrsOf lib.types.str;
+        default = { };
+        description = "Static request headers to include for all models under this provider.";
+      };
       reasoningEffort = lib.mkOption {
         type = lib.types.str;
         default = "medium";

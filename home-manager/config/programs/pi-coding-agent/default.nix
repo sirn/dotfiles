@@ -71,6 +71,7 @@ let
     // lib.optionalAttrs (p.api != null) { api = p.api; }
     // { models = map (toPiModel p) p.models; }
     // lib.optionalAttrs (p.envVar != null) { apiKey = p.envVar; }
+    // lib.optionalAttrs (p.headers != { }) { headers = p.headers; }
     // lib.optionalAttrs (!p.compatibility.developerRole) { compat.supportsDeveloperRole = false; };
 
   perms = agentsCfg.permissions;
