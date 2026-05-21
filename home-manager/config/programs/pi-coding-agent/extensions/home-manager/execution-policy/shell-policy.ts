@@ -402,6 +402,23 @@ export default function (pi: ExtensionAPI) {
     return sawOpinion ? allowed : undefined;
   }
 
+  function formatBlockReason(
+    toolName: string,
+    policyOverride: { write?: string[]; edit?: string[] } | undefined,
+    mode: string,
+  ): string {
+    const allowedPaths =
+      toolName === "write" ? policyOverride?.write : policyOverride?.edit;
+    if (!allowedPaths || allowedPaths.length === 0) {
+      return `Tool "${toolName}" is blocked (execution mode: ${mode}).`;
+    }
+    const resolved = allowedPaths.map((p) => path.resolve(p));
+    return [
+      `Tool "${toolName}" is blocked (execution mode: ${mode}).`,
+      ...resolved.map((p) => `Allowed path: ${p}`),
+    ].join("\n");
+  }
+
   pi.on("tool_call", async (event, ctx) => {
     const executionMode = getExecutionMode(ctx);
     const { policyOverride } = executionMode;
@@ -420,7 +437,11 @@ export default function (pi: ExtensionAPI) {
         }
         return {
           block: true,
-          reason: `Tool "${event.toolName}" blocked by execution mode policy`,
+          reason: formatBlockReason(
+            event.toolName,
+            policyOverride,
+            executionMode.mode,
+          ),
         };
       }
       return undefined; // No opinion on write/edit otherwise
