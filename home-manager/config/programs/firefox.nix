@@ -6,6 +6,7 @@
 }:
 
 let
+  firefoxProfiles = config.programs.firefox.profiles;
   firefoxExec =
     if pkgs.stdenv.isDarwin then
       "/Applications/Firefox.app/Contents/MacOS/firefox"
@@ -13,6 +14,70 @@ let
       "flatpak run org.mozilla.firefox"
     else
       lib.getExe config.programs.firefox.finalPackage;
+
+  mkFirefoxProfileApp =
+    name:
+    let
+      bundleId = "org.nix-community.home.firefox.${name}";
+      appName = "Firefox (${name})";
+      execName = "firefox-${name}";
+    in
+    pkgs.runCommand "firefox-${name}-app"
+      {
+        meta = {
+          platforms = lib.platforms.darwin;
+        };
+      }
+      ''
+        appDir="$out/Applications/${appName}.app"
+        mkdir -p "$appDir/Contents/MacOS"
+        mkdir -p "$appDir/Contents/Resources"
+
+        cat > "$appDir/Contents/MacOS/${execName}" << 'EOF'
+        #!/bin/bash
+        exec open -n -a /Applications/Firefox.app --args -P "${name}" -no-remote
+        EOF
+        chmod +x "$appDir/Contents/MacOS/${execName}"
+
+        if [ -f "/Applications/Firefox.app/Contents/Resources/firefox.icns" ]; then
+          cp "/Applications/Firefox.app/Contents/Resources/firefox.icns" "$appDir/Contents/Resources/"
+        fi
+
+        cat > "$appDir/Contents/Info.plist" << 'PLISTEOF'
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+          <key>CFBundleInfoDictionaryVersion</key>
+          <string>6.0</string>
+          <key>CFBundleDevelopmentRegion</key>
+          <string>en</string>
+          <key>CFBundlePackageType</key>
+          <string>APPL</string>
+          <key>CFBundleIdentifier</key>
+          <string>${bundleId}</string>
+          <key>CFBundleExecutable</key>
+          <string>${execName}</string>
+          <key>CFBundleName</key>
+          <string>${appName}</string>
+          <key>CFBundleDisplayName</key>
+          <string>${appName}</string>
+          <key>CFBundleVersion</key>
+          <string>1.0</string>
+          <key>CFBundleShortVersionString</key>
+          <string>1.0</string>
+          <key>CFBundleIconFile</key>
+          <string>firefox</string>
+          <key>LSUIElement</key>
+          <false/>
+          <key>NSHighResolutionCapable</key>
+          <true/>
+          <key>NSSupportsAutomaticGraphicsSwitching</key>
+          <true/>
+        </dict>
+        </plist>
+        PLISTEOF
+      '';
 in
 {
   programs.firefox = {
@@ -54,107 +119,64 @@ in
           # Privacy & security
           "browser.contentblocking.category" = "strict";
           "dom.security.https_only_mode" = true;
-          "network.cookie.cookieBehavior" = 5;
-          "privacy.trackingprotection.cryptomining.enabled" = true;
-          "privacy.trackingprotection.enabled" = true;
-          "privacy.trackingprotection.fingerprinting.enabled" = true;
-
-          # Session management
-          "browser.sessionstore.warnOnQuit" = true;
-          "browser.startup.page" = 3;
-
-          # Password manager
-          "signon.prefillForms" = false;
           "signon.rememberSignons" = false;
 
-          # Search & URL bar
-          "browser.search.separatePrivateDefault.ui.enabled" = false;
-          "browser.urlbar.oneOffSearches" = true;
-          "browser.urlbar.suggest.searches" = true;
-          "browser.urlbar.userMadeSearchSuggestionsChoice" = true;
-
-          # New tab page
-          "browser.newtabpage.activity-stream.feeds.section.highlights" = false;
-          "browser.newtabpage.activity-stream.feeds.topsites" = false;
-
-          # UI & UX
-          "browser.aboutwelcome.enabled" = false;
-          "browser.bookmarks.addedImportButton" = true;
-          "browser.compactmode.show" = true;
-          "browser.ctrlTab.recentlyUsedOrder" = false;
-          "browser.profiles.enabled" = false;
-          "sidebar.revamp" = true;
+          # WebRTC IP leak protection
+          "media.peerconnection.ice.default_address_only" = true;
 
           # Extensions
-          "extensions.autoDisableScopes" = 0;
           "extensions.pocket.enabled" = false;
-          "extensions.update.autoUpdateDefault" = false;
 
           # AI features
+          "browser.ml.enable" = false;
           "browser.ml.chat.enabled" = false;
-          "browser.ml.chat.menu" = false;
-
-          # Translations
-          "browser.translations.automaticallyPopup" = false;
 
           # Fonts
           "font.cjk_pref_fallback_order" = "ja,zh-cn,zh-hk,zh-tw,ko";
 
-          # Firefox Sync
-          "identity.fxaccounts.enabled" = false;
-
           # Telemetry & data collection
-          "app.normandy.api_url" = "";
-          "app.normandy.enabled" = false;
           "app.shield.optoutstudies.enabled" = false;
-          "browser.crashReports.unsubmittedCheck.autoSubmit2" = false;
           "browser.crashReports.unsubmittedCheck.enabled" = false;
-          "datareporting.healthreport.uploadEnabled" = false;
-          "datareporting.policy.dataSubmissionEnabled" = false;
-          "toolkit.telemetry.archive.enabled" = false;
-          "toolkit.telemetry.bhrPing.enabled" = false;
-          "toolkit.telemetry.enabled" = false;
-          "toolkit.telemetry.firstShutdownPing.enabled" = false;
-          "toolkit.telemetry.newProfilePing.enabled" = false;
-          "toolkit.telemetry.server" = "data:,";
-          "toolkit.telemetry.shutdownPingSender.enabled" = false;
-          "toolkit.telemetry.unified" = false;
-          "toolkit.telemetry.updatePing.enabled" = false;
-
-          # WebRTC IP leak protection
-          "media.peerconnection.ice.default_address_only" = true;
-          "media.peerconnection.ice.proxy_only_if_behind_proxy" = true;
-
-          # Referrer policy
-          "network.http.referer.XOriginTrimmingPolicy" = 2;
-
-          # Pocket & sponsored content
-          "browser.newtabpage.activity-stream.default.sites" = "";
-          "browser.newtabpage.activity-stream.feeds.telemetry" = false;
           "browser.newtabpage.activity-stream.showSponsored" = false;
           "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
+          "browser.newtabpage.activity-stream.feeds.telemetry" = false;
           "browser.newtabpage.activity-stream.telemetry" = false;
-          "browser.urlbar.pocket.featureGate" = false;
-
-          # Location & geolocation
-          "browser.fixup.alternate.enabled" = false;
-          "geo.provider.network.url" = "";
-          "geo.provider.use_corelocation" = false;
-
-          # Cleanup on shutdown
-          "privacy.sanitize.sanitizeOnShutdown" = true;
-          "privacy.clearOnShutdown.cache" = true;
-          "privacy.clearOnShutdown.cookies" = false;
-          "privacy.clearOnShutdown.downloads" = true;
-          "privacy.clearOnShutdown.formdata" = true;
-          "privacy.clearOnShutdown.history" = false;
-          "privacy.clearOnShutdown.sessions" = false;
-
-          # Additional AI features
-          "browser.ml.enable" = false;
-          "browser.ml.linkPreview.enabled" = false;
+          "browser.urlbar.quicksuggest.enabled" = false;
+          "datareporting.healthreport.uploadEnabled" = false;
+          "datareporting.policy.dataSubmissionEnabled" = false;
+          "toolkit.telemetry.server" = "data:,";
+          "toolkit.telemetry.unified" = false;
         };
       };
     };
   };
+
+  # Linux: XDG desktop entries for non-default Firefox profiles
+  xdg.desktopEntries = lib.mkIf (config.programs.firefox.enable && pkgs.stdenv.isLinux) (
+    lib.mapAttrs' (name: profile: {
+      name = "firefox-${name}";
+      value = {
+        name = "Firefox (${name})";
+        genericName = "Web Browser";
+        exec = "${firefoxExec} -P ${name} %U";
+        icon = "org.mozilla.firefox";
+        terminal = false;
+        categories = [
+          "Network"
+          "WebBrowser"
+        ];
+        mimeType = [
+          "text/html"
+          "text/xml"
+          "application/xhtml+xml"
+        ];
+        startupNotify = true;
+      };
+    }) (lib.filterAttrs (name: _: name != "main") firefoxProfiles)
+  );
+
+  # macOS: Application bundles for non-default Firefox profiles
+  home.packages = lib.mkIf (config.programs.firefox.enable && pkgs.stdenv.isDarwin) (
+    map (name: mkFirefoxProfileApp name) (builtins.filter (name: name != "main") (builtins.attrNames firefoxProfiles))
+  );
 }
