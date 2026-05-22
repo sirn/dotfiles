@@ -79,7 +79,7 @@ interface SubagentConfig {
 const DEFAULT_CONFIG: SubagentConfig = {
   maxConcurrency: 4,
   maxAgentsPerStep: 8,
-  collapsedItemCount: 10,
+  collapsedItemCount: 3,
   agentConcurrency: {},
 };
 
@@ -135,7 +135,7 @@ function loadConfig(): SubagentConfig {
 const subagentConfig = loadConfig();
 const MAX_CONCURRENCY = subagentConfig.maxConcurrency ?? 4;
 const MAX_AGENTS_PER_STEP = subagentConfig.maxAgentsPerStep ?? 8;
-const COLLAPSED_ITEM_COUNT = subagentConfig.collapsedItemCount ?? 10;
+const COLLAPSED_ITEM_COUNT = subagentConfig.collapsedItemCount ?? 3;
 
 // ── Types ────────────────────────────────────────────────────
 
