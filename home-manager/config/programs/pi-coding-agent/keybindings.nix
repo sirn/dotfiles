@@ -106,7 +106,7 @@ let
     # Application
     "app.interrupt" = [ "escape" ];
     "app.clear" = [ "ctrl+c" ];
-    "app.exit" = [ "ctrl+d" ];
+    "app.exit" = [];
     "app.editor.external" = [ "ctrl+g" ];
 
     # Models and Thinking
