@@ -185,6 +185,10 @@ in
     };
 
     providers = lib.mapAttrs mkPiProvider agentsCfg.models.providers;
+
+    extensionCustom = {
+      "subagent".maxAgentsPerStep = 3;
+    };
   };
 
   home.file =
