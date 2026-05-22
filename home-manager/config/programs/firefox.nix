@@ -130,6 +130,9 @@ in
           # AI features
           "browser.ml.enable" = false;
           "browser.ml.chat.enabled" = false;
+          "browser.ml.chat.page" = false;
+          "browser.ml.chat.shortcuts" = false;
+          "browser.ml.chat.sidebar" = false;
 
           # Fonts
           "font.cjk_pref_fallback_order" = "ja,zh-cn,zh-hk,zh-tw,ko";
