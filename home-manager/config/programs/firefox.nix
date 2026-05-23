@@ -180,6 +180,8 @@ in
 
   # macOS: Application bundles for non-default Firefox profiles
   home.packages = lib.mkIf (config.programs.firefox.enable && pkgs.stdenv.isDarwin) (
-    map (name: mkFirefoxProfileApp name) (builtins.filter (name: name != "main") (builtins.attrNames firefoxProfiles))
+    map (name: mkFirefoxProfileApp name) (
+      builtins.filter (name: name != "main") (builtins.attrNames firefoxProfiles)
+    )
   );
 }
