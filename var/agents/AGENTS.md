@@ -8,6 +8,7 @@
 - Comments should explain why, not obvious mechanics; never add changelog-style comments.
 - Trust the user's stated facts, but verify current repository state before changing anything.
 - Ask for clarification when requirements, success criteria, or target files are unclear.
+- Do not write a script to perform trivial tasks (examples: do not write a 10-lines script to batch changing a string across 5 files, do not write a script just to make a HTTP request).
 
 ## Skills
 
@@ -67,7 +68,8 @@ Delegate to these experts by default. The orchestrator crafts task prompts from 
 - For Terraform, follow plan-before-apply (example: `terraform plan`); never apply without explicit confirmation. Read `terraform`.
 - For library docs, use `context7` (example: `context7 --library react --topic hooks`). Read `context7`.
 - For general search, content extraction, code context, or websets, use `exa` (example: `exa search --highlights "python asyncio patterns"`). Read `exa`.
-- For JSON/YAML/TOML/XML processing, prefer `jaq` when available (examples: `jaq '.foo' file.json`, `jaq --from yaml '.jobs' file.yml`).
+- For browsing the web, prefer `curl` (examples: `curl https://www.example.com`). Do not use Python or other scripting languages to make a request.
+- For JSON/YAML/TOML/XML processing, prefer `jaq` (examples: `jaq '.foo' file.json`, `jaq --from yaml '.jobs' file.yml`). Do not use Python or other scripting languages to parse JSON/YAML/TOML/XML.
 - Prefer `fd` over `find`; if using `find`, scope it to the current project directory.
 - Prefer `podman` over `docker` when both are available.
 - Do not manually edit lockfiles; use the relevant package manager (examples: `npm install`, `cargo update`, `uv lock`, `nix flake update`).
