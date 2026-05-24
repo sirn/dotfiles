@@ -11,6 +11,8 @@ in
 
   coincide = (callPackage ./by-name/coincide { });
 
+  claude-code = (callPackage ./by-name/claude-code/package.nix { });
+
   emacsPackages = {
     phscroll = (callPackage ./by-name/emacs/elisp-packages/phscroll/package.nix { });
   };
