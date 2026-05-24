@@ -67,18 +67,14 @@ interface ApiTypeMapping {
   providerSuffix?: string;
 }
 
-interface DefaultMapping {
-  api: ProviderConfig["api"];
-  url: string;
-}
-
 interface RemoteProviderConfig {
   baseUrl: string;
   apiKeyEnv: string;
 
   hintFields?: HintFields;
   apiTypeMappings?: Record<string, ApiTypeMapping>;
-  defaultMapping?: DefaultMapping;
+  /** Key into apiTypeMappings used when no apiType hint is on a model. */
+  defaultApiType?: string;
 
   /** Preset type — fills in defaults before user overrides. */
   type?: string;
@@ -98,41 +94,39 @@ interface RemoteProviderConfig {
 // Presets
 // ---------------------------------------------------------------------------
 
-const PLEXUS_PRESET: Partial<RemoteProviderConfig> = {
-  hintFields: {
-    apiType: "preferred_api",
-    piProvider: "pi_provider",
-    piModel: "pi_model",
-  },
-  apiTypeMappings: {
-    chat_completions: { api: "openai-completions", url: "/v1" },
-    messages: {
-      api: "anthropic-messages",
-      url: "",
-      providerSuffix: "-messages",
-    },
-    responses: {
-      api: "openai-responses",
-      url: "/v1",
-      providerSuffix: "-responses",
-    },
-    gemini: {
-      api: "google-generative-ai",
-      url: "/v1beta",
-      providerSuffix: "-generative",
-    },
-  },
-  defaultMapping: { api: "openai-completions", url: "/v1" },
-  pricingFieldMappings: {
-    input: "pricing.prompt",
-    output: "pricing.completion",
-    cacheRead: "pricing.input_cache_read",
-    cacheWrite: "pricing.input_cache_write",
-  },
-};
-
 const PRESETS: Record<string, Partial<RemoteProviderConfig>> = {
-  plexus: PLEXUS_PRESET,
+  plexus: {
+    hintFields: {
+      apiType: "preferred_api",
+      piProvider: "pi_provider",
+      piModel: "pi_model",
+    },
+    apiTypeMappings: {
+      chat_completions: { api: "openai-completions", url: "/v1" },
+      messages: {
+        api: "anthropic-messages",
+        url: "",
+        providerSuffix: "-messages",
+      },
+      responses: {
+        api: "openai-responses",
+        url: "/v1",
+        providerSuffix: "-responses",
+      },
+      gemini: {
+        api: "google-generative-ai",
+        url: "/v1beta",
+        providerSuffix: "-generative",
+      },
+    },
+    defaultApiType: "chat_completions",
+    pricingFieldMappings: {
+      input: "pricing.prompt",
+      output: "pricing.completion",
+      cacheRead: "pricing.input_cache_read",
+      cacheWrite: "pricing.input_cache_write",
+    },
+  },
 };
 
 function mergePreset(config: RemoteProviderConfig): RemoteProviderConfig {
@@ -149,8 +143,12 @@ function mergePreset(config: RemoteProviderConfig): RemoteProviderConfig {
     ...config,
     hintFields: { ...preset.hintFields, ...config.hintFields },
     apiTypeMappings: { ...preset.apiTypeMappings, ...config.apiTypeMappings },
-    defaultMapping: config.defaultMapping ?? preset.defaultMapping,
-    pricingFieldMappings: { ...preset.pricingFieldMappings, ...config.pricingFieldMappings },
+    defaultApiType: config.defaultApiType ?? preset.defaultApiType,
+    pricingFieldMappings: {
+      ...preset.pricingFieldMappings,
+      ...config.pricingFieldMappings,
+    },
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -203,9 +201,10 @@ function resolveMapping(
   apiTypeValue: string | string[] | undefined,
   configKey: string,
   mappings: Record<string, ApiTypeMapping> | undefined,
-  defaultMapping: DefaultMapping | undefined,
+  defaultApiType: string | undefined,
 ): ResolvedMapping | null {
-  const fallback: DefaultMapping = defaultMapping ?? {
+  const defaultEntry = mappings?.[defaultApiType ?? ""];
+  const fallback: ApiTypeMapping = defaultEntry ?? {
     api: "openai-completions",
     url: "/v1",
   };
@@ -213,7 +212,7 @@ function resolveMapping(
   // No hint or no mappings defined — use default
   if (!mappings || apiTypeValue === undefined) {
     return {
-      providerId: configKey,
+      providerId: configKey + (fallback.providerSuffix ?? ""),
       api: fallback.api,
       url: fallback.url,
     };
@@ -267,20 +266,19 @@ function filterInputModalities(
   return filtered.length > 0 ? filtered : ["text"];
 }
 
-/** Read a hint field from the API model by its configured field name. */
-function readHint(model: RemoteApiModel, fieldName?: string): unknown {
-  if (!fieldName) return undefined;
-  return model[fieldName];
-}
-
 /** Resolve a dot-notation path (e.g., "pricing.prompt") against an object.
  *  Returns undefined if the path doesn't exist or encounters a non-object mid-path.
  */
-function resolvePath(obj: Record<string, unknown>, path: string): unknown {
+function resolvePath(obj: Record<string, unknown>, path: string | undefined): unknown {
+  if (!path) return undefined;
   const parts = path.split(".");
   let current: unknown = obj;
   for (const part of parts) {
-    if (current === null || current === undefined || typeof current !== "object") {
+    if (
+      current === null ||
+      current === undefined ||
+      typeof current !== "object"
+    ) {
       return undefined;
     }
     current = (current as Record<string, unknown>)[part];
@@ -294,14 +292,14 @@ function resolvePath(obj: Record<string, unknown>, path: string): unknown {
  */
 function toProviderModel(
   apiModel: RemoteApiModel,
-  hintFields: HintFields | undefined,
-  pricingConvention: "perToken" | "perMillion" = "perToken",
-  pricingFieldMappings: PricingFieldMappings | undefined = undefined,
+  config: RemoteProviderConfig,
 ): ProviderModelConfig {
-  const piProvider = readHint(apiModel, hintFields?.piProvider) as
+  const { hintFields, pricingConvention, pricingFieldMappings } = config;
+  const rawModel = apiModel as Record<string, unknown>;
+  const piProvider = resolvePath(rawModel, hintFields?.piProvider) as
     | string
     | undefined;
-  const piModelId = readHint(apiModel, hintFields?.piModel) as
+  const piModelId = resolvePath(rawModel, hintFields?.piModel) as
     | string
     | undefined;
 
@@ -321,7 +319,6 @@ function toProviderModel(
     contextWindow;
 
   const fields = pricingFieldMappings;
-  const rawModel = apiModel as Record<string, unknown>;
 
   return {
     id: apiModel.id,
@@ -338,19 +335,31 @@ function toProviderModel(
       filterInputModalities(apiModel.architecture?.input_modalities),
     cost: {
       input:
-        parsePricing(fields?.input ? resolvePath(rawModel, fields.input) : undefined, pricingConvention) ||
+        parsePricing(
+          resolvePath(rawModel, fields?.input),
+          pricingConvention,
+        ) ||
         piModel?.cost.input ||
         0,
       output:
-        parsePricing(fields?.output ? resolvePath(rawModel, fields.output) : undefined, pricingConvention) ||
+        parsePricing(
+          resolvePath(rawModel, fields?.output),
+          pricingConvention,
+        ) ||
         piModel?.cost.output ||
         0,
       cacheRead:
-        parsePricing(fields?.cacheRead ? resolvePath(rawModel, fields.cacheRead) : undefined, pricingConvention) ||
+        parsePricing(
+          resolvePath(rawModel, fields?.cacheRead),
+          pricingConvention,
+        ) ||
         piModel?.cost.cacheRead ||
         0,
       cacheWrite:
-        parsePricing(fields?.cacheWrite ? resolvePath(rawModel, fields.cacheWrite) : undefined, pricingConvention) ||
+        parsePricing(
+          resolvePath(rawModel, fields?.cacheWrite),
+          pricingConvention,
+        ) ||
         piModel?.cost.cacheWrite ||
         0,
     },
@@ -438,15 +447,15 @@ export default async function (pi: ExtensionAPI): Promise<void> {
       for (const apiModel of payload.data) {
         if (!apiModel.id) continue;
 
-        const apiTypeValue = readHint(apiModel, config.hintFields?.apiType) as
-          | string
-          | string[]
-          | undefined;
+        const apiTypeValue = resolvePath(
+          apiModel as Record<string, unknown>,
+          config.hintFields?.apiType,
+        ) as string | string[] | undefined;
         const mapping = resolveMapping(
           apiTypeValue,
           configKey,
           config.apiTypeMappings,
-          config.defaultMapping,
+          config.defaultApiType,
         );
         if (!mapping) continue;
 
@@ -461,11 +470,15 @@ export default async function (pi: ExtensionAPI): Promise<void> {
             );
             continue;
           }
-          existing.models.push(toProviderModel(apiModel, config.hintFields, config.pricingConvention, config.pricingFieldMappings));
+          existing.models.push(
+            toProviderModel(apiModel, config),
+          );
         } else {
           groups.set(mapping.providerId, {
             mapping,
-            models: [toProviderModel(apiModel, config.hintFields, config.pricingConvention, config.pricingFieldMappings)],
+            models: [
+              toProviderModel(apiModel, config),
+            ],
           });
         }
       }
