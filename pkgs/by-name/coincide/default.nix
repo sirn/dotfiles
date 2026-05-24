@@ -14,7 +14,7 @@
 
 let
   pname = "coincide";
-  version = "0.1.2";
+  version = "0.1.3";
   wasm-bindgen-cli = buildWasmBindgenCli rec {
     src = fetchCrate {
       pname = "wasm-bindgen-cli";
@@ -35,7 +35,7 @@ rustPlatform.buildRustPackage {
     owner = "~sirn";
     repo = "coincide";
     rev = "v${version}";
-    hash = "sha256-6bU7qvuxC2+LdsTQsmx81HT2/ar07r0qLQpTlI3gr8Q=";
+    hash = "sha256-MmmiwXElcyaGelGwgmA2JbKtzR2le2YPFrmWWlP0ZeU=";
   };
 
   buildFeatures = [ "embed-assets" ];
@@ -67,7 +67,7 @@ rustPlatform.buildRustPackage {
     cd ..
   '';
 
-  cargoHash = "sha256-bM/oYhMtX4cOv1883svl5dKUfYFE1B4+vVGFKGm8UVg=";
+  cargoHash = "sha256-LXxQhk5Y4YTK0/owVGOlMclyCQ+saLJznPTyGzgwuik=";
 
   meta = with lib; {
     description = "Local web app for reviewing Git commits and Jujutsu changes in an inline diff view";
