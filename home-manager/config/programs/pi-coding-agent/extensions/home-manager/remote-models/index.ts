@@ -47,6 +47,17 @@ interface HintFields {
   piModel?: string;
 }
 
+interface PricingFieldMappings {
+  /** Path to input/prompt cost (e.g., "pricing.prompt", "model_info.input_cost_per_token"). */
+  input?: string;
+  /** Path to output/completion cost (e.g., "pricing.completion", "pricing.output"). */
+  output?: string;
+  /** Path to cache-read cost (e.g., "pricing.input_cache_read", "pricing.cached_input"). */
+  cacheRead?: string;
+  /** Path to cache-write cost (e.g., "pricing.input_cache_write", "model_info.cache_creation_input_token_cost"). */
+  cacheWrite?: string;
+}
+
 interface ApiTypeMapping {
   /** Pi API type for streaming. */
   api: ProviderConfig["api"];
@@ -71,6 +82,16 @@ interface RemoteProviderConfig {
 
   /** Preset type — fills in defaults before user overrides. */
   type?: string;
+
+  /** How the remote API reports pricing values.
+   *  - "perToken" (default): values are per-token; multiply by 1M
+   *  - "perMillion": values are already per-1M-token; use as-is
+   */
+  pricingConvention?: "perToken" | "perMillion";
+  /** Dot-notation paths to pricing fields in the API model object.
+   *  Omitted fields mean no remote source for that cost dimension.
+   */
+  pricingFieldMappings?: PricingFieldMappings;
 }
 
 // ---------------------------------------------------------------------------
@@ -102,7 +123,12 @@ const PLEXUS_PRESET: Partial<RemoteProviderConfig> = {
     },
   },
   defaultMapping: { api: "openai-completions", url: "/v1" },
-
+  pricingFieldMappings: {
+    input: "pricing.prompt",
+    output: "pricing.completion",
+    cacheRead: "pricing.input_cache_read",
+    cacheWrite: "pricing.input_cache_write",
+  },
 };
 
 const PRESETS: Record<string, Partial<RemoteProviderConfig>> = {
@@ -124,7 +150,7 @@ function mergePreset(config: RemoteProviderConfig): RemoteProviderConfig {
     hintFields: { ...preset.hintFields, ...config.hintFields },
     apiTypeMappings: { ...preset.apiTypeMappings, ...config.apiTypeMappings },
     defaultMapping: config.defaultMapping ?? preset.defaultMapping,
-  };
+    pricingFieldMappings: { ...preset.pricingFieldMappings, ...config.pricingFieldMappings },
 }
 
 // ---------------------------------------------------------------------------
@@ -137,12 +163,7 @@ interface RemoteApiModel {
   architecture?: {
     input_modalities?: string[];
   };
-  pricing?: {
-    prompt?: string;
-    completion?: string;
-    input_cache_read?: string;
-    input_cache_write?: string;
-  };
+  pricing?: Record<string, unknown>;
   supported_parameters?: string[];
   context_length?: number | null;
   top_provider?: {
@@ -220,11 +241,18 @@ function resolveMapping(
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** Parse a per-token pricing string (e.g. "7.5e-7") and convert to per-million-token cost. */
-function parsePricing(value: string | null | undefined): number {
-  if (!value) return 0;
-  const num = Number(value);
-  return Number.isFinite(num) ? num * 1_000_000 : 0;
+/** Parse a pricing value and convert to per-million-token cost.
+ *  @param convention - "perToken" (default): multiply by 1M; "perMillion": use as-is.
+ */
+function parsePricing(
+  value: unknown,
+  convention: "perToken" | "perMillion" = "perToken",
+): number {
+  if (value == null) return 0;
+  const str = String(value);
+  const num = Number(str);
+  if (!Number.isFinite(num)) return 0;
+  return convention === "perToken" ? num * 1_000_000 : num;
 }
 
 /** Filter input modalities to only "text" and "image", defaulting to ["text"]. */
@@ -245,6 +273,21 @@ function readHint(model: RemoteApiModel, fieldName?: string): unknown {
   return model[fieldName];
 }
 
+/** Resolve a dot-notation path (e.g., "pricing.prompt") against an object.
+ *  Returns undefined if the path doesn't exist or encounters a non-object mid-path.
+ */
+function resolvePath(obj: Record<string, unknown>, path: string): unknown {
+  const parts = path.split(".");
+  let current: unknown = obj;
+  for (const part of parts) {
+    if (current === null || current === undefined || typeof current !== "object") {
+      return undefined;
+    }
+    current = (current as Record<string, unknown>)[part];
+  }
+  return current;
+}
+
 /** Convert a remote API model to Pi's ProviderModelConfig.
  *  When piProvider/piModel hints are present, inherit defaults from pi-ai
  *  and let remote-reported pricing override only when non-zero.
@@ -252,6 +295,8 @@ function readHint(model: RemoteApiModel, fieldName?: string): unknown {
 function toProviderModel(
   apiModel: RemoteApiModel,
   hintFields: HintFields | undefined,
+  pricingConvention: "perToken" | "perMillion" = "perToken",
+  pricingFieldMappings: PricingFieldMappings | undefined = undefined,
 ): ProviderModelConfig {
   const piProvider = readHint(apiModel, hintFields?.piProvider) as
     | string
@@ -275,6 +320,9 @@ function toProviderModel(
     piModel?.maxTokens ??
     contextWindow;
 
+  const fields = pricingFieldMappings;
+  const rawModel = apiModel as Record<string, unknown>;
+
   return {
     id: apiModel.id,
     name: apiModel.name ?? piModel?.name ?? apiModel.id,
@@ -289,15 +337,20 @@ function toProviderModel(
       piModel?.input ??
       filterInputModalities(apiModel.architecture?.input_modalities),
     cost: {
-      input: parsePricing(apiModel.pricing?.prompt) || piModel?.cost.input || 0,
+      input:
+        parsePricing(fields?.input ? resolvePath(rawModel, fields.input) : undefined, pricingConvention) ||
+        piModel?.cost.input ||
+        0,
       output:
-        parsePricing(apiModel.pricing?.completion) || piModel?.cost.output || 0,
+        parsePricing(fields?.output ? resolvePath(rawModel, fields.output) : undefined, pricingConvention) ||
+        piModel?.cost.output ||
+        0,
       cacheRead:
-        parsePricing(apiModel.pricing?.input_cache_read) ||
+        parsePricing(fields?.cacheRead ? resolvePath(rawModel, fields.cacheRead) : undefined, pricingConvention) ||
         piModel?.cost.cacheRead ||
         0,
       cacheWrite:
-        parsePricing(apiModel.pricing?.input_cache_write) ||
+        parsePricing(fields?.cacheWrite ? resolvePath(rawModel, fields.cacheWrite) : undefined, pricingConvention) ||
         piModel?.cost.cacheWrite ||
         0,
     },
@@ -408,11 +461,11 @@ export default async function (pi: ExtensionAPI): Promise<void> {
             );
             continue;
           }
-          existing.models.push(toProviderModel(apiModel, config.hintFields));
+          existing.models.push(toProviderModel(apiModel, config.hintFields, config.pricingConvention, config.pricingFieldMappings));
         } else {
           groups.set(mapping.providerId, {
             mapping,
-            models: [toProviderModel(apiModel, config.hintFields)],
+            models: [toProviderModel(apiModel, config.hintFields, config.pricingConvention, config.pricingFieldMappings)],
           });
         }
       }
