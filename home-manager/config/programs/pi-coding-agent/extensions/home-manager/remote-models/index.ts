@@ -269,7 +269,10 @@ function filterInputModalities(
 /** Resolve a dot-notation path (e.g., "pricing.prompt") against an object.
  *  Returns undefined if the path doesn't exist or encounters a non-object mid-path.
  */
-function resolvePath(obj: Record<string, unknown>, path: string | undefined): unknown {
+function resolvePath(
+  obj: Record<string, unknown>,
+  path: string | undefined,
+): unknown {
   if (!path) return undefined;
   const parts = path.split(".");
   let current: unknown = obj;
@@ -335,10 +338,7 @@ function toProviderModel(
       filterInputModalities(apiModel.architecture?.input_modalities),
     cost: {
       input:
-        parsePricing(
-          resolvePath(rawModel, fields?.input),
-          pricingConvention,
-        ) ||
+        parsePricing(resolvePath(rawModel, fields?.input), pricingConvention) ||
         piModel?.cost.input ||
         0,
       output:
@@ -470,15 +470,11 @@ export default async function (pi: ExtensionAPI): Promise<void> {
             );
             continue;
           }
-          existing.models.push(
-            toProviderModel(apiModel, config),
-          );
+          existing.models.push(toProviderModel(apiModel, config));
         } else {
           groups.set(mapping.providerId, {
             mapping,
-            models: [
-              toProviderModel(apiModel, config),
-            ],
+            models: [toProviderModel(apiModel, config)],
           });
         }
       }

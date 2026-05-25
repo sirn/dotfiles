@@ -25,10 +25,10 @@ manifest=$(curl -fsSL "$BASE_URL/$version/manifest.json")
 
 # Platform mapping: Nix system -> node platform key
 declare -A NIX_TO_NODE=(
-  [aarch64-darwin]=darwin-arm64
-  [x86_64-darwin]=darwin-x64
-  [aarch64-linux]=linux-arm64
-  [x86_64-linux]=linux-x64
+  ["aarch64-darwin"]=darwin-arm64
+  ["x86_64-darwin"]=darwin-x64
+  ["aarch64-linux"]=linux-arm64
+  ["x86_64-linux"]=linux-x64
 )
 
 # Build sources.json by fetching each binary to compute its nix hash
