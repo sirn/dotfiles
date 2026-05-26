@@ -6,6 +6,7 @@
 - Prefer no code over code, simple over clever, and minimal targeted changes over broad refactors.
 - Match the project's existing style; do not add backward compatibility unless asked.
 - Comments should explain why, not obvious mechanics; never add changelog-style comments.
+- Use plain comments without decorators (examples: ✓ `// Log commands`, ✗ `// --- Log commands ---`, ✗ `// ### Log commands`, ✗ `// ===== Log =====`).
 - Trust the user's stated facts, but verify current repository state before changing anything.
 - Ask for clarification when requirements, success criteria, or target files are unclear.
 - Do not write a script to perform trivial tasks (examples: do not write a 10-lines script to batch changing a string across 5 files, do not write a script just to make a HTTP request).
