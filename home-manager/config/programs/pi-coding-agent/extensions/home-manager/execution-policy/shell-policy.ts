@@ -9,6 +9,8 @@
  * Policy: Ask by default - any command not explicitly allowed or denied requires confirmation.
  * Per-project overrides can be placed in .pi/policy.json relative to the project root.
  *
+ * Commands that trigger ask/default are logged to ~/.pi/agent/logs/execution-policy/commands.log
+ *
  * Auto mode: when policyAutoMode is enabled in custom/execution-policy/config.json, commands that would
  * normally require user confirmation are first evaluated by a small LLM using
  * policy_auto_mode.md. If the model returns "allow", the command runs without
@@ -21,7 +23,7 @@ import type {
   ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
 import { getExecutionMode } from "./lib/execution-mode.js";
-import { EXT_DIR } from "./lib/paths.js";
+import { EXT_DIR, PI_AGENT_DIR } from "./lib/paths.js";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import {
@@ -37,6 +39,30 @@ import {
   type PolicyCommands,
   type WrapperRuleConfig,
 } from "./lib/shell-policy.js";
+
+// Log commands that require confirmation for later policy review
+const COMMANDS_LOG_DIR = path.join(PI_AGENT_DIR, "logs/execution-policy");
+
+function logConfirmNeeded(command: string, result: EvalResult): void {
+  try {
+    const entry = {
+      ts: new Date().toISOString(),
+      command: getCommandSummary(command),
+      decidedBy: result.decidedBy,
+      match: result.match
+        ? { [result.match.category]: result.match.entry.match }
+        : undefined,
+    };
+    fs.mkdirSync(COMMANDS_LOG_DIR, { recursive: true });
+    // Enforce restrictive perms even if dir/file already existed
+    fs.chmodSync(COMMANDS_LOG_DIR, 0o700);
+    const logPath = path.join(COMMANDS_LOG_DIR, "commands.log");
+    fs.appendFileSync(logPath, JSON.stringify(entry) + "\n", { mode: 0o600, encoding: "utf-8" });
+    fs.chmodSync(logPath, 0o600);
+  } catch {
+    // Best-effort; never block the tool_call handler
+  }
+}
 
 // Load global config from unified policy.json at ~/.pi/agent/custom/execution-policy/policy.json
 const globalConfigRaw = JSON.parse(
@@ -470,6 +496,11 @@ export default function (pi: ExtensionAPI) {
     };
 
     const result = evaluate(command, mergedPolicy);
+
+    // Log commands that require confirmation for later policy review
+    if (result.action === "ask" || result.action === "default") {
+      logConfirmNeeded(command, result);
+    }
 
     switch (result.action) {
       case "deny":
