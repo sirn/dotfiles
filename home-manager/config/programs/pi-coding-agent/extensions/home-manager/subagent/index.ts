@@ -1187,8 +1187,46 @@ function createSubagentResultRenderer(
 
 // ── Tool Registration ────────────────────────────────────────
 
+// Discover agents once at registration time so their names and
+// descriptions can be baked into the tool schema as a hint to
+// the LLM. Agents are re-discovered on each execute() call as
+// well, so validation stays current if agents change.
+//
+// A try/catch guards against unexpected errors in getAgentDir()
+// or discoverAgents (e.g. parseFrontmatter throw); on failure
+// the schema falls back to a plain description with no agent list.
+const discoveredAgents: AgentConfig[] = (() => {
+  try {
+    return discoverAgents(path.join(getAgentDir(), "agents"));
+  } catch {
+    return [];
+  }
+})();
+
+function buildAgentHint(agents: AgentConfig[]): string {
+  if (agents.length === 0)
+    return "Name of the agent to invoke. No agents discovered at startup — run /reload after adding agent files.";
+  const maxDescLen = 80; // cap per-agent description for LLM token budget
+  const maxAgents = 12; // cap total agents shown in schema hint
+  const shown = agents.slice(0, maxAgents);
+  const entries = shown
+    .map((a) => {
+      const desc =
+        a.description.length > maxDescLen
+          ? `${a.description.slice(0, maxDescLen - 1)}…`
+          : a.description;
+      return `"${a.name}" — ${desc}`;
+    })
+    .join("; ");
+  const suffix =
+    agents.length > maxAgents ? `; and ${agents.length - maxAgents} more` : "";
+  return `Available agents: ${entries}${suffix}.`;
+}
+
+const agentHint = buildAgentHint(discoveredAgents);
+
 const TaskItem = Type.Object({
-  agent: Type.String({ description: "Name of the agent to invoke" }),
+  agent: Type.String({ description: agentHint }),
   task: Type.String({
     description: "Task to delegate. May use {previous} in chained steps.",
   }),
