@@ -47,7 +47,7 @@ function logConfirmNeeded(command: string, result: EvalResult): void {
   try {
     const entry = {
       ts: new Date().toISOString(),
-      command: getCommandSummary(command),
+      command: command,
       decidedBy: result.decidedBy,
       match: result.match
         ? { [result.match.category]: result.match.entry.match }
