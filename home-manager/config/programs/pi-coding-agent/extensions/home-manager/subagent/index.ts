@@ -1,14 +1,14 @@
 /**
  * Subagent Tool - Delegate tasks to specialized agents
  *
- * Spawns a separate `pi` process for each subagent invocation,
- * giving it an isolated context window.
+ * Spawns a separate process (Pi RPC or Claude Code --print) for each
+ * subagent invocation, giving it an isolated context window.
  *
  * Unified `steps` schema: a 2D matrix where inner arrays run in
  * parallel and outer array runs sequentially.
  *
  *   steps: [[a, b], [c], [d, e]]
- *           └─┬─┘  └┬┘  └─┬─┘
+ *           └-┬-┘  └┬┘  └-┬-┘
  *          step1  step2  step3
  *           (par)  (seq)  (par)
  *
@@ -17,12 +17,12 @@
  * Chain         = steps: [[t1], [t2], [t3]]
  * Fanout        = steps: [[t1, t2], [t3]]
  *
- * Uses RPC mode to send tasks and capture structured output from subagents,
- * including proxied extension UI requests. Subagent system prompts
- * (persona) are surfaced back to the main agent
+ * Uses RPC mode (Pi) or --print stream-json (Claude Code) to send tasks
+ * and capture structured output from subagents, including proxied
+ * extension UI requests (Pi only). Subagent system prompts (persona)
+ * are surfaced back to the main agent.
  */
 
-import { spawn } from "node:child_process";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -37,7 +37,6 @@ import {
   getAgentDir,
   parseFrontmatter,
   getMarkdownTheme,
-  withFileMutationQueue,
   DEFAULT_MAX_BYTES,
   DEFAULT_MAX_LINES,
   formatSize,
@@ -45,7 +44,23 @@ import {
 } from "@earendil-works/pi-coding-agent";
 import { Container, Markdown, Spacer, Text, Box } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
+import {
+  type AgentConfig,
+  type SingleResult,
+  type SubagentDetails,
+  type OnUpdateCallback,
 
+  createPendingResult,
+  createErrorResult,
+  isPendingResult,
+  isSkippedResult,
+  isFailedResult,
+  getResultErrorMessage,
+  getFinalOutput,
+
+} from "./types.js";
+import { runPiAgent } from "./pi-runner.js";
+import { runClaudeCodeAgent } from "./claude-code-runner.js";
 // Cross-process protocol shared with the execution-policy extension:
 // PI_EXECUTION_MODE (comma-separated stack) wins when set; otherwise the
 // latest execution-mode session entry wins. Kept inline so this extension
@@ -67,7 +82,7 @@ function readParentExecutionModes(ctx: ExtensionContext): string[] {
   return [mode];
 }
 
-// ── Config & Constants ────────────────────────────────────────
+// Config & Constants
 
 interface SubagentConfig {
   maxConcurrency?: number;
@@ -137,185 +152,6 @@ const MAX_CONCURRENCY = subagentConfig.maxConcurrency ?? 4;
 const MAX_AGENTS_PER_STEP = subagentConfig.maxAgentsPerStep ?? 8;
 const COLLAPSED_ITEM_COUNT = subagentConfig.collapsedItemCount ?? 3;
 
-// ── Types ────────────────────────────────────────────────────
-
-interface AgentConfig {
-  name: string;
-  description: string;
-  tools?: string[];
-  model?: string;
-  concurrency?: number;
-  systemPrompt: string;
-}
-
-interface UsageStats {
-  input: number;
-  output: number;
-  cacheRead: number;
-  cacheWrite: number;
-  cost: number;
-  contextTokens: number;
-  turns: number;
-}
-
-interface SingleResult {
-  agent: string;
-  task: string;
-  exitCode: number;
-  messages: Message[];
-  stderr: string;
-  usage: UsageStats;
-  model?: string;
-  stopReason?: string;
-  errorMessage?: string;
-  stepIndex?: number;
-  started?: boolean;
-  autoRetrying?: boolean;
-  compacting?: boolean;
-}
-
-interface SubagentDetails {
-  mode: "steps";
-  results: SingleResult[];
-  totalSteps?: number;
-  totalAgents?: number;
-}
-
-type RpcEvent =
-  | { type: "message_start" }
-  | { type: "message_delta" }
-  | { type: "message_end"; message?: Message }
-  | { type: "tool_execution_start" }
-  | {
-      type: "tool_execution_end";
-      isError?: boolean;
-      result?: { content?: string };
-    }
-  | { type: "turn_start" }
-  | { type: "turn_end" }
-  | { type: "agent_end"; messages?: Message[] }
-  | {
-      type: "response";
-      id?: string;
-      command?: string;
-      success: boolean;
-      error?: string;
-    }
-  | {
-      type: "extension_ui_request";
-      id: string;
-      method: string;
-      title?: string;
-      message?: string;
-      options?: string[];
-      placeholder?: string;
-      prefill?: string;
-      notifyType?: "info" | "warning" | "error";
-      statusKey?: string;
-      statusText?: string;
-      widgetKey?: string;
-      widgetLines?: string[];
-      text?: string;
-    }
-  | {
-      type: "auto_retry_start";
-      attempt: number;
-      maxAttempts: number;
-      delayMs: number;
-      errorMessage: string;
-    }
-  | {
-      type: "auto_retry_end";
-      success: boolean;
-      attempt: number;
-      finalError?: string;
-    }
-  | { type: "compaction_start"; reason: string }
-  | {
-      type: "compaction_end";
-      reason: string;
-      result?: unknown;
-      aborted: boolean;
-      willRetry: boolean;
-      errorMessage?: string;
-    }
-  | { type: string; [key: string]: unknown };
-
-function createEmptyUsage(): UsageStats {
-  return {
-    input: 0,
-    output: 0,
-    cacheRead: 0,
-    cacheWrite: 0,
-    cost: 0,
-    contextTokens: 0,
-    turns: 0,
-  };
-}
-
-function createPendingResult(
-  agent: string,
-  task: string,
-  stepIndex?: number,
-): SingleResult {
-  return {
-    agent,
-    task,
-    exitCode: -1,
-    messages: [],
-    stderr: "",
-    usage: createEmptyUsage(),
-    stepIndex,
-  };
-}
-
-function createErrorResult(
-  agent: string,
-  task: string,
-  errorMessage: string,
-  exitCode = 1,
-  stderr = errorMessage,
-  model?: string,
-  messages: Message[] = [],
-): SingleResult {
-  return {
-    agent,
-    task,
-    exitCode,
-    messages,
-    stderr,
-    usage: createEmptyUsage(),
-    model,
-    errorMessage,
-  };
-}
-
-function isPendingResult(result: SingleResult): boolean {
-  return result.exitCode === -1;
-}
-
-function isSkippedResult(result: SingleResult): boolean {
-  return result.stopReason === "skipped";
-}
-
-function isFailedResult(result: SingleResult): boolean {
-  return (
-    !isPendingResult(result) &&
-    (result.exitCode !== 0 ||
-      result.stopReason === "error" ||
-      result.stopReason === "aborted")
-  );
-}
-
-function getResultErrorMessage(result: SingleResult): string {
-  return (
-    result.errorMessage ||
-    result.stderr.trim() ||
-    getFinalOutput(result.messages) ||
-    (result.stopReason ? `Stopped: ${result.stopReason}` : "(no output)")
-  );
-}
-
 function createTextResult(
   text: string,
   details: SubagentDetails,
@@ -334,7 +170,7 @@ function createTextResult(
   return { content, details };
 }
 
-// ── Helpers ──────────────────────────────────────────────────
+// Helpers
 
 function formatTokens(count: number): string {
   if (count < 1000) return count.toString();
@@ -381,13 +217,15 @@ function formatToolCall(
   };
 
   switch (toolName) {
-    case "bash": {
+    case "bash":
+    case "Bash": {
       const command = (args.command as string) || "...";
       const preview =
         command.length > 60 ? `${command.slice(0, 60)}...` : command;
       return themeFg("muted", "$ ") + themeFg("toolOutput", preview);
     }
-    case "read": {
+    case "read":
+    case "Read": {
       const rawPath = (args.file_path || args.path || "...") as string;
       const filePath = shortenPath(rawPath);
       const offset = args.offset as number | undefined;
@@ -403,7 +241,8 @@ function formatToolCall(
       }
       return themeFg("muted", "read ") + text;
     }
-    case "write": {
+    case "write":
+    case "Write": {
       const rawPath = (args.file_path || args.path || "...") as string;
       const filePath = shortenPath(rawPath);
       const content = (args.content || "") as string;
@@ -412,7 +251,9 @@ function formatToolCall(
       if (lines > 1) text += themeFg("dim", ` (${lines} lines)`);
       return text;
     }
-    case "edit": {
+    case "edit":
+    case "Edit":
+    case "MultiEdit": {
       const rawPath = (args.file_path || args.path || "...") as string;
       return (
         themeFg("muted", "edit ") + themeFg("accent", shortenPath(rawPath))
@@ -422,7 +263,8 @@ function formatToolCall(
       const rawPath = (args.path || ".") as string;
       return themeFg("muted", "ls ") + themeFg("accent", shortenPath(rawPath));
     }
-    case "find": {
+    case "find":
+    case "Glob": {
       const pattern = (args.pattern || "*") as string;
       const rawPath = (args.path || ".") as string;
       return (
@@ -431,7 +273,8 @@ function formatToolCall(
         themeFg("dim", ` in ${shortenPath(rawPath)}`)
       );
     }
-    case "grep": {
+    case "grep":
+    case "Grep": {
       const pattern = (args.pattern || "") as string;
       const rawPath = (args.path || ".") as string;
       return (
@@ -447,18 +290,6 @@ function formatToolCall(
       return themeFg("accent", toolName) + themeFg("dim", ` ${preview}`);
     }
   }
-}
-
-function getFinalOutput(messages: Message[]): string {
-  for (let i = messages.length - 1; i >= 0; i--) {
-    const msg = messages[i];
-    if (msg.role === "assistant") {
-      for (const part of msg.content) {
-        if (part.type === "text") return part.text;
-      }
-    }
-  }
-  return "";
 }
 
 function formatFinalOutput(result: SingleResult): string {
@@ -577,41 +408,8 @@ async function mapWithAgentConcurrency<TIn, TOut>(
   return results;
 }
 
-async function writePromptToTempFile(
-  agentName: string,
-  prompt: string,
-): Promise<{ dir: string; filePath: string }> {
-  const tmpDir = await fs.promises.mkdtemp(
-    path.join(os.tmpdir(), "pi-subagent-"),
-  );
-  const safeName = agentName.replace(/[^\w.-]+/g, "_");
-  const filePath = path.join(tmpDir, `prompt-${safeName}.md`);
-  await withFileMutationQueue(filePath, async () => {
-    await fs.promises.writeFile(filePath, prompt, {
-      encoding: "utf-8",
-      mode: 0o600,
-    });
-  });
-  return { dir: tmpDir, filePath };
-}
 
-function getPiInvocation(args: string[]): { command: string; args: string[] } {
-  const currentScript = process.argv[1];
-  const isBunVirtualScript = currentScript?.startsWith("/$bunfs/root/");
-  if (currentScript && !isBunVirtualScript && fs.existsSync(currentScript)) {
-    return { command: process.execPath, args: [currentScript, ...args] };
-  }
-
-  const execName = path.basename(process.execPath).toLowerCase();
-  const isGenericRuntime = /^(node|bun)(\.exe)?$/.test(execName);
-  if (!isGenericRuntime) {
-    return { command: process.execPath, args };
-  }
-
-  return { command: "pi", args };
-}
-
-// ── Agent Discovery ──────────────────────────────────────────
+// Agent Discovery
 
 function discoverAgents(agentDir: string): AgentConfig[] {
   if (!fs.existsSync(agentDir)) return [];
@@ -648,6 +446,9 @@ function discoverAgents(agentDir: string): AgentConfig[] {
             .filter(Boolean)
         : undefined;
 
+    const runner: AgentConfig["runner"] =
+      frontmatter.runner === "claude-code" ? "claude-code" : undefined;
+
     agents.push({
       name: String(frontmatter.name),
       description: String(frontmatter.description),
@@ -660,14 +461,14 @@ function discoverAgents(agentDir: string): AgentConfig[] {
           ? frontmatter.concurrency
           : undefined,
       systemPrompt: body,
+      runner,
     });
   }
+
   return agents;
 }
 
-// ── Core: runSingleAgent ─────────────────────────────────────
-
-type OnUpdateCallback = (partial: AgentToolResult<SubagentDetails>) => void;
+// Core: runSingleAgent (dispatcher)
 
 async function runSingleAgent(
   defaultCwd: string,
@@ -689,420 +490,21 @@ async function runSingleAgent(
     return createErrorResult(agentName, task, errorMessage);
   }
 
-  const args: string[] = ["--mode", "rpc", "--no-session"];
-  if (agent.model) args.push("--model", agent.model);
-  if (agent.tools && agent.tools.length > 0)
-    args.push("--tools", agent.tools.join(","));
+  const runner = agent.runner === "claude-code" ? runClaudeCodeAgent : runPiAgent;
 
-  let tmpPromptDir: string | null = null;
-  let tmpPromptPath: string | null = null;
-
-  const currentResult = createPendingResult(agentName, task);
-  currentResult.model = agent.model;
-
-  const emitUpdate = () => {
-    if (onUpdate) {
-      onUpdate({
-        content: [
-          {
-            type: "text",
-            text: getFinalOutput(currentResult.messages) || "(running...)",
-          },
-        ],
-        details: makeDetails([currentResult]),
-      });
-    }
-  };
-
-  try {
-    if (agent.systemPrompt.trim()) {
-      const tmp = await writePromptToTempFile(agent.name, agent.systemPrompt);
-      tmpPromptDir = tmp.dir;
-      tmpPromptPath = tmp.filePath;
-      args.push("--append-system-prompt", tmpPromptPath);
-    }
-
-    const promptCommand = {
-      id: "subagent-prompt",
-      type: "prompt",
-      message: `Task: ${task}`,
-    };
-    let wasAborted = false;
-    let spawnErrorMessage: string | undefined;
-
-    const childModes = [...parentModes, "subagent", `subagent:${agent.name}`];
-    const exitCode = await new Promise<number>((resolve) => {
-      const invocation = getPiInvocation(args);
-      const proc = spawn(invocation.command, invocation.args, {
-        cwd: cwd ?? defaultCwd,
-        shell: false,
-        stdio: ["pipe", "pipe", "pipe"],
-        env: {
-          ...process.env,
-          PI_EXECUTION_MODE: childModes.join(","),
-        },
-      });
-      let buffer = "";
-      let killTimeout: ReturnType<typeof setTimeout> | undefined;
-      let settled = false;
-      let agentEndTimer: ReturnType<typeof setTimeout> | undefined;
-
-      const sendRpc = (message: Record<string, unknown>) => {
-        if (!proc.stdin || proc.stdin.destroyed || proc.stdin.writableEnded)
-          return;
-        try {
-          proc.stdin.write(`${JSON.stringify(message)}\n`);
-        } catch {
-          /* ignore closed RPC stdin */
-        }
-      };
-
-      const killProc = () => {
-        wasAborted = true;
-        currentResult.stopReason = "aborted";
-        currentResult.errorMessage = "Subagent was aborted";
-        sendRpc({ type: "abort" });
-        proc.kill("SIGTERM");
-        killTimeout = setTimeout(() => {
-          if (!proc.killed) proc.kill("SIGKILL");
-        }, 5000);
-      };
-
-      const cleanup = () => {
-        if (killTimeout) clearTimeout(killTimeout);
-        if (agentEndTimer !== undefined) clearTimeout(agentEndTimer);
-        if (signal) signal.removeEventListener("abort", killProc);
-      };
-
-      const finish = (code: number) => {
-        if (settled) return;
-        settled = true;
-        cleanup();
-        resolve(code);
-      };
-
-      const finishSuccess = () => {
-        if (proc.stdin && !proc.stdin.destroyed && !proc.stdin.writableEnded) {
-          proc.stdin.end();
-        }
-        finish(0);
-        proc.kill("SIGTERM");
-      };
-
-      const finishFailure = () => {
-        if (proc.stdin && !proc.stdin.destroyed && !proc.stdin.writableEnded) {
-          proc.stdin.end();
-        }
-        finish(1);
-        proc.kill("SIGTERM");
-      };
-
-      let lineQueue = Promise.resolve();
-
-      const handleExtensionUIRequest = async (
-        event: Extract<RpcEvent, { type: "extension_ui_request" }>,
-      ) => {
-        const { id, method } = event;
-        switch (method) {
-          case "select": {
-            const value = await ctx.ui.select(
-              event.title ?? event.message ?? "Select",
-              event.options ?? [],
-            );
-            sendRpc(
-              value === undefined
-                ? { type: "extension_ui_response", id, cancelled: true }
-                : { type: "extension_ui_response", id, value },
-            );
-            break;
-          }
-          case "confirm": {
-            const value = await ctx.ui.select(
-              event.message
-                ? `${event.title ?? "Confirm"}: ${event.message}`
-                : (event.title ?? "Confirm"),
-              ["Yes", "No"],
-            );
-            sendRpc(
-              value === undefined
-                ? { type: "extension_ui_response", id, cancelled: true }
-                : {
-                    type: "extension_ui_response",
-                    id,
-                    confirmed: value === "Yes",
-                  },
-            );
-            break;
-          }
-          case "input":
-          case "editor":
-            sendRpc({ type: "extension_ui_response", id, cancelled: true });
-            break;
-          case "notify":
-            if (event.message) {
-              const notifyType =
-                event.notifyType === "warning" || event.notifyType === "error"
-                  ? event.notifyType
-                  : "info";
-              ctx.ui.notify(event.message, notifyType);
-            }
-            break;
-          default:
-            break;
-        }
-      };
-
-      const processLine = async (line: string) => {
-        if (!line.trim()) return;
-        let event: RpcEvent;
-        try {
-          event = JSON.parse(line);
-        } catch {
-          return;
-        }
-
-        // Work-producing events cancel the deferred finalization timer.
-        // Use a whitelist — not a blacklist — so side-channel events
-        // like extension_ui_request (compaction notifications) don't
-        // accidentally kill the timer and cause hangs.
-        const isWorkEvent =
-          event.type === "message_end" ||
-          event.type === "message_start" ||
-          event.type === "message_delta" ||
-          event.type === "tool_execution_start" ||
-          event.type === "tool_execution_end" ||
-          event.type === "turn_start" ||
-          event.type === "turn_end";
-        if (agentEndTimer !== undefined && isWorkEvent) {
-          clearTimeout(agentEndTimer);
-          agentEndTimer = undefined;
-        }
-
-        if (event.type === "message_end" && event.message) {
-          const msg = event.message as Message;
-          currentResult.messages.push(msg);
-
-          if (msg.role === "assistant") {
-            currentResult.usage.turns++;
-            const usage = msg.usage;
-            if (usage) {
-              currentResult.usage.input += usage.input || 0;
-              currentResult.usage.output += usage.output || 0;
-              currentResult.usage.cacheRead += usage.cacheRead || 0;
-              currentResult.usage.cacheWrite += usage.cacheWrite || 0;
-              currentResult.usage.cost += usage.cost?.total || 0;
-              currentResult.usage.contextTokens = usage.totalTokens || 0;
-            }
-            if (!currentResult.model && msg.model)
-              currentResult.model = msg.model;
-            if (msg.stopReason) currentResult.stopReason = msg.stopReason;
-            if (msg.errorMessage) currentResult.errorMessage = msg.errorMessage;
-          }
-          emitUpdate();
-        }
-
-        if (event.type === "tool_execution_end" && event.isError) {
-          currentResult.errorMessage ||= getResultErrorMessage({
-            ...currentResult,
-            messages: [],
-            errorMessage:
-              typeof event.result?.content === "string"
-                ? event.result.content
-                : undefined,
-          });
-        }
-
-        if (event.type === "extension_ui_request") {
-          await handleExtensionUIRequest(event);
-        }
-
-        if (event.type === "agent_end") {
-          if (settled) return;
-          // Pi may auto-retry or compact-and-retry after agent_end.
-          // Defer finalization with a grace period so built-in
-          // continuation events can cancel the kill.
-          // 2s accommodates GC pauses and slow stdout flushes.
-          if (agentEndTimer !== undefined) clearTimeout(agentEndTimer);
-          agentEndTimer = setTimeout(() => {
-            agentEndTimer = undefined;
-            currentResult.autoRetrying = false;
-            currentResult.compacting = false;
-            finishSuccess();
-          }, 2000);
-          return;
-        }
-
-        // Built-in auto-retry
-        if (event.type === "auto_retry_start") {
-          if (settled) return;
-          if (agentEndTimer !== undefined) {
-            clearTimeout(agentEndTimer);
-            agentEndTimer = undefined;
-          }
-          currentResult.errorMessage = event.errorMessage;
-          currentResult.autoRetrying = true;
-          emitUpdate();
-        }
-
-        if (event.type === "auto_retry_end") {
-          if (settled) return;
-          if (event.success) {
-            if (agentEndTimer !== undefined) {
-              clearTimeout(agentEndTimer);
-              agentEndTimer = undefined;
-            }
-            currentResult.errorMessage = undefined;
-            currentResult.stopReason = undefined;
-            currentResult.autoRetrying = false;
-            // Retry succeeded — agent is still working.
-          } else {
-            currentResult.stopReason = "error";
-            currentResult.errorMessage =
-              event.finalError || currentResult.errorMessage;
-            if (agentEndTimer !== undefined) {
-              clearTimeout(agentEndTimer);
-              agentEndTimer = undefined;
-            }
-            finishFailure();
-          }
-          emitUpdate();
-        }
-
-        // Compaction (context overflow recovery)
-        if (event.type === "compaction_start") {
-          if (settled) return;
-          if (agentEndTimer !== undefined) {
-            clearTimeout(agentEndTimer);
-            agentEndTimer = undefined;
-          }
-          currentResult.compacting = true;
-          emitUpdate();
-        }
-
-        if (event.type === "compaction_end") {
-          if (settled) return;
-          currentResult.compacting = false;
-          if (!event.willRetry) {
-            const isOverflowRecovery = event.reason !== "threshold";
-            if (isOverflowRecovery && (event.aborted || event.errorMessage)) {
-              currentResult.stopReason = "error";
-              currentResult.errorMessage =
-                event.errorMessage || currentResult.errorMessage;
-              if (agentEndTimer !== undefined) {
-                clearTimeout(agentEndTimer);
-                agentEndTimer = undefined;
-              }
-              finishFailure();
-            } else {
-              // Threshold compaction (post-success) or successful
-              // compaction — Pi may not emit another agent_end.
-              // Restart the grace timer so the process doesn't
-              // hang if no more events arrive.
-              if (agentEndTimer !== undefined) clearTimeout(agentEndTimer);
-              agentEndTimer = setTimeout(() => {
-                agentEndTimer = undefined;
-                currentResult.autoRetrying = false;
-                currentResult.compacting = false;
-                finishSuccess();
-              }, 2000);
-            }
-          }
-          emitUpdate();
-        }
-
-        // Prompt preflight failure (no agent_end will follow)
-        if (
-          event.type === "response" &&
-          event.id === "subagent-prompt" &&
-          !event.success
-        ) {
-          if (settled) return;
-          currentResult.errorMessage = event.error || "Prompt preflight failed";
-          currentResult.stopReason = "error";
-          if (agentEndTimer !== undefined) {
-            clearTimeout(agentEndTimer);
-            agentEndTimer = undefined;
-          }
-          finishFailure();
-        }
-      };
-
-      const enqueueLine = (line: string) => {
-        lineQueue = lineQueue.then(() => processLine(line));
-        return lineQueue;
-      };
-
-      proc.stdout.on("data", (data) => {
-        buffer += data.toString();
-        const lines = buffer.split("\n");
-        buffer = lines.pop() || "";
-        for (const line of lines) enqueueLine(line);
-      });
-
-      proc.stderr.on("data", (data) => {
-        currentResult.stderr += data.toString();
-      });
-
-      proc.on("close", (code, childSignal) => {
-        if (buffer.trim()) enqueueLine(buffer);
-        lineQueue.then(
-          () => {
-            if (typeof code === "number") finish(code);
-            else if (wasAborted || childSignal) finish(130);
-            else finish(spawnErrorMessage ? 1 : 1);
-          },
-          (error) => {
-            currentResult.errorMessage =
-              error instanceof Error ? error.message : String(error);
-            currentResult.stderr += `${currentResult.errorMessage}\n`;
-            finish(1);
-          },
-        );
-      });
-
-      proc.on("error", (error) => {
-        spawnErrorMessage = `Failed to start pi for agent "${agentName}": ${error.message}`;
-        currentResult.errorMessage = spawnErrorMessage;
-        currentResult.stderr += `${spawnErrorMessage}\n`;
-        finish(1);
-      });
-
-      sendRpc(promptCommand);
-
-      if (signal) {
-        if (signal.aborted) killProc();
-        else signal.addEventListener("abort", killProc, { once: true });
-      }
-    });
-
-    currentResult.exitCode = exitCode;
-    if (wasAborted) {
-      currentResult.stopReason = "aborted";
-      currentResult.errorMessage ||= "Subagent was aborted";
-      return currentResult;
-    }
-    if (spawnErrorMessage) currentResult.errorMessage = spawnErrorMessage;
-    if (exitCode !== 0 && !currentResult.errorMessage) {
-      currentResult.errorMessage = `Subagent process exited with code ${exitCode}`;
-    }
-    return currentResult;
-  } finally {
-    if (tmpPromptPath)
-      try {
-        fs.unlinkSync(tmpPromptPath);
-      } catch {
-        /* ignore */
-      }
-    if (tmpPromptDir)
-      try {
-        fs.rmdirSync(tmpPromptDir);
-      } catch {
-        /* ignore */
-      }
-  }
+  return runner(
+    agent,
+    task,
+    cwd ?? defaultCwd,
+    parentModes,
+    signal,
+    onUpdate,
+    makeDetails,
+    ctx,
+  );
 }
 
-// ── Custom Message Renderers (persona surfacing) ─────────────
+// Custom Message Renderers (persona surfacing)
 
 function createSubagentResultRenderer(
   header: string,
@@ -1185,7 +587,7 @@ function createSubagentResultRenderer(
   };
 }
 
-// ── Tool Registration ────────────────────────────────────────
+// Tool Registration
 
 // Discover agents once at registration time so their names and
 // descriptions can be baked into the tool schema as a hint to
@@ -1208,14 +610,15 @@ function buildAgentHint(agents: AgentConfig[]): string {
     return "Name of the agent to invoke. No agents discovered at startup — run /reload after adding agent files.";
   const maxDescLen = 80; // cap per-agent description for LLM token budget
   const maxAgents = 12; // cap total agents shown in schema hint
-  const shown = agents.slice(0, maxAgents);
-  const entries = shown
+  const entries = agents
+    .slice(0, maxAgents)
     .map((a) => {
       const desc =
         a.description.length > maxDescLen
           ? `${a.description.slice(0, maxDescLen - 1)}…`
           : a.description;
-      return `"${a.name}" — ${desc}`;
+      const runner = a.runner === "claude-code" ? " [CC]" : "";
+      return `"${a.name}"${runner} — ${desc}`;
     })
     .join("; ");
   const suffix =
@@ -1265,6 +668,7 @@ export default function (pi: ExtensionAPI) {
     label: "Subagent",
     description: [
       "Delegate tasks to specialized subagents with isolated context.",
+      "Supports both Pi and Claude Code runners.",
       "Schema: steps: [[{agent, task}, ...], ...] — inner arrays run parallel, outer runs sequentially.",
       "Modes: single ([[{agent, task}]]), parallel ([[t1, t2]]), chain ([[t1], [t2]]), fanout ([[t1, t2], [t3]]).",
       "Subagent personas are surfaced in result messages.",
@@ -1467,7 +871,7 @@ export default function (pi: ExtensionAPI) {
           .join("\n\n");
       }
 
-      // ── All steps succeeded ─────────────────────────────
+      // - All steps succeeded
 
       const finalOutput = truncateFinalOutput(
         buildStepsFinalOutput(planResults),
@@ -1481,7 +885,7 @@ export default function (pi: ExtensionAPI) {
       );
     },
 
-    // ── TUI: renderCall ────────────────────────────────────
+    // - TUI: renderCall
     renderCall(args, theme, _context) {
       const steps = args.steps;
       if (!steps || steps.length === 0) {
@@ -1508,7 +912,7 @@ export default function (pi: ExtensionAPI) {
       return new Text(text, 0, 0);
     },
 
-    // ── TUI: renderResult ──────────────────────────────────
+    // - TUI: renderResult
     renderResult(result, { expanded }, theme, _context) {
       const details = result.details as SubagentDetails | undefined;
       if (!details || details.results.length === 0) {

@@ -8,6 +8,8 @@
 let
   cfg = config.programs.pi-coding-agent;
   agentsCfg = config.agents;
+  # YAML-safe: quote strings containing colons, hashes, or other special chars
+  yamlQuote = s: if builtins.match "^[a-zA-Z0-9_/., -]+$" s != null then s else "\"${s}\"";
 
   wrappedPi = pkgs.writeScriptBin "pi" ''
     #!${pkgs.runtimeShell}
@@ -122,20 +124,43 @@ let
     }
   ) policyAutoModeContextFiles;
 
-  # Generate pi-compatible agent markdown files from subagent configs
+  # Generate agent markdown files from subagent configs
+  # pi.runner determines the frontmatter format:
+  #   "pi"          -> standard Pi .md
+  #   "claude-code" -> adds runner field; tools are CC-style names
   piAgentMdFiles = builtins.listToAttrs (
     builtins.filter (a: a != null) (
       builtins.attrValues (
         builtins.mapAttrs (
           name: agentCfg:
-          if agentCfg ? pi then
+          if agentCfg.pi.runner == "pi" then
             let
               piCfg = agentCfg.pi;
               tools = builtins.concatStringsSep ", " piCfg.tools;
               content = ''
                 ---
                 name: ${name}
-                description: ${agentCfg.description}
+                description: ${yamlQuote agentCfg.description}
+                tools: ${tools}
+                model: ${piCfg.model}
+                ---
+                ${agentCfg.prompt}'';
+            in
+            {
+              name = ".pi/agent/agents/${name}.md";
+              value = {
+                text = content;
+              };
+            }
+          else if agentCfg.pi.runner == "claude-code" then
+            let
+              piCfg = agentCfg.pi;
+              tools = builtins.concatStringsSep ", " piCfg.tools;
+              content = ''
+                ---
+                name: ${name}
+                description: ${yamlQuote agentCfg.description}
+                runner: claude-code
                 tools: ${tools}
                 model: ${piCfg.model}
                 ---

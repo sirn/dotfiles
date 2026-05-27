@@ -209,28 +209,34 @@ let
         type = lib.types.lines;
         description = "System prompt for the subagent.";
       };
+
       claude-code = lib.mkOption {
         type = lib.types.nullOr claudeCodeAgentType;
         default = null;
         description = "Claude Code-specific configuration.";
       };
       pi = lib.mkOption {
-        type = lib.types.nullOr (
-          lib.types.submodule {
-            options = {
-              tools = lib.mkOption {
-                type = lib.types.listOf lib.types.str;
-                default = [ ];
-                description = "Pi tools available to this subagent.";
-              };
-              model = lib.mkOption {
-                type = lib.types.str;
-                description = "Pi model ID for this subagent.";
-              };
+        type = lib.types.submodule {
+          options = {
+            runner = lib.mkOption {
+              type = lib.types.enum [
+                "pi"
+                "claude-code"
+              ];
+              default = "pi";
+              description = "Which runner to use for executing this subagent. pi uses RPC mode, claude-code uses --print stream-json.";
             };
-          }
-        );
-        default = null;
+            tools = lib.mkOption {
+              type = lib.types.listOf lib.types.str;
+              default = [ ];
+              description = "Pi tools available to this subagent.";
+            };
+            model = lib.mkOption {
+              type = lib.types.str;
+              description = "Pi model ID for this subagent.";
+            };
+          };
+        };
         description = "Pi-specific subagent configuration.";
       };
     };
