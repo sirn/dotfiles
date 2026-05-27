@@ -18,13 +18,19 @@ Generate an actionable implementation plan based on task analysis and research.
    - `planner`: "Design a minimal implementation plan for {task}, including alternatives and tradeoffs."
    - `reviewer`: "Review the proposed direction for security, correctness, simplicity, and project-convention risks for {task}."
 
-3. Use `oracle` only for high-impact or conflicting design decisions:
+3. For large or cross-module projects, spawn `architect` before `planner`:
+   - `architect`: "Analyze module boundaries, ownership, data flow, dependency direction, and structural invariants for {task}. Recommend the minimal architecture that solves the problem."
+
+4. Use `oracle` only for high-impact or conflicting design decisions:
    - `oracle`: "Adjudicate the conflicting recommendations for {task}. Choose the safest minimal path and state assumptions, tradeoffs, and confidence."
 
-4. Read relevant code yourself and validate agent findings.
+5. For production-bound changes, spawn `auditor` after the plan is synthesized:
+   - `auditor`: "Audit the implementation plan for {task} for production risks: correctness, security, data loss, migration hazards, and rollback safety."
 
-5. Design the implementation:
-   - Define the minimal design approach.
+6. Read relevant code yourself and validate agent findings.
+
+7. Design the implementation:
+   - Define the minimal design approach, incorporating architect and auditor findings when present.
    - Identify files to modify and integration points.
    - Plan verification aligned with project tooling.
    - Prefer no-code alternatives, boring solutions, minimal scope, and avoiding premature abstractions.

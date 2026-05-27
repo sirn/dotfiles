@@ -18,12 +18,18 @@ Generate an actionable schema design plan based on task analysis and research.
    - `planner`: "Design a minimal schema plan for {task}, including relationships, indexes, constraints, migrations, alternatives, and tradeoffs."
    - `reviewer`: "Review the proposed schema for correctness, data integrity, security, performance, simplicity, and project-convention risks."
 
-3. Use `oracle` only for high-impact or conflicting schema decisions:
+3. For schemas affecting data flow or cross-module boundaries, spawn `architect` before `planner`:
+   - `architect`: "Analyze data flow, ownership, dependency direction, and migration shape for {task}. Recommend the minimal schema that preserves invariants."
+
+4. Use `oracle` only for high-impact or conflicting schema decisions:
    - `oracle`: "Adjudicate the conflicting schema recommendations for {task}. Choose the safest minimal data model and state assumptions, tradeoffs, and confidence."
 
-4. Read relevant code yourself and validate agent findings.
+5. For production-bound schema changes, spawn `auditor` after the plan is synthesized:
+   - `auditor`: "Audit the schema plan for {task} for production risks: data loss, migration hazards, rollback safety, and contract compatibility."
 
-5. Design the schema:
+6. Read relevant code yourself and validate agent findings.
+
+7. Design the schema:
    - Define only required tables/entities/fields.
    - Avoid generic/flexible schemas unless strictly required.
    - Consider indexes, constraints, migrations, normalization, and N+1 risks.

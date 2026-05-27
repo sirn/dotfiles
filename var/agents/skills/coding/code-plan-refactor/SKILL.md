@@ -17,12 +17,18 @@ Generate a safe refactoring plan only; do not apply code changes.
    - `planner`: "Design a minimal behavior-preserving refactoring plan for {task}, including ordering, stop points, alternatives, and tradeoffs."
    - `reviewer`: "Review the proposed refactor for correctness, behavior preservation, simplicity, and project-convention risks."
 
-3. Use `oracle` only for high-impact or conflicting refactoring decisions:
+3. For cross-module refactors, spawn `architect` before `planner`:
+   - `architect`: "Analyze module boundaries, ownership, dependency direction, and structural invariants for {task}. Recommend the minimal architecture that preserves behavior."
+
+4. Use `oracle` only for high-impact or conflicting refactoring decisions:
    - `oracle`: "Adjudicate the conflicting refactoring recommendations for {task}. Choose the safest minimal path and state assumptions, tradeoffs, and confidence."
 
-4. Read relevant code yourself and validate agent findings.
+5. For production-bound refactors, spawn `auditor` after the plan is synthesized:
+   - `auditor`: "Audit the refactoring plan for {task} for production risks: data loss, migration hazards, rollback safety, and contract compatibility."
 
-5. Design the refactor:
+6. Read relevant code yourself and validate agent findings.
+
+7. Design the refactor:
    - Identify safe transformations: extraction, rename, simplification, deletion, inlining, or module movement.
    - Audit abstractions: does each abstraction earn its complexity?
    - Prefer deletion and simplification over new layers.

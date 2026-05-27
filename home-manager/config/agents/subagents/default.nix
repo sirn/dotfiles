@@ -1,5 +1,6 @@
 {
   imports = [
+    ./architect.nix
     ./auditor.nix
     ./oracle.nix
     ./planner.nix

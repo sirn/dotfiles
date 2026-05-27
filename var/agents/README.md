@@ -96,12 +96,13 @@ Skills may orchestrate existing subagent roles for a workflow. Do not create a n
 
 Skills are workflows/SOPs. Subagents are expert roles/lenses that skills can compose:
 
-- `scout`: local codebase reconnaissance, file and pattern discovery, and convention mapping.
-- `researcher`: authoritative documentation, API, migration, error, and advisory research.
-- `planner`: design, architecture, refactoring, API, and schema planning with tradeoffs.
-- `reviewer`: correctness, security, convention, simplicity, and quality review using the lens requested by the task.
+- `architect`: module boundaries, ownership, structural design, and minimal architecture decisions.
+- `auditor`: final-pass production-readiness gate for material issues — correctness, security, data loss, and reliability.
 - `oracle`: high-confidence adjudication for ambiguous, conflicting, or high-impact decisions.
-- `worker`: focused implementation of code and configuration changes delegated by the orchestrator.
+- `planner`: design, architecture, refactoring, API, and schema planning with tradeoffs.
+- `researcher`: authoritative documentation, API, migration, error, and advisory research.
+- `reviewer`: correctness, security, convention, simplicity, and quality review using the lens requested by the task.
+- `scout`: local codebase reconnaissance, file and pattern discovery, and convention mapping.
 
 The orchestrator delegates write operations to `worker` to keep its own context free for quality control. The orchestrator remains responsible for reviewing worker output and verifying changes before finalizing.
 

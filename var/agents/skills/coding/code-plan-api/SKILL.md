@@ -18,12 +18,18 @@ Generate an actionable API design plan based on task analysis and research.
    - `planner`: "Design a minimal API contract for {task}, including request/response shapes, errors, validation, and tradeoffs."
    - `reviewer`: "Review the proposed API for correctness, security, compatibility, simplicity, and project-convention risks."
 
-3. Use `oracle` only for high-impact or conflicting API design decisions:
+3. For APIs spanning module or service boundaries, spawn `architect` before `planner`:
+   - `architect`: "Analyze module boundaries, ownership, data flow, and interface contracts for {task}. Recommend the minimal API boundary that solves the problem."
+
+4. Use `oracle` only for high-impact or conflicting API design decisions:
    - `oracle`: "Adjudicate the conflicting API design recommendations for {task}. Choose the safest minimal contract and state assumptions, tradeoffs, and confidence."
 
-4. Read relevant code yourself and validate agent findings.
+5. For production-bound API changes, spawn `auditor` after the plan is synthesized:
+   - `auditor`: "Audit the API design for {task} for production risks: contract compatibility, breaking changes, data loss, and rollback safety."
 
-5. Design the API:
+6. Read relevant code yourself and validate agent findings.
+
+7. Design the API:
    - Design only required resources, operations, fields, and data shapes.
    - Prefer flat, simple structures over deeply nested designs.
    - Consider versioning, pagination, error handling, auth, validation, and compatibility.

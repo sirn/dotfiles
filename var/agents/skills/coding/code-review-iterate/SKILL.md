@@ -44,13 +44,17 @@ Run a convergent review-fix loop: reviewer subagents find issues, worker fixes t
    - Run the most specific applicable commands with timeouts.
    - If regressions appear, delegate to `worker` to fix regressions before continuing.
 
-3. **Final verification**:
+3. **Production audit** (for production-bound changes, after the iteration loop converges):
+   - `auditor`: "Audit {files} for production readiness: correctness, security, data loss, migration hazards, and rollback safety."
+
+4. **Final verification**:
    - Run full project checks (test + lint + format).
    - Ensure the diff from the safety baseline is coherent and no unintended changes slipped in.
 
-4. **Report**:
+5. **Report**:
    - Total iterations run.
    - Summary of findings per iteration (what was found, what was fixed, what was deferred).
+   - Auditor findings, if run.
    - Final check results.
    - Any remaining items requiring manual attention.
 

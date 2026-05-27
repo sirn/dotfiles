@@ -43,7 +43,13 @@ Wait for the research agent to complete and synthesize findings. Prefer official
 
 ### Step 4 - Generate Plan
 
-Create an upgrade plan incorporating research findings. For broad, major-version, or risky upgrades, spawn `reviewer` with a migration-risk lens before presenting the plan.
+Create an upgrade plan incorporating research findings. For broad, major-version, or risky upgrades, spawn the following agents before presenting the plan:
+
+   - `reviewer`: "Review the upgrade plan for {package} with a migration-risk lens: breaking changes, behavior regressions, and project-convention risks."
+   - `auditor`: "Audit the upgrade plan for {package} for production risks: data loss, migration hazards, rollback safety, and contract compatibility."
+
+   For framework migrations or upgrades spanning module boundaries, also spawn:
+   - `architect`: "Analyze module boundaries, ownership, dependency direction, and migration shape for upgrading {package}. Recommend the minimal migration path that preserves invariants."
 
 Include:
 
