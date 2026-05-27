@@ -57,7 +57,10 @@ function logConfirmNeeded(command: string, result: EvalResult): void {
     // Enforce restrictive perms even if dir/file already existed
     fs.chmodSync(COMMANDS_LOG_DIR, 0o700);
     const logPath = path.join(COMMANDS_LOG_DIR, "commands.log");
-    fs.appendFileSync(logPath, JSON.stringify(entry) + "\n", { mode: 0o600, encoding: "utf-8" });
+    fs.appendFileSync(logPath, JSON.stringify(entry) + "\n", {
+      mode: 0o600,
+      encoding: "utf-8",
+    });
     fs.chmodSync(logPath, 0o600);
   } catch {
     // Best-effort; never block the tool_call handler
