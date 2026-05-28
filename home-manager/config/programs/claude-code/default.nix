@@ -196,7 +196,7 @@ in
       showClearContextOnPlanAccept = true;
       skipAutoPermissionPrompt = true;
       cleanupPeriodDays = 7;
-      effortLevel = lib.mkDefault "xhigh";
+      effortLevel = lib.mkDefault "high";
       theme = config.home.colors.variant;
       statusLine = {
         type = "command";
