@@ -31,9 +31,10 @@ import {
 
 // Claude Code CLI invocation
 
-function getClaudeCodeInvocation(
-  args: string[],
-): { command: string; args: string[] } {
+function getClaudeCodeInvocation(args: string[]): {
+  command: string;
+  args: string[];
+} {
   return { command: "claude", args };
 }
 
@@ -42,7 +43,9 @@ function getClaudeCodeInvocation(
 /**
  * Map Claude Code stop reasons to Pi stop reasons.
  */
-function mapCCStopReason(reason: string | undefined | null): Message["stopReason"] {
+function mapCCStopReason(
+  reason: string | undefined | null,
+): Message["stopReason"] {
   const map: Record<string, Message["stopReason"]> = {
     end_turn: "stop",
     tool_use: "toolUse",
@@ -69,14 +72,20 @@ function parseCCLine(line: string): CCEvent | null {
  * Extract the text content from an assistant message.
  * Skips thinking blocks; includes text and tool_use content blocks.
  */
-function extractAssistantContent(
-  event: CCAssistantEvent,
-): {
+function extractAssistantContent(event: CCAssistantEvent): {
   textParts: string[];
-  toolCalls: Array<{ name: string; id: string; input: Record<string, unknown> }>;
+  toolCalls: Array<{
+    name: string;
+    id: string;
+    input: Record<string, unknown>;
+  }>;
 } {
   const textParts: string[] = [];
-  const toolCalls: Array<{ name: string; id: string; input: Record<string, unknown> }> = [];
+  const toolCalls: Array<{
+    name: string;
+    id: string;
+    input: Record<string, unknown>;
+  }> = [];
 
   if (!event.message?.content) return { textParts, toolCalls };
 
@@ -100,9 +109,7 @@ function extractAssistantContent(
  * Build a Pi-compatible AssistantMessage from a Claude Code assistant event.
  * Combines text and tool_use content blocks.
  */
-function buildAssistantMessage(
-  event: CCAssistantEvent,
-): Message {
+function buildAssistantMessage(event: CCAssistantEvent): Message {
   const { textParts, toolCalls } = extractAssistantContent(event);
 
   const content: Message["content"] = [];
@@ -138,12 +145,17 @@ function buildAssistantMessage(
         cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
       }
     : {
-        input: 0, output: 0, cacheRead: 0, cacheWrite: 0,
-        totalTokens: 0, cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+        input: 0,
+        output: 0,
+        cacheRead: 0,
+        cacheWrite: 0,
+        totalTokens: 0,
+        cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
       };
 
-  const stopReason: Message["stopReason"] =
-    mapCCStopReason(event.message.stop_reason);
+  const stopReason: Message["stopReason"] = mapCCStopReason(
+    event.message.stop_reason,
+  );
 
   return {
     role: "assistant",
@@ -161,9 +173,16 @@ function buildAssistantMessage(
  * Build Pi-compatible ToolResultMessage(s) from a Claude Code user event.
  * Each tool_result block becomes a separate ToolResultMessage.
  */
-function buildToolResultMessages(
-  event: { message: { content: Array<{ tool_use_id: string; type: string; content: string; is_error: boolean }> } },
-): Message[] {
+function buildToolResultMessages(event: {
+  message: {
+    content: Array<{
+      tool_use_id: string;
+      type: string;
+      content: string;
+      is_error: boolean;
+    }>;
+  };
+}): Message[] {
   if (!event.message?.content) return [];
 
   const messages: Message[] = [];
@@ -185,9 +204,7 @@ function buildToolResultMessages(
 /**
  * Extract usage and cost from the final result event.
  */
-function extractResultUsage(
-  resultEvent: CCResultEvent,
-): {
+function extractResultUsage(resultEvent: CCResultEvent): {
   input: number;
   output: number;
   cacheRead: number;
@@ -284,8 +301,10 @@ export async function runClaudeCodeAgent(
 
     // Build CLI arguments
     const args: string[] = [
-      "-p", `Task: ${task}`,
-      "--output-format", "stream-json",
+      "-p",
+      `Task: ${task}`,
+      "--output-format",
+      "stream-json",
       "--verbose",
     ];
 
@@ -428,8 +447,9 @@ export async function runClaudeCodeAgent(
               currentResult.errorMessage =
                 resultEvent.result || "Claude Code returned an error";
             } else {
-              currentResult.stopReason =
-                mapCCStopReason(resultEvent.stop_reason);
+              currentResult.stopReason = mapCCStopReason(
+                resultEvent.stop_reason,
+              );
             }
 
             if (resultEvent.modelUsage) {
@@ -463,7 +483,13 @@ export async function runClaudeCodeAgent(
                 api: "anthropic-messages",
                 provider: "anthropic",
                 model: currentResult.model ?? "unknown",
-                usage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, totalTokens: 0 },
+                usage: {
+                  input: 0,
+                  output: 0,
+                  cacheRead: 0,
+                  cacheWrite: 0,
+                  totalTokens: 0,
+                },
                 stopReason: "stop",
                 timestamp: Date.now(),
               });
@@ -549,7 +575,8 @@ export async function runClaudeCodeAgent(
     // If no result event was parsed, the stream-json output was malformed
     if (!resultEvent && exitCode === 0) {
       currentResult.stopReason = "error";
-      currentResult.errorMessage = "No result event received from Claude Code — stream output may have been malformed";
+      currentResult.errorMessage =
+        "No result event received from Claude Code — stream output may have been malformed";
     }
     return currentResult;
   } finally {

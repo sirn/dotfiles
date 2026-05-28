@@ -124,6 +124,12 @@ in
       description = "Shared instruction text (AGENTS.md) for all agents.";
     };
 
+    subagentPreamble = lib.mkOption {
+      type = lib.types.lines;
+      default = "";
+      description = "Preamble prepended to every subagent persona to override orchestration instructions.";
+    };
+
     commandContext = lib.mkOption {
       type = lib.types.lines;
       default = "";

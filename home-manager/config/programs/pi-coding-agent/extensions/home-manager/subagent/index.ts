@@ -49,7 +49,6 @@ import {
   type SingleResult,
   type SubagentDetails,
   type OnUpdateCallback,
-
   createPendingResult,
   createErrorResult,
   isPendingResult,
@@ -57,7 +56,6 @@ import {
   isFailedResult,
   getResultErrorMessage,
   getFinalOutput,
-
 } from "./types.js";
 import { runPiAgent } from "./pi-runner.js";
 import { runClaudeCodeAgent } from "./claude-code-runner.js";
@@ -408,7 +406,6 @@ async function mapWithAgentConcurrency<TIn, TOut>(
   return results;
 }
 
-
 // Agent Discovery
 
 function discoverAgents(agentDir: string): AgentConfig[] {
@@ -490,7 +487,8 @@ async function runSingleAgent(
     return createErrorResult(agentName, task, errorMessage);
   }
 
-  const runner = agent.runner === "claude-code" ? runClaudeCodeAgent : runPiAgent;
+  const runner =
+    agent.runner === "claude-code" ? runClaudeCodeAgent : runPiAgent;
 
   return runner(
     agent,

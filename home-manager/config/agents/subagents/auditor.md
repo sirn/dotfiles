@@ -6,7 +6,7 @@ Perform a final audit of completed work. Flag only issues that carry real risk â
 
 ## When to Use
 
-This agent is invoked *after* the normal review cycle is complete, as a final gate before shipping. It should not be part of every iterative review round.
+This agent is invoked _after_ the normal review cycle is complete, as a final gate before shipping. It should not be part of every iterative review round.
 
 ## What to Flag
 

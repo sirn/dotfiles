@@ -115,6 +115,8 @@ let
     color: ${agent.claude-code.color}
     model: ${agent.claude-code.model}
     ---
+    ${agentsCfg.subagentPreamble}
+
     ${agent.prompt}
   '';
 

@@ -181,7 +181,10 @@ export interface CCResultEvent {
     output_tokens?: number;
     cache_read_input_tokens?: number;
     cache_creation_input_tokens?: number;
-    server_tool_use?: { web_search_requests?: number; web_fetch_requests?: number };
+    server_tool_use?: {
+      web_search_requests?: number;
+      web_fetch_requests?: number;
+    };
     [key: string]: unknown;
   };
   modelUsage?: Record<

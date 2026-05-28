@@ -144,6 +144,8 @@ let
                 tools: ${tools}
                 model: ${piCfg.model}
                 ---
+                ${agentsCfg.subagentPreamble}
+
                 ${agentCfg.prompt}'';
             in
             {
@@ -164,6 +166,8 @@ let
                 tools: ${tools}
                 model: ${piCfg.model}
                 ---
+                ${agentsCfg.subagentPreamble}
+
                 ${agentCfg.prompt}'';
             in
             {

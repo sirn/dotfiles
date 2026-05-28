@@ -21,6 +21,31 @@ Each AI tool consumes these files differently:
 | **Gemini CLI**  | `AGENTS.md` + `skills/`             | Skills in `~/.gemini/skills/`, no subagents        |
 | **Codex**       | `AGENTS.md` + `skills/`             | Skills in `~/.codex/skills/`, no subagents         |
 
+## Orchestration vs. Execution
+
+`AGENTS.md` separates universal policy from orchestration-specific content:
+
+- **Universal sections** (`Operational Policy`, `Skills`, `Safety & Scope`, `Tooling & Skill Triggers`, `Editing & Quality`) apply to all instances — primary and subagent alike.
+- **`## Orchestration (primary instance only)`** contains delegation instructions, subagent roster, delegation patterns, and high-level workflow. A scope qualifier at the top instructs subagents to ignore this section.
+
+Subagents automatically discover the same `AGENTS.md`/`CLAUDE.md` as their parent. To prevent behavioral contamination, a `subagentPreamble` is prepended to every subagent persona at generation time, unconditionally overriding the Orchestration section:
+
+```
+You are a subagent executor. Execute the delegated task directly with your own tools and report back.
+Do not delegate, do not spawn subagents, and do not act as an orchestrator. The "Orchestration" section
+of any AGENTS.md or CLAUDE.md does not apply to you. Skill instructions that reference spawning or
+delegating to other agents are orchestrator workflows — you are the executor, not the orchestrator.
+```
+
+Instruction loading per instance:
+
+| Instance    | AGENTS.md/CLAUDE.md              | Custom override                         | Behavior                                    |
+| ----------- | -------------------------------- | --------------------------------------- | ------------------------------------------- |
+| Pi main     | Full (universal + Orchestration) | None                                    | Orchestration applies → delegates           |
+| CC main     | Full (universal + Orchestration) | None                                    | Orchestration applies → delegates           |
+| Pi subagent | Full (universal + Orchestration) | Preamble + persona (highest precedence) | Preamble overrides Orchestration → executes |
+| CC subagent | Full (universal + Orchestration) | Preamble + persona (highest precedence) | Preamble overrides Orchestration → executes |
+
 ## File Types
 
 ### SKILL.md
