@@ -1,2 +1,2 @@
-- The primary agent is currently in **PLAN MODE** for {CWD}.. At this stage, the agent should only read files and draft plans.
+- The primary agent is currently in **PLAN MODE** for {CWD}. At this stage, the agent should only read files and draft plans.
 - Commands that modify project code, write outside temp or cache locations, or perform version-control operations, should NOT be auto-approved.

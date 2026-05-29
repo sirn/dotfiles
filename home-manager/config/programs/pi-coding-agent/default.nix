@@ -111,17 +111,37 @@ let
     text = policyJson;
   };
 
-  policyAutoModePrompt = builtins.readFile ./policy_auto_mode.md;
+  policyAutoModePrompt = builtins.readFile ./auto-mode/prompt.md;
   policyAutoModeExtraCommands = lib.strings.trim agentsCfg.commandContext;
-  policyAutoModeContextFiles = lib.filterAttrs (
-    name: type:
-    type == "regular" && lib.hasPrefix "policy_auto_mode." name && lib.hasSuffix "_context.md" name
-  ) (builtins.readDir ./.);
+  policyAutoModeContextFiles = {
+    "auto-mode/subagent/subagent.md" = {
+      text = builtins.readFile ./auto-mode/subagent/subagent.md;
+    };
+  }
+  # Dynamically discover all context context files (delegate.md, plan.md, etc.)
+  // builtins.listToAttrs (
+    builtins.map
+      (name:
+        lib.nameValuePair "auto-mode/context/${name}" {
+          text = builtins.readFile (./auto-mode/context + "/${name}");
+        }
+      )
+      (builtins.filter (n: builtins.match ".*\\.md$" n != null)
+        (builtins.attrNames (builtins.readDir ./auto-mode/context)))
+  )
+  # Dynamically discover subagent context files (excluding subagent.md in the base set)
+  // builtins.listToAttrs (
+    builtins.map
+      (name:
+        lib.nameValuePair "auto-mode/subagent/${name}" {
+          text = builtins.readFile (./auto-mode/subagent + "/${name}");
+        }
+      )
+      (builtins.filter (n: builtins.match ".*\\.md$" n != null && n != "subagent.md")
+        (builtins.attrNames (builtins.readDir ./auto-mode/subagent)))
+  );
   policyAutoModeContextFileEntries = lib.mapAttrs' (
-    name: _:
-    lib.nameValuePair ".pi/agent/custom/execution-policy/${name}" {
-      text = builtins.readFile (./. + "/${name}");
-    }
+    name: value: lib.nameValuePair ".pi/agent/custom/execution-policy/${name}" value
   ) policyAutoModeContextFiles;
 
   # Generate agent markdown files from subagent configs
@@ -234,8 +254,8 @@ in
       ".pi/agent/skills".source = agentsCfg.skillTrees;
       ".pi/agent/custom/execution-policy/policy.json".source = policyJsonFile;
 
-      ".pi/agent/custom/execution-policy/policy_auto_mode.md".text = policyAutoModePrompt;
-      ".pi/agent/custom/execution-policy/policy_auto_mode.commands_context.md".text = lib.mkIf (
+      ".pi/agent/custom/execution-policy/auto-mode/prompt.md".text = policyAutoModePrompt;
+      ".pi/agent/custom/execution-policy/auto-mode/commands-context.md".text = lib.mkIf (
         policyAutoModeExtraCommands != ""
       ) policyAutoModeExtraCommands;
     }

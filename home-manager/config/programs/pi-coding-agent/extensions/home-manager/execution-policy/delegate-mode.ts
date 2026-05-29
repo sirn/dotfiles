@@ -9,7 +9,7 @@ import {
 } from "./lib/execution-mode.js";
 
 const DELEGATE_MODE_PROMPT =
-  "[Delegate mode active — You are an orchestrator. You cannot write or edit files directly. All file changes must go through the `subagent` tool. Use `subagent` with a worker agent for code changes.]";
+  "[Delegate mode active — You are an orchestrator. You cannot write or edit files directly. Delegate all planning, code changes, etc. to subagent using `subagent` tool.]";
 
 export default function (pi: ExtensionAPI) {
   function getMode(ctx: ExtensionContext): string {

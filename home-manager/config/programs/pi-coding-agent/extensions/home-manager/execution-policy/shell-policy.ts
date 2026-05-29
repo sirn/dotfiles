@@ -13,7 +13,7 @@
  *
  * Auto mode: when policyAutoMode is enabled in custom/execution-policy/config.json, commands that would
  * normally require user confirmation are first evaluated by a small LLM using
- * policy_auto_mode.md. If the model returns "allow", the command runs without
+ * auto-mode/prompt.md. If the model returns "allow", the command runs without
  * prompting the user. Any other outcome falls back to human confirmation.
  */
 
@@ -39,6 +39,20 @@ import {
   type PolicyCommands,
   type WrapperRuleConfig,
 } from "./lib/shell-policy.js";
+
+function resolveModeContextPath(mode: string): string | null {
+  if (mode === "subagent") return "auto-mode/subagent/subagent.md";
+  if (mode.startsWith("subagent:")) {
+    const name = mode.slice("subagent:".length);
+    if (name.length > 0 && !name.includes("/") && !name.includes("..")) {
+      return `auto-mode/subagent/${name}.md`;
+    }
+  }
+  if (mode.length > 0 && !mode.includes("/") && !mode.includes("..")) {
+    return `auto-mode/context/${mode}.md`;
+  }
+  return null;
+}
 
 // Log commands that require confirmation for later policy review
 const COMMANDS_LOG_DIR = path.join(PI_AGENT_DIR, "logs/execution-policy");
@@ -128,7 +142,7 @@ function loadAutoModeConfig(): AutoModeConfig | null {
 }
 
 function loadAutoModePrompt(): string | null {
-  const promptPath = path.join(EXT_DIR, "policy_auto_mode.md");
+  const promptPath = path.join(EXT_DIR, "auto-mode", "prompt.md");
   try {
     return fs.readFileSync(promptPath, "utf-8");
   } catch {
@@ -136,28 +150,24 @@ function loadAutoModePrompt(): string | null {
   }
 }
 const contextTemplateCache = new Map<string, string>();
-
 function loadContextTemplate(mode: string): string {
-  const suffix = mode
-    .replace(/([a-z])([A-Z])/g, "$1_$2")
-    .toLowerCase()
-    .replace(/\W/g, "_");
-  const cached = contextTemplateCache.get(suffix);
+  const relativePath = resolveModeContextPath(mode);
+  if (relativePath === null) {
+    return "";
+  }
+  const cached = contextTemplateCache.get(relativePath);
   if (cached !== undefined) {
     return cached;
   }
 
-  const promptPath = path.join(
-    EXT_DIR,
-    `policy_auto_mode.${suffix}_context.md`,
-  );
+  const promptPath = path.join(EXT_DIR, relativePath);
   let template: string;
   try {
     template = fs.readFileSync(promptPath, "utf-8");
   } catch {
     template = "";
   }
-  contextTemplateCache.set(suffix, template);
+  contextTemplateCache.set(relativePath, template);
   return template;
 }
 
@@ -170,7 +180,7 @@ const commandsContextText: string = (() => {
   try {
     const text = fs
       .readFileSync(
-        path.join(EXT_DIR, "policy_auto_mode.commands_context.md"),
+        path.join(EXT_DIR, "auto-mode", "commands-context.md"),
         "utf-8",
       )
       .trim();
