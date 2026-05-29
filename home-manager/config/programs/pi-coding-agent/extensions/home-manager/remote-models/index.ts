@@ -162,9 +162,7 @@ function resolveUrl(baseUrl: string, subPath: string): string {
   // Ensure baseUrl has a trailing slash for correct URL resolution
   const base = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
   // Strip leading slash from subPath to avoid protocol-relative URLs
-  const relative = subPath.startsWith("/")
-    ? subPath.slice(1)
-    : subPath;
+  const relative = subPath.startsWith("/") ? subPath.slice(1) : subPath;
   if (!relative) return baseUrl;
   return `${base}${relative}`;
 }
@@ -276,7 +274,10 @@ function toProviderModel(
       filterInputModalities(apiModel.architecture?.input_modalities),
     cost: {
       input:
-        parsePricing(resolvePath(rawModel, fields?.input), config.pricingConvention) ||
+        parsePricing(
+          resolvePath(rawModel, fields?.input),
+          config.pricingConvention,
+        ) ||
         piModel?.cost.input ||
         0,
       output:
@@ -427,7 +428,9 @@ export default async function (pi: ExtensionAPI): Promise<void> {
       }
 
       if (models.length === 0) {
-        console.warn(`[remote-models] ${configKey}: No models resolved — skipping`);
+        console.warn(
+          `[remote-models] ${configKey}: No models resolved — skipping`,
+        );
         continue;
       }
 

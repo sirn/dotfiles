@@ -1,5 +1,7 @@
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 
+export const MODE_DELEGATE = "delegate";
+
 export interface ExecutionModeState {
   mode: string;
   modes: string[];

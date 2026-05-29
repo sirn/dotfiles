@@ -677,6 +677,36 @@
         };
       };
 
+      delegate = {
+        tools = {
+          edit = false;
+          write = false;
+        };
+        commands.deny = [
+          "cp"
+          "ln"
+          "mkdir"
+          "mktemp"
+          "mv"
+          "rsync"
+          "sed -i"
+          "tee"
+          "touch"
+        ];
+        redirects = {
+          action = "deny";
+          safeTargets = [
+            "/dev/null"
+            "/dev/stderr"
+            "/dev/stdout"
+          ];
+          allowFdDup = true;
+        };
+        heredocs = {
+          action = "ask";
+        };
+      };
+
       subagent = { };
 
       "subagent:researcher" = {

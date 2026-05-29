@@ -44,6 +44,7 @@ import {
 } from "@earendil-works/pi-coding-agent";
 import { Container, Markdown, Spacer, Text, Box } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
+
 import {
   type AgentConfig,
   type SingleResult,
@@ -63,12 +64,17 @@ import { runClaudeCodeAgent } from "./claude-code-runner.js";
 // PI_EXECUTION_MODE (comma-separated stack) wins when set; otherwise the
 // latest execution-mode session entry wins. Kept inline so this extension
 // has no code-level dependency on execution-policy.
-function readParentExecutionModes(ctx: ExtensionContext): string[] {
+// Returns parent execution modes that should propagate to subagent children.
+// Non-propagating modes (e.g., "delegate") are filtered out so child agents
+// don't inherit restrictions that only apply to the orchestrator.
+const MODE_DELEGATE = "delegate";
+
+function getInheritedExecutionModes(ctx: ExtensionContext): string[] {
   const envModes = (process.env.PI_EXECUTION_MODE ?? "")
     .split(",")
     .map((m) => m.trim())
     .filter(Boolean);
-  if (envModes.length > 0) return envModes;
+  if (envModes.length > 0) return envModes.filter((m) => m !== MODE_DELEGATE);
 
   let mode = "edit";
   for (const entry of ctx.sessionManager.getEntries()) {
@@ -77,7 +83,7 @@ function readParentExecutionModes(ctx: ExtensionContext): string[] {
       mode = data?.mode || "edit";
     }
   }
-  return [mode];
+  return mode === MODE_DELEGATE ? [] : [mode];
 }
 
 // Config & Constants
@@ -732,7 +738,7 @@ export default function (pi: ExtensionAPI) {
         }
       }
 
-      const parentModes = readParentExecutionModes(ctx);
+      const parentModes = getInheritedExecutionModes(ctx);
       let previousOutput = "";
 
       // Pre-populate pending results for ALL steps so the TUI shows

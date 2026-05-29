@@ -351,6 +351,9 @@ ${message}`,
             modelSelection: previousModelSelection,
             userMessage: args || undefined,
           });
+          sessionManager.appendCustomEntry("execution-mode", {
+            mode: "edit",
+          });
         },
       });
 

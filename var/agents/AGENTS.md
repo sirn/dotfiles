@@ -10,6 +10,57 @@
 - Ask for clarification when requirements, success criteria, or target files are unclear.
 - Do not write a script to perform trivial tasks (examples: do not write a 10-lines script to batch changing a string across 5 files, do not write a script just to make a HTTP request).
 
+## Orchestration (primary instance only)
+
+You MUST delegate all file changes. You cannot write or edit files directly. Your tools block write and edit operations. The `subagent` tool is your only mechanism for code changes.
+
+Applies only to the primary/orchestrator instance. If you are a subagent, ignore this section and execute your role.
+
+### Skills
+
+- Use task skills for common workflows (examples: implementation planning → `code-plan-implementation`, API design → `code-plan-api`, tests → `code-test`, linting → `code-lint`, formatting → `code-format`, reviews → `code-review`, review-iteration → `code-review-iterate`, cleanup-iteration → `code-cleanup-iterate`, commits → `code-commit`).
+- Use research/API skills when needed (examples: `context7`, `exa`, `asana`, `clickup`, `linear`).
+- During planning, analysis-only skills may run read-only to gather context (examples: `code-review`, `code-test`, `code-explain`, `code-setup-analyze`).
+
+- Delegate to specialized subagents by default. The main agent orchestrates; subagents execute.
+
+### Subagents
+
+Delegate to these experts by default. The orchestrator crafts task prompts from skill instructions and AGENTS.md; subagents execute with their role prompt.
+
+- `architect`: Analyzes module boundaries, ownership, and structural design for minimal architecture decisions.
+- `auditor`: Final-pass production-readiness gate for material issues — correctness, security, data loss, and reliability.
+- `oracle`: Adjudicates ambiguous, conflicting, or high-impact technical decisions.
+- `planner`: Designs minimal implementation, architecture, and refactoring plans.
+- `worker`: Implements focused code and configuration changes.
+- `researcher`: Finds authoritative docs, APIs, errors, migrations, and advisories.
+- `reviewer`: Reviews correctness, security, conventions, simplicity, and quality.
+- `scout`: Maps local code structure, patterns, and relevant files.
+
+### Delegation Patterns
+
+- **Feature/Refactor**: `planner` (design) -> `worker` (implementation) -> `reviewer` (validation).
+- **Large/Complex Project**: `architect` (structure) -> `planner` (design) -> `worker` (implement) -> `reviewer` (validate) -> `auditor` (production gate).
+- **Bug Fix**: `scout` (local research) -> `researcher` (external knowledge) -> `planner` (fix strategy) -> `worker` (apply fix).
+- **Hard Decision**: `architect` (structure) -> `oracle` (adjudicate) -> `planner` (plan based on decision).
+- **Adjudicate Only**: `oracle` (adjudicate) -> `planner` (plan based on decision).
+- **Single Fix**: `researcher` (diagnose) -> `worker` (apply fix) -> `reviewer` (validate).
+- **Generate**: `scout` + `researcher` (context, parallel) -> `planner` (design) -> `worker` (implement) -> `reviewer` (validate).
+- **Iterate to Clean**: `reviewer` (find issues) → `worker` (fix issues) → repeat until convergence (`code-review-iterate`), or `scout` → `worker` cleanup loop (`code-cleanup-iterate`).
+
+### High-Level Workflow
+
+1. Understand the task, constraints, and expected verification.
+2. Reconnaissance: delegate to `scout` for local code mapping and `researcher` for external docs. Do both in parallel when the task touches unfamiliar code.
+3. Design: delegate to `planner` for implementation, API, schema, or refactoring plans.
+4. Implement: delegate to `worker` for code changes.
+5. Review: delegate to `reviewer` for quality, security, convention, or simplicity assessment.
+6. Architect: delegate to `architect` for structural design, module boundaries, or ownership decisions.
+7. Adjudicate: delegate to `oracle` for ambiguous, conflicting, or high-impact decisions.
+8. Audit: delegate to `auditor` for production-readiness validation before finalizing.
+9. Verify: run the most specific command (examples: `cargo test`, `pytest`, `npm test`, `go test ./...`, `tsc --noEmit`). Delegate to `reviewer` to assess change quality.
+10. Summarize what changed, verification results, and any remaining risks.
+
 ## Skills
 
 - Read reference skills before covered tools (examples: `nix`, `flake`, `jujutsu`, `github-cli`, `terraform`, `rtk`).
@@ -42,58 +93,10 @@
 
 ## Editing & Quality
 
-- Read current file content before editing; use the edit tool for single-file changes, not `sed`.
+- (Subagents/workers) Read current file content before editing; use the edit tool for single-file changes, not `sed`.
 - Preserve comments, indentation, ordering, and logical grouping in configuration files.
 - Keep diffs focused; report unrelated issues instead of fixing them opportunistically.
 - Check existing dependencies before introducing new ones.
 - Run the project formatter when appropriate (examples: `cargo fmt`, `gofmt`, `ruff format`, `prettier --write`, `nixfmt`); otherwise match local formatting exactly.
 - Every code change needs verification before it is complete.
 - Write tests for public behavior when tests are needed; avoid testing private implementation details unless observable.
-
-## Orchestration (primary instance only)
-
-Applies only to the primary/orchestrator instance. If you are a subagent, ignore this section and execute your role.
-
-### Skills
-
-- Use task skills for common workflows (examples: implementation planning → `code-plan-implementation`, API design → `code-plan-api`, tests → `code-test`, linting → `code-lint`, formatting → `code-format`, reviews → `code-review`, review-iteration → `code-review-iterate`, cleanup-iteration → `code-cleanup-iterate`, commits → `code-commit`).
-- Use research/API skills when needed (examples: `context7`, `exa`, `asana`, `clickup`, `linear`).
-- During planning, analysis-only skills may run read-only to gather context (examples: `code-review`, `code-test`, `code-explain`, `code-setup-analyze`).
-
-- Delegate to specialized subagents by default. The main agent orchestrates; subagents execute. Reserve direct action for command-running tasks where delegation adds latency without quality benefit.
-
-### Subagents
-
-Delegate to these experts by default. The orchestrator crafts task prompts from skill instructions and AGENTS.md; subagents execute with their role prompt.
-
-- `architect`: Analyzes module boundaries, ownership, and structural design for minimal architecture decisions.
-- `auditor`: Final-pass production-readiness gate for material issues — correctness, security, data loss, and reliability.
-- `oracle`: Adjudicates ambiguous, conflicting, or high-impact technical decisions.
-- `planner`: Designs minimal implementation, architecture, and refactoring plans.
-- `researcher`: Finds authoritative docs, APIs, errors, migrations, and advisories.
-- `reviewer`: Reviews correctness, security, conventions, simplicity, and quality.
-- `scout`: Maps local code structure, patterns, and relevant files.
-
-### Delegation Patterns
-
-- **Feature/Refactor**: `planner` (design) -> `worker` (implementation) -> `reviewer` (validation).
-- **Large/Complex Project**: `architect` (structure) -> `planner` (design) -> `worker` (implement) -> `reviewer` (validate) -> `auditor` (production gate).
-- **Bug Fix**: `scout` (local research) -> `researcher` (external knowledge) -> `planner` (fix strategy) -> `worker` (apply fix).
-- **Hard Decision**: `architect` (structure) -> `oracle` (adjudicate) -> `planner` (plan based on decision).
-- **Adjudicate Only**: `oracle` (adjudicate) -> `planner` (plan based on decision).
-- **Single Fix**: `researcher` (diagnose) -> `worker` (apply fix) -> `reviewer` (validate).
-- **Generate**: `scout` + `researcher` (context, parallel) -> `planner` (design) -> `worker` (implement) -> `reviewer` (validate).
-- **Iterate to Clean**: `reviewer` (find issues) → `worker` (fix issues) → repeat until convergence (`code-review-iterate`), or `scout` → `worker` cleanup loop (`code-cleanup-iterate`).
-
-### High-Level Workflow
-
-1. Understand the task, constraints, and expected verification.
-2. Reconnaissance: delegate to `scout` for local code mapping and `researcher` for external docs. Do both in parallel when the task touches unfamiliar code.
-3. Design: delegate to `planner` for implementation, API, schema, or refactoring plans.
-4. Implement: delegate to `worker` for code changes. Reserve direct edits for single-line fixes or trivial formatting.
-5. Review: delegate to `reviewer` for quality, security, convention, or simplicity assessment.
-6. Architect: delegate to `architect` for structural design, module boundaries, or ownership decisions.
-7. Adjudicate: delegate to `oracle` for ambiguous, conflicting, or high-impact decisions.
-8. Audit: delegate to `auditor` for production-readiness validation before finalizing.
-9. Verify: run the most specific command (examples: `cargo test`, `pytest`, `npm test`, `go test ./...`, `tsc --noEmit`). Delegate to `reviewer` to assess change quality.
-10. Summarize what changed, verification results, and any remaining risks.

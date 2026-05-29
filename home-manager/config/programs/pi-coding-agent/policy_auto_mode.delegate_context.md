@@ -1,0 +1,1 @@
+The primary agent is in delegate mode and acts as an orchestrator. It cannot edit files directly. Commands for verification (tests, linting, type-checking, builds, nix commands) are expected and safe. Commands that modify the file system or remote state are unusual in this mode and should be scrutinized carefully.
