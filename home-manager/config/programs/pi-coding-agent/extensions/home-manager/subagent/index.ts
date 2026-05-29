@@ -214,6 +214,7 @@ function formatToolCall(
   toolName: string,
   args: Record<string, unknown>,
   themeFg: (color: ThemeColor, text: string) => string,
+  expanded?: boolean,
 ): string {
   const shortenPath = (p: string) => {
     const home = os.homedir();
@@ -224,8 +225,11 @@ function formatToolCall(
     case "bash":
     case "Bash": {
       const command = (args.command as string) || "...";
-      const preview =
-        command.length > 60 ? `${command.slice(0, 60)}...` : command;
+      const preview = expanded
+        ? command
+        : command.length > 60
+          ? `${command.slice(0, 60)}...`
+          : command;
       return themeFg("muted", "$ ") + themeFg("toolOutput", preview);
     }
     case "read":
@@ -332,7 +336,8 @@ function truncateFinalOutput(output: string): string {
 
 type DisplayItem =
   | { type: "text"; text: string }
-  | { type: "toolCall"; name: string; args: Record<string, unknown> };
+  | { type: "toolCall"; name: string; args: Record<string, unknown> }
+  | { type: "toolResult"; toolName: string; text: string; isError: boolean };
 
 function getDisplayItems(messages: Message[]): DisplayItem[] {
   const items: DisplayItem[] = [];
@@ -347,6 +352,16 @@ function getDisplayItems(messages: Message[]): DisplayItem[] {
             name: part.name,
             args: part.arguments,
           });
+      }
+    } else if (msg.role === "toolResult") {
+      const toolName = (msg as any).toolName || "";
+      const isError = (msg as any).isError || false;
+      const text = msg.content
+        .filter((p: any) => p.type === "text")
+        .map((p: any) => p.text)
+        .join("\n");
+      if (text.trim()) {
+        items.push({ type: "toolResult", toolName, text, isError });
       }
     }
   }
@@ -952,8 +967,16 @@ export default function (pi: ExtensionAPI) {
               : trimInline(item.text, 160);
             if (!preview.trim()) continue;
             text += `${theme.fg("toolOutput", preview)}\n`;
-          } else {
-            text += `${theme.fg("muted", "→ ") + formatToolCall(item.name, item.args, theme.fg.bind(theme))}\n`;
+          } else if (item.type === "toolCall") {
+            text += `${theme.fg("muted", "→ ") + formatToolCall(item.name, item.args, theme.fg.bind(theme), expanded)}\n`;
+          } else if (item.type === "toolResult") {
+            const prefix = item.isError
+              ? theme.fg("error", "← error:")
+              : theme.fg("muted", "← output:");
+            const resultPreview = expanded
+              ? item.text.trim()
+              : trimInline(item.text, 160);
+            text += `${prefix} ${theme.fg("toolOutput", resultPreview)}\n`;
           }
         }
         return text.trimEnd();
