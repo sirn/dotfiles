@@ -5,15 +5,13 @@
  * startup and registers them as Pi providers. Each named provider entry in the
  * config defines a baseUrl, apiKeyEnv, and mapping logic.
  *
- * A `type` preset (e.g., "plexus") fills in hint field names, api type mappings,
- * and URL defaults so that common backends need minimal config.
+ * A `type` preset (e.g., "plexus") fills in api type mappings, pricing field
+ * mappings, and pi-ai hint field names so that common backends need minimal
+ * config.
  *
- * Provider IDs are derived from the config key plus an apiType suffix:
- *
- *   key="plexus" + chat_completions → plexus            (openai-completions)
- *   key="plexus" + messages         → plexus-messages   (anthropic-messages)
- *   key="plexus" + responses        → plexus-responses  (openai-responses)
- *   key="plexus" + gemini           → plexus-generative (google-generative-ai)
+ * Each model from the remote endpoint carries its own `api` and `baseUrl`,
+ * so a single provider can contain models across different API types (chat
+ * completions, messages, responses, generative).
  *
  * When a model hints at `piProvider`/`piModel`, the matching pi-ai model
  * definition is used as the base config (input modalities, costs, compat),
@@ -38,15 +36,6 @@ import * as path from "node:path";
 // Config types
 // ---------------------------------------------------------------------------
 
-interface HintFields {
-  /** Field name in the API model object that selects the api type (e.g., "preferred_api"). */
-  apiType?: string;
-  /** Field name for the pi-ai provider hint (e.g., "pi_provider"). */
-  piProvider?: string;
-  /** Field name for the pi-ai model hint (e.g., "pi_model"). */
-  piModel?: string;
-}
-
 interface PricingFieldMappings {
   /** Path to input/prompt cost (e.g., "pricing.prompt", "model_info.input_cost_per_token"). */
   input?: string;
@@ -59,22 +48,26 @@ interface PricingFieldMappings {
 }
 
 interface ApiTypeMapping {
-  /** Pi API type for streaming. */
-  api: ProviderConfig["api"];
-  /** Full URL or relative path from baseUrl. */
-  url: string;
-  /** Suffix appended to the config key to form the provider ID (e.g., "-messages"). */
-  providerSuffix?: string;
+  /** Pi API type for streaming (e.g., "openai-completions"). */
+  api: string;
+  /** Relative URL path from baseUrl (e.g., "/v1"). Empty means baseUrl directly. */
+  path?: string;
 }
 
 interface RemoteProviderConfig {
   baseUrl: string;
   apiKeyEnv: string;
 
-  hintFields?: HintFields;
+  /** Field name in the API model object that selects the api type (e.g., "preferred_api"). */
+  apiTypeField?: string;
+  /** Map apiType string → { api, path }. */
   apiTypeMappings?: Record<string, ApiTypeMapping>;
   /** Key into apiTypeMappings used when no apiType hint is on a model. */
   defaultApiType?: string;
+  /** Field name for the pi-ai provider hint (e.g., "pi_provider"). */
+  piProviderField?: string;
+  /** Field name for the pi-ai model hint (e.g., "pi_model"). */
+  piModelField?: string;
 
   /** Preset type — fills in defaults before user overrides. */
   type?: string;
@@ -96,30 +89,16 @@ interface RemoteProviderConfig {
 
 const PRESETS: Record<string, Partial<RemoteProviderConfig>> = {
   plexus: {
-    hintFields: {
-      apiType: "preferred_api",
-      piProvider: "pi_provider",
-      piModel: "pi_model",
-    },
+    apiTypeField: "preferred_api",
     apiTypeMappings: {
-      chat_completions: { api: "openai-completions", url: "/v1" },
-      messages: {
-        api: "anthropic-messages",
-        url: "",
-        providerSuffix: "-messages",
-      },
-      responses: {
-        api: "openai-responses",
-        url: "/v1",
-        providerSuffix: "-responses",
-      },
-      gemini: {
-        api: "google-generative-ai",
-        url: "/v1beta",
-        providerSuffix: "-generative",
-      },
+      chat_completions: { api: "openai-completions", path: "/v1" },
+      messages: { api: "anthropic-messages" },
+      responses: { api: "openai-responses", path: "/v1" },
+      gemini: { api: "google-generative-ai", path: "/v1beta" },
     },
     defaultApiType: "chat_completions",
+    piProviderField: "pi_provider",
+    piModelField: "pi_model",
     pricingFieldMappings: {
       input: "pricing.prompt",
       output: "pricing.completion",
@@ -141,7 +120,6 @@ function mergePreset(config: RemoteProviderConfig): RemoteProviderConfig {
   return {
     ...preset,
     ...config,
-    hintFields: { ...preset.hintFields, ...config.hintFields },
     apiTypeMappings: { ...preset.apiTypeMappings, ...config.apiTypeMappings },
     defaultApiType: config.defaultApiType ?? preset.defaultApiType,
     pricingFieldMappings: {
@@ -176,69 +154,47 @@ interface RemoteApiResponse {
 }
 
 // ---------------------------------------------------------------------------
-// Mapping resolution
+// URL resolution
 // ---------------------------------------------------------------------------
 
-interface ResolvedMapping {
-  providerId: string;
-  api: ProviderConfig["api"];
-  url: string;
-}
-
-function resolveUrl(baseUrl: string, mappingUrl: string): string {
-  if (/^https?:\/\//.test(mappingUrl)) return mappingUrl;
+function resolveUrl(baseUrl: string, subPath: string): string {
+  if (/^https?:\/\//.test(subPath)) return subPath;
   // Ensure baseUrl has a trailing slash for correct URL resolution
   const base = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
-  // Strip leading slash from mappingUrl to avoid protocol-relative URLs
-  const relative = mappingUrl.startsWith("/")
-    ? mappingUrl.slice(1)
-    : mappingUrl;
+  // Strip leading slash from subPath to avoid protocol-relative URLs
+  const relative = subPath.startsWith("/")
+    ? subPath.slice(1)
+    : subPath;
   if (!relative) return baseUrl;
   return `${base}${relative}`;
-}
-
-function resolveMapping(
-  apiTypeValue: string | string[] | undefined,
-  configKey: string,
-  mappings: Record<string, ApiTypeMapping> | undefined,
-  defaultApiType: string | undefined,
-): ResolvedMapping | null {
-  const defaultEntry = mappings?.[defaultApiType ?? ""];
-  const fallback: ApiTypeMapping = defaultEntry ?? {
-    api: "openai-completions",
-    url: "/v1",
-  };
-
-  // No hint or no mappings defined — use default
-  if (!mappings || apiTypeValue === undefined) {
-    return {
-      providerId: configKey + (fallback.providerSuffix ?? ""),
-      api: fallback.api,
-      url: fallback.url,
-    };
-  }
-
-  const candidates = Array.isArray(apiTypeValue)
-    ? apiTypeValue
-    : [apiTypeValue];
-  for (const candidate of candidates) {
-    const mapping = mappings[candidate];
-    if (mapping) {
-      return {
-        providerId: configKey + (mapping.providerSuffix ?? ""),
-        api: mapping.api,
-        url: mapping.url,
-      };
-    }
-  }
-
-  // Hint present but no mapping matched — caller should skip this model
-  return null;
 }
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+/** Resolve a dot-notation path (e.g., "pricing.prompt") against an object.
+ *  Returns undefined if the path doesn't exist or encounters a non-object mid-path.
+ */
+function resolvePath(
+  obj: Record<string, unknown>,
+  path: string | undefined,
+): unknown {
+  if (!path) return undefined;
+  const parts = path.split(".");
+  let current: unknown = obj;
+  for (const part of parts) {
+    if (
+      current === null ||
+      current === undefined ||
+      typeof current !== "object"
+    ) {
+      return undefined;
+    }
+    current = (current as Record<string, unknown>)[part];
+  }
+  return current;
+}
 
 /** Parse a pricing value and convert to per-million-token cost.
  *  @param convention - "perToken" (default): multiply by 1M; "perMillion": use as-is.
@@ -266,43 +222,23 @@ function filterInputModalities(
   return filtered.length > 0 ? filtered : ["text"];
 }
 
-/** Resolve a dot-notation path (e.g., "pricing.prompt") against an object.
- *  Returns undefined if the path doesn't exist or encounters a non-object mid-path.
- */
-function resolvePath(
-  obj: Record<string, unknown>,
-  path: string | undefined,
-): unknown {
-  if (!path) return undefined;
-  const parts = path.split(".");
-  let current: unknown = obj;
-  for (const part of parts) {
-    if (
-      current === null ||
-      current === undefined ||
-      typeof current !== "object"
-    ) {
-      return undefined;
-    }
-    current = (current as Record<string, unknown>)[part];
-  }
-  return current;
-}
-
 /** Convert a remote API model to Pi's ProviderModelConfig.
  *  When piProvider/piModel hints are present, inherit defaults from pi-ai
  *  and let remote-reported pricing override only when non-zero.
+ *  Sets `api` and `baseUrl` per-model so a single provider can span
+ *  multiple API types.
  */
 function toProviderModel(
   apiModel: RemoteApiModel,
   config: RemoteProviderConfig,
+  api: string,
+  modelBaseUrl: string,
 ): ProviderModelConfig {
-  const { hintFields, pricingConvention, pricingFieldMappings } = config;
   const rawModel = apiModel as Record<string, unknown>;
-  const piProvider = resolvePath(rawModel, hintFields?.piProvider) as
+  const piProvider = resolvePath(rawModel, config.piProviderField) as
     | string
     | undefined;
-  const piModelId = resolvePath(rawModel, hintFields?.piModel) as
+  const piModelId = resolvePath(rawModel, config.piModelField) as
     | string
     | undefined;
 
@@ -321,11 +257,13 @@ function toProviderModel(
     piModel?.maxTokens ??
     contextWindow;
 
-  const fields = pricingFieldMappings;
+  const fields = config.pricingFieldMappings;
 
   return {
     id: apiModel.id,
     name: apiModel.name ?? piModel?.name ?? apiModel.id,
+    api: api as any,
+    baseUrl: modelBaseUrl,
     reasoning:
       piModel?.reasoning ??
       apiModel.supported_parameters?.includes("reasoning") ??
@@ -338,27 +276,27 @@ function toProviderModel(
       filterInputModalities(apiModel.architecture?.input_modalities),
     cost: {
       input:
-        parsePricing(resolvePath(rawModel, fields?.input), pricingConvention) ||
+        parsePricing(resolvePath(rawModel, fields?.input), config.pricingConvention) ||
         piModel?.cost.input ||
         0,
       output:
         parsePricing(
           resolvePath(rawModel, fields?.output),
-          pricingConvention,
+          config.pricingConvention,
         ) ||
         piModel?.cost.output ||
         0,
       cacheRead:
         parsePricing(
           resolvePath(rawModel, fields?.cacheRead),
-          pricingConvention,
+          config.pricingConvention,
         ) ||
         piModel?.cost.cacheRead ||
         0,
       cacheWrite:
         parsePricing(
           resolvePath(rawModel, fields?.cacheWrite),
-          pricingConvention,
+          config.pricingConvention,
         ) ||
         piModel?.cost.cacheWrite ||
         0,
@@ -405,6 +343,28 @@ try {
 // Extension factory
 // ---------------------------------------------------------------------------
 
+const FALLBACK_MAPPING: ApiTypeMapping = { api: "openai-completions" };
+
+/** Resolve an ApiTypeMapping for a model's apiType hint. */
+function resolveApiTypeMapping(
+  apiTypeValue: string | string[] | undefined,
+  mappings: Record<string, ApiTypeMapping> | undefined,
+  defaultApiType: string | undefined,
+): ApiTypeMapping {
+  const defaultMapping = mappings?.[defaultApiType ?? ""] ?? FALLBACK_MAPPING;
+  if (!mappings || apiTypeValue === undefined) return defaultMapping;
+
+  const candidates = Array.isArray(apiTypeValue)
+    ? apiTypeValue
+    : [apiTypeValue];
+  for (const candidate of candidates) {
+    const mapping = mappings[candidate];
+    if (mapping) return mapping;
+  }
+
+  return defaultMapping;
+}
+
 export default async function (pi: ExtensionAPI): Promise<void> {
   if (Object.keys(providers).length === 0) return;
 
@@ -439,56 +399,45 @@ export default async function (pi: ExtensionAPI): Promise<void> {
         continue;
       }
 
-      // Group models by their resolved provider mapping
-      const groups = new Map<
-        string,
-        { mapping: ResolvedMapping; models: ProviderModelConfig[] }
-      >();
+      // Build all models with per-model api and baseUrl, then register
+      // a single provider containing them all.
+      const models: ProviderModelConfig[] = [];
       for (const apiModel of payload.data) {
         if (!apiModel.id) continue;
 
         const apiTypeValue = resolvePath(
           apiModel as Record<string, unknown>,
-          config.hintFields?.apiType,
+          config.apiTypeField,
         ) as string | string[] | undefined;
-        const mapping = resolveMapping(
+
+        const mapping = resolveApiTypeMapping(
           apiTypeValue,
-          configKey,
           config.apiTypeMappings,
           config.defaultApiType,
         );
-        if (!mapping) continue;
 
-        const existing = groups.get(mapping.providerId);
-        if (existing) {
-          if (
-            existing.mapping.api !== mapping.api ||
-            existing.mapping.url !== mapping.url
-          ) {
-            console.warn(
-              `[remote-models] ${configKey}: provider ID collision on "${mapping.providerId}" with different api/url — skipping model ${apiModel.id}`,
-            );
-            continue;
-          }
-          existing.models.push(toProviderModel(apiModel, config));
-        } else {
-          groups.set(mapping.providerId, {
-            mapping,
-            models: [toProviderModel(apiModel, config)],
-          });
-        }
+        models.push(
+          toProviderModel(
+            apiModel,
+            config,
+            mapping.api,
+            resolveUrl(config.baseUrl, mapping.path ?? ""),
+          ),
+        );
       }
 
-      for (const [, entry] of groups) {
-        const { mapping, models } = entry;
-        const providerConfig: ProviderConfig = {
-          baseUrl: resolveUrl(config.baseUrl, mapping.url),
-          apiKey: config.apiKeyEnv,
-          api: mapping.api,
-          models,
-        };
-        pi.registerProvider(mapping.providerId, providerConfig);
+      if (models.length === 0) {
+        console.warn(`[remote-models] ${configKey}: No models resolved — skipping`);
+        continue;
       }
+
+      const providerConfig: ProviderConfig = {
+        baseUrl: config.baseUrl,
+        apiKey: `$${config.apiKeyEnv}`,
+        models,
+      };
+
+      pi.registerProvider(configKey, providerConfig);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       console.warn(
