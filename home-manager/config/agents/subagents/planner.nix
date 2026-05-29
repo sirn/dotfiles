@@ -2,7 +2,6 @@
 {
   agents.subagents.planner = {
     description = "Designs minimal implementation, architecture, and refactoring plans";
-    mode = "plan";
     prompt = builtins.readFile ./planner.md;
     claude-code = {
       allowedTools = [

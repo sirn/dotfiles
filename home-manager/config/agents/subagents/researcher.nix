@@ -2,7 +2,6 @@
 {
   agents.subagents.researcher = {
     description = "Finds authoritative docs, APIs, errors, migrations, and advisories";
-    mode = "plan";
     prompt = builtins.readFile ./researcher.md;
     claude-code = {
       allowedTools = [

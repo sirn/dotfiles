@@ -3,7 +3,6 @@
 {
   agents.subagents.architect = {
     description = "Analyzes module boundaries, ownership, and structural design for minimal architecture decisions";
-    mode = "plan";
     prompt = builtins.readFile ./architect.md;
     claude-code = {
       allowedTools = [

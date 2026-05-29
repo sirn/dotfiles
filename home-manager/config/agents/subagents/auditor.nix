@@ -2,7 +2,6 @@
 {
   agents.subagents.auditor = {
     description = "Final-pass audit for material issues - correctness, security, data loss, and production risks";
-    mode = "plan";
     prompt = builtins.readFile ./auditor.md;
     claude-code = {
       allowedTools = [

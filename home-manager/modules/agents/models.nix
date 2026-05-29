@@ -197,14 +197,6 @@ let
         type = lib.types.str;
         description = "Human-readable description of the subagent's purpose.";
       };
-      mode = lib.mkOption {
-        type = lib.types.enum [
-          "plan"
-          "build"
-        ];
-        default = "plan";
-        description = "Operating mode: plan for planning tasks, build for execution.";
-      };
       prompt = lib.mkOption {
         type = lib.types.lines;
         description = "System prompt for the subagent.";

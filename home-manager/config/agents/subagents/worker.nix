@@ -2,7 +2,6 @@
 {
   agents.subagents.worker = {
     description = "Implements focused code and configuration changes";
-    mode = "build";
     prompt = builtins.readFile ./worker.md;
     claude-code = {
       allowedTools = [

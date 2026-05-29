@@ -2,7 +2,6 @@
 {
   agents.subagents.scout = {
     description = "Maps local code structure, patterns, and relevant files";
-    mode = "plan";
     prompt = builtins.readFile ./scout.md;
     claude-code = {
       allowedTools = [

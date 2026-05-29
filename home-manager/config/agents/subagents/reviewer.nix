@@ -2,7 +2,6 @@
 {
   agents.subagents.reviewer = {
     description = "Reviews correctness, security, conventions, simplicity, and quality";
-    mode = "plan";
     prompt = builtins.readFile ./reviewer.md;
     claude-code = {
       allowedTools = [
