@@ -41,7 +41,7 @@ export default function (pi: ExtensionAPI) {
 
   pi.registerCommand("delegate", {
     description:
-      "Enter delegate mode — block direct file edits, force subagent delegation; use 'cancel' to exit",
+      "Enter delegate mode — force subagent delegation for file changes; use 'cancel' to exit",
     getArgumentCompletions: (prefix: string) => {
       const token = prefix.trimStart();
       if (token.includes(" ")) return null;
@@ -81,7 +81,7 @@ export default function (pi: ExtensionAPI) {
       setMode(pi, ctx, MODE_DELEGATE);
       updateModeWidgets(ctx);
       ctx.ui.notify(
-        "Delegate mode enabled. File edits blocked; use subagent for code changes.",
+        "Delegate mode enabled. File changes must go through subagent.",
         "success",
       );
     },
