@@ -1,6 +1,5 @@
 /**
  * Subagent Tool - Delegate tasks to specialized agents
- *
  * Spawns a separate process (Pi RPC or Claude Code --print) for each
  * subagent invocation, giving it an isolated context window.
  *
@@ -50,6 +49,7 @@ import {
   type SingleResult,
   type SubagentDetails,
   type OnUpdateCallback,
+  type AgentRunner,
   createPendingResult,
   createErrorResult,
   isPendingResult,
@@ -61,15 +61,41 @@ import {
 } from "./types.js";
 import { runPiAgent } from "./pi-runner.js";
 import { runClaudeCodeAgent } from "./claude-code-runner.js";
+
+// Nerd Font glyphs used in TUI rendering, collected here so the raw
+// code points live in one place instead of scattered inline.
+const ICONS = {
+  completed: "\u{F03EB}", // subagent completed (result header)
+  failed: "\u{F03EC}", // subagent failed (result header)
+  running: "\u{F03EF}", // subagent running (result header)
+  waiting: "\u{25CB}", // agent waiting to start
+  pending: "\u{F43A}", // agent in progress
+  skipped: "\u{2298}", // agent skipped
+  agentFailed: "\u{F467}", // agent failed
+  agentSuccess: "\u{F42E}", // agent succeeded
+  compacting: "\u{F48C}", // agent compacting context
+  retrying: "\u{F46A}", // agent auto-retrying
+} as const;
+
+// Runner registry: the single source of truth for which runners exist
+// and how an agent's `runner` field maps to an implementation.
+const RUNNERS: Record<AgentConfig["runner"], AgentRunner> = {
+  pi: runPiAgent,
+  "claude-code": runClaudeCodeAgent,
+};
+
+// Tool names that create or modify files, used to surface file changes.
+const WRITE_TOOLS = new Set(["write", "Write", "edit", "Edit", "MultiEdit"]);
+
 // Cross-process protocol shared with the execution-policy extension:
 // PI_EXECUTION_MODE (comma-separated stack) wins when set; otherwise the
 // latest execution-mode session entry wins. Kept inline so this extension
 // has no code-level dependency on execution-policy.
-// Returns parent execution modes that should propagate to subagent children.
-// Non-propagating modes (e.g., "delegate") are filtered out so child agents
-// don't inherit restrictions that only apply to the orchestrator.
 const MODE_DELEGATE = "delegate";
 
+// Returns the parent execution modes that should propagate to subagent
+// children. Non-propagating modes (e.g. "delegate") are filtered out so
+// children don't inherit restrictions meant only for the orchestrator.
 function getInheritedExecutionModes(ctx: ExtensionContext): string[] {
   const envModes = (process.env.PI_EXECUTION_MODE ?? "")
     .split(",")
@@ -173,6 +199,18 @@ function createTextResult(
       : [{ type, text }];
 
   return { content, details };
+}
+
+// Sums the cost of completed (non-pending, non-skipped) results and
+// reflects it in the status line, clearing it when there's nothing to show.
+function setSubagentCost(ctx: ExtensionContext, results: SingleResult[]): void {
+  const totalCost = results
+    .filter((r) => !isPendingResult(r) && !isSkippedResult(r))
+    .reduce((sum, r) => sum + r.usage.cost, 0);
+  ctx.ui.setStatus(
+    "subagent-cost",
+    totalCost > 0 ? `subagents +$${totalCost.toFixed(2)}` : undefined,
+  );
 }
 
 // Helpers
@@ -341,24 +379,19 @@ function extractFileChanges(results: SingleResult[]): string[] {
     for (const msg of result.messages) {
       if (msg.role !== "assistant") continue;
       for (const part of msg.content) {
-        if (part.type === "toolCall" && part.name) {
-          const name = part.name;
-          if (
-            name === "write" ||
-            name === "Write" ||
-            name === "edit" ||
-            name === "Edit" ||
-            name === "MultiEdit"
-          ) {
-            const args = (part as any).arguments;
-            if (!args || typeof args !== "object") continue;
-            const filePath =
-              (args as Record<string, unknown>).file_path ||
-              (args as Record<string, unknown>).path ||
-              (args as Record<string, unknown>).filePath;
-            if (typeof filePath === "string" && filePath.trim()) {
-              paths.add(filePath.trim());
-            }
+        if (
+          part.type === "toolCall" &&
+          part.name &&
+          WRITE_TOOLS.has(part.name)
+        ) {
+          const args = part.arguments;
+          if (!args || typeof args !== "object") continue;
+          const filePath =
+            (args as Record<string, unknown>).file_path ||
+            (args as Record<string, unknown>).path ||
+            (args as Record<string, unknown>).filePath;
+          if (typeof filePath === "string" && filePath.trim()) {
+            paths.add(filePath.trim());
           }
         }
       }
@@ -387,8 +420,10 @@ function getDisplayItems(messages: Message[]): DisplayItem[] {
           });
       }
     } else if (msg.role === "toolResult") {
-      const toolName = (msg as any).toolName || "";
-      const isError = (msg as any).isError || false;
+      const { toolName = "", isError = false } = msg as {
+        toolName?: string;
+        isError?: boolean;
+      };
       const text = msg.content
         .filter((p: any) => p.type === "text")
         .map((p: any) => p.text)
@@ -498,7 +533,9 @@ function discoverAgents(agentDir: string): AgentConfig[] {
         : undefined;
 
     const runner: AgentConfig["runner"] =
-      frontmatter.runner === "claude-code" ? "claude-code" : undefined;
+      typeof frontmatter.runner === "string" && frontmatter.runner in RUNNERS
+        ? (frontmatter.runner as AgentConfig["runner"])
+        : "pi";
 
     agents.push({
       name: String(frontmatter.name),
@@ -545,8 +582,7 @@ async function runSingleAgent(
     return createErrorResult(agentName, task, errorMessage);
   }
 
-  const runner =
-    agent.runner === "claude-code" ? runClaudeCodeAgent : runPiAgent;
+  const runner = RUNNERS[agent.runner];
 
   return runner(
     agent,
@@ -707,17 +743,39 @@ const SubagentParams = Type.Object({
 });
 
 export default function (pi: ExtensionAPI) {
+  pi.on("session_start", (_event, ctx) => {
+    if (ctx.hasUI) ctx.ui.setStatus("subagent-cost", undefined);
+  });
+
+  pi.on("session_shutdown", (_event, ctx) => {
+    if (ctx.hasUI) ctx.ui.setStatus("subagent-cost", undefined);
+  });
+
   pi.registerMessageRenderer(
     "subagent-result-success",
-    createSubagentResultRenderer("󰏫 subagent completed", "success", "Done."),
+    createSubagentResultRenderer(
+      `${ICONS.completed} subagent completed`,
+      "success",
+      "Done.",
+    ),
   );
+
   pi.registerMessageRenderer(
     "subagent-result-error",
-    createSubagentResultRenderer("󰏬 subagent failed", "error", "Failed."),
+    createSubagentResultRenderer(
+      `${ICONS.failed} subagent failed`,
+      "error",
+      "Failed.",
+    ),
   );
+
   pi.registerMessageRenderer(
     "subagent-result-running",
-    createSubagentResultRenderer("󰏯 subagent running", "accent", "Running..."),
+    createSubagentResultRenderer(
+      `${ICONS.running} subagent running`,
+      "accent",
+      "Running...",
+    ),
   );
 
   pi.registerTool({
@@ -911,6 +969,7 @@ export default function (pi: ExtensionAPI) {
             }
           }
 
+          setSubagentCost(ctx, planResults);
           return createTextResult(
             `Stopped at step ${stepIndex + 1}/${steps.length} (${failedAgents}):\n${errorMsg}`,
             makeDetails([...planResults]),
@@ -930,6 +989,7 @@ export default function (pi: ExtensionAPI) {
 
       // - All steps succeeded
 
+      setSubagentCost(ctx, planResults);
       const fullOutput = buildStepsFinalOutput(planResults);
       const truncation = truncateHead(fullOutput, {
         maxLines: DEFAULT_MAX_LINES,
@@ -1093,14 +1153,14 @@ export default function (pi: ExtensionAPI) {
           const isSkipped = isSkippedResult(r);
           const isWaiting = isPending && !r.started;
           const rIcon = isWaiting
-            ? theme.fg("dim", "○")
+            ? theme.fg("dim", ICONS.waiting)
             : isPending
-              ? theme.fg("warning", "")
+              ? theme.fg("warning", ICONS.pending)
               : isSkipped
-                ? theme.fg("dim", "⊘")
+                ? theme.fg("dim", ICONS.skipped)
                 : hasFailed
-                  ? theme.fg("error", "")
-                  : theme.fg("success", "");
+                  ? theme.fg("error", ICONS.agentFailed)
+                  : theme.fg("success", ICONS.agentSuccess);
           const task = r.task
             ? expanded
               ? r.task.trim().replace(/\s+/g, " ")
@@ -1108,10 +1168,19 @@ export default function (pi: ExtensionAPI) {
             : undefined;
           const displayItems = getDisplayItems(r.messages);
 
+          const runnerTag =
+            r.runner === "claude-code" ? theme.fg("dim", " [claude-code]") : "";
+          const statusGlyph =
+            isPending && (r.autoRetrying || r.compacting)
+              ? theme.fg(
+                  "warning",
+                  r.compacting ? ICONS.compacting : ICONS.retrying,
+                )
+              : "";
           text += `${resultIndex > 0 ? "\n" : ""}\n  ${rIcon} ${theme.fg(
             "muted",
             `[${agentNumber}]`,
-          )} ${theme.fg("accent", r.agent)}${isPending && (r.autoRetrying || r.compacting) ? theme.fg("warning", r.compacting ? " " : " ") : ""}`;
+          )} ${theme.fg("accent", r.agent)}${runnerTag}${statusGlyph}`;
           if (task)
             text += `\n    ${theme.fg("muted", "Task: ")}${theme.fg("dim", task)}`;
 

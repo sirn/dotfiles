@@ -22,7 +22,7 @@ export interface AgentConfig {
   concurrency?: number;
   mode?: string;
   systemPrompt: string;
-  runner?: "pi" | "claude-code";
+  runner: "pi" | "claude-code";
 }
 
 // Result Types
@@ -45,6 +45,7 @@ export interface SingleResult {
   stderr: string;
   usage: UsageStats;
   model?: string;
+  runner?: "pi" | "claude-code";
   stopReason?: string;
   errorMessage?: string;
   stepIndex?: number;
@@ -380,4 +381,46 @@ export async function writeOutputToTempFile(output: string): Promise<string> {
     });
   });
   return filePath;
+}
+
+// Best-effort removal of a temp prompt file and its directory.
+export function cleanupTempPrompt(
+  dir: string | null,
+  filePath: string | null,
+): void {
+  if (filePath) {
+    try {
+      fs.unlinkSync(filePath);
+    } catch {
+      /* ignore */
+    }
+  }
+  if (dir) {
+    try {
+      fs.rmSync(dir, { recursive: true });
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
+// Builds the progress callback shared by both runners: emits the result's
+// latest text (or a running placeholder) alongside the live details.
+export function makeEmitUpdate(
+  currentResult: SingleResult,
+  onUpdate: OnUpdateCallback | undefined,
+  makeDetails: (results: SingleResult[]) => SubagentDetails,
+): () => void {
+  return () => {
+    if (!onUpdate) return;
+    onUpdate({
+      content: [
+        {
+          type: "text",
+          text: getFinalOutput(currentResult.messages) || "(running...)",
+        },
+      ],
+      details: makeDetails([currentResult]),
+    });
+  };
 }

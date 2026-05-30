@@ -18,9 +18,10 @@ import {
   type RpcEvent,
   type OnUpdateCallback,
   createPendingResult,
-  getFinalOutput,
   getResultErrorMessage,
   writePromptToTempFile,
+  cleanupTempPrompt,
+  makeEmitUpdate,
 } from "./types.js";
 
 // Pi Invocation
@@ -64,20 +65,9 @@ export async function runPiAgent(
 
   const currentResult = createPendingResult(agent.name, task);
   currentResult.model = agent.model;
+  currentResult.runner = "pi";
 
-  const emitUpdate = () => {
-    if (onUpdate) {
-      onUpdate({
-        content: [
-          {
-            type: "text",
-            text: getFinalOutput(currentResult.messages) || "(running...)",
-          },
-        ],
-        details: makeDetails([currentResult]),
-      });
-    }
-  };
+  const emitUpdate = makeEmitUpdate(currentResult, onUpdate, makeDetails);
 
   try {
     if (agent.systemPrompt.trim()) {
@@ -163,6 +153,25 @@ export async function runPiAgent(
         proc.kill("SIGTERM");
       };
 
+      const clearAgentEndTimer = () => {
+        if (agentEndTimer !== undefined) {
+          clearTimeout(agentEndTimer);
+          agentEndTimer = undefined;
+        }
+      };
+
+      // Pi may auto-retry or compact-and-retry after agent_end, so defer
+      // finalization with a grace period that a late retry can cancel.
+      const scheduleGraceFinish = () => {
+        clearAgentEndTimer();
+        agentEndTimer = setTimeout(() => {
+          agentEndTimer = undefined;
+          currentResult.autoRetrying = false;
+          currentResult.compacting = false;
+          finishSuccess();
+        }, 2000);
+      };
+
       let lineQueue = Promise.resolve();
 
       const handleExtensionUIRequest = async (
@@ -236,10 +245,7 @@ export async function runPiAgent(
           event.type === "tool_execution_end" ||
           event.type === "turn_start" ||
           event.type === "turn_end";
-        if (agentEndTimer !== undefined && isWorkEvent) {
-          clearTimeout(agentEndTimer);
-          agentEndTimer = undefined;
-        }
+        if (isWorkEvent) clearAgentEndTimer();
 
         if (event.type === "message_end" && event.message) {
           const msg = event.message as Message;
@@ -281,25 +287,14 @@ export async function runPiAgent(
 
         if (event.type === "agent_end") {
           if (settled) return;
-          // Pi may auto-retry or compact-and-retry after agent_end.
-          // Defer finalization with a grace period.
-          if (agentEndTimer !== undefined) clearTimeout(agentEndTimer);
-          agentEndTimer = setTimeout(() => {
-            agentEndTimer = undefined;
-            currentResult.autoRetrying = false;
-            currentResult.compacting = false;
-            finishSuccess();
-          }, 2000);
+          scheduleGraceFinish();
           return;
         }
 
         // Built-in auto-retry
         if (event.type === "auto_retry_start") {
           if (settled) return;
-          if (agentEndTimer !== undefined) {
-            clearTimeout(agentEndTimer);
-            agentEndTimer = undefined;
-          }
+          clearAgentEndTimer();
           currentResult.errorMessage = event.errorMessage;
           currentResult.autoRetrying = true;
           emitUpdate();
@@ -308,10 +303,7 @@ export async function runPiAgent(
         if (event.type === "auto_retry_end") {
           if (settled) return;
           if (event.success) {
-            if (agentEndTimer !== undefined) {
-              clearTimeout(agentEndTimer);
-              agentEndTimer = undefined;
-            }
+            clearAgentEndTimer();
             currentResult.errorMessage = undefined;
             currentResult.stopReason = undefined;
             currentResult.autoRetrying = false;
@@ -319,10 +311,7 @@ export async function runPiAgent(
             currentResult.stopReason = "error";
             currentResult.errorMessage =
               event.finalError || currentResult.errorMessage;
-            if (agentEndTimer !== undefined) {
-              clearTimeout(agentEndTimer);
-              agentEndTimer = undefined;
-            }
+            clearAgentEndTimer();
             finishFailure();
           }
           emitUpdate();
@@ -331,10 +320,7 @@ export async function runPiAgent(
         // Compaction (context overflow recovery)
         if (event.type === "compaction_start") {
           if (settled) return;
-          if (agentEndTimer !== undefined) {
-            clearTimeout(agentEndTimer);
-            agentEndTimer = undefined;
-          }
+          clearAgentEndTimer();
           currentResult.compacting = true;
           emitUpdate();
         }
@@ -348,20 +334,11 @@ export async function runPiAgent(
               currentResult.stopReason = "error";
               currentResult.errorMessage =
                 event.errorMessage || currentResult.errorMessage;
-              if (agentEndTimer !== undefined) {
-                clearTimeout(agentEndTimer);
-                agentEndTimer = undefined;
-              }
+              clearAgentEndTimer();
               finishFailure();
             } else {
-              // Threshold compaction or successful compaction — restart grace timer.
-              if (agentEndTimer !== undefined) clearTimeout(agentEndTimer);
-              agentEndTimer = setTimeout(() => {
-                agentEndTimer = undefined;
-                currentResult.autoRetrying = false;
-                currentResult.compacting = false;
-                finishSuccess();
-              }, 2000);
+              // Threshold or successful compaction — restart the grace timer.
+              scheduleGraceFinish();
             }
           }
           emitUpdate();
@@ -376,10 +353,7 @@ export async function runPiAgent(
           if (settled) return;
           currentResult.errorMessage = event.error || "Prompt preflight failed";
           currentResult.stopReason = "error";
-          if (agentEndTimer !== undefined) {
-            clearTimeout(agentEndTimer);
-            agentEndTimer = undefined;
-          }
+          clearAgentEndTimer();
           finishFailure();
         }
       };
@@ -444,17 +418,6 @@ export async function runPiAgent(
     }
     return currentResult;
   } finally {
-    if (tmpPromptPath)
-      try {
-        fs.unlinkSync(tmpPromptPath);
-      } catch {
-        /* ignore */
-      }
-    if (tmpPromptDir)
-      try {
-        fs.rmSync(tmpPromptDir, { recursive: true });
-      } catch {
-        /* ignore */
-      }
+    cleanupTempPrompt(tmpPromptDir, tmpPromptPath);
   }
 }

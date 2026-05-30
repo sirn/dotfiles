@@ -13,7 +13,6 @@
  */
 
 import { spawn } from "node:child_process";
-import * as fs from "node:fs";
 import type { Message } from "@earendil-works/pi-ai";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import {
@@ -27,6 +26,8 @@ import {
   createPendingResult,
   getFinalOutput,
   writePromptToTempFile,
+  cleanupTempPrompt,
+  makeEmitUpdate,
 } from "./types.js";
 
 // Claude Code CLI invocation
@@ -274,20 +275,9 @@ export async function runClaudeCodeAgent(
 ): Promise<SingleResult> {
   const currentResult = createPendingResult(agent.name, task);
   currentResult.model = agent.model;
+  currentResult.runner = "claude-code";
 
-  const emitUpdate = () => {
-    if (onUpdate) {
-      onUpdate({
-        content: [
-          {
-            type: "text",
-            text: getFinalOutput(currentResult.messages) || "(running...)",
-          },
-        ],
-        details: makeDetails([currentResult]),
-      });
-    }
-  };
+  const emitUpdate = makeEmitUpdate(currentResult, onUpdate, makeDetails);
 
   let tmpPromptDir: string | null = null;
   let tmpPromptPath: string | null = null;
@@ -581,17 +571,6 @@ export async function runClaudeCodeAgent(
     }
     return currentResult;
   } finally {
-    if (tmpPromptPath)
-      try {
-        fs.unlinkSync(tmpPromptPath);
-      } catch {
-        /* ignore */
-      }
-    if (tmpPromptDir)
-      try {
-        fs.rmSync(tmpPromptDir, { recursive: true });
-      } catch {
-        /* ignore */
-      }
+    cleanupTempPrompt(tmpPromptDir, tmpPromptPath);
   }
 }
