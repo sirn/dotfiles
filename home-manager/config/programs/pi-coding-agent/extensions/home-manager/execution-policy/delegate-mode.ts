@@ -9,7 +9,7 @@ import {
 } from "./lib/execution-mode.js";
 
 const DELEGATE_MODE_PROMPT =
-  "[Delegate mode active — You are an orchestrator. You cannot write or edit files directly. Delegate all planning, code changes, etc. to subagent using `subagent` tool.]";
+  "[Delegate mode active — You are an orchestrator. You cannot write or edit files directly. Delegate your tasks to subagent using `subagent` tool.]";
 
 export default function (pi: ExtensionAPI) {
   function getMode(ctx: ExtensionContext): string {
@@ -42,7 +42,8 @@ export default function (pi: ExtensionAPI) {
     }
   }
 
-  // session_start: default into delegate mode if no execution-mode entry exists
+  // Registration
+
   pi.on("session_start", async (_event, ctx) => {
     if (!hasExecutionModeEntry(ctx)) {
       setMode(ctx, MODE_DELEGATE);
@@ -51,7 +52,6 @@ export default function (pi: ExtensionAPI) {
     }
   });
 
-  // before_agent_start: inject delegate-mode context reminder
   pi.on("before_agent_start", async (_event, ctx) => {
     if (getMode(ctx) !== MODE_DELEGATE) return;
 
@@ -64,9 +64,6 @@ export default function (pi: ExtensionAPI) {
     };
   });
 
-
-
-  // /delegate command: toggle delegate mode (supports 'cancel' subcommand)
   pi.registerCommand("delegate", {
     description:
       "Enter delegate mode — block direct file edits, force subagent delegation; use 'cancel' to exit",
@@ -104,6 +101,7 @@ export default function (pi: ExtensionAPI) {
         ctx.ui.notify("Already in delegate mode.", "info");
         return;
       }
+
       setMode(ctx, MODE_DELEGATE);
       ctx.ui.notify(
         "Delegate mode enabled. File edits blocked; use subagent for code changes.",
@@ -112,7 +110,6 @@ export default function (pi: ExtensionAPI) {
     },
   });
 
-  // Widget update on turn end
   pi.on("turn_end", async (_event, ctx) => {
     updateDelegateWidget(ctx);
   });

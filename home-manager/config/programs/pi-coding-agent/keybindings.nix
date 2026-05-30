@@ -1,10 +1,6 @@
-# Keybindings configuration for Pi coding agent
-# Uses namespaced ids (Pi >= 0.61.0 format)
-
 { ... }:
 
 let
-
   keybindingMap = {
     # Cursor Movement (Emacs)
     "tui.editor.cursorUp" = [

@@ -7,7 +7,9 @@
 
 let
   cfg = config.programs.pi-coding-agent;
+
   agentsCfg = config.agents;
+
   # YAML-safe: quote strings containing colons, hashes, or other special chars
   yamlQuote = s: if builtins.match "^[a-zA-Z0-9_/., -]+$" s != null then s else "\"${s}\"";
 
@@ -121,24 +123,32 @@ let
   # Dynamically discover all context context files (delegate.md, plan.md, etc.)
   // builtins.listToAttrs (
     builtins.map
-      (name:
+      (
+        name:
         lib.nameValuePair "auto-mode/context/${name}" {
           text = builtins.readFile (./auto-mode/context + "/${name}");
         }
       )
-      (builtins.filter (n: builtins.match ".*\\.md$" n != null)
-        (builtins.attrNames (builtins.readDir ./auto-mode/context)))
+      (
+        builtins.filter (n: builtins.match ".*\\.md$" n != null) (
+          builtins.attrNames (builtins.readDir ./auto-mode/context)
+        )
+      )
   )
   # Dynamically discover subagent context files (excluding subagent.md in the base set)
   // builtins.listToAttrs (
     builtins.map
-      (name:
+      (
+        name:
         lib.nameValuePair "auto-mode/subagent/${name}" {
           text = builtins.readFile (./auto-mode/subagent + "/${name}");
         }
       )
-      (builtins.filter (n: builtins.match ".*\\.md$" n != null && n != "subagent.md")
-        (builtins.attrNames (builtins.readDir ./auto-mode/subagent)))
+      (
+        builtins.filter (n: builtins.match ".*\\.md$" n != null && n != "subagent.md") (
+          builtins.attrNames (builtins.readDir ./auto-mode/subagent)
+        )
+      )
   );
   policyAutoModeContextFileEntries = lib.mapAttrs' (
     name: value: lib.nameValuePair ".pi/agent/custom/execution-policy/${name}" value
@@ -225,7 +235,7 @@ in
 
     settings = {
       quietStartup = true;
-      hideThinkingBlock = false;
+      hideThinkingBlock = true;
       theme = config.home.colors.variant;
       retry = {
         maxRetries = 10;

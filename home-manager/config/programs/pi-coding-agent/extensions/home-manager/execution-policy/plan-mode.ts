@@ -31,7 +31,7 @@ const PLAN_MODE_PROMPT =
   "[Plan mode active - produce an implementation/execution plan. DO NOT execute any changes, only read-only exploration and planning; only write to {PLAN_PATH} using write/edit]";
 
 export default function (pi: ExtensionAPI) {
-  // --- Recently-compacted detection ---
+  // Recently-compacted detection
 
   /**
    * Returns true if the session context was recently compacted.
@@ -56,7 +56,7 @@ export default function (pi: ExtensionAPI) {
     return false;
   }
 
-  // --- Mode state management ---
+  // Mode state management
 
   function getMode(ctx: ExtensionContext): string {
     return getExecutionMode(ctx).mode;
@@ -449,6 +449,8 @@ ${message}`,
     }
   }
 
+  // Registration
+
   pi.registerCommand("plan", {
     description: "Plan mode: enter, accept, show, or cancel",
     getArgumentCompletions: (prefix: string) => {
@@ -488,6 +490,7 @@ ${message}`,
       }
     },
   });
+
   pi.on("session_start", async (_event, ctx) => {
     updatePlanWidget(ctx);
 
