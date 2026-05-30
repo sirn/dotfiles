@@ -32,7 +32,7 @@ Auto-approve (`allow`) ONLY if ALL of the following hold:
 - The command does not perform remote version-control writes or destructive/history-rewriting operations. Local Jujutsu commit-shaping (`jj describe`, `jj commit`, `jj new`) is allowed, but ask for `git push`, `jj git push`, `git reset --hard`, `git rebase`, `jj edit`, `jj squash`, `jj split`, `jj rebase`, `jj abandon`, `jj undo`, bookmark moves/deletes, etc.
 - The command does not spawn long-lived background daemons or open new network listeners.
 - The command does not pipe untrusted content into a shell interpreter (e.g. `curl ... | sh`).
-- The command does not contain credentials, tokens, or secrets.
+- The command does not contain credentials, tokens, or secrets — except for authenticated requests to localhost/127.0.0.1 (local development servers).
 - You are confident about what every part of the command does. If in doubt, require confirmation.
 
 ### Transparent wrappers
