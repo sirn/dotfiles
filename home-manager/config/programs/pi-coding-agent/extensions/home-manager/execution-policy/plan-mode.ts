@@ -5,12 +5,17 @@ import {
   type ExtensionContext,
   type ExtensionCommandContext,
 } from "@earendil-works/pi-coding-agent";
-import { getExecutionMode, clearModeCache } from "./lib/execution-mode.js";
-import { PLAN_DIR } from "./lib/paths.js";
+import { Container, Text, Box, Spacer } from "@earendil-works/pi-tui";
 import * as fs from "node:fs";
 import * as path from "node:path";
-
-import { Container, Text, Box, Spacer } from "@earendil-works/pi-tui";
+import {
+  MODE_PLAN,
+  MODE_EDIT,
+  getMode,
+  setMode,
+  EXECUTION_MODE_ENTRY,
+} from "./lib/execution-mode.js";
+import { PLAN_DIR } from "./lib/paths.js";
 
 type ModelSelection = { provider: string; modelId: string };
 
@@ -56,23 +61,6 @@ export default function (pi: ExtensionAPI) {
     return false;
   }
 
-  // Mode state management
-
-  function getMode(ctx: ExtensionContext): string {
-    return getExecutionMode(ctx).mode;
-  }
-
-  function setMode(ctx: ExtensionContext, mode: string) {
-    const sessionId = ctx.sessionManager.getSessionFile() ?? "ephemeral";
-    clearModeCache(sessionId);
-    const planPath = ctxPlanPath(ctx);
-    pi.appendEntry("execution-mode", {
-      mode,
-      policyOverride:
-        mode === "plan" ? { write: [planPath], edit: [planPath] } : undefined,
-    });
-    updatePlanWidget(ctx);
-  }
   function getPendingPlanExecution(
     ctx: ExtensionContext,
   ): PendingPlanExecution | undefined {
@@ -153,7 +141,7 @@ export default function (pi: ExtensionAPI) {
   }
 
   function updatePlanWidget(ctx: ExtensionContext) {
-    if (getMode(ctx) === "plan") {
+    if (getMode(ctx) === MODE_PLAN) {
       ctx.ui.setWidget("plan-mode", [ctx.ui.theme.fg("accent", " plan mode")]);
     } else {
       ctx.ui.setWidget("plan-mode", undefined);
@@ -161,7 +149,7 @@ export default function (pi: ExtensionAPI) {
   }
 
   function requirePlanMode(ctx: ExtensionContext, message: string): boolean {
-    if (getMode(ctx) !== "plan") {
+    if (getMode(ctx) !== MODE_PLAN) {
       ctx.ui.notify(message, "error");
       return false;
     }
@@ -259,9 +247,9 @@ ${message}`,
     args: string,
     ctx: ExtensionContext,
   ): Promise<void> {
-    setMode(ctx, "plan");
-
     const planPath = ctxPlanPath(ctx);
+    setMode(pi, ctx, MODE_PLAN, { write: [planPath], edit: [planPath] });
+    updatePlanWidget(ctx);
     fs.mkdirSync(path.dirname(planPath), { recursive: true });
 
     // Treat whitespace-only args as no args (matches original /plan behavior where
@@ -322,7 +310,8 @@ ${message}`,
       return;
     }
 
-    setMode(ctx, "edit");
+    setMode(pi, ctx, MODE_EDIT);
+    updatePlanWidget(ctx);
 
     const planContent = fs.readFileSync(planPath, "utf-8");
 
@@ -351,8 +340,8 @@ ${message}`,
             modelSelection: previousModelSelection,
             userMessage: args || undefined,
           });
-          sessionManager.appendCustomEntry("execution-mode", {
-            mode: "edit",
+          sessionManager.appendCustomEntry(EXECUTION_MODE_ENTRY, {
+            mode: MODE_EDIT,
           });
         },
       });
@@ -395,7 +384,7 @@ ${message}`,
   async function handlePlanShow(ctx: ExtensionContext): Promise<void> {
     const mode = getMode(ctx);
     const planPath = ctxPlanPath(ctx);
-    if (mode !== "plan" || !fs.existsSync(planPath)) {
+    if (mode !== MODE_PLAN || !fs.existsSync(planPath)) {
       ctx.ui.notify("No plan found. Use /plan to create one.", "error");
       return;
     }
@@ -425,7 +414,8 @@ ${message}`,
       return;
     }
 
-    setMode(ctx, "edit");
+    setMode(pi, ctx, MODE_EDIT);
+    updatePlanWidget(ctx);
 
     if (choice === "Leave plan mode and clear plan file") {
       try {
@@ -513,7 +503,7 @@ ${message}`,
   });
 
   pi.on("before_agent_start", async (_event, ctx) => {
-    if (getMode(ctx) !== "plan") return;
+    if (getMode(ctx) !== MODE_PLAN) return;
 
     const planPath = ctxPlanPath(ctx);
 

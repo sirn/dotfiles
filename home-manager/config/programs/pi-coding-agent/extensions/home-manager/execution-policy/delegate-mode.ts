@@ -3,33 +3,27 @@ import {
   type ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
 import {
-  getExecutionMode,
-  clearModeCache,
   MODE_DELEGATE,
+  MODE_EDIT,
+  getMode,
+  setMode,
+  EXECUTION_MODE_ENTRY,
 } from "./lib/execution-mode.js";
 
 const DELEGATE_MODE_PROMPT =
   "[Delegate mode active — You are an orchestrator. You cannot write or edit files directly. Delegate your tasks to subagent using `subagent` tool.]";
 
 export default function (pi: ExtensionAPI) {
-  function getMode(ctx: ExtensionContext): string {
-    return getExecutionMode(ctx).mode;
-  }
-
   function hasExecutionModeEntry(ctx: ExtensionContext): boolean {
     for (const entry of ctx.sessionManager.getEntries()) {
-      if (entry.type === "custom" && entry.customType === "execution-mode") {
+      if (
+        entry.type === "custom" &&
+        entry.customType === EXECUTION_MODE_ENTRY
+      ) {
         return true;
       }
     }
     return false;
-  }
-
-  function setMode(ctx: ExtensionContext, mode: string) {
-    const sessionId = ctx.sessionManager.getSessionFile() ?? "ephemeral";
-    clearModeCache(sessionId);
-    pi.appendEntry("execution-mode", { mode });
-    updateDelegateWidget(ctx);
   }
 
   function updateDelegateWidget(ctx: ExtensionContext) {
@@ -46,7 +40,8 @@ export default function (pi: ExtensionAPI) {
 
   pi.on("session_start", async (_event, ctx) => {
     if (!hasExecutionModeEntry(ctx)) {
-      setMode(ctx, MODE_DELEGATE);
+      setMode(pi, ctx, MODE_DELEGATE);
+      updateDelegateWidget(ctx);
     } else {
       updateDelegateWidget(ctx);
     }
@@ -91,7 +86,8 @@ export default function (pi: ExtensionAPI) {
           ctx.ui.notify("Not in delegate mode.", "info");
           return;
         }
-        setMode(ctx, "edit");
+        setMode(pi, ctx, MODE_EDIT);
+        updateDelegateWidget(ctx);
         ctx.ui.notify("Delegate mode cancelled.", "success");
         return;
       }
@@ -102,7 +98,8 @@ export default function (pi: ExtensionAPI) {
         return;
       }
 
-      setMode(ctx, MODE_DELEGATE);
+      setMode(pi, ctx, MODE_DELEGATE);
+      updateDelegateWidget(ctx);
       ctx.ui.notify(
         "Delegate mode enabled. File edits blocked; use subagent for code changes.",
         "success",
