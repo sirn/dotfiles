@@ -3,8 +3,6 @@ import type {
   ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
 
-export const MODE_DELEGATE = "delegate";
-export const MODE_PLAN = "plan";
 export const MODE_EDIT = "edit";
 export const EXECUTION_MODE_ENTRY = "execution-mode";
 
@@ -73,5 +71,52 @@ export function clearModeCache(cacheKey?: string | null) {
     modeCache.delete(cacheKey);
   } else {
     modeCache.clear();
+  }
+}
+
+type ModeRegistration = {
+  mode: string;
+  getPrompt: (ctx: ExtensionContext) => string;
+  widget?: {
+    widgetId: string;
+    label: string;
+  };
+};
+
+const modeRegistrations = new Map<string, ModeRegistration>();
+
+export function registerMode(config: ModeRegistration): void {
+  modeRegistrations.set(config.mode, config);
+}
+
+export function setupModePromptInjection(pi: ExtensionAPI): void {
+  pi.on("before_agent_start", async (_event, ctx) => {
+    const currentMode = getMode(ctx);
+    if (currentMode === MODE_EDIT) return;
+
+    const reg = modeRegistrations.get(currentMode);
+    if (reg) {
+      return {
+        message: {
+          customType: `${currentMode}-mode-context`,
+          content: reg.getPrompt(ctx),
+          display: false,
+        },
+      };
+    }
+  });
+}
+
+export function updateModeWidgets(ctx: ExtensionContext): void {
+  const mode = getMode(ctx);
+  for (const [modeName, reg] of modeRegistrations) {
+    if (!reg.widget) continue;
+    if (modeName === mode) {
+      ctx.ui.setWidget(reg.widget.widgetId, [
+        ctx.ui.theme.fg("accent", reg.widget.label),
+      ]);
+    } else {
+      ctx.ui.setWidget(reg.widget.widgetId, undefined);
+    }
   }
 }

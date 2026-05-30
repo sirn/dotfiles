@@ -3,13 +3,15 @@ import {
   type ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
 import {
-  MODE_DELEGATE,
   MODE_EDIT,
   getMode,
   setMode,
   EXECUTION_MODE_ENTRY,
+  registerMode,
+  updateModeWidgets,
 } from "./lib/execution-mode.js";
 
+export const MODE_DELEGATE = "delegate";
 const DELEGATE_MODE_PROMPT =
   "[Delegate mode active — You are an orchestrator. You cannot write or edit files directly. Delegate your tasks to subagent using `subagent` tool.]";
 
@@ -26,37 +28,15 @@ export default function (pi: ExtensionAPI) {
     return false;
   }
 
-  function updateDelegateWidget(ctx: ExtensionContext) {
-    if (getMode(ctx) === MODE_DELEGATE) {
-      ctx.ui.setWidget("delegate-mode", [
-        ctx.ui.theme.fg("accent", " delegate"),
-      ]);
-    } else {
-      ctx.ui.setWidget("delegate-mode", undefined);
-    }
-  }
-
   // Registration
 
   pi.on("session_start", async (_event, ctx) => {
     if (!hasExecutionModeEntry(ctx)) {
       setMode(pi, ctx, MODE_DELEGATE);
-      updateDelegateWidget(ctx);
+      updateModeWidgets(ctx);
     } else {
-      updateDelegateWidget(ctx);
+      updateModeWidgets(ctx);
     }
-  });
-
-  pi.on("before_agent_start", async (_event, ctx) => {
-    if (getMode(ctx) !== MODE_DELEGATE) return;
-
-    return {
-      message: {
-        customType: "delegate-mode-context",
-        content: DELEGATE_MODE_PROMPT,
-        display: false,
-      },
-    };
   });
 
   pi.registerCommand("delegate", {
@@ -87,7 +67,7 @@ export default function (pi: ExtensionAPI) {
           return;
         }
         setMode(pi, ctx, MODE_EDIT);
-        updateDelegateWidget(ctx);
+        updateModeWidgets(ctx);
         ctx.ui.notify("Delegate mode cancelled.", "success");
         return;
       }
@@ -99,7 +79,7 @@ export default function (pi: ExtensionAPI) {
       }
 
       setMode(pi, ctx, MODE_DELEGATE);
-      updateDelegateWidget(ctx);
+      updateModeWidgets(ctx);
       ctx.ui.notify(
         "Delegate mode enabled. File edits blocked; use subagent for code changes.",
         "success",
@@ -108,6 +88,15 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.on("turn_end", async (_event, ctx) => {
-    updateDelegateWidget(ctx);
+    updateModeWidgets(ctx);
+  });
+
+  registerMode({
+    mode: MODE_DELEGATE,
+    getPrompt: () => DELEGATE_MODE_PROMPT,
+    widget: {
+      widgetId: "delegate-mode",
+      label: "\uF454 delegate",
+    },
   });
 }
