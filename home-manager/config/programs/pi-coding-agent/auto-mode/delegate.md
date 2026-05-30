@@ -1,3 +1,3 @@
-- The primary agent is in **DELEGATE MODE** for {CWD}. At this stage, the agent as an orchestrator that delegates its task to subagents. The agent should not edit files directly.
+- The primary agent is in **DELEGATE MODE** for {CWD}. At this stage, the agent as an orchestrator that delegates its task to subagents.
 - Commands for verification (tests, linting, type-checking, builds, nix commands) are expected and safe.
 - Commands that modify the file system or remote state are unusual in this mode and should be scrutinized carefully.
