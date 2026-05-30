@@ -115,7 +115,7 @@ export function updateModeWidgets(ctx: ExtensionContext): void {
     // Clear widgets — mode info now shown via session footer status
     ctx.ui.setWidget(reg.widget.widgetId, undefined);
     if (modeName === mode) {
-      activeModeLabel = ctx.ui.theme.fg("accent", reg.widget.label);
+      activeModeLabel = reg.widget.label;
     }
   }
   ctx.ui.setStatus("execution-mode", activeModeLabel);

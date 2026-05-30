@@ -209,8 +209,30 @@ function setSubagentCost(ctx: ExtensionContext, results: SingleResult[]): void {
     .reduce((sum, r) => sum + r.usage.cost, 0);
   ctx.ui.setStatus(
     "subagent-cost",
-    totalCost > 0 ? `subagents +$${totalCost.toFixed(2)}` : undefined,
+    totalCost > 0 ? `+$${totalCost.toFixed(2)}` : undefined,
   );
+}
+
+// Restore subagent cost from persisted session history.
+function restoreSubagentCost(ctx: ExtensionContext): void {
+  const branch = ctx.sessionManager.getBranch() as {
+    type: string;
+    message?: { role: string; details?: unknown };
+  }[];
+  let restoredCost = 0;
+  for (const entry of branch) {
+    if (entry.type === "message" && entry.message?.role === "toolResult") {
+      const details = entry.message.details as SubagentDetails | undefined;
+      if (details?.mode === "steps") {
+        for (const result of details.results ?? []) {
+          restoredCost += result.usage?.cost ?? 0;
+        }
+      }
+    }
+  }
+  if (restoredCost > 0) {
+    ctx.ui.setStatus("subagent-cost", `+$${restoredCost.toFixed(2)}`);
+  }
 }
 
 // Helpers
@@ -744,7 +766,9 @@ const SubagentParams = Type.Object({
 
 export default function (pi: ExtensionAPI) {
   pi.on("session_start", (_event, ctx) => {
-    if (ctx.hasUI) ctx.ui.setStatus("subagent-cost", undefined);
+    if (ctx.hasUI) {
+      restoreSubagentCost(ctx);
+    }
   });
 
   pi.on("session_shutdown", (_event, ctx) => {
