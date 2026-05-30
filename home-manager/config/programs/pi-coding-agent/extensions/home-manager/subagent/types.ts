@@ -20,6 +20,7 @@ export interface AgentConfig {
   tools?: string[];
   model?: string;
   concurrency?: number;
+  mode?: string;
   systemPrompt: string;
   runner?: "pi" | "claude-code";
 }
@@ -253,6 +254,7 @@ export type AgentRunner = (
   task: string,
   cwd: string,
   parentModes: string[],
+  modeOverride: string | undefined,
   signal: AbortSignal | undefined,
   onUpdate: OnUpdateCallback | undefined,
   makeDetails: (results: SingleResult[]) => SubagentDetails,
@@ -364,4 +366,20 @@ export async function writePromptToTempFile(
     });
   });
   return { dir: tmpDir, filePath };
+}
+
+export async function writeOutputToTempFile(
+  output: string,
+): Promise<string> {
+  const tmpDir = await fs.promises.mkdtemp(
+    path.join(os.tmpdir(), "pi-subagent-"),
+  );
+  const filePath = path.join(tmpDir, "output.txt");
+  await withFileMutationQueue(filePath, async () => {
+    await fs.promises.writeFile(filePath, output, {
+      encoding: "utf-8",
+      mode: 0o600,
+    });
+  });
+  return filePath;
 }

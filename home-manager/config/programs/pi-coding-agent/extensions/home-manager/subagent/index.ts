@@ -57,6 +57,7 @@ import {
   isFailedResult,
   getResultErrorMessage,
   getFinalOutput,
+  writeOutputToTempFile,
 } from "./types.js";
 import { runPiAgent } from "./pi-runner.js";
 import { runClaudeCodeAgent } from "./claude-code-runner.js";
@@ -334,6 +335,35 @@ function truncateFinalOutput(output: string): string {
   ].join("\n");
 }
 
+function extractFileChanges(results: SingleResult[]): string[] {
+  const paths = new Set<string>();
+  for (const result of results) {
+    for (const msg of result.messages) {
+      if (msg.role !== "assistant") continue;
+      for (const part of msg.content) {
+        if (part.type === "toolCall" && part.name) {
+          const name = part.name;
+          if (
+            name === "write" || name === "Write" ||
+            name === "edit" || name === "Edit" ||
+            name === "MultiEdit"
+          ) {
+            const args = (part as any).arguments;
+            if (!args || typeof args !== "object") continue;
+            const filePath = (args as Record<string, unknown>).file_path
+              || (args as Record<string, unknown>).path
+              || (args as Record<string, unknown>).filePath;
+            if (typeof filePath === "string" && filePath.trim()) {
+              paths.add(filePath.trim());
+            }
+          }
+        }
+      }
+    }
+  }
+  return [...paths].sort();
+}
+
 type DisplayItem =
   | { type: "text"; text: string }
   | { type: "toolCall"; name: string; args: Record<string, unknown> }
@@ -478,6 +508,10 @@ function discoverAgents(agentDir: string): AgentConfig[] {
         isPositiveSafeInt(frontmatter.concurrency)
           ? frontmatter.concurrency
           : undefined,
+      mode:
+        typeof frontmatter.mode === "string" && frontmatter.mode.trim()
+          ? frontmatter.mode.trim()
+          : undefined,
       systemPrompt: body,
       runner,
     });
@@ -516,6 +550,7 @@ async function runSingleAgent(
     task,
     cwd ?? defaultCwd,
     parentModes,
+    agent.mode,
     signal,
     onUpdate,
     makeDetails,
@@ -650,7 +685,7 @@ const agentHint = buildAgentHint(discoveredAgents);
 const TaskItem = Type.Object({
   agent: Type.String({ description: agentHint }),
   task: Type.String({
-    description: "Task to delegate. May use {previous} in chained steps.",
+    description: "Task to delegate. May use {previous} in chained steps."
   }),
   cwd: Type.Optional(
     Type.String({ description: "Working directory for the agent process" }),
@@ -892,9 +927,36 @@ export default function (pi: ExtensionAPI) {
 
       // - All steps succeeded
 
-      const finalOutput = truncateFinalOutput(
-        buildStepsFinalOutput(planResults),
-      );
+      const fullOutput = buildStepsFinalOutput(planResults);
+      const truncation = truncateHead(fullOutput, {
+        maxLines: DEFAULT_MAX_LINES,
+        maxBytes: DEFAULT_MAX_BYTES,
+      });
+
+      const fileChanges = extractFileChanges(planResults);
+      const fileChangesText =
+        fileChanges.length > 0
+          ? `\n<output-meta>\n## Files changed\n${fileChanges.map((p) => "- `" + p + "`").join("\n")}\n</output-meta>`
+          : "";
+
+      let finalOutput: string;
+      if (truncation.truncated) {
+        let tmpPath: string | null = null;
+        try {
+          tmpPath = await writeOutputToTempFile(fullOutput);
+        } catch {
+          // Fall through to generic truncation notice
+        }
+        const truncatedBy = truncation.truncatedBy === "bytes"
+          ? `output truncated (${formatSize(truncation.maxBytes)})`
+          : `output truncated (${truncation.maxLines} lines)`;
+        const truncationNotice = tmpPath
+          ? `${truncatedBy}, read: ${tmpPath} for full text`
+          : `[Subagent final answer truncated: showing ${truncation.outputLines} of ${truncation.totalLines} lines (${formatSize(truncation.outputBytes)} of ${formatSize(truncation.totalBytes)}). Ask the subagent for a narrower/shorter answer if more detail is needed.]`;
+        finalOutput = truncation.content + "\n" + truncationNotice + fileChangesText;
+      } else {
+        finalOutput = fullOutput + fileChangesText;
+      }
 
       return createTextResult(
         finalOutput,

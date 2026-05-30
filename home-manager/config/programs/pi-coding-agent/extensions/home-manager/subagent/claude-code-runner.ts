@@ -266,6 +266,7 @@ export async function runClaudeCodeAgent(
   task: string,
   cwd: string,
   _parentModes: string[],
+  _modeOverride: string | undefined,
   signal: AbortSignal | undefined,
   onUpdate: OnUpdateCallback | undefined,
   makeDetails: (results: SingleResult[]) => SubagentDetails,

@@ -48,6 +48,7 @@ export async function runPiAgent(
   task: string,
   cwd: string,
   parentModes: string[],
+  modeOverride: string | undefined,
   signal: AbortSignal | undefined,
   onUpdate: OnUpdateCallback | undefined,
   makeDetails: (results: SingleResult[]) => SubagentDetails,
@@ -95,6 +96,7 @@ export async function runPiAgent(
     let spawnErrorMessage: string | undefined;
 
     const childModes = [...parentModes, "subagent", `subagent:${agent.name}`];
+    if (modeOverride) childModes.push(modeOverride);
     const exitCode = await new Promise<number>((resolve) => {
       const invocation = getPiInvocation(args);
       const proc = spawn(invocation.command, invocation.args, {
