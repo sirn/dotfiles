@@ -109,14 +109,14 @@ export function setupModePromptInjection(pi: ExtensionAPI): void {
 
 export function updateModeWidgets(ctx: ExtensionContext): void {
   const mode = getMode(ctx);
+  let activeModeLabel: string | undefined;
   for (const [modeName, reg] of modeRegistrations) {
     if (!reg.widget) continue;
+    // Clear widgets — mode info now shown via session footer status
+    ctx.ui.setWidget(reg.widget.widgetId, undefined);
     if (modeName === mode) {
-      ctx.ui.setWidget(reg.widget.widgetId, [
-        ctx.ui.theme.fg("accent", reg.widget.label),
-      ]);
-    } else {
-      ctx.ui.setWidget(reg.widget.widgetId, undefined);
+      activeModeLabel = ctx.ui.theme.fg("accent", reg.widget.label);
     }
   }
+  ctx.ui.setStatus("execution-mode", activeModeLabel);
 }
