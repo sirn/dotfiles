@@ -183,6 +183,9 @@ const MAX_CONCURRENCY = subagentConfig.maxConcurrency ?? 4;
 const MAX_AGENTS_PER_STEP = subagentConfig.maxAgentsPerStep ?? 8;
 const COLLAPSED_ITEM_COUNT = subagentConfig.collapsedItemCount ?? 3;
 
+// Cost restored from previous session history on startup, so
+// setSubagentCost adds to it instead of overwriting it.
+let sessionRestoredCost = 0;
 function createTextResult(
   text: string,
   details: SubagentDetails,
@@ -201,19 +204,17 @@ function createTextResult(
   return { content, details };
 }
 
-// Sums the cost of completed (non-pending, non-skipped) results and
-// reflects it in the status line, clearing it when there's nothing to show.
 function setSubagentCost(ctx: ExtensionContext, results: SingleResult[]): void {
-  const totalCost = results
+  const currentCost = results
     .filter((r) => !isPendingResult(r) && !isSkippedResult(r))
     .reduce((sum, r) => sum + r.usage.cost, 0);
+  sessionRestoredCost += currentCost;
   ctx.ui.setStatus(
     "subagent-cost",
-    totalCost > 0 ? `+$${totalCost.toFixed(2)}` : undefined,
+    sessionRestoredCost > 0 ? `+$${sessionRestoredCost.toFixed(2)}` : undefined,
   );
 }
 
-// Restore subagent cost from persisted session history.
 function restoreSubagentCost(ctx: ExtensionContext): void {
   const branch = ctx.sessionManager.getBranch() as {
     type: string;
@@ -230,6 +231,7 @@ function restoreSubagentCost(ctx: ExtensionContext): void {
       }
     }
   }
+  sessionRestoredCost = restoredCost;
   if (restoredCost > 0) {
     ctx.ui.setStatus("subagent-cost", `+$${restoredCost.toFixed(2)}`);
   }
