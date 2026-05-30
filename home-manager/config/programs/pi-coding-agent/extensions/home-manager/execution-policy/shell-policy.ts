@@ -41,15 +41,8 @@ import {
 } from "./lib/shell-policy.js";
 
 function resolveModeContextPath(mode: string): string | null {
-  if (mode === "subagent") return "auto-mode/subagent/subagent.md";
-  if (mode.startsWith("subagent:")) {
-    const name = mode.slice("subagent:".length);
-    if (name.length > 0 && !name.includes("/") && !name.includes("..")) {
-      return `auto-mode/subagent/${name}.md`;
-    }
-  }
   if (mode.length > 0 && !mode.includes("/") && !mode.includes("..")) {
-    return `auto-mode/context/${mode}.md`;
+    return `auto-mode/${mode.replace(/:/g, ".")}.md`;
   }
   return null;
 }
@@ -394,13 +387,27 @@ function formatTriggerReason(result: EvalResult): string {
 }
 
 function buildContextHint(ctx: ExtensionContext): string {
-  let template = "";
+  // Group modes by prefix (before first ":"), pick most specific per prefix
+  const groups = new Map<string, string>();
   for (const mode of getExecutionMode(ctx).modes) {
-    const candidate = loadContextTemplate(mode);
-    if (candidate.trim()) template = candidate;
+    const prefix = mode.includes(":") ? mode.split(":")[0] : mode;
+    const existing = groups.get(prefix);
+    if (!existing || mode.length > existing.length) {
+      groups.set(prefix, mode);
+    }
   }
-  if (template) {
-    return template.replaceAll("{CWD}", ctx.cwd ?? "(unknown)");
+
+  // Load context files for the selected modes, in insertion order
+  const parts: string[] = [];
+  for (const [, mode] of groups) {
+    const template = loadContextTemplate(mode);
+    if (template.trim()) {
+      parts.push(template.replaceAll("{CWD}", ctx.cwd ?? "(unknown)"));
+    }
+  }
+
+  if (parts.length > 0) {
+    return parts.join("\n\n---\n\n");
   }
   return "No execution mode context hint. Evaluate the command against the general evaluation criteria only.";
 }

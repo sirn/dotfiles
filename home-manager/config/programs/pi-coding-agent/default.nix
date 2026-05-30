@@ -115,39 +115,15 @@ let
 
   policyAutoModePrompt = builtins.readFile ./auto-mode/prompt.md;
   policyAutoModeExtraCommands = lib.strings.trim agentsCfg.commandContext;
-  policyAutoModeContextFiles = {
-    "auto-mode/subagent/subagent.md" = {
-      text = builtins.readFile ./auto-mode/subagent/subagent.md;
-    };
-  }
-  # Dynamically discover all context context files (delegate.md, plan.md, etc.)
-  // builtins.listToAttrs (
+  policyAutoModeContextFiles = builtins.listToAttrs (
     builtins.map
       (
-        name:
-        lib.nameValuePair "auto-mode/context/${name}" {
-          text = builtins.readFile (./auto-mode/context + "/${name}");
-        }
+        name: lib.nameValuePair "auto-mode/${name}" { text = builtins.readFile (./auto-mode + "/${name}"); }
       )
       (
-        builtins.filter (n: builtins.match ".*\\.md$" n != null) (
-          builtins.attrNames (builtins.readDir ./auto-mode/context)
-        )
-      )
-  )
-  # Dynamically discover subagent context files (excluding subagent.md in the base set)
-  // builtins.listToAttrs (
-    builtins.map
-      (
-        name:
-        lib.nameValuePair "auto-mode/subagent/${name}" {
-          text = builtins.readFile (./auto-mode/subagent + "/${name}");
-        }
-      )
-      (
-        builtins.filter (n: builtins.match ".*\\.md$" n != null && n != "subagent.md") (
-          builtins.attrNames (builtins.readDir ./auto-mode/subagent)
-        )
+        builtins.filter (
+          n: builtins.match ".*\\.md$" n != null && n != "prompt.md" && n != "commands-context.md"
+        ) (builtins.attrNames (builtins.readDir ./auto-mode))
       )
   );
   policyAutoModeContextFileEntries = lib.mapAttrs' (
