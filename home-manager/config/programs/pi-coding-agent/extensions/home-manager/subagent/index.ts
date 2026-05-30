@@ -344,15 +344,18 @@ function extractFileChanges(results: SingleResult[]): string[] {
         if (part.type === "toolCall" && part.name) {
           const name = part.name;
           if (
-            name === "write" || name === "Write" ||
-            name === "edit" || name === "Edit" ||
+            name === "write" ||
+            name === "Write" ||
+            name === "edit" ||
+            name === "Edit" ||
             name === "MultiEdit"
           ) {
             const args = (part as any).arguments;
             if (!args || typeof args !== "object") continue;
-            const filePath = (args as Record<string, unknown>).file_path
-              || (args as Record<string, unknown>).path
-              || (args as Record<string, unknown>).filePath;
+            const filePath =
+              (args as Record<string, unknown>).file_path ||
+              (args as Record<string, unknown>).path ||
+              (args as Record<string, unknown>).filePath;
             if (typeof filePath === "string" && filePath.trim()) {
               paths.add(filePath.trim());
             }
@@ -685,7 +688,7 @@ const agentHint = buildAgentHint(discoveredAgents);
 const TaskItem = Type.Object({
   agent: Type.String({ description: agentHint }),
   task: Type.String({
-    description: "Task to delegate. May use {previous} in chained steps."
+    description: "Task to delegate. May use {previous} in chained steps.",
   }),
   cwd: Type.Optional(
     Type.String({ description: "Working directory for the agent process" }),
@@ -947,13 +950,15 @@ export default function (pi: ExtensionAPI) {
         } catch {
           // Fall through to generic truncation notice
         }
-        const truncatedBy = truncation.truncatedBy === "bytes"
-          ? `output truncated (${formatSize(truncation.maxBytes)})`
-          : `output truncated (${truncation.maxLines} lines)`;
+        const truncatedBy =
+          truncation.truncatedBy === "bytes"
+            ? `output truncated (${formatSize(truncation.maxBytes)})`
+            : `output truncated (${truncation.maxLines} lines)`;
         const truncationNotice = tmpPath
           ? `${truncatedBy}, read: ${tmpPath} for full text`
           : `[Subagent final answer truncated: showing ${truncation.outputLines} of ${truncation.totalLines} lines (${formatSize(truncation.outputBytes)} of ${formatSize(truncation.totalBytes)}). Ask the subagent for a narrower/shorter answer if more detail is needed.]`;
-        finalOutput = truncation.content + "\n" + truncationNotice + fileChangesText;
+        finalOutput =
+          truncation.content + "\n" + truncationNotice + fileChangesText;
       } else {
         finalOutput = fullOutput + fileChangesText;
       }

@@ -368,9 +368,7 @@ export async function writePromptToTempFile(
   return { dir: tmpDir, filePath };
 }
 
-export async function writeOutputToTempFile(
-  output: string,
-): Promise<string> {
+export async function writeOutputToTempFile(output: string): Promise<string> {
   const tmpDir = await fs.promises.mkdtemp(
     path.join(os.tmpdir(), "pi-subagent-"),
   );
