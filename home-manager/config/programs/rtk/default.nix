@@ -9,7 +9,7 @@ let
   claudeCfg = config.programs.claude-code;
   piCfg = config.programs.pi-coding-agent;
 
-  rtkBin = lib.getExe pkgs.unstable.rtk;
+  rtkBin = lib.getExe pkgs.rtk;
   tomlFormat = pkgs.formats.toml { };
 
   # Commands to ignore (not proxy commands)
@@ -42,7 +42,7 @@ let
   rtkSkillSet =
     pkgs.runCommand "rtk-skill-set"
       {
-        nativeBuildInputs = [ pkgs.unstable.rtk ];
+        nativeBuildInputs = [ pkgs.rtk ];
         ignore = lib.concatStringsSep " " ignoreCommands;
       }
       ''
@@ -131,7 +131,7 @@ let
     excludeShellChecks = [ "SC2016" ];
     runtimeInputs = [
       pkgs.jaq
-      pkgs.unstable.rtk
+      pkgs.rtk
     ];
     text = builtins.readFile ./rtk-rewrite-claude.sh;
   };
@@ -150,7 +150,7 @@ let
   };
 in
 {
-  home.packages = [ pkgs.unstable.rtk ];
+  home.packages = [ pkgs.rtk ];
 
   home.file = {
     "Library/Application Support/rtk/config.toml" = lib.mkIf pkgs.stdenv.isDarwin {

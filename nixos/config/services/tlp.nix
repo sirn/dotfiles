@@ -19,11 +19,10 @@
 
   services.tlp = {
     enable = true;
-    # TODO: move back to stable > 25.11
-    package = pkgs.unstable.tlp;
+    package = pkgs.tlp;
     pd = {
       enable = true;
-      package = pkgs.unstable.tlp-pd;
+      package = pkgs.tlp-pd;
     };
     settings = {
       CPU_ENERGY_PERF_POLICY_ON_BAT = "balance_power";

@@ -41,7 +41,6 @@
       ];
 
       networking.hostName = "polaris";
-      networking.hostId = "1de2954a";
 
       # Backups
       services.sanoid = {

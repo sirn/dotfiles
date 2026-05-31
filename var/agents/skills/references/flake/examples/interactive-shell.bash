@@ -8,4 +8,4 @@ nix-shell -p python3 python3Packages.requests
 nix-shell -p nodejs --pure
 
 # Pin to specific nixpkgs version
-nix-shell -p go -I nixpkgs=https://nixos.org/channels/nixos-25.11/nixexprs.tar.xz
+nix-shell -p go -I nixpkgs=https://nixos.org/channels/nixos-26.05/nixexprs.tar.xz

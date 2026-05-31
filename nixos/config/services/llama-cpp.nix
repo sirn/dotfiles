@@ -13,7 +13,7 @@ in
 {
   services.llama-cpp = {
     package = lib.mkIf hasNvidia (
-      (pkgs.unstable.llama-cpp.override { cudaSupport = true; }).overrideAttrs (old: {
+      (pkgs.llama-cpp.override { cudaSupport = true; }).overrideAttrs (old: {
         cmakeFlags = (old.cmakeFlags or [ ]) ++ [
           "-DGGML_CPU_ALL_VARIANTS=ON"
           "-DGGML_BACKEND_DL=ON"

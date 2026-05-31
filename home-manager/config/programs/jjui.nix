@@ -1,5 +1,5 @@
 { pkgs, ... }:
 
 {
-  home.packages = with pkgs; [ unstable.jjui ];
+  home.packages = with pkgs; [ jjui ];
 }

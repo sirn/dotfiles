@@ -25,7 +25,6 @@
       ../nixos/config/services/sddm.nix
     ];
 
-    networking.hostId = "4d91fe14";
     networking.hostName = "phoebe";
   };
 

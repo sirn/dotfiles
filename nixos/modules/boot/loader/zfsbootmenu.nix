@@ -123,24 +123,10 @@ in
       '';
     };
 
-    boot.initrd.extraFiles =
+    boot.initrd.secrets =
       if !builtins.isNull config.boot.loader.zfsbootmenu.keyfile then
         {
-          "etc/zfs/zroot.key".source = pkgs.runCommandLocal "zroot.key" { } ''
-            ${pkgs.coreutils}/bin/cp ${config.boot.loader.zfsbootmenu.keyfile} $out
-            ${pkgs.coreutils}/bin/chmod 0000 $out
-          '';
-        }
-      else
-        { };
-
-    environment.etc =
-      if !builtins.isNull config.boot.loader.zfsbootmenu.keyfile then
-        {
-          "zfs/zroot.key" = {
-            source = config.boot.loader.zfsbootmenu.keyfile;
-            mode = "0000";
-          };
+          "/etc/zfs/zroot.key" = config.boot.loader.zfsbootmenu.keyfile;
         }
       else
         { };

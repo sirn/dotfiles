@@ -6,7 +6,7 @@
   );
 
   services.resolved = {
-    fallbackDns = [ ];
+    settings.Resolve.FallbackDNS = [ ];
   };
 
   networking = {

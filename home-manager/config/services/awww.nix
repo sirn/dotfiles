@@ -72,7 +72,7 @@ in
 {
   services.awww = {
     enable = true;
-    package = pkgs.unstable.awww;
+    package = pkgs.awww;
   };
 
   # The awww-daemon service is provided by the upstream home-manager module.

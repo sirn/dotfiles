@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs = {
-      url = "github:nixos/nixpkgs/nixos-25.11";
+      url = "github:nixos/nixpkgs/nixos-26.05";
     };
 
     nixpkgs-unstable = {
@@ -14,14 +14,8 @@
     ##
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # TODO: remove after Home Manager > 25.11
-    home-manager-unstable = {
-      url = "github:nix-community/home-manager/master";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
     ## Nix quality of life
@@ -119,7 +113,7 @@
         allowUnfree = true;
       };
 
-      stateVersion = "25.11";
+      stateVersion = "26.05";
 
       optionalPath = p: if builtins.pathExists p then p else { };
 
@@ -177,10 +171,6 @@
           inputs.nix-index-database.homeModules.nix-index
           inputs.noctalia.homeModules.default
           inputs.sops-nix.homeManagerModules.sops
-
-          # TODO: remove after Home Manager > 25.11
-          { disabledModules = [ "services/swww.nix" ]; }
-          "${inputs.home-manager-unstable}/modules/services/awww.nix"
 
           # Configurations
           ./home-manager/modules
@@ -253,10 +243,6 @@
             inputs.microvm.nixosModules.host
             inputs.nixvirt.nixosModules.default
             inputs.sops-nix.nixosModules.sops
-
-            # TODO: remove after NixOS > 25.11
-            { disabledModules = [ "services/hardware/tlp.nix" ]; }
-            "${inputs.nixpkgs-unstable}/nixos/modules/services/hardware/tlp.nix"
 
             # NixOS Generate Config (per-machine, gitignored)
             (optionalPath ./configuration.nix)

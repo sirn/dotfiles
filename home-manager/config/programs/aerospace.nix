@@ -3,7 +3,7 @@
 {
   programs.aerospace = {
     enable = true;
-    package = pkgs.unstable.aerospace;
+    package = pkgs.aerospace;
     launchd = {
       enable = true;
     };

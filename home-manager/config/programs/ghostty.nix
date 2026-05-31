@@ -26,9 +26,9 @@ in
 
     package =
       if pkgs.stdenv.isLinux then
-        config.lib.nixGL.wrap pkgs.unstable.ghostty
+        config.lib.nixGL.wrap pkgs.ghostty
       else
-        pkgs.unstable.ghostty-bin;
+        pkgs.ghostty-bin;
 
     settings = lib.mkMerge [
       {

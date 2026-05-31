@@ -50,7 +50,7 @@ See [examples/interactive-shell.bash](examples/interactive-shell.bash)
 
 ### nix-shell Shebang Patterns
 
-> **Note**: Update the nixpkgs channel URL (e.g., `nixos-25.11`) to match your current NixOS release.
+> **Note**: Update the nixpkgs channel URL (e.g., `nixos-26.05`) to match your current NixOS release.
 
 **Finding your current release:**
 
@@ -65,7 +65,7 @@ See [examples/interactive-shell.bash](examples/interactive-shell.bash)
 #!/usr/bin/env nix-shell
 #! nix-shell -i bash --pure
 #! nix-shell -p bash curl jq
-#! nix-shell -I nixpkgs=https://nixos.org/channels/nixos-25.11/nixexprs.tar.xz
+#! nix-shell -I nixpkgs=https://nixos.org/channels/nixos-26.05/nixexprs.tar.xz
 
 curl -s https://api.example.com | jq .
 ```
@@ -76,7 +76,7 @@ curl -s https://api.example.com | jq .
 #!/usr/bin/env nix-shell
 #! nix-shell -i python3 --pure
 #! nix-shell -p python3 python3Packages.requests
-#! nix-shell -I nixpkgs=https://nixos.org/channels/nixos-25.11/nixexprs.tar.xz
+#! nix-shell -I nixpkgs=https://nixos.org/channels/nixos-26.05/nixexprs.tar.xz
 
 import requests
 print(requests.get("https://api.example.com").json())

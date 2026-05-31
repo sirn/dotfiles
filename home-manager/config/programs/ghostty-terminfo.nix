@@ -3,7 +3,7 @@
 {
   home.packages = [
     (
-      if pkgs.stdenv.isDarwin then pkgs.unstable.ghostty-bin.terminfo else pkgs.unstable.ghostty.terminfo
+      if pkgs.stdenv.isDarwin then pkgs.ghostty-bin.terminfo else pkgs.ghostty.terminfo
     )
   ];
 }

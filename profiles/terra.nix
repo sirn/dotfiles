@@ -22,7 +22,6 @@
     ];
 
     networking.hostName = "terra";
-    networking.hostId = "ae419c0f";
 
     systemd.network.netdevs = {
       "20-br0" = {

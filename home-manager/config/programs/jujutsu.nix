@@ -15,7 +15,7 @@ in
 {
   programs.jujutsu = {
     enable = true;
-    package = pkgs.unstable.jujutsu;
+    package = pkgs.jujutsu;
 
     settings = {
       user = {
