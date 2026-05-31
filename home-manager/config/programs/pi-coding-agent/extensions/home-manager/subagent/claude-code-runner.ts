@@ -193,7 +193,7 @@ function buildToolResultMessages(event: {
         role: "toolResult",
         toolCallId: block.tool_use_id,
         toolName: "", // CC doesn't echo tool name in results; filled by matching above toolCall
-        content: [{ type: "text", text: block.content }],
+        content: block.is_error ? [{ type: "text", text: block.content }] : [],
         isError: block.is_error,
         timestamp: Date.now(),
       });

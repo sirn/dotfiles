@@ -31,7 +31,6 @@ import {
   type ExtensionAPI,
   type ExtensionContext,
   type Theme,
-  type ThemeColor,
   keyHint,
   getAgentDir,
   parseFrontmatter,
@@ -276,91 +275,17 @@ function formatUsageStats(
 function formatToolCall(
   toolName: string,
   args: Record<string, unknown>,
-  themeFg: (color: ThemeColor, text: string) => string,
-  expanded?: boolean,
 ): string {
-  const shortenPath = (p: string) => {
-    const home = os.homedir();
-    return p.startsWith(home) ? `~${p.slice(home.length)}` : p;
-  };
-
-  switch (toolName) {
-    case "bash":
-    case "Bash": {
-      const command = (args.command as string) || "...";
-      const preview = expanded
-        ? command
-        : command.length > 60
-          ? `${command.slice(0, 60)}...`
-          : command;
-      return themeFg("muted", "$ ") + themeFg("toolOutput", preview);
-    }
-    case "read":
-    case "Read": {
-      const rawPath = (args.file_path || args.path || "...") as string;
-      const filePath = shortenPath(rawPath);
-      const offset = args.offset as number | undefined;
-      const limit = args.limit as number | undefined;
-      let text = themeFg("accent", filePath);
-      if (offset !== undefined || limit !== undefined) {
-        const startLine = offset ?? 1;
-        const endLine = limit !== undefined ? startLine + limit - 1 : "";
-        text += themeFg(
-          "warning",
-          `:${startLine}${endLine ? `-${endLine}` : ""}`,
-        );
-      }
-      return themeFg("muted", "read ") + text;
-    }
-    case "write":
-    case "Write": {
-      const rawPath = (args.file_path || args.path || "...") as string;
-      const filePath = shortenPath(rawPath);
-      const content = (args.content || "") as string;
-      const lines = content.split("\n").length;
-      let text = themeFg("muted", "write ") + themeFg("accent", filePath);
-      if (lines > 1) text += themeFg("dim", ` (${lines} lines)`);
-      return text;
-    }
-    case "edit":
-    case "Edit":
-    case "MultiEdit": {
-      const rawPath = (args.file_path || args.path || "...") as string;
-      return (
-        themeFg("muted", "edit ") + themeFg("accent", shortenPath(rawPath))
-      );
-    }
-    case "ls": {
-      const rawPath = (args.path || ".") as string;
-      return themeFg("muted", "ls ") + themeFg("accent", shortenPath(rawPath));
-    }
-    case "find":
-    case "Glob": {
-      const pattern = (args.pattern || "*") as string;
-      const rawPath = (args.path || ".") as string;
-      return (
-        themeFg("muted", "find ") +
-        themeFg("accent", pattern) +
-        themeFg("dim", ` in ${shortenPath(rawPath)}`)
-      );
-    }
-    case "grep":
-    case "Grep": {
-      const pattern = (args.pattern || "") as string;
-      const rawPath = (args.path || ".") as string;
-      return (
-        themeFg("muted", "grep ") +
-        themeFg("accent", `/${pattern}/`) +
-        themeFg("dim", ` in ${shortenPath(rawPath)}`)
-      );
-    }
-    default: {
-      const argsStr = JSON.stringify(args);
-      const preview =
-        argsStr.length > 50 ? `${argsStr.slice(0, 50)}...` : argsStr;
-      return themeFg("accent", toolName) + themeFg("dim", ` ${preview}`);
-    }
+  const primaryArg =
+    (args.command as string) ??
+    (args.file_path as string) ??
+    (args.path as string) ??
+    (args.pattern as string) ??
+    (args.url as string);
+  if (primaryArg) {
+    return `${toolName} ${primaryArg}`;
   }
+  return toolName;
 }
 
 function formatFinalOutput(result: SingleResult): string {
@@ -1121,7 +1046,9 @@ export default function (pi: ExtensionAPI) {
             if (!preview.trim()) continue;
             text += `${theme.fg("toolOutput", preview)}\n`;
           } else if (item.type === "toolCall") {
-            text += `${theme.fg("muted", "→ ") + formatToolCall(item.name, item.args, theme.fg.bind(theme), expanded)}\n`;
+            const raw = formatToolCall(item.name, item.args);
+            const preview = expanded ? raw.trim() : trimInline(raw, 160);
+            text += `${theme.fg("muted", "→ ")}${theme.fg("toolOutput", preview)}\n`;
           } else if (item.type === "toolResult") {
             const prefix = item.isError
               ? theme.fg("error", "← error:")

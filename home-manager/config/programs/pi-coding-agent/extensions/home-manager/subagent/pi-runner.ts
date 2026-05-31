@@ -249,6 +249,9 @@ export async function runPiAgent(
 
         if (event.type === "message_end" && event.message) {
           const msg = event.message as Message;
+          if (msg.role === "toolResult" && !msg.isError) {
+            msg.content = [];
+          }
           currentResult.messages.push(msg);
 
           if (msg.role === "assistant") {
