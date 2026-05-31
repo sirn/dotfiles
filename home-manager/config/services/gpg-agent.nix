@@ -96,7 +96,7 @@ in
       };
     };
 
-  programs.ssh.matchBlocks."*".extraOptions = lib.mkIf cfg.enable {
+  programs.ssh.settings."*" = lib.mkIf cfg.enable {
     IdentityAgent = lib.mkOverride 500 "$\{XDG_RUNTIME_DIR\}/gnupg/S.gpg-agent.ssh";
   };
 

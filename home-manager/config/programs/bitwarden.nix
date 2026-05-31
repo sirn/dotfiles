@@ -21,7 +21,7 @@ in
     with pkgs;
     [ bitwarden-cli ] ++ lib.optional (!config.flatpak.enable) [ bitwarden-desktop ];
 
-  programs.ssh.matchBlocks."*".extraOptions = {
+  programs.ssh.settings."*" = {
     "IdentityAgent" = lib.mkOverride 250 agentSocketPath;
   };
 

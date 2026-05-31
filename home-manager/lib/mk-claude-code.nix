@@ -19,10 +19,12 @@ in
       cfg.settings // { "$schema" = "https://json.schemastore.org/claude-code-settings.json"; }
     );
   }
-  // lib.optionalAttrs (cfg.memory.text != null) { "${configDir}/CLAUDE.md".text = cfg.memory.text; }
-  // lib.optionalAttrs (cfg.memory.source != null) {
-    "${configDir}/CLAUDE.md".source = cfg.memory.source;
-  }
+  // lib.optionalAttrs (cfg.context != null) (
+    if lib.isPath cfg.context then
+      { "${configDir}/CLAUDE.md".source = cfg.context; }
+    else
+      { "${configDir}/CLAUDE.md".text = cfg.context; }
+  )
   // lib.mapAttrs' (
     agentName: content:
     lib.nameValuePair "${configDir}/agents/${agentName}.md" (

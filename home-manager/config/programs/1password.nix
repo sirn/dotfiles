@@ -20,7 +20,7 @@ in
     [ _1password-cli ]
     ++ lib.optional (!pkgs.stdenv.isDarwin && !config.flatpak.enable) [ _1password-gui ];
 
-  programs.ssh.matchBlocks."*".extraOptions = {
+  programs.ssh.settings."*" = {
     "IdentityAgent" = lib.mkOverride 250 "\"${agentSocketPath}\"";
   };
 

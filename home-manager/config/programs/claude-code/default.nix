@@ -186,7 +186,7 @@ in
     );
 
     agents = lib.mapAttrs mkClaudeCodeAgent validClaudeCodeAgents;
-    memory.text = agentsCfg.instructionText;
+    context = agentsCfg.instructionText;
     mcpServers = toClaudeCodeMcpServers config.programs.mcp.servers;
 
     settings = {

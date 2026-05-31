@@ -11,22 +11,19 @@
     package = pkgs.openssh;
     enableDefaultConfig = false;
 
-    matchBlocks = {
+    settings = {
       "*" = {
-        compression = true;
-        controlMaster = "auto";
-        controlPath = "${config.home.homeDirectory}/.ssh/ssh-%r@%h:%p";
-        controlPersist = "10m";
-        serverAliveCountMax = 3;
-        serverAliveInterval = 60;
-        userKnownHostsFile = "${config.home.homeDirectory}/.ssh/known_hosts";
-
-        extraOptions = {
-          "CheckHostIP" = "yes";
-          "PreferredAuthentications" = "publickey";
-          "StrictHostKeyChecking" = "accept-new";
-          "TCPKeepAlive" = "no";
-        };
+        Compression = "yes";
+        ControlMaster = "auto";
+        ControlPath = "${config.home.homeDirectory}/.ssh/ssh-%r@%h:%p";
+        ControlPersist = "10m";
+        ServerAliveCountMax = 3;
+        ServerAliveInterval = 60;
+        UserKnownHostsFile = "${config.home.homeDirectory}/.ssh/known_hosts";
+        CheckHostIP = "yes";
+        PreferredAuthentications = "publickey";
+        StrictHostKeyChecking = "accept-new";
+        TCPKeepAlive = "no";
       };
     };
 
