@@ -29,7 +29,7 @@ in
     hack-font
     ibm-plex
     inter
-    iosevka
+    iosevka-bin
     ipaexfont
     ipafont
     noto-fonts
