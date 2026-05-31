@@ -124,10 +124,8 @@ in
     };
 
     boot.initrd.secrets =
-      if !builtins.isNull config.boot.loader.zfsbootmenu.keyfile then
-        {
-          "/etc/zfs/zroot.key" = config.boot.loader.zfsbootmenu.keyfile;
-        }
+      if !isNull config.boot.loader.zfsbootmenu.keyfile then
+        { "/etc/zfs/zroot.key" = config.boot.loader.zfsbootmenu.keyfile; }
       else
         { };
   };
