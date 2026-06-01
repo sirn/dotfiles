@@ -223,7 +223,7 @@ in
       "vfio"
     ];
 
-    boot.initrd.extraFiles =
+    boot.initrd.extraFiles = lib.mkIf (!config.boot.initrd.systemd.enable) (
       let
         mkExtraInitrd =
           f:
@@ -231,7 +231,19 @@ in
             "/etc/${f}".source = config.environment.etc."${f}".source;
           });
       in
-      lib.mkMerge [ (mkExtraInitrd "modprobe.d/vfio.conf") ];
+      lib.mkMerge [ (mkExtraInitrd "modprobe.d/vfio.conf") ]
+    );
+
+    boot.initrd.systemd.contents = lib.mkIf config.boot.initrd.systemd.enable (
+      let
+        mkExtraInitrd =
+          f:
+          (lib.mkIf (lib.hasAttr f config.environment.etc) {
+            "/etc/${f}".source = config.environment.etc."${f}".source;
+          });
+      in
+      lib.mkMerge [ (mkExtraInitrd "modprobe.d/vfio.conf") ]
+    );
 
     systemd.services = lib.mkMerge [
       (lib.mkIf cfg.udev-forwarder.enable {
