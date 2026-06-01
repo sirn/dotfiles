@@ -276,12 +276,13 @@ function formatToolCall(
   toolName: string,
   args: Record<string, unknown>,
 ): { name: string; arg?: string } {
-  const arg =
-    (args.command as string) ??
-    (args.file_path as string) ??
-    (args.path as string) ??
-    (args.pattern as string) ??
-    (args.url as string);
+  const arg: string | undefined =
+    typeof args.command === "string" ? args.command :
+    typeof args.file_path === "string" ? args.file_path :
+    typeof args.path === "string" ? args.path :
+    typeof args.pattern === "string" ? args.pattern :
+    typeof args.url === "string" ? args.url :
+    undefined;
   return { name: toolName, arg };
 }
 
@@ -1043,11 +1044,18 @@ export default function (pi: ExtensionAPI) {
             if (!preview.trim()) continue;
             text += `${theme.fg("toolOutput", preview)}\n`;
           } else if (item.type === "toolCall") {
-            const { name, arg } = formatToolCall(item.name, item.args);
-            const argText = arg
-              ? ` ${theme.fg("toolOutput", expanded ? arg.trim() : trimInline(arg, 140))}`
-              : "";
-            text += `${theme.fg("muted", "→ ")}${theme.fg("accent", name)}${argText}\n`;
+            let toolName: string;
+            let argText = "";
+            try {
+              const { name, arg } = formatToolCall(item.name, item.args);
+              toolName = name;
+              if (arg) {
+                argText = ` ${theme.fg("toolOutput", expanded ? arg.trim() : trimInline(arg, 140))}`;
+              }
+            } catch {
+              toolName = item.name;
+            }
+            text += `${theme.fg("muted", "→ ")}${theme.fg("accent", toolName)}${argText}\n`;
           } else if (item.type === "toolResult") {
             const prefix = item.isError
               ? theme.fg("error", "← error:")
