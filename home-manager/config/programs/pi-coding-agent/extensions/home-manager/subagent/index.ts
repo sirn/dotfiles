@@ -275,17 +275,14 @@ function formatUsageStats(
 function formatToolCall(
   toolName: string,
   args: Record<string, unknown>,
-): string {
-  const primaryArg =
+): { name: string; arg?: string } {
+  const arg =
     (args.command as string) ??
     (args.file_path as string) ??
     (args.path as string) ??
     (args.pattern as string) ??
     (args.url as string);
-  if (primaryArg) {
-    return `${toolName} ${primaryArg}`;
-  }
-  return toolName;
+  return { name: toolName, arg };
 }
 
 function formatFinalOutput(result: SingleResult): string {
@@ -1046,9 +1043,11 @@ export default function (pi: ExtensionAPI) {
             if (!preview.trim()) continue;
             text += `${theme.fg("toolOutput", preview)}\n`;
           } else if (item.type === "toolCall") {
-            const raw = formatToolCall(item.name, item.args);
-            const preview = expanded ? raw.trim() : trimInline(raw, 160);
-            text += `${theme.fg("muted", "→ ")}${theme.fg("toolOutput", preview)}\n`;
+            const { name, arg } = formatToolCall(item.name, item.args);
+            const argText = arg
+              ? ` ${theme.fg("toolOutput", expanded ? arg.trim() : trimInline(arg, 140))}`
+              : "";
+            text += `${theme.fg("muted", "→ ")}${theme.fg("accent", name)}${argText}\n`;
           } else if (item.type === "toolResult") {
             const prefix = item.isError
               ? theme.fg("error", "← error:")
