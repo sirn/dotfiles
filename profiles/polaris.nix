@@ -17,6 +17,7 @@
         ../nixos/config/system/intel-gpu.nix
         ../nixos/config/system/niri.nix
         ../nixos/config/system/pcie-aspm.nix
+        ../nixos/config/system/plymouth.nix
         ../nixos/config/system/power-management.nix
         ../nixos/config/system/sway.nix
         ../nixos/config/system/wireless.nix
