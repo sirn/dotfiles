@@ -277,12 +277,17 @@ function formatToolCall(
   args: Record<string, unknown>,
 ): { name: string; arg?: string } {
   const arg: string | undefined =
-    typeof args.command === "string" ? args.command :
-    typeof args.file_path === "string" ? args.file_path :
-    typeof args.path === "string" ? args.path :
-    typeof args.pattern === "string" ? args.pattern :
-    typeof args.url === "string" ? args.url :
-    undefined;
+    typeof args.command === "string"
+      ? args.command
+      : typeof args.file_path === "string"
+        ? args.file_path
+        : typeof args.path === "string"
+          ? args.path
+          : typeof args.pattern === "string"
+            ? args.pattern
+            : typeof args.url === "string"
+              ? args.url
+              : undefined;
   return { name: toolName, arg };
 }
 
