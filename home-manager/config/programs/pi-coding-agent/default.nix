@@ -163,11 +163,11 @@ in
     lib.mapAttrs' (
       name: _:
       lib.nameValuePair ".pi/agent/extensions/hm-${name}" {
-        source = ./extensions/home-manager + "/${name}";
+        source = ./extensions + "/${name}";
       }
       # Note: builtins.readDir ordering is non-deterministic per Nix spec,
       # but home.file deployment order does not matter here.
-    ) (builtins.readDir ./extensions/home-manager)
+    ) (lib.filterAttrs (_: type: type == "directory") (builtins.readDir ./extensions))
     // {
       ".pi/agent/extensions/rimuruw-pi-hashline-edit".source = pkgs.local.pi-hashline-edit;
       ".pi/agent/skills".source = agentsCfg.skillTrees;
