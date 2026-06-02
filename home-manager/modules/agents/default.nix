@@ -113,7 +113,7 @@ in
 {
   imports = [
     ./domains.nix
-    ./models.nix
+    ./subagents.nix
     ./permissions.nix
   ];
 

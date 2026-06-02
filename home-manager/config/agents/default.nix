@@ -1,7 +1,6 @@
 {
   imports = [
     ./domains.nix
-    ./models.nix
     ./permissions.nix
     ./skills.nix
     ./subagents
