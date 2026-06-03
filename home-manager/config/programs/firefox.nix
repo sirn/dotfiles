@@ -120,6 +120,7 @@ in
           "browser.contentblocking.category" = "strict";
           "dom.security.https_only_mode" = true;
           "signon.rememberSignons" = false;
+          "browser.startup.page" = 3;
 
           # WebRTC IP leak protection
           "media.peerconnection.ice.default_address_only" = true;
