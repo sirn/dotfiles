@@ -56,6 +56,7 @@ export interface SingleResult {
   autoRetrying?: boolean;
   compacting?: boolean;
   sessionId?: string;
+  resumed?: boolean;
 }
 
 export interface SubagentDetails {

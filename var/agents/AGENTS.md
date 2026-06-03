@@ -37,6 +37,8 @@ Delegate to these experts by default. The orchestrator crafts task prompts from 
 - `reviewer`: Reviews correctness, security, conventions, simplicity, and quality.
 - `scout`: Maps local code structure, patterns, and relevant files.
 
+Resume for genuine follow-ups (scout digging deeper, planner revising a doc); new session for different tasks, agents, or when in doubt.
+
 ### Delegation Patterns
 
 - **Feature/Refactor**: `planner` (design) -> `worker` (implementation) -> `reviewer` (validation).

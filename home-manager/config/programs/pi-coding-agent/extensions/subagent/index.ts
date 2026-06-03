@@ -679,7 +679,7 @@ const TaskItem = Type.Object({
 const STEPS_DESCRIPTION =
   "2D array of {agent, task}. Inner arrays run in parallel; outer runs sequentially. " +
   "Single: [[{agent, task}]]. Parallel: [[t1, t2, ...]]. Chain: [[t1], [t2], ...]. " +
-  `Task may contain {previous} which is replaced with the prior step's combined output. Max ${MAX_AGENTS_PER_STEP} agents per step.`;
+  `Task may contain {previous} which is replaced with the prior step's combined output. Steps with more than ${MAX_AGENTS_PER_STEP} agents queue the excess — agents run in batches within the same step.`;
 
 const SubagentParams = Type.Object({
   steps: Type.Array(Type.Array(TaskItem), {
@@ -788,11 +788,25 @@ export default function (pi: ExtensionAPI) {
             makeDetails([]),
           );
         }
-        if (steps[s].length > MAX_AGENTS_PER_STEP) {
-          return createTextResult(
-            `Step ${s + 1} has ${steps[s].length} agents. Max ${MAX_AGENTS_PER_STEP} per step.`,
-            makeDetails([]),
-          );
+        // Reject duplicate session IDs for the same runner within a step.
+        // Different runners can share the same ID (e.g. pi vs claude-code).
+        const sidToRunners = new Map<string, string[]>();
+        for (const task of steps[s]) {
+          if (!task.sessionId) continue;
+          const agentConf = agents.find((a) => a.name === task.agent);
+          const runner = agentConf?.runner ?? "pi";
+          const existing = sidToRunners.get(task.sessionId);
+          if (existing && existing.includes(runner)) {
+            return createTextResult(
+              `Step ${s + 1} has duplicate session ID "${task.sessionId}" for runner "${runner}". Each session ID can only be used once per step per runner type.`,
+              makeDetails([]),
+            );
+          }
+          if (existing) {
+            existing.push(runner);
+          } else {
+            sidToRunners.set(task.sessionId, [runner]);
+          }
         }
       }
 
@@ -816,7 +830,7 @@ export default function (pi: ExtensionAPI) {
         // Replace {previous} in each task
         const stepTasks = stepAgents.map((a) => ({
           ...a,
-          task: a.task.replace(/\{previous\}/g, previousOutput),
+          task: a.task.replace(/\{previous\}/g, () => previousOutput),
         }));
 
         // Update task text for this step's agents (replacing {previous})
@@ -852,43 +866,59 @@ export default function (pi: ExtensionAPI) {
         // Emit initial state so waiting steps are visible from the start
         emitStepUpdate();
 
-        await mapWithAgentConcurrency(
-          stepTasks,
-          MAX_CONCURRENCY,
-          (t) => t.agent,
-          agentConcurrencyMap,
-          async (t, i) => {
-            // Mark as started when the concurrency limiter actually begins execution
-            planResults[stepStartIndex + i].started = true;
-            emitStepUpdate();
-            const result = await runSingleAgent(
-              ctx.cwd,
-              agents,
-              parentModes,
-              t.agent,
-              t.task,
-              t.cwd,
-              t.sessionId,
-              signal,
-              (partial) => {
-                if (partial.details?.results[0]) {
-                  const partialResult = partial.details.results[0];
-                  partialResult.stepIndex = stepIndex;
-                  partialResult.started = true;
-                  planResults[stepStartIndex + i] = partialResult;
-                  emitStepUpdate();
-                }
-              },
-              makeDetails,
-              ctx,
-            );
-            result.stepIndex = stepIndex;
-            result.started = true;
-            planResults[stepStartIndex + i] = result;
-            emitStepUpdate();
-            return result;
-          },
-        );
+        // Run agents in batches within the same step (soft cap: excess agents queue)
+        for (
+          let batchStart = 0;
+          batchStart < stepTasks.length;
+          batchStart += MAX_AGENTS_PER_STEP
+        ) {
+          const batch = stepTasks.slice(
+            batchStart,
+            batchStart + MAX_AGENTS_PER_STEP,
+          );
+          await mapWithAgentConcurrency(
+            batch,
+            MAX_CONCURRENCY,
+            (t) => t.agent,
+            agentConcurrencyMap,
+            async (t, i) => {
+              const idx = stepStartIndex + batchStart + i;
+              // Mark as started when the concurrency limiter actually begins execution
+              planResults[idx].started = true;
+              emitStepUpdate();
+              const result = await runSingleAgent(
+                ctx.cwd,
+                agents,
+                parentModes,
+                t.agent,
+                t.task,
+                t.cwd,
+                t.sessionId,
+                signal,
+                (partial) => {
+                  if (partial.details?.results[0]) {
+                    const partialResult = partial.details.results[0];
+                    partialResult.stepIndex = stepIndex;
+                    partialResult.started = true;
+                    planResults[idx] = partialResult;
+                    emitStepUpdate();
+                  }
+                },
+                makeDetails,
+                ctx,
+              );
+              result.stepIndex = stepIndex;
+              result.started = true;
+              if (t.sessionId) {
+                result.resumed = true;
+                if (!result.sessionId) result.sessionId = t.sessionId;
+              }
+              planResults[idx] = result;
+              emitStepUpdate();
+              return result;
+            },
+          );
+        }
 
         const stepResults = planResults.slice(
           stepStartIndex,
@@ -905,17 +935,42 @@ export default function (pi: ExtensionAPI) {
             ? `\n<output-meta>\n## Session IDs\n${sessionIds.join("\n")}\n</output-meta>`
             : "";
 
+        // Build combined output for next step's {previous}
+        previousOutput = stepResults
+          .map(
+            (r) =>
+              `[${r.agent}]\n${getFinalOutput(r.messages) || "(no output)"}`,
+          )
+          .join("\n\n");
+
+        const fileChanges = extractFileChanges(planResults);
+        const fileChangesText =
+          fileChanges.length > 0
+            ? `\n<output-meta>\n## Files changed\n${fileChanges.map((p) => "- `" + p + "`").join("\n")}\n</output-meta>`
+            : "";
+
         const anyFailed = stepResults.some(isFailedResult);
         if (anyFailed) {
           const failedAgents = stepResults
             .filter(isFailedResult)
             .map((r) => r.agent)
             .join(", ");
-          const errorMsg =
-            stepResults
-              .filter(isFailedResult)
-              .map((r) => `[${r.agent}] ${getResultErrorMessage(r)}`)
-              .join("\n") + sessionIdsText;
+          const errorMsg = stepResults
+            .filter(isFailedResult)
+            .map((r) => `[${r.agent}] ${getResultErrorMessage(r)}`)
+            .join("\n");
+          const successfulResults = stepResults.filter(
+            (r) => !isFailedResult(r),
+          );
+          const successSection =
+            successfulResults.length > 0
+              ? `\n\n## Completed in this step\n${successfulResults
+                  .map(
+                    (r) =>
+                      `[${r.agent}]\n${getFinalOutput(r.messages) || "(no output)"}`,
+                  )
+                  .join("\n\n")}`
+              : "";
 
           // Mark future steps as skipped so the renderer doesn't treat them as running
           for (let si = stepStartIndex; si < planResults.length; si++) {
@@ -928,20 +983,12 @@ export default function (pi: ExtensionAPI) {
 
           setSubagentCost(ctx, planResults);
           return createTextResult(
-            `Stopped at step ${stepIndex + 1}/${steps.length} (${failedAgents}):\n${errorMsg}`,
+            `Stopped at step ${stepIndex + 1}/${steps.length} (${failedAgents}):\n${errorMsg}${successSection}${fileChangesText}${sessionIdsText}`,
             makeDetails([...planResults]),
             "custom",
             "subagent-result-error",
           );
         }
-
-        // Build combined output for next step's {previous}
-        previousOutput = stepResults
-          .map(
-            (r) =>
-              `[${r.agent}]\n${getFinalOutput(r.messages) || "(no output)"}`,
-          )
-          .join("\n\n");
       }
 
       // - All steps succeeded
@@ -1157,8 +1204,8 @@ export default function (pi: ExtensionAPI) {
                   r.compacting ? ICONS.compacting : ICONS.retrying,
                 )
               : "";
-          const resumedTag = r.sessionId
-            ? theme.fg("accent", ` (resumed: ${r.sessionId})`)
+          const resumedTag = r.resumed
+            ? theme.fg("dim", ` (resumed: ${r.sessionId})`)
             : "";
           text += `${resultIndex > 0 ? "\n" : ""}\n  ${rIcon} ${theme.fg(
             "muted",
