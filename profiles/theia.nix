@@ -15,7 +15,6 @@
         ../home-manager/config/home/xdg.nix
 
         # programs
-        ../home-manager/config/programs/firefox.nix
         ../home-manager/config/programs/omniwm.nix
       ];
     };

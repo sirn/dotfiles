@@ -122,7 +122,6 @@
 
         # programs
         ../home-manager/config/programs/bitwarden.nix
-        ../home-manager/config/programs/firefox.nix
         ../home-manager/config/programs/ghostty.nix
         ../home-manager/config/programs/imagemagick.nix
         ../home-manager/config/programs/mcp.nix
