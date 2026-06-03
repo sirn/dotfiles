@@ -311,20 +311,6 @@ function buildStepsFinalOutput(results: SingleResult[]): string {
     .join("\n\n");
 }
 
-function truncateFinalOutput(output: string): string {
-  const truncation = truncateHead(output, {
-    maxLines: DEFAULT_MAX_LINES,
-    maxBytes: DEFAULT_MAX_BYTES,
-  });
-
-  if (!truncation.truncated) return truncation.content;
-
-  return [
-    truncation.content,
-    `\n[Subagent final answer truncated: showing ${truncation.outputLines} of ${truncation.totalLines} lines (${formatSize(truncation.outputBytes)} of ${formatSize(truncation.totalBytes)}). Ask the subagent for a narrower/shorter answer if more detail is needed.]`,
-  ].join("\n");
-}
-
 function extractFileChanges(results: SingleResult[]): string[] {
   const paths = new Set<string>();
   for (const result of results) {
@@ -521,6 +507,7 @@ async function runSingleAgent(
   agentName: string,
   task: string,
   cwd: string | undefined,
+  sessionId: string | undefined,
   signal: AbortSignal | undefined,
   onUpdate: OnUpdateCallback | undefined,
   makeDetails: (results: SingleResult[]) => SubagentDetails,
@@ -545,6 +532,7 @@ async function runSingleAgent(
     signal,
     onUpdate,
     makeDetails,
+    sessionId,
     ctx,
   );
 }
@@ -680,6 +668,11 @@ const TaskItem = Type.Object({
   }),
   cwd: Type.Optional(
     Type.String({ description: "Working directory for the agent process" }),
+  ),
+  sessionId: Type.Optional(
+    Type.String({
+      description: "Session ID to resume. Omit to start a new session.",
+    }),
   ),
 });
 
@@ -875,6 +868,7 @@ export default function (pi: ExtensionAPI) {
               t.agent,
               t.task,
               t.cwd,
+              t.sessionId,
               signal,
               (partial) => {
                 if (partial.details?.results[0]) {
@@ -903,16 +897,25 @@ export default function (pi: ExtensionAPI) {
 
         stepStartIndex += stepTasks.length;
 
+        const sessionIds = planResults
+          .filter((r) => r.sessionId)
+          .map((r) => `- ${r.agent}: ${r.sessionId}`);
+        const sessionIdsText =
+          sessionIds.length > 0
+            ? `\n<output-meta>\n## Session IDs\n${sessionIds.join("\n")}\n</output-meta>`
+            : "";
+
         const anyFailed = stepResults.some(isFailedResult);
         if (anyFailed) {
           const failedAgents = stepResults
             .filter(isFailedResult)
             .map((r) => r.agent)
             .join(", ");
-          const errorMsg = stepResults
-            .filter(isFailedResult)
-            .map((r) => `[${r.agent}] ${getResultErrorMessage(r)}`)
-            .join("\n");
+          const errorMsg =
+            stepResults
+              .filter(isFailedResult)
+              .map((r) => `[${r.agent}] ${getResultErrorMessage(r)}`)
+              .join("\n") + sessionIdsText;
 
           // Mark future steps as skipped so the renderer doesn't treat them as running
           for (let si = stepStartIndex; si < planResults.length; si++) {
@@ -956,6 +959,14 @@ export default function (pi: ExtensionAPI) {
           ? `\n<output-meta>\n## Files changed\n${fileChanges.map((p) => "- `" + p + "`").join("\n")}\n</output-meta>`
           : "";
 
+      const sessionIds = planResults
+        .filter((r) => r.sessionId)
+        .map((r) => `- ${r.agent}: ${r.sessionId}`);
+      const sessionIdsText =
+        sessionIds.length > 0
+          ? `\n<output-meta>\n## Session IDs\n${sessionIds.join("\n")}\n</output-meta>`
+          : "";
+
       let finalOutput: string;
       if (truncation.truncated) {
         let tmpPath: string | null = null;
@@ -972,9 +983,13 @@ export default function (pi: ExtensionAPI) {
           ? `${truncatedBy}, read: ${tmpPath} for full text`
           : `[Subagent final answer truncated: showing ${truncation.outputLines} of ${truncation.totalLines} lines (${formatSize(truncation.outputBytes)} of ${formatSize(truncation.totalBytes)}). Ask the subagent for a narrower/shorter answer if more detail is needed.]`;
         finalOutput =
-          truncation.content + "\n" + truncationNotice + fileChangesText;
+          truncation.content +
+          "\n" +
+          truncationNotice +
+          fileChangesText +
+          sessionIdsText;
       } else {
-        finalOutput = fullOutput + fileChangesText;
+        finalOutput = fullOutput + fileChangesText + sessionIdsText;
       }
 
       return createTextResult(
@@ -1142,10 +1157,13 @@ export default function (pi: ExtensionAPI) {
                   r.compacting ? ICONS.compacting : ICONS.retrying,
                 )
               : "";
+          const resumedTag = r.sessionId
+            ? theme.fg("accent", ` (resumed: ${r.sessionId})`)
+            : "";
           text += `${resultIndex > 0 ? "\n" : ""}\n  ${rIcon} ${theme.fg(
             "muted",
             `[${agentNumber}]`,
-          )} ${theme.fg("accent", r.agent)}${runnerTag}${statusGlyph}`;
+          )} ${theme.fg("accent", r.agent)}${runnerTag}${resumedTag}${statusGlyph}`;
           if (task)
             text += `\n    ${theme.fg("muted", "Task: ")}${theme.fg("dim", task)}`;
 

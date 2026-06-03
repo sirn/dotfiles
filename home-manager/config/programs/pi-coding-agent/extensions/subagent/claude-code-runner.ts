@@ -271,6 +271,7 @@ export async function runClaudeCodeAgent(
   signal: AbortSignal | undefined,
   onUpdate: OnUpdateCallback | undefined,
   makeDetails: (results: SingleResult[]) => SubagentDetails,
+  sessionId: string | undefined,
   _ctx: ExtensionContext,
 ): Promise<SingleResult> {
   const currentResult = createPendingResult(agent.name, task);
@@ -298,6 +299,7 @@ export async function runClaudeCodeAgent(
       "stream-json",
       "--verbose",
     ];
+    if (sessionId) args.push("--resume", sessionId);
 
     if (agent.model) {
       args.push("--model", agent.model);
@@ -371,6 +373,8 @@ export async function runClaudeCodeAgent(
               currentResult.model =
                 (event as { model?: string }).model ?? agent.model;
             }
+            if (typeof event.session_id === "string")
+              currentResult.sessionId = event.session_id;
             // api_retry: log but don't treat as error
             break;
           }
@@ -423,6 +427,8 @@ export async function runClaudeCodeAgent(
 
           case "result": {
             resultEvent = event as CCResultEvent;
+            if (typeof resultEvent.session_id === "string")
+              currentResult.sessionId = resultEvent.session_id;
             // Override usage with more accurate final data
             const finalUsage = extractResultUsage(resultEvent);
             currentResult.usage.input = finalUsage.input;

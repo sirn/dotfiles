@@ -53,9 +53,18 @@ export async function runPiAgent(
   signal: AbortSignal | undefined,
   onUpdate: OnUpdateCallback | undefined,
   makeDetails: (results: SingleResult[]) => SubagentDetails,
+  sessionId: string | undefined,
   ctx: ExtensionContext,
 ): Promise<SingleResult> {
-  const args: string[] = ["--mode", "rpc", "--no-session"];
+  const args: string[] = ["--mode", "rpc"];
+  if (sessionId) args.push("--session", sessionId);
+  const currentSessionFile = ctx.sessionManager.getSessionFile();
+  if (currentSessionFile) {
+    args.push(
+      "--session-dir",
+      `${currentSessionFile.replace(/\.jsonl$/, "")}-subagent`,
+    );
+  }
   if (agent.model) args.push("--model", agent.model);
   if (agent.tools && agent.tools.length > 0)
     args.push("--tools", agent.tools.join(","));
@@ -347,6 +356,18 @@ export async function runPiAgent(
           emitUpdate();
         }
 
+        if (
+          event.type === "response" &&
+          event.id === "get-state" &&
+          event.success
+        ) {
+          const data = (event as Record<string, unknown>).data as
+            | Record<string, unknown>
+            | undefined;
+          if (typeof data?.sessionId === "string")
+            currentResult.sessionId = data.sessionId;
+        }
+
         // Prompt preflight failure (no agent_end will follow)
         if (
           event.type === "response" &&
@@ -402,6 +423,7 @@ export async function runPiAgent(
       });
 
       sendRpc(promptCommand);
+      sendRpc({ type: "get_state", id: "get-state" });
 
       if (signal) {
         if (signal.aborted) killProc();

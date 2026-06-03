@@ -10,7 +10,10 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { Message } from "@earendil-works/pi-ai";
 import type { AgentToolResult } from "@earendil-works/pi-agent-core";
-import { withFileMutationQueue } from "@earendil-works/pi-coding-agent";
+import {
+  type ExtensionContext,
+  withFileMutationQueue,
+} from "@earendil-works/pi-coding-agent";
 
 // Agent Config
 
@@ -52,6 +55,7 @@ export interface SingleResult {
   started?: boolean;
   autoRetrying?: boolean;
   compacting?: boolean;
+  sessionId?: string;
 }
 
 export interface SubagentDetails {
@@ -82,6 +86,7 @@ export type RpcEvent =
       command?: string;
       success: boolean;
       error?: string;
+      [key: string]: unknown;
     }
   | {
       type: "extension_ui_request";
@@ -259,7 +264,8 @@ export type AgentRunner = (
   signal: AbortSignal | undefined,
   onUpdate: OnUpdateCallback | undefined,
   makeDetails: (results: SingleResult[]) => SubagentDetails,
-  ctx: unknown,
+  sessionId: string | undefined,
+  ctx: ExtensionContext,
 ) => Promise<SingleResult>;
 
 // Helper Functions
