@@ -5,15 +5,9 @@
  * as well as the main extension index for orchestration and rendering.
  */
 
-import * as fs from "node:fs";
-import * as os from "node:os";
-import * as path from "node:path";
 import type { Message } from "@earendil-works/pi-ai";
 import type { AgentToolResult } from "@earendil-works/pi-agent-core";
-import {
-  type ExtensionContext,
-  withFileMutationQueue,
-} from "@earendil-works/pi-coding-agent";
+import { type ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 // Agent Config
 
@@ -335,99 +329,4 @@ export function isFailedResult(result: SingleResult): boolean {
       result.stopReason === "error" ||
       result.stopReason === "aborted")
   );
-}
-
-export function getResultErrorMessage(result: SingleResult): string {
-  return (
-    result.errorMessage ||
-    result.stderr.trim() ||
-    getFinalOutput(result.messages) ||
-    (result.stopReason ? `Stopped: ${result.stopReason}` : "(no output)")
-  );
-}
-
-export function getFinalOutput(messages: Message[]): string {
-  for (let i = messages.length - 1; i >= 0; i--) {
-    const msg = messages[i];
-    if (msg.role === "assistant") {
-      for (const part of msg.content) {
-        if (part.type === "text") return part.text;
-      }
-    }
-  }
-  return "";
-}
-
-export async function writePromptToTempFile(
-  agentName: string,
-  prompt: string,
-): Promise<{ dir: string; filePath: string }> {
-  const tmpDir = await fs.promises.mkdtemp(
-    path.join(os.tmpdir(), "pi-subagent-"),
-  );
-  const safeName = agentName.replace(/[^\w.-]+/g, "_");
-  const filePath = path.join(tmpDir, `prompt-${safeName}.md`);
-  await withFileMutationQueue(filePath, async () => {
-    await fs.promises.writeFile(filePath, prompt, {
-      encoding: "utf-8",
-      mode: 0o600,
-    });
-  });
-  return { dir: tmpDir, filePath };
-}
-
-export async function writeOutputToTempFile(output: string): Promise<string> {
-  const tmpDir = await fs.promises.mkdtemp(
-    path.join(os.tmpdir(), "pi-subagent-"),
-  );
-  const filePath = path.join(tmpDir, "output.txt");
-  await withFileMutationQueue(filePath, async () => {
-    await fs.promises.writeFile(filePath, output, {
-      encoding: "utf-8",
-      mode: 0o600,
-    });
-  });
-  return filePath;
-}
-
-// Best-effort removal of a temp prompt file and its directory.
-export function cleanupTempPrompt(
-  dir: string | null,
-  filePath: string | null,
-): void {
-  if (filePath) {
-    try {
-      fs.unlinkSync(filePath);
-    } catch {
-      /* ignore */
-    }
-  }
-  if (dir) {
-    try {
-      fs.rmSync(dir, { recursive: true });
-    } catch {
-      /* ignore */
-    }
-  }
-}
-
-// Builds the progress callback shared by both runners: emits the result's
-// latest text (or a running placeholder) alongside the live details.
-export function makeEmitUpdate(
-  currentResult: SingleResult,
-  onUpdate: OnUpdateCallback | undefined,
-  makeDetails: (results: SingleResult[]) => SubagentDetails,
-): () => void {
-  return () => {
-    if (!onUpdate) return;
-    onUpdate({
-      content: [
-        {
-          type: "text",
-          text: getFinalOutput(currentResult.messages) || "(running...)",
-        },
-      ],
-      details: makeDetails([currentResult]),
-    });
-  };
 }

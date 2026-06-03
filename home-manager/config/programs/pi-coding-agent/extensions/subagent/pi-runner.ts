@@ -18,11 +18,13 @@ import {
   type RpcEvent,
   type OnUpdateCallback,
   createPendingResult,
+} from "./types.js";
+import {
   getResultErrorMessage,
   writePromptToTempFile,
   cleanupTempPrompt,
   makeEmitUpdate,
-} from "./types.js";
+} from "./utils.js";
 
 // Pi Invocation
 

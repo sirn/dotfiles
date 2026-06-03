@@ -54,10 +54,13 @@ import {
   isPendingResult,
   isSkippedResult,
   isFailedResult,
+} from "./types.js";
+import {
   getResultErrorMessage,
   getFinalOutput,
+  stripAnsi,
   writeOutputToTempFile,
-} from "./types.js";
+} from "./utils.js";
 import { runPiAgent } from "./pi-runner.js";
 import { runClaudeCodeAgent } from "./claude-code-runner.js";
 
@@ -291,22 +294,15 @@ function formatToolCall(
   return { name: toolName, arg };
 }
 
-function formatFinalOutput(result: SingleResult): string {
-  return getFinalOutput(result.messages) || "(no output)";
-}
-
-function formatStepHeading(stepIndex: number, result: SingleResult): string {
-  return `Step ${stepIndex + 1} [${result.agent}]`;
-}
-
 function buildStepsFinalOutput(results: SingleResult[]): string {
   if (results.length === 0) return "(no output)";
-  if (results.length === 1) return formatFinalOutput(results[0]);
+  if (results.length === 1)
+    return getFinalOutput(results[0].messages) || "(no output)";
 
   return results
     .map((result) => {
       const stepIndex = result.stepIndex ?? 0;
-      return `${formatStepHeading(stepIndex, result)}\n${formatFinalOutput(result)}`;
+      return `Step ${stepIndex + 1} [${result.agent}]\n${getFinalOutput(result.messages) || "(no output)"}`;
     })
     .join("\n\n");
 }
@@ -366,8 +362,9 @@ function getDisplayItems(messages: Message[]): DisplayItem[] {
         .filter((p: any) => p.type === "text")
         .map((p: any) => p.text)
         .join("\n");
-      if (text.trim()) {
-        items.push({ type: "toolResult", toolName, text, isError });
+      const trimmed = stripAnsi(text).trim();
+      if (trimmed) {
+        items.push({ type: "toolResult", toolName, text: trimmed, isError });
       }
     }
   }

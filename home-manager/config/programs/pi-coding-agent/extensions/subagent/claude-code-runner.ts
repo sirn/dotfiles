@@ -24,20 +24,13 @@ import {
   type CCAssistantEvent,
   type CCResultEvent,
   createPendingResult,
+} from "./types.js";
+import {
   getFinalOutput,
   writePromptToTempFile,
   cleanupTempPrompt,
   makeEmitUpdate,
-} from "./types.js";
-
-// Claude Code CLI invocation
-
-function getClaudeCodeInvocation(args: string[]): {
-  command: string;
-  args: string[];
-} {
-  return { command: "claude", args };
-}
+} from "./utils.js";
 
 // Event parsing helpers
 
@@ -325,7 +318,7 @@ export async function runClaudeCodeAgent(
     let resultEvent: CCResultEvent | undefined;
 
     const exitCode = await new Promise<number>((resolve) => {
-      const invocation = getClaudeCodeInvocation(args);
+      const invocation = { command: "claude", args };
       const proc = spawn(invocation.command, invocation.args, {
         cwd,
         shell: false,
