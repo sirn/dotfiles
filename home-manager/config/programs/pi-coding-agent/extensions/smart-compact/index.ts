@@ -33,10 +33,11 @@ interface NormalizedAutoCompactConfig {
 }
 
 interface SmartCompactConfig {
-  provider: string;
-  model: string;
+  provider?: string;
+  model?: string;
   maxTokens?: number;
   autoCompact?: SmartCompactAutoConfig;
+  vcc?: { enable?: boolean };
 }
 
 const DEFAULT_AUTO_COMPACT_MAX_CONTEXT_TOKENS = 150_000;
@@ -49,7 +50,10 @@ try {
     const customConfig: SmartCompactConfig = JSON.parse(
       fs.readFileSync(configPath, "utf-8"),
     );
-    if (customConfig.provider && customConfig.model) {
+    if (
+      (customConfig.provider && customConfig.model) ||
+      customConfig.vcc?.enable === true
+    ) {
       compactionConfig = customConfig;
     }
   }
@@ -159,7 +163,9 @@ export default function (pi: ExtensionAPI) {
 
     ctx.compact({
       customInstructions:
-        "Auto-compaction triggered because context usage exceeded the configured threshold. Preserve current task state, decisions, modified files, verification results, blockers, and next actions.",
+        compactionConfig!.vcc?.enable === true
+          ? "__pi_vcc__"
+          : "Auto-compaction triggered because context usage exceeded the configured threshold. Preserve current task state, decisions, modified files, verification results, blockers, and next actions.",
       onComplete: () => {
         autoCompactionInProgress = false;
         previousTokens = null;
@@ -185,6 +191,11 @@ export default function (pi: ExtensionAPI) {
       firstKeptEntryId,
       previousSummary,
     } = preparation;
+
+    // If vcc is enabled, let pi-vcc handle the compaction
+    if (compactionConfig!.vcc?.enable === true) {
+      return; // Let pi-vcc's before-compact hook handle it
+    }
 
     // Resolve the configured model
     const model = ctx.modelRegistry.find(
@@ -318,6 +329,7 @@ ${conversationText}
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       ctx.ui.notify(`Compaction failed: ${message}, using default`, "error");
+
       // Fall back to default compaction on error
       return;
     }

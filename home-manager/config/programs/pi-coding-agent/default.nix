@@ -161,22 +161,25 @@ in
 
   home.file =
     lib.mapAttrs' (
-      name: _:
-      lib.nameValuePair ".pi/agent/extensions/hm-${name}" {
-        source = ./extensions + "/${name}";
-      }
+      name: _: lib.nameValuePair ".pi/agent/extensions/hm-${name}" { source = ./extensions + "/${name}"; }
       # Note: builtins.readDir ordering is non-deterministic per Nix spec,
       # but home.file deployment order does not matter here.
     ) (lib.filterAttrs (_: type: type == "directory") (builtins.readDir ./extensions))
     // {
       ".pi/agent/extensions/rimuruw-pi-hashline-edit".source = pkgs.local.pi-hashline-edit;
+      ".pi/agent/extensions/monotykamary-pi-vcc".source = pkgs.local.pi-vcc;
       ".pi/agent/skills".source = agentsCfg.skillTrees;
       ".pi/agent/custom/execution-policy/policy.json".source = policyJsonFile;
-
       ".pi/agent/custom/execution-policy/auto-mode/prompt.md".text = policyAutoModePrompt;
       ".pi/agent/custom/execution-policy/auto-mode/commands-context.md".text = lib.mkIf (
         policyAutoModeExtraCommands != ""
       ) policyAutoModeExtraCommands;
+    }
+    // lib.optionalAttrs (cfg.extensionCustom.smart-compact.vcc.enable or false) {
+      ".pi/agent/pi-vcc-config.json".text = builtins.toJSON {
+        overrideDefaultCompaction = true;
+        debug = false;
+      };
     }
     // policyAutoModeContextFileEntries
     // piAgentMdFiles;
