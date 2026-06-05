@@ -94,6 +94,7 @@
 
       # Layout
       "toggleFullscreen" = "Command+Control+Return";
+      "toggleFloating" = "Command+Option+F";
       "toggleColumnTabbed" = "Command+Control+T";
       "toggleColumnFullWidth" = "Command+Control+Shift+F";
       "toggleWorkspaceLayout" = "Command+Control+Shift+W";
