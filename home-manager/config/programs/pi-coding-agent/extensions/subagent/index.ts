@@ -704,11 +704,16 @@ export default function (pi: ExtensionAPI) {
     }
     for (let i = entries.length - 1; i >= 0; i--) {
       const entry = entries[i];
-      if (entry.type !== "custom" || entry.customType !== "subagent-partial-results") continue;
+      if (
+        entry.type !== "custom" ||
+        entry.customType !== "subagent-partial-results"
+      )
+        continue;
       const data = entry.data as Record<string, unknown> | undefined;
       if (!data || typeof data !== "object") continue;
       const status = typeof data.status === "string" ? data.status : undefined;
-      const summary = typeof data.summary === "string" ? data.summary : undefined;
+      const summary =
+        typeof data.summary === "string" ? data.summary : undefined;
       if (status === "processed") break;
       if (status === "pending" && summary) {
         try {
@@ -1028,7 +1033,10 @@ export default function (pi: ExtensionAPI) {
                 )
                 .join("\n\n");
               try {
-                pi.appendEntry("subagent-partial-results", { status: "pending", summary });
+                pi.appendEntry("subagent-partial-results", {
+                  status: "pending",
+                  summary,
+                });
               } catch {
                 // Non-critical: persistence failure shouldn't break the tool result
               }
