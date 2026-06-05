@@ -5,6 +5,7 @@ let
 in
 {
   mitsuhiko-agent-stuff = (callPackage ./by-name/mitsuhiko-agent-stuff { });
+  mouseless = (callPackage ./by-name/mouseless/package.nix { });
   skill-ast-grep = (callPackage ./by-name/skill-ast-grep { });
 
   asdcontrol = (callPackage ./by-name/asdcontrol { });

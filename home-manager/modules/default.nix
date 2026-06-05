@@ -9,6 +9,7 @@
     ./programs/emacs.nix
     ./programs/niri.nix
     ./programs/omniwm.nix
+    ./programs/mouseless.nix
     ./programs/pi-coding-agent.nix
   ];
 }
