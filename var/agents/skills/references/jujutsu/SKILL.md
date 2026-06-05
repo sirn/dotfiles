@@ -14,6 +14,7 @@ Working copy is always a commit. Changes are first-class with stable IDs across 
 - **User Authorization**: NEVER push (`jj git push`) or run destructive/history-rewriting operations (`jj edit`, `jj squash`, `jj split`, `jj rebase`, `jj abandon`, `jj undo`, `jj op restore`, bookmark moves/deletes) without explicit user confirmation.
 - **Logical Commits**: Group changes into logical steps; try to make each commit "usable" on its own.
 - **Commit + Advance**: Prefer `jj commit -m "msg"` when finalizing the current working-copy commit and moving on. This replaces the common `jj describe <id> -m "msg"` followed by `jj new <id>` sequence.
+- **Working Copy After Commit**: After `jj commit` or `jj new`, a new empty commit becomes `@`. This is expected jj behavior — do not attempt to remove or squash it away.
 - **Revision References**: Use `@`, `@-`, and revsets for immediate one-off commands when they are clear. Use explicit change IDs for scripts, multi-step instructions, destructive operations, and commands where the target could become ambiguous.
 - **Splitting**: Use `jj split -r <change-id> -m "<commit-message>" -- <file>`; do not use interactive `jj split`.
 - **Squashing**: Use `jj squash --from <from-id> --to <to-id>` instead of implicit `jj squash`. Always squash **from newer to older** (descendant into ancestor) to avoid conflicts. Squashing older into newer (e.g. `--from <base> --to <head>`) rewrites the head's ancestors while descendants still reference the old state, causing conflicts in every downstream commit.
