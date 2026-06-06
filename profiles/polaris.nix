@@ -87,6 +87,8 @@
       boot.kernel.sysctl = {
         "vm.mem_profiling" = "0";
       };
+
+      hardware.uinput.enable = true;
     };
 
   home =
