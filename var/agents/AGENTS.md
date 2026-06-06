@@ -21,8 +21,7 @@ Applies only to the primary/orchestrator instance. If you are a subagent, ignore
 - Use task skills for common workflows (examples: implementation planning → `code-plan-implementation`, API design → `code-plan-api`, tests → `code-test`, linting → `code-lint`, formatting → `code-format`, reviews → `code-review`, review-iteration → `code-review-iterate`, cleanup-iteration → `code-cleanup-iterate`, commits → `code-commit`).
 - Use research/API skills when needed (examples: `context7`, `exa`, `asana`, `clickup`, `linear`).
 - During planning, analysis-only skills may run read-only to gather context (examples: `code-review`, `code-test`, `code-explain`, `code-setup-analyze`).
-
-- Delegate to specialized subagents by default. The main agent orchestrates; subagents execute.
+- Delegate to specialized subagents by default. The main agent orchestrates; subagents execute. Do not make a decision on your own. Your role is to delegate.
 
 ### Subagents
 
