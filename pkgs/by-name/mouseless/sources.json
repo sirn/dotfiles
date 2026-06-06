@@ -1,15 +1,15 @@
 {
-  "version": "1.0.0-preview.3",
+  "version": "0.4.3",
   "x86_64-linux": {
-    "url": "https://github.com/cymian/mouseless/releases/download/v1.0.0-preview.3/Mouseless_v1.0.0-preview.3_debian-13_x86_64.AppImage",
-    "hash": "sha256-JQ97r2dMIZihaU8TnLX+3ieeiym2vEFq1dxYSxjgYIQ="
+    "url": "https://github.com/cymian/mouseless/releases/download/v0.4.3/Mouseless_v0.4.3_debian-13_x86_64.AppImage",
+    "hash": "sha256-l4Xs8LMRtrMjIqDhAaf1kru7Mhwdn2n1xVcXVir0/wM="
   },
   "aarch64-linux": {
-    "url": "https://github.com/cymian/mouseless/releases/download/v1.0.0-preview.3/Mouseless_v1.0.0-preview.3_debian-13_aarch64.AppImage",
-    "hash": "sha256-SXCN1kBE8aHEDZQw6fj0ewEflN5pYPGjKJ2zpuycg9s="
+    "url": "https://github.com/cymian/mouseless/releases/download/v0.4.3/Mouseless_v0.4.3_debian-13_aarch64.AppImage",
+    "hash": "sha256-bMlyNtU5F3sm0HguQAW0B+sri78YDZtWsvn4Eax9psU="
   },
   "aarch64-darwin": {
-    "url": "https://github.com/cymian/mouseless/releases/download/v1.0.0-preview.1/mouseless-installer_v1.0.0-preview.1.dmg",
-    "hash": "sha256-0JAZMDW1c7c2Jyopvf8wr7NRvxENYSrOKZ44QNmmPko="
+    "url": "https://github.com/cymian/mouseless/releases/download/v0.4.3/mouseless-installer_v0.4.3.dmg",
+    "hash": "sha256-cyqv9z8WeXFnj1/Hp1LH566KwbRQEqXewJMq+EzlwUk="
   }
 }
