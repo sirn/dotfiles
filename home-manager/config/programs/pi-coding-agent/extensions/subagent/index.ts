@@ -862,11 +862,15 @@ export default function (pi: ExtensionAPI) {
       for (let stepIndex = 0; stepIndex < steps.length; stepIndex++) {
         const stepAgents = steps[stepIndex];
 
-        // Replace {previous} in each task
-        const stepTasks = stepAgents.map((a) => ({
-          ...a,
-          task: a.task.replace(/\{previous\}/g, () => previousOutput),
-        }));
+        // Replace {previous} in each task; auto-inject when absent and output exists
+        const stepTasks = stepAgents.map((a) => {
+          const hasPrevious = /\{previous\}/.test(a.task);
+          let task = a.task.replace(/\{previous\}/g, () => previousOutput);
+          if (!hasPrevious && previousOutput) {
+            task += `\n<previous>\n${previousOutput}\n</previous>`;
+          }
+          return { ...a, task };
+        });
 
         // Update task text for this step's agents (replacing {previous})
         for (let i = 0; i < stepTasks.length; i++) {
