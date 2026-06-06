@@ -178,6 +178,46 @@ export function normalizeUnifiedPolicyConfig(
   };
 }
 
+
+// Tool Policy Helpers
+
+/**
+/**
+ * Compute the set of tools explicitly DISABLED by a stack of mode policies.
+ * If any policy in the stack disables a tool, it remains disabled (any-false-wins).
+ */
+export function computeDisabledTools(policies: ModePolicy[]): Set<string> {
+  const disabled = new Set<string>();
+  for (const policy of policies) {
+    if (!policy.tools) continue;
+    for (const [toolName, allowed] of Object.entries(policy.tools)) {
+      if (allowed === false) {
+        disabled.add(toolName);
+      }
+    }
+  }
+  return disabled;
+}
+
+/**
+ * Get all tool names that have an explicit opinion in the policy stack,
+ * mapped to their final opinion (true/false) after resolving the stack.
+ * Last opinion wins.
+ */
+export function getToolsWithPolicyOpinion(
+  policies: ModePolicy[],
+): Map<string, boolean> {
+  const result = new Map<string, boolean>();
+  for (const policy of policies) {
+    if (policy.tools) {
+      for (const [toolName, opinion] of Object.entries(policy.tools)) {
+        result.set(toolName, opinion);
+      }
+    }
+  }
+  return result;
+}
+
 // --- Tokenizer ---
 
 interface WordToken {

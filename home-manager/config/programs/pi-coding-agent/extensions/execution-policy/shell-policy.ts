@@ -22,7 +22,7 @@ import type {
   ExtensionAPI,
   ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
-import { getExecutionMode } from "./lib/execution-mode.js";
+import { getExecutionMode, setModeChangeHook } from "./lib/execution-mode.js";
 import { EXT_DIR, PI_AGENT_DIR } from "./lib/paths.js";
 import * as fs from "node:fs";
 import * as path from "node:path";
@@ -33,6 +33,8 @@ import {
   normalizeUnifiedPolicyConfig,
   normalizeShellPolicyConfig,
   getCommandSummary,
+  computeDisabledTools,
+
   type EvalResult,
   type EvaluationPolicy,
   type ModePolicy,
@@ -433,20 +435,19 @@ export default function (pi: ExtensionAPI) {
     );
   }
 
-  function mergeToolAllowedStrict(
-    toolName: string,
-    policies: ModePolicy[],
-  ): boolean | undefined {
-    let sawOpinion = false;
-    let allowed = true;
-    for (const policy of policies) {
-      const value = policy.tools?.[toolName];
-      if (value === undefined) continue;
-      sawOpinion = true;
-      if (value === false) allowed = false;
-    }
-    return sawOpinion ? allowed : undefined;
+function mergeToolAllowedStrict(
+  toolName: string,
+  policies: ModePolicy[],
+): boolean | undefined {
+  // Most restrictive wins: any false → false, any true (no false) → true, else undefined
+  let hasTrue = false;
+  for (const policy of policies) {
+    const value = policy.tools?.[toolName];
+    if (value === false) return false;
+    if (value === true) hasTrue = true;
   }
+  return hasTrue ? true : undefined;
+}
 
   function formatBlockReason(
     toolName: string,
@@ -472,25 +473,25 @@ export default function (pi: ExtensionAPI) {
       .map((mode) => globalUnified.modes?.[mode])
       .filter((policy): policy is ModePolicy => Boolean(policy));
 
-    // --- Write/Edit tool blocking based on mode stack's tools config ---
-    if (event.toolName === "write" || event.toolName === "edit") {
-      const toolAllowed = mergeToolAllowedStrict(event.toolName, modePolicies);
-      if (toolAllowed === false) {
-        // Check if this path is explicitly allowed by policy override
+    // Defense-in-depth: block any tool explicitly disabled by mode policy
+    const toolAllowed = mergeToolAllowedStrict(event.toolName, modePolicies);
+    if (toolAllowed === false) {
+      // For write/edit, check path-specific allowances
+      if (event.toolName === "write" || event.toolName === "edit") {
         const targetPath = event.input?.path as string | undefined;
         if (isPathAllowed(event.toolName, targetPath, policyOverride)) {
           return undefined; // Allow this specific path
         }
-        return {
-          block: true,
-          reason: formatBlockReason(
-            event.toolName,
-            policyOverride,
-            executionMode.mode,
-          ),
-        };
       }
-      return undefined; // No opinion on write/edit otherwise
+      return {
+        block: true,
+        reason: `Tool "${event.toolName}" is blocked (execution mode: ${executionMode.mode}).`,
+      };
+    }
+
+    // Write/edit now handled above by general tool policy enforcement
+    if (event.toolName === "write" || event.toolName === "edit") {
+      return undefined; // No additional blocking beyond tool policy
     }
 
     // --- Bash command evaluation ---
@@ -535,5 +536,15 @@ export default function (pi: ExtensionAPI) {
       case "default":
         return await confirmCommand(command, ctx, result);
     }
+  });
+
+  setModeChangeHook((_ctx, _mode, modes) => {
+    const modePolicies = modes
+      .map((mode) => globalUnified.modes?.[mode])
+      .filter((policy): policy is ModePolicy => Boolean(policy));
+    const disabledTools = computeDisabledTools(modePolicies);
+    const activeToolNames = pi.getActiveTools().filter((name) => !disabledTools.has(name));
+    pi.setActiveTools(activeToolNames);
+
   });
 }

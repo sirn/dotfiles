@@ -89,6 +89,25 @@ export function registerMode(config: ModeRegistration): void {
   modeRegistrations.set(config.mode, config);
 }
 
+// Mode Change Hook
+
+type ModeChangeHook = (ctx: ExtensionContext, mode: string, modes: string[]) => void;
+let modeChangeHook: ModeChangeHook | undefined;
+
+/**
+ * Register a callback fired after mode state changes.
+ * Called from updateModeWidgets, which is invoked on session_start,
+ * mode commands (/plan, /delegate), and turn_end.
+ */
+export function setModeChangeHook(hook: ModeChangeHook): void {
+  modeChangeHook = hook;
+}
+
+/** Internal: fire the mode change hook. */
+export function fireModeChangeHook(ctx: ExtensionContext, mode: string, modes: string[]): void {
+  modeChangeHook?.(ctx, mode, modes);
+}
+
 export function setupModePromptInjection(pi: ExtensionAPI): void {
   pi.on("before_agent_start", async (_event, ctx) => {
     const currentMode = getMode(ctx);
@@ -119,4 +138,5 @@ export function updateModeWidgets(ctx: ExtensionContext): void {
     }
   }
   ctx.ui.setStatus("execution-mode", activeModeLabel);
+  fireModeChangeHook(ctx, mode, getExecutionMode(ctx).modes);
 }
