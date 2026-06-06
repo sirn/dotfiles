@@ -1,9 +1,15 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
-  inherit (lib) mkOption types;
+  inherit (lib) mkOption types mkEnableOption;
   cfg = config.programs.mouseless;
-in {
+in
+{
   options.programs.mouseless = {
     enable = mkOption {
       type = types.bool;
@@ -36,12 +42,30 @@ in {
         description = "Whether the launchd service should be kept alive.";
       };
     };
+
+    systemd = {
+      enable = mkEnableOption "the systemd user service for Mouseless" // {
+        default = true;
+      };
+
+      target = mkOption {
+        type = types.str;
+        default = "graphical-session.target";
+        description = "The systemd target for the Mouseless service.";
+      };
+
+      wantedBy = mkOption {
+        type = types.listOf types.str;
+        default = [ "default.target" ];
+        description = "The systemd units that want the Mouseless service.";
+      };
+    };
   };
 
   config = lib.mkIf cfg.enable {
     home.packages = [ cfg.package ];
 
-    launchd.agents.mouseless = lib.mkIf cfg.launchd.enable {
+    launchd.agents.mouseless = lib.mkIf (pkgs.stdenv.hostPlatform.isDarwin && cfg.launchd.enable) {
       enable = true;
       config = {
         Program = "${cfg.package}/Applications/Mouseless.app/Contents/MacOS/mouseless";
@@ -51,5 +75,27 @@ in {
         StandardErrorPath = "/tmp/mouseless.err.log";
       };
     };
+
+    systemd.user.services.mouseless =
+      lib.mkIf (cfg.systemd.enable && config ? systemd.user)
+        {
+          Unit = {
+            Description = "Mouseless - keyboard-driven mouse control";
+            PartOf = [ cfg.systemd.target ];
+            After = [ cfg.systemd.target ];
+
+          };
+
+          Service = {
+            ExecStart = lib.getExe cfg.package;
+            Restart = "on-failure";
+            RestartSec = 5;
+            Slice = "app.slice";
+          };
+
+          Install = {
+            WantedBy = cfg.systemd.wantedBy;
+          };
+        };
   };
 }
