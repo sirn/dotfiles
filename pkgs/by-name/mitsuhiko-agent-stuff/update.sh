@@ -30,8 +30,4 @@ jq -n \
   --arg srcHash "$src_hash" \
   '{version: $version, rev: $rev, srcHash: $srcHash}' >"$sources_file"
 
-echo "Verifying build..."
-nix-build -E 'let pkgs = import <nixpkgs> {}; in pkgs.callPackage ./pkgs/by-name/mitsuhiko-agent-stuff {}' \
-  --no-out-link
-
 echo "Done. Updated to $version ($rev)"

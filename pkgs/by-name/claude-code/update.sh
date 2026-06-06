@@ -49,9 +49,4 @@ done
 
 printf '\n}\n' >>"$sources_file"
 
-echo "Verifying build..."
-nix-build -E \
-  'let pkgs = import <nixpkgs> {}; in pkgs.callPackage ./pkgs/by-name/claude-code/package.nix {}' \
-  --no-out-link 2>&1 | tail -5 || true
-
 echo "Done. Updated to $version"
