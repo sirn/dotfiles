@@ -677,7 +677,13 @@
         };
       };
 
-      delegate = { };
+      delegate = {
+        tools = {
+          edit = false;
+          write = false;
+          bash = false;
+        };
+      };
 
       subagent = { };
 
