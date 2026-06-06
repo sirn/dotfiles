@@ -34,7 +34,6 @@ import {
   normalizeShellPolicyConfig,
   getCommandSummary,
   computeDisabledTools,
-
   type EvalResult,
   type EvaluationPolicy,
   type ModePolicy,
@@ -435,19 +434,19 @@ export default function (pi: ExtensionAPI) {
     );
   }
 
-function mergeToolAllowedStrict(
-  toolName: string,
-  policies: ModePolicy[],
-): boolean | undefined {
-  // Most restrictive wins: any false → false, any true (no false) → true, else undefined
-  let hasTrue = false;
-  for (const policy of policies) {
-    const value = policy.tools?.[toolName];
-    if (value === false) return false;
-    if (value === true) hasTrue = true;
+  function mergeToolAllowedStrict(
+    toolName: string,
+    policies: ModePolicy[],
+  ): boolean | undefined {
+    // Most restrictive wins: any false → false, any true (no false) → true, else undefined
+    let hasTrue = false;
+    for (const policy of policies) {
+      const value = policy.tools?.[toolName];
+      if (value === false) return false;
+      if (value === true) hasTrue = true;
+    }
+    return hasTrue ? true : undefined;
   }
-  return hasTrue ? true : undefined;
-}
 
   function formatBlockReason(
     toolName: string,
@@ -543,8 +542,9 @@ function mergeToolAllowedStrict(
       .map((mode) => globalUnified.modes?.[mode])
       .filter((policy): policy is ModePolicy => Boolean(policy));
     const disabledTools = computeDisabledTools(modePolicies);
-    const activeToolNames = pi.getActiveTools().filter((name) => !disabledTools.has(name));
+    const activeToolNames = pi
+      .getActiveTools()
+      .filter((name) => !disabledTools.has(name));
     pi.setActiveTools(activeToolNames);
-
   });
 }

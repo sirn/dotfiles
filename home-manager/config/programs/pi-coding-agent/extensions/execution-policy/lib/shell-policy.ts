@@ -178,7 +178,6 @@ export function normalizeUnifiedPolicyConfig(
   };
 }
 
-
 // Tool Policy Helpers
 
 /**

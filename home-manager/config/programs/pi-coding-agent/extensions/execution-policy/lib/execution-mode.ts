@@ -91,7 +91,11 @@ export function registerMode(config: ModeRegistration): void {
 
 // Mode Change Hook
 
-type ModeChangeHook = (ctx: ExtensionContext, mode: string, modes: string[]) => void;
+type ModeChangeHook = (
+  ctx: ExtensionContext,
+  mode: string,
+  modes: string[],
+) => void;
 let modeChangeHook: ModeChangeHook | undefined;
 
 /**
@@ -104,7 +108,11 @@ export function setModeChangeHook(hook: ModeChangeHook): void {
 }
 
 /** Internal: fire the mode change hook. */
-export function fireModeChangeHook(ctx: ExtensionContext, mode: string, modes: string[]): void {
+export function fireModeChangeHook(
+  ctx: ExtensionContext,
+  mode: string,
+  modes: string[],
+): void {
   modeChangeHook?.(ctx, mode, modes);
 }
 
