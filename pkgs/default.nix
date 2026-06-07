@@ -4,13 +4,11 @@ let
   inherit (prev.lib) recurseIntoAttrs;
 in
 {
-  mitsuhiko-agent-stuff = (callPackage ./by-name/mitsuhiko-agent-stuff { });
-  mouseless = (callPackage ./by-name/mouseless/package.nix { });
-  skill-ast-grep = (callPackage ./by-name/skill-ast-grep { });
-
   asdcontrol = (callPackage ./by-name/asdcontrol { });
 
   coincide = (callPackage ./by-name/coincide { });
+
+  coord = (callPackage ./by-name/coord/package.nix { });
 
   claude-code = (callPackage ./by-name/claude-code/package.nix { });
 
@@ -32,11 +30,17 @@ in
 
   pi-vcc = (callPackage ./by-name/pi-vcc/package.nix { });
 
+  mitsuhiko-agent-stuff = (callPackage ./by-name/mitsuhiko-agent-stuff { });
+
+  mouseless = (callPackage ./by-name/mouseless/package.nix { });
+
   node-textfile-collector-scripts = (
     callPackage ./by-name/prometheus/node-textfile-collector-scripts.nix { }
   );
 
   repoman = (callPackage ./by-name/repoman/package.nix { });
+
+  skill-ast-grep = (callPackage ./by-name/skill-ast-grep { });
 
   tincan = (callPackage ./by-name/tincan/package.nix { });
 
