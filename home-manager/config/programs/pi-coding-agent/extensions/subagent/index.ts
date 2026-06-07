@@ -18,8 +18,7 @@
  *
  * Uses RPC mode (Pi) or --print stream-json (Claude Code) to send tasks
  * and capture structured output from subagents, including proxied
- * extension UI requests (Pi only). Subagent system prompts (persona)
- * are surfaced back to the main agent.
+ * extension UI requests (Pi only).
  */
 
 import * as fs from "node:fs";
@@ -30,17 +29,15 @@ import type { Message } from "@earendil-works/pi-ai";
 import {
   type ExtensionAPI,
   type ExtensionContext,
-  type Theme,
   keyHint,
   getAgentDir,
   parseFrontmatter,
-  getMarkdownTheme,
   DEFAULT_MAX_BYTES,
   DEFAULT_MAX_LINES,
   formatSize,
   truncateHead,
 } from "@earendil-works/pi-coding-agent";
-import { Container, Markdown, Spacer, Text, Box } from "@earendil-works/pi-tui";
+import { Text } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 
 import {
@@ -67,9 +64,6 @@ import { runClaudeCodeAgent } from "./claude-code-runner.js";
 // Nerd Font glyphs used in TUI rendering, collected here so the raw
 // code points live in one place instead of scattered inline.
 const ICONS = {
-  completed: "\u{F03EB}", // subagent completed (result header)
-  failed: "\u{F03EC}", // subagent failed (result header)
-  running: "\u{F03EF}", // subagent running (result header)
   waiting: "\u{25CB}", // agent waiting to start
   pending: "\u{F43A}", // agent in progress
   skipped: "\u{2298}", // agent skipped
@@ -191,19 +185,8 @@ let sessionRestoredCost = 0;
 function createTextResult(
   text: string,
   details: SubagentDetails,
-  type: "text" | "custom" = "text",
-  customType?: string,
-  extra: Record<string, unknown> = {},
 ): AgentToolResult<SubagentDetails> {
-  const content =
-    type === "custom"
-      ? [
-          { type: "text", text },
-          { type, customType, content: text, ...extra },
-        ]
-      : [{ type, text }];
-
-  return { content, details };
+  return { content: [{ type: "text", text }], details };
 }
 
 function setSubagentCost(ctx: ExtensionContext, results: SingleResult[]): void {
@@ -534,89 +517,6 @@ async function runSingleAgent(
   );
 }
 
-// Custom Message Renderers (persona surfacing)
-
-function createSubagentResultRenderer(
-  header: string,
-  colorKey: "accent" | "success" | "error",
-  fallback: string,
-) {
-  return (
-    message: Record<string, unknown>,
-    { expanded }: { expanded: boolean },
-    theme: Theme,
-  ) => {
-    const container = new Container();
-    const box = new Box(1, 1, (s: string) => theme.bg("customMessageBg", s));
-
-    if (expanded) {
-      box.addChild(new Text(theme.fg(colorKey, theme.bold(header)), 0, 0));
-      box.addChild(new Spacer(1));
-
-      // Agent persona header
-      if (message.agentName) {
-        box.addChild(
-          new Text(
-            theme.fg("accent", `Agent: ${message.agentName}`) +
-              (message.agentDescription
-                ? theme.fg("dim", ` — ${message.agentDescription}`)
-                : ""),
-            0,
-            0,
-          ),
-        );
-        box.addChild(new Spacer(1));
-      }
-
-      const body =
-        typeof message.content === "string" ? message.content : fallback;
-      box.addChild(
-        new Markdown(body.trim(), 0, 0, getMarkdownTheme(), {
-          color: (text: string) => theme.fg("customMessageText", text),
-        }),
-      );
-    } else {
-      box.addChild(new Text(theme.fg(colorKey, theme.bold(header)), 0, 0));
-      box.addChild(new Spacer(1));
-
-      if (message.agentName) {
-        box.addChild(
-          new Text(
-            theme.fg("accent", String(message.agentName)) +
-              (message.agentDescription
-                ? theme.fg("dim", ` — ${message.agentDescription}`)
-                : ""),
-            0,
-            0,
-          ),
-        );
-        box.addChild(new Spacer(1));
-      }
-
-      const preview =
-        typeof message.content === "string"
-          ? message.content.split("\n").slice(0, 5).join("\n")
-          : fallback;
-      box.addChild(new Text(theme.fg("customMessageText", preview), 0, 0));
-      box.addChild(new Spacer(1));
-      box.addChild(
-        new Text(
-          `${theme.fg("muted", "(")}${keyHint("app.tools.expand", "to expand")}${theme.fg("muted", ")")}`,
-          0,
-          0,
-        ),
-      );
-    }
-
-    container.addChild(box);
-
-    return {
-      render: (width: number) => container.render(width),
-      invalidate: () => container.invalidate(),
-    };
-  };
-}
-
 // Tool Registration
 
 // Discover agents once at registration time so their names and
@@ -733,33 +633,6 @@ export default function (pi: ExtensionAPI) {
     }
   });
 
-  pi.registerMessageRenderer(
-    "subagent-result-success",
-    createSubagentResultRenderer(
-      `${ICONS.completed} subagent completed`,
-      "success",
-      "Done.",
-    ),
-  );
-
-  pi.registerMessageRenderer(
-    "subagent-result-error",
-    createSubagentResultRenderer(
-      `${ICONS.failed} subagent failed`,
-      "error",
-      "Failed.",
-    ),
-  );
-
-  pi.registerMessageRenderer(
-    "subagent-result-running",
-    createSubagentResultRenderer(
-      `${ICONS.running} subagent running`,
-      "accent",
-      "Running...",
-    ),
-  );
-
   pi.registerTool({
     name: "subagent",
     label: "Subagent",
@@ -768,7 +641,6 @@ export default function (pi: ExtensionAPI) {
       "Supports both Pi and Claude Code runners.",
       "Schema: steps: [[{agent, task}, ...], ...] — inner arrays run parallel, outer runs sequentially.",
       "Modes: single ([[{agent, task}]]), parallel ([[t1, t2]]), chain ([[t1], [t2]]), fanout ([[t1, t2], [t3]]).",
-      "Subagent personas are surfaced in result messages.",
     ].join(" "),
     parameters: SubagentParams,
 
@@ -853,7 +725,12 @@ export default function (pi: ExtensionAPI) {
       const planResults: SingleResult[] = [];
       for (let si = 0; si < steps.length; si++) {
         for (const t of steps[si]) {
-          planResults.push(createPendingResult(t.agent, t.task, si));
+          const pending = createPendingResult(t.agent, t.task, si);
+          if (t.sessionId) {
+            pending.resumed = true;
+            pending.sessionId = t.sessionId;
+          }
+          planResults.push(pending);
         }
       }
 
@@ -891,14 +768,7 @@ export default function (pi: ExtensionAPI) {
               steps.length === 1
                 ? `Step 1/1: ${currentStepDone}/${stepTasks.length} done, ${currentStepRunning} running...`
                 : `Step ${stepIndex + 1}/${steps.length}: ${currentStepDone}/${stepTasks.length} done, ${currentStepRunning} running...`;
-            onUpdate(
-              createTextResult(
-                msg,
-                makeDetails([...planResults]),
-                "custom",
-                "subagent-result-running",
-              ),
-            );
+            onUpdate(createTextResult(msg, makeDetails([...planResults])));
           }
         };
 
@@ -939,6 +809,12 @@ export default function (pi: ExtensionAPI) {
                     const partialResult = partial.details.results[0];
                     partialResult.stepIndex = stepIndex;
                     partialResult.started = true;
+                    // Partial updates replace the slot, so re-stamp resumed flag.
+                    if (t.sessionId) {
+                      partialResult.resumed = true;
+                      if (!partialResult.sessionId)
+                        partialResult.sessionId = t.sessionId;
+                    }
                     planResults[idx] = partialResult;
                     emitStepUpdate();
                   }
@@ -1049,8 +925,6 @@ export default function (pi: ExtensionAPI) {
           return createTextResult(
             `Stopped at step ${stepIndex + 1}/${steps.length} (${failedAgents}):\n${errorMsg}${successSection}${fileChangesText}${sessionIdsText}`,
             makeDetails([...planResults]),
-            "custom",
-            "subagent-result-error",
           );
         }
       }
@@ -1103,12 +977,7 @@ export default function (pi: ExtensionAPI) {
         finalOutput = fullOutput + fileChangesText + sessionIdsText;
       }
 
-      return createTextResult(
-        finalOutput,
-        makeDetails([...planResults]),
-        "custom",
-        "subagent-result-success",
-      );
+      return createTextResult(finalOutput, makeDetails([...planResults]));
     },
 
     // - TUI: renderCall
