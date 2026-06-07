@@ -6,6 +6,7 @@
     ./home/colors.nix
     ./home/fonts.nix
     ./programs/claude-code.nix
+    ./programs/coord.nix
     ./programs/emacs.nix
     ./programs/mouseless.nix
     ./programs/niri.nix

@@ -118,6 +118,7 @@
         # programs
         ../home-manager/config/programs/1password.nix
         ../home-manager/config/programs/brightnessctl.nix
+        ../home-manager/config/programs/coord.nix
         ../home-manager/config/programs/ffmpeg.nix
         ../home-manager/config/programs/ghostty.nix
         ../home-manager/config/programs/imagemagick.nix

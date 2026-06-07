@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.coord.enable = true;
+}
