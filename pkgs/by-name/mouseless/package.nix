@@ -11,7 +11,7 @@
 
 let
   sources = lib.importJSON ./sources.json;
-  inherit (sources) version;
+  inherit (platformData) version;
   appName = "Mouseless.app";
 
   platformData =
@@ -28,7 +28,7 @@ let
     homepage = "https://mouseless.click";
     license = licenses.unfree;
     sourceProvenance = [ sourceTypes.binaryNativeCode ];
-    platforms = builtins.attrNames (removeAttrs sources [ "version" ]);
+    platforms = builtins.attrNames sources;
     mainProgram = "mouseless";
   };
 

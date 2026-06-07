@@ -21,55 +21,56 @@ NIX_PLATFORMS=(
   ["aarch64-darwin"]="dmg"
 )
 
-# Fetch release info
-if [ -n "${1:-}" ]; then
-  version="$1"
-  echo "Using specified version: $version"
-  release_json=$(curl -fsSL "$API_URL/tags/v${version}")
-else
-  release_json=$(curl -fsSL "$API_URL/latest")
-  version=$(printf '%s' "$release_json" | jaq -r '.tag_name | ltrimstr("v")')
-fi
+# Fetch all releases
+all_releases=$(curl -fsSL "$API_URL?per_page=100")
 
 current=$(cat "$sources_file")
-current_version=$(printf '%s' "$current" | jaq -r '.version')
 
-if [ "$current_version" = "$version" ]; then
-  echo "Already at latest version: $version"
-  exit 0
-fi
-
-echo "Updating from $current_version to $version"
-
-# Extract asset names from the release for membership checks
-asset_names=$(printf '%s' "$release_json" | jaq '[.assets[].name]')
-
-# Start from current sources and update the version
-result=$(printf '%s' "$current" | jaq --arg v "$version" '.version = $v')
-
+# For each platform, find the latest release that has a matching asset
 for nix_sys in "${!NIX_PLATFORMS[@]}"; do
   platform_type="${NIX_PLATFORMS[$nix_sys]}"
 
-  if [ "$platform_type" = "appimage" ]; then
-    arch=$(printf '%s' "$nix_sys" | cut -d- -f1)
-    file="Mouseless_v${version}_debian-13_${arch}.AppImage"
-  else
-    file="mouseless-installer_v${version}.dmg"
-  fi
+  echo "Resolving version for $nix_sys ($platform_type)..."
 
-  url="$BASE_URL/download/v${version}/$file"
+  # Iterate through releases (newest first) to find one with a matching asset
+  found_version=""
+  found_idx=0
+  release_count=$(printf '%s' "$all_releases" | jaq '. | length')
+  while [ "$found_idx" -lt "$release_count" ] && [ -z "$found_version" ]; do
+    release_json=$(printf '%s' "$all_releases" | jaq ".[$found_idx]")
+    candidate=$(printf '%s' "$release_json" | jaq -r '.tag_name | ltrimstr("v")')
 
-  # Check if this asset exists in the release
-  has_asset=$(printf '%s' "$asset_names" | jaq -r --arg f "$file" 'any(. == $f)')
-  if [ "$has_asset" != "true" ]; then
-    echo "WARNING: no asset '$file' in release $version; keeping existing entry for $nix_sys"
+    # Determine expected asset name
+    if [ "$platform_type" = "appimage" ]; then
+      arch=$(printf '%s' "$nix_sys" | cut -d- -f1)
+      file="Mouseless_v${candidate}_debian-13_${arch}.AppImage"
+    else
+      file="mouseless-installer_v${candidate}.dmg"
+    fi
+
+    # Check if this asset exists in the release
+    has_asset=$(printf '%s' "$release_json" | jaq --arg f "$file" '[.assets[].name] | any(. == $f)')
+    if [ "$has_asset" = "true" ]; then
+      found_version="$candidate"
+      echo "  Found version $found_version for $nix_sys"
+    else
+      echo "  No asset '$file' in release $candidate, trying next..."
+      found_idx=$((found_idx + 1))
+    fi
+  done
+
+  if [ -z "$found_version" ]; then
+    echo "WARNING: could not find any release with assets for $nix_sys; keeping existing entry"
     continue
   fi
 
-  # Skip if URL is unchanged (avoids re-downloading)
+  # Check if this platform is already at the found version
+  current_version=$(printf '%s' "$current" | jaq -r --arg s "$nix_sys" '.[$s].version // ""')
   current_url=$(printf '%s' "$current" | jaq -r --arg s "$nix_sys" '.[$s].url // ""')
-  if [ "$current_url" = "$url" ]; then
-    echo "  $nix_sys already at $version, skipping"
+  url="$BASE_URL/download/v${found_version}/$file"
+
+  if [ "$current_version" = "$found_version" ] && [ "$current_url" = "$url" ]; then
+    echo "  $nix_sys already at $found_version, skipping"
     continue
   fi
 
@@ -80,10 +81,11 @@ for nix_sys in "${!NIX_PLATFORMS[@]}"; do
   }
   hash=$(nix hash convert --hash-algo sha256 --to sri "$raw_hash")
 
-  result=$(printf '%s' "$result" \
-    | jaq --arg s "$nix_sys" --arg u "$url" --arg h "$hash" \
-      '.[$s] = {url: $u, hash: $h}')
+  result=$(printf '%s' "$current" \
+    | jaq --arg s "$nix_sys" --arg v "$found_version" --arg u "$url" --arg h "$hash" \
+      '.[$s] = {version: $v, url: $u, hash: $h}')
+  current="$result"
 done
 
-printf '%s\n' "$result" | jaq '.' > "$sources_file"
-echo "Done. Updated to $version"
+printf '%s\n' "$current" | jaq '.' > "$sources_file"
+echo "Done. Updated sources.json"
