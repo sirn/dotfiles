@@ -6,7 +6,7 @@
 }:
 
 {
-  programs.mouseless = {
+  services.mouseless = {
     enable = true;
     launchd.enable = true;
   };

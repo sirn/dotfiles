@@ -7,10 +7,10 @@
 
 let
   inherit (lib) mkOption types mkEnableOption;
-  cfg = config.programs.mouseless;
+  cfg = config.services.mouseless;
 in
 {
-  options.programs.mouseless = {
+  options.services.mouseless = {
     enable = mkOption {
       type = types.bool;
       default = false;

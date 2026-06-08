@@ -6,9 +6,9 @@
     ./home/colors.nix
     ./home/fonts.nix
     ./programs/claude-code.nix
-    ./programs/coord.nix
+    ./services/coord.nix
     ./programs/emacs.nix
-    ./programs/mouseless.nix
+    ./services/mouseless.nix
     ./programs/niri.nix
     ./programs/pi-coding-agent.nix
   ];

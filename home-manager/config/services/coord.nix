@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  services.coord.enable = true;
+}

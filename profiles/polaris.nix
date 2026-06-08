@@ -67,6 +67,8 @@
         SUBSYSTEM=="i2c", ACTION=="add|change", KERNEL=="i2c-SNSL0028:00", ATTR{power/wakeup}="disabled"
       '';
 
+      hardware.uinput.enable = true;
+
       # Fix broken audio on Lunar Lake.
       services.pipewire.extraConfig.pipewire."99-lunar-lake-fix" = {
         "context.properties" = {
@@ -87,8 +89,6 @@
       boot.kernel.sysctl = {
         "vm.mem_profiling" = "0";
       };
-
-      hardware.uinput.enable = true;
     };
 
   home =
@@ -118,7 +118,7 @@
         # programs
         ../home-manager/config/programs/1password.nix
         ../home-manager/config/programs/brightnessctl.nix
-        ../home-manager/config/programs/coord.nix
+        ../home-manager/config/services/coord.nix
         ../home-manager/config/programs/ffmpeg.nix
         ../home-manager/config/programs/ghostty.nix
         ../home-manager/config/programs/imagemagick.nix

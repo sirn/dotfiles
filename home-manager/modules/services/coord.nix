@@ -7,7 +7,7 @@
 
 let
   inherit (lib) mkOption types mkEnableOption;
-  cfg = config.programs.coord;
+  cfg = config.services.coord;
 
   tomlFormat = pkgs.formats.toml { };
 
@@ -170,7 +170,7 @@ let
 
 in
 {
-  options.programs.coord = {
+  options.services.coord = {
     enable = mkEnableOption "coord" // {
       description = "Enable coord, a keyboard-controlled mouse for Wayland.";
     };
