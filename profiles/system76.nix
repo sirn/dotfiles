@@ -36,6 +36,7 @@
         ../nixos/config/services/greetd.nix
         ../nixos/config/services/node-exporter.nix
         ../nixos/config/services/podman.nix
+        ../nixos/config/services/dnscrypt-proxy.nix
         ../nixos/config/services/udisks2.nix
         ../nixos/config/services/upower.nix
 
