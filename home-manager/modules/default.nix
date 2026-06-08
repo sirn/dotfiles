@@ -8,7 +8,6 @@
     ./programs/claude-code.nix
     ./services/coord.nix
     ./programs/emacs.nix
-    ./services/mouseless.nix
     ./programs/niri.nix
     ./programs/pi-coding-agent.nix
   ];

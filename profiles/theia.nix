@@ -14,8 +14,6 @@
         ../home-manager/config/home/shell.nix
         ../home-manager/config/home/xdg.nix
 
-        # programs
-        ../home-manager/config/programs/mouseless.nix
       ];
     };
 }

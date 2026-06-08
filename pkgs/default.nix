@@ -32,8 +32,6 @@ in
 
   mitsuhiko-agent-stuff = (callPackage ./by-name/mitsuhiko-agent-stuff { });
 
-  mouseless = (callPackage ./by-name/mouseless/package.nix { });
-
   node-textfile-collector-scripts = (
     callPackage ./by-name/prometheus/node-textfile-collector-scripts.nix { }
   );
