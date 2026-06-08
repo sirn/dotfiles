@@ -80,6 +80,8 @@
         SUBSYSTEM=="power_supply", KERNEL=="ADP*", ACTION=="change", ENV{POWER_SUPPLY_ONLINE}=="0", RUN+="${systemdRun} --collect ${system76Power} profile battery"
       '';
 
+      hardware.uinput.enable = true;
+
       boot.kernelParams = [
         "i915.enable_guc=3"
         "i915.enable_fbc=1"
@@ -122,6 +124,7 @@
 
         # programs
         ../home-manager/config/programs/bitwarden.nix
+        ../home-manager/config/services/coord.nix
         ../home-manager/config/programs/ghostty.nix
         ../home-manager/config/programs/imagemagick.nix
         ../home-manager/config/programs/mcp.nix
