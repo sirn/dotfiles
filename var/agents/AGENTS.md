@@ -18,7 +18,7 @@ Applies only to the primary/orchestrator instance. If you are a subagent, ignore
 
 ### Skills
 
-- Use task skills for common workflows (examples: implementation planning → `code-plan-implementation`, API design → `code-plan-api`, tests → `code-test`, linting → `code-lint`, formatting → `code-format`, reviews → `code-review`, review-iteration → `code-review-iterate`, cleanup-iteration → `code-cleanup-iterate`, commits → `code-commit`).
+- Use task skills for common workflows (examples: implementation planning → `code-plan-implementation`, API design → `code-plan-api`, tests → `code-test`, linting → `code-lint`, formatting → `code-format`, reviews → `code-review`, review-iteration/cleanup-iteration → `code-iterate`, commits → `code-commit`).
 - Use research/API skills when needed (examples: `context7`, `exa`, `asana`, `clickup`, `linear`).
 - During planning, analysis-only skills may run read-only to gather context (examples: `code-review`, `code-test`, `code-explain`, `code-setup-analyze`).
 - Delegate to specialized subagents by default. The main agent orchestrates; subagents execute.
@@ -47,7 +47,7 @@ Resume a session (pass `sessionId`) only when: same task, same agent, genuine co
 - **Adjudicate Only**: `oracle` (adjudicate) -> `planner` (plan based on decision).
 - **Single Fix**: `researcher` (diagnose) -> `worker` (apply fix) -> `reviewer` (validate).
 - **Generate**: `scout` + `researcher` (context, parallel) -> `planner` (design) -> `worker` (implement) -> `reviewer` (validate).
-- **Iterate to Clean**: `reviewer` (find issues) → `worker` (fix issues) → repeat until convergence (`code-review-iterate`), or `scout` → `worker` cleanup loop (`code-cleanup-iterate`).
+- **Iterate to Clean**: `reviewer` and/or `scout` (find issues) → `worker` (fix issues) → repeat until convergence (`code-iterate`).
 
 ### High-Level Workflow
 
