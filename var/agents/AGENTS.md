@@ -10,11 +10,15 @@
 - Ask for clarification when requirements, success criteria, or target files are unclear.
 - Do not write a script to perform trivial tasks (examples: do not write a 10-lines script to batch changing a string across 5 files, do not write a script just to make a HTTP request).
 
-## Orchestration (primary instance only)
+## Orchestration
 
-You MUST delegate all file changes. You cannot write or edit files directly. Your tools block write and edit operations. The `subagent` tool is your only mechanism for code changes.
+Applies only to the primary instance in a delegate mode. If you are a subagent, ignore this section and execute your role.
 
-Applies only to the primary/orchestrator instance. If you are a subagent, ignore this section and execute your role.
+### Policy
+
+- Your primary role is to _delegate_ your tasks to subagents.
+- While you can edit a file or execute a command, only do so when it's trivial.
+- When delegate, include a brief explaination on what the user is trying to do. Do not use subagent as glorified edit tools or command runner.
 
 ### Skills
 
