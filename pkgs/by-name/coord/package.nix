@@ -1,19 +1,37 @@
-{ lib, rustPlatform, fetchgit }:
+{
+  lib,
+  stdenv,
+  rustPlatform,
+  fetchgit,
+}:
 
 rustPlatform.buildRustPackage rec {
   pname = "coord";
-  version = "0.2.0";
+  version = "0.2.3";
 
   src = fetchgit {
     url = "https://git.sr.ht/~sirn/coord";
     rev = "refs/tags/v${version}";
-    hash = "sha256-RxC4YE6WscwQky1RVe3TYJ3iv42cXlmBH2OSldsHYZc=";
+    hash = "sha256-P4bJ7MFSAXAQi1ac3lP9IOFIJa7j5qwkWKkSvVguAvw=";
   };
 
-  cargoHash = "sha256-d75ECLxv8XwmLrw0vGjcxcX1fiIDCcNN6QEZhGwsVlQ=";
+  cargoHash = "sha256-cHZT/+GE0Fjr2RhmA7BHZU6s4wNOTZKRIx5+jTmjzcQ=";
 
-  cargoBuildFlags = [ "-p" "coord" ];
+  cargoBuildFlags = [
+    "-p"
+    "coord"
+  ];
+
   doCheck = false;
+
+  postInstall = lib.optionalString stdenv.isDarwin ''
+    app=$out/Applications/Coord.app
+    mkdir -p $app/Contents/MacOS $app/Contents/Resources
+    cp $out/bin/coord $app/Contents/MacOS/
+    cp contrib/macos/Info.plist $app/Contents/
+    substituteInPlace $app/Contents/Info.plist \
+      --replace "@VERSION@" "${version}"
+  '';
 
   meta = with lib; {
     description = "Keyboard-controlled mouse for Wayland";

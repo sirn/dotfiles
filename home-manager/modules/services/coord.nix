@@ -457,7 +457,7 @@ in
             RunAtLoad = true;
             KeepAlive = true;
             ProcessType = "Interactive";
-            ProgramArguments = [ (lib.getExe cfg.package) ];
+            ProgramArguments = [ "${cfg.package}/Applications/Coord.app/Contents/MacOS/coord" ];
             StandardOutPath = "/tmp/coord.log";
             StandardErrorPath = "/tmp/coord.log";
           };
