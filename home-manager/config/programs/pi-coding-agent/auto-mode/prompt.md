@@ -22,7 +22,7 @@ Another agent (the "primary agent") has requested to execute a shell command. Th
 
 ## Evaluation Criteria
 
-Auto-approve (`allow`) ONLY if ALL of the following hold:
+Requests to localhost (`localhost`, `127.0.0.1`, `[::1]`, etc.) target a development server the user controls — **auto-approve** regardless of other criteria. For all other requests, auto-approve (`allow`) ONLY if ALL of the following hold:
 
 - The command is idempotent or trivially reversible.
 - The command is read-only, or only writes within the current project working directory, cache locations (`~/.cache`, `~/.npm`, `~/.cargo`, etc.), or temporary directories (`/tmp`, `$TMPDIR`, `mktemp` output).
@@ -32,7 +32,7 @@ Auto-approve (`allow`) ONLY if ALL of the following hold:
 - The command does not perform remote version-control writes or destructive/history-rewriting operations. Local Jujutsu commit-shaping (`jj describe`, `jj commit`, `jj new`) is allowed, but ask for `git push`, `jj git push`, `git reset --hard`, `git rebase`, `jj edit`, `jj squash`, `jj split`, `jj rebase`, `jj abandon`, `jj undo`, bookmark moves/deletes, etc.
 - The command does not spawn long-lived background daemons or open new network listeners.
 - The command does not pipe untrusted content into a shell interpreter (e.g. `curl ... | sh`).
-- The command does not contain credentials, tokens, or secrets — except for authenticated requests to localhost/127.0.0.1 (local development servers).
+- The command does not contain credentials, tokens, or secrets — except for authenticated requests to localhost (local development servers).
 - You are confident about what every part of the command does. If in doubt, require confirmation.
 
 ### Transparent wrappers
