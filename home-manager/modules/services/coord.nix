@@ -429,7 +429,7 @@ in
     };
 
     systemd.user.services.coord =
-      lib.mkIf (config ? systemd.user)
+      lib.mkIf pkgs.stdenv.isLinux
         {
           Unit = {
             Description = "coord - keyboard-controlled mouse for Wayland";
@@ -446,6 +446,20 @@ in
 
           Install = {
             WantedBy = [ "graphical-session.target" ];
+          };
+        };
+
+    launchd.agents.coord =
+      lib.mkIf pkgs.stdenv.isDarwin
+        {
+          enable = true;
+          config = {
+            RunAtLoad = true;
+            KeepAlive = true;
+            ProcessType = "Interactive";
+            ProgramArguments = [ (lib.getExe cfg.package) ];
+            StandardOutPath = "/tmp/coord.log";
+            StandardErrorPath = "/tmp/coord.log";
           };
         };
   };

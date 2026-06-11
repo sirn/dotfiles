@@ -2,15 +2,15 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "coord";
-  version = "0.1.0";
+  version = "0.2.0";
 
   src = fetchgit {
     url = "https://git.sr.ht/~sirn/coord";
     rev = "refs/tags/v${version}";
-    hash = "sha256-Kel//99/uc5xCo0D9+olNMdbgwkj8UUt/jroDglTHmU=";
+    hash = "sha256-RxC4YE6WscwQky1RVe3TYJ3iv42cXlmBH2OSldsHYZc=";
   };
 
-  cargoHash = "sha256-fd9TGHRPnO6W0h6ARaWMKXx+KlnnV/43Tp0Jr6rl+e8=";
+  cargoHash = "sha256-d75ECLxv8XwmLrw0vGjcxcX1fiIDCcNN6QEZhGwsVlQ=";
 
   cargoBuildFlags = [ "-p" "coord" ];
   doCheck = false;
@@ -20,6 +20,6 @@ rustPlatform.buildRustPackage rec {
     homepage = "https://git.sr.ht/~sirn/coord";
     license = licenses.mit;
     mainProgram = "coord";
-    platforms = platforms.linux;
+    platforms = platforms.linux ++ platforms.darwin;
   };
 }
