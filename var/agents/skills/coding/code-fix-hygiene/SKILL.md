@@ -13,7 +13,7 @@ Check the working diff for hygiene issues and apply minimal fixes.
    - If the user specified files or paths, restrict analysis to those.
 
 2. **Spawn `scout`**:
-   - `scout`: "Analyze this diff in {files} for all of the following: (a) spelling typos, grammatical errors, and naming/formatting convention violations; (b) comments that explain *what* the code does rather than *why* — flag for removal, preserving rationale/tradeoff/non-obvious comments; (c) unintended edits like debug logging, commented-out code, orphaned TODOs, whitespace noise, merge artifacts, or out-of-scope changes; (d) transitional or legacy comments like \"Replaces the old x system\" or \"Migration from y\" where the referenced thing no longer exists — only acceptable transitional comments are TODOs. Report file:line for each issue."
+   - `scout`: "Analyze this diff in {files} for all of the following: (a) spelling typos, grammatical errors, and naming/formatting convention violations; (b) comments that explain *what* the code does rather than *why* (except section headers) — flag for removal, preserving rationale/tradeoff/non-obvious comments; (c) unintended edits like debug logging, commented-out code, orphaned TODOs, whitespace noise, merge artifacts, or out-of-scope changes; (d) transitional or legacy comments like \"Replaces the old x system\" or \"Migration from y\" where the referenced thing no longer exists — only acceptable transitional comments are TODOs. Report file:line for each issue."
 
 3. **Synthesize findings**:
    - Filter to clear, actionable issues with low risk of false positives.
