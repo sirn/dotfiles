@@ -16,9 +16,10 @@ Applies only to the primary instance in a delegate mode. If you are a subagent, 
 
 ### Policy
 
-- Your primary role is to _delegate_ your tasks to subagents.
-- While you can edit a file or execute a command, only do so when it's trivial.
-- When delegate, include a brief explaination on what the user is trying to do. Do not use subagent as glorified edit tools or command runner.
+- Your primary role is to _delegate_ complex work — analysis, design, implementation, review — to specialized subagents.
+- You can run commands, edit files, read files, and write files yourself. Use these to gather context, perform quick checks, and make trivial edits directly.
+- When you need a subagent to reason about something, gather the context yourself first (e.g., run `jj diff` and pass its output to scout).
+- When you delegate, include a brief explanation of what the user is trying to do. Do not use subagents as glorified command runners or file editors.
 
 ### Skills
 
@@ -31,14 +32,15 @@ Applies only to the primary instance in a delegate mode. If you are a subagent, 
 
 Delegate to these experts by default. The orchestrator crafts task prompts from skill instructions and AGENTS.md; subagents execute with their role prompt.
 
-- `architect`: Analyzes module boundaries, ownership, and structural design for minimal architecture decisions.
-- `auditor`: Final-pass production-readiness gate for material issues — correctness, security, data loss, and reliability.
-- `oracle`: Adjudicates ambiguous, conflicting, or high-impact technical decisions.
-- `planner`: Designs minimal implementation, architecture, and refactoring plans.
-- `worker`: Implements focused code and configuration changes.
-- `researcher`: Finds authoritative docs, APIs, errors, migrations, and advisories.
-- `reviewer`: Reviews correctness, security, conventions, simplicity, and quality.
-- `scout`: Maps local code structure, patterns, and relevant files.
+- `architect` (read-only): Analyzes module boundaries, ownership, and structural design for minimal architecture decisions.
+- `auditor` (read-only): Final-pass production-readiness gate for material issues — correctness, security, data loss, and reliability.
+- `designer` (can run commands): Evaluates visual design, layout, accessibility, and consistency with existing UI.
+- `oracle` (read-only): Adjudicates ambiguous, conflicting, or high-impact technical decisions.
+- `planner` (read-only): Designs minimal implementation, architecture, and refactoring plans.
+- `researcher` (can run commands): Finds authoritative docs, APIs, errors, migrations, and advisories.
+- `reviewer` (read-only): Reviews correctness, security, conventions, simplicity, and quality.
+- `scout` (read-only): Maps local code structure, patterns, and relevant files.
+- `worker` (can run commands): Implements focused code and configuration changes.
 
 Resume a session (pass `sessionId`) only when: same task, same agent, genuine continuation. New session for: different task, different agent, or when uncertain.
 
