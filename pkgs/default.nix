@@ -42,6 +42,8 @@ in
 
   tincan = (callPackage ./by-name/tincan/package.nix { });
 
+  tiler = (callPackage ./by-name/tiler/package.nix { });
+
   udev-forwarder = (callPackage ./by-name/udev-forwarder { });
 
   lsp-cli = (callPackage ./by-name/lsp-cli/package.nix { });
