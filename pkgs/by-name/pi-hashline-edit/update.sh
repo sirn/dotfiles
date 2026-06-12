@@ -50,12 +50,12 @@ jq -n \
   --arg npmDepsHash "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" \
   '{version: $version, srcHash: $srcHash, npmDepsHash: $npmDepsHash}' >"$sources_file"
 
-build_log=$(nix-build -E 'let pkgs = import <nixpkgs> {}; in pkgs.callPackage ./pkgs/by-name/pi-hashline-edit/package.nix {}' 2>&1 || true)
+build_log=$(nix-build -E "let pkgs = import <nixpkgs> {}; in pkgs.callPackage $script_dir/package.nix {}" 2>&1 || true)
 npm_deps_hash=$(echo "$build_log" | grep 'got:' | head -1 | sed 's/.*got: *//')
 
 if [ -z "$npm_deps_hash" ]; then
   echo "ERROR: Failed to determine npmDeps hash"
-  nix-build -E 'let pkgs = import <nixpkgs> {}; in pkgs.callPackage ./pkgs/by-name/pi-hashline-edit/package.nix {}' 2>&1 | tail -10
+  nix-build -E "let pkgs = import <nixpkgs> {}; in pkgs.callPackage $script_dir/package.nix {}" 2>&1 | tail -10
   exit 1
 fi
 
@@ -68,7 +68,8 @@ jq -n \
 
 echo "Verifying build..."
 
-nix-build -E 'let pkgs = import <nixpkgs> {}; in pkgs.callPackage ./pkgs/by-name/pi-hashline-edit/package.nix {}' \
+nix-build -E \
+  "let pkgs = import <nixpkgs> {}; in pkgs.callPackage $script_dir/package.nix {}" \
   --no-out-link
 
 echo "Done. Updated to $version"

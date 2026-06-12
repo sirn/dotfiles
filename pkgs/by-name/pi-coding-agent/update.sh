@@ -34,7 +34,7 @@ jq -n \
   >"$sources_file"
 
 build_log=$(nix-build -E \
-  'let pkgs = import <nixpkgs> {}; in pkgs.callPackage ./pkgs/by-name/pi-coding-agent/package.nix {}' \
+  "let pkgs = import <nixpkgs> {}; in pkgs.callPackage $script_dir/package.nix {}" \
   2>&1 || true)
 npm_deps_hash=$(echo "$build_log" | grep 'got:' | head -1 | sed 's/.*got: *//')
 
@@ -53,7 +53,7 @@ jq -n \
 
 echo "Verifying build..."
 nix-build -E \
-  'let pkgs = import <nixpkgs> {}; in pkgs.callPackage ./pkgs/by-name/pi-coding-agent/package.nix {}' \
+  "let pkgs = import <nixpkgs> {}; in pkgs.callPackage $script_dir/package.nix {}" \
   --no-out-link
 
 echo "Done. Updated to $version"
