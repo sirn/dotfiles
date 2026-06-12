@@ -1,5 +1,6 @@
 {
-  "version": "0.3.15",
-  "srcHash": "sha256-LYFI5jgD7xsChtC4PAv8eAo27hKDDudSMtpQ8Eg2r4Y=",
-  "npmDepsHash": "sha256-Lebth2clWNWIquVMH26tD0+JqFifS/zj635doUGbtLs="
+  "version": "0.4.1",
+  "rev": "976ac9c4b1e33ab9f186eda6f6918dc632e148d8",
+  "srcHash": "sha256-12ki/kp7vkKIlThX1CNMMfhse9uPGVlJcqV0Cwyb/Ck=",
+  "npmDepsHash": "sha256-5NqTm+TLHNQk9FzVybbcsyUFFqG+u12a2C+9SMQh2Ic="
 }

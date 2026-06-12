@@ -27,14 +27,16 @@ stdenv.mkDerivation (finalAttrs: {
   src = fetchFromGitHub {
     owner = "monotykamary";
     repo = "pi-vcc";
-    rev = "1994b2611e9ae8aa7afe6a670c1122578b198477";
+    rev = sources.rev;
     hash = sources.srcHash;
   };
 
   npmDeps = fetchNpmDeps {
     inherit (finalAttrs) src;
     hash = sources.npmDepsHash;
+    forceEmptyCache = true;
     postPatch = ''
+      rm -f npm-shrinkwrap.json
       cp ${./package-lock.json} package-lock.json
       ${stripPeerAndDevDeps}
     '';
@@ -46,6 +48,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   postPatch = ''
+    rm -f npm-shrinkwrap.json
     cp ${./package-lock.json} package-lock.json
     ${stripPeerAndDevDeps}
   '';

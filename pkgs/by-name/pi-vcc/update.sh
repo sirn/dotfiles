@@ -13,14 +13,13 @@ fi
 
 current_version=$(jq -r '.version' "$sources_file")
 
-# Fetch latest package.json from master to get version
-version=$(curl -sL "https://raw.githubusercontent.com/monotykamary/pi-vcc/master/package.json" | jq -r '.version')
+# Fetch latest package.json from tom to get version
+version=$(curl -sL "https://raw.githubusercontent.com/monotykamary/pi-vcc/tom/package.json" | jq -r '.version')
 # Get the commit hash for the source tarball
-commit=$(curl -s "https://api.github.com/repos/monotykamary/pi-vcc/commits/master" | jq -r '.sha')
+commit=$(curl -s "https://api.github.com/repos/monotykamary/pi-vcc/commits/tom" | jq -r '.sha')
 
 if [ "$current_version" = "$version" ]; then
-  echo "Already at latest version: $version"
-  exit 0
+  echo "Already at latest version: $version, ensuring npm deps hash is up to date"
 fi
 
 echo "Updating from $current_version to $version (commit: $commit)"
@@ -52,32 +51,34 @@ cp "$tmpdir/package-lock.json" "$lockfile"
 # Write sources.json with fake npmDepsHash, then build to get the real one
 jq -n \
   --arg version "$version" \
+  --arg rev "$commit" \
   --arg srcHash "$src_hash" \
   --arg npmDepsHash "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" \
-  '{version: $version, srcHash: $srcHash, npmDepsHash: $npmDepsHash}' >"$sources_file"
+  '{version: $version, rev: $rev, srcHash: $srcHash, npmDepsHash: $npmDepsHash}' >"$sources_file"
 
 build_log=$(nix-build -E \
-  'let pkgs = import <nixpkgs> {}; in pkgs.callPackage ./pkgs/by-name/pi-vcc/package.nix {}' \
+  "let pkgs = import <nixpkgs> {}; in pkgs.callPackage $script_dir/package.nix {}" \
   2>&1 || true)
 npm_deps_hash=$(echo "$build_log" | grep 'got:' | head -1 | sed 's/.*got: *//')
 
 if [ -z "$npm_deps_hash" ]; then
   echo "ERROR: Failed to determine npmDeps hash"
-  nix-build -E 'let pkgs = import <nixpkgs> {}; in pkgs.callPackage ./pkgs/by-name/pi-vcc/package.nix {}' 2>&1 | tail -10
+  nix-build -E "let pkgs = import <nixpkgs> {}; in pkgs.callPackage $script_dir/package.nix {}" 2>&1 | tail -10
   exit 1
 fi
 
 # Write final sources.json with the real npmDepsHash
 jq -n \
   --arg version "$version" \
+  --arg rev "$commit" \
   --arg srcHash "$src_hash" \
   --arg npmDepsHash "$npm_deps_hash" \
-  '{version: $version, srcHash: $srcHash, npmDepsHash: $npmDepsHash}' >"$sources_file"
+  '{version: $version, rev: $rev, srcHash: $srcHash, npmDepsHash: $npmDepsHash}' >"$sources_file"
 
 echo "Verifying build..."
 
 nix-build -E \
-  'let pkgs = import <nixpkgs> {}; in pkgs.callPackage ./pkgs/by-name/pi-vcc/package.nix {}' \
+  "let pkgs = import <nixpkgs> {}; in pkgs.callPackage $script_dir/package.nix {}" \
   --no-out-link
 
 echo "Done. Updated to $version (commit: $commit)"
