@@ -1,5 +1,4 @@
-{ lib, ... }:
-{
+{ lib, ... }: {
   agents.subagents.reviewer = {
     description = "Reviews correctness, security, conventions, simplicity, and quality";
     prompt = builtins.readFile ./reviewer.md;

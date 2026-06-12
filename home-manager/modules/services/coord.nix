@@ -40,7 +40,7 @@ let
         default = "col_row";
         description = "Label ordering for cells.";
       };
-  };
+    };
   };
 
   subgridSubmodule = types.submodule {
@@ -74,7 +74,7 @@ let
         default = 4;
         description = "Number of nudge steps per cell.";
       };
-  };
+    };
   };
 
   gridSubmodule = types.submodule {
@@ -151,13 +151,16 @@ let
     grids = map (grid: {
       name = grid.name;
       monitor_assignment = grid.monitorAssignment;
-      levels = map (level: lib.filterAttrs (_: v: v != null) {
-        cols = level.cols;
-        rows = level.rows;
-        col_keys = level.colKeys;
-        row_keys = level.rowKeys;
-        label_order = level.labelOrder;
-      }) grid.levels;
+      levels = map (
+        level:
+        lib.filterAttrs (_: v: v != null) {
+          cols = level.cols;
+          rows = level.rows;
+          col_keys = level.colKeys;
+          row_keys = level.rowKeys;
+          label_order = level.labelOrder;
+        }
+      ) grid.levels;
       subgrid = {
         cols = grid.subgrid.cols;
         rows = grid.subgrid.rows;
@@ -428,39 +431,35 @@ in
       source = tomlFormat.generate "coord-config" settings;
     };
 
-    systemd.user.services.coord =
-      lib.mkIf pkgs.stdenv.isLinux
-        {
-          Unit = {
-            Description = "coord - keyboard-controlled mouse for Wayland";
-            PartOf = [ "graphical-session.target" ];
-            After = [ "graphical-session.target" ];
-          };
+    systemd.user.services.coord = lib.mkIf pkgs.stdenv.isLinux {
+      Unit = {
+        Description = "coord - keyboard-controlled mouse for Wayland";
+        PartOf = [ "graphical-session.target" ];
+        After = [ "graphical-session.target" ];
+      };
 
-          Service = {
-            ExecStart = lib.getExe cfg.package;
-            Restart = "on-failure";
-            RestartSec = 5;
-            Slice = "app.slice";
-          };
+      Service = {
+        ExecStart = lib.getExe cfg.package;
+        Restart = "on-failure";
+        RestartSec = 5;
+        Slice = "app.slice";
+      };
 
-          Install = {
-            WantedBy = [ "graphical-session.target" ];
-          };
-        };
+      Install = {
+        WantedBy = [ "graphical-session.target" ];
+      };
+    };
 
-    launchd.agents.coord =
-      lib.mkIf pkgs.stdenv.isDarwin
-        {
-          enable = true;
-          config = {
-            RunAtLoad = true;
-            KeepAlive = true;
-            ProcessType = "Interactive";
-            ProgramArguments = [ "${cfg.package}/Applications/Coord.app/Contents/MacOS/coord" ];
-            StandardOutPath = "/tmp/coord.log";
-            StandardErrorPath = "/tmp/coord.log";
-          };
-        };
+    launchd.agents.coord = lib.mkIf pkgs.stdenv.isDarwin {
+      enable = true;
+      config = {
+        RunAtLoad = true;
+        KeepAlive = true;
+        ProcessType = "Interactive";
+        ProgramArguments = [ "${cfg.package}/Applications/Coord.app/Contents/MacOS/coord" ];
+        StandardOutPath = "/tmp/coord.log";
+        StandardErrorPath = "/tmp/coord.log";
+      };
+    };
   };
 }

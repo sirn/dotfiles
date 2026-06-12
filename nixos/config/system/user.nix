@@ -19,7 +19,15 @@
       )
       ++ (if config.virtualisation.podman.enable then [ "podman" ] else [ ])
       ++ (if config.virtualisation.docker.enable then [ "docker" ] else [ ])
-      ++ (if config.hardware.uinput.enable then [ "uinput" "input" ] else [ ]);
+      ++ (
+        if config.hardware.uinput.enable then
+          [
+            "uinput"
+            "input"
+          ]
+        else
+          [ ]
+      );
 
       subUidRanges = [
         {

@@ -1,5 +1,3 @@
 { pkgs, ... }:
 
-{
-  home.packages = with pkgs; [ lstr ];
-}
+{ home.packages = with pkgs; [ lstr ]; }

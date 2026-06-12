@@ -1,5 +1,4 @@
-{ config, ... }:
-{
+{ config, ... }: {
   agents.permissions = {
     default = {
       tools = {

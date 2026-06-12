@@ -1,5 +1,3 @@
 { pkgs, ... }:
 
-{
-  environment.systemPackages = with pkgs; [ age ];
-}
+{ environment.systemPackages = with pkgs; [ age ]; }

@@ -1,5 +1,3 @@
 { pkgs, ... }:
 
-{
-  home.packages = with pkgs; [ jjui ];
-}
+{ home.packages = with pkgs; [ jjui ]; }

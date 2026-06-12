@@ -1,5 +1,3 @@
 { pkgs, ... }:
 
-{
-  home.packages = [ pkgs.local.coincide ];
-}
+{ home.packages = [ pkgs.local.coincide ]; }

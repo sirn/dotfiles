@@ -1,5 +1,4 @@
-{ lib, ... }:
-{
+{ lib, ... }: {
   agents.subagents.auditor = {
     description = "Final-pass audit for material issues - correctness, security, data loss, and production risks";
     prompt = builtins.readFile ./auditor.md;

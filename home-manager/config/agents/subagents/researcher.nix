@@ -1,5 +1,4 @@
-{ lib, ... }:
-{
+{ lib, ... }: {
   agents.subagents.researcher = {
     description = "Finds authoritative docs, APIs, errors, migrations, and advisories";
     prompt = builtins.readFile ./researcher.md;

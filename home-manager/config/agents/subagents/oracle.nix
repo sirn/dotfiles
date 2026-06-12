@@ -1,5 +1,4 @@
-{ lib, ... }:
-{
+{ lib, ... }: {
   agents.subagents.oracle = {
     description = "Adjudicates ambiguous, conflicting, or high-impact technical decisions";
     prompt = builtins.readFile ./oracle.md;

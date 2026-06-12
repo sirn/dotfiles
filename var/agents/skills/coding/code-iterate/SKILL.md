@@ -19,28 +19,27 @@ Run a convergent fix loop: find issues, fix them, repeat until clean.
    - Read the `code-test` skill to detect the project's test/lint commands; run a baseline check.
 
 2. **Iteration loop** (max 5 iterations by default):
+   1. **Find issues** — use applicable skills and spawn subagents:
+      - Default: spawn subagents according to code-review skill, and code-cleanup skill.
+      - Specific: spawn subagents that closely matches user's request.
 
-   a. **Find issues** — use applicable skills and spawn subagents:
-       - Default: spawn subagents according to code-review skill, and code-cleanup skill.
-       - Specific: spawn subagents that closely matches user's request.
+   2. **Filter findings** — synthesize agent output:
+      - Deduplicate: drop issues already addressed or explicitly deferred in a prior iteration.
+      - Classify: critical/high (must fix), medium (should fix), low/speculative (defer).
+      - If no new actionable findings remain → exit loop.
 
-   b. **Filter findings** — synthesize agent output:
-       - Deduplicate: drop issues already addressed or explicitly deferred in a prior iteration.
-       - Classify: critical/high (must fix), medium (should fix), low/speculative (defer).
-       - If no new actionable findings remain → exit loop.
-
-   c. **Fix** — delegate to `worker`:
+   3. **Fix** — delegate to `worker`:
       - `worker`:
         ```
         Fix these issues in {files}: {findings list}. Apply minimal targeted, behavior-preserving changes. Do not refactor beyond what's needed to resolve each finding.
         ```
 
-   d. **Verify** — run project checks:
-       - Run the most specific applicable commands with timeouts.
-       - If regressions appear, delegate to `worker` to fix regressions before continuing.
+   4. **Verify** — run project checks:
+      - Run the most specific applicable commands with timeouts.
+      - If regressions appear, delegate to `worker` to fix regressions before continuing.
 
-   e. **Commit** — commit iteration pass:
-       - Make a commit with "Iteration <n>: <desc>"; these commits are ephemeral and will be reviewed and squashed by the user.
+   5. **Commit** — commit iteration pass:
+      - Make a commit with "Iteration <n>: <desc>"; these commits are ephemeral and will be reviewed and squashed by the user.
 
 3. **Production audit** (for production-bound changes, after the loop converges):
    - `auditor`:

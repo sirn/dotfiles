@@ -1,5 +1,3 @@
 { pkgs, ... }:
 
-{
-  environment.systemPackages = with pkgs; [ local.asdcontrol ];
-}
+{ environment.systemPackages = with pkgs; [ local.asdcontrol ]; }

@@ -1,5 +1,3 @@
 { ... }:
 
-{
-  services.coord.enable = true;
-}
+{ services.coord.enable = true; }

@@ -1,5 +1,4 @@
-{ lib, ... }:
-{
+{ lib, ... }: {
   agents.subagents.worker = {
     description = "Implements focused code and configuration changes";
     prompt = builtins.readFile ./worker.md;

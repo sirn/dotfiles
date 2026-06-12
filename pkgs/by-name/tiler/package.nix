@@ -1,4 +1,12 @@
-{ lib, stdenv, swift, swiftpm, fetchgit, cacert, git }:
+{
+  lib,
+  stdenv,
+  swift,
+  swiftpm,
+  fetchgit,
+  cacert,
+  git,
+}:
 
 stdenv.mkDerivation rec {
   pname = "tiler";
@@ -10,7 +18,11 @@ stdenv.mkDerivation rec {
     hash = "sha256-Anv6EuzoCa7anEDgfRGGyJ9C4kfesHFlBc0Oageyj1k=";
   };
 
-  nativeBuildInputs = [ swift swiftpm git ];
+  nativeBuildInputs = [
+    swift
+    swiftpm
+    git
+  ];
   buildInputs = [ cacert ];
 
   GIT_SSL_CAINFO = "${cacert}/etc/ssl/certs/ca-bundle.crt";

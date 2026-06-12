@@ -1,5 +1,3 @@
 { config, pkgs, ... }:
 
-{
-  home.packages = with pkgs; [ mosh ];
-}
+{ home.packages = with pkgs; [ mosh ]; }

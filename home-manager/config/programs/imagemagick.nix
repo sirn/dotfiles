@@ -1,5 +1,3 @@
 { pkgs, ... }:
 
-{
-  home.packages = with pkgs; [ imagemagick ];
-}
+{ home.packages = with pkgs; [ imagemagick ]; }

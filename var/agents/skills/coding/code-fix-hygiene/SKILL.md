@@ -13,13 +13,14 @@ Check the working diff for hygiene issues and apply minimal fixes.
    - If the user specified files or paths, restrict analysis to those.
 
 2. **Spawn `scout`**:
+
    ```
    Analyze this diff in the following files:
    {files}
 
    For all the following:
    - spelling typos, grammatical errors, and naming/formatting convention violations
-   - comments that explain *what* the code does rather than *why* (except section headers) — flag for removal, preserving rationale/tradeoff/non-obvious comments
+   - comments that explain _what_ the code does rather than _why_ (except section headers) — flag for removal, preserving rationale/tradeoff/non-obvious comments
    - unintended edits like debug logging, commented-out code, orphaned TODOs, whitespace noise, merge artifacts, or out-of-scope changes
    - inline decorated comments such as `// --- Title ----------` (multi-line section borders (`// -------------------` are fine)
    - transitional or legacy comments like "Replaces the old x system" or "Migration from y" where the referenced thing no longer exists — only acceptable transitional comments are TODOs
@@ -33,6 +34,7 @@ Check the working diff for hygiene issues and apply minimal fixes.
    - For typos: prefer dictionary lookups or project glossary terms before assuming.
 
 4. **Delegate to `worker`**:
+
    ```
    Apply these hygiene fixes in the following files:
    {files}
@@ -40,7 +42,7 @@ Check the working diff for hygiene issues and apply minimal fixes.
    For the following:
    {prioritized fixes}
 
-   Remove obvious *what*-comments, fix typos, remove unintended edits, remove stale transitional/legacy comments unless they are TODOs.
+   Remove obvious _what_-comments, fix typos, remove unintended edits, remove stale transitional/legacy comments unless they are TODOs.
    Do not change behavior, logic, or structure.
    Apply one logical fix per edit.
    ```
@@ -66,7 +68,7 @@ Check the working diff for hygiene issues and apply minimal fixes.
 ## Guardrails
 
 - Never change behavior, logic, or structure — only surface-level hygiene.
-- Do not rewrite comments or improve their content; only remove *what*-comments and fix obvious typos.
+- Do not rewrite comments or improve their content; only remove _what_-comments and fix obvious typos.
 - Do not fix issues outside the diff scope unless the user explicitly asked for broader cleanup.
 - Preserve intentional debug logging, TODOs with context, and commented-out code that has a clear purpose.
 - Only acceptable transitional/legacy comments are TODOs with context — all others should be removed.

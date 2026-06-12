@@ -179,17 +179,15 @@
         ];
 
       # Returns the base Home Manager configuration module
-      mkHomeManagerBaseModule =
-        { username, homeDirectory }:
-        {
-          nixpkgs.overlays = overlays;
-          nixpkgs.config = nixpkgsConfig;
-          programs.home-manager.enable = true;
-          home.username = username;
-          home.homeDirectory = homeDirectory;
-          home.stateVersion = stateVersion;
-          news.display = "silent";
-        };
+      mkHomeManagerBaseModule = { username, homeDirectory }: {
+        nixpkgs.overlays = overlays;
+        nixpkgs.config = nixpkgsConfig;
+        programs.home-manager.enable = true;
+        home.username = username;
+        home.homeDirectory = homeDirectory;
+        home.stateVersion = stateVersion;
+        news.display = "silent";
+      };
 
       # Builds a standalone Home Manager configuration
       mkHomeManager =

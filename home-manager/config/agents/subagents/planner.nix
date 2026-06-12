@@ -1,5 +1,4 @@
-{ lib, ... }:
-{
+{ lib, ... }: {
   agents.subagents.planner = {
     description = "Designs minimal implementation, architecture, and refactoring plans";
     prompt = builtins.readFile ./planner.md;

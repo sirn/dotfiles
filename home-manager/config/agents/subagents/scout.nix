@@ -1,5 +1,4 @@
-{ lib, ... }:
-{
+{ lib, ... }: {
   agents.subagents.scout = {
     description = "Maps local code structure, patterns, and relevant files";
     prompt = builtins.readFile ./scout.md;

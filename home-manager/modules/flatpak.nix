@@ -42,31 +42,29 @@ let
     };
   };
 
-  flatpakOpts =
-    { name, config, ... }:
-    {
-      options = {
-        name = lib.mkOption {
-          type = lib.types.str;
-          readOnly = true;
-          description = ''
-            Unique application ID for Flatpak applications.
-            This is set to the attribute name of the Flatpak
-            application.
-          '';
-        };
-
-        overrides = lib.mkOption {
-          type = overrideModule;
-          description = "Override configuration for Flatpak applications.";
-          default = { };
-        };
+  flatpakOpts = { name, config, ... }: {
+    options = {
+      name = lib.mkOption {
+        type = lib.types.str;
+        readOnly = true;
+        description = ''
+          Unique application ID for Flatpak applications.
+          This is set to the attribute name of the Flatpak
+          application.
+        '';
       };
 
-      config = {
-        name = name;
+      overrides = lib.mkOption {
+        type = overrideModule;
+        description = "Override configuration for Flatpak applications.";
+        default = { };
       };
     };
+
+    config = {
+      name = name;
+    };
+  };
 
   renderOptionValue =
     v: if lib.isList v then lib.concatStringsSep ";" v else lib.generators.mkValueStringDefault { } v;

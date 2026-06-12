@@ -1,5 +1,3 @@
 { ... }:
 
-{
-  services.tiler.enable = true;
-}
+{ services.tiler.enable = true; }
