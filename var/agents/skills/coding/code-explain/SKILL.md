@@ -20,18 +20,44 @@ Explain code logic, triage incoming changes, or map the project architecture.
 
    **Explain**:
    - Spawn `scout` and `researcher` in parallel when external library context matters.
-   - `scout`: "Identify the purpose, local patterns, data flow, and integration points in {files}."
-   - `researcher`: "Look up documentation for libraries/frameworks used in {files}, focusing only on APIs needed to understand the code."
-   - Use `planner` only when the user asks for architecture/tradeoff explanation: "Explain the architectural choices and tradeoffs visible in {files}."
+   - `scout`:
+     ```
+     Identify the purpose, local patterns, data flow, and integration points in:
+     {files}
+     ```
+   - `researcher`:
+     ```
+     Look up documentation for libraries/frameworks used in:
+     {files}
+
+     Focus only on APIs needed to understand the code.
+     ```
+   - Use `planner` only when the user asks for architecture/tradeoff explanation:
+     ```
+     Explain the architectural choices and tradeoffs visible in:
+     {files}
+     ```
    - Synthesize: Purpose, How it works, Patterns, Dependencies, Gotchas.
 
    **Triage**:
    - Skim relevant diffs.
-   - Spawn `scout` if the diff touches unfamiliar areas: "Map the files, ownership boundaries, and neighboring tests for this diff."
+   - Spawn `scout` if the diff touches unfamiliar areas:
+     ```
+     Map the files, ownership boundaries, and neighboring tests for this diff.
+     ```
    - Identify: Areas touched, Risk hotspots, Review order.
 
    **Map**:
-   - Spawn `scout`: "Create a high-level dependency graph and module breakdown for {directory}; identify entry points, core domain logic, and infrastructure/adapters."
+   - Spawn `scout`:
+     ```
+     Create a high-level dependency graph and module breakdown for:
+     {directory}
+
+     Identify:
+     - entry points
+     - core domain logic
+     - infrastructure/adapters
+     ```
    - Use `planner` only for architecture/tradeoff commentary when requested.
    - Identify: Key Entry Points, Core Domain Logic, Infrastructure/Adapters.
 

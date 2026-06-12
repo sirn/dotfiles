@@ -13,19 +13,40 @@ Generate an actionable implementation plan based on task analysis and research.
    - Understand the user's requested behavior, constraints, and expected verification.
 
 2. Spawn applicable agents in parallel:
-   - `scout`: "Analyze affected code areas, existing patterns, tests, architecture, integration points, and local conventions for {task}."
-   - `researcher`: "Research official documentation, best practices, constraints, migration considerations, and security guidance relevant to {task}."
-   - `planner`: "Design a minimal implementation plan for {task}, including alternatives and tradeoffs."
-   - `reviewer`: "Review the proposed direction for security, correctness, simplicity, and project-convention risks for {task}."
+   - `scout`:
+     ```
+     Analyze affected code areas, existing patterns, tests, architecture, integration points, and local conventions for {task}.
+     ```
+   - `researcher`:
+     ```
+     Research official documentation, best practices, constraints, migration considerations, and security guidance relevant to {task}.
+     ```
+   - `planner`:
+     ```
+     Design a minimal implementation plan for {task}, including alternatives and tradeoffs.
+     ```
+   - `reviewer`:
+     ```
+     Review the proposed direction for security, correctness, simplicity, and project-convention risks for {task}.
+     ```
 
 3. For large or cross-module projects, spawn `architect` before `planner`:
-   - `architect`: "Analyze module boundaries, ownership, data flow, dependency direction, and structural invariants for {task}. Recommend the minimal architecture that solves the problem."
+   - `architect`:
+     ```
+     Analyze module boundaries, ownership, data flow, dependency direction, and structural invariants for {task}. Recommend the minimal architecture that solves the problem.
+     ```
 
 4. Use `oracle` only for high-impact or conflicting design decisions:
-   - `oracle`: "Adjudicate the conflicting recommendations for {task}. Choose the safest minimal path and state assumptions, tradeoffs, and confidence."
+   - `oracle`:
+     ```
+     Adjudicate the conflicting recommendations for {task}. Choose the safest minimal path and state assumptions, tradeoffs, and confidence.
+     ```
 
 5. For production-bound changes, spawn `auditor` after the plan is synthesized:
-   - `auditor`: "Audit the implementation plan for {task} for production risks: correctness, security, data loss, migration hazards, and rollback safety."
+   - `auditor`:
+     ```
+     Audit the implementation plan for {task} for production risks: correctness, security, data loss, migration hazards, and rollback safety.
+     ```
 
 6. Read relevant code yourself and validate agent findings.
 

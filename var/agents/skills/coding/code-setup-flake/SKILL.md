@@ -21,9 +21,18 @@ Determine or ask for:
 ## Process
 
 1. Spawn applicable agents in parallel:
-   - `scout`: "Detect project tooling, package managers, existing Nix files, wrappers, task runners, and setup conventions."
-   - `researcher`: "Find official Nix/flake guidance and exact package recommendations for this project type."
-   - `reviewer`: "Audit the proposed flake with a simplicity lens: unnecessary packages, boilerplate, shell hooks, extra inputs, and over-engineering."
+   - `scout`:
+     ```
+     Detect project tooling, package managers, existing Nix files, wrappers, task runners, and setup conventions.
+     ```
+   - `researcher`:
+     ```
+     Find official Nix/flake guidance and exact package recommendations for this project type.
+     ```
+   - `reviewer`:
+     ```
+     Audit the proposed flake with a simplicity lens: unnecessary packages, boilerplate, shell hooks, extra inputs, and over-engineering.
+     ```
 
 2. Inspect project setup yourself:
    - Nix: `flake.nix`, `.my/flake.nix`, `shell.nix`, `default.nix`.

@@ -30,7 +30,10 @@ Run a convergent fix loop: find issues, fix them, repeat until clean.
        - If no new actionable findings remain → exit loop.
 
    c. **Fix** — delegate to `worker`:
-       - `worker`: "Fix these issues in {files}: {findings list}. Apply minimal targeted, behavior-preserving changes. Do not refactor beyond what's needed to resolve each finding."
+      - `worker`:
+        ```
+        Fix these issues in {files}: {findings list}. Apply minimal targeted, behavior-preserving changes. Do not refactor beyond what's needed to resolve each finding.
+        ```
 
    d. **Verify** — run project checks:
        - Run the most specific applicable commands with timeouts.
@@ -40,7 +43,10 @@ Run a convergent fix loop: find issues, fix them, repeat until clean.
        - Make a commit with "Iteration <n>: <desc>"; these commits are ephemeral and will be reviewed and squashed by the user.
 
 3. **Production audit** (for production-bound changes, after the loop converges):
-   - `auditor`: "Audit {files} for production readiness: correctness, security, data loss, migration hazards, and rollback safety."
+   - `auditor`:
+     ```
+     Audit {files} for production readiness: correctness, security, data loss, migration hazards, and rollback safety.
+     ```
 
 4. **Final verification**:
    - Run full project checks (test + lint + format).

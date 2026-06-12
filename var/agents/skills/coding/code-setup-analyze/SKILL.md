@@ -22,8 +22,14 @@ During detection, identify complexity hotspots, unnecessary tooling, and native 
 ## Process
 
 1. Spawn applicable agents in parallel:
-   - `scout`: "Detect project tooling, wrappers, task runners, package managers, existing Nix files, CI, setup conventions, and available commands."
-   - `reviewer`: "Audit the detected setup with a simplicity lens: unnecessary wrappers, duplicate tooling, boilerplate, shell hooks, extra flake inputs, and over-engineering."
+   - `scout`:
+     ```
+     Detect project tooling, wrappers, task runners, package managers, existing Nix files, CI, setup conventions, and available commands.
+     ```
+   - `reviewer`:
+     ```
+     Audit the detected setup with a simplicity lens: unnecessary wrappers, duplicate tooling, boilerplate, shell hooks, extra flake inputs, and over-engineering.
+     ```
 
 2. Read project instructions and repository structure yourself.
 3. Validate agent findings against actual files.

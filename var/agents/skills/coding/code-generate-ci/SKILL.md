@@ -13,9 +13,18 @@ Generate minimal CI/CD configuration that matches existing project conventions.
    - Identify the requested pipeline goal, such as lint, check, test, build, release, or deploy.
 
 2. Spawn applicable agents in parallel:
-   - `researcher`: "Research current official CI provider syntax, action versions, permission requirements, and cache patterns for {provider}."
-   - `planner`: "Design a minimal CI pipeline for the requested goal using the project's existing commands and conventions."
-   - `reviewer`: "Review the proposed CI design for secret leaks, script injection, unsafe permissions, insecure pull-request handling, and unnecessary complexity."
+   - `researcher`:
+     ```
+     Research current official CI provider syntax, action versions, permission requirements, and cache patterns for {provider}.
+     ```
+   - `planner`:
+     ```
+     Design a minimal CI pipeline for the requested goal using the project's existing commands and conventions.
+     ```
+   - `reviewer`:
+     ```
+     Review the proposed CI design for secret leaks, script injection, unsafe permissions, insecure pull-request handling, and unnecessary complexity.
+     ```
 
 3. Inspect existing conventions yourself:
    - Locate existing CI/CD config files and project task runners.

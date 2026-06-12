@@ -27,11 +27,23 @@ Evaluate and address PR review comments by delegating to expert roles.
    **Important**: Always use `-X GET` to be explicit about read-only access.
 
 2. Spawn parallel agents for comment analysis:
-   - `reviewer`: "Review these PR comments across all lenses: (1) correctness/quality — classify each as already-addressed, valid-fix-needed, invalid, or needs-discussion; (2) security — identify valid security concerns vs false positives and assess severity; (3) simplicity/convention — prioritize the simplest possible change that satisfies valid feedback, distinguish valid simplifications from over-engineering suggestions."
-   - `researcher`: "Research best practices and official documentation for the fixes suggested in these PR comments. Provide authoritative sources."
+   - `reviewer`:
+     ```
+     Review these PR comments across all lenses:
+     - (1) correctness/quality — classify each as already-addressed, valid-fix-needed, invalid, or needs-discussion
+     - (2) security — identify valid security concerns vs false positives and assess severity
+     - (3) simplicity/convention — prioritize the simplest possible change that satisfies valid feedback, distinguish valid simplifications from over-engineering suggestions
+     ```
+   - `researcher`:
+     ```
+     Research best practices and official documentation for the fixes suggested in these PR comments. Provide authoritative sources.
+     ```
 
 3. Use `oracle` only for disputed comments or conflicting expert recommendations:
-   - `oracle`: "Adjudicate these disputed PR comments and conflicting recommendations. Decide which feedback should be fixed, discussed, or rejected, and explain why."
+   - `oracle`:
+     ```
+     Adjudicate these disputed PR comments and conflicting recommendations. Decide which feedback should be fixed, discussed, or rejected, and explain why.
+     ```
 
 4. **Synthesize findings** into unified report.
 

@@ -27,7 +27,19 @@ Clean up code by applying small, behavior-preserving fixes until additional chan
    - Determine mode from the request; default to **Focused**.
 
 2. Spawn `scout`:
-   - "Map cleanup opportunities in {scope}: redundancies, non-idiomatic code, dead code, simplification opportunities, and unnecessary complexity. Report file paths, line numbers, and evidence for each."
+   ```
+   Map cleanup opportunities in the following scope:
+   {scope}
+
+   For all the following:
+   - redundancies
+   - non-idiomatic code
+   - dead code
+   - simplification opportunities
+   - unnecessary complexity
+
+   Report file paths, line numbers, and evidence for each.
+   ```
    - Read the `code-test` skill to detect the project's test/lint commands.
    - Capture the current diff and run targeted tests or checks as a safety baseline.
 
@@ -37,7 +49,15 @@ Clean up code by applying small, behavior-preserving fixes until additional chan
    - Prefer existing project patterns over external preferences.
 
 4. Delegate to `worker`:
-   - "Apply these cleanup fixes in {files}: {prioritized findings list}. Apply one logical cleanup per step. Preserve public behavior, API signatures, and test expectations."
+   ```
+   Apply these cleanup fixes in the following files:
+   {files}
+
+   {prioritized findings list}
+
+   Apply one logical cleanup per step.
+   Preserve public behavior, API signatures, and test expectations.
+   ```
 
 5. Stop at diminishing returns:
    - Stop when remaining issues are speculative or lack clear evidence.

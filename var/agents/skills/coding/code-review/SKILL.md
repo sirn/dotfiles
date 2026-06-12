@@ -12,11 +12,23 @@ Run a full code review or quality check using specialized agents.
    - If the user specified files or paths, focus on those.
 
 2. Spawn applicable agents in parallel:
-   - `reviewer`: "Review {files} across all lenses: (1) correctness/quality — bugs, logic errors, edge cases, error handling, resource leaks, concurrency, and performance traps; (2) security — OWASP risks, injection flaws, auth/authz, cryptography, sensitive data exposure, dependency risks, and secure defaults; (3) convention/simplicity — naming, organization, documentation, project consistency, over-engineering, unnecessary abstractions, dead code, and avoidable indirection."
-   - `researcher`: "Verify relevant API/library usage in {files} against official documentation and research best practices."
+   - `reviewer`:
+     ```
+     Review {files} across all lenses:
+     - correctness/quality — bugs, logic errors, edge cases, error handling, resource leaks, concurrency, and performance traps
+     - security — OWASP risks, injection flaws, auth/authz, cryptography, sensitive data exposure, dependency risks, and secure defaults
+     - convention/simplicity — naming, organization, documentation, project consistency, over-engineering, unnecessary abstractions, dead code, and avoidable indirection
+     ```
+   - `researcher`:
+     ```
+     Verify relevant API/library usage in {files} against official documentation and research best practices.
+     ```
 
 3. For production-bound changes, spawn `auditor`:
-   - `auditor`: "Audit {files} for production readiness: correctness, security, data loss, migration hazards, and rollback safety."
+   - `auditor`:
+     ```
+     Audit {files} for production readiness: correctness, security, data loss, migration hazards, and rollback safety.
+     ```
 
 4. Read relevant code yourself to validate and synthesize agent findings.
 

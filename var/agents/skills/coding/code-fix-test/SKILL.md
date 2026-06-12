@@ -18,10 +18,27 @@ Diagnose and fix validation failures with minimal targeted changes.
    - Use proper timeouts and avoid watch modes.
 
 3. Spawn `researcher`:
-   - "Research the root cause of this failure: {error output}. Identify whether this is a product-code bug, test bug, environment issue, or stale expectation. Find relevant docs or known issues."
+   ```
+   Research the root cause of this failure:
+   {error output}
+
+   Identify whether this is:
+   - a product-code bug
+   - a test bug
+   - an environment issue
+   - a stale expectation
+
+   Find relevant docs or known issues.
+   ```
 
 4. Review researcher findings. Delegate to `worker`:
-   - "Apply a minimal fix for {root cause} in {file}. Do not weaken assertions, skip tests, or broaden ignores unless explicitly approved with sound rationale."
+   ```
+   Apply a minimal fix for the following in the specified file:
+   {root cause}
+   {file}
+
+   Do not weaken assertions, skip tests, or broaden ignores unless explicitly approved with sound rationale.
+   ```
 
 5. Rerun the failing command to verify the fix.
 

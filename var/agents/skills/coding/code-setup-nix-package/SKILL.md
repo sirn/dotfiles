@@ -15,9 +15,18 @@ Reference these skills first:
 ## Process
 
 1. Spawn applicable agents in parallel:
-   - `scout`: "Locate existing Nix environment files and package ordering/style conventions."
-   - `researcher`: "Find and verify the exact nixpkgs attribute for the requested package using authoritative sources."
-   - `reviewer`: "Audit the proposed package addition for necessity, correct environment placement, and avoidable complexity."
+   - `scout`:
+     ```
+     Locate existing Nix environment files and package ordering/style conventions.
+     ```
+   - `researcher`:
+     ```
+     Find and verify the exact nixpkgs attribute for the requested package using authoritative sources.
+     ```
+   - `reviewer`:
+     ```
+     Audit the proposed package addition for necessity, correct environment placement, and avoidable complexity.
+     ```
 
 2. Identify the package requested by the user.
 3. Verify the exact nixpkgs attribute with `nix-locate`, `nix search`, WebSearch/WebFetch, or official nixpkgs references.

@@ -13,19 +13,40 @@ Generate an actionable API design plan based on task analysis and research.
    - Identify the protocol and format: REST, GraphQL, gRPC, TRPC, OpenAPI, protobuf, Zod/TypeBox, etc.
 
 2. Spawn applicable agents in parallel:
-   - `scout`: "Analyze existing API handlers, clients, schemas, validators, middleware, tests, and local API conventions for {task}."
-   - `researcher`: "Research official protocol/framework documentation, constraints, security guidance, and compatibility considerations relevant to {task}."
-   - `planner`: "Design a minimal API contract for {task}, including request/response shapes, errors, validation, and tradeoffs."
-   - `reviewer`: "Review the proposed API for correctness, security, compatibility, simplicity, and project-convention risks."
+   - `scout`:
+     ```
+     Analyze existing API handlers, clients, schemas, validators, middleware, tests, and local API conventions for {task}.
+     ```
+   - `researcher`:
+     ```
+     Research official protocol/framework documentation, constraints, security guidance, and compatibility considerations relevant to {task}.
+     ```
+   - `planner`:
+     ```
+     Design a minimal API contract for {task}, including request/response shapes, errors, validation, and tradeoffs.
+     ```
+   - `reviewer`:
+     ```
+     Review the proposed API for correctness, security, compatibility, simplicity, and project-convention risks.
+     ```
 
 3. For APIs spanning module or service boundaries, spawn `architect` before `planner`:
-   - `architect`: "Analyze module boundaries, ownership, data flow, and interface contracts for {task}. Recommend the minimal API boundary that solves the problem."
+   - `architect`:
+     ```
+     Analyze module boundaries, ownership, data flow, and interface contracts for {task}. Recommend the minimal API boundary that solves the problem.
+     ```
 
 4. Use `oracle` only for high-impact or conflicting API design decisions:
-   - `oracle`: "Adjudicate the conflicting API design recommendations for {task}. Choose the safest minimal contract and state assumptions, tradeoffs, and confidence."
+   - `oracle`:
+     ```
+     Adjudicate the conflicting API design recommendations for {task}. Choose the safest minimal contract and state assumptions, tradeoffs, and confidence.
+     ```
 
 5. For production-bound API changes, spawn `auditor` after the plan is synthesized:
-   - `auditor`: "Audit the API design for {task} for production risks: contract compatibility, breaking changes, data loss, and rollback safety."
+   - `auditor`:
+     ```
+     Audit the API design for {task} for production risks: contract compatibility, breaking changes, data loss, and rollback safety.
+     ```
 
 6. Read relevant code yourself and validate agent findings.
 

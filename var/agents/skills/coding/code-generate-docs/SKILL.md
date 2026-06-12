@@ -13,9 +13,18 @@ Generate documentation that matches existing project conventions.
    - Determine the documentation type: inline comments, docstrings, module/file docs, README content, or reference material.
 
 2. Spawn applicable agents in parallel:
-   - `scout`: "Identify existing documentation style, naming, structure, examples, and relevant code context for {files or requirements}."
-   - `planner`: "Draft the minimal documentation structure needed to explain the behavior, intent, data flow, or tradeoffs."
-   - `reviewer`: "Review the proposed documentation for clarity, convention fit, accuracy, and unnecessary detail."
+   - `scout`:
+     ```text
+     Identify existing documentation style, naming, structure, examples, and relevant code context for {files or requirements}.
+     ```
+   - `planner`:
+     ```text
+     Draft the minimal documentation structure needed to explain the behavior, intent, data flow, or tradeoffs.
+     ```
+   - `reviewer`:
+     ```text
+     Review the proposed documentation for clarity, convention fit, accuracy, and unnecessary detail.
+     ```
 
 3. Inspect existing conventions yourself:
    - Read relevant code and neighboring documentation.

@@ -12,8 +12,14 @@ Run a focused security review using specialized agents.
    - If the user specified files, paths, assets, trust boundaries, or threat models, focus on those.
 
 2. Spawn applicable agents in parallel:
-   - `reviewer`: "Perform a focused security audit of {files}: OWASP Top 10, injection flaws, auth/authz, cryptography, sensitive data exposure, dependency risks, and secure defaults."
-   - `researcher`: "Research official security guidance, advisories, and framework-specific secure implementation patterns relevant to {files}."
+   - `reviewer`:
+     ```text
+     Perform a focused security audit of {files}: OWASP Top 10, injection flaws, auth/authz, cryptography, sensitive data exposure, dependency risks, and secure defaults.
+     ```
+   - `researcher`:
+     ```text
+     Research official security guidance, advisories, and framework-specific secure implementation patterns relevant to {files}.
+     ```
 
 3. Read relevant code yourself to validate and synthesize agent findings:
    - Check local instructions and conventions: `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `GEMINI.md`, `CODEX.md` when present.

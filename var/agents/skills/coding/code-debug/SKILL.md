@@ -9,8 +9,14 @@ Troubleshoot a problem by delegating focused research and risk review.
 
 1. Identify the error message, log, or failure symptom from the user's request or context.
 2. Spawn agents:
-   - `researcher`: "Investigate the error or failure in {context}. Find likely root causes, official docs or known issues, minimal fixes, and verification steps with sources."
-   - `reviewer`: "Review the likely fix for {context} with a minimal-fix risk lens. Ensure it addresses only the root cause, avoids new abstractions, and note edge cases or regressions."
+   - `researcher`:
+     ```
+     Investigate the error or failure in {context}. Find likely root causes, official docs or known issues, minimal fixes, and verification steps with sources.
+     ```
+   - `reviewer`:
+     ```
+     Review the likely fix for {context} with a minimal-fix risk lens. Ensure it addresses only the root cause, avoids new abstractions, and note edge cases or regressions.
+     ```
 3. Synthesize findings into actionable steps.
 4. If fixing is requested, make the smallest change that addresses the likely root cause and verify with the most specific command.
 

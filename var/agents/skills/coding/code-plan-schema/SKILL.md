@@ -13,19 +13,74 @@ Generate an actionable schema design plan based on task analysis and research.
    - Identify the database, ORM/framework, migration tooling, and existing data model.
 
 2. Spawn applicable agents in parallel:
-   - `scout`: "Analyze existing schema definitions, migrations, models, query code, tests, and persistence conventions for {task}."
-   - `researcher`: "Research official database/ORM documentation, migration constraints, performance considerations, and security guidance relevant to {task}."
-   - `planner`: "Design a minimal schema plan for {task}, including relationships, indexes, constraints, migrations, alternatives, and tradeoffs."
-   - `reviewer`: "Review the proposed schema for correctness, data integrity, security, performance, simplicity, and project-convention risks."
+   - `scout`:
+     ```
+     Analyze existing schema artifacts for {task}:
+     - Schema definitions
+     - Migrations
+     - Models
+     - Query code
+     - Tests
+     - Persistence conventions
+     ```
+   - `researcher`:
+     ```
+     Research official database/ORM documentation relevant to {task}:
+     - Migration constraints
+     - Performance considerations
+     - Security guidance
+     ```
+   - `planner`:
+     ```
+     Design a minimal schema plan for {task}, including:
+     - Relationships
+     - Indexes
+     - Constraints
+     - Migrations
+     - Alternatives
+     - Tradeoffs
+     ```
+   - `reviewer`:
+     ```
+     Review the proposed schema for:
+     - Correctness
+     - Data integrity
+     - Security
+     - Performance
+     - Simplicity
+     - Project-convention risks
+     ```
 
 3. For schemas affecting data flow or cross-module boundaries, spawn `architect` before `planner`:
-   - `architect`: "Analyze data flow, ownership, dependency direction, and migration shape for {task}. Recommend the minimal schema that preserves invariants."
+   - `architect`:
+     ```
+     Analyze for {task}:
+     - Data flow
+     - Ownership
+     - Dependency direction
+     - Migration shape
+     Recommend the minimal schema that preserves invariants.
+     ```
 
 4. Use `oracle` only for high-impact or conflicting schema decisions:
-   - `oracle`: "Adjudicate the conflicting schema recommendations for {task}. Choose the safest minimal data model and state assumptions, tradeoffs, and confidence."
+   - `oracle`:
+     ```
+     Adjudicate the conflicting schema recommendations for {task}.
+     Choose the safest minimal data model and state:
+     - Assumptions
+     - Tradeoffs
+     - Confidence
+     ```
 
 5. For production-bound schema changes, spawn `auditor` after the plan is synthesized:
-   - `auditor`: "Audit the schema plan for {task} for production risks: data loss, migration hazards, rollback safety, and contract compatibility."
+   - `auditor`:
+     ```
+     Audit the schema plan for {task} for production risks:
+     - Data loss
+     - Migration hazards
+     - Rollback safety
+     - Contract compatibility
+     ```
 
 6. Read relevant code yourself and validate agent findings.
 

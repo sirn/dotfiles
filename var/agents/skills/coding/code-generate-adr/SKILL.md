@@ -13,13 +13,28 @@ Create ADRs that match existing project conventions.
    - Ask for missing Context, Decision, or Consequences if they are necessary and not provided.
 
 2. Spawn applicable agents in parallel:
-   - `scout`: "Identify existing ADR style, naming, structure, status values, and relevant architectural context for {files or requirements}."
-   - `planner`: "Draft the minimal ADR structure needed to explain the decision, alternatives, consequences, and tradeoffs."
-   - `reviewer`: "Review the proposed ADR for clarity, convention fit, decision focus, and unnecessary detail."
+   - `scout`:
+     ```
+     Identify existing ADR style, naming, structure, status values, and relevant architectural context for {files or requirements}.
+     ```
+   - `planner`:
+     ```
+     Draft the minimal ADR structure needed to explain the decision, alternatives, consequences, and tradeoffs.
+     ```
+   - `reviewer`:
+     ```
+     Review the proposed ADR for clarity, convention fit, decision focus, and unnecessary detail.
+     ```
 
    For ADRs with structural or cross-module implications, also spawn:
-   - `architect`: "Analyze module boundaries, ownership, and structural implications of the decision in {task}. Identify invariants and compatibility risks."
-   - `auditor`: "Audit the decision for production risks: data loss, migration hazards, rollback safety, and contract compatibility."
+   - `architect`:
+     ```
+     Analyze module boundaries, ownership, and structural implications of the decision in {task}. Identify invariants and compatibility risks.
+     ```
+   - `auditor`:
+     ```
+     Audit the decision for production risks: data loss, migration hazards, rollback safety, and contract compatibility.
+     ```
 
 3. Inspect existing conventions yourself:
    - Look for an existing ADR directory and naming convention.

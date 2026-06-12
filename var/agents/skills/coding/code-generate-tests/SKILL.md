@@ -13,9 +13,18 @@ Generate tests that match existing project conventions.
    - Identify the public behavior and interfaces to test.
 
 2. Spawn applicable agents in parallel:
-   - `scout`: "Identify critical public behavior, neighboring tests, fixtures, naming conventions, edge cases, and error paths in {files}."
-   - `researcher`: "Research idiomatic testing practices for the detected language/framework."
-   - `reviewer`: "Review proposed tests with a simplicity and behavior-coverage lens; avoid unnecessary helpers or private-implementation assertions."
+   - `scout`:
+     ```
+     Identify critical public behavior, neighboring tests, fixtures, naming conventions, edge cases, and error paths in {files}.
+     ```
+   - `researcher`:
+     ```
+     Research idiomatic testing practices for the detected language/framework.
+     ```
+   - `reviewer`:
+     ```
+     Review proposed tests with a simplicity and behavior-coverage lens; avoid unnecessary helpers or private-implementation assertions.
+     ```
 
 3. Inspect existing conventions yourself:
    - Read relevant code, neighboring tests, fixtures, and helpers.

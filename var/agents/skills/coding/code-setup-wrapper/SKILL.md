@@ -15,8 +15,14 @@ Determine or ask for:
 ## Process
 
 1. Spawn applicable agents in parallel:
-   - `scout`: "Detect existing wrappers, task runners, package managers, setup conventions, and available project commands."
-   - `reviewer`: "Audit the proposed wrapper scripts with a simplicity lens: unnecessary wrappers, duplicate commands, unsafe shell, and over-engineering."
+   - `scout`:
+     ```
+     Detect existing wrappers, task runners, package managers, setup conventions, and available project commands.
+     ```
+   - `reviewer`:
+     ```
+     Audit the proposed wrapper scripts with a simplicity lens: unnecessary wrappers, duplicate commands, unsafe shell, and over-engineering.
+     ```
 
 2. Inspect project setup yourself:
    - Existing wrappers: `bin/`, `.my/bin/`.

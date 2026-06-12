@@ -13,8 +13,14 @@ Run a focused performance review using specialized agents.
    - Identify suspected hot paths and expected scale.
 
 2. Spawn applicable agents in parallel:
-   - `reviewer`: "Review {files} with a performance lens: bottlenecks, algorithmic complexity, memory usage, blocking I/O, N+1 queries, unnecessary work, and concrete optimizations."
-   - `researcher`: "Research framework/runtime/database-specific performance guidance relevant to {files}."
+   - `reviewer`:
+     ```text
+     Review {files} with a performance lens: bottlenecks, algorithmic complexity, memory usage, blocking I/O, N+1 queries, unnecessary work, and concrete optimizations.
+     ```
+   - `researcher`:
+     ```text
+     Research framework/runtime/database-specific performance guidance relevant to {files}.
+     ```
 
 3. Read relevant code yourself to validate and synthesize agent findings:
    - Check local instructions and conventions: `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `GEMINI.md`, `CODEX.md` when present.

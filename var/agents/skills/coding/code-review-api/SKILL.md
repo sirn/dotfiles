@@ -13,8 +13,14 @@ Verify API and library usage against authoritative documentation using specializ
    - Identify APIs, versions, packages, generated clients, SDKs, or protocols in use.
 
 2. Spawn applicable agents in parallel:
-   - `researcher`: "Verify API/library usage in {files or context} against official documentation, including version-specific parameters, behavior, configuration, and deprecations."
-   - `reviewer`: "Review the API/library usage findings for correctness risk and minimal remediation."
+   - `researcher`:
+     ```
+     Verify API/library usage in {files or context} against official documentation, including version-specific parameters, behavior, configuration, and deprecations.
+     ```
+   - `reviewer`:
+     ```
+     Review the API/library usage findings for correctness risk and minimal remediation.
+     ```
 
 3. Read relevant code yourself to validate and synthesize agent findings:
    - Check local instructions and conventions: `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `GEMINI.md`, `CODEX.md` when present.

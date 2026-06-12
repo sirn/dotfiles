@@ -35,9 +35,14 @@ Ask the user to clarify what they want to upgrade if it is not already clear:
 
 Spawn `researcher` with detailed instructions:
 
-- "Research breaking changes for upgrading {package} from {current_version} to {target_version}."
-- "Find official migration guides, changelogs, and deprecated API replacements."
-- "Identify common pitfalls, dependency manager commands, security advisories, and verification steps."
+```
+Research breaking changes for upgrading:
+{package} from {current_version} to {target_version}
+
+Find official migration guides, changelogs, and deprecated API replacements.
+
+Identify common pitfalls, dependency manager commands, security advisories, and verification steps.
+```
 
 Wait for the research agent to complete and synthesize findings. Prefer official documentation and record sources.
 
@@ -45,12 +50,29 @@ Wait for the research agent to complete and synthesize findings. Prefer official
 
 Create an upgrade plan incorporating research findings. For broad, major-version, or risky upgrades, spawn the following agents before presenting the plan:
 
-- `reviewer`: "Review the upgrade plan for {package} with a migration-risk lens: breaking changes, behavior regressions, and project-convention risks."
-- `auditor`: "Audit the upgrade plan for {package} for production risks: data loss, migration hazards, rollback safety, and contract compatibility."
+- `reviewer`:
+  ```
+  Review the upgrade plan for {package} with a migration-risk lens:
+  - breaking changes
+  - behavior regressions
+  - project-convention risks
+  ```
+- `auditor`:
+  ```
+  Audit the upgrade plan for {package} for production risks:
+  - data loss
+  - migration hazards
+  - rollback safety
+  - contract compatibility
+  ```
 
 For framework migrations or upgrades spanning module boundaries, also spawn:
 
-- `architect`: "Analyze module boundaries, ownership, dependency direction, and migration shape for upgrading {package}. Recommend the minimal migration path that preserves invariants."
+- `architect`:
+  ```
+  Analyze module boundaries, ownership, dependency direction, and migration shape for upgrading {package}.
+  Recommend the minimal migration path that preserves invariants.
+  ```
 
 Include:
 
@@ -66,14 +88,30 @@ Present the plan to the user for approval before proceeding when the upgrade is 
 
 After approval when needed, delegate to `worker`:
 
-"Upgrade {package} from {current} to {target} in {project}. Use {package_manager} commands. Update dependency declarations, let the package manager update lockfiles. Fix breaking changes identified in the migration plan: {summary}. Run {test/lint commands} after each change."
+```
+Upgrade {package} from {current} to {target} in {project}.
+Use {package_manager} commands.
+Update dependency declarations, let the package manager update lockfiles.
+Fix breaking changes identified in the migration plan: {summary}.
+Run {test/lint commands} after each change.
+```
 
 ### Step 6 - Fix Failures
 
 For any failures the worker couldn't resolve:
 
-1. Spawn `researcher`: "Research this failure after upgrading {package}: {error output}. Identify root cause and minimal fix."
-2. Delegate to `worker`: "Apply this fix: {findings}."
+1. Spawn `researcher`:
+   ```
+   Research this failure after upgrading {package}:
+   {error output}
+
+   Identify root cause and minimal fix.
+   ```
+2. Delegate to `worker`:
+   ```
+   Apply this fix:
+   {findings}
+   ```
 3. Re-run the relevant command to verify.
 
 ## Stop Condition
