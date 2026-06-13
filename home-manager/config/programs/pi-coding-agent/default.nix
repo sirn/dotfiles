@@ -146,7 +146,7 @@ in
 
     settings = {
       quietStartup = true;
-      hideThinkingBlock = true;
+      hideThinkingBlock = false;
       theme = config.home.colors.variant;
       retry = {
         maxRetries = 10;
