@@ -14,40 +14,63 @@ Evaluate and address PR review comments by delegating to expert roles.
 
 ## Process
 
-1. **Gather PR data** (sequential):
-   - Get PR number from user or infer from branch
-   - Determine repository: `gh repo view` or `jj git remote list`
-   - Fetch PR comments: `gh api repos/owner/repo/pulls/<number>/comments -X GET --paginate`
-   - Fetch reviews: `gh api repos/owner/repo/pulls/<number>/reviews -X GET --paginate`
-   - Get PR diff: `gh pr diff <number> -R owner/repo`
-   - Check PR status: `gh pr checks <number> -R owner/repo`
-   - If checks failing, fetch logs: `gh run view <run-id> -R owner/repo --log-failed`
-   - Run `jj diff -s` to see current working copy changes
+### Step 1 - Gather PR Data
 
-   **Important**: Always use `-X GET` to be explicit about read-only access.
+- Get PR number from user or infer from branch
+- Determine repository: `gh repo view` or `jj git remote list`
+- Fetch PR comments: `gh api repos/owner/repo/pulls/<number>/comments -X GET --paginate`
+- Fetch reviews: `gh api repos/owner/repo/pulls/<number>/reviews -X GET --paginate`
+- Get PR diff: `gh pr diff <number> -R owner/repo`
+- Check PR status: `gh pr checks <number> -R owner/repo`
+- If checks failing, fetch logs: `gh run view <run-id> -R owner/repo --log-failed`
+- Capture CI failure context: save a summary of which checks failed, key error messages, and stack traces for use in subsequent analysis steps.
+- Run `jj diff -s` to see current working copy changes
 
-2. Spawn parallel agents for comment analysis:
-   - `reviewer`:
-     ```
-     Review these PR comments across all lenses:
-     - (1) correctness/quality — classify each as already-addressed, valid-fix-needed, invalid, or needs-discussion
-     - (2) security — identify valid security concerns vs false positives and assess severity
-     - (3) simplicity/convention — prioritize the simplest possible change that satisfies valid feedback, distinguish valid simplifications from over-engineering suggestions
-     ```
-   - `researcher`:
-     ```
-     Research best practices and official documentation for the fixes suggested in these PR comments. Provide authoritative sources.
-     ```
+**Important**: Always use `-X GET` to be explicit about read-only access.
 
-3. Use `oracle` only for disputed comments or conflicting expert recommendations:
-   - `oracle`:
-     ```
-     Adjudicate these disputed PR comments and conflicting recommendations. Decide which feedback should be fixed, discussed, or rejected, and explain why.
-     ```
+### Step 2 - Analyze Comments and CI
 
-4. **Synthesize findings** into unified report.
+Spawn `reviewer` subagent for review comments:
 
-## Output
+```
+Review these PR comments across all lenses:
+
+- correctness/quality — classify each as already-addressed, valid-fix-needed, invalid, or needs-discussion
+- security — identify valid security concerns vs false positives and assess severity
+- simplicity/convention — prioritize the simplest possible change that satisfies valid feedback, distinguish valid simplifications from over-engineering suggestions
+- ci-correlation — for each comment, check whether it relates to an observed CI failure; if so, note the connection and whether the comment would resolve the failure
+
+Include the CI failure context below when available.
+```
+
+Spawn `researcher` subagent for API validation/best practices:
+
+```
+Research best practices and official documentation for the fixes suggested in these PR comments. Provide authoritative sources. If CI failure logs are included, research the specific error messages, stack traces, or test failures to find root causes and known solutions.
+```
+
+Spawn  `reviewer` subagent for CI analysis only if checks failed:
+
+```
+Analyze these GitHub Actions CI failure logs:
+
+- failure-classification — classify each as test-flake, code-regression, env/infra-issue, dependency-problem, or timeout
+- root-cause — identify the most likely root cause for each failure with supporting evidence from logs
+- diff-relationship — check whether failures are in code touched by this PR's diff or in unrelated code
+- fix-suggestion — for code-regression failures, suggest minimal fixes; for flake/infra issues, suggest mitigation (retry, environment fix, etc.)
+```
+
+### Step 3 - Adjudicate Disputes
+
+Spawn `oracle` subagent when there are disputes.
+
+```
+Adjudicate these disputed PR comments and conflicting recommendations. Decide which feedback should be fixed, discussed, or rejected, and explain why.
+```
+
+### Step 4 - Synthesize Findings
+
+Synthesize the analysis into a unified report with the following sections:
 
 1. **PR Summary**
    - PR number, title, state
@@ -64,34 +87,13 @@ Evaluate and address PR review comments by delegating to expert roles.
    - Best practice references
    - Estimated effort
 
-4. **Next Steps**
+4. **CI Failure Analysis** — only include if checks failed
+   - **Failing Checks**: List each failed check with run ID and error summary
+   - **Failure Classification**: Test flake / code regression / env-infra / dependency / timeout
+   - **Root Causes**: Per-failure analysis with log evidence
+   - **PR Relationship**: Whether each failure is in PR-touched code or unrelated
+   - **Recommendations**: Fix suggestions for regressions, mitigation steps for flakes/infra
+
+5. **Next Steps**
    - Immediate actions
    - Questions for reviewer
-
-## Agent Roles
-
-**reviewer**:
-
-- Analyze comments through the requested lens: correctness, security, simplicity, convention, or plan/design.
-- Determine if feedback is already addressed by existing changes.
-- Validate technical accuracy of feedback.
-- Flag unclear or ambiguous comments.
-- Recommend pragmatic minimal fixes for valid feedback.
-
-**researcher**:
-
-- Use WebSearch/WebFetch to verify patterns.
-- Look up official documentation.
-- Research idiomatic solutions.
-- Provide authoritative sources.
-
-**oracle**:
-
-- Resolve disputed comments or conflicting recommendations.
-- State assumptions, tradeoffs, and confidence.
-
-## Important
-
-- **Never** push fixes without explicit user confirmation
-- Ask before destructive changes
-- Use `jj` commands for VCS operations (refer to `jujutsu`)

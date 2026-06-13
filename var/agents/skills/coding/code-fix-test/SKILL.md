@@ -7,45 +7,58 @@ Diagnose and fix validation failures with minimal targeted changes.
 
 ## Process
 
-1. Identify context:
-   - If failure output is provided, read it fully before changing anything.
-   - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
-   - If the user specified files, commands, or failures, focus on those.
+### Step 1 - Identify Context
 
-2. Reproduce or inspect the failure:
-   - Prefer the exact failing command from the user or project output.
-   - If no command is provided, detect the relevant test/lint/check command from instructions, task runners, wrappers, package manager scripts, then common defaults.
-   - Use proper timeouts and avoid watch modes.
+- If failure output is provided, read it fully before changing anything.
+- If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
+- If the user specified files, commands, or failures, focus on those.
 
-3. Spawn `researcher`:
-   ```
-   Research the root cause of this failure:
-   {error output}
+### Step 2 - Reproduce Failure
 
-   Identify whether this is:
-   - a product-code bug
-   - a test bug
-   - an environment issue
-   - a stale expectation
+- Prefer the exact failing command from the user or project output.
+- If no command is provided, detect the relevant test/lint/check command from instructions, task runners, wrappers, package manager scripts, then common defaults.
+- Use proper timeouts and avoid watch modes.
 
-   Find relevant docs or known issues.
-   ```
+### Step 3 - Research Root Cause
 
-4. Review researcher findings. Delegate to `worker`:
-   ```
-   Apply a minimal fix for the following in the specified file:
-   {root cause}
-   {file}
+Spawn `research` subagent:
 
-   Do not weaken assertions, skip tests, or broaden ignores unless explicitly approved with sound rationale.
-   ```
+```
+Research the root cause of this failure:
+{error output}
 
-5. Rerun the failing command to verify the fix.
+Identify whether this is:
+- a product-code bug
+- a test bug
+- an environment issue
+- a stale expectation
 
-6. Stop condition:
-   - If a fix fails twice, stop, provide root-cause analysis, and ask for guidance.
+Find relevant docs or known issues.
+```
 
-## Output
+### Step 4 - Apply Fix
+
+Spawn `worker` subagent:
+
+```
+Apply a minimal fix for the following in the specified file:
+{root cause}
+{file}
+
+Do not weaken assertions, skip tests, or broaden ignores unless explicitly approved with sound rationale.
+```
+
+### Step 5 - Verify
+
+Verify using relevant methods.
+
+### Step 6 - Stop Condition
+
+- If a fix fails twice, stop, provide root-cause analysis, and ask for guidance.
+
+### Step 6 - Report
+
+Report the following to the user:
 
 1. **Failing Command**
 2. **Root Cause**

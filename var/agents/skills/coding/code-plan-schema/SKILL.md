@@ -7,90 +7,107 @@ Generate an actionable schema design plan based on task analysis and research.
 
 ## Process
 
-1. Identify context:
-   - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
-   - If the user specified entities, tables, models, migrations, or relationships, focus on those.
-   - Identify the database, ORM/framework, migration tooling, and existing data model.
+### Step 1 - Identify Context
 
-2. Spawn applicable agents in parallel:
-   - `scout`:
-     ```
-     Analyze existing schema artifacts for {task}:
-     - Schema definitions
-     - Migrations
-     - Models
-     - Query code
-     - Tests
-     - Persistence conventions
-     ```
-   - `researcher`:
-     ```
-     Research official database/ORM documentation relevant to {task}:
-     - Migration constraints
-     - Performance considerations
-     - Security guidance
-     ```
-   - `planner`:
-     ```
-     Design a minimal schema plan for {task}, including:
-     - Relationships
-     - Indexes
-     - Constraints
-     - Migrations
-     - Alternatives
-     - Tradeoffs
-     ```
-   - `reviewer`:
-     ```
-     Review the proposed schema for:
-     - Correctness
-     - Data integrity
-     - Security
-     - Performance
-     - Simplicity
-     - Project-convention risks
-     ```
+- If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
+- If the user specified entities, tables, models, migrations, or relationships, focus on those.
+- Identify the database, ORM/framework, migration tooling, and existing data model.
 
-3. For schemas affecting data flow or cross-module boundaries, spawn `architect` before `planner`:
-   - `architect`:
-     ```
-     Analyze for {task}:
-     - Data flow
-     - Ownership
-     - Dependency direction
-     - Migration shape
-     Recommend the minimal schema that preserves invariants.
-     ```
+### Step 2 - Research and Scout
 
-4. Use `oracle` only for high-impact or conflicting schema decisions:
-   - `oracle`:
-     ```
-     Adjudicate the conflicting schema recommendations for {task}.
-     Choose the safest minimal data model and state:
-     - Assumptions
-     - Tradeoffs
-     - Confidence
-     ```
+Spawn `scout` subagent:
 
-5. For production-bound schema changes, spawn `auditor` after the plan is synthesized:
-   - `auditor`:
-     ```
-     Audit the schema plan for {task} for production risks:
-     - Data loss
-     - Migration hazards
-     - Rollback safety
-     - Contract compatibility
-     ```
+```
+Analyze existing schema artifacts for {task}:
+- Schema definitions
+- Migrations
+- Models
+- Query code
+- Tests
+- Persistence conventions
+```
 
-6. Read relevant code yourself and validate agent findings.
+Spawn `researcher` subagent:
 
-7. Design the schema:
-   - Define only required tables/entities/fields.
-   - Avoid generic/flexible schemas unless strictly required.
-   - Consider indexes, constraints, migrations, normalization, and N+1 risks.
-   - Identify security and privacy risks for stored data.
+```
+Research official database/ORM documentation relevant to {task}:
+- Migration constraints
+- Performance considerations
+- Security guidance
+```
 
-## Output
+Spawn `planner` subagent:
+```
+Design a minimal schema plan for {task}, including:
+- Relationships
+- Indexes
+- Constraints
+- Migrations
+- Alternatives
+- Tradeoffs
+```
+
+Spawn `reviewer` subagent:
+
+```
+Review the proposed schema for:
+- Correctness
+- Data integrity
+- Security
+- Performance
+- Simplicity
+- Project-convention risks
+```
+
+### Step 3 - Architecture Review
+
+For schemas affecting data flow or cross-module boundaries, spawn `architect` subagent before `planner` subagent:
+
+  ```
+  Analyze for {task}:
+  - Data flow
+  - Ownership
+  - Dependency direction
+  - Migration shape
+  Recommend the minimal schema that preserves invariants.
+  ```
+
+### Step 4 - Adjudicate Decisions
+
+Use `oracle` subagent only for high-impact or conflicting schema decisions:
+
+```
+Adjudicate the conflicting schema recommendations for {task}.
+Choose the safest minimal data model and state:
+- Assumptions
+- Tradeoffs
+- Confidence
+```
+
+### Step 5 - Audit
+
+For production-bound schema changes, spawn `auditor` subagent after the plan is synthesized:
+
+```
+Audit the schema plan for {task} for production risks:
+- Data loss
+- Migration hazards
+- Rollback safety
+- Contract compatibility
+```
+
+### Step 6 - Validate Findings
+
+Read relevant code yourself and validate agent findings.
+
+### Step 7 - Design Schema
+
+- Define only required tables/entities/fields.
+- Avoid generic/flexible schemas unless strictly required.
+- Consider indexes, constraints, migrations, normalization, and N+1 risks.
+- Identify security and privacy risks for stored data.
+
+### Step 8 - Report
 
 1. **Context Analysis**
    - Existing schema/model structure

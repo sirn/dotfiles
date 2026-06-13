@@ -12,51 +12,74 @@ Run a convergent fix loop: find issues, fix them, repeat until clean.
 
 ## Process
 
-1. **Identify scope**:
-   - If code changes are involved: `jj diff -s` to see changed files; `jj diff -- path` to restrict scope.
-   - If the user specified files or paths, focus on those.
-   - Capture a safety baseline: note the current diff state or create a new commit on top (`jj new`).
-   - Read the `code-test` skill to detect the project's test/lint commands; run a baseline check.
+### Step 1 - Identify Scope
 
-2. **Iteration loop** (max 5 iterations by default):
-   1. **Find issues** — use applicable skills and spawn subagents:
-      - Default: spawn subagents according to code-review skill, and code-cleanup skill.
-      - Specific: spawn subagents that closely matches user's request.
+- If code changes are involved: `jj diff -s` to see changed files; `jj diff -- path` to restrict scope.
+- If the user specified files or paths, focus on those.
+- Capture a safety baseline: note the current diff state or create a new commit on top (`jj new`).
+- Read the `code-test` skill to detect the project's test/lint commands; run a baseline check.
 
-   2. **Filter findings** — synthesize agent output:
-      - Deduplicate: drop issues already addressed or explicitly deferred in a prior iteration.
-      - Classify: critical/high (must fix), medium (should fix), low/speculative (defer).
-      - If no new actionable findings remain → exit loop.
+### Step 2 - Iteration Loop
 
-   3. **Fix** — delegate to `worker`:
-      - `worker`:
-        ```
-        Fix these issues in {files}: {findings list}. Apply minimal targeted, behavior-preserving changes. Do not refactor beyond what's needed to resolve each finding.
-        ```
+#### 1. Find issues
 
-   4. **Verify** — run project checks:
-      - Run the most specific applicable commands with timeouts.
-      - If regressions appear, delegate to `worker` to fix regressions before continuing.
+Use applicable skills and spawn subagents:
 
-   5. **Commit** — commit iteration pass:
-      - Make a commit with "Iteration <n>: <desc>"; these commits are ephemeral and will be reviewed and squashed by the user.
+- Default: spawn subagents according to code-review skill, and code-cleanup skill.
+- Specific: spawn subagents that closely matches user's request.
 
-3. **Production audit** (for production-bound changes, after the loop converges):
-   - `auditor`:
-     ```
-     Audit {files} for production readiness: correctness, security, data loss, migration hazards, and rollback safety.
-     ```
+#### 2. Filter findings
 
-4. **Final verification**:
-   - Run full project checks (test + lint + format).
-   - Ensure the diff from the safety baseline is coherent and no unintended changes slipped in.
+Synthesize agent output:
 
-5. **Report**:
-   - Total iterations run.
-   - Summary of findings per iteration (what was found, what was fixed, what was deferred).
-   - Auditor findings, if run.
-   - Final check results.
-   - Any remaining items requiring manual attention.
+- Deduplicate: drop issues already addressed or explicitly deferred in a prior iteration.
+- Classify: critical/high (must fix), medium (should fix), low/speculative (defer).
+- If no new actionable findings remain → exit loop.
+
+#### 3. Fix
+
+Spawn `worker` subagent:
+
+```
+Fix these issues in {files}: {findings list}. Apply minimal targeted, behavior-preserving changes. Do not refactor beyond what's needed to resolve each finding.
+```
+
+#### 4. Verify
+
+Run project checks:
+
+- Run the most specific applicable commands with timeouts.
+- If regressions appear, delegate to `worker` to fix regressions before continuing.
+
+#### 5. Commit
+
+Commit iteration pass:
+
+- Make a commit with "Iteration <n>: <desc>"; these commits are ephemeral and will be reviewed and squashed by the user.
+
+### Step 3 - Production Audit
+
+If production readiness is requested, spawn `auditor` subagent:
+
+```
+Audit {files} for production readiness: correctness, security, data loss, migration hazards, and rollback safety.
+```
+
+### Step 4 - Verification
+
+- Run full project checks (test + lint + format).
+- Ensure the diff from the safety baseline is coherent and no unintended changes slipped in.
+
+### Step 5 - Report
+
+Report the following to the user:
+
+- **Scope**: files and mode used
+- **Iterations**: for each iteration — total iterations run, summary of findings per iteration (what was found, what was fixed, what was deferred)
+- **Final Verification**: final check results
+- **Convergence Status**: why the loop stopped (clean / max iterations / stuck)
+- **Auditor Findings**: if the production audit was run
+- **Remaining Items**: deferred findings requiring manual attention or product decisions
 
 ## Convergence Rules
 
@@ -72,11 +95,3 @@ Run a convergent fix loop: find issues, fix them, repeat until clean.
 - Do not make broad rewrites; worker must apply minimal targeted fixes per finding.
 - Do not fix issues outside the defined scope.
 - Do not invoke or call other skills from within this skill; reading `code-test` for command detection is allowed.
-
-## Output
-
-1. **Scope**: files and mode used
-2. **Iterations**: for each iteration — findings, fixes applied, deferred
-3. **Final Verification**: check results
-4. **Convergence Status**: why the loop stopped (clean / max iterations / stuck)
-5. **Remaining Items**: deferred findings requiring manual attention or product decisions

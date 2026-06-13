@@ -7,55 +7,70 @@ Generate a safe refactoring plan only; do not apply code changes.
 
 ## Process
 
-1. Identify context:
-   - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
-   - If the user specified files, paths, abstractions, or pain points, focus on those.
-   - Understand the desired outcome and non-goals.
+### Step 1 - Identify Context
 
-2. Spawn applicable agents in parallel:
-   - `scout`:
-     ```
-     Analyze affected code areas, call sites, tests, abstractions, dependency edges, and local conventions for {task}.
-     ```
-   - `planner`:
-     ```
-     Design a minimal behavior-preserving refactoring plan for {task}, including ordering, stop points, alternatives, and tradeoffs.
-     ```
-   - `reviewer`:
-     ```
-     Review the proposed refactor for correctness, behavior preservation, simplicity, and project-convention risks.
-     ```
+- If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
+- If the user specified files, paths, abstractions, or pain points, focus on those.
+- Understand the desired outcome and non-goals.
 
-3. For cross-module refactors, spawn `architect` before `planner`:
-   - `architect`:
-     ```
-     Analyze module boundaries, ownership, dependency direction, and structural invariants for {task}. Recommend the minimal architecture that preserves behavior.
-     ```
+### Step 2 - Research and Scout
 
-4. Use `oracle` only for high-impact or conflicting refactoring decisions:
-   - `oracle`:
-     ```
-     Adjudicate the conflicting refactoring recommendations for {task}. Choose the safest minimal path and state assumptions, tradeoffs, and confidence.
-     ```
+Spawn `scout` subagent:
 
-5. For production-bound refactors, spawn `auditor` after the plan is synthesized:
-   - `auditor`:
-     ```
-     Audit the refactoring plan for {task} for production risks: data loss, migration hazards, rollback safety, and contract compatibility.
-     ```
+  ```
+  Analyze affected code areas, call sites, tests, abstractions, dependency edges, and local conventions for {task}.
+  ```
 
-6. Read relevant code yourself and validate agent findings.
+Spawn `planner` subagent:
+  ```
+  Design a minimal behavior-preserving refactoring plan for {task}, including ordering, stop points, alternatives, and tradeoffs.
+  ```
 
-7. Design the refactor:
-   - Identify safe transformations: extraction, rename, simplification, deletion, inlining, or module movement.
-   - Audit abstractions: does each abstraction earn its complexity?
-   - Prefer deletion and simplification over new layers.
-   - Break the work into small behavior-preserving steps.
-   - Include verification after each meaningful step.
-   - Call out where characterization tests are needed before refactoring.
-   - Do not apply code changes.
+Spawn `reviewer` subagent:
 
-## Output
+```
+Review the proposed refactor for correctness, behavior preservation, simplicity, and project-convention risks.
+```
+
+### Step 3 - Architecture Review
+
+For cross-module refactors, spawn `architect` subagent before `planner` subagent:
+
+```
+Analyze module boundaries, ownership, dependency direction, and structural invariants for {task}. Recommend the minimal architecture that preserves behavior.
+```
+
+### Step 4 - Adjudicate Decisions
+
+Use `oracle` subagent only for high-impact or conflicting refactoring decisions:
+
+```
+Adjudicate the conflicting refactoring recommendations for {task}. Choose the safest minimal path and state assumptions, tradeoffs, and confidence.
+```
+
+### Step 5 - Audit
+
+For production-bound refactors, spawn `auditor` subagent after the plan is synthesized:
+
+```
+Audit the refactoring plan for {task} for production risks: data loss, migration hazards, rollback safety, and contract compatibility.
+```
+
+### Step 6 - Validate Findings
+
+Read relevant code yourself and validate agent findings.
+
+### Step 7 - Design Refactor
+
+- Identify safe transformations: extraction, rename, simplification, deletion, inlining, or module movement.
+- Audit abstractions: does each abstraction earn its complexity?
+- Prefer deletion and simplification over new layers.
+- Break the work into small behavior-preserving steps.
+- Include verification after each meaningful step.
+- Call out where characterization tests are needed before refactoring.
+- Do not apply code changes.
+
+### Step 8 - Report
 
 1. **Context Analysis**
    - Relevant code structure and patterns

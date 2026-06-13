@@ -27,13 +27,16 @@ Ask the user to clarify what they want to upgrade if it is not already clear:
    - Go: `go.mod`, `go.sum`.
    - Ruby: `Gemfile`, `Gemfile.lock`.
    - Nix: `flake.nix`, `flake.lock`, `shell.nix`; read the `nix` and `flake` skills.
+
 2. Read dependency files and identify current versions.
+
 3. Identify existing test, lint/check, build, and formatter commands from instructions, task runners, wrappers, and package manager scripts.
+
 4. Note lockfiles but do not edit them manually.
 
 ### Step 3 - Research Changes
 
-Spawn `researcher` with detailed instructions:
+Spawn `researcher` subagent:
 
 ```
 Research breaking changes for upgrading:
@@ -44,35 +47,39 @@ Find official migration guides, changelogs, and deprecated API replacements.
 Identify common pitfalls, dependency manager commands, security advisories, and verification steps.
 ```
 
-Wait for the research agent to complete and synthesize findings. Prefer official documentation and record sources.
+Then synthesize findings. Prefer official documentation and record sources.
 
 ### Step 4 - Generate Plan
 
 Create an upgrade plan incorporating research findings. For broad, major-version, or risky upgrades, spawn the following agents before presenting the plan:
 
-- `reviewer`:
-  ```
-  Review the upgrade plan for {package} with a migration-risk lens:
-  - breaking changes
-  - behavior regressions
-  - project-convention risks
-  ```
-- `auditor`:
-  ```
-  Audit the upgrade plan for {package} for production risks:
-  - data loss
-  - migration hazards
-  - rollback safety
-  - contract compatibility
-  ```
+Spawn `reviewer` subagent:
+
+```
+Review the upgrade plan for {package} with a migration-risk lens:
+- breaking changes
+- behavior regressions
+- project-convention risks
+```
+
+Spawn `auditor` subagent:
+
+```
+Audit the upgrade plan for {package} for production risks:
+- data loss
+- migration hazards
+- rollback safety
+- contract compatibility
+```
 
 For framework migrations or upgrades spanning module boundaries, also spawn:
 
-- `architect`:
-  ```
-  Analyze module boundaries, ownership, dependency direction, and migration shape for upgrading {package}.
-  Recommend the minimal migration path that preserves invariants.
-  ```
+Spawn `architect` subagent:
+
+```
+Analyze module boundaries, ownership, dependency direction, and migration shape for upgrading {package}.
+Recommend the minimal migration path that preserves invariants.
+```
 
 Include:
 
@@ -100,32 +107,38 @@ Run {test/lint commands} after each change.
 
 For any failures the worker couldn't resolve:
 
-1. Spawn `researcher`:
-   ```
-   Research this failure after upgrading {package}:
-   {error output}
+Spawn `researcher` subagent:
 
-   Identify root cause and minimal fix.
-   ```
-2. Delegate to `worker`:
-   ```
-   Apply this fix:
-   {findings}
-   ```
-3. Re-run the relevant command to verify.
+```
+Research this failure after upgrading {package}:
+{error output}
+
+Identify root cause and minimal fix.
+```
+
+Spawn `worker` subagent:
+
+```
+Apply this fix:
+{findings}
+```
+
+Re-run the relevant command to verify.
+
+### Step 7 - Report
+
+Report the following to the user:
+
+1. **Upgrading** — What's being upgraded
+2. **Current Versions** — Before upgrade
+3. **Target Versions** — After upgrade
+4. **Breaking Changes** — From research with sources
+5. **Migration Plan** — Step-by-step, presented before risky execution
+6. **Updates Applied** — Files changed, commands run
+7. **Verification Results** — Tests/build/lint/checks
+8. **Failures Fixed** — If any, with explanations
+9. **Remaining Issues** — Requires manual intervention
 
 ## Stop Condition
 
-- If a fix fails twice, stop and ask for guidance.
-
-## Output
-
-1. **Upgrading** - What's being upgraded
-2. **Current Versions** - Before upgrade
-3. **Target Versions** - After upgrade
-4. **Breaking Changes** - From research with sources
-5. **Migration Plan** - Step-by-step, presented before risky execution
-6. **Updates Applied** - Files changed, commands run
-7. **Verification Results** - Tests/build/lint/checks
-8. **Failures Fixed** - If any, with explanations
-9. **Remaining Issues** - Requires manual intervention
+If a fix fails twice, stop and ask for guidance.

@@ -6,57 +6,74 @@ description: Generate implementation plans. Use when asked to plan how to implem
 Generate an actionable implementation plan based on task analysis and research.
 
 ## Process
+### Step 1 - Identify Context
 
-1. Identify context:
-   - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
-   - If the user specified files or paths, focus on those.
-   - Understand the user's requested behavior, constraints, and expected verification.
+- If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
+- If the user specified files or paths, focus on those.
+- Understand the user's requested behavior, constraints, and expected verification.
 
-2. Spawn applicable agents in parallel:
-   - `scout`:
-     ```
-     Analyze affected code areas, existing patterns, tests, architecture, integration points, and local conventions for {task}.
-     ```
-   - `researcher`:
-     ```
-     Research official documentation, best practices, constraints, migration considerations, and security guidance relevant to {task}.
-     ```
-   - `planner`:
-     ```
-     Design a minimal implementation plan for {task}, including alternatives and tradeoffs.
-     ```
-   - `reviewer`:
-     ```
-     Review the proposed direction for security, correctness, simplicity, and project-convention risks for {task}.
-     ```
+### Step 2 - Research and Scout
 
-3. For large or cross-module projects, spawn `architect` before `planner`:
-   - `architect`:
-     ```
-     Analyze module boundaries, ownership, data flow, dependency direction, and structural invariants for {task}. Recommend the minimal architecture that solves the problem.
-     ```
+Spawn `scout` subagent:
 
-4. Use `oracle` only for high-impact or conflicting design decisions:
-   - `oracle`:
-     ```
-     Adjudicate the conflicting recommendations for {task}. Choose the safest minimal path and state assumptions, tradeoffs, and confidence.
-     ```
+```
+Analyze affected code areas, existing patterns, tests, architecture, integration points, and local conventions for {task}.
+```
 
-5. For production-bound changes, spawn `auditor` after the plan is synthesized:
-   - `auditor`:
-     ```
-     Audit the implementation plan for {task} for production risks: correctness, security, data loss, migration hazards, and rollback safety.
-     ```
+Spawn `researcher` subagent:
 
-6. Read relevant code yourself and validate agent findings.
+```
+Research official documentation, best practices, constraints, migration considerations, and security guidance relevant to {task}.
+```
 
-7. Design the implementation:
-   - Define the minimal design approach, incorporating architect and auditor findings when present.
-   - Identify files to modify and integration points.
-   - Plan verification aligned with project tooling.
-   - Prefer no-code alternatives, boring solutions, minimal scope, and avoiding premature abstractions.
+Spawn `planner` subagent:
 
-## Output
+```
+Design a minimal implementation plan for {task}, including alternatives and tradeoffs.
+```
+
+Spawn `reviewer` subagent:
+
+```
+Review the proposed direction for security, correctness, simplicity, and project-convention risks for {task}.
+```
+
+### Step 3 - Architecture Review
+
+For large or cross-module projects, spawn `architect` subagent before `planner` subagent:
+
+```
+Analyze module boundaries, ownership, data flow, dependency direction, and structural invariants for {task}. Recommend the minimal architecture that solves the problem.
+```
+
+### Step 4 - Adjudicate Decisions
+
+Use `oracle` subagent only for high-impact or conflicting design decisions:
+
+```
+Adjudicate the conflicting recommendations for {task}. Choose the safest minimal path and state assumptions, tradeoffs, and confidence.
+```
+
+### Step 5 - Audit
+
+For production-bound changes, spawn `auditor` subagent after the plan is synthesized:
+
+```
+Audit the implementation plan for {task} for production risks: correctness, security, data loss, migration hazards, and rollback safety.
+```
+
+### Step 6 - Validate Findings
+
+Read relevant code yourself and validate agent findings.
+
+### Step 7 - Design Implementation
+
+- Define the minimal design approach, incorporating architect and auditor findings when present.
+- Identify files to modify and integration points.
+- Plan verification aligned with project tooling.
+- Prefer no-code alternatives, boring solutions, minimal scope, and avoiding premature abstractions.
+
+### Step 8 - Report
 
 1. **Context Analysis**
    - Relevant code structure and patterns

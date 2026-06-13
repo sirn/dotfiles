@@ -7,57 +7,65 @@ Check the working diff for hygiene issues and apply minimal fixes.
 
 ## Process
 
-1. **Identify context**:
-   - Run `jj diff -s` to see changed files and get a high-level overview.
-   - Run `jj diff` (or `jj diff -- <paths>`) for full diff content.
-   - If the user specified files or paths, restrict analysis to those.
+### Step 1 - Identify Context
 
-2. **Spawn `scout`**:
+- Run `jj diff -s` to see changed files and get a high-level overview.
+- Run `jj diff` (or `jj diff -- <paths>`) for full diff content.
+- If the user specified files or paths, restrict analysis to those.
 
-   ```
-   Analyze this diff in the following files:
-   {files}
+### Step 2 - Scout for Issues
 
-   For all the following:
-   - spelling typos, grammatical errors, and naming/formatting convention violations
-   - comments that explain _what_ the code does rather than _why_ (except section headers) — flag for removal, preserving rationale/tradeoff/non-obvious comments
-   - unintended edits like debug logging, commented-out code, orphaned TODOs, whitespace noise, merge artifacts, or out-of-scope changes
-   - inline decorated comments such as `// --- Title ----------` (multi-line section borders (`// -------------------` are fine)
-   - transitional or legacy comments like "Replaces the old x system" or "Migration from y" where the referenced thing no longer exists — only acceptable transitional comments are TODOs
+Spawn `scout` subagent:
 
-   Report file:line for each issue.
-   ```
+```
+Analyze this diff in the following files:
+{files}
 
-3. **Synthesize findings**:
-   - Filter to clear, actionable issues with low risk of false positives.
-   - Flag ambiguous findings for user confirmation rather than fixing speculatively.
-   - For typos: prefer dictionary lookups or project glossary terms before assuming.
+For all the following:
+- spelling typos, grammatical errors, and naming/formatting convention violations
+- comments that explain _what_ the code does rather than _why_ (except section headers) — flag for removal, preserving rationale/tradeoff/non-obvious comments
+- unintended edits like debug logging, commented-out code, orphaned TODOs, whitespace noise, merge artifacts, or out-of-scope changes
+- inline decorated comments such as `// --- Title ----------` (multi-line section borders (`// -------------------` are fine)
+- transitional or legacy comments like "Replaces the old x system" or "Migration from y" where the referenced thing no longer exists — only acceptable transitional comments are TODOs
 
-4. **Delegate to `worker`**:
+Report file:line for each issue.
+```
 
-   ```
-   Apply these hygiene fixes in the following files:
-   {files}
+### Step 3 - Synthesize Findings
 
-   For the following:
-   {prioritized fixes}
+- Filter to clear, actionable issues with low risk of false positives.
+- Flag ambiguous findings for user confirmation rather than fixing speculatively.
+- For typos: prefer dictionary lookups or project glossary terms before assuming.
 
-   Remove obvious _what_-comments, fix typos, remove unintended edits, remove stale transitional/legacy comments unless they are TODOs.
-   Do not change behavior, logic, or structure.
-   Apply one logical fix per edit.
-   ```
+### Step 4 - Apply Fixes
 
-5. **Stop at diminishing returns**:
-   - Stop when remaining findings are speculative or stylistic preferences.
-   - Stop when fixes would alter behavior or semantics.
-   - Stop when fixes require broader context beyond the diff.
+```
+Apply these hygiene fixes in the following files:
+{files}
 
-6. **Verify**:
-   - Run `jj diff` to confirm only intended changes were made and no side effects introduced.
-   - Run the project formatter if applicable.
-   - If a test/lint command is available, run it to confirm nothing broke.
+For the following:
+{prioritized fixes}
 
-## Output
+Remove obvious _what_-comments, fix typos, remove unintended edits, remove stale transitional/legacy comments unless they are TODOs.
+Do not change behavior, logic, or structure.
+Apply one logical fix per edit.
+```
+
+### Step 5 - Stop at Diminishing Returns
+
+- Stop when remaining findings are speculative or stylistic preferences.
+- Stop when fixes would alter behavior or semantics.
+- Stop when fixes require broader context beyond the diff.
+
+### Step 6 - Verify
+
+- Run `jj diff` to confirm only intended changes were made and no side effects introduced.
+- Run the project formatter if applicable.
+- If a test/lint command is available, run it to confirm nothing broke.
+
+### Step 7 - Report
+
+Report the following to the user:
 
 1. **Scope**: files analyzed and diff summary
 2. **Issues Found**: categorized by type (typos, comment quality, unintended edits) with file:line references

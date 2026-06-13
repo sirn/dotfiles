@@ -21,55 +21,75 @@ Clean up code by applying small, behavior-preserving fixes until additional chan
 
 ## Process
 
-1. Identify scope:
-   - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
-   - If the user specified files or paths, focus on those.
-   - Determine mode from the request; default to **Focused**.
+### Step 1 - Identify Scope
 
-2. Spawn `scout`:
-   ```
-   Map cleanup opportunities in the following scope:
-   {scope}
+- If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
+- If the user specified files or paths, focus on those.
+- Determine mode from the request; default to **Focused**.
 
-   For all the following:
-   - redundancies
-   - non-idiomatic code
-   - dead code
-   - simplification opportunities
-   - unnecessary complexity
+### Step 2 - Map Cleanup Opportunities
 
-   Report file paths, line numbers, and evidence for each.
-   ```
-   - Read the `code-test` skill to detect the project's test/lint commands.
-   - Capture the current diff and run targeted tests or checks as a safety baseline.
+Spawn `scout` subagent:
 
-3. Synthesize scout findings:
-   - Filter to safe, behavior-preserving improvements.
-   - Drop speculative items lacking clear evidence.
-   - Prefer existing project patterns over external preferences.
+```
+Map cleanup opportunities in the following scope:
+{scope}
 
-4. Delegate to `worker`:
-   ```
-   Apply these cleanup fixes in the following files:
-   {files}
+For all the following:
+- redundancies
+- non-idiomatic code
+- dead code
+- simplification opportunities
+- unnecessary complexity
 
-   {prioritized findings list}
+Report file paths, line numbers, and evidence for each.
+```
 
-   Apply one logical cleanup per step.
-   Preserve public behavior, API signatures, and test expectations.
-   ```
+Once subagent finished:
 
-5. Stop at diminishing returns:
-   - Stop when remaining issues are speculative or lack clear evidence.
-   - Stop when fixes would require risky cross-cutting refactors.
-   - Stop when changes need product or API decisions beyond the user's request.
-   - Stop when edits would produce churn without clear maintainability value.
+- Read the `code-test` skill to detect the project's test/lint commands.
+- Capture the current diff and run targeted tests or checks as a safety baseline.
 
-6. Verify targeted behavior and formatting:
-   - Re-run the checks from the safety baseline.
-   - Run the project formatter when applicable.
+### Step 3 - Synthesize Findings
 
-7. Report changes and remaining deferred items.
+- Filter to safe, behavior-preserving improvements.
+- Drop speculative items lacking clear evidence.
+- Prefer existing project patterns over external preferences.
+
+### Step 4 - Apply Fixes
+
+Spawn `worker` subagent:
+
+```
+Apply these cleanup fixes in the following files:
+{files}
+
+{prioritized findings list}
+
+Apply one logical cleanup per step.
+Preserve public behavior, API signatures, and test expectations.
+```
+
+### Step 5 - Stop at Diminishing Returns
+
+- Stop when remaining issues are speculative or lack clear evidence.
+- Stop when fixes would require risky cross-cutting refactors.
+- Stop when changes need product or API decisions beyond the user's request.
+- Stop when edits would produce churn without clear maintainability value.
+
+### Step 6 - Verify
+
+- Re-run the checks from the safety baseline.
+- Run the project formatter when applicable.
+
+### Step 7 - Report
+
+Report the following to the user:
+
+- **Scope**: files and mode used
+- **Cleanup Applied**: each change with before/after summary
+- **Verification**: check results confirming behavior is preserved
+- **Deferred/Remaining Items**: issues identified but not fixed, with rationale
 
 ## Guardrails
 
@@ -79,9 +99,3 @@ Clean up code by applying small, behavior-preserving fixes until additional chan
 - Preserve public behavior and test outcomes.
 - Do not invoke or call other skills from within this skill; reading `code-test` for command detection is allowed.
 
-## Output
-
-1. **Scope**: files and mode used
-2. **Cleanup Applied**: each change with before/after summary
-3. **Verification**: check results confirming behavior is preserved
-4. **Deferred/Remaining Items**: issues identified but not fixed, with rationale
