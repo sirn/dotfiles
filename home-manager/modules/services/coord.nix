@@ -131,8 +131,19 @@ let
         faster = cfg.keymap.freeMode.faster;
         click_left = cfg.keymap.freeMode.clickLeft;
         click_middle = cfg.keymap.freeMode.clickMiddle;
-        scroll_up = cfg.keymap.freeMode.scrollUp;
-        scroll_down = cfg.keymap.freeMode.scrollDown;
+      };
+      scroll_mode = {
+        modifier = cfg.keymap.scrollMode.modifier;
+        up = cfg.keymap.scrollMode.up;
+        down = cfg.keymap.scrollMode.down;
+        left = cfg.keymap.scrollMode.left;
+        right = cfg.keymap.scrollMode.right;
+      };
+      modifiers = {
+        meta = cfg.keymap.modifiers.meta;
+        alt = cfg.keymap.modifiers.alt;
+        shift = cfg.keymap.modifiers.shift;
+        ctrl = cfg.keymap.modifiers.ctrl;
       };
     };
     style = {
@@ -320,17 +331,56 @@ in
           default = "e";
           description = "Key for middle-click in free mode.";
         };
+      };
 
-        scrollUp = mkOption {
-          type = types.str;
-          default = "m";
-          description = "Key for scrolling up in free mode.";
+      scrollMode = {
+        modifier = mkOption {
+          type = types.enum [ "ctrl" "shift" "alt" "meta" ];
+          default = "ctrl";
+          description = "Modifier key held to enter scroll mode.";
         };
-
-        scrollDown = mkOption {
+        up = mkOption {
           type = types.str;
-          default = ",";
-          description = "Key for scrolling down in free mode.";
+          default = "j";
+          description = "Key for scrolling up in scroll mode.";
+        };
+        down = mkOption {
+          type = types.str;
+          default = "k";
+          description = "Key for scrolling down in scroll mode.";
+        };
+        left = mkOption {
+          type = types.str;
+          default = "h";
+          description = "Key for scrolling left in scroll mode.";
+        };
+        right = mkOption {
+          type = types.str;
+          default = "l";
+          description = "Key for scrolling right in scroll mode.";
+        };
+      };
+
+      modifiers = {
+        meta = mkOption {
+          type = types.listOf types.str;
+          default = [ "meta_l" "meta_r" ];
+          description = "Keys treated as the Meta modifier.";
+        };
+        alt = mkOption {
+          type = types.listOf types.str;
+          default = [ "alt_l" "alt_r" ];
+          description = "Keys treated as the Alt modifier.";
+        };
+        shift = mkOption {
+          type = types.listOf types.str;
+          default = [ "shift_l" "shift_r" ];
+          description = "Keys treated as the Shift modifier.";
+        };
+        ctrl = mkOption {
+          type = types.listOf types.str;
+          default = [ "ctrl_l" "ctrl_r" ];
+          description = "Keys treated as the Ctrl modifier.";
         };
       };
     };
