@@ -7,15 +7,15 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "coord";
-  version = "0.2.3";
+  version = "0.3.0";
 
   src = fetchgit {
     url = "https://git.sr.ht/~sirn/coord";
     rev = "refs/tags/v${version}";
-    hash = "sha256-P4bJ7MFSAXAQi1ac3lP9IOFIJa7j5qwkWKkSvVguAvw=";
+    hash = "sha256-n0v0uzr1/E2xA4EAQHWbOaKvDvrOt41v7/D19L888lQ=";
   };
 
-  cargoHash = "sha256-cHZT/+GE0Fjr2RhmA7BHZU6s4wNOTZKRIx5+jTmjzcQ=";
+  cargoHash = "sha256-Y+hjer6fAKndVsjA45NOex2NWXZn4HR5mr39AlJFm5Q=";
 
   cargoBuildFlags = [
     "-p"
