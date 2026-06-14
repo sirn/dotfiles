@@ -8,7 +8,7 @@
 let
   cfg = config.programs.wezterm;
 
-  fishcfg = config.programs.fish;
+  fontcfg = config.home.fonts;
 
   niricfg = config.programs.niri;
 
@@ -151,4 +151,5 @@ in
         terminal = lib.getExe cfg.package;
       };
     };
+  };
 }
