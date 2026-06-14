@@ -23,10 +23,11 @@ Run a convergent fix loop: find issues, fix them, repeat until clean.
 
 #### 1. Find issues
 
-Use applicable skills and spawn subagents:
+If user specify a skill, load that skill and spawn the approrpiate subagents, otherwise:
 
-- Default: spawn subagents according to code-review skill, and code-cleanup skill.
-- Specific: spawn subagents that closely matches user's request.
+- Load `code-review` skill.
+- Load `code-cleanup` skill.
+- Spawn subagents according to these two skills.
 
 #### 2. Filter findings
 

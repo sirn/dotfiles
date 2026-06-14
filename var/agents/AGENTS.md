@@ -9,7 +9,7 @@
 - Trust the user's stated facts, but verify current repository state before changing anything.
 - Ask for clarification when requirements, success criteria, or target files are unclear.
 - Do not write a script to perform trivial tasks.
-- Delegate to available subagents when a task requires specialization.
+- Delegate to available subagents when a task involve more than a simple command run or one/two line edits.
 - Resume subagent session (pass `sessionId`) when: same task, same agent, genuine continuation.
 - New subagent session for: different task, different agent, or when uncertain.
 - Read reference skills before covered tools.
