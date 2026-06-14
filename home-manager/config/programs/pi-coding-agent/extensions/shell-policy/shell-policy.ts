@@ -513,12 +513,16 @@ export default function (pi: ExtensionAPI) {
     }
   });
 
+  let savedPreFilterTools: string[] | null = null;
+
   function updateActiveTools(ctx: ExtensionContext): void {
     const executionMode = getExecutionMode(ctx);
     const { policyOverride } = executionMode;
     const modePolicies = executionMode.modes
       .map((mode) => globalUnified.modes?.[mode])
       .filter((policy): policy is ModePolicy => Boolean(policy));
+
+    const beforeTools = pi.getActiveTools();
     const disabledTools = computeDisabledTools(modePolicies);
     // Keep path-restricted tools callable so the model can use them for the
     // permitted paths; the tool_call handler enforces the path restriction.
@@ -527,13 +531,39 @@ export default function (pi: ExtensionAPI) {
         if (paths?.length) disabledTools.delete(tool);
       }
     }
-    const allToolNames = pi.getAllTools().map((t) => t.name);
-    const activeToolNames = allToolNames.filter(
-      (name) => !disabledTools.has(name),
-    );
-    pi.setActiveTools(activeToolNames);
-  }
 
+    if (disabledTools.size === 0) {
+      if (savedPreFilterTools) {
+        pi.setActiveTools(savedPreFilterTools);
+        savedPreFilterTools = null;
+      }
+      return;
+    }
+
+    // Save once: the first time restrictions are applied per agent run.
+    if (savedPreFilterTools === null) {
+      savedPreFilterTools = beforeTools;
+    }
+    pi.setActiveTools(
+      savedPreFilterTools.filter((name) => !disabledTools.has(name)),
+    );
+  }
   pi.on("session_start", (_event, ctx) => updateActiveTools(ctx));
   pi.on("before_agent_start", (_event, ctx) => updateActiveTools(ctx));
+  pi.on("agent_end", () => {
+    if (savedPreFilterTools) {
+      // Preserve tools that became active after save (e.g. dynamic
+      // registration) while restoring tools removed by mode policy.
+      const currentActive = new Set(pi.getActiveTools());
+      const restored = [...new Set([...savedPreFilterTools, ...currentActive])];
+      pi.setActiveTools(restored);
+      savedPreFilterTools = null;
+    }
+  });
+  pi.on("session_shutdown", (_event) => {
+    if (savedPreFilterTools) {
+      pi.setActiveTools(savedPreFilterTools);
+      savedPreFilterTools = null;
+    }
+  });
 }
