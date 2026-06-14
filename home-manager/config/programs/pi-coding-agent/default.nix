@@ -83,13 +83,13 @@ let
         name: lib.nameValuePair "auto-mode/${name}" { text = builtins.readFile (./auto-mode + "/${name}"); }
       )
       (
-        builtins.filter (
-          n: builtins.match ".*\\.md$" n != null && n != "prompt.md" && n != "commands-context.md"
-        ) (builtins.attrNames (builtins.readDir ./auto-mode))
+        builtins.filter (n: builtins.match ".*\\.md$" n != null && n != "prompt.md" && n != "commands.md") (
+          builtins.attrNames (builtins.readDir ./auto-mode)
+        )
       )
   );
   policyAutoModeContextFileEntries = lib.mapAttrs' (
-    name: value: lib.nameValuePair ".pi/agent/custom/execution-policy/${name}" value
+    name: value: lib.nameValuePair ".pi/agent/custom/shell-policy/${name}" value
   ) policyAutoModeContextFiles;
 
   # Generate agent markdown files from subagent configs
@@ -195,9 +195,9 @@ in
       ".pi/agent/extensions/rimuruw-pi-hashline-edit".source = pkgs.local.pi-hashline-edit;
       ".pi/agent/extensions/monotykamary-pi-vcc".source = pkgs.local.pi-vcc;
       ".pi/agent/skills".source = agentsCfg.skillTrees;
-      ".pi/agent/custom/execution-policy/policy.json".source = policyJsonFile;
-      ".pi/agent/custom/execution-policy/auto-mode/prompt.md".text = policyAutoModePrompt;
-      ".pi/agent/custom/execution-policy/auto-mode/commands-context.md".text = lib.mkIf (
+      ".pi/agent/custom/shell-policy/policy.json".source = policyJsonFile;
+      ".pi/agent/custom/shell-policy/auto-mode/prompt.md".text = policyAutoModePrompt;
+      ".pi/agent/custom/shell-policy/auto-mode/commands.md".text = lib.mkIf (
         policyAutoModeExtraCommands != ""
       ) policyAutoModeExtraCommands;
     }

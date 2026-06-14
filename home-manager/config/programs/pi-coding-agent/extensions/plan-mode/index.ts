@@ -13,12 +13,17 @@ import {
   getMode,
   setMode,
   EXECUTION_MODE_ENTRY,
-  registerMode,
-  updateModeWidgets,
-} from "./lib/execution-mode.js";
+} from "./lib/contract.js";
 import { PLAN_DIR } from "./lib/paths.js";
 
 export const MODE_PLAN = "plan";
+
+function updatePlanModeStatus(ctx: ExtensionContext): void {
+  ctx.ui.setStatus(
+    "execution-mode",
+    getMode(ctx) === MODE_PLAN ? "\uF4A0 plan mode" : undefined,
+  );
+}
 
 type ModelSelection = { provider: string; modelId: string };
 
@@ -243,8 +248,8 @@ ${message}`,
     ctx: ExtensionContext,
   ): Promise<void> {
     const planPath = ctxPlanPath(ctx);
-    setMode(pi, ctx, MODE_PLAN, { write: [planPath], edit: [planPath] });
-    updateModeWidgets(ctx);
+    setMode(pi, MODE_PLAN, { write: [planPath], edit: [planPath] });
+    updatePlanModeStatus(ctx);
     fs.mkdirSync(path.dirname(planPath), { recursive: true });
 
     // Treat whitespace-only args as no args (matches original /plan behavior where
@@ -305,8 +310,8 @@ ${message}`,
       return;
     }
 
-    setMode(pi, ctx, MODE_EDIT);
-    updateModeWidgets(ctx);
+    setMode(pi, MODE_EDIT);
+    updatePlanModeStatus(ctx);
 
     const planContent = fs.readFileSync(planPath, "utf-8");
 
@@ -409,8 +414,8 @@ ${message}`,
       return;
     }
 
-    setMode(pi, ctx, MODE_EDIT);
-    updateModeWidgets(ctx);
+    setMode(pi, MODE_EDIT);
+    updatePlanModeStatus(ctx);
 
     if (choice === "Leave plan mode and clear plan file") {
       try {
@@ -477,7 +482,7 @@ ${message}`,
   });
 
   pi.on("session_start", async (_event, ctx) => {
-    updateModeWidgets(ctx);
+    updatePlanModeStatus(ctx);
 
     const pendingPlanExecution = getPendingPlanExecution(ctx);
     if (!pendingPlanExecution) return;
@@ -494,16 +499,17 @@ ${message}`,
   });
 
   pi.on("turn_end", async (_event, ctx) => {
-    updateModeWidgets(ctx);
+    updatePlanModeStatus(ctx);
   });
 
-  registerMode({
-    mode: MODE_PLAN,
-    getPrompt: (ctx: ExtensionContext) =>
-      PLAN_MODE_PROMPT.replaceAll("{PLAN_PATH}", ctxPlanPath(ctx)),
-    widget: {
-      widgetId: "plan-mode",
-      label: "\uF4A0 plan mode",
-    },
+  pi.on("before_agent_start", async (_event, ctx) => {
+    if (getMode(ctx) !== MODE_PLAN) return;
+    return {
+      message: {
+        customType: "plan-mode-context",
+        content: PLAN_MODE_PROMPT.replaceAll("{PLAN_PATH}", ctxPlanPath(ctx)),
+        display: false,
+      },
+    };
   });
 }

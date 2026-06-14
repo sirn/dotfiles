@@ -513,8 +513,7 @@ async function runSingleAgent(
 
 // Tool Registration
 
-const agentHint =
-  "Name of the agent to delegate to, e.g. \"worker\".";
+const agentHint = 'Name of the agent to delegate to, e.g. "worker".';
 
 const TaskItem = Type.Object({
   agent: Type.String({ description: agentHint }),

@@ -6,7 +6,7 @@
  * a policy table. Fails closed on parse errors (unknown → "ask").
  */
 
-// --- Shared Types ---
+// Shared Types
 
 export interface CommandEntry {
   match: string;
@@ -181,7 +181,6 @@ export function normalizeUnifiedPolicyConfig(
 // Tool Policy Helpers
 
 /**
-/**
  * Compute the set of tools explicitly DISABLED by a stack of mode policies.
  * If any policy in the stack disables a tool, it remains disabled (any-false-wins).
  */
@@ -217,7 +216,7 @@ export function getToolsWithPolicyOpinion(
   return result;
 }
 
-// --- Tokenizer ---
+// Tokenizer
 
 interface WordToken {
   type: "word";
@@ -532,7 +531,7 @@ export function tokenize(input: string): Token[] {
       continue;
     }
 
-    // --- Redirections and heredocs ---
+    // Redirections and heredocs
     let fdPrefix = "";
     let ri = i;
     if (ch >= "0" && ch <= "9" && (peek(1) === ">" || peek(1) === "<")) {
@@ -648,7 +647,7 @@ export function tokenize(input: string): Token[] {
   return tokens;
 }
 
-// --- Command Extraction ---
+// Command Extraction
 
 /**
  * WRAPPER STRATEGY DESIGN
@@ -726,7 +725,7 @@ export interface WrapperRule {
 
 export type WrapperRuleMap = ReadonlyMap<string, WrapperRule>;
 
-// --- Evaluation Detail Types (for analyze()/evaluate()) ---
+// Evaluation Detail Types (for analyze()/evaluate())
 
 export type DecisionSource = "commands" | "redirects" | "heredocs" | "default";
 
@@ -1078,7 +1077,7 @@ export function buildWrapperRuleMap(
   return map;
 }
 
-// --- Policy Matching ---
+// Policy Matching
 
 interface ArgsPattern {
   programPrefix: string;
@@ -1198,7 +1197,7 @@ function buildCommandEvaluation(
   };
 }
 
-// --- Internal Evaluation Functions (not exported) ---
+// Internal Evaluation Functions (not exported)
 
 interface CommandsInternalResult extends CommandsPhaseSummary {
   commands: CommandEvaluation[];
@@ -1396,7 +1395,7 @@ function evaluateHeredocsInternal(
   };
 }
 
-// --- Priority Determination Helper ---
+// Priority Determination Helper
 
 const ACTION_PRIORITY: Record<Action, number> = {
   default: 0,
@@ -1502,7 +1501,7 @@ function determineWinner(
   };
 }
 
-// --- Primary Evaluation Functions ---
+// Primary Evaluation Functions
 
 export function analyze(
   command: string,

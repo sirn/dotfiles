@@ -9,9 +9,9 @@
  * Policy: Ask by default - any command not explicitly allowed or denied requires confirmation.
  * Per-project overrides can be placed in .pi/policy.json relative to the project root.
  *
- * Commands that trigger ask/default are logged to ~/.pi/agent/logs/execution-policy/commands.log
+ * Commands that trigger ask/default are logged to ~/.pi/agent/logs/shell-policy/commands.log
  *
- * Auto mode: when policyAutoMode is enabled in custom/execution-policy/config.json, commands that would
+ * Auto mode: when policyAutoMode is enabled in custom/shell-policy/config.json, commands that would
  * normally require user confirmation are first evaluated by a small LLM using
  * auto-mode/prompt.md. If the model returns "allow", the command runs without
  * prompting the user. Any other outcome falls back to human confirmation.
@@ -22,7 +22,7 @@ import type {
   ExtensionAPI,
   ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
-import { getExecutionMode, setModeChangeHook } from "./lib/execution-mode.js";
+import { getExecutionMode } from "./lib/execution-mode.js";
 import { EXT_DIR, PI_AGENT_DIR } from "./lib/paths.js";
 import * as fs from "node:fs";
 import * as path from "node:path";
@@ -48,8 +48,7 @@ function resolveModeContextPath(mode: string): string | null {
   return null;
 }
 
-// Log commands that require confirmation for later policy review
-const COMMANDS_LOG_DIR = path.join(PI_AGENT_DIR, "logs/execution-policy");
+const COMMANDS_LOG_DIR = path.join(PI_AGENT_DIR, "logs/shell-policy");
 
 function logConfirmNeeded(command: string, result: EvalResult): void {
   try {
@@ -75,14 +74,12 @@ function logConfirmNeeded(command: string, result: EvalResult): void {
   }
 }
 
-// Load global config from unified policy.json at ~/.pi/agent/custom/execution-policy/policy.json
+// Load global config from unified policy.json at ~/.pi/agent/custom/shell-policy/policy.json
 const globalConfigRaw = JSON.parse(
   fs.readFileSync(path.join(EXT_DIR, "policy.json"), "utf-8"),
 );
 
 const globalUnified = normalizeUnifiedPolicyConfig(globalConfigRaw);
-
-// --- Auto mode config ---
 
 interface AutoModeConfig {
   enable: boolean;
@@ -173,10 +170,7 @@ const NO_COMMANDS_CONTEXT =
 const commandsContextText: string = (() => {
   try {
     const text = fs
-      .readFileSync(
-        path.join(EXT_DIR, "auto-mode", "commands-context.md"),
-        "utf-8",
-      )
+      .readFileSync(path.join(EXT_DIR, "auto-mode", "commands.md"), "utf-8")
       .trim();
     return text || NO_COMMANDS_CONTEXT;
   } catch {
@@ -448,23 +442,6 @@ export default function (pi: ExtensionAPI) {
     return hasTrue ? true : undefined;
   }
 
-  function formatBlockReason(
-    toolName: string,
-    policyOverride: { write?: string[]; edit?: string[] } | undefined,
-    mode: string,
-  ): string {
-    const allowedPaths =
-      toolName === "write" ? policyOverride?.write : policyOverride?.edit;
-    if (!allowedPaths || allowedPaths.length === 0) {
-      return `Tool "${toolName}" is blocked (execution mode: ${mode}).`;
-    }
-    const resolved = allowedPaths.map((p) => path.resolve(p));
-    return [
-      `Tool "${toolName}" is blocked (execution mode: ${mode}).`,
-      ...resolved.map((p) => `Allowed path: ${p}`),
-    ].join("\n");
-  }
-
   pi.on("tool_call", async (event, ctx) => {
     const executionMode = getExecutionMode(ctx);
     const { policyOverride } = executionMode;
@@ -517,7 +494,6 @@ export default function (pi: ExtensionAPI) {
 
     const result = evaluate(command, mergedPolicy);
 
-    // Log commands that require confirmation for later policy review
     if (result.action === "ask" || result.action === "default") {
       logConfirmNeeded(command, result);
     }
@@ -537,14 +513,27 @@ export default function (pi: ExtensionAPI) {
     }
   });
 
-  setModeChangeHook((_ctx, _mode, modes) => {
-    const modePolicies = modes
+  function updateActiveTools(ctx: ExtensionContext): void {
+    const executionMode = getExecutionMode(ctx);
+    const { policyOverride } = executionMode;
+    const modePolicies = executionMode.modes
       .map((mode) => globalUnified.modes?.[mode])
       .filter((policy): policy is ModePolicy => Boolean(policy));
     const disabledTools = computeDisabledTools(modePolicies);
-    const activeToolNames = pi
-      .getActiveTools()
-      .filter((name) => !disabledTools.has(name));
+    // Keep path-restricted tools callable so the model can use them for the
+    // permitted paths; the tool_call handler enforces the path restriction.
+    if (policyOverride) {
+      for (const [tool, paths] of Object.entries(policyOverride)) {
+        if (paths?.length) disabledTools.delete(tool);
+      }
+    }
+    const allToolNames = pi.getAllTools().map((t) => t.name);
+    const activeToolNames = allToolNames.filter(
+      (name) => !disabledTools.has(name),
+    );
     pi.setActiveTools(activeToolNames);
-  });
+  }
+
+  pi.on("session_start", (_event, ctx) => updateActiveTools(ctx));
+  pi.on("before_agent_start", (_event, ctx) => updateActiveTools(ctx));
 }
