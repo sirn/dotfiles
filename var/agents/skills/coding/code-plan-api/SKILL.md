@@ -6,6 +6,7 @@ description: Design API contracts. Use when asked to plan REST, GraphQL, gRPC, T
 Generate an actionable API design plan based on task analysis and research.
 
 ## Process
+
 ### Step 1 - Identify Context
 
 - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.

@@ -17,14 +17,15 @@ Generate a safe refactoring plan only; do not apply code changes.
 
 Spawn `scout` subagent:
 
-  ```
-  Analyze affected code areas, call sites, tests, abstractions, dependency edges, and local conventions for {task}.
-  ```
+```
+Analyze affected code areas, call sites, tests, abstractions, dependency edges, and local conventions for {task}.
+```
 
 Spawn `planner` subagent:
-  ```
-  Design a minimal behavior-preserving refactoring plan for {task}, including ordering, stop points, alternatives, and tradeoffs.
-  ```
+
+```
+Design a minimal behavior-preserving refactoring plan for {task}, including ordering, stop points, alternatives, and tradeoffs.
+```
 
 Spawn `reviewer` subagent:
 

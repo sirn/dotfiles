@@ -22,7 +22,11 @@ in
   programs.noctalia = lib.mkIf noctaliaCfg.enable {
     settings = {
       idle = {
-        behavior_order = [ "lock" "screen-off" "lock-and-suspend" ];
+        behavior_order = [
+          "lock"
+          "screen-off"
+          "lock-and-suspend"
+        ];
         behavior = {
           "lock-and-suspend" = {
             action = "lock_and_suspend";

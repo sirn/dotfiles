@@ -49,7 +49,7 @@ Spawn `researcher` subagent for API validation/best practices:
 Research best practices and official documentation for the fixes suggested in these PR comments. Provide authoritative sources. If CI failure logs are included, research the specific error messages, stack traces, or test failures to find root causes and known solutions.
 ```
 
-Spawn  `reviewer` subagent for CI analysis only if checks failed:
+Spawn `reviewer` subagent for CI analysis only if checks failed:
 
 ```
 Analyze these GitHub Actions CI failure logs:

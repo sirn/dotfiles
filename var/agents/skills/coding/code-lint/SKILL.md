@@ -6,6 +6,7 @@ description: Detect and run linting or static-analysis commands. Use when asked 
 Run project linting and static-analysis commands.
 
 ## Process
+
 ### Step 1 - Identify Context
 
 - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
@@ -14,6 +15,7 @@ Run project linting and static-analysis commands.
 ### Step 2 - Detect Lint Command
 
 Detect lint/static-check commands in this order:
+
 1. Project instructions: `README.md`, `CONTRIBUTING.md`, `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, `CODEX.md`.
 2. Task runners: `Makefile`, `justfile`, `Taskfile.yml`.
 3. Wrapper scripts: `bin/`, `.my/bin/` (`lint`, `check`, `*-lint`, etc.).
@@ -42,8 +44,8 @@ Detect lint/static-check commands in this order:
 
 ### Step 5 - Stop Condition
 
-
 - If a fix fails twice, stop, provide root-cause analysis, and ask for guidance.
+
 ### Step 6 - Report
 
 Report the following to the user:

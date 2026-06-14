@@ -28,6 +28,7 @@ Draft the minimal documentation structure needed to explain the behavior, intent
 ```
 
 Spawn `reviewer` subagent:
+
 ```text
 Review the proposed documentation for clarity, convention fit, accuracy, and unnecessary detail.
 ```

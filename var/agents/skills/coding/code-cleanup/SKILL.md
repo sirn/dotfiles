@@ -98,4 +98,3 @@ Report the following to the user:
 - Do not delete code unless usage search and build evidence support removal, or the user explicitly asked.
 - Preserve public behavior and test outcomes.
 - Do not invoke or call other skills from within this skill; reading `code-test` for command detection is allowed.
-

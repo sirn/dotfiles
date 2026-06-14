@@ -37,6 +37,7 @@ Research official database/ORM documentation relevant to {task}:
 ```
 
 Spawn `planner` subagent:
+
 ```
 Design a minimal schema plan for {task}, including:
 - Relationships
@@ -63,14 +64,14 @@ Review the proposed schema for:
 
 For schemas affecting data flow or cross-module boundaries, spawn `architect` subagent before `planner` subagent:
 
-  ```
-  Analyze for {task}:
-  - Data flow
-  - Ownership
-  - Dependency direction
-  - Migration shape
-  Recommend the minimal schema that preserves invariants.
-  ```
+```
+Analyze for {task}:
+- Data flow
+- Ownership
+- Dependency direction
+- Migration shape
+Recommend the minimal schema that preserves invariants.
+```
 
 ### Step 4 - Adjudicate Decisions
 

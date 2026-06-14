@@ -6,6 +6,7 @@ description: Generate implementation plans. Use when asked to plan how to implem
 Generate an actionable implementation plan based on task analysis and research.
 
 ## Process
+
 ### Step 1 - Identify Context
 
 - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.

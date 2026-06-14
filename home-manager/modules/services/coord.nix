@@ -335,7 +335,12 @@ in
 
       scrollMode = {
         modifier = mkOption {
-          type = types.enum [ "ctrl" "shift" "alt" "meta" ];
+          type = types.enum [
+            "ctrl"
+            "shift"
+            "alt"
+            "meta"
+          ];
           default = "ctrl";
           description = "Modifier key held to enter scroll mode.";
         };
@@ -364,22 +369,34 @@ in
       modifiers = {
         meta = mkOption {
           type = types.listOf types.str;
-          default = [ "meta_l" "meta_r" ];
+          default = [
+            "meta_l"
+            "meta_r"
+          ];
           description = "Keys treated as the Meta modifier.";
         };
         alt = mkOption {
           type = types.listOf types.str;
-          default = [ "alt_l" "alt_r" ];
+          default = [
+            "alt_l"
+            "alt_r"
+          ];
           description = "Keys treated as the Alt modifier.";
         };
         shift = mkOption {
           type = types.listOf types.str;
-          default = [ "shift_l" "shift_r" ];
+          default = [
+            "shift_l"
+            "shift_r"
+          ];
           description = "Keys treated as the Shift modifier.";
         };
         ctrl = mkOption {
           type = types.listOf types.str;
-          default = [ "ctrl_l" "ctrl_r" ];
+          default = [
+            "ctrl_l"
+            "ctrl_r"
+          ];
           description = "Keys treated as the Ctrl modifier.";
         };
       };
