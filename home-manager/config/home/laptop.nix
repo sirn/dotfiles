@@ -7,7 +7,7 @@ let
 
   niricfg = config.programs.niri;
 
-  noctaliaShellCfg = config.programs.noctalia-shell;
+  noctaliaCfg = config.programs.noctalia;
 in
 {
   services.swayidle = lib.mkIf swayidlecfg.enable {
@@ -19,7 +19,7 @@ in
     ];
   };
 
-  programs.noctalia-shell = lib.mkIf noctaliaShellCfg.enable {
+  programs.noctalia = lib.mkIf noctaliaCfg.enable {
     settings = {
       idle = {
         suspendTimeout = "900";

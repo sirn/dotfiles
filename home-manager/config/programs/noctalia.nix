@@ -1,16 +1,16 @@
 { config, lib, ... }:
 
 let
-  cfg = config.programs.noctalia-shell;
+  noctaliaCfg = config.programs.noctalia;
 
   swaycfg = config.wayland.windowManager.sway;
 
   niricfg = config.programs.niri;
 
-  noctaliaShell = lib.getExe cfg.package;
+  noctaliaShell = lib.getExe noctaliaCfg.package;
 in
 {
-  programs.noctalia-shell = {
+  programs.noctalia = {
     enable = true;
     settings = {
       appLauncher = {
@@ -136,7 +136,7 @@ in
     };
   };
 
-  wayland.windowManager.sway = lib.mkIf (cfg.enable && swaycfg.enable) {
+  wayland.windowManager.sway = lib.mkIf (noctaliaCfg.enable && swaycfg.enable) {
     config = {
       startup = lib.mkAfter [ { command = noctaliaShell; } ];
 
@@ -148,7 +148,7 @@ in
     };
   };
 
-  programs.niri = lib.mkIf (cfg.enable && niricfg.enable) {
+  programs.niri = lib.mkIf (noctaliaCfg.enable && niricfg.enable) {
     settings = {
       spawn-at-startup = lib.mkAfter [ { argv = [ noctaliaShell ]; } ];
 

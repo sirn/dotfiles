@@ -3,6 +3,6 @@
     ./base.nix
 
     # Shell
-    ../../programs/noctalia-shell.nix
+    ../../programs/noctalia.nix
   ];
 }

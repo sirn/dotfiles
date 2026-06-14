@@ -18,7 +18,7 @@ let
 
   fontcfg = config.home.fonts;
 
-  noctaliaShellCfg = config.programs.noctalia-shell;
+  noctaliaCfg = config.programs.noctalia;
 
   weztermLauncher = config.lib.home.wrapLauncher cfg.package;
 in
@@ -157,7 +157,7 @@ in
     };
   };
 
-  programs.noctalia-shell = lib.mkIf noctaliaShellCfg.enable {
+  programs.noctalia = lib.mkIf noctaliaCfg.enable {
     settings = {
       appLauncher = {
         terminalCommand = lib.getExe cfg.package;
