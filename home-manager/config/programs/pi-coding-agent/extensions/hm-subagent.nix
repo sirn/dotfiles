@@ -1,0 +1,104 @@
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+
+let
+  agentsCfg = config.agents;
+
+  # YAML-safe: quote strings containing colons, hashes, or other special chars
+  yamlQuote = s: if builtins.match "^[a-zA-Z0-9_/., -]+$" s != null then s else "\"${s}\"";
+
+  piAgentMdFiles = builtins.listToAttrs (
+    builtins.filter (a: a != null) (
+      builtins.attrValues (
+        builtins.mapAttrs (
+          name: agentCfg:
+          if agentCfg.pi.runner == "pi" then
+            let
+              piCfg = agentCfg.pi;
+              tools = builtins.concatStringsSep ", " piCfg.tools;
+              content = ''
+                ---
+                name: ${name}
+                description: ${yamlQuote agentCfg.description}
+                tools: ${tools}
+                model: ${piCfg.model}
+                ---
+                ${agentsCfg.subagentPreamble}
+
+                ${agentCfg.prompt}'';
+            in
+            {
+              name = ".pi/agent/agents/${name}.md";
+              value = {
+                text = content;
+              };
+            }
+          else if agentCfg.pi.runner == "claude-code" then
+            let
+              piCfg = agentCfg.pi;
+              tools = builtins.concatStringsSep ", " piCfg.tools;
+              content = ''
+                ---
+                name: ${name}
+                description: ${yamlQuote agentCfg.description}
+                runner: claude-code
+                tools: ${tools}
+                model: ${piCfg.model}
+                ---
+                ${agentsCfg.subagentPreamble}
+
+                ${agentCfg.prompt}'';
+            in
+            {
+              name = ".pi/agent/agents/${name}.md";
+              value = {
+                text = content;
+              };
+            }
+          else
+            null
+        ) agentsCfg.subagents
+      )
+    )
+  );
+
+  subagentListing =
+    if agentsCfg.subagents == { } then
+      ""
+    else
+      "\n"
+      + ''
+        ## Available Subagents
+
+        Only the subagents listed below are available. Do not make up subagent names not in this list.
+
+        ${builtins.concatStringsSep "\n" (
+          builtins.map (
+            name:
+            let
+              agentCfg = agentsCfg.subagents.${name};
+            in
+            "- **${name}**: ${agentCfg.description}"
+            + "\n  - Tools: ${builtins.concatStringsSep ", " agentCfg.pi.tools}"
+            + "\n  - Runner: ${agentCfg.pi.runner} (${agentCfg.pi.model})"
+          ) (builtins.attrNames agentsCfg.subagents)
+        )}
+      '';
+in
+
+{
+  programs.pi-coding-agent = {
+    extensionCustom."subagent".maxAgentsPerStep = 3;
+
+    instructionText = lib.mkAfter subagentListing;
+  };
+
+  home.file = {
+    ".pi/agent/extensions/hm-subagent".source = ../vendor/extensions/subagent;
+  }
+  // piAgentMdFiles;
+}
