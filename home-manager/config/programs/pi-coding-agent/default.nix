@@ -193,6 +193,7 @@ in
     ) (lib.filterAttrs (_: type: type == "directory") (builtins.readDir ./extensions))
     // {
       ".pi/agent/extensions/rimuruw-pi-hashline-edit".source = pkgs.local.pi-hashline-edit;
+      ".pi/agent/extensions/monotykamary-pi-tool-repair".source = pkgs.local.pi-tool-repair;
       ".pi/agent/extensions/monotykamary-pi-vcc".source = pkgs.local.pi-vcc;
       ".pi/agent/skills".source = agentsCfg.skillTrees;
       ".pi/agent/custom/shell-policy/policy.json".source = policyJsonFile;

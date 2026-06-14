@@ -30,6 +30,8 @@ in
 
   pi-vcc = (callPackage ./by-name/pi-vcc/package.nix { });
 
+  pi-tool-repair = (callPackage ./by-name/pi-tool-repair/package.nix { });
+
   mitsuhiko-agent-stuff = (callPackage ./by-name/mitsuhiko-agent-stuff { });
 
   node-textfile-collector-scripts = (
