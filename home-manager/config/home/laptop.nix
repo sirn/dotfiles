@@ -22,7 +22,14 @@ in
   programs.noctalia = lib.mkIf noctaliaCfg.enable {
     settings = {
       idle = {
-        suspendTimeout = "900";
+        behavior_order = [ "lock" "screen-off" "lock-and-suspend" ];
+        behavior = {
+          "lock-and-suspend" = {
+            action = "lock_and_suspend";
+            enabled = true;
+            timeout = 900;
+          };
+        };
       };
     };
   };

@@ -16,8 +16,6 @@ let
 
   fontcfg = config.home.fonts;
 
-  noctaliaCfg = config.programs.noctalia;
-
   alacrittyLauncher = config.lib.home.wrapLauncher cfg.package;
 in
 {
@@ -95,11 +93,4 @@ in
     };
   };
 
-  programs.noctalia = lib.mkIf noctaliaCfg.enable {
-    settings = {
-      appLauncher = {
-        terminalCommand = lib.getExe cfg.package;
-      };
-    };
-  };
 }

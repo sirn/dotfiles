@@ -8,130 +8,157 @@ let
   niricfg = config.programs.niri;
 
   noctaliaShell = lib.getExe noctaliaCfg.package;
+
+  radiusSize = 12.0;
 in
 {
   programs.noctalia = {
     enable = true;
     settings = {
-      appLauncher = {
-        position = "center";
+      # Shell
+      shell = {
+        font_family = "sans-serif";
+        settings_show_advanced = true;
+        panel = {
+          launcher_placement = "centered";
+          control_center_placement = "attached";
+          open_near_click_control_center = true;
+        };
       };
+
+      # Bar
       bar = {
-        density = "default";
         position = "left";
-        showCapsule = false;
         widgets = {
-          left = [
-            {
-              id = "Launcher";
-              useDistroLogo = true;
-              enableColorization = true;
-            }
-          ];
-          center = [
-            {
-              hideUnoccupied = false;
-              id = "Workspace";
-              labelMode = "none";
-            }
-          ];
-          right = [
-            {
-              hidePassive = true;
-              id = "Tray";
-            }
-            {
-              alwaysShowPercentage = false;
-              id = "Battery";
-              warningThreshold = 30;
-            }
-            { id = "ControlCenter"; }
-            {
-              formatHorizontal = "HH:mm";
-              formatVertical = "HH mm";
-              id = "Clock";
-              useMonospacedFont = true;
-              usePrimaryColor = true;
-            }
+          position = "left";
+          thickness = 40;
+          widget_spacing = 10;
+          radius_top_left = 0;
+          radius_top_right = radiusSize;
+          radius_bottom_left = 0;
+          radius_bottom_right = radiusSize;
+          margin_edge = 0;
+          margin_ends = 8; # Consistent with Niri/Sway gaps
+          start = [ "launcher" ];
+          center = [ "workspaces" ];
+          end = [
+            "tray"
+            "notifications"
+            "battery"
+            "clock"
+            "control-center"
+            "session"
           ];
         };
       };
-      colorSchemes = {
-        syncGsettings = false;
-      };
-      controlCenter = {
-        position = "close_to_bar_button";
-        diskPath = "/";
-        shortcuts = {
-          left = [
-            { id = "Network"; }
-            { id = "Bluetooth"; }
-            { id = "WallpaperSelector"; }
-            { id = "NoctaliaPerformance"; }
-          ];
-          right = [
-            { id = "Notifications"; }
-            { id = "PowerProfile"; }
-            { id = "KeepAwake"; }
-            { id = "NightLight"; }
-          ];
+
+      # Per-widget settings
+      widget = {
+        launcher = {
+          use_distro_logo = true;
+          enable_colorization = true;
         };
-        cards = [
-          {
-            enabled = true;
-            id = "profile-card";
-          }
-          {
-            enabled = true;
-            id = "shortcuts-card";
-          }
-          {
-            enabled = true;
-            id = "audio-card";
-          }
-          {
-            enabled = true;
-            id = "brightness-card";
-          }
-          {
-            enabled = true;
-            id = "weather-card";
-          }
-          {
-            enabled = true;
-            id = "media-sysmon-card";
-          }
+        tray = {
+          drawer = true;
+        };
+        battery = {
+          show_label = false;
+          warning_threshold = 30;
+        };
+        workspaces = {
+          display = "none";
+        };
+        clock = {
+          format = "{:%H:%M}";
+          vertical_format = "{:%H\n%M}";
+        };
+      };
+
+      # Control Center
+      control_center = {
+        shortcuts = [
+          { type = "wifi"; }
+          { type = "bluetooth"; }
+          { type = "notification"; }
+          { type = "power_profile"; }
+          { type = "caffeine"; }
+          { type = "nightlight"; }
         ];
       };
+
+      # Desktop widgets
+      desktop_widgets = {
+        enabled = false;
+      };
+
+      # Dock
       dock = {
         enabled = false;
       };
+
+      # Location
       location = {
-        monthBeforeDay = true;
-        name = "Tokyo, Japan";
+        address = "Tokyo, Japan";
+        sunrise = "06:30";
+        sunset = "18:30";
       };
+
+      # Idle
       idle = {
-        enabled = true;
-        lockTimeout = "300";
-        screenOffTimeout = "600";
-        suspendTimeout = lib.mkDefault "0";
+        behavior_order = lib.mkDefault [
+          "lock"
+          "screen-off"
+        ];
+        behavior = {
+          lock = {
+            action = "lock";
+            enabled = true;
+            timeout = 300;
+          };
+          "screen-off" = {
+            action = "screen_off";
+            enabled = true;
+            timeout = 600;
+          };
+        };
       };
-      nightLight = {
-        autoSchedule = true;
-        dayTemp = "6500";
+
+      # Night Light
+      nightlight = {
         enabled = true;
-        manualSunrise = "06:30";
-        manualSunset = "18:30";
-        nightTemp = "4500";
+        temperature_day = 6500;
+        temperature_night = 4500;
       };
+
+      # Theme
+      theme = {
+        templates = {
+          enable_builtin_templates = false;
+          enable_community_templates = false;
+        };
+      };
+
+      # Wallpaper
       wallpaper = {
-        automationEnabled = true;
+        enabled = true;
         directory = "${config.home.homeDirectory}/Pictures/Wallpapers";
-        randomIntervalSec = 1800;
-        wallpaperChangeMode = "random";
+        fill_mode = "crop";
+        automation = {
+          enabled = true;
+          interval_minutes = 30;
+          order = "random";
+          recursive = true;
+        };
       };
+
+      # Brightness
       brightness = {
-        enableDdcSupport = true;
+        enable_ddcutil = true;
+      };
+
+      # Lockscreen widgets
+      lockscreen_widgets = {
+        enabled = false;
       };
     };
   };
@@ -143,7 +170,7 @@ in
       bars = [ ];
 
       keybindings = {
-        "${swaycfg.config.modifier}+d" = "exec ${noctaliaShell} ipc call launcher toggle";
+        "${swaycfg.config.modifier}+d" = "exec ${noctaliaShell} msg panel-toggle launcher";
       };
     };
   };
@@ -156,10 +183,10 @@ in
         {
           clip-to-geometry = true;
           geometry-corner-radius = {
-            bottom-left = 15.0;
-            bottom-right = 15.0;
-            top-left = 15.0;
-            top-right = 15.0;
+            bottom-left = radiusSize;
+            bottom-right = radiusSize;
+            top-left = radiusSize;
+            top-right = radiusSize;
           };
         }
       ];
@@ -167,10 +194,9 @@ in
       binds = {
         "Mod+d".action.spawn = [
           "${noctaliaShell}"
-          "ipc"
-          "call"
+          "msg"
+          "panel-toggle"
           "launcher"
-          "toggle"
         ];
       };
     };

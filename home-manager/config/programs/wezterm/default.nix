@@ -16,10 +16,6 @@ let
 
   swaycfg = config.wayland.windowManager.sway;
 
-  fontcfg = config.home.fonts;
-
-  noctaliaCfg = config.programs.noctalia;
-
   weztermLauncher = config.lib.home.wrapLauncher cfg.package;
 in
 {
@@ -155,13 +151,4 @@ in
         terminal = lib.getExe cfg.package;
       };
     };
-  };
-
-  programs.noctalia = lib.mkIf noctaliaCfg.enable {
-    settings = {
-      appLauncher = {
-        terminalCommand = lib.getExe cfg.package;
-      };
-    };
-  };
 }
