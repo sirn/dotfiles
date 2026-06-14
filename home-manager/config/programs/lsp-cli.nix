@@ -13,7 +13,7 @@ in
   agents.instructionText = lib.mkAfter lspInstructionText;
 
   agents.commandContext = lib.mkAfter ''
-    `lsp` is an LSP client that manages background Language Server sessions.
+    - `lsp` is an LSP client that manages background Language Server sessions.
     - `lsp session start --lsp <name>` starts a background Language Server daemon; the daemon is stopped with `lsp session stop`
     - `lsp session stop --lsp <name>` terminates the Language Server daemon
     - `lsp hover|definition|references|completion --lsp <name> FILE LINE CHAR` are read-only code intelligence queries

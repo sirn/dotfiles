@@ -83,21 +83,14 @@ const RUNNERS: Record<AgentConfig["runner"], AgentRunner> = {
 // Tool names that create or modify files, used to surface file changes.
 const WRITE_TOOLS = new Set(["write", "Write", "edit", "Edit", "MultiEdit"]);
 
-// Cross-process protocol shared with the execution-policy extension:
-// PI_EXECUTION_MODE (comma-separated stack) wins when set; otherwise the
-// latest execution-mode session entry wins. Kept inline so this extension
-// has no code-level dependency on execution-policy.
-const MODE_DELEGATE = "delegate";
-
 // Returns the parent execution modes that should propagate to subagent
-// children. Non-propagating modes (e.g. "delegate") are filtered out so
-// children don't inherit restrictions meant only for the orchestrator.
+// children.
 function getInheritedExecutionModes(ctx: ExtensionContext): string[] {
   const envModes = (process.env.PI_EXECUTION_MODE ?? "")
     .split(",")
     .map((m) => m.trim())
     .filter(Boolean);
-  if (envModes.length > 0) return envModes.filter((m) => m !== MODE_DELEGATE);
+  if (envModes.length > 0) return envModes;
 
   let mode = "edit";
   for (const entry of ctx.sessionManager.getEntries()) {
@@ -106,7 +99,8 @@ function getInheritedExecutionModes(ctx: ExtensionContext): string[] {
       mode = data?.mode || "edit";
     }
   }
-  return mode === MODE_DELEGATE ? [] : [mode];
+
+  return [mode];
 }
 
 // Config & Constants
@@ -519,44 +513,8 @@ async function runSingleAgent(
 
 // Tool Registration
 
-// Discover agents once at registration time so their names and
-// descriptions can be baked into the tool schema as a hint to
-// the LLM. Agents are re-discovered on each execute() call as
-// well, so validation stays current if agents change.
-//
-// A try/catch guards against unexpected errors in getAgentDir()
-// or discoverAgents (e.g. parseFrontmatter throw); on failure
-// the schema falls back to a plain description with no agent list.
-const discoveredAgents: AgentConfig[] = (() => {
-  try {
-    return discoverAgents(path.join(getAgentDir(), "agents"));
-  } catch {
-    return [];
-  }
-})();
-
-function buildAgentHint(agents: AgentConfig[]): string {
-  if (agents.length === 0)
-    return "Name of the agent to invoke. No agents discovered at startup — run /reload after adding agent files.";
-  const maxDescLen = 80; // cap per-agent description for LLM token budget
-  const maxAgents = 12; // cap total agents shown in schema hint
-  const entries = agents
-    .slice(0, maxAgents)
-    .map((a) => {
-      const desc =
-        a.description.length > maxDescLen
-          ? `${a.description.slice(0, maxDescLen - 1)}…`
-          : a.description;
-      const runner = a.runner === "claude-code" ? " [CC]" : "";
-      return `"${a.name}"${runner} — ${desc}`;
-    })
-    .join("; ");
-  const suffix =
-    agents.length > maxAgents ? `; and ${agents.length - maxAgents} more` : "";
-  return `Available agents: ${entries}${suffix}.`;
-}
-
-const agentHint = buildAgentHint(discoveredAgents);
+const agentHint =
+  "Name of the agent to delegate to, e.g. \"worker\".";
 
 const TaskItem = Type.Object({
   agent: Type.String({ description: agentHint }),
@@ -576,7 +534,7 @@ const TaskItem = Type.Object({
 const STEPS_DESCRIPTION =
   "2D array of {agent, task}. Inner arrays run in parallel; outer runs sequentially. " +
   "Single: [[{agent, task}]]. Parallel: [[t1, t2, ...]]. Chain: [[t1], [t2], ...]. " +
-  `Task may contain {previous} which is replaced with the prior step's combined output. Steps with more than ${MAX_AGENTS_PER_STEP} agents queue the excess — agents run in batches within the same step.`;
+  `Task may contain {previous} which is replaced with the prior step's combined output.`;
 
 const SubagentParams = Type.Object({
   steps: Type.Array(Type.Array(TaskItem), {
@@ -639,8 +597,6 @@ export default function (pi: ExtensionAPI) {
     description: [
       "Delegate tasks to specialized subagents with isolated context.",
       "Supports both Pi and Claude Code runners.",
-      "Schema: steps: [[{agent, task}, ...], ...] — inner arrays run parallel, outer runs sequentially.",
-      "Modes: single ([[{agent, task}]]), parallel ([[t1, t2]]), chain ([[t1], [t2]]), fanout ([[t1, t2], [t3]]).",
     ].join(" "),
     parameters: SubagentParams,
 

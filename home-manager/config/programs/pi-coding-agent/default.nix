@@ -23,6 +23,24 @@ let
   '';
 
   agentsMdText = agentsCfg.instructionText;
+  subagentListing =
+    if agentsCfg.subagents == { } then
+      ""
+    else
+      "\n\n## Available Subagents\n\n"
+      + builtins.concatStringsSep "\n" (
+        builtins.map (
+          name:
+          let
+            agentCfg = agentsCfg.subagents.${name};
+          in
+          lib.strings.trim ''
+            - **${name}**: ${agentCfg.description}
+              - Tools: ${builtins.concatStringsSep ", " agentCfg.pi.tools}
+              - Runner: ${agentCfg.pi.runner} (${agentCfg.pi.model})
+          ''
+        ) (builtins.attrNames agentsCfg.subagents)
+      );
 
   perms = agentsCfg.permissions;
 
@@ -142,7 +160,15 @@ in
 
     package = wrappedPi;
 
-    instructionText = agentsMdText;
+    instructionText =
+      agentsMdText
+      + "\n\n"
+      + (lib.strings.trim ''
+        ## Editing restriction
+
+        - ~/.pi is managed by Nix. DO NOT EDIT FILES IN ~/.pi DIRECTLY.
+      '')
+      + subagentListing;
 
     settings = {
       quietStartup = true;

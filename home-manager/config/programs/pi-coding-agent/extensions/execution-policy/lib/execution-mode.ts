@@ -101,7 +101,7 @@ let modeChangeHook: ModeChangeHook | undefined;
 /**
  * Register a callback fired after mode state changes.
  * Called from updateModeWidgets, which is invoked on session_start,
- * mode commands (/plan, /delegate), and turn_end.
+ * mode commands, and turn_end.
  */
 export function setModeChangeHook(hook: ModeChangeHook): void {
   modeChangeHook = hook;

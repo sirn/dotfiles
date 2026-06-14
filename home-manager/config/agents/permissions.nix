@@ -676,8 +676,6 @@
         };
       };
 
-      delegate = { };
-
       subagent = { };
 
       "subagent:researcher" = {
