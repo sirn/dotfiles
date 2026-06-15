@@ -457,9 +457,18 @@ export default function (pi: ExtensionAPI) {
           return undefined; // Allow this specific path
         }
       }
+      const relevantPaths: string[] | undefined =
+        event.toolName === "write"
+          ? policyOverride?.write
+          : event.toolName === "edit"
+            ? policyOverride?.edit
+            : undefined;
+      const pathHint = relevantPaths?.length
+        ? `\nAllowed paths: ${relevantPaths.join(", ")}`
+        : "";
       return {
         block: true,
-        reason: `Tool "${event.toolName}" is blocked (execution mode: ${executionMode.mode}).`,
+        reason: `Tool "${event.toolName}" is blocked (execution mode: ${executionMode.mode}).${pathHint}`,
       };
     }
 
