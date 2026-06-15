@@ -41,7 +41,7 @@ type PendingPlanExecution = {
 };
 
 const PLAN_MODE_PROMPT =
-  "[Plan mode active - produce an implementation/execution plan. DO NOT execute any changes, only read-only exploration and planning; only write to {PLAN_PATH} using write/edit]";
+  "[Plan mode active - produce an implementation/execution plan. DO NOT execute any changes, only read-only exploration and planning; only write to {PLAN_PATH} using write/edit. After writing the plan, summarize it back to the user in your response — do NOT assume the user will read the plan file.]";
 
 export default function (pi: ExtensionAPI) {
   // Recently-compacted detection
