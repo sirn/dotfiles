@@ -91,15 +91,13 @@ interface AutoModeConfig {
 }
 
 interface ExtensionConfig {
-  shellPolicy?: {
-    autoMode?: {
-      enable?: unknown;
-      provider?: unknown;
-      model?: unknown;
-      thinkingEnabled?: unknown;
-      timeoutMs?: unknown;
-      maxTokens?: unknown;
-    };
+  autoMode?: {
+    enable?: unknown;
+    provider?: unknown;
+    model?: unknown;
+    thinkingEnabled?: unknown;
+    timeoutMs?: unknown;
+    maxTokens?: unknown;
   };
 }
 
@@ -110,7 +108,7 @@ function loadAutoModeConfig(): AutoModeConfig | null {
     const raw: ExtensionConfig = JSON.parse(
       fs.readFileSync(customPath, "utf-8"),
     );
-    const cfg = raw.shellPolicy?.autoMode;
+    const cfg = raw.autoMode;
     if (
       !cfg ||
       cfg.enable !== true ||

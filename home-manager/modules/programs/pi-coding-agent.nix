@@ -98,7 +98,7 @@ in
       '';
       example = lib.literalExpression ''
         {
-          "shell-policy" = { shellPolicy.autoMode.enable = true; };
+          "shell-policy" = { autoMode.enable = true; };
           "smart-compact" = {
             model = "gemini-3-flash-preview";
             provider = "plexus";
