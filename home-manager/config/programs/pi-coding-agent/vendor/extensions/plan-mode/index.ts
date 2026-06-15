@@ -41,7 +41,15 @@ type PendingPlanExecution = {
 };
 
 const PLAN_MODE_PROMPT =
-  "[Plan mode active - produce an implementation/execution plan. DO NOT execute any changes, only read-only exploration and planning; only write to {PLAN_PATH} using write/edit. After writing the plan, summarize it back to the user in your response — do NOT assume the user will read the plan file.]";
+  `<plan-mode>
+Plan mode is currently ACTIVE:
+- Produce an implementation/execution plan at {PLAN_PATH} using write/edit tool
+- DO NOT made any other changes, only read-only exploration and planning
+- Ask the user if the instruction is unclear or need decision before writing a plan
+- Plan should only contains relevant information for implementation
+- Assume future session will not have access to our conversation
+- Summarize plan to user; don't assume user will read the full plan
+</plan-mode>`;
 
 export default function (pi: ExtensionAPI) {
   // Recently-compacted detection
@@ -227,15 +235,18 @@ export default function (pi: ExtensionAPI) {
     pi.sendMessage(
       {
         customType: "plan-mode-execute",
-        content: `[Plan approved - execute the implementation plan. Execute one step at a time, verify success before proceeding. If a step fails, fix it before asking. Run the verification checklist after all steps complete.]
-
-## Plan
-
+        content: `<plan-mode>
+Plan approved - execute the implementation plan:
+- Execute one step at a time, verify success before proceeding
+- If a step fails, fix it before asking
+- Run the verification checklist after all steps complete
+</plan-mode>
+<plan>
 ${planContent}
-
-## User Message
-
-${message}`,
+</plan>
+<user-message>
+${message}
+</user-message>`,
         display: true,
         details: { userInstruction: userMessage?.trim() || undefined },
       },
