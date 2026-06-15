@@ -40,8 +40,7 @@ type PendingPlanExecution = {
   userMessage?: string;
 };
 
-const PLAN_MODE_PROMPT =
-  `<plan-mode>
+const PLAN_MODE_PROMPT = `<plan-mode>
 Plan mode is currently ACTIVE:
 - Produce an implementation/execution plan at {PLAN_PATH} using write/edit tool
 - DO NOT make any other changes, only read-only exploration and planning
@@ -49,6 +48,15 @@ Plan mode is currently ACTIVE:
 - Plan should only contains relevant information for implementation
 - Assume future session will not have access to our conversation
 - Summarize plan to user; don't assume user will read the full plan
+</plan-mode>`;
+const PLAN_MODE_CONTEXT = "plan-mode-context";
+const PLAN_MODE_EXIT = "plan-mode-exit";
+const PLAN_MODE_EXECUTE = "plan-mode-execute";
+
+const PLAN_MODE_EXIT_PROMPT = `<plan-mode>
+Plan mode has been EXITED — you are now in normal mode.
+- The earlier plan-mode instructions no longer apply; disregard them.
+- Resume normal operation and make changes as the user directs.
 </plan-mode>`;
 
 export default function (pi: ExtensionAPI) {
@@ -75,6 +83,20 @@ export default function (pi: ExtensionAPI) {
       return true;
 
     return false;
+  }
+
+  function lastInstructionMode(
+    ctx: ExtensionContext,
+  ): "plan" | "edit" | undefined {
+    const branch = ctx.sessionManager.getBranch();
+    const latestCompaction = getLatestCompactionEntry(branch);
+    const lo = latestCompaction ? branch.lastIndexOf(latestCompaction) : -1;
+    for (let i = branch.length - 1; i > lo; i--) {
+      const ct = (branch[i] as { customType?: string }).customType;
+      if (ct === PLAN_MODE_CONTEXT) return "plan";
+      if (ct === PLAN_MODE_EXIT || ct === PLAN_MODE_EXECUTE) return "edit";
+    }
+    return undefined;
   }
 
   function getPendingPlanExecution(
@@ -164,7 +186,7 @@ export default function (pi: ExtensionAPI) {
     return true;
   }
   pi.registerMessageRenderer(
-    "plan-mode-execute",
+    PLAN_MODE_EXECUTE,
     (message: any, { expanded }: { expanded: boolean }, theme: any) => {
       const container = new Container();
       const box = new Box(1, 1, (s: string) => theme.bg("customMessageBg", s));
@@ -234,7 +256,7 @@ export default function (pi: ExtensionAPI) {
       : "No additional user message. Proceed according to the plan.";
     pi.sendMessage(
       {
-        customType: "plan-mode-execute",
+        customType: PLAN_MODE_EXECUTE,
         content: `<plan-mode>
 Plan approved - execute the implementation plan:
 - Execute one step at a time, verify success before proceeding
@@ -514,13 +536,29 @@ ${message}
   });
 
   pi.on("before_agent_start", async (_event, ctx) => {
-    if (getMode(ctx) !== MODE_PLAN) return;
-    return {
-      message: {
-        customType: "plan-mode-context",
-        content: PLAN_MODE_PROMPT.replaceAll("{PLAN_PATH}", ctxPlanPath(ctx)),
-        display: false,
-      },
-    };
+    const mode = getMode(ctx);
+    const last = lastInstructionMode(ctx);
+
+    if (mode === MODE_PLAN) {
+      if (last === "plan") return;
+      return {
+        message: {
+          customType: PLAN_MODE_CONTEXT,
+          content: PLAN_MODE_PROMPT.replaceAll("{PLAN_PATH}", ctxPlanPath(ctx)),
+          display: false,
+        },
+      };
+    }
+
+    if (last === "plan") {
+      return {
+        message: {
+          customType: PLAN_MODE_EXIT,
+          content: PLAN_MODE_EXIT_PROMPT,
+          display: false,
+        },
+      };
+    }
+    return;
   });
 }
