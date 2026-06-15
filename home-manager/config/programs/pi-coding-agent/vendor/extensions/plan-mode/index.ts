@@ -40,6 +40,10 @@ type PendingPlanExecution = {
   userMessage?: string;
 };
 
+const PLAN_MODE_CONTEXT = "plan-mode-context";
+const PLAN_MODE_EXIT = "plan-mode-exit";
+const PLAN_MODE_EXECUTE = "plan-mode-execute";
+
 const PLAN_MODE_PROMPT = `<plan-mode>
 Plan mode is currently ACTIVE:
 - Produce an implementation/execution plan at {PLAN_PATH} using write/edit tool
@@ -49,15 +53,25 @@ Plan mode is currently ACTIVE:
 - Assume future session will not have access to our conversation
 - Summarize plan to user; don't assume user will read the full plan
 </plan-mode>`;
-const PLAN_MODE_CONTEXT = "plan-mode-context";
-const PLAN_MODE_EXIT = "plan-mode-exit";
-const PLAN_MODE_EXECUTE = "plan-mode-execute";
 
 const PLAN_MODE_EXIT_PROMPT = `<plan-mode>
 Plan mode has been EXITED — you are now in normal mode.
 - The earlier plan-mode instructions no longer apply; disregard them.
 - Resume normal operation and make changes as the user directs.
 </plan-mode>`;
+
+const PLAN_MODE_EXECUTE_PROMPT = `<plan-mode>
+Plan approved - execute the implementation plan:
+- Execute one step at a time, verify success before proceeding
+- If a step fails, fix it before asking
+- Run the verification checklist after all steps complete
+</plan-mode>
+<plan>
+{PLAN_CONTENT}
+</plan>
+<user-message>
+{USER_MESSAGE}
+</user-message>`;
 
 export default function (pi: ExtensionAPI) {
   // Recently-compacted detection
@@ -257,18 +271,10 @@ export default function (pi: ExtensionAPI) {
     pi.sendMessage(
       {
         customType: PLAN_MODE_EXECUTE,
-        content: `<plan-mode>
-Plan approved - execute the implementation plan:
-- Execute one step at a time, verify success before proceeding
-- If a step fails, fix it before asking
-- Run the verification checklist after all steps complete
-</plan-mode>
-<plan>
-${planContent}
-</plan>
-<user-message>
-${message}
-</user-message>`,
+        content: PLAN_MODE_EXECUTE_PROMPT.replaceAll(
+          "{PLAN_CONTENT}",
+          planContent,
+        ).replaceAll("{USER_MESSAGE}", message),
         display: true,
         details: { userInstruction: userMessage?.trim() || undefined },
       },
