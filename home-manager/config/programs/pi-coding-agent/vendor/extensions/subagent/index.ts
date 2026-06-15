@@ -495,6 +495,12 @@ async function runSingleAgent(
     return createErrorResult(agentName, task, errorMessage);
   }
 
+  // Treat null/undefined/empty sessionId as "not provided"
+  sessionId =
+    typeof sessionId === "string" && sessionId.trim().length > 0
+      ? sessionId.trim()
+      : undefined;
+
   const runner = RUNNERS[agent.runner];
 
   return runner(

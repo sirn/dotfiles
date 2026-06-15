@@ -59,7 +59,8 @@ export async function runPiAgent(
   ctx: ExtensionContext,
 ): Promise<SingleResult> {
   const args: string[] = ["--mode", "rpc"];
-  if (sessionId) args.push("--session", sessionId);
+  if (sessionId && typeof sessionId === "string")
+    args.push("--session", sessionId);
   const currentSessionFile = ctx.sessionManager.getSessionFile();
   if (currentSessionFile) {
     args.push(

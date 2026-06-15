@@ -292,7 +292,8 @@ export async function runClaudeCodeAgent(
       "stream-json",
       "--verbose",
     ];
-    if (sessionId) args.push("--resume", sessionId);
+    if (sessionId && typeof sessionId === "string")
+      args.push("--resume", sessionId);
 
     if (agent.model) {
       args.push("--model", agent.model);
