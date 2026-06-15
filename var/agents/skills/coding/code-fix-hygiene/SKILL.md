@@ -21,14 +21,63 @@ Spawn `scout` subagent:
 Analyze this diff in the following files:
 {files}
 
-For all the following:
-- spelling typos, grammatical errors, and naming/formatting convention violations
-- comments that explain _what_ the code does rather than _why_ (except section headers) — flag for removal, preserving rationale/tradeoff/non-obvious comments
-- unintended edits like debug logging, commented-out code, orphaned TODOs, whitespace noise, merge artifacts, or out-of-scope changes
-- inline decorated comments such as `// --- Title ----------` (multi-line section borders (`// -------------------` are fine)
-- transitional or legacy comments like "Replaces the old x system" or "Migration from y" where the referenced thing no longer exists — only acceptable transitional comments are TODOs
+## Issues to flag
 
-Report file:line for each issue.
+Flag all code hygiene issues according to the sections below.
+
+### Editing artifacts
+
+- Spelling typos, grammatical errors, and naming/formatting convention violations
+
+- Unintended edits such as whitespace noises, newline noises, merge artifacts
+
+  Example:
+  - When an existing code uses one newline between section, but the edit uses two
+  - Lack of newlines at the end of file
+
+### Commenting hygiene
+
+- Inline decorated comments
+
+  Exception:
+  - Multi-line section borders
+
+  Example:
+  - `// --- Title ---` -> replace with `// Title`
+  - `# ==== Title ====` -> replace with `# Title`
+  - `/* <emoji> Title */` -> replace with `/* Title */`
+
+- Comments that explain _what the code_ does rather than _why_
+
+  Exception:
+  - Section headers for readability
+  - The code is non-obvious
+
+  Example:
+  - "a = 1+1; /* assign 1+1 to a */"
+
+- Commented-out code, orphaned TODOs
+
+- Transitional or legacy comments that are not TODOs
+
+  Example:
+  - "Replaces the old x system"
+  - "Migration from y" where the referenced component no longer exists
+
+### Coding artifact
+
+- Adhoc debug `print()`/`console.log()`/etc.
+
+  Example:
+  - `print("here")`
+
+- Out-of-scope changes
+
+- Inconsistent coding conventions
+
+## Output
+
+Report list of `file:line` for each issue with a brief explaination why it was flagged.
 ```
 
 ### Step 3 - Synthesize Findings
@@ -46,7 +95,6 @@ Apply these hygiene fixes in the following files:
 For the following:
 {prioritized fixes}
 
-Remove obvious _what_-comments, fix typos, remove unintended edits, remove stale transitional/legacy comments unless they are TODOs.
 Do not change behavior, logic, or structure.
 Apply one logical fix per edit.
 ```

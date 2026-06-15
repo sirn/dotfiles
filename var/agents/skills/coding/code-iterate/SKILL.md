@@ -16,7 +16,7 @@ Run a convergent fix loop: find issues, fix them, repeat until clean.
 
 - If code changes are involved: `jj diff -s` to see changed files; `jj diff -- path` to restrict scope.
 - If the user specified files or paths, focus on those.
-- Capture a safety baseline: note the current diff state or create a new commit on top (`jj new`).
+- Capture a safety baseline: create a new empty commit on top of the current commit (`jj new`).
 - Read the `code-test` skill to detect the project's test/lint commands; run a baseline check.
 
 ### Step 2 - Iteration Loop
