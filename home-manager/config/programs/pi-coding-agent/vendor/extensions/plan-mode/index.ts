@@ -62,8 +62,10 @@ Plan mode has been EXITED — you are now in normal mode.
 
 const PLAN_MODE_EXECUTE_PROMPT = `<plan-mode>
 Plan approved - execute the implementation plan:
-- Execute one step at a time, verify success before proceeding
-- If a step fails, fix it before asking
+- Execute the plan one step at a time until the end; verify each step
+- If appropriate subagent exist, delegate plan execution to subagent 
+- If a step fail verification, fix it before asking
+- Report progress to the user at every step
 - Run the verification checklist after all steps complete
 </plan-mode>
 <plan>
