@@ -21,7 +21,6 @@
  * extension UI requests (Pi only).
  */
 
-import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { AgentToolResult } from "@earendil-works/pi-agent-core";
@@ -37,6 +36,12 @@ import {
   formatSize,
   truncateHead,
 } from "@earendil-works/pi-coding-agent";
+import {
+  memoizeByStat,
+  memoizeDirectoryByStat,
+  invalidateDirectoryCache,
+} from "./lib/cache.js";
+import { measure } from "./lib/perf.js";
 import { Text } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 
@@ -130,15 +135,17 @@ function isNonNegSafeInt(v: unknown): v is number {
 const MAX_CONCURRENCY_CEILING = 16;
 const MAX_AGENTS_PER_STEP_CEILING = 32;
 
-function loadConfig(): SubagentConfig {
+async function loadConfig(): Promise<SubagentConfig> {
   const configPath = path.join(
     os.homedir(),
     ".pi/agent/custom/subagent/config.json",
   );
-  if (!fs.existsSync(configPath)) return { ...DEFAULT_CONFIG };
   try {
-    const raw = fs.readFileSync(configPath, "utf-8");
-    const parsed = JSON.parse(raw);
+    const raw = await memoizeByStat(configPath, (content) =>
+      JSON.parse(content),
+    );
+    if (!raw) return { ...DEFAULT_CONFIG };
+    const parsed = raw;
     const result = { ...DEFAULT_CONFIG };
     if (isPositiveSafeInt(parsed.maxConcurrency))
       result.maxConcurrency = Math.min(
@@ -168,11 +175,9 @@ function loadConfig(): SubagentConfig {
   }
 }
 
-const subagentConfig = loadConfig();
-const MAX_CONCURRENCY = subagentConfig.maxConcurrency ?? 4;
-const MAX_AGENTS_PER_STEP = subagentConfig.maxAgentsPerStep ?? 8;
-const COLLAPSED_ITEM_COUNT = subagentConfig.collapsedItemCount ?? 3;
-
+// Mutable cache of render-relevant config constants. Populated lazily on
+// first execute(); renderResult is synchronous and reads from these.
+let collapsedItemCount = 3;
 // Cost restored from previous session history on startup, so
 // setSubagentCost adds to it instead of overwriting it.
 let sessionRestoredCost = 0;
@@ -409,67 +414,69 @@ async function mapWithAgentConcurrency<TIn, TOut>(
 
 // Agent Discovery
 
-function discoverAgents(agentDir: string): AgentConfig[] {
-  if (!fs.existsSync(agentDir)) return [];
+// Per-file parsed agent cache so adding/removing an agent file only
+// re-reads the changed entry. The directory listing is cached on its own
+// mtime so discovery is a no-op until the agent directory changes.
+async function getDiscoveredAgents(agentDir: string): Promise<AgentConfig[]> {
+  return measure("subagent.discoverAgents", async () => {
+    const result = await memoizeDirectoryByStat(agentDir, async (entries) => {
+      const agents: AgentConfig[] = [];
+      for (const entry of entries) {
+        if (!entry.name.endsWith(".md")) continue;
+        if (!entry.isFile() && !entry.isSymbolicLink()) continue;
 
-  let entries: fs.Dirent[];
-  try {
-    entries = fs.readdirSync(agentDir, { withFileTypes: true });
-  } catch {
-    return [];
-  }
-
-  const agents: AgentConfig[] = [];
-  for (const entry of entries) {
-    if (!entry.name.endsWith(".md")) continue;
-    if (!entry.isFile() && !entry.isSymbolicLink()) continue;
-
-    const filePath = path.join(agentDir, entry.name);
-    let content: string;
-    try {
-      content = fs.readFileSync(filePath, "utf-8");
-    } catch {
-      continue;
-    }
-
-    const { frontmatter, body } =
-      parseFrontmatter<Record<string, unknown>>(content);
-    if (!frontmatter.name || !frontmatter.description) continue;
-
-    const tools =
-      typeof frontmatter.tools === "string"
-        ? frontmatter.tools
-            .split(",")
-            .map((t: string) => t.trim())
-            .filter(Boolean)
-        : undefined;
-
-    const runner: AgentConfig["runner"] =
-      typeof frontmatter.runner === "string" && frontmatter.runner in RUNNERS
-        ? (frontmatter.runner as AgentConfig["runner"])
-        : "pi";
-
-    agents.push({
-      name: String(frontmatter.name),
-      description: String(frontmatter.description),
-      tools: tools && tools.length > 0 ? tools : undefined,
-      model:
-        typeof frontmatter.model === "string" ? frontmatter.model : undefined,
-      concurrency:
-        typeof frontmatter.concurrency === "number" &&
-        isPositiveSafeInt(frontmatter.concurrency)
-          ? frontmatter.concurrency
-          : undefined,
-      mode:
-        typeof frontmatter.mode === "string" && frontmatter.mode.trim()
-          ? frontmatter.mode.trim()
-          : undefined,
-      systemPrompt: body,
-      runner,
+        const filePath = path.join(agentDir, entry.name);
+        const parsed = await memoizeByStat(filePath, (content) =>
+          parseAgentFile(content),
+        );
+        if (parsed) agents.push(parsed);
+      }
+      return agents;
     });
-  }
+    return result ?? [];
+  });
+}
 
-  return agents;
+function parseAgentFile(content: string): AgentConfig | null {
+  const { frontmatter, body } =
+    parseFrontmatter<Record<string, unknown>>(content);
+  if (!frontmatter.name || !frontmatter.description) return null;
+
+  const tools =
+    typeof frontmatter.tools === "string"
+      ? frontmatter.tools
+          .split(",")
+          .map((t: string) => t.trim())
+          .filter(Boolean)
+      : undefined;
+
+  const runner: AgentConfig["runner"] =
+    typeof frontmatter.runner === "string" && frontmatter.runner in RUNNERS
+      ? (frontmatter.runner as AgentConfig["runner"])
+      : "pi";
+
+  return {
+    name: String(frontmatter.name),
+    description: String(frontmatter.description),
+    tools: tools && tools.length > 0 ? tools : undefined,
+    model:
+      typeof frontmatter.model === "string" ? frontmatter.model : undefined,
+    concurrency:
+      typeof frontmatter.concurrency === "number" &&
+      isPositiveSafeInt(frontmatter.concurrency)
+        ? frontmatter.concurrency
+        : undefined,
+    mode:
+      typeof frontmatter.mode === "string" && frontmatter.mode.trim()
+        ? frontmatter.mode.trim()
+        : undefined,
+    systemPrompt: body,
+    runner,
+  };
+}
+
+function invalidateAgentCache(agentDir: string): void {
+  invalidateDirectoryCache(agentDir);
 }
 
 // Core: runSingleAgent (dispatcher)
@@ -516,6 +523,13 @@ async function runSingleAgent(
     ctx,
   );
 }
+
+// Render cache: keyed by SubagentDetails object identity so renderResult can
+// skip rebuilding + resorting grouped steps when the same details are re-rendered.
+const groupedResultsCache = new WeakMap<
+  SubagentDetails,
+  [number, SingleResult[]][]
+>();
 
 // Tool Registration
 
@@ -606,9 +620,18 @@ export default function (pi: ExtensionAPI) {
     parameters: SubagentParams,
 
     async execute(_toolCallId, params, signal, onUpdate, ctx) {
-      // Discover agents from user directory
+      // Discover agents from user directory (cached; re-reads only on
+      // agent-directory changes).
       const agentDir = path.join(getAgentDir(), "agents");
-      const agents = discoverAgents(agentDir);
+      const agents = await getDiscoveredAgents(agentDir);
+
+      // Resolve numeric config constants from the cached loader. The cache
+      // helper re-checks mtime/hash on every call, so config edits take effect
+      // without a pinned module-level promise.
+      const cfg = await measure("subagent.loadConfig", loadConfig);
+      collapsedItemCount = cfg.collapsedItemCount ?? 3;
+      const maxConcurrency = cfg.maxConcurrency ?? 4;
+      const maxAgentsPerStep = cfg.maxAgentsPerStep ?? 8;
 
       // Build per-agent concurrency map: frontmatter first, config overrides
       const agentConcurrencyMap = new Map<string, number>();
@@ -617,9 +640,7 @@ export default function (pi: ExtensionAPI) {
           agentConcurrencyMap.set(agent.name, agent.concurrency);
         }
       }
-      for (const [name, limit] of Object.entries(
-        subagentConfig.agentConcurrency ?? {},
-      )) {
+      for (const [name, limit] of Object.entries(cfg.agentConcurrency ?? {})) {
         if (limit > 0) agentConcurrencyMap.set(name, limit);
         else agentConcurrencyMap.delete(name); // 0 clears frontmatter limit
       }
@@ -740,15 +761,15 @@ export default function (pi: ExtensionAPI) {
         for (
           let batchStart = 0;
           batchStart < stepTasks.length;
-          batchStart += MAX_AGENTS_PER_STEP
+          batchStart += maxAgentsPerStep
         ) {
           const batch = stepTasks.slice(
             batchStart,
-            batchStart + MAX_AGENTS_PER_STEP,
+            batchStart + maxAgentsPerStep,
           );
           await mapWithAgentConcurrency(
             batch,
-            MAX_CONCURRENCY,
+            maxConcurrency,
             (t) => t.agent,
             agentConcurrencyMap,
             async (t, i) => {
@@ -1054,18 +1075,26 @@ export default function (pi: ExtensionAPI) {
 
       let text = "";
 
-      const groupedResults = new Map<number, SingleResult[]>();
-      for (const r of details.results) {
-        const stepIndex = r.stepIndex ?? 0;
-        const group = groupedResults.get(stepIndex);
-        if (group) group.push(r);
-        else groupedResults.set(stepIndex, [r]);
-      }
+      // Group + sort by step once per details object identity; renderResult can
+      // be invoked many times (resize/expand toggles) without the underlying
+      // results changing, so caching avoids re-allocating the map each time.
+      const grouped =
+        groupedResultsCache.get(details) ??
+        (() => {
+          const map = new Map<number, SingleResult[]>();
+          for (const r of details.results) {
+            const stepIndex = r.stepIndex ?? 0;
+            const group = map.get(stepIndex);
+            if (group) group.push(r);
+            else map.set(stepIndex, [r]);
+          }
+          const sorted = [...map.entries()].sort(([a], [b]) => a - b);
+          groupedResultsCache.set(details, sorted);
+          return sorted;
+        })();
 
       let agentNumber = 1;
-      for (const [stepIndex, results] of [...groupedResults.entries()].sort(
-        ([a], [b]) => a - b,
-      )) {
+      for (const [stepIndex, results] of grouped) {
         text += `${text ? "\n\n" : ""}${theme.fg("muted", `step ${stepIndex + 1}:`)}`;
 
         for (const [resultIndex, r] of results.entries()) {
@@ -1121,7 +1150,7 @@ export default function (pi: ExtensionAPI) {
           } else {
             const rendered = renderDisplayItems(
               displayItems,
-              expanded ? undefined : COLLAPSED_ITEM_COUNT,
+              expanded ? undefined : collapsedItemCount,
             );
             if (rendered)
               text += `\n${rendered

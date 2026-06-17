@@ -74,46 +74,97 @@ export default function (pi: ExtensionAPI) {
   pi.on("session_start", (_event, ctx) => {
     if (!ctx.hasUI) return;
 
+    let usage = {
+      input: 0,
+      output: 0,
+      cacheRead: 0,
+      cacheWrite: 0,
+      cost: 0,
+      compacted: false,
+    };
+
+    const recomputeUsage = () => {
+      let input = 0,
+        output = 0,
+        cacheRead = 0,
+        cacheWrite = 0,
+        cost = 0;
+      const branch = ctx.sessionManager.getBranch() as BranchEntry[];
+      for (const entry of branch) {
+        if (entry.type === "message" && entry.message?.role === "assistant") {
+          const msg = (entry as { message: AssistantMessage }).message;
+          input += msg.usage.input;
+          output += msg.usage.output;
+          cacheRead += msg.usage.cacheRead;
+          cacheWrite += msg.usage.cacheWrite;
+          cost += msg.usage.cost.total;
+        }
+      }
+      usage = {
+        input,
+        output,
+        cacheRead,
+        cacheWrite,
+        cost,
+        compacted: isRecentlyCompacted(branch),
+      };
+    };
+
     ctx.ui.setFooter((tui, theme, footerData) => {
       activeTui = tui;
-      const unsubBranch = footerData.onBranchChange(() => tui.requestRender());
 
+      const unsubBranch = footerData.onBranchChange(() => {
+        recomputeUsage();
+        tui.requestRender();
+      });
+      recomputeUsage();
+
+      // Cache the last rendered footer keyed by width + state signature
+      // so repeated renders within the same turn skip recomputation.
+      let renderCache:
+        | { sig: string; width: number; lines: string[] }
+        | undefined;
       return {
         dispose() {
           unsubBranch();
           activeTui = undefined;
         },
-        invalidate() {},
+        invalidate() {
+          renderCache = undefined;
+        },
         render(width: number): string[] {
-          // Session token & cost aggregation.
-          let input = 0;
-          let output = 0;
-          let cacheRead = 0;
-          let cacheWrite = 0;
-          let cost = 0;
-          const branch = ctx.sessionManager.getBranch() as BranchEntry[];
-          for (const entry of branch) {
-            if (
-              entry.type === "message" &&
-              entry.message?.role === "assistant"
-            ) {
-              const msg = (entry as { message: AssistantMessage }).message;
-              input += msg.usage.input;
-              output += msg.usage.output;
-              cacheRead += msg.usage.cacheRead;
-              cacheWrite += msg.usage.cacheWrite;
-              cost += msg.usage.cost.total;
-            }
-          }
+          const { input, output, cacheRead, cacheWrite, cost, compacted } =
+            usage;
+          const ctxUsage = ctx.getContextUsage();
 
           // Cross-extension statuses.
           const statuses = footerData.getExtensionStatuses();
           const execMode = statuses.get("execution-mode") ?? null;
           const subCost = statuses.get("subagent-cost") ?? null;
 
-          // Context
-          const ctxUsage = ctx.getContextUsage();
-          const compacted = isRecentlyCompacted(branch);
+          // Reuse cached footer when width and all dynamic inputs are unchanged.
+          const sig = [
+            ctx.cwd,
+            input,
+            output,
+            cacheRead,
+            cacheWrite,
+            cost.toFixed(2),
+            ctxUsage?.tokens,
+            ctxUsage?.contextWindow,
+            ctx.model?.id,
+            pi.getThinkingLevel(),
+            compacted,
+            execMode,
+            subCost,
+          ].join("|");
+          if (
+            renderCache &&
+            renderCache.width === width &&
+            renderCache.sig === sig
+          ) {
+            return renderCache.lines;
+          }
 
           // Line 1: cwd | execution-mode.
           let l1Left = theme.fg("dim", formatCwd(ctx.cwd));
@@ -159,17 +210,25 @@ export default function (pi: ExtensionAPI) {
           const pad1 = " ".repeat(Math.max(1, width - l1w - r1w));
           const pad2 = " ".repeat(Math.max(1, width - l2w - r2w));
 
-          return [
+          const lines = [
             truncateToWidth(l1Left + pad1 + l1Right, width),
             truncateToWidth(l2Left + pad2 + l2Right, width),
           ];
+          renderCache = { sig, width, lines };
+          return lines;
         },
       };
     });
-  });
 
-  pi.on("turn_end", () => {
-    activeTui?.requestRender();
+    pi.on("turn_end", () => {
+      recomputeUsage();
+      activeTui?.requestRender();
+    });
+
+    pi.on("agent_end", () => {
+      recomputeUsage();
+      activeTui?.requestRender();
+    });
   });
 
   pi.on("session_shutdown", (_event, ctx) => {

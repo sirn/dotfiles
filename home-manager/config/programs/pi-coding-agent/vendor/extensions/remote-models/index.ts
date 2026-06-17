@@ -28,9 +28,10 @@ import type {
 } from "@earendil-works/pi-coding-agent";
 import { getModel } from "@earendil-works/pi-ai";
 
-import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
+import { memoizeByStat } from "./lib/cache.js";
+import { measure } from "./lib/perf.js";
 
 // ---------------------------------------------------------------------------
 // Config types
@@ -317,28 +318,42 @@ const configPath = path.join(
   ".pi/agent/custom/remote-models/config.json",
 );
 
-let providers: Record<string, RemoteProviderConfig> = {};
-try {
-  if (fs.existsSync(configPath)) {
-    const cfg = JSON.parse(fs.readFileSync(configPath, "utf-8"));
-    if (typeof cfg === "object" && cfg !== null) {
-      for (const [key, value] of Object.entries(cfg)) {
-        if (
-          typeof value === "object" &&
-          value !== null &&
-          typeof (value as Record<string, unknown>).baseUrl === "string" &&
-          typeof (value as Record<string, unknown>).apiKeyEnv === "string"
-        ) {
-          providers[key] = mergePreset(value as RemoteProviderConfig);
-        }
+// TTL for cached remote model lists (ms). Re-fetched only after expiry or
+// endpoint response error.
+const REMOTE_MODELS_TTL_MS = 300_000;
+
+async function loadProviders(): Promise<Record<string, RemoteProviderConfig>> {
+  const result: Record<string, RemoteProviderConfig> = {};
+  try {
+    const cfg = await memoizeByStat(
+      configPath,
+      (content) => JSON.parse(content) as Record<string, unknown>,
+    );
+    if (!cfg || typeof cfg !== "object") return result;
+    for (const [key, value] of Object.entries(cfg)) {
+      if (
+        typeof value === "object" &&
+        value !== null &&
+        typeof (value as Record<string, unknown>).baseUrl === "string" &&
+        typeof (value as Record<string, unknown>).apiKeyEnv === "string"
+      ) {
+        result[key] = mergePreset(value as RemoteProviderConfig);
       }
     }
+  } catch (e) {
+    console.warn(
+      `[remote-models] Failed to read config: ${e instanceof Error ? e.message : String(e)}`,
+    );
   }
-} catch (e) {
-  console.warn(
-    `[remote-models] Failed to read config: ${e instanceof Error ? e.message : String(e)}`,
-  );
+  return result;
 }
+
+// In-memory cache for fetched /v1/models payloads, keyed by endpoint URL.
+interface CachedModels {
+  fetchedAt: number;
+  models: RemoteApiModel[];
+}
+const modelsCache = new Map<string, CachedModels>();
 
 // ---------------------------------------------------------------------------
 // Extension factory
@@ -366,86 +381,115 @@ function resolveApiTypeMapping(
   return defaultMapping;
 }
 
-export default async function (pi: ExtensionAPI): Promise<void> {
-  if (Object.keys(providers).length === 0) return;
+async function fetchProviderModels(
+  configKey: string,
+  config: RemoteProviderConfig,
+  debug: boolean,
+): Promise<{ configKey: string; providerConfig: ProviderConfig } | null> {
+  const apiKeyValue = process.env[config.apiKeyEnv];
+  if (!apiKeyValue) {
+    console.warn(
+      `[remote-models] ${configKey}: ${config.apiKeyEnv} is not set — skipping`,
+    );
+    return null;
+  }
 
-  for (const [configKey, config] of Object.entries(providers)) {
-    const apiKeyValue = process.env[config.apiKeyEnv];
-    if (!apiKeyValue) {
-      console.warn(
-        `[remote-models] ${configKey}: ${config.apiKeyEnv} is not set — skipping`,
-      );
-      continue;
-    }
+  if (debug) console.warn(`[remote-models] ${configKey}: fetching models`);
+  const endpointUrl = resolveUrl(config.baseUrl, "v1/models");
 
+  // Serve from cache when fresh; avoids re-hitting the endpoint on every
+  // extension reload within the TTL window.
+  const cached = modelsCache.get(endpointUrl);
+  let apiModels: RemoteApiModel[] | undefined;
+  if (cached && Date.now() - cached.fetchedAt < REMOTE_MODELS_TTL_MS) {
+    apiModels = cached.models;
+  } else {
     try {
-      const response = await fetch(resolveUrl(config.baseUrl, "v1/models"), {
+      const response = await fetch(endpointUrl, {
         headers: { Authorization: `Bearer ${apiKeyValue}` },
         signal: AbortSignal.timeout(30_000),
       });
-
       if (!response.ok) {
         console.warn(
           `[remote-models] ${configKey}: API returned ${response.status}: ${response.statusText}`,
         );
-        continue;
+        return null;
       }
-
       const payload = (await response.json()) as RemoteApiResponse;
-
       if (!payload.data || !Array.isArray(payload.data)) {
         console.warn(
           `[remote-models] ${configKey}: API returned unexpected data format`,
         );
-        continue;
+        return null;
       }
-
-      // Build all models with per-model api and baseUrl, then register
-      // a single provider containing them all.
-      const models: ProviderModelConfig[] = [];
-      for (const apiModel of payload.data) {
-        if (!apiModel.id) continue;
-
-        const apiTypeValue = resolvePath(
-          apiModel as Record<string, unknown>,
-          config.apiTypeField,
-        ) as string | string[] | undefined;
-
-        const mapping = resolveApiTypeMapping(
-          apiTypeValue,
-          config.apiTypeMappings,
-          config.defaultApiType,
-        );
-
-        models.push(
-          toProviderModel(
-            apiModel,
-            config,
-            mapping.api,
-            resolveUrl(config.baseUrl, mapping.path ?? ""),
-          ),
-        );
-      }
-
-      if (models.length === 0) {
-        console.warn(
-          `[remote-models] ${configKey}: No models resolved — skipping`,
-        );
-        continue;
-      }
-
-      const providerConfig: ProviderConfig = {
-        baseUrl: config.baseUrl,
-        apiKey: `$${config.apiKeyEnv}`,
-        models,
-      };
-
-      pi.registerProvider(configKey, providerConfig);
+      apiModels = payload.data;
+      modelsCache.set(endpointUrl, {
+        fetchedAt: Date.now(),
+        models: apiModels,
+      });
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       console.warn(
         `[remote-models] ${configKey}: Failed to fetch models: ${message}`,
       );
+      return null;
     }
+  }
+
+  const models: ProviderModelConfig[] = [];
+  for (const apiModel of apiModels) {
+    if (!apiModel.id) continue;
+
+    const apiTypeValue = resolvePath(
+      apiModel as Record<string, unknown>,
+      config.apiTypeField,
+    ) as string | string[] | undefined;
+
+    const mapping = resolveApiTypeMapping(
+      apiTypeValue,
+      config.apiTypeMappings,
+      config.defaultApiType,
+    );
+
+    models.push(
+      toProviderModel(
+        apiModel,
+        config,
+        mapping.api,
+        resolveUrl(config.baseUrl, mapping.path ?? ""),
+      ),
+    );
+  }
+
+  if (models.length === 0) {
+    console.warn(`[remote-models] ${configKey}: No models resolved — skipping`);
+    return null;
+  }
+
+  const providerConfig: ProviderConfig = {
+    baseUrl: config.baseUrl,
+    apiKey: `$${config.apiKeyEnv}`,
+    models,
+  };
+  return { configKey, providerConfig };
+}
+
+export default async function (pi: ExtensionAPI): Promise<void> {
+  const providers = await measure("remote-models.loadConfig", loadProviders);
+  if (Object.keys(providers).length === 0) return;
+
+  const debug = process.env.PI_EXTENSION_PERF === "1";
+
+  // Fetch all providers concurrently; each settles independently so a
+  // single slow/erroring endpoint doesn't gate the others.
+  const results = await Promise.allSettled(
+    Object.entries(providers).map(([configKey, config]) =>
+      fetchProviderModels(configKey, config, debug),
+    ),
+  );
+
+  for (const result of results) {
+    if (result.status !== "fulfilled" || !result.value) continue;
+    pi.registerProvider(result.value.configKey, result.value.providerConfig);
   }
 }

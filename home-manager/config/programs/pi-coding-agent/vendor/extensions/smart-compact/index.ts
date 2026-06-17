@@ -12,9 +12,9 @@ import {
   convertToLlm,
   serializeConversation,
 } from "@earendil-works/pi-coding-agent";
-import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
+import { memoizeByStat } from "./lib/cache.js";
 
 const configPath = path.join(
   os.homedir(),
@@ -43,22 +43,21 @@ interface SmartCompactConfig {
 const DEFAULT_AUTO_COMPACT_MAX_CONTEXT_TOKENS = 150_000;
 const DEFAULT_AUTO_COMPACT_CONTEXT_RATIO = 0.8;
 
-let compactionConfig: SmartCompactConfig | null = null;
-
-try {
-  if (fs.existsSync(configPath)) {
-    const customConfig: SmartCompactConfig = JSON.parse(
-      fs.readFileSync(configPath, "utf-8"),
+async function loadCompactionConfig(): Promise<SmartCompactConfig | null> {
+  try {
+    const parsed = await memoizeByStat(
+      configPath,
+      (content) => JSON.parse(content) as SmartCompactConfig,
     );
-    if (
-      (customConfig.provider && customConfig.model) ||
-      customConfig.vcc?.enable === true
-    ) {
-      compactionConfig = customConfig;
+    if (!parsed) return null;
+    if ((parsed.provider && parsed.model) || parsed.vcc?.enable === true) {
+      return parsed;
     }
+    return null;
+  } catch {
+    // Config missing or invalid - extension will be a no-op
+    return null;
   }
-} catch {
-  // Config missing or invalid - extension will be a no-op
 }
 
 function getPositiveNumber(value: unknown, fallback: number): number {
@@ -76,18 +75,20 @@ function getRatio(value: unknown, fallback: number): number {
     : fallback;
 }
 
-function getAutoCompactConfig(): NormalizedAutoCompactConfig | undefined {
-  if (compactionConfig?.autoCompact?.enable !== true) {
+function getAutoCompactConfig(
+  cfg: SmartCompactConfig,
+): NormalizedAutoCompactConfig | undefined {
+  if (cfg.autoCompact?.enable !== true) {
     return;
   }
 
   return {
     maxContextTokens: getPositiveNumber(
-      compactionConfig.autoCompact.maxContextTokens,
+      cfg.autoCompact.maxContextTokens,
       DEFAULT_AUTO_COMPACT_MAX_CONTEXT_TOKENS,
     ),
     contextRatio: getRatio(
-      compactionConfig.autoCompact.contextRatio,
+      cfg.autoCompact.contextRatio,
       DEFAULT_AUTO_COMPACT_CONTEXT_RATIO,
     ),
   };
@@ -110,16 +111,15 @@ function getAutoCompactThreshold(
 }
 
 export default function (pi: ExtensionAPI) {
-  // Skip if no config
-  if (!compactionConfig) {
-    return;
-  }
-
   let previousTokens: number | null | undefined;
   let autoCompactionInProgress = false;
 
-  pi.on("agent_end", (_event, ctx) => {
-    const autoCompactConfig = getAutoCompactConfig();
+  pi.on("agent_end", async (_event, ctx) => {
+    const cfg = await loadCompactionConfig();
+    if (!cfg) {
+      return;
+    }
+    const autoCompactConfig = getAutoCompactConfig(cfg);
     if (!autoCompactConfig || autoCompactionInProgress) {
       return;
     }
@@ -163,7 +163,7 @@ export default function (pi: ExtensionAPI) {
 
     ctx.compact({
       customInstructions:
-        compactionConfig!.vcc?.enable === true
+        cfg.vcc?.enable === true
           ? "__pi_vcc__"
           : "Auto-compaction triggered because context usage exceeded the configured threshold. Preserve current task state, decisions, modified files, verification results, blockers, and next actions.",
       onComplete: () => {
@@ -184,6 +184,8 @@ export default function (pi: ExtensionAPI) {
 
   pi.on("session_before_compact", async (event, ctx) => {
     const { preparation, signal } = event;
+    const cfg = await loadCompactionConfig();
+    if (!cfg) return;
     const {
       messagesToSummarize,
       turnPrefixMessages,
@@ -193,18 +195,15 @@ export default function (pi: ExtensionAPI) {
     } = preparation;
 
     // If vcc is enabled, let pi-vcc handle the compaction
-    if (compactionConfig!.vcc?.enable === true) {
+    if (cfg.vcc?.enable === true) {
       return; // Let pi-vcc's before-compact hook handle it
     }
 
     // Resolve the configured model
-    const model = ctx.modelRegistry.find(
-      compactionConfig!.provider,
-      compactionConfig!.model,
-    );
+    const model = ctx.modelRegistry.find(cfg.provider, cfg.model);
     if (!model) {
       ctx.ui.notify(
-        `Compaction model "${compactionConfig!.provider}/${compactionConfig!.model}" not found, using default`,
+        `Compaction model "${cfg.provider}/${cfg.model}" not found, using default`,
         "warning",
       );
       return;
@@ -221,7 +220,7 @@ export default function (pi: ExtensionAPI) {
     }
     if (!auth.apiKey) {
       ctx.ui.notify(
-        `No API key for ${compactionConfig!.provider}, using default compaction`,
+        `No API key for ${cfg.provider}, using default compaction`,
         "warning",
       );
       return;
@@ -298,7 +297,7 @@ ${conversationText}
         {
           apiKey: auth.apiKey,
           headers: auth.headers,
-          maxTokens: compactionConfig!.maxTokens ?? model.maxTokens,
+          maxTokens: cfg.maxTokens ?? model.maxTokens,
           signal,
         },
       );

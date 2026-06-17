@@ -6,7 +6,7 @@ import {
   type ExtensionCommandContext,
 } from "@earendil-works/pi-coding-agent";
 import { Container, Text, Box, Spacer } from "@earendil-works/pi-tui";
-import * as fs from "node:fs";
+import * as fsp from "node:fs/promises";
 import * as path from "node:path";
 import {
   MODE_EDIT,
@@ -15,6 +15,16 @@ import {
   EXECUTION_MODE_ENTRY,
 } from "./lib/contract.js";
 import { PLAN_DIR, PROMPTS_DIR } from "./lib/paths.js";
+import { memoizeByStat } from "./lib/cache.js";
+
+async function fileExists(p: string): Promise<boolean> {
+  try {
+    await fsp.access(p);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export const MODE_PLAN = "plan";
 
@@ -56,21 +66,29 @@ const PLAN_MODE_EXECUTE_PROMPT_FALLBACK = `<plan-mode>Execute the plan.</plan-mo
 {USER_MESSAGE}
 </user-message>`;
 
-function loadPrompt(name: string): string | null {
-  const p = path.join(PROMPTS_DIR, name);
-  try {
-    return fs.readFileSync(p, "utf-8");
-  } catch {
-    return null;
-  }
+interface PlanPrompts {
+  mode: string;
+  exit: string;
+  execute: string;
 }
 
-const PLAN_MODE_PROMPT_TEMPLATE =
-  loadPrompt("plan-mode.md") ?? PLAN_MODE_PROMPT_FALLBACK;
-const PLAN_MODE_EXIT_PROMPT_TEMPLATE =
-  loadPrompt("plan-mode-exit.md") ?? PLAN_MODE_EXIT_PROMPT_FALLBACK;
-const PLAN_MODE_EXECUTE_PROMPT_TEMPLATE =
-  loadPrompt("plan-mode-execute.md") ?? PLAN_MODE_EXECUTE_PROMPT_FALLBACK;
+async function loadPlanPrompts(): Promise<PlanPrompts> {
+  const [mode, exit, execute] = await Promise.all([
+    loadPrompt("plan-mode.md"),
+    loadPrompt("plan-mode-exit.md"),
+    loadPrompt("plan-mode-execute.md"),
+  ]);
+  return {
+    mode: mode ?? PLAN_MODE_PROMPT_FALLBACK,
+    exit: exit ?? PLAN_MODE_EXIT_PROMPT_FALLBACK,
+    execute: execute ?? PLAN_MODE_EXECUTE_PROMPT_FALLBACK,
+  };
+}
+
+function loadPrompt(name: string): Promise<string | null> {
+  const p = path.join(PROMPTS_DIR, name);
+  return memoizeByStat(p, (content) => content);
+}
 
 export default function (pi: ExtensionAPI) {
   // Recently-compacted detection
@@ -80,36 +98,67 @@ export default function (pi: ExtensionAPI) {
    * "Recently" means the latest compaction entry is the last entry on the
    * current branch, or there are only a few non-user entries between it and the leaf.
    */
-  function isRecentlyCompacted(ctx: ExtensionContext): boolean {
+  // Cached combined branch scan: both isRecentlyCompacted and
+  // lastInstructionMode walk getBranch(); computing them together in one
+  // pass avoids two full scans per turn. Cached by branch length + leaf id
+  // so repeated calls within the same turn are free.
+  let branchScanCache:
+    | {
+        key: string;
+        recentlyCompacted: boolean;
+        lastMode: "plan" | "edit" | undefined;
+      }
+    | undefined;
+
+  function scanBranch(ctx: ExtensionContext): {
+    recentlyCompacted: boolean;
+    lastMode: "plan" | "edit" | undefined;
+  } {
     const branch = ctx.sessionManager.getBranch();
-    const latestCompaction = getLatestCompactionEntry(branch);
-    if (!latestCompaction) return false;
-
-    // If the latest compaction is the very last entry, it's definitely recent
     const leafEntry = branch[branch.length - 1];
-    if (leafEntry && leafEntry.id === latestCompaction.id) return true;
+    const key = `${branch.length}:${leafEntry?.id ?? ""}`;
+    if (branchScanCache && branchScanCache.key === key) {
+      return branchScanCache;
+    }
 
-    // Also consider it recent if the compaction is within the last few entries
-    // (there may be custom entries appended after compaction, e.g. execution-mode)
-    const compactionIndex = branch.lastIndexOf(latestCompaction);
-    if (compactionIndex >= 0 && branch.length - compactionIndex <= 3)
-      return true;
+    const latestCompaction = getLatestCompactionEntry(branch);
+    let recentlyCompacted = false;
+    if (latestCompaction) {
+      if (leafEntry && leafEntry.id === latestCompaction.id) {
+        recentlyCompacted = true;
+      } else {
+        const compactionIndex = branch.lastIndexOf(latestCompaction);
+        recentlyCompacted =
+          compactionIndex >= 0 && branch.length - compactionIndex <= 3;
+      }
+    }
 
-    return false;
+    const lo = latestCompaction ? branch.lastIndexOf(latestCompaction) : -1;
+    let lastMode: "plan" | "edit" | undefined;
+    for (let i = branch.length - 1; i > lo; i--) {
+      const ct = (branch[i] as { customType?: string }).customType;
+      if (ct === PLAN_MODE_CONTEXT) {
+        lastMode = "plan";
+        break;
+      }
+      if (ct === PLAN_MODE_EXIT || ct === PLAN_MODE_EXECUTE) {
+        lastMode = "edit";
+        break;
+      }
+    }
+
+    branchScanCache = { key, recentlyCompacted, lastMode };
+    return branchScanCache;
+  }
+
+  function isRecentlyCompacted(ctx: ExtensionContext): boolean {
+    return scanBranch(ctx).recentlyCompacted;
   }
 
   function lastInstructionMode(
     ctx: ExtensionContext,
   ): "plan" | "edit" | undefined {
-    const branch = ctx.sessionManager.getBranch();
-    const latestCompaction = getLatestCompactionEntry(branch);
-    const lo = latestCompaction ? branch.lastIndexOf(latestCompaction) : -1;
-    for (let i = branch.length - 1; i > lo; i--) {
-      const ct = (branch[i] as { customType?: string }).customType;
-      if (ct === PLAN_MODE_CONTEXT) return "plan";
-      if (ct === PLAN_MODE_EXIT || ct === PLAN_MODE_EXECUTE) return "edit";
-    }
-    return undefined;
+    return scanBranch(ctx).lastMode;
   }
 
   function getPendingPlanExecution(
@@ -149,28 +198,32 @@ export default function (pi: ExtensionAPI) {
     return undefined;
   }
 
-  function movePlanToSession(
+  async function movePlanToSession(
     projectDir: string,
     sessionFile: string | undefined,
     sourcePlanPath: string,
     planContent: string,
   ) {
     const targetPlanPath = getPlanPath(projectDir, sessionFile);
-    fs.mkdirSync(path.dirname(targetPlanPath), { recursive: true });
+    await fsp.mkdir(path.dirname(targetPlanPath), { recursive: true });
 
     if (sourcePlanPath === targetPlanPath) {
-      if (!fs.existsSync(targetPlanPath)) {
-        fs.writeFileSync(targetPlanPath, planContent, "utf-8");
+      try {
+        await fsp.access(targetPlanPath);
+      } catch {
+        await fsp.writeFile(targetPlanPath, planContent, "utf-8");
       }
       return;
     }
 
-    if (fs.existsSync(sourcePlanPath)) {
-      fs.renameSync(sourcePlanPath, targetPlanPath);
+    try {
+      await fsp.rename(sourcePlanPath, targetPlanPath);
       return;
+    } catch {
+      // Source missing or rename unsupported; fall through to writing content.
     }
 
-    fs.writeFileSync(targetPlanPath, planContent, "utf-8");
+    await fsp.writeFile(targetPlanPath, planContent, "utf-8");
   }
 
   function getPlanPath(
@@ -263,17 +316,20 @@ export default function (pi: ExtensionAPI) {
     }
   }
 
-  function sendExecutionMessage(planContent: string, userMessage?: string) {
+  async function sendExecutionMessage(
+    planContent: string,
+    userMessage?: string,
+  ) {
+    const prompts = await loadPlanPrompts();
     const message = userMessage
       ? userMessage.trim()
       : "No additional user message. Proceed according to the plan.";
     pi.sendMessage(
       {
         customType: PLAN_MODE_EXECUTE,
-        content: PLAN_MODE_EXECUTE_PROMPT_TEMPLATE.replaceAll(
-          "{PLAN_CONTENT}",
-          planContent,
-        ).replaceAll("{USER_MESSAGE}", message),
+        content: prompts.execute
+          .replaceAll("{PLAN_CONTENT}", planContent)
+          .replaceAll("{USER_MESSAGE}", message),
         display: true,
         details: { userInstruction: userMessage?.trim() || undefined },
       },
@@ -288,14 +344,14 @@ export default function (pi: ExtensionAPI) {
     const planPath = ctxPlanPath(ctx);
     setMode(pi, MODE_PLAN, { write: [planPath], edit: [planPath] });
     updatePlanModeStatus(ctx);
-    fs.mkdirSync(path.dirname(planPath), { recursive: true });
+    await fsp.mkdir(path.dirname(planPath), { recursive: true });
 
     // Treat whitespace-only args as no args (matches original /plan behavior where
     // Pi passes undefined for empty, but unified dispatch passes raw string)
     if (args?.trim()) {
       pi.sendUserMessage(args);
     } else {
-      const hasExistingPlan = fs.existsSync(planPath);
+      const hasExistingPlan = await fileExists(planPath);
       ctx.ui.notify(
         hasExistingPlan
           ? "Plan mode active. Continue refining your plan."
@@ -313,12 +369,12 @@ export default function (pi: ExtensionAPI) {
 
     const planPath = ctxPlanPath(ctx);
 
-    if (!fs.existsSync(planPath)) {
+    if (!(await fileExists(planPath))) {
       ctx.ui.notify(`Plan file not found: ${planPath}`, "error");
       return;
     }
 
-    const stat = fs.statSync(planPath);
+    const stat = await fsp.stat(planPath);
     if (stat.size < 50) {
       ctx.ui.notify(
         "Plan file is too small or empty. Please write a detailed plan first.",
@@ -351,7 +407,7 @@ export default function (pi: ExtensionAPI) {
     setMode(pi, MODE_EDIT);
     updatePlanModeStatus(ctx);
 
-    const planContent = fs.readFileSync(planPath, "utf-8");
+    const planContent = await fsp.readFile(planPath, "utf-8");
 
     if (choice === "Accept plan and clear context") {
       ctx.ui.notify(
@@ -366,7 +422,7 @@ export default function (pi: ExtensionAPI) {
       const result = await ctx.newSession({
         parentSession,
         setup: async (sessionManager) => {
-          movePlanToSession(
+          await movePlanToSession(
             ctx.cwd,
             sessionManager.getSessionFile(),
             planPath,
@@ -410,29 +466,29 @@ export default function (pi: ExtensionAPI) {
           "User has accepted the implementation plan. Summarize the current conversation in a short, concise text focusing on the context needed for plan execution.",
         onComplete: () => {
           ctx.ui.notify("Context compacted. Ready for execution.", "success");
-          sendExecutionMessage(planContent, args);
+          void sendExecutionMessage(planContent, args);
         },
       });
     } else if (choice === "Accept plan") {
       ctx.ui.notify("Plan accepted! Ready for execution.", "success");
-      sendExecutionMessage(planContent, args);
+      await sendExecutionMessage(planContent, args);
     }
   }
 
   async function handlePlanShow(ctx: ExtensionContext): Promise<void> {
     const mode = getMode(ctx);
     const planPath = ctxPlanPath(ctx);
-    if (mode !== MODE_PLAN || !fs.existsSync(planPath)) {
+    if (mode !== MODE_PLAN || !(await fileExists(planPath))) {
       ctx.ui.notify("No plan found. Use /plan to create one.", "error");
       return;
     }
 
-    const content = fs.readFileSync(planPath, "utf-8");
+    const content = await fsp.readFile(planPath, "utf-8");
 
     const edited = await ctx.ui.editor("Plan", content);
 
     if (edited && edited !== content) {
-      fs.writeFileSync(planPath, edited, "utf-8");
+      await fsp.writeFile(planPath, edited, "utf-8");
       ctx.ui.notify("Plan updated manually.", "success");
     }
   }
@@ -457,8 +513,8 @@ export default function (pi: ExtensionAPI) {
 
     if (choice === "Leave plan mode and clear plan file") {
       try {
-        if (fs.existsSync(planPath)) {
-          fs.unlinkSync(planPath);
+        if (await fileExists(planPath)) {
+          await fsp.unlink(planPath);
           ctx.ui.notify("Plan mode cancelled. Plan file deleted.", "success");
         } else {
           ctx.ui.notify(
@@ -530,7 +586,7 @@ export default function (pi: ExtensionAPI) {
       pendingPlanExecution.modelSelection,
     );
     pi.appendEntry("plan-execution-pending", { status: "processed" });
-    sendExecutionMessage(
+    await sendExecutionMessage(
       pendingPlanExecution.planContent,
       pendingPlanExecution.userMessage,
     );
@@ -546,23 +602,21 @@ export default function (pi: ExtensionAPI) {
 
     if (mode === MODE_PLAN) {
       if (last === "plan") return;
+      const prompts = await loadPlanPrompts();
       return {
         message: {
           customType: PLAN_MODE_CONTEXT,
-          content: PLAN_MODE_PROMPT_TEMPLATE.replaceAll(
-            "{PLAN_PATH}",
-            ctxPlanPath(ctx),
-          ),
+          content: prompts.mode.replaceAll("{PLAN_PATH}", ctxPlanPath(ctx)),
           display: false,
         },
       };
     }
-
     if (last === "plan") {
+      const prompts = await loadPlanPrompts();
       return {
         message: {
           customType: PLAN_MODE_EXIT,
-          content: PLAN_MODE_EXIT_PROMPT_TEMPLATE,
+          content: prompts.exit,
           display: false,
         },
       };
