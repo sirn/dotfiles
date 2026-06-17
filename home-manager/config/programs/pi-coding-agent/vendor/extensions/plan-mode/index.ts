@@ -14,7 +14,7 @@ import {
   setMode,
   EXECUTION_MODE_ENTRY,
 } from "./lib/contract.js";
-import { PLAN_DIR } from "./lib/paths.js";
+import { PLAN_DIR, PROMPTS_DIR } from "./lib/paths.js";
 
 export const MODE_PLAN = "plan";
 
@@ -44,36 +44,33 @@ const PLAN_MODE_CONTEXT = "plan-mode-context";
 const PLAN_MODE_EXIT = "plan-mode-exit";
 const PLAN_MODE_EXECUTE = "plan-mode-execute";
 
-const PLAN_MODE_PROMPT = `<plan-mode>
-Plan mode is currently ACTIVE:
-- Produce an implementation/execution plan at {PLAN_PATH} using write/edit tool
-- DO NOT make any other changes, only read-only exploration and planning
-- Ask the user if the instruction is unclear or need decision before writing a plan
-- Plan should only contains relevant information for implementation
-- Assume future session will not have access to our conversation
-- Summarize plan to user; don't assume user will read the full plan
-</plan-mode>`;
-
-const PLAN_MODE_EXIT_PROMPT = `<plan-mode>
-Plan mode has been EXITED — you are now in normal mode.
-- The earlier plan-mode instructions no longer apply; disregard them.
-- Resume normal operation and make changes as the user directs.
-</plan-mode>`;
-
-const PLAN_MODE_EXECUTE_PROMPT = `<plan-mode>
-Plan approved - execute the implementation plan:
-- Execute the plan one step at a time until the end; verify each step
-- If appropriate subagent exist, delegate plan execution to subagent 
-- If a step fail verification, fix it before asking
-- Report progress to the user at every step
-- Run the verification checklist after all steps complete
-</plan-mode>
+// Inline fallbacks used only when the external prompt files are missing;
+// the long real instruction bodies live in vendor/prompts/plan-mode/*.md.
+const PLAN_MODE_PROMPT_FALLBACK = `<plan-mode>Plan mode is active.</plan-mode>`;
+const PLAN_MODE_EXIT_PROMPT_FALLBACK = `<plan-mode>Plan mode exited; resume normal operation.</plan-mode>`;
+const PLAN_MODE_EXECUTE_PROMPT_FALLBACK = `<plan-mode>Execute the plan.</plan-mode>
 <plan>
 {PLAN_CONTENT}
 </plan>
 <user-message>
 {USER_MESSAGE}
 </user-message>`;
+
+function loadPrompt(name: string): string | null {
+  const p = path.join(PROMPTS_DIR, name);
+  try {
+    return fs.readFileSync(p, "utf-8");
+  } catch {
+    return null;
+  }
+}
+
+const PLAN_MODE_PROMPT_TEMPLATE =
+  loadPrompt("plan-mode.md") ?? PLAN_MODE_PROMPT_FALLBACK;
+const PLAN_MODE_EXIT_PROMPT_TEMPLATE =
+  loadPrompt("plan-mode-exit.md") ?? PLAN_MODE_EXIT_PROMPT_FALLBACK;
+const PLAN_MODE_EXECUTE_PROMPT_TEMPLATE =
+  loadPrompt("plan-mode-execute.md") ?? PLAN_MODE_EXECUTE_PROMPT_FALLBACK;
 
 export default function (pi: ExtensionAPI) {
   // Recently-compacted detection
@@ -273,7 +270,7 @@ export default function (pi: ExtensionAPI) {
     pi.sendMessage(
       {
         customType: PLAN_MODE_EXECUTE,
-        content: PLAN_MODE_EXECUTE_PROMPT.replaceAll(
+        content: PLAN_MODE_EXECUTE_PROMPT_TEMPLATE.replaceAll(
           "{PLAN_CONTENT}",
           planContent,
         ).replaceAll("{USER_MESSAGE}", message),
@@ -552,7 +549,10 @@ export default function (pi: ExtensionAPI) {
       return {
         message: {
           customType: PLAN_MODE_CONTEXT,
-          content: PLAN_MODE_PROMPT.replaceAll("{PLAN_PATH}", ctxPlanPath(ctx)),
+          content: PLAN_MODE_PROMPT_TEMPLATE.replaceAll(
+            "{PLAN_PATH}",
+            ctxPlanPath(ctx),
+          ),
           display: false,
         },
       };
@@ -562,7 +562,7 @@ export default function (pi: ExtensionAPI) {
       return {
         message: {
           customType: PLAN_MODE_EXIT,
-          content: PLAN_MODE_EXIT_PROMPT,
+          content: PLAN_MODE_EXIT_PROMPT_TEMPLATE,
           display: false,
         },
       };
