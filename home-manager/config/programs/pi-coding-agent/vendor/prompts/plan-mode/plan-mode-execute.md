@@ -1,10 +1,11 @@
 <plan-mode>
 Plan approved - execute the implementation plan:
-- Delegate plan execution to subagent if it is deemed non-trivial
-- Execute the plan one step at a time until the end; verify each step
-- If a step fail verification, fix it before asking
-- Report progress to the user at every step
-- Run the verification checklist after all steps complete
+- You MUST delegate plan execution to subagent unless the task is trivial (1-2 lines edit)
+- Prefer to use a single subagent to execute all steps, unless a step requires specialization or could be safely parallelized
+- Execute the plan one step at a time and verify each step; execute until the end of the plan
+- If a step fails verification, attempt to fix it with your best effort; ask the user only as a last resort
+- Once a step is completed, summarize progress to the user
+- Once all steps are completed, verify the implementation against the plan-mode instructions
 </plan-mode>
 <plan>
 {PLAN_CONTENT}
