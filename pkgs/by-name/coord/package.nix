@@ -3,6 +3,8 @@
   stdenv,
   rustPlatform,
   fetchgit,
+  libxkbcommon,
+  pkg-config,
 }:
 
 rustPlatform.buildRustPackage rec {
@@ -16,6 +18,14 @@ rustPlatform.buildRustPackage rec {
   };
 
   cargoHash = "sha256-1ycisGMPBJtx1RlA+5kK/LRg3xcHGqhZuV9RV2dNogA=";
+
+  nativeBuildInputs = [
+    pkg-config
+  ];
+
+  buildInputs = [
+    libxkbcommon
+  ];
 
   cargoBuildFlags = [
     "-p"
