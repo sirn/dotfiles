@@ -29,6 +29,7 @@ This is a Nix/Home Manager dotfiles repository. Read `README.md` before doing an
 - Format: `nix run path:.#treefmt`.
 - Parse profile: `nix-instantiate --parse profiles/<hostname>.nix`.
 - Build flake attr: `nix build --no-link path:.#<attr>`.
+- Build a local package: `nix build path:.#<name>` (e.g. `nix build path:.#coord`).
 - Check flake: `nix flake check path:.`.
 - Build NixOS profile: `nix build --no-link path:.#nixosConfigurations.<hostname>.config.system.build.toplevel`.
 - Apply Home Manager on non-NixOS: `home-manager switch --flake path:.#<hostname>`.

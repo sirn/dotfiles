@@ -315,6 +315,14 @@
           system: f nixpkgs.legacyPackages.${system}
         );
 
+      # Build pkgs with local overlay applied
+      mkPkgs =
+        system:
+        import nixpkgs {
+          inherit system;
+          config = nixpkgsConfig;
+          inherit overlays;
+        };
       # Eval the treefmt configuration
       treefmtEval = eachSystem (
         pkgs:
@@ -381,5 +389,13 @@
           program = "${treefmtEval.${pkgs.system}.config.build.wrapper}/bin/treefmt";
         };
       });
+
+      # Expose all local packages from the overlay
+      packages = nixpkgs.lib.genAttrs [
+        "x86_64-linux"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ] (system: (mkPkgs system).local);
     };
 }
