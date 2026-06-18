@@ -13,8 +13,8 @@ Commit current changes using Jujutsu (jj).
 
 ### Step 0 - Load Jujutsu Skill
 
-- Read the `jujutsu` skill file before running any `jj` commands.
-- Follow its Best Practices for local commit autonomy, revision references, logical grouping, and commit message style.
+- Read the `jujutsu` skill file before running any `jj` commands
+- Follow its Best Practices for local commit autonomy, revision references, logical grouping, and commit message style
 
 ### Step 1 - Analyze Changes
 
@@ -41,14 +41,15 @@ Commit current changes using Jujutsu (jj).
 - For a single commit:
   - Run `jj commit -m "<message>"`
   - Use `jj describe <id> -m "<message>"` only when updating a description without creating a new empty commit on top
-  - Follow the `jujutsu` skill's **Commit Messages** best practice for line length and style.
-  - After `jj commit`, the new working copy (`@`) is ready for new changes.
+  - Follow the `jujutsu` skill's **Commit Messages** best practice for line length and style
+  - After `jj commit`, the new working copy (`@`) is ready for new changes
 
 ### Step 4 - Verify Line Lengths
 
-- A `check-commit-message.sh` is available within this skill directory.
-  - Use `./check-commit-msg.sh [REV]` where `REV` can be a jujutsu revision, jujutsu alias, git revision, or git refs.
-  - Use `./check-commit-msg.sh -h` to see all available options
+- A `check-commit-msg.sh` is available within this skill directory
+  - Use absolute path when referencing the skill. DO NOT `cd` into the skill directory; jujutsu operations on the repo on cwd
+  - Use `/path/to/check-commit-msg.sh [REV]` where `REV` can be a jujutsu revision, jujutsu alias, git revision, or git refs
+  - Use `/path/to/check-commit-msg.sh -h` to see all available options
 - If any line exceeds the limit, fix it with `jj describe <rev> -m "<fixed-message>"` or `git commit --amend`.
 
 ### Step 5 - Report
