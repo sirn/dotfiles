@@ -180,11 +180,6 @@
         "redis-cli info"
         "redis-cli ping"
         "rg"
-        "rtk deps"
-        "rtk gain"
-        "rtk help"
-        "rtk json"
-        "rtk log"
         "rubocop"
         "ruff"
         "ruff format --check"
@@ -249,7 +244,6 @@
           mode = "exact";
         }
         "rm"
-        "rtk env"
         "shred"
         # HTTP method flags (-X / --request / --method) — any command
         {

@@ -7,7 +7,6 @@
     ../programs/lsp-cli.nix
     ../programs/mcp.nix
     ../programs/pi-coding-agent
-    ../programs/rtk
     ../programs/web-cli.nix
   ];
 
