@@ -19,13 +19,9 @@ rustPlatform.buildRustPackage rec {
 
   cargoHash = "sha256-1ycisGMPBJtx1RlA+5kK/LRg3xcHGqhZuV9RV2dNogA=";
 
-  nativeBuildInputs = [
-    pkg-config
-  ];
+  nativeBuildInputs = [ pkg-config ];
 
-  buildInputs = [
-    libxkbcommon
-  ];
+  buildInputs = [ libxkbcommon ];
 
   cargoBuildFlags = [
     "-p"
