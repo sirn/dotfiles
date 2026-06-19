@@ -8,13 +8,15 @@
 - Do not decorate comments (examples: use `// Log commands`, not `// --- Log commands ---`).
 - Trust the user's stated facts, but verify current repository state before changing anything.
 - Ask for clarification when requirements, success criteria, or target files are unclear.
+- When a path is referenced with `@`, resolve it relative to the current working directory before searching elsewhere.
 - Do not write a script to perform trivial tasks.
-- Read reference skills before covered tools.
+- Read reference skills before using covered tools.
 
 ## Subagents
 
-- Use subagents unless task is trivial (1-2 lines edit or a single command)
+- Use subagents unless the task is trivial (1-2 line edits or a single command).
 - Use appropriate subagents when planning, researching, or implementing a plan.
+- Subagents are specialized; trust them to make decisions; don't use subagents as glorified `write`/`bash` tools.
 - Resume subagent session (pass `sessionId`) when: same task, same agent, genuine continuation.
 - New subagent session for: different task, different agent, or when uncertain.
 
@@ -29,7 +31,7 @@
 
 - Use bounded timeouts for commands
 - Avoid long-running watch/dev servers unless the user runs them.
-- Prefer project task runners ad-hoc commands (examples: `make test`, `just check`, `task lint`, `bin/test`).
+- Prefer project task runners over ad-hoc commands (examples: `make test`, `just check`, `task lint`, `bin/test`).
 - For version control, prefer Jujutsu over Git (examples: `jj status`, `jj diff -s`, `jj diff -- <path>`).
 - For ad-hoc tools, prefer using Nix (examples: `nix run nixpkgs#python3 -- script.py`). Never use `nix-env -i`.
 - Prefer `fd` over `find`; if using `find`, scope it to the current project directory.
