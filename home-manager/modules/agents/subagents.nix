@@ -64,6 +64,11 @@ let
               type = lib.types.str;
               description = "Pi model ID for this subagent.";
             };
+            thinkingLevel = lib.mkOption {
+              type = lib.types.nullOr lib.types.str;
+              default = null;
+              description = "Thinking/effort level for the subagent.";
+            };
           };
         };
         description = "Pi-specific subagent configuration.";

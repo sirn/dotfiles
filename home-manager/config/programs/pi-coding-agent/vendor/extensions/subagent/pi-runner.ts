@@ -68,7 +68,12 @@ export async function runPiAgent(
       `${currentSessionFile.replace(/\.jsonl$/, "")}-subagent`,
     );
   }
-  if (agent.model) args.push("--model", agent.model);
+  if (agent.model) {
+    const modelArg = agent.thinkingLevel
+      ? `${agent.model}:${agent.thinkingLevel}`
+      : agent.model;
+    args.push("--model", modelArg);
+  }
   if (agent.tools && agent.tools.length > 0)
     args.push("--tools", agent.tools.join(","));
 

@@ -26,6 +26,7 @@ let
                 description: ${yamlQuote agentCfg.description}
                 tools: ${tools}
                 model: ${piCfg.model}
+                ${lib.optionalString (piCfg.thinkingLevel != null) "thinkingLevel: ${piCfg.thinkingLevel}"}
                 ---
                 ${agentsCfg.subagentPreamble}
 
@@ -48,6 +49,7 @@ let
                 runner: claude-code
                 tools: ${tools}
                 model: ${piCfg.model}
+                ${lib.optionalString (piCfg.thinkingLevel != null) "thinkingLevel: ${piCfg.thinkingLevel}"}
                 ---
                 ${agentsCfg.subagentPreamble}
 

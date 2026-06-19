@@ -298,6 +298,7 @@ export async function runClaudeCodeAgent(
     if (agent.model) {
       args.push("--model", agent.model);
     }
+    if (agent.thinkingLevel) args.push("--effort", agent.thinkingLevel);
 
     // Tool restrictions: --tools defines the available built-in set
     // (--allowedTools only controls auto-approval, not availability)

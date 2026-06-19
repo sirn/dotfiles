@@ -470,6 +470,11 @@ function parseAgentFile(content: string): AgentConfig | null {
       typeof frontmatter.mode === "string" && frontmatter.mode.trim()
         ? frontmatter.mode.trim()
         : undefined,
+    thinkingLevel:
+      typeof frontmatter.thinkingLevel === "string" &&
+      frontmatter.thinkingLevel.trim()
+        ? frontmatter.thinkingLevel.trim()
+        : undefined,
     systemPrompt: body,
     runner,
   };

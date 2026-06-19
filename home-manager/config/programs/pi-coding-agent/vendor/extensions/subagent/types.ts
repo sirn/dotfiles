@@ -18,6 +18,7 @@ export interface AgentConfig {
   model?: string;
   concurrency?: number;
   mode?: string;
+  thinkingLevel?: string;
   systemPrompt: string;
   runner: "pi" | "claude-code";
 }
