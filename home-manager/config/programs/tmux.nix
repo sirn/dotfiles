@@ -38,7 +38,8 @@ in
       set -g extended-keys on
       set -g extended-keys-format csi-u
       set -g set-titles-string "#W via tmux: #S"
-      # xterm-compatible baseline (Alacritty, WezTerm, Foot, Ghostty, etc.)
+      # xterm-compatible baseline (Alacritty, Foot, Ghostty via xterm-ghostty, etc.)
+      # Ghostty sets TERM=xterm-ghostty (or xterm-256color), so xterm* covers it.
       set -ga terminal-features ",xterm*:ccolour"
       set -ga terminal-features ",xterm*:clipboard"
       set -ga terminal-features ",xterm*:cstyle"
@@ -54,7 +55,7 @@ in
       set -ga terminal-features ",xterm*:title"
       set -ga terminal-features ",xterm*:usstyle"
 
-      # Wezterm-specific (additional features)
+      # WezTerm sets TERM=wezterm (no xterm prefix), so it needs its own block.
       set -ga terminal-features ",wezterm:ccolour"
       set -ga terminal-features ",wezterm:clipboard"
       set -ga terminal-features ",wezterm:cstyle"
@@ -69,21 +70,9 @@ in
       set -ga terminal-features ",wezterm:sync"
       set -ga terminal-features ",wezterm:title"
       set -ga terminal-features ",wezterm:usstyle"
-      # Ghostty-specific (additional features)
-      set -ga terminal-features ",ghostty:ccolour"
-      set -ga terminal-features ",ghostty:clipboard"
-      set -ga terminal-features ",ghostty:cstyle"
-      set -ga terminal-features ",ghostty:extkeys"
-      set -ga terminal-features ",ghostty:focus"
-      set -ga terminal-features ",ghostty:hyperlinks"
-      set -ga terminal-features ",ghostty:margins"
-      set -ga terminal-features ",ghostty:osc7"
-      set -ga terminal-features ",ghostty:overline"
-      set -ga terminal-features ",ghostty:RGB"
-      set -ga terminal-features ",ghostty:strikethrough"
-      set -ga terminal-features ",ghostty:sync"
-      set -ga terminal-features ",ghostty:title"
-      set -ga terminal-features ",ghostty:usstyle"
+
+      # With mouse on, OSC 8 hyperlinks need Shift+click (or Cmd+Shift+click on macOS)
+      # to bypass tmux's mouse capture and let the terminal handle the click.
       set -g allow-passthrough on
       set -wg automatic-rename off
 
