@@ -14,9 +14,8 @@
 
 ## Subagents
 
-- Use subagents unless the task is trivial (1-2 line edits or a single command).
-- Use appropriate subagents when planning, researching, or implementing a plan.
-- Subagents are specialized; trust them to make decisions; don't use subagents as glorified `write`/`bash` tools.
+- Use subagents unless the task is trivial (1-2 line edits or a single command). Anything non-trivial MUST go through subagents.
+- Tell subagents *what* is the intended outcome, not which files to edit or commands to run (unless it's required for context).
 - Resume subagent session (pass `sessionId`) when: same task, same agent, genuine continuation.
 - New subagent session for: different task, different agent, or when uncertain.
 
