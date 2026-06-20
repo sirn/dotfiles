@@ -26,6 +26,13 @@ export default function (pi: ExtensionAPI) {
     const raw = extractLastAssistantText(messages);
     const truncated = raw.replace(/\n/g, " ").trim().slice(0, 200);
     const body = truncated || "Pi has finished their turn";
-    process.stdout.write(`\x1b]9;${body}\x07`);
+    const osc9 = `\x1b]9;${body}\x07`;
+    // When inside tmux, raw OSC sequences are dropped by tmux unless wrapped
+    // in the DCS passthrough envelope (\ePtmux;...\e\\) with ESC doubled.
+    // allow-passthrough must be enabled in tmux config.
+    const output = process.env.TMUX
+      ? `\x1bPtmux;${osc9.replace(/\x1b/g, "\x1b\x1b")}\x1b\\`
+      : osc9;
+    process.stdout.write(output);
   });
 }
