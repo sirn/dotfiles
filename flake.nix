@@ -173,7 +173,7 @@
 
           llm-agents = inputs.llm-agents.packages.${final.stdenv.hostPlatform.system};
 
-          local = import ./pkgs final prev inputs;
+          local = (import ./pkgs final prev inputs).${final.stdenv.hostPlatform.system};
         })
       ];
 
