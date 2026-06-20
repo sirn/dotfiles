@@ -3,6 +3,7 @@
 {
   agents.subagents.designer = {
     description = "Evaluates visual design, layout, accessibility, and consistency with existing UI patterns";
+    delegateWhen = "Visual/layout/accessibility evaluation or consistency with existing UI.";
     prompt = builtins.readFile ./designer.md;
     claude-code = {
       allowedTools = [

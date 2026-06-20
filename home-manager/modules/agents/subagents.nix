@@ -34,6 +34,11 @@ let
         type = lib.types.str;
         description = "Human-readable description of the subagent's purpose.";
       };
+      delegateWhen = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Short trigger condition for when to delegate to this subagent, shown in the auto-generated roster.";
+      };
       prompt = lib.mkOption {
         type = lib.types.lines;
         description = "System prompt for the subagent.";

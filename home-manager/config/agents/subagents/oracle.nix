@@ -1,6 +1,7 @@
 { lib, ... }: {
   agents.subagents.oracle = {
     description = "Adjudicates ambiguous, conflicting, or high-impact technical decisions";
+    delegateWhen = "An ambiguous, conflicting, or high-impact technical decision needs adjudication.";
     prompt = builtins.readFile ./oracle.md;
     claude-code = {
       allowedTools = [

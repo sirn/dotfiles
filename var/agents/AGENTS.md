@@ -8,15 +8,19 @@
 - Trust the user's stated facts, but verify current repository state before changing anything.
 - Ask for clarification when requirements, success criteria, or target files are unclear.
 - When a path is referenced with `@`, resolve it relative to the current working directory before searching elsewhere.
-- Do not write a script to perform trivial tasks.
+- Avoid ad-hoc scripts when built-in tools suffice.
 - Read reference skills before using covered tools.
 
 ## Subagents
 
-- Use subagents unless the task is trivial (1-2 line edits or a single command). Anything non-trivial MUST go through subagents.
-- Tell subagents *what* is the intended outcome, not which files to edit or commands to run (unless it's required for context).
-- Resume subagent session (pass `sessionId`) when: same task, same agent, genuine continuation.
-- New subagent session for: different task, different agent, or when uncertain.
+- Use subagents for anything beyond a verbatim 1-2 line edit you already know how to make.
+- Delegate based on understanding/risk, not diff size.
+- Delegate investigation or multi-step changes even if the final diff is tiny.
+- Delegate research and exploration, not just edits.
+- If you researched in-session, pass findings with the task — don't keep the edit yourself.
+- "Single command" = one logical operation needing no investigation, not one bash call.
+- Resume a session for same task+agent; start fresh otherwise.
+- Pick the right subagent using the "Delegate when" hint in the roster below.
 
 ## Safety & Scope
 

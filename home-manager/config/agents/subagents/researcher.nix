@@ -1,6 +1,7 @@
 { lib, ... }: {
   agents.subagents.researcher = {
     description = "Finds authoritative docs, APIs, errors, migrations, and advisories";
+    delegateWhen = "Authoritative external docs, APIs, errors, advisories, or compatibility are needed.";
     prompt = builtins.readFile ./researcher.md;
     claude-code = {
       allowedTools = [

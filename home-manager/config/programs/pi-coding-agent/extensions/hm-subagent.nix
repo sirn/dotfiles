@@ -87,6 +87,8 @@ let
             "- **${name}**: ${agentCfg.description}"
             + "\n  - Tools: ${builtins.concatStringsSep ", " agentCfg.pi.tools}"
             + "\n  - Runner: ${agentCfg.pi.runner} (${agentCfg.pi.model})"
+            + lib.optionalString (agentCfg.delegateWhen != null)
+              "\n  - Delegate when: ${agentCfg.delegateWhen}"
           ) (builtins.attrNames agentsCfg.subagents)
         )}
       '';
