@@ -49,11 +49,12 @@
     # Hardware presets for NixOS
     nixos-hardware = {
       url = "github:NixOS/nixos-hardware/master";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Definition of Nix systems
-    systems = {
-      url = "github:nix-systems/default-linux";
+    # Definition of all Nix systems
+    systems-default = {
+      url = "github:nix-systems/default";
     };
 
     # Definition of Linux Nix systems
@@ -61,9 +62,15 @@
       url = "github:nix-systems/default-linux";
     };
 
+    # Flake parts library (shared to avoid duplicates)
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
+
     flake-utils = {
       url = "github:numtide/flake-utils";
-      inputs.systems.follows = "systems";
+      inputs.systems.follows = "systems-linux";
     };
 
     ## MicroVM
@@ -88,6 +95,7 @@
     nur = {
       url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
     };
 
     niri = {
@@ -103,6 +111,14 @@
         inputs.treefmt-nix.follows = "treefmt-nix";
         inputs.systems.follows = "systems-linux";
       };
+    };
+
+    llm-agents = {
+      url = "github:numtide/llm-agents.nix";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.treefmt-nix.follows = "treefmt-nix";
+      inputs.systems.follows = "systems-default";
+      inputs.flake-parts.follows = "flake-parts";
     };
   };
 
@@ -154,6 +170,8 @@
             nurpkgs = final;
             pkgs = final;
           };
+
+          llm-agents = inputs.llm-agents.packages.${final.stdenv.hostPlatform.system};
 
           local = import ./pkgs final prev inputs;
         })
@@ -364,10 +382,12 @@
 
       nixConfig = {
         extra-substituters = [
+          "https://cache.numtide.com"
           "https://noctalia.cachix.org"
           "https://microvm.cachix.org"
         ];
         extra-trusted-public-keys = [
+          "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
           "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
           "microvm.cachix.org-1:oXnBc6hRE3eX5rSYdRyMYXnfzcCxC7yKPTbZXALsqys="
         ];

@@ -23,7 +23,7 @@ in
 
     package = lib.mkOption {
       type = lib.types.package;
-      default = pkgs.local.pi-coding-agent;
+      default = pkgs.pi-coding-agent;
       description = "The Pi coding agent package to use.";
     };
 

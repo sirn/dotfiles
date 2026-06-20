@@ -10,8 +10,6 @@ in
 
   coord = (callPackage ./by-name/coord/package.nix { });
 
-  claude-code = (callPackage ./by-name/claude-code/package.nix { });
-
   emacsPackages = {
     phscroll = (callPackage ./by-name/emacs/elisp-packages/phscroll/package.nix { });
   };
@@ -23,8 +21,6 @@ in
   exa-cli = (callPackage ./by-name/exa-cli/package.nix { });
 
   powerband = (callPackage ./by-name/powerband { });
-
-  pi-coding-agent = (callPackage ./by-name/pi-coding-agent/package.nix { });
 
   pi-hashline-edit = (callPackage ./by-name/pi-hashline-edit/package.nix { });
 

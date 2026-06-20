@@ -14,7 +14,7 @@ let
     exec "${lib.getExe pkgs.local.envWrapper}" \
       -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
       -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env.local" \
-      -- "${lib.getExe pkgs.local.pi-coding-agent}" "$@"
+      -- "${lib.getExe pkgs.llm-agents.pi}" "$@"
   '';
 in
 

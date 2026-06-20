@@ -181,7 +181,7 @@ in
         exec "${lib.getExe pkgs.local.envWrapper}" \
           -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
           -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env.local" \
-          -- "${lib.getExe pkgs.local.claude-code}" "$@"
+          -- "${lib.getExe pkgs.llm-agents.claude-code}" "$@"
       ''
     );
 
