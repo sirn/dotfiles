@@ -5,7 +5,6 @@
 - Prefer no code over code, simple over clever, and minimal targeted changes over broad refactors.
 - Match the project's existing style; do not add backward compatibility unless asked.
 - Comments should explain why, not obvious mechanics; never add changelog-style comments.
-- Do not decorate comments (examples: use `// Log commands`, not `// --- Log commands ---`).
 - Trust the user's stated facts, but verify current repository state before changing anything.
 - Ask for clarification when requirements, success criteria, or target files are unclear.
 - When a path is referenced with `@`, resolve it relative to the current working directory before searching elsewhere.
@@ -22,6 +21,7 @@
 ## Safety & Scope
 
 - Stay inside the current project or workspace; use project `tmp/` for temp files.
+- Never commit, squash, rebase, or abandon a commit unless instructed by the user.
 - Never hardcode or expose secrets (examples: API keys, PATs, cookies, `.env`, sops values).
 - Never push or change remotes unless explicitly requested.
 - Follow URLs when presented before acting on them.
@@ -44,3 +44,4 @@
 - Keep diffs focused; report unrelated issues instead of fixing them opportunistically.
 - Check existing dependencies before introducing new ones.
 - Write tests for public behavior when tests are needed; avoid testing private implementation details unless observable.
+- Do not decorate comments (example: use `// Log commands` instead of `// --- Log commands ---`).
