@@ -10,9 +10,7 @@ in
 
   coord = (callPackage ./by-name/coord/package.nix { });
 
-  emacsPackages = {
-    phscroll = (callPackage ./by-name/emacs/elisp-packages/phscroll/package.nix { });
-  };
+  emacsPackages.phscroll = (callPackage ./by-name/emacs/elisp-packages/phscroll/package.nix { });
 
   envWrapper = (callPackage ./by-name/env-wrapper/package.nix { });
 

@@ -8,6 +8,8 @@
 
     hardware.enableRedistributableFirmware = false;
 
+    boot.loader.grub.enable = false;
+
     users.users.sirn.linger = true;
 
     systemd.network.networks = {

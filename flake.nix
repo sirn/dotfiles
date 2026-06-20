@@ -134,13 +134,13 @@
       optionalPath = p: if builtins.pathExists p then p else { };
 
       localCfg =
-        if builtins.pathExists ./local/default.nix then
-          import ./local/default.nix
-        else
-          {
-            nixos = { };
-            home = { };
-          };
+        let
+          cfg = if builtins.pathExists ./local/default.nix then import ./local/default.nix else { };
+        in
+        {
+          nixos = cfg.nixos or { };
+          home = cfg.home or { };
+        };
 
       mkMicroVM = import ./nixos/lib/mk-microvm.nix {
         inherit (inputs)
@@ -411,11 +411,14 @@
       });
 
       # Expose all local packages from the overlay
-      packages = nixpkgs.lib.genAttrs [
-        "x86_64-linux"
-        "aarch64-linux"
-        "x86_64-darwin"
-        "aarch64-darwin"
-      ] (system: (mkPkgs system).local);
+      packages =
+        nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ]
+          (
+            system:
+            let
+              local = (mkPkgs system).local;
+            in
+            nixpkgs.lib.filterAttrs (_: v: nixpkgs.lib.isDerivation v) local
+          );
     };
 }
