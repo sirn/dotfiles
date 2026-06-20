@@ -122,3 +122,18 @@ export function makeEmitUpdate(
     });
   };
 }
+
+// JSON tool-call coercion can turn a literal `null`/`undefined` into the string
+// "null"/"undefined"; treat those (case-insensitive) and other absent sentinels
+// the same as a missing sessionId so resume/stamping stays consistent.
+const ABSENT_SESSION_ID = new Set(["null", "undefined", "none", "nil"]);
+
+export function normalizeSessionId(
+  sessionId: unknown,
+): string | undefined {
+  if (typeof sessionId !== "string") return undefined;
+  const trimmed = sessionId.trim();
+  if (!trimmed) return undefined;
+  if (ABSENT_SESSION_ID.has(trimmed.toLowerCase())) return undefined;
+  return trimmed;
+}

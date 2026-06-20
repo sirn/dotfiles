@@ -60,6 +60,7 @@ import {
 import {
   getResultErrorMessage,
   getFinalOutput,
+  normalizeSessionId,
   stripAnsi,
   writeOutputToTempFile,
 } from "./utils.js";
@@ -507,11 +508,9 @@ async function runSingleAgent(
     return createErrorResult(agentName, task, errorMessage);
   }
 
-  // Treat null/undefined/empty sessionId as "not provided"
-  sessionId =
-    typeof sessionId === "string" && sessionId.trim().length > 0
-      ? sessionId.trim()
-      : undefined;
+  // Treat null/undefined/empty/whitespace and JSON-coercion sentinels ("null",
+  // "undefined", ...) as "not provided".
+  sessionId = normalizeSessionId(sessionId);
 
   const runner = RUNNERS[agent.runner];
 
@@ -661,13 +660,24 @@ export default function (pi: ExtensionAPI) {
         totalAgents,
       });
 
-      const steps = params.steps;
-      if (!steps || steps.length === 0) {
+      const rawSteps = params.steps;
+      if (!rawSteps || rawSteps.length === 0) {
         return createTextResult(
           "No steps provided. Provide a 2D array: [[{agent, task}, ...], ...]",
           makeDetails([]),
         );
       }
+      // Normalize sessionId via normalizeSessionId so JSON-coercion sentinels
+      // ("null", "undefined", ...) are treated as omitted, keeping validation,
+      // pending/result stamping, runner call, output-meta, and TUI consistent.
+      const steps = rawSteps.map((step) =>
+        Array.isArray(step)
+          ? step.map((t) => ({
+              ...t,
+              sessionId: normalizeSessionId(t.sessionId),
+            }))
+          : step,
+      );
 
       for (let s = 0; s < steps.length; s++) {
         if (!Array.isArray(steps[s])) {
