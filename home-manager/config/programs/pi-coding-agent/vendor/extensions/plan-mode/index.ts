@@ -468,6 +468,13 @@ export default function (pi: ExtensionAPI) {
           ctx.ui.notify("Context compacted. Ready for execution.", "success");
           void sendExecutionMessage(planContent, args);
         },
+        onError: (error: Error) => {
+          ctx.ui.notify(
+            `Compaction failed (${error.message}). Running plan without compacting.`,
+            "warning",
+          );
+          void sendExecutionMessage(planContent, args);
+        },
       });
     } else if (choice === "Accept plan") {
       ctx.ui.notify("Plan accepted! Ready for execution.", "success");
