@@ -9,12 +9,12 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "coord";
-  version = "0.4.0";
+  version = "0.4.1";
 
   src = fetchgit {
     url = "https://git.sr.ht/~sirn/coord";
     rev = "refs/tags/v${version}";
-    hash = "sha256-j0pGaHQdwEASXn10V54FPz+jnDzUROt9BWJKX5y25wg=";
+    hash = "sha256-k0+70F7cMEgD+fQZUNZZI+CXBg+v8sAMZZzk0vBwRDw=";
   };
 
   cargoHash = "sha256-1ycisGMPBJtx1RlA+5kK/LRg3xcHGqhZuV9RV2dNogA=";
