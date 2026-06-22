@@ -1168,7 +1168,7 @@ export default function (pi: ExtensionAPI) {
             isPending && (r.autoRetrying || r.compacting)
               ? theme.fg(
                   "warning",
-                  r.compacting ? ICONS.compacting : ICONS.retrying,
+                  ` ${r.compacting ? ICONS.compacting : ICONS.retrying}`,
                 )
               : "";
           const resumedTag = r.resumed
