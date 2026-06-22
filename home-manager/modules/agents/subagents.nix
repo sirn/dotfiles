@@ -25,6 +25,11 @@ let
         type = lib.types.str;
         description = "Model ID to use for this subagent.";
       };
+      effort = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Effort level for the subagent.";
+      };
     };
   };
 
@@ -49,6 +54,7 @@ let
         default = null;
         description = "Claude Code-specific configuration.";
       };
+
       pi = lib.mkOption {
         type = lib.types.submodule {
           options = {

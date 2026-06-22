@@ -114,6 +114,7 @@ let
     tools: ${lib.concatStringsSep ", " agent.claude-code.allowedTools}
     color: ${agent.claude-code.color}
     model: ${agent.claude-code.model}
+    ${lib.optionalString (agent.claude-code.effort != null) "effort: ${agent.claude-code.effort}"}
     ---
     ${agentsCfg.subagentPreamble}
 
