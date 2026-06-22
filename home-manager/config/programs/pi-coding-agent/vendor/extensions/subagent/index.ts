@@ -79,6 +79,11 @@ const ICONS = {
   retrying: "\u{F46A}", // agent auto-retrying
 } as const;
 
+// Braille spinner mirroring pi-tui's Loader (components/loader.js): same
+// frames and 80ms cadence so subagent progress matches pi's working indicator.
+const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+const SPINNER_INTERVAL_MS = 80;
+
 // Runner registry: the single source of truth for which runners exist
 // and how an agent's `runner` field maps to an implementation.
 const RUNNERS: Record<AgentConfig["runner"], AgentRunner> = {
@@ -1005,7 +1010,7 @@ export default function (pi: ExtensionAPI) {
     },
 
     // - TUI: renderResult
-    renderResult(result, { expanded }, theme, _context) {
+    renderResult(result, { expanded, isPartial }, theme, context) {
       const details = result.details as SubagentDetails | undefined;
       if (!details || details.results.length === 0) {
         const text = result.content[0];
@@ -1088,6 +1093,29 @@ export default function (pi: ExtensionAPI) {
 
       const isRunning = details.results.some(isPendingResult);
 
+      // Drive a braille spinner that mirrors pi-tui's Loader while any agent
+      // is still running. The interval advances the frame and invalidates this
+      // row; it is cleared once the tool call is no longer partial.
+      const spinState = context.state as {
+        spinnerInterval?: ReturnType<typeof setInterval>;
+        spinnerFrame?: number;
+      };
+      if (isPartial && isRunning) {
+        if (!spinState.spinnerInterval) {
+          spinState.spinnerFrame = 0;
+          spinState.spinnerInterval = setInterval(() => {
+            spinState.spinnerFrame = ((spinState.spinnerFrame ?? 0) + 1) % SPINNER_FRAMES.length;
+            context.invalidate();
+          }, SPINNER_INTERVAL_MS);
+        }
+      } else if (spinState.spinnerInterval) {
+        clearInterval(spinState.spinnerInterval);
+        spinState.spinnerInterval = undefined;
+      }
+      const spinnerFrame = isPartial && isRunning && spinState.spinnerInterval
+        ? SPINNER_FRAMES[spinState.spinnerFrame ?? 0]
+        : undefined;
+
       let text = "";
 
       // Group + sort by step once per details object identity; renderResult can
@@ -1117,10 +1145,11 @@ export default function (pi: ExtensionAPI) {
           const hasFailed = isFailedResult(r);
           const isSkipped = isSkippedResult(r);
           const isWaiting = isPending && !r.started;
+          const pendingIcon = theme.fg("warning", spinnerFrame ?? ICONS.pending);
           const rIcon = isWaiting
             ? theme.fg("dim", ICONS.waiting)
             : isPending
-              ? theme.fg("warning", ICONS.pending)
+              ? pendingIcon
               : isSkipped
                 ? theme.fg("dim", ICONS.skipped)
                 : hasFailed
