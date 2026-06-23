@@ -120,3 +120,20 @@ Create a file named `local/home.nix` to have a machine-specific configuration th
   targets.genericLinux.enable = true;
 }
 ```
+
+### Binary Caches
+
+Binary caches (numtide, noctalia, microvm) are configured declaratively:
+
+- NixOS hosts via `nix.settings` in `nixos/config/system/nix.nix` (applies to all users on rebuild; `cache.nixos.org` is appended automatically by the NixOS nix module).
+- The `theia` macOS host via `nix.settings` in `home-manager/config/home/nix.nix`, which Home Manager writes to `~/.config/nix/nix.conf` on `switch`.
+
+These are set at the system/user level rather than in `flake.nix`'s `nixConfig`, which Nix ignores unless `accept-flake-config = true` is set.
+
+On the standalone Home Manager host (`theia`), the user must also be trusted so Nix honours user-level `substituters`/`trusted-public-keys`. Add to `/etc/nix/nix.conf` once:
+
+```ini
+trusted-users = root <username>
+```
+
+then restart the Nix daemon before running `home-manager switch` or `nixos-rebuild`.
