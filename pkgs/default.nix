@@ -35,6 +35,8 @@ let
 
     skill-ast-grep = (callPackage ./by-name/skill-ast-grep { });
 
+    skill-tuicr = (callPackage ./by-name/skill-tuicr { });
+
     tincan = (callPackage ./by-name/tincan/package.nix { });
 
     tiler = (callPackage ./by-name/tiler/package.nix { });
