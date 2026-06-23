@@ -42,7 +42,7 @@ import {
   invalidateDirectoryCache,
 } from "./lib/cache.js";
 import { measure } from "./lib/perf.js";
-import { Text } from "@earendil-works/pi-tui";
+import { Box, Text, Spacer } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 
 import {
@@ -540,6 +540,420 @@ const groupedResultsCache = new WeakMap<
   [number, SingleResult[]][]
 >();
 
+// Display-items cache: keyed by SingleResult identity. The pi-runner MUTATES
+// the result object in place across partial emits, so identity alone is unsound;
+// we additionally gate on messages.length (append-only, so unchanged length
+// implies the message array is unchanged). A spin tick does not mutate, so it
+// hits the cache and skips re-parsing messages + stripAnsi on every 80ms tick.
+const displayItemsCache = new WeakMap<SingleResult, { len: number; items: DisplayItem[] }>();
+
+type SubagentStore = {
+  details: SubagentDetails;
+  expanded: boolean;
+  isPartial: boolean;
+  theme: any;              // matches existing untyped theme convention in this file
+  isRunning: boolean;
+  spinnerGlyph: string | undefined; // SPINNER_FRAMES[frame] while spinning, else undefined
+};
+
+function buildStore(
+  result: AgentToolResult<SubagentDetails>,
+  options: { expanded: boolean; isPartial: boolean },
+  theme: any,
+  spinState: { spinnerInterval?: ReturnType<typeof setInterval>; spinnerFrame?: number },
+): SubagentStore {
+  const details = result.details;
+  const isRunning = details.results.some(isPendingResult);
+  const spinning = options.isPartial && isRunning && !!spinState.spinnerInterval;
+  return {
+    details,
+    expanded: options.expanded,
+    isPartial: options.isPartial,
+    theme,
+    isRunning,
+    spinnerGlyph: spinning ? SPINNER_FRAMES[spinState.spinnerFrame ?? 0] : undefined,
+  };
+}
+
+function trimInline(value: string, maxLength: number): string {
+  const compact = value.trim().replace(/\s+/g, " ");
+  return compact.length > maxLength
+    ? `${compact.slice(0, maxLength - 1)}…`
+    : compact;
+}
+
+function renderDisplayItems(items: DisplayItem[], limit: number | undefined, expanded: boolean, theme: any): string {
+  const toShow = limit ? items.slice(-limit) : items;
+  const skipped =
+    limit && items.length > limit ? items.length - limit : 0;
+  let text = "";
+  if (skipped > 0)
+    text += theme.fg(
+      "muted",
+      `… ${skipped} earlier display items hidden\n`,
+    );
+  for (const item of toShow) {
+    if (item.type === "text") {
+      const preview = expanded
+        ? item.text.trim()
+        : trimInline(item.text, 160);
+      if (!preview.trim()) continue;
+      text += `${theme.fg("toolOutput", preview)}\n`;
+    } else if (item.type === "toolCall") {
+      let toolName: string;
+      let argText = "";
+      try {
+        const { name, arg } = formatToolCall(item.name, item.args);
+        toolName = name;
+        if (arg) {
+          argText = ` ${theme.fg("toolOutput", expanded ? arg.trim() : trimInline(arg, 140))}`;
+        }
+      } catch {
+        toolName = item.name;
+      }
+      text += `${theme.fg("muted", "→ ")}${theme.fg("accent", toolName)}${argText}\n`;
+    } else if (item.type === "toolResult") {
+      const prefix = item.isError
+        ? theme.fg("error", "← error:")
+        : theme.fg("muted", "← output:");
+      const resultPreview = expanded
+        ? item.text.trim()
+        : trimInline(item.text, 160);
+      text += `${prefix} ${theme.fg("toolOutput", resultPreview)}\n`;
+    }
+  }
+  return text.trimEnd();
+}
+
+function aggregateUsage(results: SingleResult[]) {
+  const total = {
+    input: 0,
+    output: 0,
+    cacheRead: 0,
+    cacheWrite: 0,
+    cost: 0,
+    turns: 0,
+  };
+  for (const r of results) {
+    total.input += r.usage.input;
+    total.output += r.usage.output;
+    total.cacheRead += r.usage.cacheRead;
+    total.cacheWrite += r.usage.cacheWrite;
+    total.cost += r.usage.cost;
+    total.turns += r.usage.turns;
+  }
+  return total;
+}
+
+// Resolve the cached grouped-step view of a details object. Kept out of
+// SubagentResultView so leaf derive closures can recompute the slot -> result
+// mapping on every spin tick without re-allocating the group map.
+function groupedResults(details: SubagentDetails): [number, SingleResult[]][] {
+  return (
+    groupedResultsCache.get(details) ??
+    (() => {
+      const map = new Map<number, SingleResult[]>();
+      for (const r of details.results) {
+        const stepIndex = r.stepIndex ?? 0;
+        const group = map.get(stepIndex);
+        if (group) group.push(r);
+        else map.set(stepIndex, [r]);
+      }
+      const sorted = [...map.entries()].sort(([a], [b]) => a - b);
+      groupedResultsCache.set(details, sorted);
+      return sorted;
+    })()
+  );
+}
+
+// Cached display items for a single result, mirroring the original logic.
+function resultDisplayItems(r: SingleResult): DisplayItem[] {
+  const entry = displayItemsCache.get(r);
+  if (entry && entry.len === r.messages.length) return entry.items;
+  const items = getDisplayItems(r.messages);
+  displayItemsCache.set(r, { len: r.messages.length, items });
+  return items;
+}
+
+type LeafCtx = {
+  kind: "step" | "header" | "task" | "fallback" | "display" | "usage" | "total" | "expand";
+  stepIndex?: number;
+  resultIndex?: number;
+  agentNumber?: number;
+};
+
+type Leaf = { text: Text; derive: (store: SubagentStore) => string; current: string };
+
+class SubagentResultView extends Box {
+  private leaves: Leaf[] = [];
+  private lastKey = "";
+  // Per-result memo for the four non-header derives. The pi-runner MUTATES
+  // the result object in place across partial emits, so keying by `r` identity
+  // alone would go stale (pending+empty would poison at first render). Instead
+  // each entry carries a content version snapshot; a spin tick does not mutate,
+  // so version matches -> cache hit -> no recompute. Invalidated wholesale on
+  // theme or expanded change (those bake into the cached strings).
+  private deriveMemo = new WeakMap<SingleResult, { version: string; fields: Partial<Record<"task" | "fallback" | "display" | "usage", string>> }>();
+  private memoTheme: any;
+  private memoExpanded: boolean | undefined;
+
+  constructor() {
+    super(0, 0);
+  }
+
+  // Structural key: steps + per-step counts + running/total/expanded flags.
+  // A spin tick leaves all of these unchanged, so no rebuild happens and only
+  // header leaves (the only ones depending on spinnerGlyph) get setText.
+  private structKey(store: SubagentStore): string {
+    const grouped = groupedResults(store.details);
+    const hasTotal =
+      !store.isRunning && !!formatUsageStats(aggregateUsage(store.details.results));
+    return JSON.stringify({
+      steps: grouped.map(([si, rs]) => [si, rs.length]),
+      isRunning: store.isRunning,
+      hasTotal,
+      expanded: store.expanded,
+    });
+  }
+
+  private pushLeaf(parent: Box, derive: (store: SubagentStore) => string): Leaf {
+    const text = new Text("", 0, 0);
+    parent.addChild(text);
+    const leaf = { text, derive, current: "" };
+    this.leaves.push(leaf);
+    return leaf;
+  }
+
+  private memoField(
+    field: "task" | "fallback" | "display" | "usage",
+    compute: () => string,
+    store: SubagentStore,
+    stepIndex: number,
+    resultIndex: number,
+  ): string {
+    const r = lookupResult(store, stepIndex, resultIndex);
+    const version = resultVersion(r);
+    const entry = this.deriveMemo.get(r);
+    if (entry && entry.version === version && field in entry.fields) return entry.fields[field]!;
+    const val = compute();
+    if (entry && entry.version === version) entry.fields[field] = val;
+    else this.deriveMemo.set(r, { version, fields: { [field]: val } });
+    return val;
+  }
+
+  private rebuild(store: SubagentStore): void {
+    this.clear();
+    this.leaves = [];
+    const root = this;
+    const { theme, expanded } = store;
+    const grouped = groupedResults(store.details);
+
+    let agentNumber = 1;
+    for (let i = 0; i < grouped.length; i++) {
+      const [stepIndex, results] = grouped[i];
+      if (i > 0) root.addChild(new Spacer(1)); // blank before `step N:` for N>1
+      this.pushLeaf(root, (s) => s.theme.fg("muted", `step ${stepIndex + 1}:`));
+
+      const stepBox = new Box(2, 0);
+      root.addChild(stepBox);
+
+      for (let j = 0; j < results.length; j++) {
+        const resultIndex = j;
+        const thisAgentNumber = agentNumber;
+        if (resultIndex > 0) stepBox.addChild(new Spacer(1)); // blank before header
+        this.pushLeaf(
+          stepBox,
+          (s) =>
+            renderHeaderContent(
+              lookupResult(s, stepIndex, resultIndex),
+              thisAgentNumber,
+              s,
+            ),
+        );
+
+        const detailBox = new Box(2, 0);
+        stepBox.addChild(detailBox);
+
+        this.pushLeaf(detailBox, (s) =>
+          this.memoField(
+            "task",
+            () => renderTaskContent(lookupResult(s, stepIndex, resultIndex), expanded, s.theme),
+            s, stepIndex, resultIndex,
+          ),
+        );
+        this.pushLeaf(detailBox, (s) =>
+          this.memoField(
+            "fallback",
+            () => renderFallbackContent(lookupResult(s, stepIndex, resultIndex), s.theme),
+            s, stepIndex, resultIndex,
+          ),
+        );
+        this.pushLeaf(detailBox, (s) =>
+          this.memoField(
+            "display",
+            () => renderDisplayContent(lookupResult(s, stepIndex, resultIndex), expanded, s.theme),
+            s, stepIndex, resultIndex,
+          ),
+        );
+        this.pushLeaf(detailBox, (s) =>
+          this.memoField(
+            "usage",
+            () => renderUsageContent(lookupResult(s, stepIndex, resultIndex), s.theme),
+            s, stepIndex, resultIndex,
+          ),
+        );
+        agentNumber++;
+      }
+    }
+
+    // Tail
+    const hasTotal =
+      !store.isRunning && !!formatUsageStats(aggregateUsage(store.details.results));
+    if (hasTotal) {
+      root.addChild(new Spacer(1));
+      this.pushLeaf(root, (s) =>
+        s.isRunning
+          ? ""
+          : (() => {
+              const usageStr = formatUsageStats(aggregateUsage(s.details.results));
+              return usageStr ? s.theme.fg("dim", `Total: ${usageStr}`) : "";
+            })(),
+      );
+      if (!store.expanded) {
+        this.pushLeaf(root, (s) =>
+          s.expanded
+            ? ""
+            : s.theme.fg("muted", "(") +
+                keyHint("app.tools.expand", "to expand") +
+                s.theme.fg("muted", ")"),
+        );
+      }
+    } else if (!store.expanded) {
+      root.addChild(new Spacer(1));
+      this.pushLeaf(root, (s) =>
+        s.expanded
+          ? ""
+          : s.theme.fg("muted", "(") +
+              keyHint("app.tools.expand", "to expand") +
+              s.theme.fg("muted", ")"),
+      );
+    }
+  }
+
+  reconcile(store: SubagentStore): void {
+    const key = this.structKey(store);
+    if (key !== this.lastKey) {
+      this.rebuild(store);
+      this.lastKey = key;
+    }
+    if (store.theme !== this.memoTheme || store.expanded !== this.memoExpanded) {
+      this.deriveMemo = new WeakMap();
+      this.memoTheme = store.theme;
+      this.memoExpanded = store.expanded;
+    }
+    for (const leaf of this.leaves) {
+      const desired = leaf.derive(store);
+      if (desired !== leaf.current) {
+        leaf.text.setText(desired);
+        leaf.current = desired;
+      }
+    }
+  }
+}
+
+// Content version snapshot for a single result. Cheap concatenation of every
+// field the memoized derives read. `r.task` is set at creation and never
+// mutated, so it is omitted. The fallback derive reads exitCode/stopReason/
+// errorMessage plus resultDisplayItems; the display derive reads
+// resultDisplayItems; the usage derive reads isPending(exitCode) plus r.usage
+// and r.model. messages.length gates the append-only message array. A spin
+// tick does not mutate the result, so the version is stable and the memo
+// hits. Header-only fields (runner/resumed/sessionId/agent/started) are not
+// included because the header derive is never memoized.
+function resultVersion(r: SingleResult): string {
+  const u = r.usage;
+  return `${r.exitCode}|${r.messages.length}|${r.stopReason ?? ""}|${r.errorMessage ?? ""}|${r.model ?? ""}|${u.turns}|${u.input}|${u.output}|${u.cacheRead}|${u.cacheWrite}|${u.cost}|${r.compacting}|${r.autoRetrying}`;
+}
+
+// Slot lookup by (stepIndex, resultIndex) into the grouped view of the
+// *current* store's details, so partial updates that replace a slot's result
+// object are reflected without a structural rebuild.
+function lookupResult(store: SubagentStore, stepIndex: number, resultIndex: number): SingleResult {
+  const grouped = groupedResults(store.details);
+  for (const [si, rs] of grouped) {
+    if (si === stepIndex) return rs[resultIndex];
+  }
+  // Should be unreachable for any key produced by structKey.
+  return store.details.results[0];
+}
+
+function renderHeaderContent(r: SingleResult, agentNumber: number, store: SubagentStore): string {
+  const theme = store.theme;
+  const spinnerFrame = store.spinnerGlyph;
+  const isPending = isPendingResult(r);
+  const hasFailed = isFailedResult(r);
+  const isSkipped = isSkippedResult(r);
+  const isWaiting = isPending && !r.started;
+  const pendingIcon = theme.fg("warning", spinnerFrame ?? ICONS.pending);
+  const rIcon = isWaiting
+    ? theme.fg("dim", ICONS.waiting)
+    : isPending
+      ? pendingIcon
+      : isSkipped
+        ? theme.fg("dim", ICONS.skipped)
+        : hasFailed
+          ? theme.fg("error", ICONS.agentFailed)
+          : theme.fg("success", ICONS.agentSuccess);
+  const runnerTag =
+    r.runner === "claude-code" ? theme.fg("dim", " [claude-code]") : "";
+  const statusGlyph =
+    isPending && (r.autoRetrying || r.compacting)
+      ? theme.fg("warning", ` ${r.compacting ? ICONS.compacting : ICONS.retrying}`)
+      : "";
+  const resumedTag = r.resumed ? theme.fg("dim", ` (resumed: ${r.sessionId})`) : "";
+  return `${rIcon} ${theme.fg("muted", `[${agentNumber}]`)} ${theme.fg("accent", r.agent)}${runnerTag}${resumedTag}${statusGlyph}`;
+}
+
+function renderTaskContent(r: SingleResult, expanded: boolean, theme: any): string {
+  if (!r.task) return "";
+  const task = expanded ? r.task.trim().replace(/\s+/g, " ") : trimInline(r.task, 100);
+  return r.task ? `${theme.fg("muted", "Task: ")}${theme.fg("dim", task)}` : "";
+}
+
+function renderFallbackContent(r: SingleResult, theme: any): string {
+  const isPending = isPendingResult(r);
+  const hasFailed = isFailedResult(r);
+  const isSkipped = isSkippedResult(r);
+  const fallback = isSkipped
+    ? "Skipped: earlier step failed"
+    : hasFailed
+      ? getResultErrorMessage(r)
+      : isPending
+        ? ""
+        : "(no output)";
+  if (resultDisplayItems(r).length > 0) return "";
+  if (!fallback) return "";
+  return theme.fg(isSkipped ? "muted" : hasFailed ? "error" : "muted", fallback);
+}
+
+function renderDisplayContent(r: SingleResult, expanded: boolean, theme: any): string {
+  const displayItems = resultDisplayItems(r);
+  if (displayItems.length === 0) return "";
+  const rendered = renderDisplayItems(
+    displayItems,
+    expanded ? undefined : collapsedItemCount,
+    expanded,
+    theme,
+  );
+  return rendered;
+}
+
+function renderUsageContent(r: SingleResult, theme: any): string {
+  if (isPendingResult(r)) return "";
+  const taskUsage = formatUsageStats(r.usage, r.model);
+  return taskUsage ? theme.fg("dim", taskUsage) : "";
+}
+
 // Tool Registration
 
 const agentHint = 'Name of the agent to delegate to, e.g. "worker".';
@@ -1021,76 +1435,6 @@ export default function (pi: ExtensionAPI) {
         );
       }
 
-      const trimInline = (value: string, maxLength: number) => {
-        const compact = value.trim().replace(/\s+/g, " ");
-        return compact.length > maxLength
-          ? `${compact.slice(0, maxLength - 1)}…`
-          : compact;
-      };
-
-      const renderDisplayItems = (items: DisplayItem[], limit?: number) => {
-        const toShow = limit ? items.slice(-limit) : items;
-        const skipped =
-          limit && items.length > limit ? items.length - limit : 0;
-        let text = "";
-        if (skipped > 0)
-          text += theme.fg(
-            "muted",
-            `… ${skipped} earlier display items hidden\n`,
-          );
-        for (const item of toShow) {
-          if (item.type === "text") {
-            const preview = expanded
-              ? item.text.trim()
-              : trimInline(item.text, 160);
-            if (!preview.trim()) continue;
-            text += `${theme.fg("toolOutput", preview)}\n`;
-          } else if (item.type === "toolCall") {
-            let toolName: string;
-            let argText = "";
-            try {
-              const { name, arg } = formatToolCall(item.name, item.args);
-              toolName = name;
-              if (arg) {
-                argText = ` ${theme.fg("toolOutput", expanded ? arg.trim() : trimInline(arg, 140))}`;
-              }
-            } catch {
-              toolName = item.name;
-            }
-            text += `${theme.fg("muted", "→ ")}${theme.fg("accent", toolName)}${argText}\n`;
-          } else if (item.type === "toolResult") {
-            const prefix = item.isError
-              ? theme.fg("error", "← error:")
-              : theme.fg("muted", "← output:");
-            const resultPreview = expanded
-              ? item.text.trim()
-              : trimInline(item.text, 160);
-            text += `${prefix} ${theme.fg("toolOutput", resultPreview)}\n`;
-          }
-        }
-        return text.trimEnd();
-      };
-
-      const aggregateUsage = (results: SingleResult[]) => {
-        const total = {
-          input: 0,
-          output: 0,
-          cacheRead: 0,
-          cacheWrite: 0,
-          cost: 0,
-          turns: 0,
-        };
-        for (const r of results) {
-          total.input += r.usage.input;
-          total.output += r.usage.output;
-          total.cacheRead += r.usage.cacheRead;
-          total.cacheWrite += r.usage.cacheWrite;
-          total.cost += r.usage.cost;
-          total.turns += r.usage.turns;
-        }
-        return total;
-      };
-
       const isRunning = details.results.some(isPendingResult);
 
       // Drive a braille spinner that mirrors pi-tui's Loader while any agent
@@ -1112,117 +1456,14 @@ export default function (pi: ExtensionAPI) {
         clearInterval(spinState.spinnerInterval);
         spinState.spinnerInterval = undefined;
       }
-      const spinnerFrame = isPartial && isRunning && spinState.spinnerInterval
-        ? SPINNER_FRAMES[spinState.spinnerFrame ?? 0]
-        : undefined;
 
-      let text = "";
-
-      // Group + sort by step once per details object identity; renderResult can
-      // be invoked many times (resize/expand toggles) without the underlying
-      // results changing, so caching avoids re-allocating the map each time.
-      const grouped =
-        groupedResultsCache.get(details) ??
-        (() => {
-          const map = new Map<number, SingleResult[]>();
-          for (const r of details.results) {
-            const stepIndex = r.stepIndex ?? 0;
-            const group = map.get(stepIndex);
-            if (group) group.push(r);
-            else map.set(stepIndex, [r]);
-          }
-          const sorted = [...map.entries()].sort(([a], [b]) => a - b);
-          groupedResultsCache.set(details, sorted);
-          return sorted;
-        })();
-
-      let agentNumber = 1;
-      for (const [stepIndex, results] of grouped) {
-        text += `${text ? "\n\n" : ""}${theme.fg("muted", `step ${stepIndex + 1}:`)}`;
-
-        for (const [resultIndex, r] of results.entries()) {
-          const isPending = isPendingResult(r);
-          const hasFailed = isFailedResult(r);
-          const isSkipped = isSkippedResult(r);
-          const isWaiting = isPending && !r.started;
-          const pendingIcon = theme.fg("warning", spinnerFrame ?? ICONS.pending);
-          const rIcon = isWaiting
-            ? theme.fg("dim", ICONS.waiting)
-            : isPending
-              ? pendingIcon
-              : isSkipped
-                ? theme.fg("dim", ICONS.skipped)
-                : hasFailed
-                  ? theme.fg("error", ICONS.agentFailed)
-                  : theme.fg("success", ICONS.agentSuccess);
-          const task = r.task
-            ? expanded
-              ? r.task.trim().replace(/\s+/g, " ")
-              : trimInline(r.task, 100)
-            : undefined;
-          const displayItems = getDisplayItems(r.messages);
-
-          const runnerTag =
-            r.runner === "claude-code" ? theme.fg("dim", " [claude-code]") : "";
-          const statusGlyph =
-            isPending && (r.autoRetrying || r.compacting)
-              ? theme.fg(
-                  "warning",
-                  ` ${r.compacting ? ICONS.compacting : ICONS.retrying}`,
-                )
-              : "";
-          const resumedTag = r.resumed
-            ? theme.fg("dim", ` (resumed: ${r.sessionId})`)
-            : "";
-          text += `${resultIndex > 0 ? "\n" : ""}\n  ${rIcon} ${theme.fg(
-            "muted",
-            `[${agentNumber}]`,
-          )} ${theme.fg("accent", r.agent)}${runnerTag}${resumedTag}${statusGlyph}`;
-          if (task)
-            text += `\n    ${theme.fg("muted", "Task: ")}${theme.fg("dim", task)}`;
-
-          if (displayItems.length === 0) {
-            const fallback = isSkipped
-              ? "Skipped: earlier step failed"
-              : hasFailed
-                ? getResultErrorMessage(r)
-                : isPending
-                  ? ""
-                  : "(no output)";
-            if (fallback)
-              text += `\n    ${theme.fg(isSkipped ? "muted" : hasFailed ? "error" : "muted", fallback)}`;
-          } else {
-            const rendered = renderDisplayItems(
-              displayItems,
-              expanded ? undefined : collapsedItemCount,
-            );
-            if (rendered)
-              text += `\n${rendered
-                .split("\n")
-                .map((line) => `    ${line}`)
-                .join("\n")}`;
-          }
-
-          if (!isPending) {
-            const taskUsage = formatUsageStats(r.usage, r.model);
-            if (taskUsage) text += `\n    ${theme.fg("dim", taskUsage)}`;
-          }
-
-          agentNumber++;
-        }
-      }
-
-      let hasTotal = false;
-      if (!isRunning) {
-        const usageStr = formatUsageStats(aggregateUsage(details.results));
-        if (usageStr) {
-          text += `\n\n${theme.fg("dim", `Total: ${usageStr}`)}`;
-          hasTotal = true;
-        }
-      }
-      if (!expanded)
-        text += `${hasTotal ? "\n" : "\n\n"}${theme.fg("muted", "(")}${keyHint("app.tools.expand", "to expand")}${theme.fg("muted", ")")}`;
-      return new Text(text, 0, 0);
+      const store = buildStore(result, { expanded, isPartial }, theme, spinState);
+      const view =
+        context.lastComponent instanceof SubagentResultView
+          ? context.lastComponent
+          : new SubagentResultView();
+      view.reconcile(store);
+      return view;
     },
   });
 }
