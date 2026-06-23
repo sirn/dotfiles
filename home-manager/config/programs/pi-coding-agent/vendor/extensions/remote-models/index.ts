@@ -82,6 +82,13 @@ interface RemoteProviderConfig {
    *  Omitted fields mean no remote source for that cost dimension.
    */
   pricingFieldMappings?: PricingFieldMappings;
+  /** Applied ONLY to models with no resolvable pi-ai hint (piModel === null).
+   *  Lets proxy-routed models expose xhigh without inheriting pi-ai's
+   *  per-provider flags, which may not apply behind a multi-provider endpoint. */
+  unhandledThinkingLevelMap?: Partial<Record<
+    "off" | "minimal" | "low" | "medium" | "high" | "xhigh",
+    string | null
+  >>;
 }
 
 // ---------------------------------------------------------------------------
@@ -106,6 +113,10 @@ const PRESETS: Record<string, Partial<RemoteProviderConfig>> = {
       cacheRead: "pricing.input_cache_read",
       cacheWrite: "pricing.input_cache_write",
     },
+    // Plexus routes one endpoint to many upstream providers, so we can't
+    // safely inherit pi-ai's per-provider flags via pi_provider/pi_model
+    // hints. Instead expose xhigh for models pi-ai doesn't know about.
+    unhandledThinkingLevelMap: { xhigh: "xhigh" },
   },
 };
 
@@ -267,8 +278,10 @@ function toProviderModel(
       piModel?.reasoning ??
       apiModel.supported_parameters?.includes("reasoning") ??
       false,
-    ...(piModel?.thinkingLevelMap && {
-      thinkingLevelMap: piModel.thinkingLevelMap,
+    ...((piModel?.thinkingLevelMap ??
+      config.unhandledThinkingLevelMap) && {
+      thinkingLevelMap:
+        piModel?.thinkingLevelMap ?? config.unhandledThinkingLevelMap,
     }),
     input:
       piModel?.input ??
