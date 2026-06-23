@@ -34,6 +34,7 @@
 
 - Use bounded timeouts for commands
 - Avoid long-running watch/dev servers unless the user runs them.
+- If GPG or SSH agent fails, wait for the user to fix. Do not attempt to workaround it in any way.
 - Prefer project task runners over ad-hoc commands (examples: `make test`, `just check`, `task lint`, `bin/test`).
 - For version control, prefer Jujutsu over Git (examples: `jj status`, `jj diff -s`, `jj diff -- <path>`).
 - For ad-hoc tools, prefer using Nix (examples: `nix run nixpkgs#python3 -- script.py`). Never use `nix-env -i`.
