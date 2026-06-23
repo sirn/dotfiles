@@ -41,8 +41,6 @@ let
 
     lsp-cli = (callPackage ./by-name/lsp-cli/package.nix { });
 
-    web-cli = (callPackage ./by-name/web-cli/package.nix { });
-
     wrapped-uv = (callPackage ./by-name/wrapped-uv/wrapped.nix { });
   };
 

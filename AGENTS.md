@@ -42,6 +42,6 @@ Keep messages concise and use these scope prefixes:
 - `profiles/<hostname>` for `profiles/<hostname>.nix`, e.g. `profiles/terra: ...`.
 - `nixos/<component>` for files under `nixos/config`, `nixos/modules`, or `nixos/lib`. Skip `modules/programs`, e.g. `nixos/system: ...`
 - `hm/<component>` for files under `home-manager/config`, `home-manager/modules`, or `home-manager/lib`, e.g. `hm/pi-coding-agent: ...`
-- `pkgs/<package>` for packages under `pkgs/<group>/<package>`, e.g. `pkgs/web-cli: ...`.
+- `pkgs/<package>` for packages under `pkgs/<group>/<package>`, e.g. `pkgs/coord: ...`.
 - Use the top-level filename for top-level files, and the directory path for other areas.
 - For multiple areas, use brace scopes like `nixos/{system,services}: ...` or `{nixos,hm}/*: ...`.

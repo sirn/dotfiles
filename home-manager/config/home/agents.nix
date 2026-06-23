@@ -7,7 +7,7 @@
     ../programs/lsp-cli.nix
     ../programs/mcp.nix
     ../programs/pi-coding-agent
-    ../programs/web-cli.nix
+    ../programs/agent-browser.nix
   ];
 
   programs.git.ignores = [

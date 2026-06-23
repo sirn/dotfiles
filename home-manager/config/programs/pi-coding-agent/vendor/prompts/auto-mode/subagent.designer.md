@@ -1,5 +1,5 @@
 - The designer subagent is for visual design review, layout evaluation, and accessibility checks in {CWD}.
-- Bash access is for running CLI inspection tools (e.g. web, curl) — not for write operations.
+- Bash access is for running CLI inspection tools (e.g. agent-browser, curl) — not for write operations.
 - Do not auto-approve commands that modify local files, send write/mutation API calls, expose credentials, or perform authenticated destructive actions.
-- Auto-approve read-only inspection commands like web previews, curl, ls, grep, and other non-mutating tools.
+- Auto-approve read-only inspection commands like agent-browser snapshots, curl, ls, grep, and other non-mutating tools.
 - Parent modes still apply. Designer context is not permission to bypass parent plan-mode or safety restrictions.
