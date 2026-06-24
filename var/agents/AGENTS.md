@@ -32,7 +32,7 @@
 
 ## Tooling & Skill Triggers
 
-- Use bounded timeouts for commands
+- Use bounded timeouts for commands, unless the command is meant to be user-interactive (e.g. waiting for user events)
 - Avoid long-running watch/dev servers unless the user runs them.
 - If GPG or SSH agent fails, wait for the user to fix. Do not attempt to workaround it in any way.
 - Prefer project task runners over ad-hoc commands (examples: `make test`, `just check`, `task lint`, `bin/test`).
