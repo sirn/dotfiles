@@ -34,7 +34,7 @@ Commit current changes using Jujutsu (jj).
 - The commit message MUST be derived primarily from the diff itself
 - The conversation context (what the user asked for) MUST not be included unless the commit itself is unobvious
 - If changes are logically distinct (different subsystems, features, or concerns), mark them for split:
-  - Use `jj op` to note the current operation ID (for rollback if split goes wrong)
+  - Run `jj op log -n 1` to note the current operation ID; roll back with `jj undo` or `jj op restore <op-id>` if a split goes wrong
   - Execute `jj split -r <id> -m "<commit-message>" -- <file>` for each split
   - Message MUST always be present with splitting a commit
   - Do NOT use interactive `jj split`
@@ -50,7 +50,7 @@ Commit current changes using Jujutsu (jj).
   - Use absolute path when referencing the skill. DO NOT `cd` into the skill directory; jujutsu operations on the repo on cwd
   - Use `/path/to/check-commit-msg.sh [REV]` where `REV` can be a jujutsu revision, jujutsu alias, git revision, or git refs
   - Use `/path/to/check-commit-msg.sh -h` to see all available options
-- If any line exceeds the limit, fix it with `jj describe <rev> -m "<fixed-message>"` or `git commit --amend`.
+- If any line exceeds the limit, fix it with `jj describe <rev> -m "<fixed-message>"`.
 
 ### Step 5 - Report
 
