@@ -24,6 +24,7 @@ import type {
 } from "@earendil-works/pi-coding-agent";
 import { getExecutionMode } from "./lib/execution-mode.js";
 import { EXT_DIR, PI_AGENT_DIR } from "./lib/paths.js";
+import { buildPathDiffHint } from "./lib/path-hint.js";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import {
@@ -451,11 +452,11 @@ export default function (pi: ExtensionAPI) {
     const toolAllowed = mergeToolAllowedStrict(event.toolName, modePolicies);
     if (toolAllowed === false) {
       // For write/edit, check path-specific allowances
-      if (event.toolName === "write" || event.toolName === "edit") {
-        const targetPath = event.input?.path as string | undefined;
-        if (isPathAllowed(event.toolName, targetPath, policyOverride)) {
-          return undefined; // Allow this specific path
-        }
+      const targetPath = (event.toolName === "write" || event.toolName === "edit")
+        ? event.input?.path as string | undefined
+        : undefined;
+      if (isPathAllowed(event.toolName, targetPath, policyOverride)) {
+        return undefined; // Allow this specific path
       }
       const relevantPaths: string[] | undefined =
         event.toolName === "write"
@@ -466,9 +467,14 @@ export default function (pi: ExtensionAPI) {
       const pathHint = relevantPaths?.length
         ? `\nAllowed paths: ${relevantPaths.join(", ")}`
         : "";
+      const diffHint =
+        (event.toolName === "write" || event.toolName === "edit") && relevantPaths?.length
+          ? buildPathDiffHint(targetPath, relevantPaths)
+          : null;
+      const hintLine = diffHint ? `\nHint: ${diffHint}` : "";
       return {
         block: true,
-        reason: `Tool "${event.toolName}" is blocked (execution mode: ${executionMode.mode}).${pathHint}`,
+        reason: `Tool "${event.toolName}" is blocked (execution mode: ${executionMode.mode}).${pathHint}${hintLine}`,
       };
     }
 
