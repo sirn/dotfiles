@@ -79,11 +79,6 @@ const ICONS = {
   retrying: "\u{F46A}", // agent auto-retrying
 } as const;
 
-// Braille spinner mirroring pi-tui's Loader (components/loader.js): same
-// frames and 80ms cadence so subagent progress matches pi's working indicator.
-const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
-const SPINNER_INTERVAL_MS = 80;
-
 // Runner registry: the single source of truth for which runners exist
 // and how an agent's `runner` field maps to an implementation.
 const RUNNERS: Record<AgentConfig["runner"], AgentRunner> = {
@@ -543,8 +538,7 @@ const groupedResultsCache = new WeakMap<
 // Display-items cache: keyed by SingleResult identity. The pi-runner MUTATES
 // the result object in place across partial emits, so identity alone is unsound;
 // we additionally gate on messages.length (append-only, so unchanged length
-// implies the message array is unchanged). A spin tick does not mutate, so it
-// hits the cache and skips re-parsing messages + stripAnsi on every 80ms tick.
+// implies the message array is unchanged).
 const displayItemsCache = new WeakMap<SingleResult, { len: number; items: DisplayItem[] }>();
 
 type SubagentStore = {
@@ -553,25 +547,21 @@ type SubagentStore = {
   isPartial: boolean;
   theme: any;              // matches existing untyped theme convention in this file
   isRunning: boolean;
-  spinnerGlyph: string | undefined; // SPINNER_FRAMES[frame] while spinning, else undefined
 };
 
 function buildStore(
   result: AgentToolResult<SubagentDetails>,
   options: { expanded: boolean; isPartial: boolean },
   theme: any,
-  spinState: { spinnerInterval?: ReturnType<typeof setInterval>; spinnerFrame?: number },
 ): SubagentStore {
   const details = result.details;
   const isRunning = details.results.some(isPendingResult);
-  const spinning = options.isPartial && isRunning && !!spinState.spinnerInterval;
   return {
     details,
     expanded: options.expanded,
     isPartial: options.isPartial,
     theme,
     isRunning,
-    spinnerGlyph: spinning ? SPINNER_FRAMES[spinState.spinnerFrame ?? 0] : undefined,
   };
 }
 
@@ -647,7 +637,7 @@ function aggregateUsage(results: SingleResult[]) {
 
 // Resolve the cached grouped-step view of a details object. Kept out of
 // SubagentResultView so leaf derive closures can recompute the slot -> result
-// mapping on every spin tick without re-allocating the group map.
+// mapping on every reconcile without re-allocating the group map.
 function groupedResults(details: SubagentDetails): [number, SingleResult[]][] {
   return (
     groupedResultsCache.get(details) ??
@@ -690,8 +680,8 @@ class SubagentResultView extends Box {
   // Per-result memo for the four non-header derives. The pi-runner MUTATES
   // the result object in place across partial emits, so keying by `r` identity
   // alone would go stale (pending+empty would poison at first render). Instead
-  // each entry carries a content version snapshot; a spin tick does not mutate,
-  // so version matches -> cache hit -> no recompute. Invalidated wholesale on
+  // each entry carries a content version snapshot; version matches -> cache
+  // hit -> no recompute. Invalidated wholesale on
   // theme or expanded change (those bake into the cached strings).
   private deriveMemo = new WeakMap<SingleResult, { version: string; fields: Partial<Record<"task" | "fallback" | "display" | "usage", string>> }>();
   private memoTheme: any;
@@ -702,8 +692,8 @@ class SubagentResultView extends Box {
   }
 
   // Structural key: steps + per-step counts + running/total/expanded flags.
-  // A spin tick leaves all of these unchanged, so no rebuild happens and only
-  // header leaves (the only ones depending on spinnerGlyph) get setText.
+  // A matching key means structure is unchanged, so no rebuild happens and
+  // reconcile only setTexts leaves whose content changed.
   private structKey(store: SubagentStore): string {
     const grouped = groupedResults(store.details);
     const hasTotal =
@@ -866,9 +856,8 @@ class SubagentResultView extends Box {
 // mutated, so it is omitted. The fallback derive reads exitCode/stopReason/
 // errorMessage plus resultDisplayItems; the display derive reads
 // resultDisplayItems; the usage derive reads isPending(exitCode) plus r.usage
-// and r.model. messages.length gates the append-only message array. A spin
-// tick does not mutate the result, so the version is stable and the memo
-// hits. Header-only fields (runner/resumed/sessionId/agent/started) are not
+// and r.model. messages.length gates the append-only message array.
+// Header-only fields (runner/resumed/sessionId/agent/started) are not
 // included because the header derive is never memoized.
 function resultVersion(r: SingleResult): string {
   const u = r.usage;
@@ -889,16 +878,14 @@ function lookupResult(store: SubagentStore, stepIndex: number, resultIndex: numb
 
 function renderHeaderContent(r: SingleResult, agentNumber: number, store: SubagentStore): string {
   const theme = store.theme;
-  const spinnerFrame = store.spinnerGlyph;
   const isPending = isPendingResult(r);
   const hasFailed = isFailedResult(r);
   const isSkipped = isSkippedResult(r);
   const isWaiting = isPending && !r.started;
-  const pendingIcon = theme.fg("warning", spinnerFrame ?? ICONS.pending);
   const rIcon = isWaiting
     ? theme.fg("dim", ICONS.waiting)
     : isPending
-      ? pendingIcon
+      ? theme.fg("warning", ICONS.pending)
       : isSkipped
         ? theme.fg("dim", ICONS.skipped)
         : hasFailed
@@ -1435,29 +1422,7 @@ export default function (pi: ExtensionAPI) {
         );
       }
 
-      const isRunning = details.results.some(isPendingResult);
-
-      // Drive a braille spinner that mirrors pi-tui's Loader while any agent
-      // is still running. The interval advances the frame and invalidates this
-      // row; it is cleared once the tool call is no longer partial.
-      const spinState = context.state as {
-        spinnerInterval?: ReturnType<typeof setInterval>;
-        spinnerFrame?: number;
-      };
-      if (isPartial && isRunning) {
-        if (!spinState.spinnerInterval) {
-          spinState.spinnerFrame = 0;
-          spinState.spinnerInterval = setInterval(() => {
-            spinState.spinnerFrame = ((spinState.spinnerFrame ?? 0) + 1) % SPINNER_FRAMES.length;
-            context.invalidate();
-          }, SPINNER_INTERVAL_MS);
-        }
-      } else if (spinState.spinnerInterval) {
-        clearInterval(spinState.spinnerInterval);
-        spinState.spinnerInterval = undefined;
-      }
-
-      const store = buildStore(result, { expanded, isPartial }, theme, spinState);
+      const store = buildStore(result, { expanded, isPartial }, theme);
       const view =
         context.lastComponent instanceof SubagentResultView
           ? context.lastComponent
