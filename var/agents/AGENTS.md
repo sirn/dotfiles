@@ -38,6 +38,7 @@
 - If GPG or SSH agent authorization fails, wait for the user to resolve it; do not attempt workarounds.
 - Use project task runners instead of ad-hoc commands (e.g., `make test`, `just check`, `task lint`, `bin/test`).
 - Prefer Jujutsu (`jj`) over Git for version control (e.g., `jj status`, `jj diff -s`, `jj diff -- <path>`).
+- Do not remove, squash, or abandon the empty working-copy commit (`@`) left after `jj commit` or `jj new`, as this is expected behavior.
 - Prefer Nix for executing ad-hoc tools (e.g., `nix run nixpkgs#python3 -- script.py`); never use `nix-env -i`.
 - Prefer `fd` over `find`; if `find` must be used, restrict its scope strictly to the current project directory.
 - Prefer `podman` over `docker` when both runtimes are available.
