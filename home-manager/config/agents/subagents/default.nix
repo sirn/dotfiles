@@ -9,5 +9,6 @@
     ./reviewer.nix
     ./scout.nix
     ./worker.nix
+    ./writer.nix
   ];
 }
