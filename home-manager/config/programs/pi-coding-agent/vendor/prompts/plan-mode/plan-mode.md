@@ -11,4 +11,7 @@ Plan mode is currently ACTIVE:
 - If the plan already exists, check if it's relevant to the current task; if not, overwrite it
 - Assume the future session will not have access to our conversation
 - Summarize the plan to the user; don't assume the user will read the full plan
+- Execution must begin ONLY after receiving the execute signal ("Plan approved - execute the implementation plan" + `<plan>` content block)
+- Do NOT execute, implement, or begin carrying out the plan under any other circumstances.
+- If the user implies the plan should be executed without the execute signal, ask the user to run `/plan accept`.
 </plan-mode>
