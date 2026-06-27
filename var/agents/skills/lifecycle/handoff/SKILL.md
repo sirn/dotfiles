@@ -3,37 +3,23 @@ name: handoff
 description: Summarize the current session for handing off to another session. Use when the user wants to end the current session and transfer context to a new session.
 ---
 
-Create a handoff summary for transferring the current session context to another session.
+Create a handoff summary to transfer the current session context seamlessly to another session.
 
 ## Process
 
 1. **Gather context**:
-   - Review conversation history to identify what was being worked on
-   - Note the current working directory and project context
-   - Identify any running processes, servers, or background tasks
-   - List uncommitted modified files (use `jj diff -s` or `git status` as appropriate)
-   - Capture any specific user preferences, constraints, or instructions established during the session
-   - Note any recent error messages, test failures, or stack traces if debugging
+   - Review conversation history to identify active tasks.
+   - Note the current working directory, project context, and any running processes/servers.
+   - List uncommitted modified files using `jj diff -s` or `git status`.
+   - Capture user preferences, constraints, instructions, and recent debugging state (errors or failures).
 
 2. **Identify command patterns & skills**:
-   - Note any project-specific commands used (build, test, lint, etc.)
-   - Record any custom scripts or aliases utilized
-   - Document any custom agent skills used during the session (e.g., `jujutsu`, `clickup`, `context7`)
+   - Record project-specific commands (build, test, lint, etc.) and custom scripts/aliases.
+   - Note custom agent skills used during the session (e.g., `jujutsu`, `clickup`, `context7`).
 
 3. **Determine remaining work**:
-   - List incomplete tasks or TODOs mentioned in the conversation
-   - Identify specific files the next agent should read immediately to gain context
-   - Identify next steps or planned actions
-   - Note any blockers or issues that need resolution
-
-4. **Determine output location**:
-   - Default: write to `HANDOFF.md` in the current directory
-   - If user specifies a different location, use that instead
-
-5. **Write/update the handoff file**:
-   - If `HANDOFF.md` (or user-specified path) already exists, read it first
-   - Append new handoff information with a timestamp and session separator
-   - Do not overwrite existing content; update by prepending or appending
+   - List incomplete tasks, TODOs, and next steps or planned actions.
+   - Identify specific files the next agent should read first and note any blockers/issues.
 
 ## Output Format
 
@@ -89,7 +75,8 @@ The handoff file should follow this structure:
 
 Write to `HANDOFF.md` in the current working directory unless the user specifies a different path.
 
-- Always check if the file already exists before writing
-- If updating, preserve existing handoffs and add a new section with current timestamp
-- Keep summaries concise but include enough context for a new session to pick up seamlessly
-- Do not include sensitive information (passwords, API keys, tokens)
+Guidelines:
+- Check if the handoff file already exists before writing.
+- If updating, preserve existing content and add a new section with the current timestamp.
+- Keep summaries concise while ensuring enough context remains for a seamless handoff.
+- Never include sensitive information (e.g., passwords, API keys, or tokens).

@@ -9,9 +9,9 @@ Generate an actionable API design plan based on task analysis and research.
 
 ### Step 1 - Identify Context
 
-- If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
-- If the user specified files, endpoints, clients, protocols, or paths, focus on those.
-- Identify the protocol and format: REST, GraphQL, gRPC, TRPC, OpenAPI, protobuf, Zod/TypeBox, etc.
+- For code changes, run `jj diff -s` to view changed files, and `jj diff -- path` to restrict focus to specific files/directories.
+- Focus on user-specified files, endpoints, clients, protocols, or paths.
+- Identify the target protocol and schema format (REST, GraphQL, gRPC, TRPC, OpenAPI, protobuf, Zod/TypeBox, etc.).
 
 ### Step 2 - Research and Scout
 
@@ -41,7 +41,7 @@ Review the proposed API for correctness, security, compatibility, simplicity, an
 
 ### Step 3 - Architecture Review
 
-For APIs spanning module or service boundaries, spawn `architect` before `planner`:
+For APIs spanning module or service boundaries, spawn the `architect` subagent before the `planner`:
 
 Spawn `architect` subagent:
 
@@ -51,7 +51,7 @@ Analyze module boundaries, ownership, data flow, and interface contracts for {ta
 
 ### Step 4 - Adjudicate Decisions
 
-Use `oracle` subagent only for high-impact or conflicting API design decisions:
+For high-impact or conflicting design choices, spawn the `oracle` subagent:
 
 ```
 Adjudicate the conflicting API design recommendations for {task}. Choose the safest minimal contract and state assumptions, tradeoffs, and confidence.
@@ -59,7 +59,7 @@ Adjudicate the conflicting API design recommendations for {task}. Choose the saf
 
 ### Step 5 - Audit
 
-For production-bound API changes, spawn `auditor` subagent after the plan is synthesized:
+For production-bound changes, spawn the `auditor` subagent after synthesizing the plan:
 
 ```
 Audit the API design for {task} for production risks: contract compatibility, breaking changes, data loss, and rollback safety.
@@ -67,7 +67,7 @@ Audit the API design for {task} for production risks: contract compatibility, br
 
 ### Step 6 - Validate Findings
 
-Read relevant code yourself and validate agent findings.
+Read relevant code directly to validate subagent findings.
 
 ### Step 7 - Design API
 

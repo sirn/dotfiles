@@ -10,7 +10,7 @@ Generate an actionable schema design plan based on task analysis and research.
 ### Step 1 - Identify Context
 
 - If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
-- If the user specified entities, tables, models, migrations, or relationships, focus on those.
+- Focus on user-specified entities, tables, models, migrations, or relationships.
 - Identify the database, ORM/framework, migration tooling, and existing data model.
 
 ### Step 2 - Research and Scout
@@ -103,9 +103,9 @@ Read relevant code yourself and validate agent findings.
 
 ### Step 7 - Design Schema
 
-- Define only required tables/entities/fields.
-- Avoid generic/flexible schemas unless strictly required.
-- Consider indexes, constraints, migrations, normalization, and N+1 risks.
+- Define only required tables, entities, and fields.
+- Avoid generic or over-flexible schemas.
+- Account for indexes, constraints, migrations, normalization, and N+1 query risks.
 - Identify security and privacy risks for stored data.
 
 ### Step 8 - Report

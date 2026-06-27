@@ -3,13 +3,11 @@ name: asana
 description: Interact with the Asana REST API using a Personal Access Token in ASANA_PAT. Covers core work management plus portfolios, goals, status updates, webhooks, events, audit logs, attachments, batch requests, jobs, and newer API families.
 ---
 
-Use the Asana REST API directly.
+Interact with the Asana REST API directly using a Personal Access Token:
 
-This skill is **PAT-first**:
-
-- Store your Asana Personal Access Token in `ASANA_PAT`
-- Send it as `Authorization: Bearer $ASANA_PAT`
-- Never hardcode the token
+- Store the token in `ASANA_PAT`.
+- Send it via the `Authorization: Bearer $ASANA_PAT` header.
+- Never hardcode credentials.
 
 ## Canonical references
 
@@ -74,7 +72,7 @@ Common query options:
 - `opt_fields=field1,field2,...`
 - `pretty=true`
 
-`opt_fields` is important because many endpoints return compact objects by default.
+`opt_fields` is recommended since many endpoints return compact objects by default.
 
 ### Pagination
 
@@ -297,7 +295,7 @@ curl -fsS \
   "https://app.asana.com/api/1.0/tasks/TASK_GID" | jq '.data'
 ```
 
-Use `opt_fields` to request the fields you actually need:
+Use `opt_fields` to request specific fields:
 
 ```bash
 curl -fsS \
@@ -326,7 +324,7 @@ curl -fsS \
   "https://app.asana.com/api/1.0/workspaces/WORKSPACE_GID/tasks/search?completed=false&assignee=me" | jq '.data'
 ```
 
-Useful search filters commonly used here include:
+Commonly used search filters:
 
 - `text`
 - `assignee`
@@ -354,7 +352,7 @@ curl -fsS \
   -d '{"data":{"name":"New task","workspace":"WORKSPACE_GID"}}' | jq '.data'
 ```
 
-Common task create fields from the official schema include:
+Common task creation fields from the schema:
 
 - `name`
 - `workspace`
@@ -461,11 +459,7 @@ curl -fsS \
   "https://app.asana.com/api/1.0/projects/PROJECT_GID/custom_field_settings" | jq '.data'
 ```
 
-Other custom field settings endpoints also exist for:
-
-- portfolios
-- goals
-- teams
+Other custom field settings endpoints exist for portfolios, goals, and teams.
 
 ## Portfolios, goals, statuses
 
@@ -547,12 +541,7 @@ curl -fsS \
   "https://app.asana.com/api/1.0/attachments" | jq '.data'
 ```
 
-The attachment API also supports external attachments using:
-
-- `resource_subtype=external`
-- `parent`
-- `name`
-- `url`
+The attachment API also supports external attachments via `resource_subtype=external`, `parent`, `name`, and `url`.
 
 ## Webhooks and events
 
@@ -564,10 +553,7 @@ curl -fsS \
   "https://app.asana.com/api/1.0/webhooks?workspace=WORKSPACE_GID" | jq '.data'
 ```
 
-Optional webhook listing filters include:
-
-- `workspace`
-- `resource`
+Optional webhook listing filters include `workspace` and `resource`.
 
 ### Create a webhook
 
@@ -580,7 +566,7 @@ curl -fsS \
   -d '{"data":{"resource":"PROJECT_GID","target":"https://example.com/asana-webhook"}}' | jq '.data'
 ```
 
-The official schema also supports `filters`.
+The schema also supports webhook `filters`.
 
 ### Resource events
 
@@ -610,11 +596,8 @@ curl -fsS \
 
 Important notes from the official reference:
 
-- resource events use a sync token
-- if the token is too old, Asana can return `412`
-- the returned `sync` token should be used for the next poll
-- resource event streams cap a single sync token at 100 events
-- workspace event streams cap a single sync token at 1000 events
+- Resource events use a `sync` token for incremental updates; if the token is too old, Asana returns `412`.
+- Event streams cap a single sync token at 100 events for resources and 1,000 events for workspaces.
 
 ### Audit log events
 
@@ -652,12 +635,10 @@ curl -fsS \
   }' | jq '.data'
 ```
 
-Batch action notes from the official schema:
+Batch action parameters:
 
-- `relative_path` is relative to `/api/1.0`
-- do not put query params in `relative_path`
-- put normal request params in `data`
-- put pagination and output options in `options`
+- `relative_path` is relative to `/api/1.0` and must not contain query parameters.
+- Place standard parameters in `data`, and pagination or output configurations in `options`.
 
 ## User task lists, time tracking entries, jobs
 
@@ -696,12 +677,7 @@ curl -fsS \
   -d '{"data":{"duration_minutes":30,"description":"API time entry"}}' | jq '.data'
 ```
 
-The official schema also supports:
-
-- `entered_on`
-- `attributable_to`
-- `billable_status`
-- `categories`
+The schema also supports `entered_on`, `attributable_to`, `billable_status`, and `categories`.
 
 ### Poll long-running jobs
 
@@ -711,23 +687,15 @@ curl -fsS \
   "https://app.asana.com/api/1.0/jobs/JOB_GID" | jq '.data'
 ```
 
-This is useful for async APIs like exports and some larger operations.
+Useful for polling asynchronous APIs like exports and larger operations.
 
 ## Exports
 
-The current spec includes export endpoints such as:
-
-- `POST /exports/graph`
-- `POST /exports/resource`
-- `POST /organization_exports`
-
-These typically return async jobs or export resources that you then poll via job/export endpoints.
+The API includes endpoints such as `POST /exports/graph`, `POST /exports/resource`, and `POST /organization_exports`, which typically return asynchronous jobs that should be polled via job or export endpoints.
 
 ## Common URL / ID patterns
 
-- Resource URLs often look like `https://app.asana.com/0/PROJECT_GID/TASK_GID`
-- Task GID is usually the last path segment
-- Project GID is commonly the second-to-last path segment
+- In typical resource URLs (`https://app.asana.com/0/PROJECT_GID/TASK_GID`), the Task GID is the last path segment and the Project GID is the second-to-last.
 
 ```bash
 echo "https://app.asana.com/0/123456789/9876543210" | sed 's#.*/##'
@@ -751,16 +719,16 @@ echo "https://app.asana.com/0/123456789/9876543210" | awk -F'/' '{print $(NF-1)}
 | `429`  | Rate limited                             |
 | `5xx`  | Server error                             |
 
-Use `curl -fsS` so HTTP failures surface immediately.
+Use `curl -fsS` to fail fast and surface HTTP errors immediately.
 
 ## Best practices
 
-1. **Use PAT auth with Bearer**: `Authorization: Bearer $ASANA_PAT`
-2. **Remember the `data` wrapper** on JSON writes
-3. **Use `opt_fields` aggressively** to avoid over-fetching
-4. **Treat `offset` as an opaque token**, not a page number
-5. **Default to incomplete tasks** unless the user explicitly asks for completed ones
-6. **Use workspace task search** when IDs are unknown and you need to find tasks by text or filters
-7. **Use stories for comments**: task comments are created via `/tasks/{task_gid}/stories`
-8. **Use jobs for async workflows** like exports
-9. **Use events or webhooks for sync/integration workflows** rather than repeatedly polling large task/project collections
+1. **Use Bearer authentication**: Send `Authorization: Bearer $ASANA_PAT` on every request.
+2. **Wrap JSON writes**: Always wrap request payloads in a top-level `data` object.
+3. **Use `opt_fields` aggressively**: Request only the specific fields you need to avoid over-fetching.
+4. **Treat `offset` as opaque**: Treat pagination offsets as opaque tokens, not numeric indexes.
+5. **Default to incomplete tasks** unless the user explicitly requests completed ones.
+6. **Use workspace task search** when IDs are unknown and you need to find tasks by text or filters.
+7. **Use stories for comments**: Task comments are created and retrieved via the `/tasks/{task_gid}/stories` endpoint.
+8. **Use jobs for async workflows**: Poll the jobs endpoint for asynchronous tasks like exports.
+9. **Prefer events/webhooks over polling** to sync data without repeatedly requesting large collections.

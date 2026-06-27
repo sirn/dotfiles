@@ -7,15 +7,13 @@ Linear GraphQL API reference for common operations.
 
 ## Prerequisites
 
-- `LINEAR_PAT` environment variable with a valid Linear Personal API Key
+- `LINEAR_PAT` environment variable containing a valid Linear Personal API Key (never hardcode it).
 
 **Check before use:**
 
 ```bash
 [ -z "$LINEAR_PAT" ] && echo "Error: LINEAR_PAT not set" || echo "OK: LINEAR_PAT is set"
 ```
-
-**Note:** Never hardcode `LINEAR_PAT`. Always use the environment variable.
 
 ## Base URL
 
@@ -34,7 +32,7 @@ curl -s https://api.linear.app/graphql \
   --data '{"query":"query { viewer { id name email } }"}'
 ```
 
-For OAuth access tokens, use `Authorization: Bearer <ACCESS_TOKEN>`, but for this skill prefer `LINEAR_PAT`.
+For OAuth, use `Authorization: Bearer <ACCESS_TOKEN>`, but prefer `LINEAR_PAT` for this skill.
 
 ## GraphQL Conventions
 
@@ -218,7 +216,7 @@ curl -s https://api.linear.app/graphql \
 
 ### List Incomplete Issues for a Team
 
-Prefer this unless the user explicitly asks for completed issues.
+Prefer this unless completed issues are explicitly requested.
 
 ```bash
 curl -s https://api.linear.app/graphql \
@@ -229,7 +227,7 @@ curl -s https://api.linear.app/graphql \
 
 ### Search Issues by Text
 
-Use `searchIssues`. `issueSearch` is deprecated.
+Use `searchIssues` (`issueSearch` is deprecated).
 
 ```bash
 curl -s https://api.linear.app/graphql \
@@ -371,10 +369,9 @@ curl -s https://api.linear.app/graphql \
 
 ## Common ID Patterns
 
-- Most Linear entities use UUIDs like `80c49302-0141-4911-b464-824a9ae6bd8f`
-- Issues also have shorthand identifiers like `ENG-123`
-- Many queries accept either UUIDs or shorthand identifiers for issue lookups
-- You can copy UUIDs in the Linear UI with `Cmd/Ctrl+K` → `Copy model UUID`
+- Most Linear entities use UUIDs (e.g., `80c49302-0141-4911-b464-824a9ae6bd8f`).
+- Issues also use shorthand identifiers like `ENG-123`; many queries accept either format.
+- Copy UUIDs in the Linear UI with `Cmd/Ctrl+K` → `Copy model UUID`.
 
 ## Utility: Extract Issue Identifier from URL
 
@@ -402,10 +399,10 @@ Also inspect `.errors` in the JSON body, even when HTTP status is `200`.
 
 ## Best Practices
 
-1. **Default to incomplete issues**: Use `completedAt: { null: true }` unless asked for completed ones
-2. **Use issue search when IDs are unknown**: Start with `searchIssues`
-3. **Request only needed fields**: Keep GraphQL selections small to reduce payload size
-4. **Handle pagination**: Use `first` + `after` for large result sets
-5. **Prefer team-scoped queries**: Issues are usually team-centric in Linear
-6. **Check `errors` as well as HTTP status**: GraphQL can partially succeed
-7. **Avoid polling per issue**: Prefer filtering, sorting by `updatedAt`, or webhooks for sync workflows
+1. **Default to incomplete issues**: Use `completedAt: { null: true }` unless completed ones are requested.
+2. **Use issue search when IDs are unknown**: Start with `searchIssues`.
+3. **Request only needed fields**: Keep GraphQL selections minimal to reduce payload size.
+4. **Handle pagination**: Use `first` + `after` for large result sets.
+5. **Prefer team-scoped queries**: Linear issues are typically team-centric.
+6. **Check `errors` array**: GraphQL can partially succeed even with HTTP 200.
+7. **Avoid polling per issue**: Prefer filtering, sorting by `updatedAt`, or webhooks.

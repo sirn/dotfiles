@@ -9,19 +9,19 @@ Diagnose and fix validation failures with minimal targeted changes.
 
 ### Step 1 - Identify Context
 
-- If failure output is provided, read it fully before changing anything.
-- If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
-- If the user specified files, commands, or failures, focus on those.
+Read any provided failure output fully before making changes.
+If code changes are present, run `jj diff -s` to view changed files, and use `jj diff -- path` to inspect specific files/directories.
+Focus on user-specified files, commands, or failures.
 
 ### Step 2 - Reproduce Failure
 
-- Prefer the exact failing command from the user or project output.
-- If no command is provided, detect the relevant test/lint/check command from instructions, task runners, wrappers, package manager scripts, then common defaults.
-- Use proper timeouts and avoid watch modes.
+Prefer the exact failing command from the user or project output.
+If no command is provided, detect the relevant test/lint/check command from project instructions, task runners, package manager scripts, or common defaults.
+Use appropriate timeouts and avoid watch modes.
 
 ### Step 3 - Research Root Cause
 
-Spawn `research` subagent:
+Spawn the `research` subagent:
 
 ```
 Research the root cause of this failure:
@@ -38,7 +38,7 @@ Find relevant docs or known issues.
 
 ### Step 4 - Apply Fix
 
-Spawn `worker` subagent:
+Spawn the `worker` subagent:
 
 ```
 Apply a minimal fix for the following in the specified file:
@@ -50,15 +50,15 @@ Do not weaken assertions, skip tests, or broaden ignores unless explicitly appro
 
 ### Step 5 - Verify
 
-Verify using relevant methods.
+Verify the fix using relevant commands.
 
 ### Step 6 - Stop Condition
 
-- If a fix fails twice, stop, provide root-cause analysis, and ask for guidance.
+- If a fix fails twice, stop, analyze the root cause, and ask for guidance.
 
 ### Step 6 - Report
 
-Report the following to the user:
+Report the outcome to the user:
 
 1. **Failing Command**
 2. **Root Cause**

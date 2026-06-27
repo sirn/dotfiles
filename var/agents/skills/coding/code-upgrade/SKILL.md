@@ -7,36 +7,32 @@ Safely upgrade dependencies or migrate framework versions.
 
 ## Process
 
-- If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
+- If code changes are involved, run `jj diff -s` to see changed files, then use `jj diff -- path` to restrict to specific files or directories.
 
 ### Step 1 - Identify Upgrade Type
 
-Ask the user to clarify what they want to upgrade if it is not already clear:
-
-- **Single dependency**: Upgrade one package (e.g., `react 18 -> 19`).
-- **All dependencies**: Update all packages to latest compatible versions.
+Clarify the target if it is not already clear:
+- **Single dependency**: One package (e.g., `react 18 -> 19`).
+- **All dependencies**: All packages to their latest compatible versions.
 - **Framework migration**: Major version upgrade with breaking changes (e.g., `Next.js 13 -> 15`).
-- **Language version**: Update runtime version (e.g., `Python 3.11 -> 3.12`).
+- **Language version**: Runtime environment update (e.g., `Python 3.11 -> 3.12`).
 
 ### Step 2 - Analyze Current State
 
 1. Detect project type and package manager:
-   - JavaScript/TypeScript: `package.json`, lockfiles, npm/yarn/pnpm/bun scripts.
-   - Python: `pyproject.toml`, `requirements*.txt`, `uv.lock`, `poetry.lock`.
-   - Rust: `Cargo.toml`, `Cargo.lock`.
-   - Go: `go.mod`, `go.sum`.
-   - Ruby: `Gemfile`, `Gemfile.lock`.
-   - Nix: `flake.nix`, `flake.lock`, `shell.nix`; read the `nix` and `flake` skills.
-
-2. Read dependency files and identify current versions.
-
-3. Identify existing test, lint/check, build, and formatter commands from instructions, task runners, wrappers, and package manager scripts.
-
+   - JS/TS: `package.json`, lockfiles, and scripts.
+   - Python: `pyproject.toml`, `requirements*.txt`, `uv.lock`, and `poetry.lock`.
+   - Rust: `Cargo.toml` and `Cargo.lock`.
+   - Go: `go.mod` and `go.sum`.
+   - Ruby: `Gemfile` and `Gemfile.lock`.
+   - Nix: `flake.nix`, `flake.lock`, and `shell.nix` (read the `nix` and `flake` skills).
+2. Read dependency files to identify current versions.
+3. Identify test, lint/check, build, and formatting commands from instructions, task runners, wrappers, and scripts.
 4. Note lockfiles but do not edit them manually.
 
 ### Step 3 - Research Changes
 
-Spawn `researcher` subagent:
+Spawn the `researcher` subagent:
 
 ```
 Research breaking changes for upgrading:
@@ -47,11 +43,11 @@ Find official migration guides, changelogs, and deprecated API replacements.
 Identify common pitfalls, dependency manager commands, security advisories, and verification steps.
 ```
 
-Then synthesize findings. Prefer official documentation and record sources.
+Synthesize findings, prioritizing official documentation and recording sources.
 
 ### Step 4 - Generate Plan
 
-Create an upgrade plan incorporating research findings. For broad, major-version, or risky upgrades, spawn the following agents before presenting the plan:
+Develop an upgrade plan from research. For major, broad, or high-risk upgrades, spawn these agents first:
 
 Spawn `reviewer` subagent:
 
@@ -72,7 +68,7 @@ Audit the upgrade plan for {package} for production risks:
 - contract compatibility
 ```
 
-For framework migrations or upgrades spanning module boundaries, also spawn:
+For framework migrations or changes crossing module boundaries, also spawn:
 
 Spawn `architect` subagent:
 
@@ -81,19 +77,18 @@ Analyze module boundaries, ownership, dependency direction, and migration shape 
 Recommend the minimal migration path that preserves invariants.
 ```
 
-Include:
-
-- Deprecated API replacements needed.
+The plan must address:
+- Deprecated API replacements.
 - Breaking changes to address.
 - Dependency manager commands to run.
-- Lockfile update strategy through the package manager only.
-- Test/build/lint commands to run after migration.
+- Lockfile updates (via the package manager only).
+- Post-migration verification commands (test, build, lint).
 
-Present the plan to the user for approval before proceeding when the upgrade is broad, major-version, or likely risky.
+Seek user approval before executing broad or risky upgrades.
 
 ### Step 5 - Execute Upgrades
 
-After approval when needed, delegate to `worker`:
+Once approved, delegate execution to the `worker` subagent:
 
 ```
 Upgrade {package} from {current} to {target} in {project}.
@@ -105,9 +100,9 @@ Run {test/lint commands} after each change.
 
 ### Step 6 - Fix Failures
 
-For any failures the worker couldn't resolve:
+If the worker cannot resolve a failure:
 
-Spawn `researcher` subagent:
+1. Spawn `researcher` to find a solution:
 
 ```
 Research this failure after upgrading {package}:
@@ -116,28 +111,27 @@ Research this failure after upgrading {package}:
 Identify root cause and minimal fix.
 ```
 
-Spawn `worker` subagent:
+2. Spawn `worker` to apply the fix:
 
 ```
 Apply this fix:
 {findings}
 ```
 
-Re-run the relevant command to verify.
+3. Re-run verification commands to confirm.
 
 ### Step 7 - Report
 
-Report the following to the user:
-
-1. **Upgrading** — What's being upgraded
-2. **Current Versions** — Before upgrade
-3. **Target Versions** — After upgrade
-4. **Breaking Changes** — From research with sources
-5. **Migration Plan** — Step-by-step, presented before risky execution
-6. **Updates Applied** — Files changed, commands run
-7. **Verification Results** — Tests/build/lint/checks
-8. **Failures Fixed** — If any, with explanations
-9. **Remaining Issues** — Requires manual intervention
+Provide a final summary detailing:
+1. **Upgrading** — Target dependencies.
+2. **Current Versions** — Versions before the upgrade.
+3. **Target Versions** — Upgraded versions.
+4. **Breaking Changes** — Key changes identified with sources.
+5. **Migration Plan** — Steps planned and executed.
+6. **Updates Applied** — Files changed and commands executed.
+7. **Verification Results** — Test, build, and lint outcomes.
+8. **Failures Fixed** — Troubleshooting and resolution details.
+9. **Remaining Issues** — Tasks requiring manual attention.
 
 ## Stop Condition
 

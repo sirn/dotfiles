@@ -7,29 +7,29 @@ Clean up code by applying small, behavior-preserving fixes until additional chan
 
 ## Operating Principles
 
-- Assume cleanup has been requested; focus on safe, behavior-preserving improvements in the requested scope.
-- Prefer applying validated fixes over producing review-style findings.
-- If the user explicitly requested analysis without edits, report cleanup findings and suggested fixes instead of modifying files.
-- Keep the working tree easy to review: small, targeted changes with clear verification.
+- Assume cleanup is requested; focus on safe, behavior-preserving improvements within scope.
+- Prefer applying validated fixes over merely generating review findings.
+- If analysis is requested without edits, report findings and proposed fixes instead of modifying files.
+- Keep changesets easy to review: make small, targeted changes with clear verification.
 
 ## Modes
 
 - **Focused** (default): Clean the requested files, diff, or subsystem.
 - **Diff**: Clean only current working-copy changes.
-- **Opportunistic**: Clean nearby issues only when they are clearly in scope and low risk.
-- **Conservative**: Only remove obvious dead or redundant code and trivial non-idioms.
+- **Opportunistic**: Clean nearby low-risk issues within the scope.
+- **Conservative**: Remove only obvious dead or redundant code and simple non-idioms.
 
 ## Process
 
 ### Step 1 - Identify Scope
 
-- If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
-- If the user specified files or paths, focus on those.
-- Determine mode from the request; default to **Focused**.
+- If code changes are involved: run `jj diff -s` first to see changed files, then use `jj diff -- path` to narrow down to specific files/directories.
+- Focus on user-specified files or paths.
+- Determine the cleanup mode from the request, defaulting to **Focused**.
 
 ### Step 2 - Map Cleanup Opportunities
 
-Spawn `scout` subagent:
+Spawn the `scout` subagent:
 
 ```
 Map cleanup opportunities in the following scope:
@@ -45,20 +45,19 @@ For all the following:
 Report file paths, line numbers, and evidence for each.
 ```
 
-Once subagent finished:
+Once the subagent completes:
 
-- Read the `code-test` skill to detect the project's test/lint commands.
-- Capture the current diff and run targeted tests or checks as a safety baseline.
+- Consult the `code-test` skill to identify project test and lint commands.
+- Run targeted tests or checks on the current diff to establish a safety baseline.
 
 ### Step 3 - Synthesize Findings
 
-- Filter to safe, behavior-preserving improvements.
-- Drop speculative items lacking clear evidence.
-- Prefer existing project patterns over external preferences.
+- Filter to safe, behavior-preserving improvements, discarding speculative items that lack clear evidence.
+- Align with existing project patterns rather than external preferences.
 
 ### Step 4 - Apply Fixes
 
-Spawn `worker` subagent:
+Spawn the `worker` subagent:
 
 ```
 Apply these cleanup fixes in the following files:
@@ -72,29 +71,30 @@ Preserve public behavior, API signatures, and test expectations.
 
 ### Step 5 - Stop at Diminishing Returns
 
-- Stop when remaining issues are speculative or lack clear evidence.
-- Stop when fixes would require risky cross-cutting refactors.
-- Stop when changes need product or API decisions beyond the user's request.
-- Stop when edits would produce churn without clear maintainability value.
+Halt cleanup when:
+- Remaining issues are speculative or lack clear evidence.
+- Fixes require risky, cross-cutting refactors.
+- Changes require product or API decisions beyond the request.
+- Edits produce churn without clear maintainability value.
 
 ### Step 6 - Verify
 
-- Re-run the checks from the safety baseline.
-- Run the project formatter when applicable.
+- Re-run baseline safety checks.
+- Apply the project formatter if applicable.
 
 ### Step 7 - Report
 
-Report the following to the user:
+Report the following details to the user:
 
-- **Scope**: files and mode used
-- **Cleanup Applied**: each change with before/after summary
-- **Verification**: check results confirming behavior is preserved
-- **Deferred/Remaining Items**: issues identified but not fixed, with rationale
+- **Scope**: Files and mode targeted.
+- **Cleanup Applied**: Each modification with a before/after summary.
+- **Verification**: Test and check results confirming behavior was preserved.
+- **Deferred/Remaining Items**: Identified issues left unfixed, with rationale.
 
 ## Guardrails
 
-- Do not make broad rewrites or behavior/API changes unless the user explicitly requested them.
+- Avoid broad rewrites or behavioral/API changes unless explicitly requested.
 - Do not fix unrelated issues outside the defined scope.
-- Do not delete code unless usage search and build evidence support removal, or the user explicitly asked.
-- Preserve public behavior and test outcomes.
-- Do not invoke or call other skills from within this skill; reading `code-test` for command detection is allowed.
+- Do not delete code unless usage analysis and build evidence support removal, or the user explicitly asked.
+- Always preserve public behavior and test outcomes.
+- Do not invoke other skills directly; only reading `code-test` for command detection is permitted.

@@ -10,10 +10,8 @@ Terraform is an infrastructure as code tool for building, changing, and versioni
 
 ### Best Practices
 
-- **Standard workflow is plan, then confirm with user, then apply**: Run `terraform plan`, summarize changes to user, get explicit confirmation, then run `terraform apply`
-- **Summarize changes to user**: Before running `terraform apply`, always show the user a summary of what will change
-- **Never apply without explicit user instruction**: Do not run `terraform apply` until the user has explicitly told you to do so
-- **Never re-run terraform plan to filter output**: Each plan execution verifies resource state from the remote provider, which is slow and can yield different results if infrastructure changed between runs. If you need to search or filter plan output, save it to a temp file first, then use grep/head/tail on that file:
+- **Standard Plan-Confirm-Apply Workflow**: Run `terraform plan`, present a summary of changes, and obtain explicit permission before executing `terraform apply`. Never apply changes without direct instruction.
+- **Save plans to filter output**: Avoid re-running `terraform plan` to search or filter output. State verification is slow and remote state may drift. Instead, save the plan output to a temporary file and use tools like grep, head, or tail to inspect it:
 
   ```bash
   # ❌ Avoid: Running plan multiple times
@@ -26,13 +24,13 @@ Terraform is an infrastructure as code tool for building, changing, and versioni
   head -20 /tmp/tfplan.txt
   ```
 
-- **Use `-auto-approve` only with permission**: Only use `-auto-approve` when the user has already explicitly approved the changes
-- **Use `-target` sparingly**: Targeted applies can leave infrastructure in inconsistent state; use only for emergencies
-- **State locking**: Never force-unlock state unless you understand why it's locked
-- **Backup state**: Before `state rm` or `state mv`, backup your state file
-- **Workspace awareness**: Always verify current workspace with `terraform workspace show` before destructive operations
-- **Module versioning**: Pin module versions in production to avoid unexpected changes
-- **Provider lock**: Use `terraform providers lock` to ensure consistent provider versions across teams
+- **Restrict `-auto-approve`**: Only use `-auto-approve` if the user has given explicit permission to apply changes.
+- **Limit `-target`**: Avoid targeted applies via `-target` as they can leave infrastructure in an inconsistent state; reserve them for emergencies.
+- **Handle locking carefully**: Never force-unlock state unless you fully understand why it is locked.
+- **Backup state**: Always backup the state file before running `state rm` or `state mv`.
+- **Verify workspace**: Run `terraform workspace show` to check the current workspace before running any destructive operations.
+- **Pin module versions**: Pin all module versions in production to prevent unexpected updates.
+- **Lock providers**: Use `terraform providers lock` to maintain consistent provider versions.
 
 ### Standard Workflow (ALWAYS Follow This)
 
@@ -56,10 +54,10 @@ terraform apply
 
 **Important Rules:**
 
-1. Always run `terraform plan` first and review the output
-2. Always summarize changes for the user before applying
-3. Never run `terraform apply` until the user has explicitly told you to do so
-4. Only use `-auto-approve` if the user has already given explicit permission to apply changes
+1. Review `terraform plan` output before applying.
+2. Summarize all proposed changes for the user.
+3. Run `terraform apply` only after receiving explicit user confirmation.
+4. Restrict `-auto-approve` to cases with pre-approved permissions.
 
 ### Core Workflow Commands
 
@@ -193,10 +191,10 @@ terraform apply
 
 **Key Points:**
 
-- Always run `terraform plan` first and review the output
-- Always show a summary of changes to the user
-- Never run `terraform apply` until the user explicitly tells you to do so
-- Only use `-auto-approve` if the user has already explicitly approved the changes
+- Review `terraform plan` output before applying.
+- Present a change summary to the user.
+- Run `terraform apply` only with explicit user permission.
+- Limit `-auto-approve` to pre-approved changes.
 
 #### First-time Setup
 

@@ -9,12 +9,12 @@ Run a full code review or quality check using specialized agents.
 
 ### Step 1 - Identify Context
 
-- If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
-- If the user specified files or paths, focus on those.
+- For code changes, run `jj diff -s` to list changed files, and use `jj diff -- path` to inspect specific paths.
+- Focus on user-specified files or paths when provided.
 
 ### Step 2 - Spawn Review Agents
 
-Spawn `reviewer` subagent:
+Spawn the `reviewer` subagent:
 
 ```
 Review {files} across all lenses:
@@ -23,7 +23,7 @@ Review {files} across all lenses:
 - convention/simplicity — naming, organization, documentation, project consistency, over-engineering, unnecessary abstractions, dead code, and avoidable indirection
 ```
 
-Spawn `researcher` subagent:
+Spawn the `researcher` subagent:
 
 ```
 Verify relevant API/library usage in {files} against official documentation and research best practices.
@@ -31,7 +31,7 @@ Verify relevant API/library usage in {files} against official documentation and 
 
 ### Step 3 - Audit
 
-For production-bound changes, spawn `auditor` subagent:
+For production-bound changes, spawn the `auditor` subagent:
 
 ```
 Audit {files} for production readiness: correctness, security, data loss, migration hazards, and rollback safety.
@@ -45,10 +45,9 @@ Read relevant code yourself to validate and synthesize agent findings.
 
 Run verification commands only when the user requested full checks:
 
-- Detect test commands from project instructions, task runners (`Makefile`, `justfile`, `Taskfile.yml`), wrapper scripts (`bin/`, `.my/bin/`), package manager scripts, then common defaults.
-- Detect lint/check/format commands from the same sources.
-- Run the most appropriate non-destructive commands with timeouts.
-- Report failures; only modify files if the user explicitly asked to fix issues.
+- Detect test, lint, check, and format commands from project instructions, task runners (`Makefile`, `justfile`, `Taskfile.yml`), wrapper scripts (`bin/`, `.my/bin/`), package manager scripts, or common defaults.
+- Run appropriate non-destructive commands with timeouts.
+- Report failures; modify files only if explicitly requested.
 
 ### Step 6 - Report
 
@@ -65,6 +64,4 @@ Produce the review report with the following structure:
 9. **Quick Wins**
 10. **Action Items** prioritized Critical > High > Medium > Low
 
-Prioritize real, evidenced issues over speculative concerns.
-Include file paths and line references or quoted snippets.
-Provide concrete fixes and verification steps.
+Prioritize real, evidenced issues over speculative concerns. Include file paths, line references, or quoted snippets, and provide concrete fixes with verification steps.

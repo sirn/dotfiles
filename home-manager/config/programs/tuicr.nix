@@ -2,14 +2,14 @@
 
 let
   tuicrInstructionText = lib.strings.trim ''
-    - Use the `tuicr` skill to review code through live tuicr sessions.
-    - Use `tuicr review comments` to read user comments.
-    - Use `tuicr review add` to add agent comments.
-    - The tuicr TUI is for the user; drive sessions through `tuicr review *` CLI commands, not interactive TUI commands.
+    - Use the `tuicr` skill to review code via live sessions.
+    - Read user comments via `tuicr review comments`; add agent comments via `tuicr review add`.
+    - Drive sessions via `tuicr review *` CLI; the interactive TUI is user-only.
+    - Do not set timeouts on `tuicr` (user-controlled interactive TUI; bounded timeouts kill the session).
   '';
 
   tuicrCommandContext = lib.strings.trim ''
-    - `tuicr` — `review list`/`comments` are read-only, `review add` mutates a session; `tui`/`pr`/`diff` are interactive, for the user
+    - `tuicr`: `review list`/`comments` are read-only; `review add` mutates; `tui`/`pr`/`diff` are interactive, for the user.
   '';
 in
 {

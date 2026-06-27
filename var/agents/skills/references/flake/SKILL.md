@@ -12,36 +12,30 @@ description: Reference for Nix flakes, flake commands, devShell patterns, templa
 - `nix flake check path:.` - Validate flake
 - `nix flake update` - Update flake.lock
 
-When developing with flakes in a dirty workspace, use `path:.` or `path:/path/to/flake/dir` so untracked files are recognized.
+In a dirty workspace, use `path:.` or `path:/path/to/flake/dir` so untracked files are recognized.
 
 ## devShell Patterns
 
 ### mkShell vs mkShellNoCC
 
-- `mkShell` - When you need C compiler (native extensions)
-- `mkShellNoCC` - Pure scripting (Python, Node.js, Go)
+- `mkShell` - For C compilers and native extensions
+- `mkShellNoCC` - For pure scripting (Python, Node.js, Go)
 
 ### Basic flake template
 
-See [examples/flake-basic.nix](examples/flake-basic.nix)
-
-Use this template for basic Flake setup.
+Use [examples/flake-basic.nix](examples/flake-basic.nix) for a basic Flake setup.
 
 ### inputsFrom flake template
 
-See [examples/flake-inputs-from.nix](examples/flake-inputs-from.nix)
-
-Use this template when you're working in a workspace and needs to combine project-specific devShells.
+Use [examples/flake-inputs-from.nix](examples/flake-inputs-from.nix) when working in a workspace and combining project-specific devShells.
 
 ### Python with uv
 
-See [examples/flake-python-uv.nix](examples/flake-python-uv.nix)
-
-Use this template when you need `uv` and/or `poetry`.
+Use [examples/flake-python-uv.nix](examples/flake-python-uv.nix) when you need `uv` and/or `poetry`.
 
 ### Overlay Pattern
 
-See [examples/overlay-pattern.nix](examples/overlay-pattern.nix)
+See [examples/overlay-pattern.nix](examples/overlay-pattern.nix).
 
 ## Related
 

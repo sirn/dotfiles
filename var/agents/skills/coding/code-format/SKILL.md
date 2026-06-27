@@ -9,9 +9,9 @@ Run project formatting commands.
 
 ### Step 1 - Identify Context
 
-- If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
-- If the user specified files or paths, focus on those.
-- Determine whether the user asked to check formatting or write formatting changes.
+- If code changes are involved, run `jj diff -s` to list changed files, or restrict focus using `jj diff -- path`.
+- Focus on user-specified files or paths.
+- Determine whether to check formatting or apply formatting changes.
 
 ### Step 2 - Detect Formatting Command
 
@@ -29,16 +29,16 @@ Run project formatting commands.
 
 ### Step 3 - Run Formatter
 
-- Use check-only formatting unless the user explicitly asked to format/write changes.
-- Prefer the most specific command that covers the requested files or changes.
-- Use proper timeouts.
+- Run check-only formatting unless explicitly asked to format/write changes.
+- Use the most specific command that covers the requested files or changes.
+- Use appropriate timeouts.
 - Do not use long-running watch modes.
 
 ### Step 4 - Handle Failures
 
-- Read the full error message before changing anything.
-- If the user only asked to check formatting, report the failure without editing.
-- If the user asked to format, apply the formatter and report changed files.
+- Review the full error message before applying changes.
+- If checking only, report the failure without making edits.
+- If formatting, apply the changes and report all modified files.
 
 ### Step 5 - Report
 

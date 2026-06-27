@@ -9,22 +9,22 @@ Evaluate and address PR review comments by delegating to expert roles.
 
 **Reference these skills first:**
 
-- Read `jujutsu` skill for Jujutsu commands to understand change context
-- Read `github-cli` skill for GitHub CLI commands to fetch PR comments
+- Read `jujutsu` skill to understand change context
+- Read `github-cli` skill to fetch PR comments
 
 ## Process
 
 ### Step 1 - Gather PR Data
 
-- Get PR number from user or infer from branch
-- Determine repository: `gh repo view` or `jj git remote list`
-- Fetch PR comments: `gh api repos/owner/repo/pulls/<number>/comments -X GET --paginate`
-- Fetch reviews: `gh api repos/owner/repo/pulls/<number>/reviews -X GET --paginate`
-- Get PR diff: `gh pr diff <number> -R owner/repo`
-- Check PR status: `gh pr checks <number> -R owner/repo`
-- If checks failing, fetch logs: `gh run view <run-id> -R owner/repo --log-failed`
-- Capture CI failure context: save a summary of which checks failed, key error messages, and stack traces for use in subsequent analysis steps.
-- Run `jj diff -s` to see current working copy changes
+- Get PR number: ask the user or infer from the current branch
+- Determine repository: run `gh repo view` or `jj git remote list`
+- Fetch PR comments: run `gh api repos/owner/repo/pulls/<number>/comments -X GET --paginate`
+- Fetch reviews: run `gh api repos/owner/repo/pulls/<number>/reviews -X GET --paginate`
+- Get PR diff: run `gh pr diff <number> -R owner/repo`
+- Check PR status: run `gh pr checks <number> -R owner/repo`
+- Fetch failure logs: run `gh run view <run-id> -R owner/repo --log-failed`
+- Capture CI failure context: summarize failed checks, error messages, and stack traces for subsequent analysis
+- View working copy changes: run `jj diff -s`
 
 **Important**: Always use `-X GET` to be explicit about read-only access.
 
@@ -62,7 +62,7 @@ Analyze these GitHub Actions CI failure logs:
 
 ### Step 3 - Adjudicate Disputes
 
-Spawn `oracle` subagent when there are disputes.
+Spawn `oracle` subagent for any disputes:
 
 ```
 Adjudicate these disputed PR comments and conflicting recommendations. Decide which feedback should be fixed, discussed, or rejected, and explain why.

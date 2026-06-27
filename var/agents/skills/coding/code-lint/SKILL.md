@@ -9,8 +9,8 @@ Run project linting and static-analysis commands.
 
 ### Step 1 - Identify Context
 
-- If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
-- If the user specified files or paths, focus on those.
+- For code changes: run `jj diff -s` to view changed files; use `jj diff -- path` to restrict checks to specific files/directories.
+- Focus on any user-specified files or paths.
 
 ### Step 2 - Detect Lint Command
 
@@ -30,17 +30,15 @@ Detect lint/static-check commands in this order:
 
 ### Step 3 - Run Linter
 
-- Prefer the most specific command that covers the requested files or changes.
-- Use proper timeouts.
-- Do not use long-running watch modes.
+- Prefer the most specific command covering the requested files or changes.
+- Use proper timeouts and avoid long-running watch modes.
 - Run autofix only when explicitly requested.
 
 ### Step 4 - Handle Failures
 
-- Read the full error message before changing anything.
-- Identify the root cause.
-- If the user asked to fix issues, apply the smallest targeted fix and re-run the relevant command.
-- If the user only asked to run/check, report the failure and suggested fix without editing.
+- Read the full error message to identify the root cause before editing.
+- If requested to fix, apply the smallest targeted fix and re-run the relevant command.
+- If only asked to run or check, report the failure and proposed fix without editing.
 
 ### Step 5 - Stop Condition
 

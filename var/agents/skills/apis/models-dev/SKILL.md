@@ -13,12 +13,12 @@ GET https://models.dev/api.json
 
 ## Prerequisites
 
-- `curl` - for fetching the API
-- `jq` - for filtering and querying the JSON data
+- `curl` to fetch the API data
+- `jq` to query and filter the JSON data
 
 ## Cache Management
 
-The API data is cached at `~/.cache/agents/models.json` and refreshed only if older than 24 hours.
+The API data is cached at `~/.cache/agents/models.json` and refreshed when older than 24 hours.
 
 **Update cache (if needed):**
 
@@ -35,9 +35,9 @@ fi
 
 The API is organized by provider:
 
-- Top level: provider IDs (google, anthropic, openai, fireworks, etc.)
-- Each provider: `{id, name, models, doc, env, npm}`
-- `models`: object keyed by model ID
+- **Top level**: Provider IDs (e.g., `google`, `anthropic`, `openai`, `fireworks`).
+- **Provider fields**: `{id, name, models, doc, env, npm}`.
+- **`models`**: Object mapping model IDs to model definitions.
 
 **Example:**
 
@@ -195,7 +195,7 @@ jq '
 ' "$CACHE_FILE"
 ```
 
-**Find cheapest model for a given context size:**
+**What is the cheapest model for a given context size?**
 
 ```bash
 CACHE_FILE="$HOME/.cache/agents/models.json"

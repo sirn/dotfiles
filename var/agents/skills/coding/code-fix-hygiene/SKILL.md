@@ -9,13 +9,13 @@ Check the working diff for hygiene issues and apply minimal fixes.
 
 ### Step 1 - Identify Context
 
-- Run `jj diff -s` to see changed files and get a high-level overview.
+- Run `jj diff -s` for a high-level overview of changed files.
 - Run `jj diff` (or `jj diff -- <paths>`) for full diff content.
-- If the user specified files or paths, restrict analysis to those.
+- Restrict analysis to user-specified files or paths.
 
 ### Step 2 - Scout for Issues
 
-Spawn `scout` subagent:
+Spawn the `scout` subagent:
 
 ```
 Analyze this diff in the following files:
@@ -82,9 +82,9 @@ Report list of `file:line` for each issue with a brief explaination why it was f
 
 ### Step 3 - Synthesize Findings
 
-- Filter to clear, actionable issues with low risk of false positives.
-- Flag ambiguous findings for user confirmation rather than fixing speculatively.
-- For typos: prefer dictionary lookups or project glossary terms before assuming.
+- Filter for clear, low-risk, actionable issues.
+- Defer ambiguous findings to the user instead of fixing speculatively.
+- Verify typos against dictionaries or project glossary terms before assuming.
 
 ### Step 4 - Apply Fixes
 
@@ -101,31 +101,29 @@ Apply one logical fix per edit.
 
 ### Step 5 - Stop at Diminishing Returns
 
-- Stop when remaining findings are speculative or stylistic preferences.
-- Stop when fixes would alter behavior or semantics.
-- Stop when fixes require broader context beyond the diff.
+- Stop if remaining findings are speculative or stylistic.
+- Stop if fixes would alter behavior/semantics, or require broader context.
 
 ### Step 6 - Verify
 
-- Run `jj diff` to confirm only intended changes were made and no side effects introduced.
-- Run the project formatter if applicable.
-- If a test/lint command is available, run it to confirm nothing broke.
+- Run `jj diff` to ensure only intended changes were made.
+- Run project formatter, linter, or tests if available to verify correctness.
 
 ### Step 7 - Report
 
-Report the following to the user:
+Report to the user:
 
-1. **Scope**: files analyzed and diff summary
-2. **Issues Found**: categorized by type (typos, comment quality, unintended edits) with file:line references
-3. **Fixes Applied**: each fix with location and description
-4. **Deferred/Skipped**: issues identified but not fixed, with rationale
-5. **Verification**: result of formatter or check commands
+1. **Scope**: Analyzed files and diff summary.
+2. **Issues Found**: Categorized issues (typos, comments, edits) with `file:line` references.
+3. **Fixes Applied**: Description and location of each fix.
+4. **Deferred/Skipped**: Identified but unfixed issues, with rationale.
+5. **Verification**: Results of formatting, linting, or test commands.
 
 ## Guardrails
 
-- Never change behavior, logic, or structure — only surface-level hygiene.
-- Do not rewrite comments or improve their content; only remove _what_-comments and fix obvious typos.
-- Do not fix issues outside the diff scope unless the user explicitly asked for broader cleanup.
-- Preserve intentional debug logging, TODOs with context, and commented-out code that has a clear purpose.
-- Only acceptable transitional/legacy comments are TODOs with context — all others should be removed.
-- If a finding is ambiguous or could be intentional, defer to the user rather than guessing.
+- Never change behavior, logic, or structure—only address surface-level hygiene.
+- Do not rewrite comments; only remove "what"-comments and fix obvious typos.
+- Restrict fixes to the diff scope unless broader cleanup is explicitly requested.
+- Preserve purposeful debug logging, clear TODOs, and intentional commented-out code.
+- Remove transitional or legacy comments unless they are contextual TODOs.
+- Defer to the user on ambiguous or potentially intentional code.

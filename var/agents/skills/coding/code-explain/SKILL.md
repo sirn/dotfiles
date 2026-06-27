@@ -9,14 +9,14 @@ Explain code logic, triage incoming changes, or map the project architecture.
 
 ### Step 1 - Identify Context
 
-- If code changes are involved: run `jj diff -s` first to see changed files.
-- If the user specified specific files or paths, focus on those.
+- If code changes are involved, run `jj diff -s` first to view changed files.
+- If specific files or paths are specified, focus on those.
 
 ### Step 2 - Determine Goal
 
-- **Explain**: User wants to understand existing code.
-- **Triage**: User wants to understand/assess a diff.
-- **Map**: User wants a high-level overview of the project structure.
+- **Explain**: To understand existing code.
+- **Triage**: To assess and understand a code diff.
+- **Map**: To get a high-level overview of the project structure.
 
 ### Step 3 - Execute Based on Goal
 
@@ -29,7 +29,7 @@ Identify the purpose, local patterns, data flow, and integration points in:
 {files}
 ```
 
-Spawn `researcher` subagent when external library context matters.
+Spawn `researcher` subagent if external library context is needed:
 
 ```
 Look up documentation for libraries/frameworks used in:
@@ -38,20 +38,18 @@ Look up documentation for libraries/frameworks used in:
 Focus only on APIs needed to understand the code.
 ```
 
-Spawn `architect` subagent only when the user asks for architecture/tradeoff explanation:
+Spawn `architect` subagent if the user asks for architecture or tradeoff explanations:
 
 ```
 Explain the architectural choices and tradeoffs visible in:
 {files}
 ```
 
-Spawn `architect` subagent only for architecture/tradeoff commentary when requested.
-
-**Synthesize**: Purpose, How it works, Patterns, Dependencies, Gotchas.
+**Synthesize**: Purpose, how it works, patterns, dependencies, and gotchas.
 
 #### Triage
 
-Skim relevant diffs and spawn `scout` subagent if the diff touches unfamiliar areas:
+Skim relevant diffs, and spawn `scout` subagent if they touch unfamiliar areas:
 
 ```
 Map the files, ownership boundaries, and neighboring tests for this diff.
@@ -84,13 +82,13 @@ Identify:
 2. **Patterns & Dependencies**
 3. **Gotchas**
 
-#### For Triage
+#### Triage
 
 1. **Change Summary**
 2. **Risk Hotspots**
 3. **Suggested Review Order**
 
-#### For Map
+#### Map
 
 1. **High-Level Diagram** (Mermaid or text tree)
 2. **Key Modules & Responsibilities**

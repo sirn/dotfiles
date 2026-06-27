@@ -7,40 +7,35 @@ Run a convergent fix loop: find issues, fix them, repeat until clean.
 
 ## Mode Selection
 
-- **Default** (no skill specified): perform review and cleanup iteration using code-review skill, and code-cleanup skill.
-- **Specific**: if a skill or an instruction is provided, follow that skill or instruction.
+- **Default** (no skill specified): Perform review and cleanup iterations using the `code-review` and `code-cleanup` skills.
+- **Specific**: If a skill or instruction is specified, follow that target instead.
 
 ## Process
 
 ### Step 1 - Identify Scope
 
-- If code changes are involved: `jj diff -s` to see changed files; `jj diff -- path` to restrict scope.
-- If the user specified files or paths, focus on those.
-- Capture a safety baseline: create a new empty commit on top of the current commit (`jj new`).
-- Read the `code-test` skill to detect the project's test/lint commands; run a baseline check.
+- **Code Changes**: Use `jj diff -s` to inspect changed files, or `jj diff -- path` to restrict the scope.
+- **Targeted Files**: Focus on any paths specified by the user.
+- **Safety Baseline**: Run `jj new` to create a fresh, empty commit on top of the current state.
+- **Baseline Verification**: Read the `code-test` skill to detect the project's test/lint commands and run a baseline check.
 
 ### Step 2 - Iteration Loop
 
 #### 1. Find issues
 
-If user specify a skill, load that skill and spawn the approrpiate subagents, otherwise:
-
-- Load `code-review` skill.
-- Load `code-cleanup` skill.
-- Spawn subagents according to these two skills.
+If a specific skill is provided, load it and spawn its corresponding subagents. Otherwise:
+- Load the `code-review` and `code-cleanup` skills, then spawn their subagents.
 
 #### 2. Filter findings
 
-Synthesize agent output:
-
-- Deduplicate: drop issues already addressed or explicitly deferred in a prior iteration.
-- Classify: critical/high (must fix), medium (should fix), low/speculative (defer).
-- If no new actionable findings remain → exit loop.
+Synthesize agent outputs by applying these rules:
+- **Deduplicate**: Drop issues already addressed or explicitly deferred in a prior iteration.
+- **Classify**: Categorize findings as critical/high (must fix), medium (should fix), or low/speculative (defer).
+- **Exit Condition**: If no new actionable findings remain, exit the loop.
 
 #### 3. Fix
 
-Spawn `worker` subagent:
-
+Spawn the `worker` subagent with this prompt:
 ```
 Fix these issues in {files}: {findings list}. Apply minimal targeted, behavior-preserving changes. Do not refactor beyond what's needed to resolve each finding.
 ```
@@ -48,51 +43,48 @@ Fix these issues in {files}: {findings list}. Apply minimal targeted, behavior-p
 #### 4. Verify
 
 Run project checks:
-
-- Run the most specific applicable commands with timeouts.
-- If regressions appear, delegate to `worker` to fix regressions before continuing.
+- Execute the most specific applicable test/lint commands with timeouts.
+- If regressions are introduced, delegate to the `worker` subagent to resolve them before continuing.
 
 #### 5. Commit
 
-Commit iteration pass:
-
-- Make a commit with "Iteration <n>: <desc>"; these commits are ephemeral and will be reviewed and squashed by the user.
+Commit the iteration pass:
+- Create an ephemeral commit named `"Iteration <n>: <desc>"`. These commits will be reviewed and squashed by the user later.
 
 ### Step 3 - Production Audit
 
-If production readiness is requested, spawn `auditor` subagent:
-
+If production readiness is requested, spawn the `auditor` subagent with this prompt:
 ```
 Audit {files} for production readiness: correctness, security, data loss, migration hazards, and rollback safety.
 ```
 
 ### Step 4 - Verification
 
-- Run full project checks (test + lint + format).
-- Ensure the diff from the safety baseline is coherent and no unintended changes slipped in.
+- Run comprehensive project checks (test, lint, and format).
+- Ensure the diff against the safety baseline is coherent and no unintended changes slipped in.
 
 ### Step 5 - Report
 
-Report the following to the user:
-
-- **Scope**: files and mode used
-- **Iterations**: for each iteration — total iterations run, summary of findings per iteration (what was found, what was fixed, what was deferred)
-- **Final Verification**: final check results
-- **Convergence Status**: why the loop stopped (clean / max iterations / stuck)
-- **Auditor Findings**: if the production audit was run
-- **Remaining Items**: deferred findings requiring manual attention or product decisions
+Present a summary report to the user:
+- **Scope**: Target files and mode of operation.
+- **Iterations**: Total iterations run, with a brief summary of findings (found, fixed, deferred) for each pass.
+- **Final Verification**: Results of the final checks.
+- **Convergence Status**: Reason the loop stopped (e.g., clean run, maximum iterations reached, or progress stalled).
+- **Auditor Findings**: Results of the production audit (if requested).
+- **Remaining Items**: Deferred findings requiring manual review or product decisions.
 
 ## Convergence Rules
 
-- **Stop when**: no new actionable findings (all remaining are deferred/speculative).
-- **Stop when**: an iteration produces no changes (nothing new to fix).
-- **Stop when**: max iterations reached (default 5, user can override).
-- **Stop when**: findings grow instead of shrink — stop and report, something is wrong.
+Stop the iteration loop when:
+- **No actionable findings**: All remaining issues are deferred or speculative.
+- **No changes**: An iteration pass makes no modifications to the code.
+- **Limit reached**: The maximum iteration count is reached (default is 5, unless overridden by the user).
+- **Divergence**: The list of findings grows rather than shrinks, indicating a potential issue with the fixes.
 
 ## Guardrails
 
-- Preserve public behavior, API signatures, and test outcomes.
-- Each iteration must produce fewer or equal new findings vs. the prior one.
-- Do not make broad rewrites; worker must apply minimal targeted fixes per finding.
-- Do not fix issues outside the defined scope.
-- Do not invoke or call other skills from within this skill; reading `code-test` for command detection is allowed.
+- **Preserve Behavior**: Do not alter public behavior, API signatures, or test outcomes.
+- **Progressive Improvement**: Each iteration must yield fewer or equal new findings compared to the previous pass.
+- **Minimal Rewrites**: Apply strictly targeted fixes; do not perform broad refactoring.
+- **Strict Scope**: Do not address issues outside the defined target scope.
+- **Isolation**: Do not invoke other skills from within this skill (only reading `code-test` for command detection is permitted).

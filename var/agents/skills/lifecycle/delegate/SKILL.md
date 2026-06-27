@@ -8,31 +8,31 @@ description: Delegate tasks to specialized agents. Use when the user wants a del
 ## Policy
 
 - Do not use subagents as glorified command runners or file editors.
-- Delegate complex work — analysis, design, implementation, review — to specialized subagents.
-- Run commands, read files, to gather context, perform quick checks; write, and edit files to make trivial edits directly.
-- Gather the context yourself first (e.g., run `jj diff` and pass its output to subagents) before passing to subagentse.
-- Include a brief explanation of what the user is trying to do.
+- Delegate complex work—such as analysis, design, implementation, and review—to specialized subagents.
+- Run commands, read files, and perform quick checks yourself to gather context; edit and write files directly for trivial changes.
+- Gather context yourself first (e.g., run `jj diff` and collect its output) before delegating to subagents.
+- Include a brief explanation of what the user is trying to do when delegating.
 
 ## Delegation Patterns
 
 ### Feature/Refactor
 
-1. Use specialized subagents to plan the changes
-2. Use specialized subagents to implement the changes made by planner
-3. Use specialized subagents to review the changes made by implementer
+1. **Plan**: Use a specialized subagent to design the changes.
+2. **Implement**: Use a specialized subagent to implement the planned changes.
+3. **Review**: Use a specialized subagent to review the implementation.
 
 ### Large/Complex Project
 
-1. Use specialized subagents to design architect the structure or solution
-2. Use specialized subagents to plan the changes based on architectural design
-3. Use specialized subagents to implement the changes made by planner
-4. Use specialized subagents to review the changes made by implementer
-5. Iterate steps 3-4 until converge
-6. Use specialized subagents to audit the changes for production readiness
+1. **Architect**: Use a specialized subagent to design the structural solution.
+2. **Plan**: Use a specialized subagent to plan the changes based on the architectural design.
+3. **Implement**: Use a specialized subagent to implement the planned changes.
+4. **Review**: Use a specialized subagent to review the implementation.
+5. Iterate implementation and review until completed.
+6. **Audit**: Use a specialized subagent to audit the changes for production readiness.
 
 ### Bug Fix
 
-1. Use specialized subagents to map the repository and perform local research
-2. Use specialized subagents to research for external knowledge
-3. Use specialized subagents to plan the fix based on local research and external knowledge
-4. Use specialized subagents to implement the changes made by planner
+1. **Research (Local)**: Use a specialized subagent to map the repository and perform local research.
+2. **Research (External)**: Use a specialized subagent to research external knowledge.
+3. **Plan**: Use a specialized subagent to plan the fix based on local research and external knowledge.
+4. **Implement**: Use a specialized subagent to implement the planned changes.

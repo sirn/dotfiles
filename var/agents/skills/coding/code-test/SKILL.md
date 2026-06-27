@@ -9,8 +9,8 @@ Run project test commands and diagnose failures.
 
 ### Step 1 - Identify Context
 
-- If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
-- If the user specified files or paths, focus on those.
+- If code changes are involved: run `jj diff -s` to see changed files, then use `jj diff -- path` to focus on specific files/directories.
+- Focus on user-specified files or paths when provided.
 
 ### Step 2 - Detect Test Command
 
@@ -29,25 +29,23 @@ Detect test commands in this order:
 
 ### Step 3 - Run Tests
 
-- Prefer the most specific command that covers the requested files or changes.
-- Use proper timeouts.
-- Do not use long-running watch modes.
-- In read-only/planning contexts, report results only.
+- Prefer the most specific command covering the requested files or changes.
+- Use appropriate timeouts and avoid long-running watch modes.
+- Report results only in read-only/planning contexts.
 
 ### Step 4 - Handle Failures
 
-- Read the full error message before changing anything.
-- Identify the root cause.
-- If the user asked to fix issues, apply the smallest targeted fix and re-run the relevant command.
-- If the user only asked to run/check, report the failure and suggested fix without editing.
+- Analyze the full error message to identify the root cause before editing.
+- If asked to fix, apply the smallest targeted change and re-run the command.
+- If asked only to run/check, report the failure and suggest a fix without editing.
 
 ### Step 5 - Stop Condition
 
-- If a fix fails twice, stop, provide root-cause analysis, and ask for guidance.
+- If a fix fails twice, stop to provide root-cause analysis and ask for guidance.
 
 ### Step 6 - Report
 
-Report the following to the user:
+Report to the user:
 
 1. **Command Used**
 2. **Results**: pass/fail summary

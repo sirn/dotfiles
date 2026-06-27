@@ -9,9 +9,9 @@ Generate an actionable implementation plan based on task analysis and research.
 
 ### Step 1 - Identify Context
 
-- If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
-- If the user specified files or paths, focus on those.
-- Understand the user's requested behavior, constraints, and expected verification.
+- For existing code changes, run `jj diff -s` to list changed files, and `jj diff -- path` to inspect specific files or directories.
+- Focus on any user-specified files or paths.
+- Understand the expected behavior, constraints, and verification requirements.
 
 ### Step 2 - Research and Scout
 
@@ -41,7 +41,7 @@ Review the proposed direction for security, correctness, simplicity, and project
 
 ### Step 3 - Architecture Review
 
-For large or cross-module projects, spawn `architect` subagent before `planner` subagent:
+For large or cross-module tasks, spawn the `architect` subagent before the `planner` subagent:
 
 ```
 Analyze module boundaries, ownership, data flow, dependency direction, and structural invariants for {task}. Recommend the minimal architecture that solves the problem.
@@ -49,7 +49,7 @@ Analyze module boundaries, ownership, data flow, dependency direction, and struc
 
 ### Step 4 - Adjudicate Decisions
 
-Use `oracle` subagent only for high-impact or conflicting design decisions:
+Use the `oracle` subagent to resolve high-impact or conflicting design decisions:
 
 ```
 Adjudicate the conflicting recommendations for {task}. Choose the safest minimal path and state assumptions, tradeoffs, and confidence.
@@ -57,7 +57,7 @@ Adjudicate the conflicting recommendations for {task}. Choose the safest minimal
 
 ### Step 5 - Audit
 
-For production-bound changes, spawn `auditor` subagent after the plan is synthesized:
+For production-bound changes, spawn the `auditor` subagent after drafting the plan:
 
 ```
 Audit the implementation plan for {task} for production risks: correctness, security, data loss, migration hazards, and rollback safety.
@@ -65,14 +65,14 @@ Audit the implementation plan for {task} for production risks: correctness, secu
 
 ### Step 6 - Validate Findings
 
-Read relevant code yourself and validate agent findings.
+Read the relevant code directly to validate all agent findings.
 
 ### Step 7 - Design Implementation
 
-- Define the minimal design approach, incorporating architect and auditor findings when present.
-- Identify files to modify and integration points.
-- Plan verification aligned with project tooling.
-- Prefer no-code alternatives, boring solutions, minimal scope, and avoiding premature abstractions.
+- Define a minimal approach, incorporating `architect` and `auditor` findings when present.
+- Identify target files and integration points.
+- Align verification with project-specific tooling.
+- Prioritize simple, no-code, or boring solutions; avoid premature abstractions.
 
 ### Step 8 - Report
 

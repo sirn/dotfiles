@@ -17,7 +17,7 @@ Working copy is always a commit. Changes are first-class with stable IDs across 
 - **Working Copy After Commit**: After `jj commit` or `jj new`, a new empty commit becomes `@`. This is expected jj behavior — do not attempt to remove or squash it away.
 - **Revision References**: Use `@`, `@-`, and revsets for immediate one-off commands when they are clear. Use explicit change IDs for scripts, multi-step instructions, destructive operations, and commands where the target could become ambiguous.
 - **Splitting**: Use `jj split -r <change-id> -m "<commit-message>" -- <file>`; do not use interactive `jj split`.
-- **Squashing**: Use `jj squash --from <from-id> --to <to-id>` instead of implicit `jj squash`. Prefer **from newer to older** (descendant into ancestor) — this matches default `jj squash` and rarely conflicts. Squashing older into newer (e.g. `--from <base> --to <head>`) rewrites the head's ancestors; jj rebases descendants preserving their diffs, so any descendant whose diff overlaps the moved content must be re-merged — rarely worth it.
+- **Squashing**: Use `jj squash --from <from-id> --to <to-id>` instead of implicit `jj squash`. Prefer **from newer to older** (descendant to ancestor) to match default `jj squash` and minimize conflicts. Squashing older into newer (e.g., `--from <base> --to <head>`) rewrites head's ancestors, forcing jj to rebase descendants and resolve any overlapping diff conflicts.
 - **Commit Messages**: Keep subject line <= 72 characters; body lines <= 72 characters. Use imperative mood ("add feature" not "added feature"). Explain "what" and "why", not "how".
 
 ### Key Concepts
@@ -50,7 +50,7 @@ Working copy is always a commit. Changes are first-class with stable IDs across 
 
 ### Interactive Mode
 
-Use `jj split` interactively when you need to review changes visually or when split boundaries aren't clear in advance. To drive `jj split` programmatically from another agent, see the **tmux** skill.
+Use `jj split` interactively to review changes visually or when split boundaries are unclear. To drive `jj split` programmatically from another agent, see the **tmux** skill.
 
 **Launching interactive split:**
 
@@ -67,7 +67,7 @@ jj split -m "Extract auth utilities"
 
 **Interactive behavior:**
 
-`jj split` with no `-- <paths>` opens a **diff editor** on the revision's changes. You edit the *right side* of the diff to select what goes into the first commit; whatever you leave stays in the second. The editor is `ui.diff-editor` (override with `--tool <name>`). If the original commit had a description, jj prompts for the two new commit descriptions in `$EDITOR`.
+`jj split` without `-- <paths>` opens a **diff editor** (`ui.diff-editor`, override with `--tool <name>`). Edit the *right side* to select what goes into the first commit; what remains stays in the second. If the original commit has a description, jj prompts for two new descriptions in `$EDITOR`.
 
 **When to use interactive vs. non-interactive:**
 
@@ -135,7 +135,7 @@ jj bookmark track <name> --remote origin  # Track remote bookmark
 
 #### Figuring Out Remote Repository
 
-To determine the remote repository URL (useful for `gh -R owner/repo` commands):
+To find the remote repository URL (for `gh -R owner/repo`):
 
 ```bash
 # List all remotes with URLs
@@ -164,7 +164,7 @@ jj git push --all                     # Push all bookmarks
 
 #### Colocated Repos
 
-When a repo also has a `.git` (colocated), jj auto-imports Git refs before commands and auto-exports jj refs/bookmarks to Git after mutations (no need to run `jj git export` manually). Drive it explicitly when needed:
+In colocated repos (having a `.git` directory), jj auto-imports Git refs before commands and auto-exports bookmarks/commits to Git after mutations (no need to run `jj git export` manually). Drive these explicitly when needed:
 
 ```bash
 jj git import          # Pull Git refs/changes into jj
@@ -175,7 +175,7 @@ jj git export          # Write jj bookmarks/commits back into Git
 
 #### Squash workflow (recommended)
 
-Always squash from newer (descendant) into older (ancestor) to avoid conflicts:
+Always squash from newer (descendant) into older (ancestor) to minimize conflicts:
 
 ```bash
 # Correct: newer into older — minimizes conflicts
@@ -186,10 +186,7 @@ jj squash --from <child-id> --to <parent-id>
 jj squash --from <parent-id> --to <child-id>
 ```
 
-Squashing older into newer rewrites the head's ancestors. jj rebases
-descendants while preserving their diffs, so only descendants whose diffs
-overlap the moved content need re-merging — not necessarily every
-downstream commit, but enough that newer-into-older is preferred.
+Squashing older into newer rewrites the head's ancestors, forcing jj to rebase descendants. While jj preserves diffs, descendants with overlapping changes require re-merging, making newer-into-older the preferred direction.
 
 #### Feature branch
 
@@ -206,7 +203,7 @@ jj git push --bookmark <name>     # New bookmarks auto-track on push
 
 #### Resolve conflicts
 
-Conflicts are stored *in the commit*, not the working tree — `jj status` and `jj log` flag them and they survive across operations until resolved. jj materializes file conflicts as 3-way merge markers; unmergeable conflicts must be resolved by editing the markers by hand. `jj new @ <other>` creates a merge commit to surface conflicts between two heads.
+Conflicts in jj are stored *in the commit* rather than the working tree. They are flagged by `jj status` and `jj log` and persist across operations until resolved. jj materializes file conflicts as 3-way merge markers; resolve them by editing the markers manually. To surface conflicts between two heads, use `jj new @ <other>` to create a merge commit.
 ```bash
 jj resolve --list -r <id>          # List conflicts
 jj resolve -r <id>                 # Use merge tool
@@ -216,12 +213,12 @@ jj resolve --tool=:theirs -r <id>  # Accept incoming
 
 #### Recovery
 
-Three distinct recovery tools — pick by scope:
+Four distinct recovery tools — pick by scope:
 
-- **`jj restore`** — restores *file contents* from one revision into another. Used to undo working-copy edits or discard changes to specific paths. Does **not** rewrite history; only affects the destination revision's content.
-- **`jj undo`** — undoes the last *operation* (commit, rebase, squash, etc.) by creating a new inverse operation. Repeated calls go further back in time. Also see `jj redo`.
-- **`jj op restore <op-id>`** — restores the entire repo to the state it was in *at* a specific past operation. Use `jj op log` to find the op-id. Use `jj --at-op=<op-id> log` to preview that state before restoring.
-- **`jj revert -r <id>`** — creates *new* commits applying the reverse of a revision's diff (no history rewrite). Distinct from `jj restore --changes-in` (in-place, same commit) and `jj op revert` (operation-level).
+- **`jj restore`**: Restores *file contents* from one revision to another (e.g., to undo working-copy edits or discard changes to specific paths). Does **not** rewrite history; only affects the destination revision.
+- **`jj undo`**: Undoes the last *operation* (commit, rebase, squash, etc.) by creating a new inverse operation. Repeated calls walk further back. See also `jj redo`.
+- **`jj op restore <op-id>`**: Restores the entire repository to its state at a specific past operation. Use `jj op log` to find the operation ID and `jj --at-op=<op-id> log` to preview that state first.
+- **`jj revert -r <id>`**: Creates *new* commits applying the reverse of a revision's diff (no history rewrite). Distinct from `jj restore --changes-in` (in-place in the same commit) and `jj op revert` (operation-level).
 
 ```bash
 # File-level recovery (no history rewrite)
@@ -239,19 +236,19 @@ jj --at-op=<op-id> log             # Preview repo state at an operation before r
 jj op restore <op-id>             # Restore the whole repo to that operation's state
 ```
 
-**When to use which:** prefer `jj restore` for unwanted edits in the working copy or a single commit (narrow, content-only); prefer `jj undo` for the most recent mistake; use `jj op restore` to jump to an arbitrary earlier state from the operation log. The latter two are history-rewriting — confirm with the user before running.
+**When to use which:** Prefer `jj restore` for narrow, content-only changes (like unwanted working-copy edits). Use `jj undo` for the most recent mistake. Use `jj op restore` to jump back to an arbitrary earlier state. Since `jj undo` and `jj op restore` rewrite history, always confirm with the user first.
 
 #### Pitfalls
 
-- **`jj restore` with no paths and no `--from`/`--into`** restores *all* files in the working copy from its parent — it discards every working-copy change at once (equivalent to `jj abandon` of the working-copy content, but keeps the empty commit). Always pass a `<path>` to scope it, e.g. `jj restore path/to/file`.
-- **`jj restore` does not undo operations.** It copies file content from one revision into another; it will not reverse a rebase, squash, or abandon. For those, use `jj undo` / `jj op restore`.
-- **`jj undo` is not selective and is not a redo.** It reverts the entire last operation, including unrelated changes made in that op. Each repeat walks *further back* — re-running `jj undo` undoes again rather than redoing. Use `jj redo` to re-apply a prior undo.
-- **`jj op restore <op-id>` restores the *whole repo***, not a single commit; everything between that op and now is rolled into one new restoring operation. Always preview with `jj --at-op=<op-id> log` first, and prefer `jj restore` when you only want to revert one revision's content.
-- **`jj restore --changes-in <id>` on a merge** reverts the diff against the *merge of the parents*, which may not match either parent's content. Inspect with `jj diff -r <id>` beforehand.
+- **`jj restore` without paths or `--from`/`--into`** restores *all* files in the working copy from its parent, discarding all local changes (keeps the empty commit, similar to `jj abandon`). Always pass a `<path>` to scope it (e.g., `jj restore path/to/file`).
+- **`jj restore` does not undo operations.** It only copies file contents. To reverse a rebase, squash, or abandon, use `jj undo` or `jj op restore`.
+- **`jj undo` is non-selective and does not redo.** It reverts the entire last operation. Repeatedly running `jj undo` walks further back. Use `jj redo` to re-apply a prior undo.
+- **`jj op restore <op-id>` restores the *whole repo***, rolling everything since that operation into one new state. Always preview with `jj --at-op=<op-id> log` first, and prefer `jj restore` if you only want to revert a single revision's content.
+- **`jj restore --changes-in <id>` on a merge** reverts the diff against the *merge of the parents*, which may not match either parent's content. Inspect with `jj diff -r <id>` first.
 
 ### Operation Log
 
-The operation log is jj's main recovery surface — every command is an op.
+The operation log is jj's main recovery surface — every mutating command is an op.
 
 ```bash
 jj op log                              # Operation history
@@ -262,7 +259,7 @@ jj op restore <op-id> [--what repo]    # Restore to a state; --what limits scope
 jj op abandon <op-id>                  # Discard old op history (then `jj util gc`)
 ```
 
-Use `jj --at-op=<op-id> <cmd>` with **read-only** commands (e.g. `log`, `show`, `diff`) to preview repo state at an operation; mutating commands would instead create a new operation. `jj evolog` shows how a single change (change ID) evolved across rewrites — complements `jj op log`.
+Use `jj --at-op=<op-id> <cmd>` with read-only commands (e.g., `log`, `show`, `diff`) to preview repo state at an operation. `jj evolog` shows how a single change (change ID) evolved across rewrites, complementing `jj op log`.
 
 ### Editing Revision Content
 
@@ -272,7 +269,7 @@ jj diffedit --from <a> --to <b>        # Edit the diff between two revisions
 jj diffedit --tool <name> -r <id>      # Use a specific diff editor
 ```
 
-Use `jj diffedit` for partial restores / interactive edits that `jj restore` (whole files) and `jj squash -i` (move changes) don't cover.
+Use `jj diffedit` for partial restores or interactive edits not covered by `jj restore` (whole files) or `jj squash -i` (moving changes).
 
 ### Configuration
 
@@ -284,11 +281,11 @@ jj config path [--user|--repo]         # Print config file path
 jj config edit [--user|--repo]         # Open config in $EDITOR
 ```
 
-Keys an agent may need: `revset-aliases.immutable_heads()`, `git.push` (`auto`|`branch`|`current`), `ui.diff-editor` / `ui.merge-editor`, `templates.*`.
+Common keys: `revset-aliases.immutable_heads()`, `git.push` (`auto`|`branch`|`current`), `ui.diff-editor` / `ui.merge-editor`, and `templates.*`.
 
 ### Ignoring Files
 
-jj respects `.gitignore` (there is no `.jjignore`). `snapshot.auto-track` controls whether new files are tracked automatically (default on). Once tracked, a file stays tracked even if later matched by an ignore pattern.
+jj respects `.gitignore` (it has no `.jjignore`). `snapshot.auto-track` controls whether new files are tracked automatically (default on). Once tracked, a file remains tracked even if matched by a later ignore pattern.
 
 ```bash
 jj file track <path>                   # Start tracking (when auto-track is off)
@@ -298,13 +295,13 @@ jj file list -r <id>                   # List files in a revision
 
 ### Workspaces
 
-Jujutsu supports workspaces (similar to `git worktree`) for working on multiple branches simultaneously.
+Jujutsu supports workspaces (similar to `git worktree`) to work on multiple branches simultaneously.
 
 #### Key Points
 
-- When in a workspace, changes are **not automatically reflected** in the local source repository
-- Some commands (e.g., `docker exec`, `podman exec`) may only point to the local source repository
-- You may need to track the workspace explicitly from the source repository
+- **Workspace Isolation**: Workspaces allow concurrent development, but changes are not automatically reflected in the main repository.
+- **Tooling Scope**: External commands (like `docker exec` or `podman exec`) typically operate on the main repository, not the active workspace.
+- **Sync Requirement**: You must explicitly track the workspace from the main repository to import its changes.
 
 #### Common Workspace Operations
 
@@ -320,9 +317,9 @@ jj workspace update-stale
 
 When working in a workspace:
 
-1. **Changes made in the workspace** stay in the workspace until committed
-2. **To sync changes** to the source repo, navigate to the source and track the workspace
-3. **External tools** (like Docker/Podman exec) may operate on the source repo, not the workspace
+1. **Keep Changes Local**: Uncommitted changes remain local to the workspace.
+2. **Sync to Source**: Navigate to the source repository and run workspace commands to synchronize state.
+3. **Verify Paths**: Always check your working directory when running external builds or containers (like `docker exec` or `podman exec`).
 
 ```bash
 # Example: sync workspace changes to source repo

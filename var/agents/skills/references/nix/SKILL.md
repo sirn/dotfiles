@@ -6,7 +6,7 @@ description: Reference for Nix commands, nix-shell patterns, package lookup, and
 
 ## String Escaping
 
-When writing Nix strings that contain code for other languages (TypeScript, JavaScript, etc.), remember:
+When writing Nix strings containing code for other languages (such as TypeScript or JavaScript):
 
 | What you want in output | Nix syntax       |
 | ----------------------- | ---------------- |
@@ -14,9 +14,9 @@ When writing Nix strings that contain code for other languages (TypeScript, Java
 | `$${variable}`          | `$''${variable}` |
 | `''${literal}`          | `'''${literal}`  |
 
-**Rule**: Use two single quotes `''` before `${}` to prevent Nix from interpolating it.
+**Rule**: Use two single quotes `''` before `${}` to prevent Nix interpolation.
 
-**Example** - Generating TypeScript with template literals:
+**Example**: Generating TypeScript with template literals.
 
 Nix source:
 
@@ -44,9 +44,7 @@ function log(msg: string) {
 
 Use `nix-shell -p` for ad-hoc tools and temporary environments.
 
-See also: [flake](../flake/SKILL.md) for flake-specific commands and templates.
-
-See [examples/interactive-shell.bash](examples/interactive-shell.bash)
+See also [flake](../flake/SKILL.md) for flake-specific commands and templates, or inspect [examples/interactive-shell.bash](examples/interactive-shell.bash).
 
 ### nix-shell Shebang Patterns
 
@@ -54,10 +52,9 @@ See [examples/interactive-shell.bash](examples/interactive-shell.bash)
 
 **Finding your current release:**
 
-- On NixOS: `nixos-version` (shows current system version, e.g., `25.05.20250224...`)
-- From flake.lock: Check the `nixpkgs` input revision or run `nix flake metadata` to see locked references
-- Check system flake: `cat /etc/nixos/flake.nix | grep -E "nixos-24|nixos-25"` or similar
-- Use `channels` command: `nix-channel --list` (if using channels instead of flakes)
+- On NixOS: Run `nixos-version` to view the active system version.
+- From flakes: Check the `nixpkgs` revision in `flake.lock`, run `nix flake metadata` to view locked references, or inspect `/etc/nixos/flake.nix` with `cat /etc/nixos/flake.nix | grep -E "nixos-24|nixos-25"`.
+- From legacy channels: Run `nix-channel --list`.
 
 #### Bash script
 
@@ -84,6 +81,5 @@ print(requests.get("https://api.example.com").json())
 
 ## Package Lookup
 
-- Use `nix-locate`, `nix search`, WebFetch, or WebSearch to verify exact package names.
-- Do not guess Nix attribute paths.
-- Never use `nix-env -i`; use flakes, profiles, or declarative configuration instead.
+- Verify exact package names with `nix-locate`, `nix search`, WebFetch, or WebSearch rather than guessing Nix attribute paths.
+- Never use `nix-env -i`; prefer flakes, profiles, or declarative configuration.

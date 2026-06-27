@@ -6,11 +6,11 @@ description: Reference for the user's local project directory layout. Read when 
 
 ## Layout
 
-- `~/Dev/src/<host>/<repo>`: cloned source repositories.
+- `~/Dev/src/<host>/<repo>`: Cloned source repositories.
   - Example: `~/Dev/src/github.com/sirn/example` corresponds to `github.com/sirn/example`.
-- `~/Dev/workspace/<name>/<repo>`: named workspaces containing one or more repositories.
+- `~/Dev/workspace/<name>/<repo>`: Named workspaces containing one or more repositories.
   - Example: `~/Dev/workspace/foo-implementation/example` is the `example` repo inside the `foo-implementation` workspace.
-- `~/Dev/adhoc/<name>`: ad-hoc scripts, experiments, and one-off projects.
+- `~/Dev/adhoc/<name>`: Ad-hoc scripts, experiments, and one-off projects.
 
 ## Policy
 

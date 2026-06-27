@@ -9,10 +9,9 @@ Generate documentation that matches existing project conventions.
 
 ### Step 1 - Identify Context
 
-- If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
-- If the user specified files, modules, audience, or requirements, focus on those.
-- Determine the documentation type: inline comments, docstrings, module/file docs, README content, or reference material.
-
+- Check for code changes by running `jj diff -s` first, then target specific files/directories with `jj diff -- path`.
+- Focus on any user-specified files, modules, target audience, or requirements.
+- Identify the documentation type (e.g., inline comments, docstrings, module/file docs, README sections, or reference guides).
 ### Step 2 - Research and Plan
 
 Spawn `scout` subagent:
@@ -35,22 +34,19 @@ Review the proposed documentation for clarity, convention fit, accuracy, and unn
 
 ### Step 3 - Inspect Conventions
 
-- Read relevant code and neighboring documentation.
-- Check existing documentation for naming, layout, heading style, examples, and detail level.
-- Check project instructions: `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `GEMINI.md`, `CODEX.md`.
-
+- Inspect adjacent code and documentation to match layout, heading style, naming conventions, and depth of detail.
+- Check project instructions in `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `GEMINI.md`, or `CODEX.md`.
 ### Step 4 - Generate Documentation
 
 - Match existing documentation style and structure.
-- Write comments that explain why and intent, not obvious mechanics.
-- Prefer concise examples that can be verified from the current code.
+- Explain design intent and *why* choices were made, rather than describing obvious mechanics.
+- Provide concise, verified examples based on actual code.
 - Avoid changelog-style comments.
 
 ### Step 5 - Verify
 
-- Run configured formatting, markdown lint, docs build, or link checks when available and relevant.
-- Otherwise, review generated docs for accuracy against the current code.
-
+- Run formatting, markdown linting, doc builds, or link checks if configured and relevant.
+- Otherwise, review the new documentation against current code for accuracy.
 ### Step 6 - Report
 
 Report the following to the user:

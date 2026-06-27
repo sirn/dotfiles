@@ -9,9 +9,9 @@ Generate tests that match existing project conventions.
 
 ### Step 1 - Identify Context
 
-- If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
-- If the user specified files, modules, behavior, or requirements, focus on those.
-- Identify the public behavior and interfaces to test.
+- If code changes are involved, run `jj diff -s` first to see changed files, then use `jj diff -- path` to restrict to specific files/directories.
+- Focus on any files, modules, behavior, or requirements specified by the user.
+- Identify public behavior and interfaces to test.
 
 ### Step 2 - Research and Scout
 
@@ -36,24 +36,23 @@ Review proposed tests with a simplicity and behavior-coverage lens; avoid unnece
 ### Step 3 - Inspect Conventions
 
 - Read relevant code, neighboring tests, fixtures, and helpers.
-- Detect the test framework and command from instructions, task runners, wrapper scripts, package manager scripts, and common defaults.
-- Check project instructions: `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `GEMINI.md`, `CODEX.md`.
+- Detect the test framework and command from task runners, wrapper scripts, package manager scripts, or defaults.
+- Check project instructions in `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `GEMINI.md`, and `CODEX.md`.
 
 ### Step 4 - Generate Tests
 
-- Prefer public interfaces and observable behavior over private implementation details.
-- Cover happy paths, edge cases, and error paths that are observable.
+- Prioritize testing public interfaces and observable behavior (covering happy paths, edge cases, and error paths) over private implementation details.
 - Match existing naming, fixture, assertion, and file-layout conventions.
 - Keep tests simple and explicit; avoid unnecessary helpers or abstractions.
 
 ### Step 5 - Verify
 
-- Run the most specific relevant test command directly.
-- Fix generated test failures if the fix is clear; stop after two failed attempts.
+- Run the most specific test command directly.
+- Fix failures if the cause is clear, but stop after two failed attempts.
 
 ### Step 6 - Report
 
-Report the following to the user:
+Report to the user:
 
 1. **Behavior Covered**
 2. **Conventions Detected**

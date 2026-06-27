@@ -6,10 +6,8 @@ description: Interact with the ClickUp HTTP API using a Personal Access Token in
 Use ClickUp's HTTP API directly, not MCP.
 
 This skill is **PAT-only**:
-
 - Use a ClickUp **Personal Access Token** in `CLICKUP_PAT`
-- Send it as `Authorization: $CLICKUP_PAT`
-- Do **not** use `Bearer` for PAT auth
+- Send it as `Authorization: $CLICKUP_PAT` (do not use `Bearer` for PAT auth)
 - Personal tokens begin with `pk_`
 
 ## Canonical references
@@ -36,7 +34,7 @@ curl -fsS \
 
 ## API coverage map
 
-ClickUp currently exposes two public API surfaces:
+ClickUp exposes two public API surfaces:
 
 ### v2: core work management
 
@@ -67,10 +65,8 @@ Use v3 for the newer resource families:
 
 ## Important ID note
 
-ClickUp uses both `team_id` and `workspace_id` across the docs/specs.
-For practical use, those refer to the same top-level workspace identifier.
-
-Also note that the v2 spec inconsistently uses both `team_id` and `team_Id` in path templates. Treat them as the same value.
+ClickUp uses both `team_id` and `workspace_id` across docs/specs; both refer to the same top-level workspace identifier.
+The v2 spec also inconsistently uses both `team_id` and `team_Id` in path templates. Treat them as the same value.
 
 ## Recommended discovery flow
 
@@ -297,9 +293,7 @@ Common filters supported by `GET /team/{team_Id}/task`:
 
 ### Create or update tasks
 
-> **Always use `markdown_content` (create) or `markdown_description` (update) for task descriptions** — the `description` field treats content as plain text and will not render Markdown. The `markdown_content`/`markdown_description` fields render Markdown as rich text in the ClickUp UI.
->
-> If both `markdown_content` and `description` are provided, `markdown_content` takes precedence.
+> **Always use `markdown_content` (create) or `markdown_description` (update) for task descriptions.** The `description` field treats content as plain text and does not render Markdown, whereas `markdown_content` and `markdown_description` render rich text in the ClickUp UI. If both are provided, `markdown_content` takes precedence.
 
 ```bash
 # Create task in a list (with Markdown description)
@@ -656,8 +650,7 @@ curl -fsS \
 
 ## Docs API (v3)
 
-Docs live in **v3**, not in the old incorrect `/workflow/.../doc` style URLs.
-Use workspace-scoped v3 endpoints instead.
+Docs live in **v3**. Avoid using incorrect `/workflow/.../doc` style URLs, and use workspace-scoped v3 endpoints instead.
 
 ### Search docs in a workspace
 
