@@ -164,6 +164,17 @@ let
     postBuild = ''
       wrapProgram $out/bin/emacs \
         --add-flags "--init-directory=${emacsConfigDir}"
+
+      # On macOS, wrapProgram above only touches bin/emacs. Emacs.app keeps
+      # the raw launcher, which skips --init-directory, so double-clicking it
+      # loads no user config. emacsWithPackages later wraps this same binary
+      # with a package-load shell (.Emacs-wrapped) that execs through here, so
+      # pointing it at the already-wrapped bin/emacs propagates the flag.
+      ${lib.optionalString pkgs.stdenv.isDarwin ''
+        appEmacs="$out/Applications/Emacs.app/Contents/MacOS/Emacs"
+        rm "$appEmacs"
+        makeWrapper "$out/bin/emacs" "$appEmacs"
+      ''}
     '';
     inherit (baseEmacs) meta;
     passthru =
