@@ -67,7 +67,7 @@ jj split -m "Extract auth utilities"
 
 **Interactive behavior:**
 
-`jj split` without `-- <paths>` opens a **diff editor** (`ui.diff-editor`, override with `--tool <name>`). Edit the *right side* to select what goes into the first commit; what remains stays in the second. If the original commit has a description, jj prompts for two new descriptions in `$EDITOR`.
+`jj split` without `-- <paths>` opens a **diff editor** (`ui.diff-editor`, override with `--tool <name>`). Edit the _right side_ to select what goes into the first commit; what remains stays in the second. If the original commit has a description, jj prompts for two new descriptions in `$EDITOR`.
 
 **When to use interactive vs. non-interactive:**
 
@@ -203,7 +203,8 @@ jj git push --bookmark <name>     # New bookmarks auto-track on push
 
 #### Resolve conflicts
 
-Conflicts in jj are stored *in the commit* rather than the working tree. They are flagged by `jj status` and `jj log` and persist across operations until resolved. jj materializes file conflicts as 3-way merge markers; resolve them by editing the markers manually. To surface conflicts between two heads, use `jj new @ <other>` to create a merge commit.
+Conflicts in jj are stored _in the commit_ rather than the working tree. They are flagged by `jj status` and `jj log` and persist across operations until resolved. jj materializes file conflicts as 3-way merge markers; resolve them by editing the markers manually. To surface conflicts between two heads, use `jj new @ <other>` to create a merge commit.
+
 ```bash
 jj resolve --list -r <id>          # List conflicts
 jj resolve -r <id>                 # Use merge tool
@@ -215,10 +216,10 @@ jj resolve --tool=:theirs -r <id>  # Accept incoming
 
 Four distinct recovery tools — pick by scope:
 
-- **`jj restore`**: Restores *file contents* from one revision to another (e.g., to undo working-copy edits or discard changes to specific paths). Does **not** rewrite history; only affects the destination revision.
-- **`jj undo`**: Undoes the last *operation* (commit, rebase, squash, etc.) by creating a new inverse operation. Repeated calls walk further back. See also `jj redo`.
+- **`jj restore`**: Restores _file contents_ from one revision to another (e.g., to undo working-copy edits or discard changes to specific paths). Does **not** rewrite history; only affects the destination revision.
+- **`jj undo`**: Undoes the last _operation_ (commit, rebase, squash, etc.) by creating a new inverse operation. Repeated calls walk further back. See also `jj redo`.
 - **`jj op restore <op-id>`**: Restores the entire repository to its state at a specific past operation. Use `jj op log` to find the operation ID and `jj --at-op=<op-id> log` to preview that state first.
-- **`jj revert -r <id>`**: Creates *new* commits applying the reverse of a revision's diff (no history rewrite). Distinct from `jj restore --changes-in` (in-place in the same commit) and `jj op revert` (operation-level).
+- **`jj revert -r <id>`**: Creates _new_ commits applying the reverse of a revision's diff (no history rewrite). Distinct from `jj restore --changes-in` (in-place in the same commit) and `jj op revert` (operation-level).
 
 ```bash
 # File-level recovery (no history rewrite)
@@ -240,11 +241,11 @@ jj op restore <op-id>             # Restore the whole repo to that operation's s
 
 #### Pitfalls
 
-- **`jj restore` without paths or `--from`/`--into`** restores *all* files in the working copy from its parent, discarding all local changes (keeps the empty commit, similar to `jj abandon`). Always pass a `<path>` to scope it (e.g., `jj restore path/to/file`).
+- **`jj restore` without paths or `--from`/`--into`** restores _all_ files in the working copy from its parent, discarding all local changes (keeps the empty commit, similar to `jj abandon`). Always pass a `<path>` to scope it (e.g., `jj restore path/to/file`).
 - **`jj restore` does not undo operations.** It only copies file contents. To reverse a rebase, squash, or abandon, use `jj undo` or `jj op restore`.
 - **`jj undo` is non-selective and does not redo.** It reverts the entire last operation. Repeatedly running `jj undo` walks further back. Use `jj redo` to re-apply a prior undo.
-- **`jj op restore <op-id>` restores the *whole repo***, rolling everything since that operation into one new state. Always preview with `jj --at-op=<op-id> log` first, and prefer `jj restore` if you only want to revert a single revision's content.
-- **`jj restore --changes-in <id>` on a merge** reverts the diff against the *merge of the parents*, which may not match either parent's content. Inspect with `jj diff -r <id>` first.
+- **`jj op restore <op-id>` restores the _whole repo_**, rolling everything since that operation into one new state. Always preview with `jj --at-op=<op-id> log` first, and prefer `jj restore` if you only want to revert a single revision's content.
+- **`jj restore --changes-in <id>` on a merge** reverts the diff against the _merge of the parents_, which may not match either parent's content. Inspect with `jj diff -r <id>` first.
 
 ### Operation Log
 

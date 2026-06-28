@@ -18,16 +18,19 @@ Create ADRs that match existing project conventions.
 #### Standard Research
 
 Spawn `scout` subagent:
+
 ```
 Identify existing ADR style, naming, structure, status values, and relevant architectural context for {files or requirements}.
 ```
 
 Spawn `planner` subagent:
+
 ```
 Draft the minimal ADR structure needed to explain the decision, alternatives, consequences, and tradeoffs.
 ```
 
 Spawn `reviewer` subagent:
+
 ```
 Review the proposed ADR for clarity, convention fit, decision focus, and unnecessary detail.
 ```
@@ -37,11 +40,13 @@ Review the proposed ADR for clarity, convention fit, decision focus, and unneces
 For ADRs with structural or cross-module implications:
 
 Spawn `architect` subagent:
+
 ```
 Analyze module boundaries, ownership, and structural implications of the decision in {task}. Identify invariants and compatibility risks.
 ```
 
 Spawn `auditor` subagent:
+
 ```
 Audit the decision for production risks: data loss, migration hazards, rollback safety, and contract compatibility.
 ```

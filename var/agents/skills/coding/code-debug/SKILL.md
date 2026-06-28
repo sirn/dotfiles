@@ -6,6 +6,7 @@ description: Debug issues by researching errors and proposing minimal fixes. Use
 Troubleshoot problems by delegating focused research and risk review.
 
 ## Process
+
 ### Step 1 - Identify Error
 
 Identify the error message, log, or symptom from the user's request or context.
@@ -13,6 +14,7 @@ Identify the error message, log, or symptom from the user's request or context.
 ### Step 2 - Research Error
 
 Spawn `researcher` subagent:
+
 ```
 Investigate the error or failure in {context}. Find likely root causes, official docs or known issues, minimal fixes, and verification steps with sources.
 ```

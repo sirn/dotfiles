@@ -76,6 +76,7 @@ The handoff file should follow this structure:
 Write to `HANDOFF.md` in the current working directory unless the user specifies a different path.
 
 Guidelines:
+
 - Check if the handoff file already exists before writing.
 - If updating, preserve existing content and add a new section with the current timestamp.
 - Keep summaries concise while ensuring enough context remains for a seamless handoff.

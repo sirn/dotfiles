@@ -452,9 +452,10 @@ export default function (pi: ExtensionAPI) {
     const toolAllowed = mergeToolAllowedStrict(event.toolName, modePolicies);
     if (toolAllowed === false) {
       // For write/edit, check path-specific allowances
-      const targetPath = (event.toolName === "write" || event.toolName === "edit")
-        ? event.input?.path as string | undefined
-        : undefined;
+      const targetPath =
+        event.toolName === "write" || event.toolName === "edit"
+          ? (event.input?.path as string | undefined)
+          : undefined;
       if (isPathAllowed(event.toolName, targetPath, policyOverride)) {
         return undefined; // Allow this specific path
       }
@@ -468,7 +469,8 @@ export default function (pi: ExtensionAPI) {
         ? `\nAllowed paths: ${relevantPaths.join(", ")}`
         : "";
       const diffHint =
-        (event.toolName === "write" || event.toolName === "edit") && relevantPaths?.length
+        (event.toolName === "write" || event.toolName === "edit") &&
+        relevantPaths?.length
           ? buildPathDiffHint(targetPath, relevantPaths)
           : null;
       const hintLine = diffHint ? `\nHint: ${diffHint}` : "";

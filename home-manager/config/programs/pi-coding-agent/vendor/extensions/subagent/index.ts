@@ -539,13 +539,16 @@ const groupedResultsCache = new WeakMap<
 // the result object in place across partial emits, so identity alone is unsound;
 // we additionally gate on messages.length (append-only, so unchanged length
 // implies the message array is unchanged).
-const displayItemsCache = new WeakMap<SingleResult, { len: number; items: DisplayItem[] }>();
+const displayItemsCache = new WeakMap<
+  SingleResult,
+  { len: number; items: DisplayItem[] }
+>();
 
 type SubagentStore = {
   details: SubagentDetails;
   expanded: boolean;
   isPartial: boolean;
-  theme: any;              // matches existing untyped theme convention in this file
+  theme: any; // matches existing untyped theme convention in this file
   isRunning: boolean;
 };
 
@@ -572,21 +575,20 @@ function trimInline(value: string, maxLength: number): string {
     : compact;
 }
 
-function renderDisplayItems(items: DisplayItem[], limit: number | undefined, expanded: boolean, theme: any): string {
+function renderDisplayItems(
+  items: DisplayItem[],
+  limit: number | undefined,
+  expanded: boolean,
+  theme: any,
+): string {
   const toShow = limit ? items.slice(-limit) : items;
-  const skipped =
-    limit && items.length > limit ? items.length - limit : 0;
+  const skipped = limit && items.length > limit ? items.length - limit : 0;
   let text = "";
   if (skipped > 0)
-    text += theme.fg(
-      "muted",
-      `… ${skipped} earlier display items hidden\n`,
-    );
+    text += theme.fg("muted", `… ${skipped} earlier display items hidden\n`);
   for (const item of toShow) {
     if (item.type === "text") {
-      const preview = expanded
-        ? item.text.trim()
-        : trimInline(item.text, 160);
+      const preview = expanded ? item.text.trim() : trimInline(item.text, 160);
       if (!preview.trim()) continue;
       text += `${theme.fg("toolOutput", preview)}\n`;
     } else if (item.type === "toolCall") {
@@ -666,13 +668,25 @@ function resultDisplayItems(r: SingleResult): DisplayItem[] {
 }
 
 type LeafCtx = {
-  kind: "step" | "header" | "task" | "fallback" | "display" | "usage" | "total" | "expand";
+  kind:
+    | "step"
+    | "header"
+    | "task"
+    | "fallback"
+    | "display"
+    | "usage"
+    | "total"
+    | "expand";
   stepIndex?: number;
   resultIndex?: number;
   agentNumber?: number;
 };
 
-type Leaf = { text: Text; derive: (store: SubagentStore) => string; current: string };
+type Leaf = {
+  text: Text;
+  derive: (store: SubagentStore) => string;
+  current: string;
+};
 
 class SubagentResultView extends Box {
   private leaves: Leaf[] = [];
@@ -683,7 +697,15 @@ class SubagentResultView extends Box {
   // each entry carries a content version snapshot; version matches -> cache
   // hit -> no recompute. Invalidated wholesale on
   // theme or expanded change (those bake into the cached strings).
-  private deriveMemo = new WeakMap<SingleResult, { version: string; fields: Partial<Record<"task" | "fallback" | "display" | "usage", string>> }>();
+  private deriveMemo = new WeakMap<
+    SingleResult,
+    {
+      version: string;
+      fields: Partial<
+        Record<"task" | "fallback" | "display" | "usage", string>
+      >;
+    }
+  >();
   private memoTheme: any;
   private memoExpanded: boolean | undefined;
 
@@ -697,7 +719,8 @@ class SubagentResultView extends Box {
   private structKey(store: SubagentStore): string {
     const grouped = groupedResults(store.details);
     const hasTotal =
-      !store.isRunning && !!formatUsageStats(aggregateUsage(store.details.results));
+      !store.isRunning &&
+      !!formatUsageStats(aggregateUsage(store.details.results));
     return JSON.stringify({
       steps: grouped.map(([si, rs]) => [si, rs.length]),
       isRunning: store.isRunning,
@@ -706,7 +729,10 @@ class SubagentResultView extends Box {
     });
   }
 
-  private pushLeaf(parent: Box, derive: (store: SubagentStore) => string): Leaf {
+  private pushLeaf(
+    parent: Box,
+    derive: (store: SubagentStore) => string,
+  ): Leaf {
     const text = new Text("", 0, 0);
     parent.addChild(text);
     const leaf = { text, derive, current: "" };
@@ -724,7 +750,8 @@ class SubagentResultView extends Box {
     const r = lookupResult(store, stepIndex, resultIndex);
     const version = resultVersion(r);
     const entry = this.deriveMemo.get(r);
-    if (entry && entry.version === version && field in entry.fields) return entry.fields[field]!;
+    if (entry && entry.version === version && field in entry.fields)
+      return entry.fields[field]!;
     const val = compute();
     if (entry && entry.version === version) entry.fields[field] = val;
     else this.deriveMemo.set(r, { version, fields: { [field]: val } });
@@ -751,14 +778,12 @@ class SubagentResultView extends Box {
         const resultIndex = j;
         const thisAgentNumber = agentNumber;
         if (resultIndex > 0) stepBox.addChild(new Spacer(1)); // blank before header
-        this.pushLeaf(
-          stepBox,
-          (s) =>
-            renderHeaderContent(
-              lookupResult(s, stepIndex, resultIndex),
-              thisAgentNumber,
-              s,
-            ),
+        this.pushLeaf(stepBox, (s) =>
+          renderHeaderContent(
+            lookupResult(s, stepIndex, resultIndex),
+            thisAgentNumber,
+            s,
+          ),
         );
 
         const detailBox = new Box(2, 0);
@@ -767,29 +792,55 @@ class SubagentResultView extends Box {
         this.pushLeaf(detailBox, (s) =>
           this.memoField(
             "task",
-            () => renderTaskContent(lookupResult(s, stepIndex, resultIndex), expanded, s.theme),
-            s, stepIndex, resultIndex,
+            () =>
+              renderTaskContent(
+                lookupResult(s, stepIndex, resultIndex),
+                expanded,
+                s.theme,
+              ),
+            s,
+            stepIndex,
+            resultIndex,
           ),
         );
         this.pushLeaf(detailBox, (s) =>
           this.memoField(
             "fallback",
-            () => renderFallbackContent(lookupResult(s, stepIndex, resultIndex), s.theme),
-            s, stepIndex, resultIndex,
+            () =>
+              renderFallbackContent(
+                lookupResult(s, stepIndex, resultIndex),
+                s.theme,
+              ),
+            s,
+            stepIndex,
+            resultIndex,
           ),
         );
         this.pushLeaf(detailBox, (s) =>
           this.memoField(
             "display",
-            () => renderDisplayContent(lookupResult(s, stepIndex, resultIndex), expanded, s.theme),
-            s, stepIndex, resultIndex,
+            () =>
+              renderDisplayContent(
+                lookupResult(s, stepIndex, resultIndex),
+                expanded,
+                s.theme,
+              ),
+            s,
+            stepIndex,
+            resultIndex,
           ),
         );
         this.pushLeaf(detailBox, (s) =>
           this.memoField(
             "usage",
-            () => renderUsageContent(lookupResult(s, stepIndex, resultIndex), s.theme),
-            s, stepIndex, resultIndex,
+            () =>
+              renderUsageContent(
+                lookupResult(s, stepIndex, resultIndex),
+                s.theme,
+              ),
+            s,
+            stepIndex,
+            resultIndex,
           ),
         );
         agentNumber++;
@@ -798,14 +849,17 @@ class SubagentResultView extends Box {
 
     // Tail
     const hasTotal =
-      !store.isRunning && !!formatUsageStats(aggregateUsage(store.details.results));
+      !store.isRunning &&
+      !!formatUsageStats(aggregateUsage(store.details.results));
     if (hasTotal) {
       root.addChild(new Spacer(1));
       this.pushLeaf(root, (s) =>
         s.isRunning
           ? ""
           : (() => {
-              const usageStr = formatUsageStats(aggregateUsage(s.details.results));
+              const usageStr = formatUsageStats(
+                aggregateUsage(s.details.results),
+              );
               return usageStr ? s.theme.fg("dim", `Total: ${usageStr}`) : "";
             })(),
       );
@@ -814,8 +868,8 @@ class SubagentResultView extends Box {
           s.expanded
             ? ""
             : s.theme.fg("muted", "(") +
-                keyHint("app.tools.expand", "to expand") +
-                s.theme.fg("muted", ")"),
+              keyHint("app.tools.expand", "to expand") +
+              s.theme.fg("muted", ")"),
         );
       }
     } else if (!store.expanded) {
@@ -824,8 +878,8 @@ class SubagentResultView extends Box {
         s.expanded
           ? ""
           : s.theme.fg("muted", "(") +
-              keyHint("app.tools.expand", "to expand") +
-              s.theme.fg("muted", ")"),
+            keyHint("app.tools.expand", "to expand") +
+            s.theme.fg("muted", ")"),
       );
     }
   }
@@ -836,7 +890,10 @@ class SubagentResultView extends Box {
       this.rebuild(store);
       this.lastKey = key;
     }
-    if (store.theme !== this.memoTheme || store.expanded !== this.memoExpanded) {
+    if (
+      store.theme !== this.memoTheme ||
+      store.expanded !== this.memoExpanded
+    ) {
       this.deriveMemo = new WeakMap();
       this.memoTheme = store.theme;
       this.memoExpanded = store.expanded;
@@ -867,7 +924,11 @@ function resultVersion(r: SingleResult): string {
 // Slot lookup by (stepIndex, resultIndex) into the grouped view of the
 // *current* store's details, so partial updates that replace a slot's result
 // object are reflected without a structural rebuild.
-function lookupResult(store: SubagentStore, stepIndex: number, resultIndex: number): SingleResult {
+function lookupResult(
+  store: SubagentStore,
+  stepIndex: number,
+  resultIndex: number,
+): SingleResult {
   const grouped = groupedResults(store.details);
   for (const [si, rs] of grouped) {
     if (si === stepIndex) return rs[resultIndex];
@@ -876,7 +937,11 @@ function lookupResult(store: SubagentStore, stepIndex: number, resultIndex: numb
   return store.details.results[0];
 }
 
-function renderHeaderContent(r: SingleResult, agentNumber: number, store: SubagentStore): string {
+function renderHeaderContent(
+  r: SingleResult,
+  agentNumber: number,
+  store: SubagentStore,
+): string {
   const theme = store.theme;
   const isPending = isPendingResult(r);
   const hasFailed = isFailedResult(r);
@@ -895,15 +960,26 @@ function renderHeaderContent(r: SingleResult, agentNumber: number, store: Subage
     r.runner === "claude-code" ? theme.fg("dim", " [claude-code]") : "";
   const statusGlyph =
     isPending && (r.autoRetrying || r.compacting)
-      ? theme.fg("warning", ` ${r.compacting ? ICONS.compacting : ICONS.retrying}`)
+      ? theme.fg(
+          "warning",
+          ` ${r.compacting ? ICONS.compacting : ICONS.retrying}`,
+        )
       : "";
-  const resumedTag = r.resumed ? theme.fg("dim", ` (resumed: ${r.sessionId})`) : "";
+  const resumedTag = r.resumed
+    ? theme.fg("dim", ` (resumed: ${r.sessionId})`)
+    : "";
   return `${rIcon} ${theme.fg("muted", `[${agentNumber}]`)} ${theme.fg("accent", r.agent)}${runnerTag}${resumedTag}${statusGlyph}`;
 }
 
-function renderTaskContent(r: SingleResult, expanded: boolean, theme: any): string {
+function renderTaskContent(
+  r: SingleResult,
+  expanded: boolean,
+  theme: any,
+): string {
   if (!r.task) return "";
-  const task = expanded ? r.task.trim().replace(/\s+/g, " ") : trimInline(r.task, 100);
+  const task = expanded
+    ? r.task.trim().replace(/\s+/g, " ")
+    : trimInline(r.task, 100);
   return r.task ? `${theme.fg("muted", "Task: ")}${theme.fg("dim", task)}` : "";
 }
 
@@ -920,10 +996,17 @@ function renderFallbackContent(r: SingleResult, theme: any): string {
         : "(no output)";
   if (resultDisplayItems(r).length > 0) return "";
   if (!fallback) return "";
-  return theme.fg(isSkipped ? "muted" : hasFailed ? "error" : "muted", fallback);
+  return theme.fg(
+    isSkipped ? "muted" : hasFailed ? "error" : "muted",
+    fallback,
+  );
 }
 
-function renderDisplayContent(r: SingleResult, expanded: boolean, theme: any): string {
+function renderDisplayContent(
+  r: SingleResult,
+  expanded: boolean,
+  theme: any,
+): string {
   const displayItems = resultDisplayItems(r);
   if (displayItems.length === 0) return "";
   const rendered = renderDisplayItems(

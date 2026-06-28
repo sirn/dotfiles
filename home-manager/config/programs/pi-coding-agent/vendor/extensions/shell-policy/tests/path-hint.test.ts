@@ -67,53 +67,41 @@ test("multiple allowed, closest match wins", () => {
 
 test("multiple allowed, closest (no tie)", () => {
   assertEquals(
-    buildPathDiffHint(
-      "/home/sirn/.pi/agent/plans/--project-a--/other.md",
-      [
-        "/home/sirn/.pi/agent/plans/--project-a--/default.md",
-        "/home/sirn/.pi/agent/plans/--project-b--/default.md",
-      ],
-    ),
+    buildPathDiffHint("/home/sirn/.pi/agent/plans/--project-a--/other.md", [
+      "/home/sirn/.pi/agent/plans/--project-a--/default.md",
+      "/home/sirn/.pi/agent/plans/--project-b--/default.md",
+    ]),
     `section 7, "other.md" -> "default.md"`,
   );
 });
 
 test("multiple allowed, tie same range (2-way combined)", () => {
   assertEquals(
-    buildPathDiffHint(
-      "/home/sirn/.pi/agent/plans/--project-c--/default.md",
-      [
-        "/home/sirn/.pi/agent/plans/--project-a--/default.md",
-        "/home/sirn/.pi/agent/plans/--project-b--/default.md",
-      ],
-    ),
+    buildPathDiffHint("/home/sirn/.pi/agent/plans/--project-c--/default.md", [
+      "/home/sirn/.pi/agent/plans/--project-a--/default.md",
+      "/home/sirn/.pi/agent/plans/--project-b--/default.md",
+    ]),
     `section 6, "--project-c--" -> either "--project-a--" or "--project-b--"`,
   );
 });
 
 test("multiple allowed, tie same range (3-way combined)", () => {
   assertEquals(
-    buildPathDiffHint(
-      "/home/sirn/.pi/agent/plans/--project-c--/default.md",
-      [
-        "/home/sirn/.pi/agent/plans/--project-a--/default.md",
-        "/home/sirn/.pi/agent/plans/--project-b--/default.md",
-        "/home/sirn/.pi/agent/plans/--project-d--/default.md",
-      ],
-    ),
+    buildPathDiffHint("/home/sirn/.pi/agent/plans/--project-c--/default.md", [
+      "/home/sirn/.pi/agent/plans/--project-a--/default.md",
+      "/home/sirn/.pi/agent/plans/--project-b--/default.md",
+      "/home/sirn/.pi/agent/plans/--project-d--/default.md",
+    ]),
     `section 6, "--project-c--" -> either "--project-a--" or "--project-b--" or "--project-d--"`,
   );
 });
 
 test("multiple allowed, tie different ranges (fallback first)", () => {
   assertEquals(
-    buildPathDiffHint(
-      "/home/sirn/.pi/agent/plans/--project-c--/other.md",
-      [
-        "/home/sirn/.pi/agent/plans/--project-a--/other.md",
-        "/home/sirn/.pi/agent/plans/--project-b--/default.md",
-      ],
-    ),
+    buildPathDiffHint("/home/sirn/.pi/agent/plans/--project-c--/other.md", [
+      "/home/sirn/.pi/agent/plans/--project-a--/other.md",
+      "/home/sirn/.pi/agent/plans/--project-b--/default.md",
+    ]),
     `section 6, "--project-c--" -> "--project-a--"`,
   );
 });

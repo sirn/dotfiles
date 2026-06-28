@@ -85,10 +85,12 @@ interface RemoteProviderConfig {
   /** Applied ONLY to models with no resolvable pi-ai hint (piModel === null).
    *  Lets proxy-routed models expose xhigh without inheriting pi-ai's
    *  per-provider flags, which may not apply behind a multi-provider endpoint. */
-  unhandledThinkingLevelMap?: Partial<Record<
-    "off" | "minimal" | "low" | "medium" | "high" | "xhigh",
-    string | null
-  >>;
+  unhandledThinkingLevelMap?: Partial<
+    Record<
+      "off" | "minimal" | "low" | "medium" | "high" | "xhigh",
+      string | null
+    >
+  >;
 }
 
 // ---------------------------------------------------------------------------
@@ -278,8 +280,7 @@ function toProviderModel(
       piModel?.reasoning ??
       apiModel.supported_parameters?.includes("reasoning") ??
       false,
-    ...((piModel?.thinkingLevelMap ??
-      config.unhandledThinkingLevelMap) && {
+    ...((piModel?.thinkingLevelMap ?? config.unhandledThinkingLevelMap) && {
       thinkingLevelMap:
         piModel?.thinkingLevelMap ?? config.unhandledThinkingLevelMap,
     }),

@@ -12,6 +12,7 @@ Safely upgrade dependencies or migrate framework versions.
 ### Step 1 - Identify Upgrade Type
 
 Clarify the target if it is not already clear:
+
 - **Single dependency**: One package (e.g., `react 18 -> 19`).
 - **All dependencies**: All packages to their latest compatible versions.
 - **Framework migration**: Major version upgrade with breaking changes (e.g., `Next.js 13 -> 15`).
@@ -78,6 +79,7 @@ Recommend the minimal migration path that preserves invariants.
 ```
 
 The plan must address:
+
 - Deprecated API replacements.
 - Breaking changes to address.
 - Dependency manager commands to run.
@@ -123,6 +125,7 @@ Apply this fix:
 ### Step 7 - Report
 
 Provide a final summary detailing:
+
 1. **Upgrading** — Target dependencies.
 2. **Current Versions** — Versions before the upgrade.
 3. **Target Versions** — Upgraded versions.

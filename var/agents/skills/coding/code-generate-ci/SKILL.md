@@ -18,16 +18,19 @@ Generate minimal CI/CD configurations matching existing project conventions.
 To research, plan, and review, spawn the appropriate subagents:
 
 - **researcher**:
+
 ```
 Research current official CI provider syntax, action versions, permission requirements, and cache patterns for {provider}.
 ```
 
 - **planner**:
+
 ```
 Design a minimal CI pipeline for the requested goal using the project's existing commands and conventions.
 ```
 
 - **reviewer**:
+
 ```
 Review the proposed CI design for secret leaks, script injection, unsafe permissions, insecure pull-request handling, and unnecessary complexity.
 ```

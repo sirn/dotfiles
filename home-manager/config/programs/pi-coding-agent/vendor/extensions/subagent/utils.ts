@@ -128,9 +128,7 @@ export function makeEmitUpdate(
 // the same as a missing sessionId so resume/stamping stays consistent.
 const ABSENT_SESSION_ID = new Set(["null", "undefined", "none", "nil"]);
 
-export function normalizeSessionId(
-  sessionId: unknown,
-): string | undefined {
+export function normalizeSessionId(sessionId: unknown): string | undefined {
   if (typeof sessionId !== "string") return undefined;
   const trimmed = sessionId.trim();
   if (!trimmed) return undefined;

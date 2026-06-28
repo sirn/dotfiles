@@ -26,7 +26,8 @@ function computeDiff(requested: string, allowed: string): DiffResult {
   const allow = splitSegments(allowed);
   const cp = commonPrefixLen(req, allow);
   const maxLen = Math.max(req.length, allow.length);
-  let firstDiff = -1, lastDiff = -1;
+  let firstDiff = -1,
+    lastDiff = -1;
   for (let i = 0; i < maxLen; i++) {
     const r = i < req.length ? req[i] : undefined;
     const a = i < allow.length ? allow[i] : undefined;
@@ -36,19 +37,29 @@ function computeDiff(requested: string, allowed: string): DiffResult {
     }
   }
   if (firstDiff === -1) {
-    return { commonPrefix: req.length, firstDiff: -1, lastDiff: -1, identical: true };
+    return {
+      commonPrefix: req.length,
+      firstDiff: -1,
+      lastDiff: -1,
+      identical: true,
+    };
   }
   return { commonPrefix: cp, firstDiff, lastDiff, identical: false };
 }
 
-function formatSubpath(segments: string[], firstDiff: number, lastDiff: number): string {
+function formatSubpath(
+  segments: string[],
+  firstDiff: number,
+  lastDiff: number,
+): string {
   const slash = firstDiff === 0 ? "/" : "";
   const joined = slash + segments.slice(firstDiff, lastDiff + 1).join("/");
   return joined === "" ? "(path ends here)" : `"${joined}"`;
 }
 
 function formatRange(firstDiff: number, lastDiff: number): string {
-  const start = firstDiff + 1, end = lastDiff + 1;
+  const start = firstDiff + 1,
+    end = lastDiff + 1;
   return start === end ? `section ${start}` : `section ${start}-${end}`;
 }
 
@@ -80,8 +91,8 @@ export function buildPathDiffHint(
 
   // Multiple tied paths. If they share the same diff range, combine
   // the allowed subpaths: `... -> either "A" or "B"`.
-  const sameRange = tied.every((d) =>
-    d.firstDiff === tied[0].firstDiff && d.lastDiff === tied[0].lastDiff,
+  const sameRange = tied.every(
+    (d) => d.firstDiff === tied[0].firstDiff && d.lastDiff === tied[0].lastDiff,
   );
   if (sameRange) {
     const allowParts = tied.map((d) =>

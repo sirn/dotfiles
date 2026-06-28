@@ -6,6 +6,7 @@ description: Interact with the ClickUp HTTP API using a Personal Access Token in
 Use ClickUp's HTTP API directly, not MCP.
 
 This skill is **PAT-only**:
+
 - Use a ClickUp **Personal Access Token** in `CLICKUP_PAT`
 - Send it as `Authorization: $CLICKUP_PAT` (do not use `Bearer` for PAT auth)
 - Personal tokens begin with `pk_`

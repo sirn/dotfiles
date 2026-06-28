@@ -72,6 +72,7 @@ Preserve public behavior, API signatures, and test expectations.
 ### Step 5 - Stop at Diminishing Returns
 
 Halt cleanup when:
+
 - Remaining issues are speculative or lack clear evidence.
 - Fixes require risky, cross-cutting refactors.
 - Changes require product or API decisions beyond the request.

@@ -24,11 +24,13 @@ Run a convergent fix loop: find issues, fix them, repeat until clean.
 #### 1. Find issues
 
 If a specific skill is provided, load it and spawn its corresponding subagents. Otherwise:
+
 - Load the `code-review` and `code-cleanup` skills, then spawn their subagents.
 
 #### 2. Filter findings
 
 Synthesize agent outputs by applying these rules:
+
 - **Deduplicate**: Drop issues already addressed or explicitly deferred in a prior iteration.
 - **Classify**: Categorize findings as critical/high (must fix), medium (should fix), or low/speculative (defer).
 - **Exit Condition**: If no new actionable findings remain, exit the loop.
@@ -36,6 +38,7 @@ Synthesize agent outputs by applying these rules:
 #### 3. Fix
 
 Spawn the `worker` subagent with this prompt:
+
 ```
 Fix these issues in {files}: {findings list}. Apply minimal targeted, behavior-preserving changes. Do not refactor beyond what's needed to resolve each finding.
 ```
@@ -43,17 +46,20 @@ Fix these issues in {files}: {findings list}. Apply minimal targeted, behavior-p
 #### 4. Verify
 
 Run project checks:
+
 - Execute the most specific applicable test/lint commands with timeouts.
 - If regressions are introduced, delegate to the `worker` subagent to resolve them before continuing.
 
 #### 5. Commit
 
 Commit the iteration pass:
+
 - Create an ephemeral commit named `"Iteration <n>: <desc>"`. These commits will be reviewed and squashed by the user later.
 
 ### Step 3 - Production Audit
 
 If production readiness is requested, spawn the `auditor` subagent with this prompt:
+
 ```
 Audit {files} for production readiness: correctness, security, data loss, migration hazards, and rollback safety.
 ```
@@ -66,6 +72,7 @@ Audit {files} for production readiness: correctness, security, data loss, migrat
 ### Step 5 - Report
 
 Present a summary report to the user:
+
 - **Scope**: Target files and mode of operation.
 - **Iterations**: Total iterations run, with a brief summary of findings (found, fixed, deferred) for each pass.
 - **Final Verification**: Results of the final checks.
@@ -76,6 +83,7 @@ Present a summary report to the user:
 ## Convergence Rules
 
 Stop the iteration loop when:
+
 - **No actionable findings**: All remaining issues are deferred or speculative.
 - **No changes**: An iteration pass makes no modifications to the code.
 - **Limit reached**: The maximum iteration count is reached (default is 5, unless overridden by the user).
