@@ -86,6 +86,15 @@ in
 
           copyToBoot $kernel vmlinuz $generation
           copyToBoot $initrd initramfs $generation
+
+          # The external loader opts out of baking initrd secrets into the
+          # store initramfs (supportsInitrdSecrets), so append them at
+          # install time from the original source path, keeping the key
+          # out of the Nix store.
+          local initrdDst=/boot/initramfs-$(kernver "$initrd")-g$generation
+          if test -x $path/append-initrd-secrets; then
+            $path/append-initrd-secrets "$initrdDst"
+          fi
         }
 
         updateInit() {
@@ -122,6 +131,12 @@ in
         done
       '';
     };
+
+    # boot.loader.external sets this to mkDefault false; override so the
+    # initramfs is built without secrets baked in (which would place the
+    # keyfile world-readable in the store) and let the install hook append
+    # them from the original source path instead.
+    boot.loader.supportsInitrdSecrets = true;
 
     boot.initrd.secrets =
       if !isNull config.boot.loader.zfsbootmenu.keyfile then
