@@ -154,7 +154,25 @@
         inherit overlays stateVersion;
       };
 
-      compatOverlays = [ ];
+      compatOverlays = [
+        # Bun-compiled tailwindcss standalone is only linker-signed, which
+        # amfid kills on recent macOS; trunk's tailwind hook then can't read
+        # its version offline.
+        #
+        # TODO: revisit after macOS 27 is released.
+        (
+          final: prev:
+          prev.lib.optionalAttrs prev.stdenv.hostPlatform.isDarwin {
+            tailwindcss_4 = prev.tailwindcss_4.overrideAttrs (
+              final': prev': {
+                postFixup = (prev'.postFixup or "") + ''
+                  /usr/bin/codesign -f -s - $out/bin/.tailwindcss-wrapped
+                '';
+              }
+            );
+          }
+        )
+      ];
 
       overlays = compatOverlays ++ [
         inputs.nixgl.overlay
