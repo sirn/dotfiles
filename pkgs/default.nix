@@ -19,8 +19,6 @@ let
 
     powerband = (callPackage ./by-name/powerband { });
 
-    pi-hashline-edit = (callPackage ./by-name/pi-hashline-edit/package.nix { });
-
     pi-vcc = (callPackage ./by-name/pi-vcc/package.nix { });
 
     pi-tool-repair = (callPackage ./by-name/pi-tool-repair/package.nix { });

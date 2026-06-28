@@ -28,7 +28,6 @@ in
     ./extensions/hm-remote-models.nix
     ./extensions/hm-simple-footer.nix
     ./extensions/hm-smart-compact.nix
-    ./extensions/pi-hashline-edit.nix
     ./extensions/pi-vcc.nix
     ./extensions/pi-tool-repair.nix
   ];
