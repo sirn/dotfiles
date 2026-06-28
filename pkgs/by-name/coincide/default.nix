@@ -58,8 +58,27 @@ rustPlatform.buildRustPackage {
 
   buildInputs = [ openssl ];
 
+  CARGO_PROFILE_RELEASE_CODEGEN_UNITS = "1";
   CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_LINKER = "lld";
   HOME = "$TMPDIR/home";
+
+  # The build embeds build-directory paths (panic locations) and a wasm-split
+  # marker derived from CARGO_MANIFEST_PATH into the wasm, which rust-embed
+  # then bakes into coincide-server. Remap the build top to a stable prefix so
+  # the output is bit-for-bit reproducible across nix builds.
+  preConfigure = ''
+    export RUSTFLAGS="--remap-path-prefix=$NIX_BUILD_TOP=/build"
+  '';
+
+  # wasm_split_macros::version_stamp derives a no_mangle-collision marker from
+  # sha256(CARGO_MANIFEST_PATH), which varies per build directory. Derive it
+  # from the stable crate name instead.
+  postPatch = ''
+    f="$cargoDepsCopy/source-registry-0/wasm_split_macros-0.2.1/src/lib.rs"
+    substituteInPlace "$f" \
+      --replace-fail 'std::env::var_os("CARGO_MANIFEST_PATH").unwrap()' 'std::env::var("CARGO_PKG_NAME").unwrap()' \
+      --replace-fail 'unique_path.as_encoded_bytes()' 'unique_path.as_bytes()'
+  '';
 
   preBuild = ''
     cd coincide-app
