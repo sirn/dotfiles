@@ -16,10 +16,11 @@
     };
     pi = {
       tools = [
-        "read"
-        "grep"
+        "bash"
         "find"
+        "grep"
         "ls"
+        "read"
       ];
       model = lib.mkDefault "claude-opus-4.7";
     };

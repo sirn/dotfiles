@@ -16,13 +16,13 @@
     };
     pi = {
       tools = [
-        "read"
-        "grep"
-        "find"
-        "ls"
         "bash"
+        "find"
+        "grep"
+        "ls"
+        "read"
       ];
-      model = lib.mkDefault "gpt-5.5";
+      model = lib.mkDefault "gpt-5.5-mini";
     };
   };
 }

@@ -14,10 +14,10 @@
     };
     pi = {
       tools = [
-        "read"
-        "grep"
         "find"
+        "grep"
         "ls"
+        "read"
       ];
       model = lib.mkDefault "gpt-5.4-mini";
     };

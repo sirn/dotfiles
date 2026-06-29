@@ -5,26 +5,26 @@
     prompt = builtins.readFile ./worker.md;
     claude-code = {
       allowedTools = [
-        "Read"
-        "Grep"
-        "Glob"
-        "Edit"
-        "MultiEdit"
-        "Write"
         "Bash"
+        "Edit"
+        "Glob"
+        "Grep"
+        "MultiEdit"
+        "Read"
+        "Write"
       ];
       color = "green";
       model = "sonnet";
     };
     pi = {
       tools = [
-        "read"
-        "grep"
-        "find"
-        "ls"
-        "edit"
-        "write"
         "bash"
+        "edit"
+        "find"
+        "grep"
+        "ls"
+        "read"
+        "write"
       ];
       model = lib.mkDefault "claude-sonnet-4.6";
     };

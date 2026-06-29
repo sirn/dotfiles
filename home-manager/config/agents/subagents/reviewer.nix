@@ -5,21 +5,22 @@
     prompt = builtins.readFile ./reviewer.md;
     claude-code = {
       allowedTools = [
-        "Read"
-        "Grep"
         "Glob"
-        "WebSearch"
+        "Grep"
+        "Read"
         "WebFetch"
+        "WebSearch"
       ];
       color = "red";
       model = "sonnet";
     };
     pi = {
       tools = [
-        "read"
-        "grep"
+        "bash"
         "find"
+        "grep"
         "ls"
+        "read"
       ];
       model = lib.mkDefault "gpt-5.5";
     };

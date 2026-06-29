@@ -19,11 +19,11 @@
     };
     pi = {
       tools = [
-        "read"
-        "grep"
-        "find"
-        "ls"
         "bash"
+        "find"
+        "grep"
+        "ls"
+        "read"
       ];
       model = lib.mkDefault "claude-sonnet-4.6";
     };

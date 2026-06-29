@@ -639,82 +639,79 @@
       };
     };
 
-    modes = {
-      plan = {
-        tools = {
-          edit = false;
-          write = false;
-        };
-        commands.deny = [
-          "cp"
-          "ln"
-          "mkdir"
-          "mktemp"
-          "mv"
-          "rsync"
-          "sed -i"
-          "tee"
-          "touch"
-        ];
-        redirects = {
-          action = "deny";
-          safeTargets = [
-            "/dev/null"
-            "/dev/stderr"
-            "/dev/stdout"
+    modes =
+      let
+        forbidsWrite = {
+          tools = {
+            edit = false;
+            write = false;
+          };
+          commands.deny = [
+            "cp"
+            "ln"
+            "mkdir"
+            "mktemp"
+            "mv"
+            "rsync"
+            "sed -i"
+            "tee"
+            "touch"
           ];
-          allowFdDup = true;
+          redirects = {
+            action = "deny";
+            safeTargets = [
+              "/dev/null"
+              "/dev/stderr"
+              "/dev/stdout"
+            ];
+            allowFdDup = true;
+          };
+          heredocs = {
+            action = "ask";
+          };
         };
-        heredocs = {
-          action = "ask";
+      in
+      {
+        build = {
+          tools = {
+            edit = true;
+            write = true;
+          };
+        };
+
+        plan = forbidsWrite;
+
+        subagent = { };
+
+        "subagent:architect" = forbidsWrite;
+
+        "subagent:auditor" = forbidsWrite;
+
+        "subagent:designer" = forbidsWrite;
+
+        "subagent:oracle" = forbidsWrite;
+
+        "subagent:planner" = forbidsWrite;
+
+        "subagent:researcher" = forbidsWrite;
+
+        "subagent:reviewer" = forbidsWrite;
+
+        "subagent:scout" = forbidsWrite;
+
+        "subagent:worker" = {
+          tools = {
+            edit = true;
+            write = true;
+          };
+        };
+
+        "subagent:writer" = {
+          tools = {
+            edit = true;
+            write = true;
+          };
         };
       };
-
-      subagent = { };
-
-      "subagent:researcher" = {
-        tools = {
-          edit = false;
-          write = false;
-        };
-        commands.deny = [
-          "cp"
-          "ln"
-          "mkdir"
-          "mktemp"
-          "mv"
-          "rsync"
-          "sed -i"
-          "tee"
-          "touch"
-        ];
-        redirects = {
-          action = "deny";
-          safeTargets = [
-            "/dev/null"
-            "/dev/stderr"
-            "/dev/stdout"
-          ];
-          allowFdDup = true;
-        };
-        heredocs = {
-          action = "ask";
-        };
-      };
-
-      "subagent:worker" = {
-        tools = {
-          edit = true;
-          write = true;
-        };
-      };
-
-      build = {
-        tools = {
-          edit = true;
-          write = true;
-        };
-      };
-    };
   };
 }

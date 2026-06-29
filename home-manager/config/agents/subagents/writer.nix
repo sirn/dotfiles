@@ -5,10 +5,10 @@
     prompt = builtins.readFile ./writer.md;
     claude-code = {
       allowedTools = [
-        "Read"
-        "Grep"
-        "Glob"
         "Edit"
+        "Glob"
+        "Grep"
+        "Read"
         "Write"
       ];
       color = "cyan";
@@ -16,11 +16,11 @@
     };
     pi = {
       tools = [
-        "read"
-        "grep"
-        "find"
-        "ls"
         "edit"
+        "find"
+        "grep"
+        "ls"
+        "read"
         "write"
       ];
       model = lib.mkDefault "claude-sonnet-4.6";
