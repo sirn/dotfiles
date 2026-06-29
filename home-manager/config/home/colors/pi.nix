@@ -34,7 +34,7 @@ let
         white = c.normal.white;
         brightBlack = c.bright.black;
         brightWhite = c.bright.white;
-        accent = s.focus.bg;
+        accent = c.normal.cyan;
         secondary = s.secondary.bg;
         tertiary = s.tertiary.bg;
         outline = s.outline;
