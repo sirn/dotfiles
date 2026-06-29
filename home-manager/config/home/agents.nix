@@ -8,6 +8,7 @@
     ../programs/lsp-cli.nix
     ../programs/mcp.nix
     ../programs/pi-coding-agent
+    ../programs/terminal-use.nix
     ../programs/tuicr.nix
   ];
 

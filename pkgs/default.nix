@@ -39,6 +39,8 @@ let
 
     tiler = (callPackage ./by-name/tiler/package.nix { });
 
+    terminal-use = (callPackage ./by-name/terminal-use/package.nix { });
+
     lsp-cli = (callPackage ./by-name/lsp-cli/package.nix { });
 
     wrapped-uv = (callPackage ./by-name/wrapped-uv/wrapped.nix { });
