@@ -98,6 +98,7 @@ lib.mkMerge [
   (import ./mako.nix args)
   (import ./niri.nix args)
   (import ./noctalia.nix args)
+  (import ./pi.nix args)
   (import ./sway.nix args)
   (import ./swaylock.nix args)
   (import ./waybar.nix args)

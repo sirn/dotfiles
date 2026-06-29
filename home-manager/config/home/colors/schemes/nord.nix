@@ -91,6 +91,19 @@ in
     outline = base16Colors.selection;
     shadow = base16Colors.normal.black;
 
+    # TUI text tones and surfaces.
+    # Nord's bg/fg range is compressed, so these use higher ramp/cube
+    # indices than modus to keep contrast legible.
+    tui = {
+      muted = getColor 248; # secondary text
+      dim = getColor 241; # tertiary text
+      surface = getColor 238; # selection / message bg
+      recess = getColor 235; # tool pending bg (deeper than surface)
+      success = getColor 28; # green-tinted bg
+      error = getColor 94; # red-tinted bg
+      label = getColor 129; # purple accent
+    };
+
     battery = {
       charging = {
         bg = getColor 46;

@@ -93,6 +93,17 @@ in
     outline = base16Colors.selection;
     shadow = base16Colors.normal.black;
 
+    # TUI text tones and surfaces.
+    tui = {
+      muted = getColor 245; # secondary text
+      dim = getColor 239; # tertiary text
+      surface = getColor 237; # selection / message bg
+      recess = getColor 235; # tool pending bg (deeper than surface)
+      success = getColor 22; # green-tinted bg
+      error = getColor 52; # red-tinted bg
+      label = getColor 129; # purple accent
+    };
+
     battery = {
       charging = {
         bg = getColor 46;
