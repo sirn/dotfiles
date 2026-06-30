@@ -133,7 +133,7 @@
         ../home-manager/config/programs/sublime-text.nix
       ];
 
-      home.colors.themeName = "nord";
+      home.colors.themeName = "nord-polar-night";
 
       services.kanshi = lib.mkIf config.services.kanshi.enable {
         settings = [

@@ -52,7 +52,7 @@ let
         accent = "accent";
         border = "blue";
         borderAccent = "cyan";
-        borderMuted = "brightBlack";
+        borderMuted = "muted";
         success = "green";
         error = "red";
         warning = "yellow";
@@ -77,7 +77,7 @@ let
         # Markdown
         mdHeading = "accent";
         mdLink = "blue";
-        mdLinkUrl = "dim";
+        mdLinkUrl = "muted";
         mdCode = "accent";
         mdCodeBlock = "fg";
         mdCodeBlockBorder = "muted";
@@ -99,7 +99,7 @@ let
         syntaxString = "green";
         syntaxNumber = "red";
         syntaxType = "blue";
-        syntaxOperator = "brightWhite";
+        syntaxOperator = "fg";
         syntaxPunctuation = "muted";
 
         # Thinking level borders (subtle -> prominent)

@@ -55,23 +55,36 @@ let
     in
     base16List ++ palette240;
 
-  # Auto-discover theme files from schemes directory
-  themeFiles = builtins.readDir ./schemes;
-  themeNames = builtins.map (lib.removeSuffix ".nix") (
+  # Auto-discover scheme files; each defines { light = {...}; dark = {...}; }
+  schemeFiles = builtins.readDir ./schemes;
+  schemeNames = builtins.map (lib.removeSuffix ".nix") (
     builtins.attrNames (
-      lib.filterAttrs (name: type: type == "regular" && lib.hasSuffix ".nix" name) themeFiles
+      lib.filterAttrs (name: type: type == "regular" && lib.hasSuffix ".nix" name) schemeFiles
     )
   );
 
-  # Import all discovered themes
-  themes = lib.genAttrs themeNames (
+  # Nested by family: schemes.<family>.{light,dark} for light/dark-switching tools
+  schemes = lib.genAttrs schemeNames (
     name: import (./schemes + "/${name}.nix") { inherit lib generatePalette; }
+  );
+
+  # Flattened by each variant's formal name, tagged with variant + family.
+  themes = lib.listToAttrs (
+    lib.flatten (
+      lib.mapAttrsToList (
+        family: variants:
+        lib.mapAttrsToList (
+          variant: scheme: lib.nameValuePair scheme.name (scheme // { inherit variant family; })
+        ) variants
+      ) schemes
+    )
   );
 
   # Selected theme for single-active consumers
   themeName = config.home.colors.themeName;
   theme = themes.${themeName};
   variant = theme.variant;
+  familyName = theme.family;
 
   stripHash = color: builtins.substring 1 6 color;
 
@@ -82,7 +95,9 @@ let
       lib
       theme
       themes
+      schemes
       themeName
+      familyName
       stripHash
       ;
   };
@@ -98,7 +113,7 @@ lib.mkMerge [
   (import ./mako.nix args)
   (import ./niri.nix args)
   (import ./noctalia.nix args)
-  (import ./pi.nix args)
+  (import ./pi-coding-agent.nix args)
   (import ./sway.nix args)
   (import ./swaylock.nix args)
   (import ./waybar.nix args)
