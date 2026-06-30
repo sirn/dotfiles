@@ -1,5 +1,6 @@
 {
   themes,
+  themeName,
   config,
   lib,
   ...
@@ -45,4 +46,11 @@ let
 in
 lib.mkIf config.programs.wezterm.enable {
   programs.wezterm.colorSchemes = lib.mapAttrs (name: weztermColorScheme) themes;
+
+  # Active theme selection (consumed by wezterm/modules/colors.lua)
+  xdg.configFile."wezterm/modules/colors.lua".text = ''
+    return {
+      color_scheme = '${themeName}',
+    }
+  '';
 }

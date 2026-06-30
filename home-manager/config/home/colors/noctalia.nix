@@ -46,7 +46,7 @@ lib.mkIf config.programs.noctalia.enable {
   programs.noctalia = {
     settings = {
       theme = {
-        mode = config.home.colors.variant;
+        mode = config.home.colors.variants.desktop;
         source = "custom";
         custom_palette = familyName;
       };

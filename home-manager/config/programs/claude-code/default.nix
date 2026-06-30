@@ -199,7 +199,7 @@ in
       cleanupPeriodDays = 7;
       effortLevel = lib.mkDefault "high";
       tui = "fullscreen";
-      theme = config.home.colors.variant;
+
       statusLine = {
         type = "command";
         command = lib.getExe statusLineScript;

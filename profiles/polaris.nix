@@ -103,7 +103,6 @@
         ../home-manager/config/common-linux.nix
 
         # profiles
-        ../home-manager/config/home/breeze-dark.nix
         ../home-manager/config/home/breeze.nix
         ../home-manager/config/home/flatpak.nix
         ../home-manager/config/home/fonts.nix

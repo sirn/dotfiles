@@ -80,42 +80,63 @@ let
     )
   );
 
-  # Selected theme for single-active consumers
-  themeName = config.home.colors.themeName;
-  theme = themes.${themeName};
-  variant = theme.variant;
-  familyName = theme.family;
+  # Resolve active themes per context
+  familyName = config.home.colors.themeName;
+  desktopVariant = config.home.colors.variants.desktop;
+  terminalVariant = config.home.colors.variants.terminal;
+
+  desktopTheme = schemes.${familyName}.${desktopVariant};
+  terminalTheme = schemes.${familyName}.${terminalVariant};
+  desktopThemeName = desktopTheme.name;
+  terminalThemeName = terminalTheme.name;
 
   stripHash = color: builtins.substring 1 6 color;
 
   # Shared args for per-program color configs
-  args = {
+  desktopArgs = {
     inherit
       config
       lib
-      theme
       themes
       schemes
-      themeName
       familyName
       stripHash
       ;
+    theme = desktopTheme;
+    themeName = desktopThemeName;
+  };
+
+  terminalArgs = {
+    inherit
+      config
+      lib
+      themes
+      schemes
+      familyName
+      stripHash
+      ;
+    theme = terminalTheme;
+    themeName = terminalThemeName;
   };
 
 in
 lib.mkMerge [
-  { home.colors.variant = variant; }
-  (import ./alacritty.nix args)
-  (import ./emacs.nix args)
-  (import ./foot.nix args)
-  (import ./fuzzel.nix args)
-  (import ./ghostty.nix args)
-  (import ./mako.nix args)
-  (import ./niri.nix args)
-  (import ./noctalia.nix args)
-  (import ./pi-coding-agent.nix args)
-  (import ./sway.nix args)
-  (import ./swaylock.nix args)
-  (import ./waybar.nix args)
-  (import ./wezterm.nix args)
+  {
+    home.colors.desktopThemeName = desktopThemeName;
+    home.colors.terminalThemeName = terminalThemeName;
+  }
+  (import ./claude-code.nix terminalArgs)
+  (import ./alacritty.nix terminalArgs)
+  (import ./emacs.nix terminalArgs)
+  (import ./foot.nix terminalArgs)
+  (import ./fuzzel.nix desktopArgs)
+  (import ./ghostty.nix terminalArgs)
+  (import ./mako.nix desktopArgs)
+  (import ./niri.nix desktopArgs)
+  (import ./noctalia.nix desktopArgs)
+  (import ./pi-coding-agent.nix terminalArgs)
+  (import ./sway.nix desktopArgs)
+  (import ./swaylock.nix desktopArgs)
+  (import ./waybar.nix desktopArgs)
+  (import ./wezterm.nix terminalArgs)
 ]

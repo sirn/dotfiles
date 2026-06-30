@@ -15,6 +15,14 @@ let
   gtkconf = config.gtk;
 
   swaycfg = config.wayland.windowManager.sway;
+
+  isDark = config.home.colors.variants.desktop == "dark";
+
+  # Breeze GTK theme name and icon theme name follow the desktop variant.
+  gtkThemeName = if isDark then "Breeze-Dark" else "Breeze";
+  iconThemeName = if isDark then "breeze-dark" else "breeze";
+  colorScheme = if isDark then "prefer-dark" else "prefer-light";
+  kdeglobalsFile = if isDark then "BreezeDark.colors" else "BreezeLight.colors";
 in
 {
   gtk = {
@@ -32,12 +40,12 @@ in
     };
 
     theme = {
-      name = lib.mkDefault "Breeze";
+      name = lib.mkDefault gtkThemeName;
       package = breezeGtkPkg;
     };
 
     iconTheme = {
-      name = lib.mkDefault "breeze";
+      name = lib.mkDefault iconThemeName;
       package = breezeIconsPkg;
     };
 
@@ -70,6 +78,8 @@ in
     };
   };
 
+  xdg.configFile."kdeglobals".source = "${breezePkg}/share/color-schemes/${kdeglobalsFile}";
+
   home = {
     packages = with pkgs; [
       breezeGtkPkg
@@ -85,8 +95,6 @@ in
             "${pkgs.glib.bin}/bin/gsettings"
           else
             "/usr/bin/gsettings";
-
-        colorScheme = if gtkconf.theme.name == "Breeze-Dark" then "prefer-dark" else "prefer-light";
 
         gsettingsDesktopSchemas = pkgs.gsettings-desktop-schemas;
 
