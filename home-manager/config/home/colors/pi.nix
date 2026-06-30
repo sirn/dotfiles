@@ -14,7 +14,6 @@ let
     let
       c = scheme.base16Colors;
       s = scheme.semantic;
-      tui = s.tui;
     in
     {
       "$schema" =
@@ -34,19 +33,19 @@ let
         white = c.normal.white;
         brightBlack = c.bright.black;
         brightWhite = c.bright.white;
-        accent = c.normal.cyan;
+        accent = s.accent.bg;
         secondary = s.secondary.bg;
         tertiary = s.tertiary.bg;
         outline = s.outline;
-        muted = tui.muted;
-        dim = tui.dim;
+        muted = s.muted;
+        dim = s.dim;
         # Surface backgrounds: lifted neutrals and subtle tints, per scheme.
-        surface = tui.surface;
-        surfaceDim = tui.recess;
-        successBg = tui.success;
-        errorBg = tui.error;
-        customBg = tui.surface; # neutral; label carries the color signal
-        purple = tui.label;
+        surface = s.surface.bg;
+        surfaceDim = s.recess.bg;
+        successBg = s.success.bg;
+        errorBg = s.error.bg;
+        customBg = s.surface.bg; # neutral; label carries the color signal
+        purple = s.label;
       };
       colors = {
         # Core UI
@@ -116,8 +115,8 @@ let
       };
       export = {
         pageBg = c.background;
-        cardBg = tui.surface;
-        infoBg = tui.surface;
+        cardBg = s.surface.bg;
+        infoBg = s.surface.bg;
       };
     };
 in

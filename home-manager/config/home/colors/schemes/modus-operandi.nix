@@ -50,14 +50,48 @@ in
       text = base16Colors.foreground;
     };
 
+    accent = {
+      bg = base16Colors.normal.cyan;
+      text = base16Colors.bright.white;
+    };
+
+    secondary = {
+      bg = getColor 25;
+      text = base16Colors.normal.black;
+    };
+
+    tertiary = {
+      bg = base16Colors.normal.magenta;
+      text = base16Colors.bright.white;
+    };
+
+    # Role
+
+    scrollbar = {
+      bg = base16Colors.scrollbar;
+      text = base16Colors.bright.white;
+    };
+
+    surface = {
+      bg = getColor 237;
+      text = base16Colors.foreground;
+    };
+
+    recess = {
+      bg = getColor 235;
+      text = base16Colors.foreground;
+    };
+
+    # Interaction
+
     inactive = {
       bg = base16Colors.bright.black;
       text = base16Colors.bright.white;
     };
 
-    scrollbar = {
-      bg = base16Colors.scrollbar;
-      text = base16Colors.bright.white;
+    hover = {
+      bg = getColor 19;
+      text = base16Colors.foreground;
     };
 
     focus = {
@@ -75,34 +109,28 @@ in
       text = base16Colors.bright.white;
     };
 
-    secondary = {
-      bg = getColor 25;
-      text = base16Colors.normal.black;
-    };
-
-    tertiary = {
-      bg = base16Colors.normal.magenta;
-      text = base16Colors.bright.white;
-    };
-
-    hover = {
-      bg = getColor 19;
+    success = {
+      bg = getColor 22;
       text = base16Colors.foreground;
     };
+
+    error = {
+      bg = getColor 52;
+      text = base16Colors.foreground;
+    };
+
+    # UI elements
 
     outline = base16Colors.selection;
     shadow = base16Colors.normal.black;
 
-    # TUI text tones and surfaces.
-    tui = {
-      muted = getColor 245; # secondary text
-      dim = getColor 239; # tertiary text
-      surface = getColor 237; # selection / message bg
-      recess = getColor 235; # tool pending bg (deeper than surface)
-      success = getColor 22; # green-tinted bg
-      error = getColor 52; # red-tinted bg
-      label = getColor 129; # purple accent
-    };
+    # Text tone
+
+    muted = getColor 245;
+    dim = getColor 239;
+    label = getColor 129;
+
+    # Special case: battery
 
     battery = {
       charging = {
