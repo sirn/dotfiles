@@ -18,6 +18,7 @@ in
       # Shell
       shell = {
         font_family = "sans-serif";
+        polkit_agent = true;
         settings_show_advanced = true;
         panel = {
           launcher_placement = "centered";
@@ -94,6 +95,12 @@ in
       # Dock
       dock = {
         enabled = false;
+      };
+
+      # Notification
+      notification = {
+        offset_x = 12;
+        offset_y = 12;
       };
 
       # Location
