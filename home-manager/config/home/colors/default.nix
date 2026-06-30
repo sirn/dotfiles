@@ -126,11 +126,13 @@ lib.mkMerge [
     home.colors.terminalThemeName = terminalThemeName;
   }
   (import ./claude-code.nix terminalArgs)
+  (import ./coord.nix desktopArgs)
   (import ./alacritty.nix terminalArgs)
   (import ./emacs.nix terminalArgs)
   (import ./foot.nix terminalArgs)
   (import ./fuzzel.nix desktopArgs)
   (import ./ghostty.nix terminalArgs)
+  (import ./jjui.nix terminalArgs)
   (import ./mako.nix desktopArgs)
   (import ./niri.nix desktopArgs)
   (import ./noctalia.nix desktopArgs)

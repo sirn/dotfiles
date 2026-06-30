@@ -1,3 +1,1 @@
-{ pkgs, ... }:
-
-{ home.packages = with pkgs; [ jjui ]; }
+{ programs.jjui.enable = true; }
