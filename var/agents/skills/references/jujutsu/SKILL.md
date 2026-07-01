@@ -12,6 +12,7 @@ Working copy is always a commit. Changes are first-class with stable IDs across 
 
 - **Local Commit Autonomy**: `jj describe`, `jj commit`, and `jj new` are allowed when they are part of the current requested task and stay local.
 - **User Authorization**: NEVER push (`jj git push`) or run destructive/history-rewriting operations (`jj edit`, `jj squash` across bookmarks/shared history, `jj split`, `jj rebase`, `jj abandon`, `jj undo`, `jj op restore`, bookmark moves/deletes) without explicit user confirmation. Routine local amends (`jj squash`, `jj squash --into @-`) do not need confirmation.
+- **Bookmark Creation**: NEVER run `jj bookmark create` unless the user explicitly asks for a bookmark. When the user does ask, create only the bookmark(s) they requested — do not create a new bookmark per commit unless the user explicitly asked for that.
 - **Logical Commits**: Group changes into logical steps; try to make each commit "usable" on its own.
 - **Commit + Advance**: Prefer `jj commit -m "msg"` when finalizing the current working-copy commit and moving on. This replaces the common `jj describe <id> -m "msg"` followed by `jj new <id>` sequence.
 - **Working Copy After Commit**: After `jj commit` or `jj new`, a new empty commit becomes `@`. This is expected jj behavior — do not attempt to remove or squash it away.
