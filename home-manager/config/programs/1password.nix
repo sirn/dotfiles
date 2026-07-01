@@ -15,10 +15,11 @@ let
       "${homeDirectory}/.1password/agent.sock";
 in
 {
+  imports = [ ./1password-cli.nix ];
+
   home.packages =
     with pkgs;
-    [ _1password-cli ]
-    ++ lib.optional (!pkgs.stdenv.isDarwin && !config.flatpak.enable) [ _1password-gui ];
+    lib.optional (!pkgs.stdenv.isDarwin && !config.flatpak.enable) [ _1password-gui ];
 
   programs.ssh.settings."*" = {
     "IdentityAgent" = lib.mkOverride 250 "\"${agentSocketPath}\"";

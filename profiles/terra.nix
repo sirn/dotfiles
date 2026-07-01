@@ -75,6 +75,9 @@
     imports = [
       ../home-manager/config/common.nix
       ../home-manager/config/common-linux.nix
+
+      # programs
+      ../home-manager/config/programs/1password-cli.nix
     ];
   };
 }
