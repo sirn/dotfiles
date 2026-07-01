@@ -107,7 +107,7 @@ in
     }
 
     ${lib.optionalString tmuxcfg.enable ''
-      # Open workspace in a tmux session.
+      # Open a workspace or project directory in a tmux session.
       # Use exec when outside tmux so detaching closes the terminal.
       # Don't exec when inside tmux or the pane will close on switch.
       #
@@ -121,7 +121,7 @@ in
       ggt() {
         local dir name
 
-        dir=$(repoman workspace list | "${fzyCmd}" -q "$*")
+        dir=$( { repoman workspace list; repoman list; } | "${fzyCmd}" -q "$*")
         if [ -z "$dir" ]; then
             return
         fi
@@ -161,7 +161,7 @@ in
     // lib.optionalAttrs tmuxcfg.enable {
       ggt = {
         body = ''
-          # Open workspace in a tmux session.
+          # Open a workspace or project directory in a tmux session.
           #
           # Use exec when outside tmux so detaching closes the terminal.
           # Don't exec when inside tmux or the pane will close on switch.
@@ -173,7 +173,7 @@ in
           # - Outside tmux: exec tmux_init → exec new-session → terminal closes on detach
           # - Inside tmux: run tmux_init → switch-client → return to shell, pane stays open
           #
-          set -l dir (repoman workspace list | ${fzyCmd} -q "$argv")
+          set -l dir (begin; repoman workspace list; repoman list; end | ${fzyCmd} -q "$argv")
           if test -z "$dir"
             return
           end
