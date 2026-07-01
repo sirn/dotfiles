@@ -25,7 +25,7 @@
         "ls"
         "read"
       ];
-      model = lib.mkDefault "claude-sonnet-4.6";
+      model = lib.mkDefault "claude-sonnet-5";
     };
   };
 }

@@ -22,7 +22,7 @@
         "ls"
         "read"
       ];
-      model = lib.mkDefault "claude-opus-4.7";
+      model = lib.mkDefault "gemini-3.1-pro-preview";
     };
   };
 }

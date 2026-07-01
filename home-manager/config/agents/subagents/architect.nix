@@ -24,7 +24,7 @@
         "ls"
         "read"
       ];
-      model = lib.mkDefault "claude-opus-4.7";
+      model = lib.mkDefault "claude-fable-5";
     };
   };
 }
