@@ -17,6 +17,8 @@ let
 
     exa-cli = (callPackage ./by-name/exa-cli/package.nix { });
 
+    portless = (callPackage ./by-name/portless/package.nix { });
+
     powerband = (callPackage ./by-name/powerband { });
 
     pi-vcc = (callPackage ./by-name/pi-vcc/package.nix { });
