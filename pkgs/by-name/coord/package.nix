@@ -9,15 +9,15 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "coord";
-  version = "0.4.1";
+  version = "0.4.3";
 
   src = fetchgit {
     url = "https://git.sr.ht/~sirn/coord";
     rev = "refs/tags/v${version}";
-    hash = "sha256-k0+70F7cMEgD+fQZUNZZI+CXBg+v8sAMZZzk0vBwRDw=";
+    hash = "sha256-hzEoWN2fyRRmNPPdm33cBupolo/6pMBJEb45oxHo+cs=";
   };
 
-  cargoHash = "sha256-1ycisGMPBJtx1RlA+5kK/LRg3xcHGqhZuV9RV2dNogA=";
+  cargoHash = "sha256-CZgNmFEEAQC3lQKXlGMNg7tQhhXoD8lcQUw+A81aIdY=";
 
   nativeBuildInputs = [ pkg-config ];
 
