@@ -25,6 +25,7 @@ in
     ./extensions/hm-subagent.nix
     ./extensions/hm-notify-turn-complete.nix
     ./extensions/hm-plan-mode.nix
+    ./extensions/hm-goal-mode.nix
     ./extensions/hm-remote-models.nix
     ./extensions/hm-simple-footer.nix
     ./extensions/hm-smart-compact.nix

@@ -141,6 +141,7 @@ export default function (pi: ExtensionAPI) {
           const statuses = footerData.getExtensionStatuses();
           const execMode = statuses.get("execution-mode") ?? null;
           const subCost = statuses.get("subagent-cost") ?? null;
+          const goalStatus = statuses.get("goal-status") ?? null;
 
           // Reuse cached footer when width and all dynamic inputs are unchanged.
           const sig = [
@@ -157,6 +158,7 @@ export default function (pi: ExtensionAPI) {
             compacted,
             execMode,
             subCost,
+            goalStatus,
           ].join("|");
           if (
             renderCache &&
@@ -166,13 +168,13 @@ export default function (pi: ExtensionAPI) {
             return renderCache.lines;
           }
 
-          // Line 1: cwd | execution-mode.
+          // Line 1: cwd | statuses.
           let l1Left = theme.fg("dim", formatCwd(ctx.cwd));
 
-          let l1Right = "";
-          if (execMode) {
-            l1Right = theme.fg("accent", execMode);
-          }
+          const l1RightParts: string[] = [];
+          if (execMode) l1RightParts.push(theme.fg("accent", execMode));
+          if (goalStatus) l1RightParts.push(theme.fg("muted", goalStatus));
+          const l1Right = l1RightParts.join(" ");
 
           // Line 2: tokens cost (subcost) ctx (compact) | model.
           const parts: string[] = [];
