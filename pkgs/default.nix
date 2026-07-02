@@ -43,6 +43,8 @@ let
 
     lsp-cli = (callPackage ./by-name/lsp-cli/package.nix { });
 
+    localterm = (callPackage ./by-name/localterm/package.nix { });
+
     wrapped-uv = (callPackage ./by-name/wrapped-uv/wrapped.nix { });
   };
 
