@@ -51,3 +51,6 @@
 - Review existing dependencies before adding new packages or libraries.
 - Test public-facing behavior; avoid targeting private implementation details unless externally observable.
 - Do not decorate comments (e.g., write `// Log commands` instead of `// --- Log commands ---`).
+- Preserve exact spelling of domains, URLs, paths, and identifiers; never swap dots (`.`) and dashes (`-`) (e.g. `src-code.example.com` is not `src-code-example.com`).
+- Verify the literal input string against the original source when a write or path operation fails, before assuming a tool or permission failure.
+- Do not work around failures with `cat`, heredocs, or other shell writes; dedicated tools are correct, but the input string is wrong.
