@@ -679,6 +679,13 @@
           };
         };
 
+        yolo = {
+          tools = {
+            edit = true;
+            write = true;
+          };
+        };
+
         plan = forbidsWrite;
 
         subagent = { };

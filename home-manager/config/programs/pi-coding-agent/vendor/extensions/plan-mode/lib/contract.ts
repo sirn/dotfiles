@@ -1,12 +1,26 @@
-// Contract shared with shell-policy/lib/execution-mode.ts — keep EXECUTION_MODE_ENTRY,
-// MODE_EDIT, and policyOverride shape in sync across both extensions.
+// Contract shared with shell-policy/lib/execution-mode.ts — keep
+// EXECUTION_MODE_ENTRY, MODE_EDIT, MODE_YOLO, modeLabel, and policyOverride
+// shape in sync across both extensions.
 import type {
   ExtensionAPI,
   ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
 
 export const MODE_EDIT = "edit";
+export const MODE_PLAN = "plan";
+export const MODE_YOLO = "yolo";
 export const EXECUTION_MODE_ENTRY = "execution-mode";
+
+export function modeLabel(mode: string): string | undefined {
+  switch (mode) {
+    case MODE_PLAN:
+      return "\uF4A0 plan mode";
+    case MODE_YOLO:
+      return "\ueb44 yolo mode";
+    default:
+      return undefined;
+  }
+}
 
 export function getMode(ctx: ExtensionContext): string {
   const envModes = (process.env.PI_EXECUTION_MODE ?? "")

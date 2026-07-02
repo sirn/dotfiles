@@ -22,8 +22,14 @@ import type {
   ExtensionAPI,
   ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
-import { getExecutionMode } from "./lib/execution-mode.js";
-import { EXT_DIR, PI_AGENT_DIR } from "./lib/paths.js";
+import {
+  EXECUTION_MODE_ENTRY,
+  MODE_EDIT,
+  MODE_YOLO,
+  getExecutionMode,
+  modeLabel,
+} from "./lib/execution-mode.js";
+import { EXT_DIR, PI_AGENT_DIR, PROMPTS_DIR } from "./lib/paths.js";
 import { buildPathDiffHint } from "./lib/path-hint.js";
 import * as fs from "node:fs";
 import * as path from "node:path";
@@ -63,6 +69,27 @@ function logConfirmNeeded(command: string, result: EvalResult): void {
     };
     fs.mkdirSync(COMMANDS_LOG_DIR, { recursive: true });
     // Enforce restrictive perms even if dir/file already existed
+    fs.chmodSync(COMMANDS_LOG_DIR, 0o700);
+    const logPath = path.join(COMMANDS_LOG_DIR, "commands.log");
+    fs.appendFileSync(logPath, JSON.stringify(entry) + "\n", {
+      mode: 0o600,
+      encoding: "utf-8",
+    });
+    fs.chmodSync(logPath, 0o600);
+  } catch {
+    // Best-effort; never block the tool_call handler
+  }
+}
+
+function logYoloApproved(command: string): void {
+  try {
+    const entry = {
+      ts: new Date().toISOString(),
+      command: command,
+      decidedBy: "yolo",
+      match: undefined,
+    };
+    fs.mkdirSync(COMMANDS_LOG_DIR, { recursive: true });
     fs.chmodSync(COMMANDS_LOG_DIR, 0o700);
     const logPath = path.join(COMMANDS_LOG_DIR, "commands.log");
     fs.appendFileSync(logPath, JSON.stringify(entry) + "\n", {
@@ -411,7 +438,32 @@ function formatPolicyMatch(match: EvalResult["match"]): string {
   return `${match.category}: ${match.entry.match}`;
 }
 
+const YOLO_PROMPT_FALLBACK = `<yolo-mode>
+YOLO mode is active. All shell commands — including ones normally denied or
+requiring confirmation — will run without prompts. Execute freely and
+proactively, but still exercise sound judgment; do not run clearly destructive
+or pointless commands.
+</yolo-mode>`;
+
+const promptCache = new Map<string, string>();
+function loadPrompt(name: string): string | null {
+  const cached = promptCache.get(name);
+  if (cached !== undefined) return cached;
+  try {
+    const text = fs.readFileSync(path.join(PROMPTS_DIR, name), "utf-8");
+    promptCache.set(name, text);
+    return text;
+  } catch {
+    return null;
+  }
+}
+function loadYoloPrompt(): string {
+  return loadPrompt("yolo-mode.md") ?? YOLO_PROMPT_FALLBACK;
+}
+
 export default function (pi: ExtensionAPI) {
+  const YOLO_MODE_CONTEXT = "yolo-mode-context";
+
   function isPathAllowed(
     toolName: string,
     targetPath: string | undefined,
@@ -443,6 +495,15 @@ export default function (pi: ExtensionAPI) {
 
   pi.on("tool_call", async (event, ctx) => {
     const executionMode = getExecutionMode(ctx);
+    if (executionMode.mode === MODE_YOLO) {
+      if (
+        event.toolName === "bash" &&
+        typeof event.input?.command === "string"
+      ) {
+        logYoloApproved(event.input.command);
+      }
+      return undefined;
+    }
     const { policyOverride } = executionMode;
     const modePolicies = executionMode.modes
       .map((mode) => globalUnified.modes?.[mode])
@@ -563,6 +624,88 @@ export default function (pi: ExtensionAPI) {
       savedPreFilterTools.filter((name) => !disabledTools.has(name)),
     );
   }
+  pi.registerCommand("yolo", {
+    description: "Toggle YOLO mode: bypass all command gating",
+    getArgumentCompletions: (prefix: string) => {
+      const token = prefix.trimStart();
+      if (token.includes(" ")) return null;
+      const options = [
+        { value: "on", label: "on", description: "Enable YOLO mode" },
+        { value: "off", label: "off", description: "Disable YOLO mode" },
+      ];
+      const filtered = options.filter((o) => o.value.startsWith(token));
+      return filtered.length > 0 ? filtered : null;
+    },
+    handler: async (args, ctx) => {
+      const raw = (args ?? "").trim().toLowerCase();
+      const current = getExecutionMode(ctx).mode;
+      let target: string;
+      if (raw === "on") {
+        target = MODE_YOLO;
+      } else if (raw === "off") {
+        if (current !== MODE_YOLO) {
+          ctx.ui.notify("Not in YOLO mode; nothing to disable.", "info");
+          return;
+        }
+        target = MODE_EDIT;
+      } else if (raw === "") {
+        // Pure toggle (whitespace or no args)
+        target = current === MODE_YOLO ? MODE_EDIT : MODE_YOLO;
+      } else {
+        ctx.ui.notify(
+          "Unknown argument. Use /yolo, /yolo on, or /yolo off.",
+          "error",
+        );
+        return;
+      }
+
+      if (target === current) {
+        ctx.ui.notify(
+          target === MODE_YOLO
+            ? "Already in YOLO mode."
+            : "Already in normal mode.",
+          "info",
+        );
+        return;
+      }
+
+      pi.appendEntry(EXECUTION_MODE_ENTRY, { mode: target });
+      ctx.ui.setStatus("execution-mode", modeLabel(target));
+      if (target === MODE_YOLO) {
+        ctx.ui.notify(
+          "YOLO mode enabled: all command gating bypassed (including deny).",
+          "warning",
+        );
+      } else {
+        ctx.ui.notify("YOLO mode disabled. Command gating resumed.", "info");
+      }
+    },
+  });
+
+  pi.on("before_agent_start", async (_event, ctx) => {
+    if (getExecutionMode(ctx).mode !== MODE_YOLO) return;
+
+    // Dedupe: walking backwards from the leaf, the first execution-mode entry
+    // is the current mode (already verified yolo above). If a yolo-mode-context
+    // exists after it (i.e. we hit one before any execution-mode entry), we've
+    // already injected for this stretch — skip. Otherwise inject.
+    const entries = ctx.sessionManager.getBranch();
+    for (let i = entries.length - 1; i >= 0; i--) {
+      const entry = entries[i];
+      const ct = (entry as { customType?: string }).customType;
+      if (ct === YOLO_MODE_CONTEXT) return; // already injected
+      if (ct === EXECUTION_MODE_ENTRY) break; // reached current mode boundary
+    }
+
+    return {
+      message: {
+        customType: YOLO_MODE_CONTEXT,
+        content: loadYoloPrompt(),
+        display: false,
+      },
+    };
+  });
+
   pi.on("session_start", (_event, ctx) => updateActiveTools(ctx));
   pi.on("before_agent_start", (_event, ctx) => updateActiveTools(ctx));
   pi.on("agent_end", () => {

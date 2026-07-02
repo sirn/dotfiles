@@ -10,9 +10,11 @@ import * as fsp from "node:fs/promises";
 import * as path from "node:path";
 import {
   MODE_EDIT,
+  MODE_PLAN,
   getMode,
   setMode,
   EXECUTION_MODE_ENTRY,
+  modeLabel,
 } from "./lib/contract.js";
 import { PLAN_DIR, PROMPTS_DIR } from "./lib/paths.js";
 import { memoizeByStat } from "./lib/cache.js";
@@ -26,13 +28,8 @@ async function fileExists(p: string): Promise<boolean> {
   }
 }
 
-export const MODE_PLAN = "plan";
-
 function updatePlanModeStatus(ctx: ExtensionContext): void {
-  ctx.ui.setStatus(
-    "execution-mode",
-    getMode(ctx) === MODE_PLAN ? "\uF4A0 plan mode" : undefined,
-  );
+  ctx.ui.setStatus("execution-mode", modeLabel(getMode(ctx)));
 }
 
 type ModelSelection = { provider: string; modelId: string };

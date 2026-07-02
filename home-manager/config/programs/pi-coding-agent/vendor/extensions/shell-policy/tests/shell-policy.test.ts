@@ -2657,6 +2657,29 @@ test("mergeEvaluationPolicies - mode deny overrides default allow for same comma
 
 // ==================== END MERGE EVALUATION POLICIES TESTS ====================
 
+// ==================== MODE LABEL TESTS ====================
+console.log("\n=== Mode Label Tests ===");
+
+import { modeLabel } from "../lib/execution-mode.ts";
+
+test("modeLabel(plan) returns plan mode label", () => {
+  assertEquals(modeLabel("plan"), "\uF4A0 plan mode");
+});
+
+test("modeLabel(yolo) returns yolo mode label", () => {
+  assertEquals(modeLabel("yolo"), "\ueb44 yolo mode");
+});
+
+test("modeLabel(edit) returns undefined", () => {
+  assertEquals(modeLabel("edit"), undefined);
+});
+
+test("modeLabel(unknown) returns undefined", () => {
+  assertEquals(modeLabel("unknown"), undefined);
+});
+
+// ==================== END MODE LABEL TESTS ====================
+
 // Tests run inline above; print summary
 console.log("\n=== Summary ===");
 console.log(`${stats.passed} passed, ${stats.failed} failed`);

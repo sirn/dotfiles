@@ -41,6 +41,23 @@ let
   # Auto-mode prompt and context files
   autoModeDir = ../vendor/prompts/auto-mode;
 
+  # YOLO / shell-policy prompt files
+  shellPolicyPromptsDir = ../vendor/prompts/shell-policy;
+  shellPolicyPromptEntries = builtins.listToAttrs (
+    builtins.map
+      (
+        name:
+        lib.nameValuePair ".pi/agent/custom/shell-policy/prompts/${name}" {
+          text = builtins.readFile (shellPolicyPromptsDir + "/${name}");
+        }
+      )
+      (
+        builtins.filter (n: builtins.match ".*\\.md$" n != null) (
+          builtins.attrNames (builtins.readDir shellPolicyPromptsDir)
+        )
+      )
+  );
+
   policyAutoModePrompt = builtins.readFile (autoModeDir + "/prompt.md");
   policyAutoModeExtraCommands = lib.strings.trim agentsCfg.commandContext;
   policyAutoModeContextFiles = builtins.listToAttrs (
@@ -70,5 +87,6 @@ in
   // policyAutoModeContextFileEntries
   // {
     ".pi/agent/extensions/hm-shell-policy".source = ../vendor/extensions/shell-policy;
-  };
+  }
+  // shellPolicyPromptEntries;
 }
