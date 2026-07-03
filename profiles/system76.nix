@@ -126,6 +126,7 @@
         # programs
         ../home-manager/config/programs/bitwarden.nix
         ../home-manager/config/programs/ghostty.nix
+        ../home-manager/config/programs/helium.nix
         ../home-manager/config/programs/imagemagick.nix
         ../home-manager/config/programs/mcp.nix
         ../home-manager/config/programs/obsidian.nix

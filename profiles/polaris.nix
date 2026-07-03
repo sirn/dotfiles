@@ -117,6 +117,7 @@
         ../home-manager/config/programs/brightnessctl.nix
         ../home-manager/config/programs/ffmpeg.nix
         ../home-manager/config/programs/ghostty.nix
+        ../home-manager/config/programs/helium.nix
         ../home-manager/config/programs/imagemagick.nix
         ../home-manager/config/programs/intellij.nix
         ../home-manager/config/programs/mpv.nix

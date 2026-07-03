@@ -51,6 +51,8 @@ let
   };
 
   linuxPackages = commonPackages // {
+    helium = (callPackage ./by-name/helium/package.nix { });
+
     udev-forwarder = (callPackage ./by-name/udev-forwarder { });
   };
 in
