@@ -64,6 +64,20 @@ Flag all code hygiene issues according to the sections below.
   - "Replaces the old x system"
   - "Migration from y" where the referenced component no longer exists
 
+- Comments that reference code, symbols, or constructs that no longer exist in the codebase
+
+  Example:
+  - "// replaced the old foo() call" when foo() is gone and the comment only describes what was removed
+  - "// was previously bar, now baz" where bar no longer appears anywhere
+
+- Comments that narrate the editing process or refer to our conversation/interaction rather than the code itself
+
+  Example:
+  - "// replaced x with y" after the user asked to replace x with y
+  - "// removed the previous loop" 
+  - "// updated to use new API as discussed"
+  These comments describe the change history, not the code—remove them.
+
 ### Coding artifact
 
 - Adhoc debug `print()`/`console.log()`/etc.
@@ -125,5 +139,5 @@ Report to the user:
 - Do not rewrite comments; only remove "what"-comments and fix obvious typos.
 - Restrict fixes to the diff scope unless broader cleanup is explicitly requested.
 - Preserve purposeful debug logging, clear TODOs, and intentional commented-out code.
-- Remove transitional or legacy comments unless they are contextual TODOs.
+- Remove transitional, legacy, and conversation-narrating comments (change-history notes like "replaced x with y") unless they are contextual TODOs.
 - Defer to the user on ambiguous or potentially intentional code.
