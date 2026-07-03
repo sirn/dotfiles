@@ -25,8 +25,9 @@
       package = pkgs.tlp-pd;
     };
     settings = {
-      CPU_ENERGY_PERF_POLICY_ON_BAT = "balance_power";
       CPU_HWP_DYN_BOOST_ON_SAV = 0;
+      PLATFORM_PROFILE_ON_AC = "balanced";
+      PLATFORM_PROFILE_ON_BAT = "low-power";
       RUNTIME_PM_ON_BAT = "auto";
       SATA_LINKPWR_ON_BAT = "min_power";
       USB_AUTOSUSPEND = 1;
