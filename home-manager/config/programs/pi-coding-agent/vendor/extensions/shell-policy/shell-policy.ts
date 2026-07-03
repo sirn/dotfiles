@@ -81,13 +81,15 @@ function logConfirmNeeded(command: string, result: EvalResult): void {
   }
 }
 
-function logYoloApproved(command: string): void {
+function logYoloApproved(command: string, result?: EvalResult): void {
   try {
     const entry = {
       ts: new Date().toISOString(),
       command: command,
       decidedBy: "yolo",
-      match: undefined,
+      match: result?.match
+        ? { [result.match.category]: result.match.entry.match }
+        : undefined,
     };
     fs.mkdirSync(COMMANDS_LOG_DIR, { recursive: true });
     fs.chmodSync(COMMANDS_LOG_DIR, 0o700);
@@ -439,10 +441,12 @@ function formatPolicyMatch(match: EvalResult["match"]): string {
 }
 
 const YOLO_PROMPT_FALLBACK = `<yolo-mode>
-YOLO mode is active. All shell commands — including ones normally denied or
-requiring confirmation — will run without prompts. Execute freely and
-proactively, but still exercise sound judgment; do not run clearly destructive
-or pointless commands.
+YOLO mode is active. Non-destructive shell commands are auto-approved; do
+not ask for permission to run them. Think twice before running anything
+destructive (e.g. wiping the working tree, force-pushing, deleting user
+data) unless that is explicitly the task. Execute freely and proactively.
+All other agent guidelines (scope, safety, editing quality) still apply.
+Every auto-approved command is audit-logged.
 </yolo-mode>`;
 
 const promptCache = new Map<string, string>();
@@ -495,15 +499,7 @@ export default function (pi: ExtensionAPI) {
 
   pi.on("tool_call", async (event, ctx) => {
     const executionMode = getExecutionMode(ctx);
-    if (executionMode.mode === MODE_YOLO) {
-      if (
-        event.toolName === "bash" &&
-        typeof event.input?.command === "string"
-      ) {
-        logYoloApproved(event.input.command);
-      }
-      return undefined;
-    }
+    const yoloActive = executionMode.modes.includes(MODE_YOLO);
     const { policyOverride } = executionMode;
     const modePolicies = executionMode.modes
       .map((mode) => globalUnified.modes?.[mode])
@@ -570,7 +566,7 @@ export default function (pi: ExtensionAPI) {
 
     const result = evaluate(command, mergedPolicy);
 
-    if (result.action === "ask" || result.action === "default") {
+    if (!yoloActive && (result.action === "ask" || result.action === "default")) {
       logConfirmNeeded(command, result);
     }
 
@@ -581,10 +577,18 @@ export default function (pi: ExtensionAPI) {
           reason: `Command blocked by safety policy (${formatPolicyMatch(result.match)}): "${getCommandSummary(command)}"`,
         };
       case "ask":
+        if (yoloActive) {
+          logYoloApproved(command, result);
+          return undefined;
+        }
         return await confirmCommand(command, ctx, result);
       case "allow":
         return undefined;
       case "default":
+        if (yoloActive) {
+          logYoloApproved(command, result);
+          return undefined;
+        }
         return await confirmCommand(command, ctx, result);
     }
   });
@@ -625,7 +629,7 @@ export default function (pi: ExtensionAPI) {
     );
   }
   pi.registerCommand("yolo", {
-    description: "Toggle YOLO mode: bypass all command gating",
+    description: "Toggle YOLO mode: auto-approve non-destructive commands",
     getArgumentCompletions: (prefix: string) => {
       const token = prefix.trimStart();
       if (token.includes(" ")) return null;
@@ -673,7 +677,7 @@ export default function (pi: ExtensionAPI) {
       ctx.ui.setStatus("execution-mode", modeLabel(target));
       if (target === MODE_YOLO) {
         ctx.ui.notify(
-          "YOLO mode enabled: all command gating bypassed (including deny).",
+          "YOLO mode enabled: non-destructive commands auto-approved.",
           "warning",
         );
       } else {
