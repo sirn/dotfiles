@@ -125,12 +125,15 @@
 
         # programs
         ../home-manager/config/programs/bitwarden.nix
-        ../home-manager/config/services/coord.nix
         ../home-manager/config/programs/ghostty.nix
         ../home-manager/config/programs/imagemagick.nix
         ../home-manager/config/programs/mcp.nix
         ../home-manager/config/programs/obsidian.nix
         ../home-manager/config/programs/sublime-text.nix
+        ../home-manager/config/programs/vivaldi.nix
+
+        # services
+        ../home-manager/config/services/coord.nix
       ];
 
       home.colors.themeName = "nord";

@@ -115,7 +115,6 @@
         # programs
         ../home-manager/config/programs/1password.nix
         ../home-manager/config/programs/brightnessctl.nix
-        ../home-manager/config/services/coord.nix
         ../home-manager/config/programs/ffmpeg.nix
         ../home-manager/config/programs/ghostty.nix
         ../home-manager/config/programs/imagemagick.nix
@@ -123,6 +122,8 @@
         ../home-manager/config/programs/mpv.nix
         ../home-manager/config/programs/sublime-text.nix
         ../home-manager/config/programs/virt-manager.nix
+        ../home-manager/config/programs/vivaldi.nix
+        ../home-manager/config/services/coord.nix
         ../home-manager/config/programs/yt-dlp.nix
       ];
 
