@@ -1,4 +1,200 @@
-{ config, ... }: {
+{ config, ... }:
+let
+  destructiveCommands = [
+    "chmod"
+    "chown"
+    "dd"
+    {
+      match = "env";
+      mode = "exact";
+    }
+    "fdisk"
+    "git commit"
+    "jj abandon"
+    "jj bookmark delete"
+    "jj bookmark move"
+    "jj bookmark set"
+    "jj edit"
+    "jj op restore"
+    "jj rebase"
+    "jj squash"
+    "jj undo"
+    "kubectl apply"
+    "kubectl create"
+    "kubectl delete"
+    "kubectl exec"
+    "kubectl run"
+    "mkfs"
+    "nix run"
+    {
+      match = "printenv";
+      mode = "exact";
+    }
+    "rm"
+    "shred"
+    # HTTP method flags (-X / --request / --method) — any command
+    {
+      match = "*:-X POST";
+      mode = "args";
+    }
+    {
+      match = "*:-XPOST";
+      mode = "args";
+    }
+    {
+      match = "*:--request POST";
+      mode = "args";
+    }
+    {
+      match = "*:--request=POST";
+      mode = "args";
+    }
+    {
+      match = "*:-X PUT";
+      mode = "args";
+    }
+    {
+      match = "*:-XPUT";
+      mode = "args";
+    }
+    {
+      match = "*:--request PUT";
+      mode = "args";
+    }
+    {
+      match = "*:--request=PUT";
+      mode = "args";
+    }
+    {
+      match = "*:-X DELETE";
+      mode = "args";
+    }
+    {
+      match = "*:-XDELETE";
+      mode = "args";
+    }
+    {
+      match = "*:--request DELETE";
+      mode = "args";
+    }
+    {
+      match = "*:--request=DELETE";
+      mode = "args";
+    }
+    {
+      match = "*:-X PATCH";
+      mode = "args";
+    }
+    {
+      match = "*:-XPATCH";
+      mode = "args";
+    }
+    {
+      match = "*:--request PATCH";
+      mode = "args";
+    }
+    {
+      match = "*:--request=PATCH";
+      mode = "args";
+    }
+    {
+      match = "*:--method DELETE";
+      mode = "args";
+    }
+    {
+      match = "*:--method=DELETE";
+      mode = "args";
+    }
+    {
+      match = "*:--method PATCH";
+      mode = "args";
+    }
+    {
+      match = "*:--method=PATCH";
+      mode = "args";
+    }
+    {
+      match = "*:--method POST";
+      mode = "args";
+    }
+    {
+      match = "*:--method=POST";
+      mode = "args";
+    }
+    {
+      match = "*:--method PUT";
+      mode = "args";
+    }
+    {
+      match = "*:--method=PUT";
+      mode = "args";
+    }
+    # curl: data-sending flags (implicitly POST)
+    {
+      match = "curl:-d";
+      mode = "args";
+    }
+    {
+      match = "curl:--data";
+      mode = "args";
+    }
+    {
+      match = "curl:--data-binary";
+      mode = "args";
+    }
+    {
+      match = "curl:--data-raw";
+      mode = "args";
+    }
+    {
+      match = "curl:--data-urlencode";
+      mode = "args";
+    }
+    {
+      match = "curl:-F";
+      mode = "args";
+    }
+    {
+      match = "curl:--form";
+      mode = "args";
+    }
+    {
+      match = "curl:--form-string";
+      mode = "args";
+    }
+    # curl: upload flag (implicitly PUT)
+    {
+      match = "curl:-T";
+      mode = "args";
+    }
+    {
+      match = "curl:--upload-file";
+      mode = "args";
+    }
+    # gh api: mutation flags
+    {
+      match = "gh api:--input";
+      mode = "args";
+    }
+    {
+      match = "gh api:-f";
+      mode = "args";
+    }
+    {
+      match = "gh api:--field";
+      mode = "args";
+    }
+    {
+      match = "gh api:-F";
+      mode = "args";
+    }
+    {
+      match = "gh api:--raw-field";
+      mode = "args";
+    }
+  ];
+in
+{
   agents.permissions = {
     default = {
       tools = {
@@ -213,199 +409,7 @@
         "yarn list"
       ];
 
-      commands.ask = [
-        "chmod"
-        "chown"
-        "dd"
-        {
-          match = "env";
-          mode = "exact";
-        }
-        "fdisk"
-        "git commit"
-        "jj abandon"
-        "jj bookmark delete"
-        "jj bookmark move"
-        "jj bookmark set"
-        "jj edit"
-        "jj op restore"
-        "jj rebase"
-        "jj squash"
-        "jj undo"
-        "kubectl apply"
-        "kubectl create"
-        "kubectl delete"
-        "kubectl exec"
-        "kubectl run"
-        "mkfs"
-        "nix run"
-        {
-          match = "printenv";
-          mode = "exact";
-        }
-        "rm"
-        "shred"
-        # HTTP method flags (-X / --request / --method) — any command
-        {
-          match = "*:-X POST";
-          mode = "args";
-        }
-        {
-          match = "*:-XPOST";
-          mode = "args";
-        }
-        {
-          match = "*:--request POST";
-          mode = "args";
-        }
-        {
-          match = "*:--request=POST";
-          mode = "args";
-        }
-        {
-          match = "*:-X PUT";
-          mode = "args";
-        }
-        {
-          match = "*:-XPUT";
-          mode = "args";
-        }
-        {
-          match = "*:--request PUT";
-          mode = "args";
-        }
-        {
-          match = "*:--request=PUT";
-          mode = "args";
-        }
-        {
-          match = "*:-X DELETE";
-          mode = "args";
-        }
-        {
-          match = "*:-XDELETE";
-          mode = "args";
-        }
-        {
-          match = "*:--request DELETE";
-          mode = "args";
-        }
-        {
-          match = "*:--request=DELETE";
-          mode = "args";
-        }
-        {
-          match = "*:-X PATCH";
-          mode = "args";
-        }
-        {
-          match = "*:-XPATCH";
-          mode = "args";
-        }
-        {
-          match = "*:--request PATCH";
-          mode = "args";
-        }
-        {
-          match = "*:--request=PATCH";
-          mode = "args";
-        }
-        {
-          match = "*:--method DELETE";
-          mode = "args";
-        }
-        {
-          match = "*:--method=DELETE";
-          mode = "args";
-        }
-        {
-          match = "*:--method PATCH";
-          mode = "args";
-        }
-        {
-          match = "*:--method=PATCH";
-          mode = "args";
-        }
-        {
-          match = "*:--method POST";
-          mode = "args";
-        }
-        {
-          match = "*:--method=POST";
-          mode = "args";
-        }
-        {
-          match = "*:--method PUT";
-          mode = "args";
-        }
-        {
-          match = "*:--method=PUT";
-          mode = "args";
-        }
-        # curl: data-sending flags (implicitly POST)
-        {
-          match = "curl:-d";
-          mode = "args";
-        }
-        {
-          match = "curl:--data";
-          mode = "args";
-        }
-        {
-          match = "curl:--data-binary";
-          mode = "args";
-        }
-        {
-          match = "curl:--data-raw";
-          mode = "args";
-        }
-        {
-          match = "curl:--data-urlencode";
-          mode = "args";
-        }
-        {
-          match = "curl:-F";
-          mode = "args";
-        }
-        {
-          match = "curl:--form";
-          mode = "args";
-        }
-        {
-          match = "curl:--form-string";
-          mode = "args";
-        }
-        # curl: upload flag (implicitly PUT)
-        {
-          match = "curl:-T";
-          mode = "args";
-        }
-        {
-          match = "curl:--upload-file";
-          mode = "args";
-        }
-        # gh api: mutation flags
-        {
-          match = "gh api:--input";
-          mode = "args";
-        }
-        {
-          match = "gh api:-f";
-          mode = "args";
-        }
-        {
-          match = "gh api:--field";
-          mode = "args";
-        }
-        {
-          match = "gh api:-F";
-          mode = "args";
-        }
-        {
-          match = "gh api:--raw-field";
-          mode = "args";
-        }
-      ];
+      commands.ask = destructiveCommands;
 
       commands.deny = [
         "gh issue create"
@@ -646,7 +650,7 @@
             edit = false;
             write = false;
           };
-          commands.deny = [
+          commands.deny = destructiveCommands ++ [
             "cp"
             "ln"
             "mkdir"
