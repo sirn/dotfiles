@@ -131,7 +131,6 @@
         ../home-manager/config/programs/mcp.nix
         ../home-manager/config/programs/obsidian.nix
         ../home-manager/config/programs/sublime-text.nix
-        ../home-manager/config/programs/vivaldi.nix
 
         # services
         ../home-manager/config/services/coord.nix
