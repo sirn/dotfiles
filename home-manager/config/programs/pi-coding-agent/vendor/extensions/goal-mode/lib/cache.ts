@@ -1,7 +1,7 @@
 /**
  * Minimal, dependency-free caching helper for the goal-mode extension.
  *
- * Invalidation uses Option B: stat (mtime + size) AND a content hash that is
+ * Invalidation uses Option B: stat (mtime) AND a content hash that is
  * recomputed on every freshness check, so edits the stat did not surface
  * (same-length swaps, coarse mtime) still invalidate the cache.
  *
