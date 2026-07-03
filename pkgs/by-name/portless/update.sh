@@ -33,8 +33,4 @@ jq -n \
   --arg srcHash "$src_hash" \
   '{version: $version, srcHash: $srcHash}' >"$sources_file"
 
-echo "Verifying build..."
-
-nix build --no-link "path:${repo_root}#portless"
-
 echo "Done. Updated to $version"

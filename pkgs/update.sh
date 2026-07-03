@@ -1,85 +1,91 @@
 #!/usr/bin/env nix-shell
-#!nix-shell -i bash -p nix-update cacert ncurses
+#!nix-shell -i bash --packages coreutils nix cacert
 set -euo pipefail
 
-BASE_DIR=$(
-  cd "$(dirname "$0")/.."
-  pwd -P
-)
-
-cd "$BASE_DIR"
-DEBUG=${DEBUG:-0}
-
-c_blue=$(tput setaf 4 2>/dev/null || true)
-c_bold=$(tput bold 2>/dev/null || true)
-c_yellow=$(tput setaf 3 2>/dev/null || true)
-c_red=$(tput setaf 1 2>/dev/null || true)
-c_reset=$(tput sgr0 2>/dev/null || true)
-c_white=$(tput setaf 7 2>/dev/null || true)
-
-_log_error() {
-  printf >&2 '%s[ERROR]%s %s\n' \
-    "$c_red" \
-    "$c_reset" \
-    "$*"
-}
-
-_log_debug() {
-  if [ "$DEBUG" = "1" ] || [ "$DEBUG" = "true" ]; then
-    printf >&2 '%s[DEBUG]%s %s\n' \
-      "$c_yellow" \
-      "$c_reset" \
-      "$*"
-  fi
-}
-
-_log_info() {
-  printf >&2 '%s[INFO]%s %s\n' \
-    "$c_blue" \
-    "$c_reset" \
-    "$*"
-}
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
 if [ -n "${NIX_SSL_CERT_FILE:-}" ] && [ -f "${NIX_SSL_CERT_FILE}" ]; then
   export SSL_CERT_FILE="${NIX_SSL_CERT_FILE}"
-  export NPM_CONFIG_CAFILE="${NIX_SSL_CERT_FILE}"
-  _log_debug "Using CA bundle: ${NIX_SSL_CERT_FILE}"
 fi
 
-_cmd() {
-  _log_debug "Running command: $*"
-  "$@"
+c_blue=$(tput setaf 4 2>/dev/null || true)
+c_green=$(tput setaf 2 2>/dev/null || true)
+c_yellow=$(tput setaf 3 2>/dev/null || true)
+c_red=$(tput setaf 1 2>/dev/null || true)
+c_reset=$(tput sgr0 2>/dev/null || true)
+
+log_info() {
+  printf '%s[INFO]%s %s\n' "$c_blue" "$c_reset" "$*"
 }
 
-_update() {
-  _cmd nix-shell "$(nix-instantiate --find-file nixpkgs)/maintainers/scripts/update.nix" \
-    --impure \
-    --arg include-overlays '(import ./. { }).overlays' \
-    "$@"
+log_ok() {
+  printf '%s[OK]%s   %s\n' "$c_green" "$c_reset" "$*"
 }
 
-main() {
-  if [ ! -d "$BASE_DIR/.git" ]; then
-    _log_error "Needs to be run in a Git project"
+log_skip() {
+  printf '%s[SKIP]%s %s\n' "$c_yellow" "$c_reset" "$*"
+}
+
+log_err() {
+  printf '%s[ERR]%s  %s\n' "$c_red" "$c_reset" "$*" >&2
+}
+
+# Discover all update.sh scripts under pkgs/by-name/
+scripts=()
+for f in "$script_dir"/by-name/*/update.sh; do
+  [ -f "$f" ] && scripts+=("$f")
+done
+
+if [ ${#scripts[@]} -eq 0 ]; then
+  log_err "No update.sh scripts found under $script_dir/by-name/"
+  exit 1
+fi
+
+# Allow filtering by package name: pkgs/update.sh coord repoman
+if [ "$#" -gt 0 ]; then
+  filtered=()
+  for f in "${scripts[@]}"; do
+    pkg=$(basename "$(dirname "$f")")
+    for arg in "$@"; do
+      if [ "$pkg" = "$arg" ]; then
+        filtered+=("$f")
+        break
+      fi
+    done
+  done
+  if [ ${#filtered[@]} -eq 0 ]; then
+    log_err "No matching packages for: $*"
+    log_info "Available: $(for f in "${scripts[@]}"; do basename "$(dirname "$f")"; done | tr '\n' ' ')"
     exit 1
   fi
+  scripts=("${filtered[@]}")
+fi
 
-  if ! command -v nix >/dev/null; then
-    _log_error "Needs to be run in a Nix environment"
-    exit 1
+log_info "Running ${#scripts[@]} update script(s)..."
+
+failed=()
+for f in "${scripts[@]}"; do
+  pkg=$(basename "$(dirname "$f")")
+  # Run via the script's shebang (nix-shell) by executing it directly,
+  # not via `bash`, so nix-shell packages (nodejs, jq, etc.) are available.
+  if "$f" >/tmp/update-$pkg.log 2>&1; then
+    log_ok "$pkg"
+  else
+    # Check if it was just "already at latest" — that's OK
+    if grep -q "Already at latest" /tmp/update-$pkg.log 2>/dev/null; then
+      log_ok "$pkg (already at latest)"
+    else
+      log_err "$pkg (see /tmp/update-$pkg.log)"
+      cat /tmp/update-$pkg.log >&2
+      failed+=("$pkg")
+    fi
   fi
+  rm -f /tmp/update-$pkg.log
+done
 
-  if [ -z "$*" ]; then
-    _log_info "Running update scripts for known packages"
-    _log_info "To run manually, provide args: $0 [args]"
-    _log_info "Sleeping for 5 secs before beginning..."
-    sleep 5
+if [ ${#failed[@]} -gt 0 ]; then
+  log_err "Failed: ${failed[*]}"
+  exit 1
+fi
 
-    _update --argstr skip-prompt true --argstr path local || exit 1
-    exit 0
-  fi
-
-  _update "$@"
-}
-
-main "$@"
+log_info "All done."

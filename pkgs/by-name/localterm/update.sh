@@ -33,8 +33,8 @@ src_hash=$(nix hash convert --hash-algo sha256 --to sri \
 tmpdir=$(mktemp -d)
 trap 'rm -rf "$tmpdir"' EXIT
 
-curl -sL "https://registry.npmjs.org/@monotykamary/localterm/-/localterm-${version}.tgz" \
-  | tar xz -C "$tmpdir" --strip-components=1
+curl -sL "https://registry.npmjs.org/@monotykamary/localterm/-/localterm-${version}.tgz" |
+  tar xz -C "$tmpdir" --strip-components=1
 
 (cd "$tmpdir" && npm install --package-lock-only --ignore-scripts)
 cp "$tmpdir/package-lock.json" "$lockfile"
@@ -48,12 +48,12 @@ jq -n \
   --arg npmDepsHash "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" \
   '{version: $version, srcHash: $srcHash, npmDepsHash: $npmDepsHash}' >"$sources_file"
 
-build_log=$(nix build --no-link --print-out-paths "path:${repo_root}#localterm" 2>&1 || true)
+build_log=$(nix build --no-link --print-out-paths "path:${repo_root}#localterm.npmDeps" 2>&1 || true)
 npm_deps_hash=$(echo "$build_log" | grep 'got:' | head -1 | sed 's/.*got: *//')
 
 if [ -z "$npm_deps_hash" ]; then
   echo "ERROR: Failed to determine npmDeps hash"
-  nix build --no-link "path:${repo_root}#localterm" 2>&1 | tail -10
+  nix build --no-link "path:${repo_root}#localterm.npmDeps" 2>&1 | tail -10
   exit 1
 fi
 
@@ -63,9 +63,5 @@ jq -n \
   --arg srcHash "$src_hash" \
   --arg npmDepsHash "$npm_deps_hash" \
   '{version: $version, srcHash: $srcHash, npmDepsHash: $npmDepsHash}' >"$sources_file"
-
-echo "Verifying build..."
-
-nix build --no-link "path:${repo_root}#localterm"
 
 echo "Done. Updated to $version"
