@@ -566,7 +566,10 @@ export default function (pi: ExtensionAPI) {
 
     const result = evaluate(command, mergedPolicy);
 
-    if (!yoloActive && (result.action === "ask" || result.action === "default")) {
+    if (
+      !yoloActive &&
+      (result.action === "ask" || result.action === "default")
+    ) {
       logConfirmNeeded(command, result);
     }
 

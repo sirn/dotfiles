@@ -74,7 +74,7 @@ Flag all code hygiene issues according to the sections below.
 
   Example:
   - "// replaced x with y" after the user asked to replace x with y
-  - "// removed the previous loop" 
+  - "// removed the previous loop"
   - "// updated to use new API as discussed"
   These comments describe the change history, not the code—remove them.
 

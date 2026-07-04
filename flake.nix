@@ -373,7 +373,10 @@
             strict = true;
           };
 
-          programs.prettier.enable = true;
+          programs.prettier = {
+            enable = true;
+            settings.proseWrap = "never";
+          };
           programs.shfmt.enable = true;
 
           # Global settings
