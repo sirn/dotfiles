@@ -50,6 +50,10 @@
   libpulseaudio,
   libkrb5,
   qt6,
+  gtk3,
+  gtk4,
+  adwaita-icon-theme,
+  gsettings-desktop-schemas,
   patchelf,
   makeWrapper,
   addDriverRunpath,
@@ -123,6 +127,14 @@ let
     libkrb5
     qt6.qtbase
     qt6.qtwayland
+    # Needed for GSETTINGS_SCHEMAS_PATH so Chromium can read
+    # org.gnome.desktop.interface font-name for its UI font.
+    gsettings-desktop-schemas
+    glib
+    gtk3
+    gtk4
+    # Needed for XDG_ICON_DIRS
+    adwaita-icon-theme
   ];
 
   libPath =
@@ -199,7 +211,7 @@ stdenv.mkDerivation rec {
 
     wrapProgram "$out/bin/helium" \
       --add-flags ${lib.escapeShellArg commandLineArgs} \
-      --prefix XDG_DATA_DIRS : "${addDriverRunpath.driverLink}/share:${glib}/share/gsettings-schemas/${glib.name}" \
+      --prefix XDG_DATA_DIRS : "${addDriverRunpath.driverLink}/share:${glib}/share/gsettings-schemas/${glib.name}:$GSETTINGS_SCHEMAS_PATH:$XDG_ICON_DIRS" \
       --prefix LD_LIBRARY_PATH : ${libPath} \
       --prefix PATH : ${coreutils}/bin \
       ''${qtWrapperArgs[@]}
