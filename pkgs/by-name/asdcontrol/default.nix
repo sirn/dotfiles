@@ -8,13 +8,13 @@
 
 stdenv.mkDerivation rec {
   pname = "asdcontrol";
-  version = "20240101";
+  version = "20250821";
 
   src = fetchFromGitHub {
     owner = "nikosdion";
     repo = pname;
-    rev = "fb82248c3767711e5dbd004516bf8137bd7e6e09";
-    sha256 = "sha256-195H+/ONsNOdQDXLq00Mfjlj/XGW6CZKnNi8mSIIEcE=";
+    rev = "0ee8bd576d4e93513027d713e688988cb0d827ef";
+    sha256 = "sha256-0BC1TKGRvCP62IhNmUcASZY+jzO1/O/Cupy0f7zqeBw=";
   };
 
   buildInputs = [ clang ];
