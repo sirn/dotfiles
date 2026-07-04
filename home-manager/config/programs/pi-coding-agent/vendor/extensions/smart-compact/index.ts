@@ -175,6 +175,12 @@ export default function (pi: ExtensionAPI) {
       },
       onError: (error) => {
         autoCompactionInProgress = false;
+        // Reset hysteresis so a failed or aborted compaction can retry on a
+        // subsequent turn. Without this, a failed compaction (e.g. one
+        // aborted because a concurrent continuation turn started) leaves
+        // previousTokens pointing above threshold, so the crossing
+        // detection never re-fires and context is never compacted.
+        previousTokens = null;
         if (ctx.hasUI) {
           ctx.ui.notify(`Auto-compaction failed: ${error.message}`, "error");
         }
