@@ -15,6 +15,7 @@
     ./programs/aria2.nix
     ./programs/coincide.nix
     ./programs/ast-grep.nix
+    ./programs/attic.nix
     ./programs/atuin.nix
     ./programs/bash.nix
     ./programs/bat.nix
