@@ -9,15 +9,11 @@ Diagnose and fix validation failures with minimal targeted changes.
 
 ### Step 1 - Identify Context
 
-Read any provided failure output fully before making changes.
-If code changes are present, run `jj diff -s` to view changed files, and use `jj diff -- path` to inspect specific files/directories.
-Focus on user-specified files, commands, or failures.
+Read any provided failure output fully before making changes. If code changes are present, run `jj diff -s` to view changed files, and use `jj diff -- path` to inspect specific files/directories. Focus on user-specified files, commands, or failures.
 
 ### Step 2 - Reproduce Failure
 
-Prefer the exact failing command from the user or project output.
-If no command is provided, detect the relevant test/lint/check command from project instructions, task runners, package manager scripts, or common defaults.
-Use appropriate timeouts and avoid watch modes.
+Prefer the exact failing command from the user or project output. If no command is provided, detect the relevant test/lint/check command from project instructions, task runners, package manager scripts, or common defaults. Use appropriate timeouts and avoid watch modes.
 
 ### Step 3 - Research Root Cause
 

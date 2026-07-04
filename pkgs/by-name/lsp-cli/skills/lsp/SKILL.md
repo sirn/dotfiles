@@ -29,17 +29,17 @@ Start an LSP session when you will perform multiple queries against the same pro
 
 ## Which LSP to use
 
-| LSP name                     | Languages              | Key project markers                       |
-| ---------------------------- | ---------------------- | ----------------------------------------- |
-| `gopls`                      | Go                     | `go.mod`                                  |
-| `typescript-language-server` | TypeScript, JavaScript | `tsconfig.json`, `package.json`           |
-| `pyright`                    | Python                 | `pyproject.toml`, `setup.py`              |
-| `nixd`                       | Nix                    | `flake.nix`, `default.nix`                |
-| `clangd`                     | C, C++                 | `compile_commands.json`, `CMakeLists.txt` |
-| `rust-analyzer`              | Rust                   | `Cargo.toml`                              |
-| `bash-language-server`       | Bash, Shell            | `.git`, `.jj`                             |
-| `yaml-language-server`       | YAML                   | `.git`, `.jj`                             |
-| `intelephense`               | PHP                    | `composer.json`, `index.php`              |
+| LSP name | Languages | Key project markers |
+| --- | --- | --- |
+| `gopls` | Go | `go.mod` |
+| `typescript-language-server` | TypeScript, JavaScript | `tsconfig.json`, `package.json` |
+| `pyright` | Python | `pyproject.toml`, `setup.py` |
+| `nixd` | Nix | `flake.nix`, `default.nix` |
+| `clangd` | C, C++ | `compile_commands.json`, `CMakeLists.txt` |
+| `rust-analyzer` | Rust | `Cargo.toml` |
+| `bash-language-server` | Bash, Shell | `.git`, `.jj` |
+| `yaml-language-server` | YAML | `.git`, `.jj` |
+| `intelephense` | PHP | `composer.json`, `index.php` |
 
 ## Position format
 

@@ -31,23 +31,23 @@ Working copy is always a commit. Changes are first-class with stable IDs across 
 
 ### Day-to-Day Commands
 
-| Task                         | Command                                                     |
-| ---------------------------- | ----------------------------------------------------------- |
-| Status                       | `jj status` (Repo status) / `jj show <id>` (Change summary) |
-| Diff                         | `jj diff -r <id>`                                           |
-| Log                          | `jj log -r <revset>`                                        |
-| Finalize current + move on   | `jj commit -m "msg"`                                        |
-| New working commit on parent | `jj new <parent-id> -m "msg"`                               |
-| Describe without moving      | `jj describe <id> -m "msg"`                                 |
-| Navigate                     | `jj edit <id>`                                              |
-| Abandon                      | `jj abandon <id>`                                           |
-| Squash                       | `jj squash --from <from-id> --to <target-id>`               |
-| Split commit                 | `jj split -r <id> -m "msg" -- <path>`                       |
-| Rebase                       | `jj rebase -r <id> -d <dest>`                               |
-| Show file                    | `jj file show <path> -r <id>`                               |
-| Blame                        | `jj file annotate <path> -r <id>`                           |
-| Resolve                      | `jj resolve -r <id>`                                        |
-| Undo                         | `jj undo`                                                   |
+| Task | Command |
+| --- | --- |
+| Status | `jj status` (Repo status) / `jj show <id>` (Change summary) |
+| Diff | `jj diff -r <id>` |
+| Log | `jj log -r <revset>` |
+| Finalize current + move on | `jj commit -m "msg"` |
+| New working commit on parent | `jj new <parent-id> -m "msg"` |
+| Describe without moving | `jj describe <id> -m "msg"` |
+| Navigate | `jj edit <id>` |
+| Abandon | `jj abandon <id>` |
+| Squash | `jj squash --from <from-id> --to <target-id>` |
+| Split commit | `jj split -r <id> -m "msg" -- <path>` |
+| Rebase | `jj rebase -r <id> -d <dest>` |
+| Show file | `jj file show <path> -r <id>` |
+| Blame | `jj file annotate <path> -r <id>` |
+| Resolve | `jj resolve -r <id>` |
+| Undo | `jj undo` |
 
 ### Interactive Mode
 
@@ -72,12 +72,12 @@ jj split -m "Extract auth utilities"
 
 **When to use interactive vs. non-interactive:**
 
-| Scenario                     | Approach        | Command                               |
-| ---------------------------- | --------------- | ------------------------------------- |
-| Clear file boundaries        | Non-interactive | `jj split -r <id> -m "msg" -- <path>` |
-| Need to review diff visually | Interactive     | `jj split -r <id>`                    |
-| Mixed changes in single file | Interactive     | `jj split`                            |
-| Automated scripts            | Non-interactive | `jj split -r <id> -m "msg" -- <path>` |
+| Scenario | Approach | Command |
+| --- | --- | --- |
+| Clear file boundaries | Non-interactive | `jj split -r <id> -m "msg" -- <path>` |
+| Need to review diff visually | Interactive | `jj split -r <id>` |
+| Mixed changes in single file | Interactive | `jj split` |
+| Automated scripts | Non-interactive | `jj split -r <id> -m "msg" -- <path>` |
 
 **After splitting:**
 
@@ -91,13 +91,13 @@ jj diff -r <new-commit-id>
 
 ### Limiting Output
 
-| Goal                    | Option                   | Example                                |
-| ----------------------- | ------------------------ | -------------------------------------- |
-| Limit commit count      | `-n <N>` / `--limit <N>` | `jj log -r ::@ -n 10`                  |
-| Summary only (diffs)    | `-s` / `--summary`       | `jj diff -s -r <id>`                   |
-| No graph (cleaner log)  | `--no-graph`             | `jj log -r ::@ --no-graph`             |
-| Custom template         | `-T <template>`          | `jj log -r @ -T 'description ++ "\n"'` |
-| Limit description lines | `-T "..."`               | `jj log -T 'description.first_line()'` |
+| Goal | Option | Example |
+| --- | --- | --- |
+| Limit commit count | `-n <N>` / `--limit <N>` | `jj log -r ::@ -n 10` |
+| Summary only (diffs) | `-s` / `--summary` | `jj diff -s -r <id>` |
+| No graph (cleaner log) | `--no-graph` | `jj log -r ::@ --no-graph` |
+| Custom template | `-T <template>` | `jj log -r @ -T 'description ++ "\n"'` |
+| Limit description lines | `-T "..."` | `jj log -T 'description.first_line()'` |
 
 ### Revset Syntax
 

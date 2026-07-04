@@ -65,11 +65,11 @@ These keybindings are available in the default mode.
 
 #### Move Column to Monitor
 
-| Keybinding                                  | Action                              |
-| ------------------------------------------- | ----------------------------------- |
-| `Mod+Shift+Ctrl+h` / `Mod+Shift+Ctrl+Left`  | Move column to monitor on the left  |
-| `Mod+Shift+Ctrl+j` / `Mod+Shift+Ctrl+Down`  | Move column to monitor below        |
-| `Mod+Shift+Ctrl+k` / `Mod+Shift+Ctrl+Up`    | Move column to monitor above        |
+| Keybinding | Action |
+| --- | --- |
+| `Mod+Shift+Ctrl+h` / `Mod+Shift+Ctrl+Left` | Move column to monitor on the left |
+| `Mod+Shift+Ctrl+j` / `Mod+Shift+Ctrl+Down` | Move column to monitor below |
+| `Mod+Shift+Ctrl+k` / `Mod+Shift+Ctrl+Up` | Move column to monitor above |
 | `Mod+Shift+Ctrl+l` / `Mod+Shift+Ctrl+Right` | Move column to monitor on the right |
 
 ### Workspace Management

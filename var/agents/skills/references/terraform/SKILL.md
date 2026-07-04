@@ -61,32 +61,32 @@ terraform apply
 
 ### Core Workflow Commands
 
-| Task                                       | Command                                    |
-| ------------------------------------------ | ------------------------------------------ |
-| Initialize directory                       | `terraform init`                           |
-| Initialize with upgrade                    | `terraform init -upgrade`                  |
-| Validate configuration                     | `terraform validate`                       |
-| Create execution plan                      | `terraform plan`                           |
-| Plan with variables                        | `terraform plan -var="key=value"`          |
-| Apply changes                              | `terraform apply`                          |
-| Apply with auto-approve (USE WITH CAUTION) | `terraform apply -auto-approve`            |
-| Apply with target                          | `terraform apply -target=resource.address` |
-| Destroy infrastructure                     | `terraform destroy`                        |
-| Auto-approve destroy (USE WITH CAUTION)    | `terraform destroy -auto-approve`          |
-| Refresh state                              | `terraform refresh`                        |
+| Task | Command |
+| --- | --- |
+| Initialize directory | `terraform init` |
+| Initialize with upgrade | `terraform init -upgrade` |
+| Validate configuration | `terraform validate` |
+| Create execution plan | `terraform plan` |
+| Plan with variables | `terraform plan -var="key=value"` |
+| Apply changes | `terraform apply` |
+| Apply with auto-approve (USE WITH CAUTION) | `terraform apply -auto-approve` |
+| Apply with target | `terraform apply -target=resource.address` |
+| Destroy infrastructure | `terraform destroy` |
+| Auto-approve destroy (USE WITH CAUTION) | `terraform destroy -auto-approve` |
+| Refresh state | `terraform refresh` |
 
 ### State Management Commands
 
-| Task                       | Command                                                      |
-| -------------------------- | ------------------------------------------------------------ |
-| List state resources       | `terraform state list`                                       |
-| List with pattern          | `terraform state list 'module.foo.*'`                        |
-| Show resource details      | `terraform state show resource.address`                      |
-| Remove resource from state | `terraform state rm resource.address`                        |
-| Move resource in state     | `terraform state mv source.destination`                      |
-| Pull raw state (JSON)      | `terraform state pull > state.json`                          |
-| Push raw state             | `terraform state push state.json`                            |
-| Replace provider           | `terraform state replace-provider old.provider new.provider` |
+| Task | Command |
+| --- | --- |
+| List state resources | `terraform state list` |
+| List with pattern | `terraform state list 'module.foo.*'` |
+| Show resource details | `terraform state show resource.address` |
+| Remove resource from state | `terraform state rm resource.address` |
+| Move resource in state | `terraform state mv source.destination` |
+| Pull raw state (JSON) | `terraform state pull > state.json` |
+| Push raw state | `terraform state push state.json` |
+| Replace provider | `terraform state replace-provider old.provider new.provider` |
 
 ### Resource Import and Tainting
 
@@ -157,17 +157,17 @@ terraform apply
 
 ### Common Options
 
-| Goal                | Flag                          | Example                                   |
-| ------------------- | ----------------------------- | ----------------------------------------- |
-| Specify working dir | `-chdir=<dir>`                | `terraform -chdir=./infra plan`           |
-| Disable colors      | `-no-color`                   | `terraform plan -no-color`                |
-| Parallelism         | `-parallelism=<n>`            | `terraform apply -parallelism=10`         |
-| Var file            | `-var-file=<file>`            | `terraform plan -var-file=prod.tfvars`    |
-| Single var          | `-var="key=value"`            | `terraform apply -var="region=us-east-1"` |
-| Backend config      | `-backend-config=<key=value>` | Used with init                            |
-| Lock state          | `-lock=true` (default)        | `terraform apply -lock=true`              |
-| Lock timeout        | `-lock-timeout=<duration>`    | `terraform apply -lock-timeout=5m`        |
-| JSON output         | `-json`                       | `terraform show -json`                    |
+| Goal | Flag | Example |
+| --- | --- | --- |
+| Specify working dir | `-chdir=<dir>` | `terraform -chdir=./infra plan` |
+| Disable colors | `-no-color` | `terraform plan -no-color` |
+| Parallelism | `-parallelism=<n>` | `terraform apply -parallelism=10` |
+| Var file | `-var-file=<file>` | `terraform plan -var-file=prod.tfvars` |
+| Single var | `-var="key=value"` | `terraform apply -var="region=us-east-1"` |
+| Backend config | `-backend-config=<key=value>` | Used with init |
+| Lock state | `-lock=true` (default) | `terraform apply -lock=true` |
+| Lock timeout | `-lock-timeout=<duration>` | `terraform apply -lock-timeout=5m` |
+| JSON output | `-json` | `terraform show -json` |
 
 ### Common Workflows
 

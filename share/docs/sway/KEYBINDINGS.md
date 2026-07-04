@@ -111,8 +111,8 @@ This mode is activated by pressing `Mod+r`. While in this mode, the following ke
 
 The following mouse interactions are available on the Waybar panel.
 
-| Component       | Interaction       | Action                                           |
-| --------------- | ----------------- | ------------------------------------------------ |
-| Workspaces      | Left-click button | Switch to the selected workspace                 |
-| Workspaces      | Scroll wheel      | Cycle through workspaces                         |
-| PulseAudio icon | Left-click        | Launch PulseAudio Volume Control (`pavucontrol`) |
+| Component | Interaction | Action |
+| --- | --- | --- |
+| Workspaces | Left-click button | Switch to the selected workspace |
+| Workspaces | Scroll wheel | Cycle through workspaces |
+| PulseAudio icon | Left-click | Launch PulseAudio Volume Control (`pavucontrol`) |

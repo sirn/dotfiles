@@ -6,33 +6,33 @@ This document provides a summary of the custom keybindings configured in this Em
 
 These keybindings are generally available in most modes.
 
-| Key       | Command               | Description                                               |
-| :-------- | :-------------------- | :-------------------------------------------------------- |
-| `C-x o`   | `ace-window`          | Select a window to switch to using `ace-window`.          |
-| `C-x C-b` | `consult-buffer`      | Switch buffers using `consult`.                           |
-| `C-x C-f` | `project-find-file`   | Find file in the current project.                         |
-| `C-x C-j` | `dired-jump`          | Open directory of current buffer in Dired.                |
-| `C-c C-d` | `helpful-at-point`    | Show help for the symbol at point.                        |
-| `M-%`     | `vr/query-replace`    | `visual-regexp` query replace.                            |
-| `M-g I`   | `consult-imenu-multi` | Search for definitions/sections across multiple buffers.  |
-| `M-g g`   | `consult-goto-line`   | Go to a specific line number in the current buffer.       |
-| `M-g i`   | `consult-imenu`       | Search for definitions/sections in the current buffer.    |
-| `M-s r`   | `consult-ripgrep`     | Search the project with `ripgrep` (same as `leader s r`). |
-| `M-y`     | `consult-yank-pop`    | Select an item from the kill ring to yank.                |
-| `M-+`     | `tempel-complete`     | Complete template at point.                               |
-| `M-*`     | `tempel-insert`       | Insert a template.                                        |
+| Key | Command | Description |
+| :-- | :-- | :-- |
+| `C-x o` | `ace-window` | Select a window to switch to using `ace-window`. |
+| `C-x C-b` | `consult-buffer` | Switch buffers using `consult`. |
+| `C-x C-f` | `project-find-file` | Find file in the current project. |
+| `C-x C-j` | `dired-jump` | Open directory of current buffer in Dired. |
+| `C-c C-d` | `helpful-at-point` | Show help for the symbol at point. |
+| `M-%` | `vr/query-replace` | `visual-regexp` query replace. |
+| `M-g I` | `consult-imenu-multi` | Search for definitions/sections across multiple buffers. |
+| `M-g g` | `consult-goto-line` | Go to a specific line number in the current buffer. |
+| `M-g i` | `consult-imenu` | Search for definitions/sections in the current buffer. |
+| `M-s r` | `consult-ripgrep` | Search the project with `ripgrep` (same as `leader s r`). |
+| `M-y` | `consult-yank-pop` | Select an item from the kill ring to yank. |
+| `M-+` | `tempel-complete` | Complete template at point. |
+| `M-*` | `tempel-insert` | Insert a template. |
 
 ### macOS Specific Global Keybindings
 
 These bindings are active only when running Emacs on macOS.
 
-| Key   | Command         | Description                                         |
-| :---- | :-------------- | :-------------------------------------------------- |
-| `s-v` | `yank`          | Paste from system clipboard.                        |
-| `s-c` | `evil-yank`     | Copy to system clipboard.                           |
-| `s-w` | `delete-window` | Close the current window.                           |
-| `s-W` | `delete-frame`  | Close the current Emacs frame (application window). |
-| `s-n` | `make-frame`    | Create a new Emacs frame (application window).      |
+| Key | Command | Description |
+| :-- | :-- | :-- |
+| `s-v` | `yank` | Paste from system clipboard. |
+| `s-c` | `evil-yank` | Copy to system clipboard. |
+| `s-w` | `delete-window` | Close the current window. |
+| `s-W` | `delete-frame` | Close the current Emacs frame (application window). |
+| `s-n` | `make-frame` | Create a new Emacs frame (application window). |
 
 ---
 
@@ -65,18 +65,18 @@ File finding and navigation commands.
 
 Project-specific commands and operations.
 
-| Key       | Command                  | Description                                     |
-| :-------- | :----------------------- | :---------------------------------------------- |
-| `SPC p`   | `(Prefix)`               | Project-specific commands.                      |
-| `SPC p p` | `project-switch-project` | Switch to another project.                      |
-| `SPC p '` | `eat-project`            | Open a terminal in the project root.            |
+| Key | Command | Description |
+| :-- | :-- | :-- |
+| `SPC p` | `(Prefix)` | Project-specific commands. |
+| `SPC p p` | `project-switch-project` | Switch to another project. |
+| `SPC p '` | `eat-project` | Open a terminal in the project root. |
 | `SPC p b` | `consult-project-buffer` | Find a buffer belonging to the current project. |
-| `SPC p d` | `project-dired`          | Open project root in Dired.                     |
-| `SPC p f` | `gemacs--project-fd`     | Find file in project using `fd`.                |
-| `SPC p g` | `gemacs--project-gptel`  | Open GPTel in the project root.                 |
-| `SPC p m` | `magit-project-status`   | Open Magit status for the project.              |
-| `SPC p s` | `consult-ripgrep`        | Search project with `ripgrep`.                  |
-| `SPC p S` | `gemacs--project-sync`   | Sync known projects from `repoman`.             |
+| `SPC p d` | `project-dired` | Open project root in Dired. |
+| `SPC p f` | `gemacs--project-fd` | Find file in project using `fd`. |
+| `SPC p g` | `gemacs--project-gptel` | Open GPTel in the project root. |
+| `SPC p m` | `magit-project-status` | Open Magit status for the project. |
+| `SPC p s` | `consult-ripgrep` | Search project with `ripgrep`. |
+| `SPC p S` | `gemacs--project-sync` | Sync known projects from `repoman`. |
 
 ### `SPC E` - Environment
 
@@ -120,19 +120,19 @@ Environment variable management commands.
 
 ### `c` - Code
 
-| Key     | Command                            | Description                                               |
-| :------ | :--------------------------------- | :-------------------------------------------------------- |
-| `c e`   | `(Prefix)`                         | Embark commands.                                          |
-| `c e a` | `embark-act`                       | Show contextual actions for the item at point.            |
-| `c e e` | `embark-dwim`                      | Execute the default action for the item at point.         |
-| `c e b` | `embark-bindings`                  | Show all possible Embark actions for the current context. |
-| `c f`   | `(Prefix)`                         | Flymake error-checking commands.                          |
-| `c f f` | `flymake-show-buffer-diagnostics`  | Show buffer diagnostics.                                  |
-| `c f p` | `flymake-show-project-diagnostics` | Show project diagnostics.                                 |
-| `c f n` | `flymake-goto-next-error`          | Go to next error.                                         |
-| `c f N` | `flymake-goto-prev-error`          | Go to previous error.                                     |
-| `c l`   | `(Prefix)`                         | Eglot (LSP) commands.                                     |
-| `c x`   | `(Prefix)`                         | Xref (cross-reference) commands.                          |
+| Key | Command | Description |
+| :-- | :-- | :-- |
+| `c e` | `(Prefix)` | Embark commands. |
+| `c e a` | `embark-act` | Show contextual actions for the item at point. |
+| `c e e` | `embark-dwim` | Execute the default action for the item at point. |
+| `c e b` | `embark-bindings` | Show all possible Embark actions for the current context. |
+| `c f` | `(Prefix)` | Flymake error-checking commands. |
+| `c f f` | `flymake-show-buffer-diagnostics` | Show buffer diagnostics. |
+| `c f p` | `flymake-show-project-diagnostics` | Show project diagnostics. |
+| `c f n` | `flymake-goto-next-error` | Go to next error. |
+| `c f N` | `flymake-goto-prev-error` | Go to previous error. |
+| `c l` | `(Prefix)` | Eglot (LSP) commands. |
+| `c x` | `(Prefix)` | Xref (cross-reference) commands. |
 
 ### `e` - Edit
 
@@ -206,22 +206,19 @@ Environment variable management commands.
 
 ### `t` - Treemacs
 
-| Key     | Command                             | Description                       |
-| :------ | :---------------------------------- | :-------------------------------- |
-| `t t`   | `treemacs`                          | Toggle Treemacs.                  |
-| `t T`   | `treemacs-select-window`            | Switch to Treemacs window.        |
+| Key | Command | Description |
+| :-- | :-- | :-- |
+| `t t` | `treemacs` | Toggle Treemacs. |
+| `t T` | `treemacs-select-window` | Switch to Treemacs window. |
 | `t p a` | `treemacs-add-project-to-workspace` | Add project to Treemacs workspace |
-| `t w c` | `treemacs-create-workspace`         | Create Treemacs workspace.        |
-| `t w e` | `treemacs-edit-workspaces`          | Edit Treemacs workspaces.         |
-| `t w r` | `treemacs-rename-workspace`         | Rename Treemacs workspace.        |
-| `t w w` | `treemacs-switch-workspace`         | Switch Treemacs workspace.        |
+| `t w c` | `treemacs-create-workspace` | Create Treemacs workspace. |
+| `t w e` | `treemacs-edit-workspaces` | Edit Treemacs workspaces. |
+| `t w r` | `treemacs-rename-workspace` | Rename Treemacs workspace. |
+| `t w w` | `treemacs-switch-workspace` | Switch Treemacs workspace. |
 
 ### `T` - Toggles
 
-| `T f` | `display-fill-column-indicator-mode` | Toggle the fill-column indicator. |
-| `T l` | `display-line-numbers-mode` | Toggle line numbers. |
-| `T o` | `outline-indent-minor-mode` | Toggle Outline Indent code folding mode. |
-| `T w` | `whitespace-mode` | Toggle whitespace display. |
+| `T f` | `display-fill-column-indicator-mode` | Toggle the fill-column indicator. | | `T l` | `display-line-numbers-mode` | Toggle line numbers. | | `T o` | `outline-indent-minor-mode` | Toggle Outline Indent code folding mode. | | `T w` | `whitespace-mode` | Toggle whitespace display. |
 
 ### `w` - Windows
 
@@ -239,12 +236,12 @@ Environment variable management commands.
 
 ### `z` - Code Folding (Outline)
 
-| Key   | Command                            | Description                                 |
-| :---- | :--------------------------------- | :------------------------------------------ |
-| `z z` | `outline-toggle-children`          | Toggle fold at point (main folding action). |
-| `z c` | `outline-hide-subtree`             | Close fold at point.                        |
-| `z o` | `outline-show-subtree`             | Open fold at point.                         |
-| `z r` | `outline-show-all`                 | Open all folds in buffer.                   |
-| `z m` | `outline-hide-body`                | Close all folds in buffer.                  |
-| `z n` | `outline-next-visible-heading`     | Move to next fold.                          |
-| `z p` | `outline-previous-visible-heading` | Move to previous fold.                      |
+| Key | Command | Description |
+| :-- | :-- | :-- |
+| `z z` | `outline-toggle-children` | Toggle fold at point (main folding action). |
+| `z c` | `outline-hide-subtree` | Close fold at point. |
+| `z o` | `outline-show-subtree` | Open fold at point. |
+| `z r` | `outline-show-all` | Open all folds in buffer. |
+| `z m` | `outline-hide-body` | Close all folds in buffer. |
+| `z n` | `outline-next-visible-heading` | Move to next fold. |
+| `z p` | `outline-previous-visible-heading` | Move to previous fold. |

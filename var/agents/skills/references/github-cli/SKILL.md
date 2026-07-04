@@ -132,12 +132,12 @@ gh api graphql -f query='query { viewer { login } }'
 
 ### Common Output Options
 
-| Goal             | Flag              | Example                                                       |
-| ---------------- | ----------------- | ------------------------------------------------------------- | -------------------------------------- | --------- |
-| JSON output      | `--json`          | `gh issue list -R owner/repo --json number,title,state`       |
-| JSON fields      | `--json <fields>` | `gh pr view 123 -R owner/repo --json headRefName,baseRefName` |
-| Quiet (IDs only) | `--jq '.[]        | .number'`                                                     | `gh issue list -R owner/repo --jq '.[] | .number'` |
-| Web browser      | `--web`           | `gh issue view 123 -R owner/repo --web`                       |
+| Goal | Flag | Example |
+| --- | --- | --- | --- | --- |
+| JSON output | `--json` | `gh issue list -R owner/repo --json number,title,state` |
+| JSON fields | `--json <fields>` | `gh pr view 123 -R owner/repo --json headRefName,baseRefName` |
+| Quiet (IDs only) | `--jq '.[] | .number'` | `gh issue list -R owner/repo --jq '.[] | .number'` |
+| Web browser | `--web` | `gh issue view 123 -R owner/repo --web` |
 
 ### Identifying the Current Repository
 

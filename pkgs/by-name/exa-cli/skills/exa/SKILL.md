@@ -19,20 +19,20 @@ Search and extract using the Exa AI API.
 
 ## Subcommands
 
-| Command        | Description                                                         |
-| -------------- | ------------------------------------------------------------------- |
-| `exa search`   | Neural search over the web                                          |
-| `exa contents` | Extract text, highlights, or summaries from URLs                    |
-| `exa context`  | Get AI-generated context for a query                                |
-| `exa websets`  | Manage Exa websets (create, get, list, items, delete, wait, cancel) |
+| Command | Description |
+| --- | --- |
+| `exa search` | Neural search over the web |
+| `exa contents` | Extract text, highlights, or summaries from URLs |
+| `exa context` | Get AI-generated context for a query |
+| `exa websets` | Manage Exa websets (create, get, list, items, delete, wait, cancel) |
 
 ## Output Modes
 
-| Flag       | Value              | Output format                   | Use case                         |
-| ---------- | ------------------ | ------------------------------- | -------------------------------- |
-| `--output` | `json` _(default)_ | JSON (pretty)                   | Programmatic use, saving to file |
-| `--output` | `compact`          | JSON (no whitespace)            | Piping to `jaq`                  |
-| `--output` | `text`             | Human-readable formatted output | Quick review of results          |
+| Flag | Value | Output format | Use case |
+| --- | --- | --- | --- |
+| `--output` | `json` _(default)_ | JSON (pretty) | Programmatic use, saving to file |
+| `--output` | `compact` | JSON (no whitespace) | Piping to `jaq` |
+| `--output` | `text` | Human-readable formatted output | Quick review of results |
 
 The `--output` flag accepts one of `json`, `compact`, or `text`.
 
@@ -42,22 +42,22 @@ The `--output` flag accepts one of `json`, `compact`, or `text`.
 exa search [OPTIONS] QUERY
 ```
 
-| Flag                          | API param                     | Description                                                      |
-| ----------------------------- | ----------------------------- | ---------------------------------------------------------------- |
-| `--type`                      | `type`                        | `auto`, `fast`, `instant`, `deep-lite`, `deep`, `deep-reasoning` |
-| `--num-results N`             | `numResults`                  | Max results (default 10)                                         |
-| `--category`                  | `category`                    | Category filter (news, company, research paper, …)               |
-| `--include-domains DOMAIN`    | `includeDomains`              | Restrict to domain; repeatable                                   |
-| `--exclude-domains DOMAIN`    | `excludeDomains`              | Exclude domain; repeatable                                       |
-| `--start-published-date DATE` | `startPublishedDate`          | YYYY-MM-DD or ISO 8601                                           |
-| `--end-published-date DATE`   | `endPublishedDate`            | YYYY-MM-DD or ISO 8601                                           |
-| `--moderation LEVEL`          | `moderation`                  | Moderation level                                                 |
-| `--highlights`                | `contents.highlights`         | Include key excerpts                                             |
-| `--summary`                   | `contents.summary`            | Include LLM-generated summary                                    |
-| `--text`                      | `contents.text`               | Include full page text                                           |
-| `--max-characters N`          | `contents.text.maxCharacters` | Max characters per text result                                   |
-| `--max-age-hours H`           | `contents.maxAgeHours`        | Max age of cached content (0 = force livecrawl)                  |
-| `--timeout SEC`               | _(client)_                    | Request timeout (default 60)                                     |
+| Flag | API param | Description |
+| --- | --- | --- |
+| `--type` | `type` | `auto`, `fast`, `instant`, `deep-lite`, `deep`, `deep-reasoning` |
+| `--num-results N` | `numResults` | Max results (default 10) |
+| `--category` | `category` | Category filter (news, company, research paper, …) |
+| `--include-domains DOMAIN` | `includeDomains` | Restrict to domain; repeatable |
+| `--exclude-domains DOMAIN` | `excludeDomains` | Exclude domain; repeatable |
+| `--start-published-date DATE` | `startPublishedDate` | YYYY-MM-DD or ISO 8601 |
+| `--end-published-date DATE` | `endPublishedDate` | YYYY-MM-DD or ISO 8601 |
+| `--moderation LEVEL` | `moderation` | Moderation level |
+| `--highlights` | `contents.highlights` | Include key excerpts |
+| `--summary` | `contents.summary` | Include LLM-generated summary |
+| `--text` | `contents.text` | Include full page text |
+| `--max-characters N` | `contents.text.maxCharacters` | Max characters per text result |
+| `--max-age-hours H` | `contents.maxAgeHours` | Max age of cached content (0 = force livecrawl) |
+| `--timeout SEC` | _(client)_ | Request timeout (default 60) |
 
 **Important:** On `/search`, content params (`--highlights`, `--summary`, `--text`) are nested under `contents` in the API body. The CLI handles this automatically.
 
@@ -107,14 +107,14 @@ exa search --output=text --highlights --num-results 5 "python asyncio patterns"
 exa contents [OPTIONS] URL [URL ...]
 ```
 
-| Flag                     | API param          | Description                       |
-| ------------------------ | ------------------ | --------------------------------- |
-| `--text`                 | `text`             | Include full page text            |
-| `--highlights`           | `highlights`       | Include key excerpts              |
-| `--summary`              | `summary`          | Include LLM-generated summary     |
-| `--max-age-hours H`      | `maxAgeHours`      | Max age of cached content         |
+| Flag | API param | Description |
+| --- | --- | --- |
+| `--text` | `text` | Include full page text |
+| `--highlights` | `highlights` | Include key excerpts |
+| `--summary` | `summary` | Include LLM-generated summary |
+| `--max-age-hours H` | `maxAgeHours` | Max age of cached content |
 | `--livecrawl-timeout MS` | `livecrawlTimeout` | Livecrawl timeout in milliseconds |
-| `--timeout SEC`          | _(client)_         | Request timeout (default 60)      |
+| `--timeout SEC` | _(client)_ | Request timeout (default 60) |
 
 **Important:** On `/contents`, content params (`--text`, `--highlights`, `--summary`) are **top-level** in the API body (NOT nested under `contents`). This differs from `/search`. The CLI handles this automatically.
 
@@ -140,10 +140,10 @@ exa contents --output=compact --highlights https://example.com | jaq '.results[]
 exa context [OPTIONS] QUERY
 ```
 
-| Flag            | API param   | Description                                             |
-| --------------- | ----------- | ------------------------------------------------------- |
-| `--tokens N`    | `tokensNum` | Token budget: integer or `"dynamic"` (default: dynamic) |
-| `--timeout SEC` | _(client)_  | Request timeout (default 60)                            |
+| Flag | API param | Description |
+| --- | --- | --- |
+| `--tokens N` | `tokensNum` | Token budget: integer or `"dynamic"` (default: dynamic) |
+| `--timeout SEC` | _(client)_ | Request timeout (default 60) |
 
 ### Examples
 
@@ -240,13 +240,13 @@ exa websets cancel ID
 
 ## Error Handling
 
-| HTTP Status | Meaning                          | Action                                  |
-| ----------- | -------------------------------- | --------------------------------------- |
-| `400`       | Bad request — invalid parameters | Check flags and parameter types         |
-| `401`       | Invalid or missing API key       | Verify `EXA_API_KEY` is set and valid   |
-| `422`       | Validation error                 | Check parameter types and constraints   |
-| `429`       | Rate limit exceeded              | Wait and retry with exponential backoff |
-| `500`       | Internal server error            | Retry later                             |
+| HTTP Status | Meaning | Action |
+| --- | --- | --- |
+| `400` | Bad request — invalid parameters | Check flags and parameter types |
+| `401` | Invalid or missing API key | Verify `EXA_API_KEY` is set and valid |
+| `422` | Validation error | Check parameter types and constraints |
+| `429` | Rate limit exceeded | Wait and retry with exponential backoff |
+| `500` | Internal server error | Retry later |
 
 Exit codes: `0` = success, `1` = error, `124` = timeout, `130` = interrupt.
 
@@ -268,9 +268,9 @@ Exit codes: `0` = success, `1` = error, `124` = timeout, `130` = interrupt.
 
 ## Common Mistakes to Avoid
 
-| Wrong                           | Correct                                                                                                                      |
-| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `useAutoprompt: true`           | Remove it. Deprecated and does nothing.                                                                                      |
-| `includeUrls` / `excludeUrls`   | Use `--include-domains` / `--exclude-domains`. No URL-level filters exist.                                                   |
+| Wrong | Correct |
+| --- | --- |
+| `useAutoprompt: true` | Remove it. Deprecated and does nothing. |
+| `includeUrls` / `excludeUrls` | Use `--include-domains` / `--exclude-domains`. No URL-level filters exist. |
 | `--text` nesting on `/contents` | The CLI handles nesting automatically. On `/search` content params nest under `contents`; on `/contents` they are top-level. |
-| `--max-age-hours 0` always      | Omit unless you specifically need fresh livecrawl results.                                                                   |
+| `--max-age-hours 0` always | Omit unless you specifically need fresh livecrawl results. |

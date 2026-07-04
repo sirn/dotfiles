@@ -214,16 +214,16 @@ jq --argjson min_ctx "$MIN_CONTEXT" '
 
 ## Response Fields
 
-| Field                         | Type   | Description                                     |
-| ----------------------------- | ------ | ----------------------------------------------- |
-| `id`                          | string | Provider ID (e.g., `google`, `fireworks`)       |
-| `name`                        | string | Provider display name                           |
-| `models.<id>.name`            | string | Human-readable model name                       |
-| `models.<id>.cost.input`      | number | Input price per 1M tokens                       |
-| `models.<id>.cost.output`     | number | Output price per 1M tokens                      |
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Provider ID (e.g., `google`, `fireworks`) |
+| `name` | string | Provider display name |
+| `models.<id>.name` | string | Human-readable model name |
+| `models.<id>.cost.input` | number | Input price per 1M tokens |
+| `models.<id>.cost.output` | number | Output price per 1M tokens |
 | `models.<id>.cost.cache_read` | number | Cached input price per 1M tokens (if supported) |
-| `models.<id>.limit.context`   | number | Maximum context window (tokens)                 |
-| `models.<id>.limit.output`    | number | Maximum output tokens                           |
+| `models.<id>.limit.context` | number | Maximum context window (tokens) |
+| `models.<id>.limit.output` | number | Maximum output tokens |
 
 ## Error Handling
 

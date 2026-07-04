@@ -66,8 +66,7 @@ Use v3 for the newer resource families:
 
 ## Important ID note
 
-ClickUp uses both `team_id` and `workspace_id` across docs/specs; both refer to the same top-level workspace identifier.
-The v2 spec also inconsistently uses both `team_id` and `team_Id` in path templates. Treat them as the same value.
+ClickUp uses both `team_id` and `workspace_id` across docs/specs; both refer to the same top-level workspace identifier. The v2 spec also inconsistently uses both `team_id` and `team_Id` in path templates. Treat them as the same value.
 
 ## Recommended discovery flow
 
@@ -261,8 +260,7 @@ Common filters supported by `GET /list/{list_id}/task`:
 
 ### Get filtered workspace tasks
 
-This is the main workspace-level task query in v2.
-It filters tasks across spaces, folders, and lists.
+This is the main workspace-level task query in v2. It filters tasks across spaces, folders, and lists.
 
 ```bash
 curl -fsS \
