@@ -15,6 +15,7 @@ import {
   extractLastAssistantText,
   runHadToolCalls,
   runCalledCompleteGoal,
+  runCalledUpdateGoalBlocked,
   classifyContinuation,
   isValidBudgetValue,
   validateObjective,
@@ -133,6 +134,15 @@ test("paused status returns label", () => {
     budget: DEFAULT_BUDGET,
   };
   assertTrue(goalStatusLabel(state)?.includes("goal: paused") ?? false);
+});
+
+test("blocked status returns label", () => {
+  const state: GoalState = {
+    objective: "test",
+    status: "blocked",
+    budget: DEFAULT_BUDGET,
+  };
+  assertTrue(goalStatusLabel(state)?.includes("goal: blocked") ?? false);
 });
 
 test("complete status returns label", () => {
@@ -636,39 +646,55 @@ test("assistant toolCall to bash returns false", () => {
   );
 });
 
-test("assistant toolCall to complete_goal returns true", () => {
+test("assistant toolCall to update_goal with status=complete returns true", () => {
   assertTrue(
     runCalledCompleteGoal([
       {
         role: "assistant",
         content: [
           { type: "text", text: "Done." },
-          { type: "toolCall", name: "complete_goal", input: {} },
+          {
+            type: "toolCall",
+            name: "update_goal",
+            input: { status: "complete" },
+          },
         ],
       },
     ]),
   );
 });
 
-test("complete_goal in any assistant message returns true", () => {
+test("update_goal with status=complete in any assistant message returns true", () => {
   assertTrue(
     runCalledCompleteGoal([
       { role: "user", content: "go" },
       { role: "assistant", content: [{ type: "text", text: "ok" }] },
       {
         role: "assistant",
-        content: [{ type: "toolCall", name: "complete_goal", input: {} }],
+        content: [
+          {
+            type: "toolCall",
+            name: "update_goal",
+            input: { status: "complete" },
+          },
+        ],
       },
     ]),
   );
 });
 
-test("user message with complete_goal toolCall is ignored", () => {
+test("user message with update_goal toolCall is ignored", () => {
   assertFalse(
     runCalledCompleteGoal([
       {
         role: "user",
-        content: [{ type: "toolCall", name: "complete_goal", input: {} }],
+        content: [
+          {
+            type: "toolCall",
+            name: "update_goal",
+            input: { status: "complete" },
+          },
+        ],
       },
     ]),
   );
@@ -694,6 +720,74 @@ test("toolCall with wrong name returns false", () => {
       {
         role: "assistant",
         content: [{ type: "toolCall", name: "read" }],
+      },
+    ]),
+  );
+});
+
+test("old complete_goal tool name returns false (rename enforced)", () => {
+  assertFalse(
+    runCalledCompleteGoal([
+      {
+        role: "assistant",
+        content: [
+          {
+            type: "toolCall",
+            name: "complete_goal",
+            input: { status: "complete" },
+          },
+        ],
+      },
+    ]),
+  );
+});
+
+test("update_goal with status=blocked returns false from runCalledCompleteGoal", () => {
+  assertFalse(
+    runCalledCompleteGoal([
+      {
+        role: "assistant",
+        content: [
+          {
+            type: "toolCall",
+            name: "update_goal",
+            input: { status: "blocked" },
+          },
+        ],
+      },
+    ]),
+  );
+});
+
+test("runCalledUpdateGoalBlocked detects status=blocked", () => {
+  assertTrue(
+    runCalledUpdateGoalBlocked([
+      {
+        role: "assistant",
+        content: [
+          {
+            type: "toolCall",
+            name: "update_goal",
+            input: { status: "blocked" },
+          },
+        ],
+      },
+    ]),
+  );
+});
+
+test("runCalledUpdateGoalBlocked ignores status=complete", () => {
+  assertFalse(
+    runCalledUpdateGoalBlocked([
+      {
+        role: "assistant",
+        content: [
+          {
+            type: "toolCall",
+            name: "update_goal",
+            input: { status: "complete" },
+          },
+        ],
       },
     ]),
   );
@@ -784,14 +878,18 @@ test("structured completion returns complete", () => {
   );
 });
 
-test("complete_goal tool call returns complete", () => {
+test("update_goal with status=complete returns complete", () => {
   assertEquals(
     classifyContinuation([
       {
         role: "assistant",
         content: [
           { type: "text", text: "Audit passed." },
-          { type: "toolCall", name: "complete_goal", input: {} },
+          {
+            type: "toolCall",
+            name: "update_goal",
+            input: { status: "complete" },
+          },
         ],
       },
     ]),
@@ -799,29 +897,39 @@ test("complete_goal tool call returns complete", () => {
   );
 });
 
-test("complete_goal takes priority over stall (no other tool calls)", () => {
-  // A run that only calls complete_goal (no other tool calls) is complete,
+test("update_goal with status=complete takes priority over stall (no other tool calls)", () => {
+  // A run that only calls update_goal (no other tool calls) is complete,
   // not stalled, because the tool-based signal wins.
   assertEquals(
     classifyContinuation([
       {
         role: "assistant",
-        content: [{ type: "toolCall", name: "complete_goal", input: {} }],
+        content: [
+          {
+            type: "toolCall",
+            name: "update_goal",
+            input: { status: "complete" },
+          },
+        ],
       },
     ]),
     "complete",
   );
 });
 
-test("complete_goal takes priority over continue", () => {
-  // A run that calls complete_goal AND another tool is complete, not continue.
+test("update_goal with status=complete takes priority over continue", () => {
+  // A run that calls update_goal AND another tool is complete, not continue.
   assertEquals(
     classifyContinuation([
       {
         role: "assistant",
         content: [
           { type: "toolCall", name: "bash" },
-          { type: "toolCall", name: "complete_goal", input: {} },
+          {
+            type: "toolCall",
+            name: "update_goal",
+            input: { status: "complete" },
+          },
         ],
       },
     ]),
@@ -829,7 +937,7 @@ test("complete_goal takes priority over continue", () => {
   );
 });
 
-test("complete_goal takes priority over regex fallback", () => {
+test("update_goal with status=complete takes priority over regex fallback", () => {
   // Even when there is no completion text, the tool call wins.
   assertEquals(
     classifyContinuation([
@@ -837,7 +945,11 @@ test("complete_goal takes priority over regex fallback", () => {
         role: "assistant",
         content: [
           { type: "text", text: "Calling the tool now." },
-          { type: "toolCall", name: "complete_goal", input: {} },
+          {
+            type: "toolCall",
+            name: "update_goal",
+            input: { status: "complete" },
+          },
         ],
       },
     ]),
@@ -933,6 +1045,19 @@ test("returns most recent goal state (last wins)", () => {
   const result = getGoalState(ctx as any);
   assertEquals(result!.objective, "new goal");
   assertEquals(result!.status, "paused");
+});
+
+test("returns blocked goal state", () => {
+  const state: GoalState = {
+    objective: "stuck on permission",
+    status: "blocked",
+    budget: DEFAULT_BUDGET,
+  };
+  const ctx = mockCtx([goalEntry(state)]);
+  const result = getGoalState(ctx as any);
+  assertTrue(result !== null);
+  assertEquals(result!.objective, "stuck on permission");
+  assertEquals(result!.status, "blocked");
 });
 
 test("skips entries with missing objective", () => {

@@ -9,7 +9,7 @@
  *
  * Design principles (aligned with Codex's approach):
  * - The harness trusts the model's judgment for *when* to stop.
- * - PRIMARY completion signal: the agent calls the `complete_goal` model
+ * - PRIMARY completion signal: the agent calls the `update_goal` model
  *   tool to mark the objective achieved (Codex-style tool-based completion).
  * - FALLBACK completion signal: the agent's natural-language declaration,
  *   detected by regex, as a safety net for models that miss the tool.
@@ -36,6 +36,7 @@ export const MODE_PLAN = "plan";
 export type GoalStatus =
   | "active" // Goal is being actively driven.
   | "paused" // User paused auto-continuation.
+  | "blocked" // Agent at a true impasse (3-strike); resumable like paused.
   | "complete" // Goal declared complete (by user or auto-detection).
   | "budget-limited" // Budget exhausted; agent asked to summarize.
   | "cleared"; // Goal removed; not shown in status bar.
@@ -150,20 +151,56 @@ export function runHadToolCalls(messages: unknown[]): boolean {
 }
 
 /**
- * Detect whether ANY assistant message in a run called the `complete_goal`
- * tool. This is the PRIMARY completion signal: when the agent marks the goal
- * achieved via the model tool, the run is complete regardless of any other
- * text or tool activity. Mirrors the structure of `runHadToolCalls`.
+ * Detect whether ANY assistant message in a run called the `update_goal`
+ * tool with status=`complete`. This is the PRIMARY completion signal: when
+ * the agent marks the goal achieved via the model tool, the run is complete
+ * regardless of any other text or tool activity. Mirrors the structure of
+ * `runHadToolCalls`.
  */
 export function runCalledCompleteGoal(messages: unknown[]): boolean {
   for (const msg of messages as { role?: string; content?: unknown }[]) {
     if (msg.role === "assistant" && Array.isArray(msg.content)) {
       if (
-        msg.content.some(
-          (part: unknown) =>
-            (part as { type?: string }).type === "toolCall" &&
-            (part as { name?: string }).name === "complete_goal",
-        )
+        msg.content.some((part: unknown) => {
+          const p = part as {
+            type?: string;
+            name?: string;
+            input?: { status?: string };
+          };
+          return (
+            p.type === "toolCall" &&
+            p.name === "update_goal" &&
+            p.input?.status === "complete"
+          );
+        })
+      ) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Detect whether ANY assistant message in a run called the `update_goal`
+ * tool with status=`blocked`.
+ */
+export function runCalledUpdateGoalBlocked(messages: unknown[]): boolean {
+  for (const msg of messages as { role?: string; content?: unknown }[]) {
+    if (msg.role === "assistant" && Array.isArray(msg.content)) {
+      if (
+        msg.content.some((part: unknown) => {
+          const p = part as {
+            type?: string;
+            name?: string;
+            input?: { status?: string };
+          };
+          return (
+            p.type === "toolCall" &&
+            p.name === "update_goal" &&
+            p.input?.status === "blocked"
+          );
+        })
       ) {
         return true;
       }
@@ -190,7 +227,7 @@ export type ContinuationOutcome = "continue" | "complete" | "stalled";
  * decision is fully testable without a running session.
  */
 export function classifyContinuation(messages: unknown[]): ContinuationOutcome {
-  // PRIMARY: the agent called the `complete_goal` tool to mark the objective
+  // PRIMARY: the agent called the `update_goal` tool to mark the objective
   // achieved. This takes priority over everything else.
   if (runCalledCompleteGoal(messages)) return "complete";
   // FALLBACK: the agent declared completion in natural language but did not
@@ -268,6 +305,7 @@ export function getGoalState(ctx: ExtensionContext): GoalState | null {
       if (
         status !== "active" &&
         status !== "paused" &&
+        status !== "blocked" &&
         status !== "complete" &&
         status !== "budget-limited" &&
         status !== "cleared"
@@ -317,6 +355,8 @@ export function goalStatusLabel(state: GoalState | null): string | undefined {
       return "\uF4DE goal: active";
     case "paused":
       return "\uF04C goal: paused";
+    case "blocked":
+      return "\uF4E8 goal: blocked";
     case "complete":
       return "\uF00C goal: complete";
     case "budget-limited":

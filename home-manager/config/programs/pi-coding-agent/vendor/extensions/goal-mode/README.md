@@ -8,25 +8,25 @@ Goal mode turns a one-shot agent interaction into a persistent autonomous loop: 
 
 ### Design Principles (aligned with Codex)
 
-1. **Tool-based completion is primary.** The agent calls the `complete_goal` model tool to mark the objective achieved (mirroring Codex's `update_goal`). This is more reliable than guessing from prose.
+1. **Tool-based completion is primary.** The agent calls the `update_goal` model tool to mark the objective achieved or blocked (mirroring Codex's `update_goal`). This is more reliable than guessing from prose.
 2. **Regex detection is a fallback.** If the agent declares completion in natural language without calling the tool, the harness still auto-completes via `detectCompletion()`.
 3. **Trust the model for _when_ to stop.** Completion is detected by the agent's signal (tool call or declaration), not by harness-side heuristics about the codebase.
-4. **Stall detection is a safety net.** If a continuation turn produces no tool calls AND no completion signal, the loop stops. This catches stuck agents without interfering with normal progress.
+4. **Stall detection is a safety net.** If a continuation turn produces no tool calls AND no completion signal, the loop stops. This catches stuck agents without interfering with normal progress. A sanctioned impasse exit is the `blocked` status: after the same blocker recurs for at least three consecutive goal turns, the agent calls `update_goal` with `status=blocked` (Codex PR #23094); the goal is resumable via `/goal resume`, which starts a fresh blocked audit.
 5. **Budgets are optional.** By default, goals have unlimited turns and cost. Budgets are a backstop, not a primary control.
 6. **Context survives compaction.** After smart-compact runs, goal context is re-injected on the next `before_agent_start` so the agent doesn't lose the objective.
 
 ## Commands
 
-| Command                   | Description                                    |
-| ------------------------- | ---------------------------------------------- |
-| `/goal <objective>`       | Set a new active goal and start driving it     |
-| `/goal` or `/goal status` | Show current goal status and budget usage      |
-| `/goal pause`             | Pause auto-continuation (goal state preserved) |
-| `/goal resume`            | Resume a paused or budget-limited goal         |
-| `/goal clear`             | Remove the current goal entirely               |
-| `/goal complete`          | Mark the current goal as complete              |
-| `/goal budget turns <N>`  | Set max turns (`unlimited` or `inf`)           |
-| `/goal budget cost <N>`   | Set max cost in USD (`unlimited` or `inf`)     |
+| Command                   | Description                                      |
+| ------------------------- | ------------------------------------------------ |
+| `/goal <objective>`       | Set a new active goal and start driving it       |
+| `/goal` or `/goal status` | Show current goal status and budget usage        |
+| `/goal pause`             | Pause auto-continuation (goal state preserved)   |
+| `/goal resume`            | Resume a paused, budget-limited, or blocked goal |
+| `/goal clear`             | Remove the current goal entirely                 |
+| `/goal complete`          | Mark the current goal as complete                |
+| `/goal budget turns <N>`  | Set max turns (`unlimited` or `inf`)             |
+| `/goal budget cost <N>`   | Set max cost in USD (`unlimited` or `inf`)       |
 
 ## Architecture
 
@@ -61,7 +61,8 @@ goal-mode/
 **Auto-continuation** (`agent_end` hook):
 
 1. If the turn was a self-triggered continuation, classify it via `classifyContinuation()` (three-tier, in priority order):
-   - **`"complete"`** → agent called `complete_goal` OR declared completion in text → set status to `complete`, notify, stop. (The tool path normally completes inside the tool's `execute()` and returns early at the top of `agent_end`; this branch covers the regex fallback.)
+   - **`"complete"`** → agent called `update_goal` (status=complete) OR declared completion in text → set status to `complete`, notify, stop. (The tool path normally completes inside the tool's `execute()` and returns early at the top of `agent_end`; this branch covers the regex fallback.)
+   - **`"blocked"`** → agent called `update_goal` with status=blocked (3-strike impasse) → set status to `blocked`, notify, stop. Resumable via `/goal resume`.
    - **`"stalled"`** → no tool calls and no completion signal → notify, stop.
    - **`"continue"`** → the agent did real work → proceed to step 2.
 2. Skip if compaction just happened or context is near threshold.
@@ -84,11 +85,11 @@ The `agent_end` hook sets `pendingContinuationTurn = true` when it sends a conti
 
 The `classifyContinuation()` function in `contract.ts` consolidates the completion/stall check into a single testable decision. It uses three helpers, checked in priority order:
 
-1. **`runCalledCompleteGoal()`** (PRIMARY) — checks whether any assistant message in the run made a `toolCall` to the `complete_goal` tool. This is the model-tool-based mechanism aligned with Codex's `update_goal`.
+1. **`runCalledCompleteGoal()`** (PRIMARY) — checks whether any assistant message in the run made a `toolCall` to the `update_goal` tool with status=`complete`. This is the model-tool-based mechanism aligned with Codex's `update_goal`. A sibling `runCalledUpdateGoalBlocked()` detects `status=blocked` calls.
 2. **`detectCompletion()`** (FALLBACK) — regex patterns on the last assistant message, kept as a safety net for models that miss the tool.
 3. **`runHadToolCalls()`** — checks for any `toolCall` parts across all assistant messages in the run; absence indicates a stall.
 
-The `complete_goal` tool is registered in `index.ts` via `pi.registerTool()` and conditionally activated via `pi.setActiveTools()` only while a goal is active (toggled in `updateGoalStatus`). This keeps the system prompt clean when no goal is running and prevents spurious completion calls.
+The `update_goal` tool is registered in `index.ts` via `pi.registerTool()` and conditionally activated via `pi.setActiveTools()` only while a goal is active (toggled in `updateGoalStatus`). This keeps the system prompt clean when no goal is running and prevents spurious completion calls.
 
 When the agent calls it, the tool's `execute()` reads the current goal state, sets status to `complete`, updates the status bar, returns a success text (with final usage when a budget is set), and returns `terminate: true` to hint that pi should skip the follow-up LLM call — the goal is done and the agent should not continue. Because the tool completes the goal mid-turn, the `agent_end` hook's early `state.status !== "active"` check returns before reaching `classifyContinuation()` for the tool path; the regex fallback in `classifyContinuation()` only fires when the agent declared completion in text without calling the tool.
 
@@ -135,7 +136,7 @@ External prompt files live in `vendor/prompts/goal-mode/` and are deployed to `~
 
 ### Context & Harness APIs Used
 
-- `pi.registerTool({ name: "complete_goal", ... })`
+- `pi.registerTool({ name: "update_goal", ... })`
 - `pi.setActiveTools(...)`
 - `ctx.hasUI`
 - `ctx.ui.setStatus("goal-status", ...)`
