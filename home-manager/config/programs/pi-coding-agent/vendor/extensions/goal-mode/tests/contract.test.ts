@@ -3,19 +3,15 @@
  *
  * Run with: nix run nixpkgs#tsx -- tests/contract.test.ts
  *
- * Tests the pure functions (goalStatusLabel, detectCompletion,
- * extractLastAssistantText, runHadToolCalls, classifyContinuation,
- * isValidBudgetValue) and the context-dependent functions (getGoalState)
- * using lightweight mocks.
+ * Tests the pure functions (goalStatusLabel, detectTurnError,
+ * runCalledCompleteGoal, classifyContinuation, isValidBudgetValue) and the
+ * context-dependent functions (getGoalState) using lightweight mocks.
  */
 
 import {
   goalStatusLabel,
-  detectCompletion,
-  extractLastAssistantText,
-  runHadToolCalls,
+  detectTurnError,
   runCalledCompleteGoal,
-  runCalledUpdateGoalBlocked,
   classifyContinuation,
   isValidBudgetValue,
   validateObjective,
@@ -107,7 +103,6 @@ function goalEntry(state: GoalState, id?: string) {
   };
 }
 
-/** Create a mock assistant message entry. */
 // ===========================================================================
 // goalStatusLabel tests
 // ===========================================================================
@@ -176,6 +171,15 @@ test("budget-limited status without reason uses default", () => {
   assertTrue(label?.includes("budget-limited") ?? false);
 });
 
+test("usage-limited status returns label", () => {
+  const state: GoalState = {
+    objective: "test",
+    status: "usage-limited",
+    budget: DEFAULT_BUDGET,
+  };
+  assertTrue(goalStatusLabel(state)?.includes("usage-limited") ?? false);
+});
+
 test("cleared status returns undefined", () => {
   const state: GoalState = {
     objective: "test",
@@ -183,438 +187,6 @@ test("cleared status returns undefined", () => {
     budget: DEFAULT_BUDGET,
   };
   assertEquals(goalStatusLabel(state), undefined);
-});
-
-// ===========================================================================
-// extractLastAssistantText tests
-// ===========================================================================
-
-console.log("\n=== extractLastAssistantText Tests ===");
-
-test("empty messages returns empty string", () => {
-  assertEquals(extractLastAssistantText([]), "");
-});
-
-test("string content returns directly", () => {
-  const messages = [
-    { role: "user", content: "hello" },
-    { role: "assistant", content: "world" },
-  ];
-  assertEquals(extractLastAssistantText(messages), "world");
-});
-
-test("structured content returns text blocks joined", () => {
-  const messages = [
-    {
-      role: "assistant",
-      content: [
-        { type: "text", text: "hello " },
-        { type: "text", text: "world" },
-      ],
-    },
-  ];
-  assertEquals(extractLastAssistantText(messages), "hello world");
-});
-
-test("only last assistant message is used", () => {
-  const messages = [
-    { role: "assistant", content: "first" },
-    { role: "user", content: "middle" },
-    { role: "assistant", content: "last" },
-  ];
-  assertEquals(extractLastAssistantText(messages), "last");
-});
-
-test("non-text parts are skipped", () => {
-  const messages = [
-    {
-      role: "assistant",
-      content: [{ type: "toolCall" }, { type: "text", text: "done" }],
-    },
-  ];
-  assertEquals(extractLastAssistantText(messages), "done");
-});
-
-test("empty text content returns empty string", () => {
-  const messages = [{ role: "assistant", content: [{ type: "toolCall" }] }];
-  assertEquals(extractLastAssistantText(messages), "");
-});
-
-test("no assistant messages returns empty string", () => {
-  const messages = [{ role: "user", content: "hello" }];
-  assertEquals(extractLastAssistantText(messages), "");
-});
-
-// ===========================================================================
-// detectCompletion tests
-// ===========================================================================
-
-console.log("\n=== detectCompletion Tests ===");
-
-test("objective has been completed", () => {
-  assertTrue(
-    detectCompletion([
-      { role: "assistant", content: "The objective has been completed." },
-    ]),
-  );
-});
-
-test("objective is complete", () => {
-  assertTrue(
-    detectCompletion([
-      { role: "assistant", content: "The objective is complete." },
-    ]),
-  );
-});
-
-test("objective was achieved", () => {
-  assertTrue(
-    detectCompletion([
-      { role: "assistant", content: "The objective was achieved." },
-    ]),
-  );
-});
-
-test("goal has been completed", () => {
-  assertTrue(
-    detectCompletion([
-      { role: "assistant", content: "The goal has been completed." },
-    ]),
-  );
-});
-
-test("goal is finished", () => {
-  assertTrue(
-    detectCompletion([{ role: "assistant", content: "The goal is finished." }]),
-  );
-});
-
-test("all requirements have been met", () => {
-  assertTrue(
-    detectCompletion([
-      { role: "assistant", content: "All requirements have been met." },
-    ]),
-  );
-});
-
-test("all tests are passing", () => {
-  assertTrue(
-    detectCompletion([
-      { role: "assistant", content: "All tests are passing." },
-    ]),
-  );
-});
-
-test("the task is complete", () => {
-  assertTrue(
-    detectCompletion([{ role: "assistant", content: "The task is complete." }]),
-  );
-});
-
-test("case insensitive matching", () => {
-  assertTrue(
-    detectCompletion([
-      { role: "assistant", content: "THE OBJECTIVE HAS BEEN COMPLETED." },
-    ]),
-  );
-});
-
-test("completion in structured content", () => {
-  assertTrue(
-    detectCompletion([
-      {
-        role: "assistant",
-        content: [{ type: "text", text: "The objective has been completed." }],
-      },
-    ]),
-  );
-});
-
-test("does not match sub-task completion", () => {
-  assertFalse(
-    detectCompletion([
-      { role: "assistant", content: "Step 1 is done. Now moving to step 2." },
-    ]),
-  );
-});
-
-test("does not match generic done", () => {
-  assertFalse(
-    detectCompletion([
-      { role: "assistant", content: "I'm done with this part." },
-    ]),
-  );
-});
-
-test("does not match empty message", () => {
-  assertFalse(detectCompletion([{ role: "assistant", content: "" }]));
-});
-
-test("does not match user message", () => {
-  assertFalse(
-    detectCompletion([
-      { role: "user", content: "The objective has been completed." },
-    ]),
-  );
-});
-
-test("does not match unrelated text", () => {
-  assertFalse(
-    detectCompletion([{ role: "assistant", content: "Running tests now." }]),
-  );
-});
-
-test("handles structured content with tool calls", () => {
-  assertTrue(
-    detectCompletion([
-      {
-        role: "assistant",
-        content: [
-          { type: "toolCall" },
-          { type: "text", text: "The objective has been completed." },
-        ],
-      },
-    ]),
-  );
-});
-
-// --- "now" variants ---
-
-test("objective is now complete", () => {
-  assertTrue(
-    detectCompletion([
-      { role: "assistant", content: "The objective is now complete." },
-    ]),
-  );
-});
-
-test("objective is now done", () => {
-  assertTrue(
-    detectCompletion([
-      { role: "assistant", content: "The objective is now done." },
-    ]),
-  );
-});
-
-test("goal is now complete", () => {
-  assertTrue(
-    detectCompletion([
-      { role: "assistant", content: "The goal is now complete." },
-    ]),
-  );
-});
-
-test("all tasks are now complete", () => {
-  assertTrue(
-    detectCompletion([
-      { role: "assistant", content: "All tasks are now complete." },
-    ]),
-  );
-});
-
-test("the task is now finished", () => {
-  assertTrue(
-    detectCompletion([
-      { role: "assistant", content: "The task is now finished." },
-    ]),
-  );
-});
-
-// --- first-person variants ---
-
-test("I have completed the objective", () => {
-  assertTrue(
-    detectCompletion([
-      { role: "assistant", content: "I have completed the objective." },
-    ]),
-  );
-});
-
-test("I've completed the goal", () => {
-  assertTrue(
-    detectCompletion([
-      { role: "assistant", content: "I've completed the goal." },
-    ]),
-  );
-});
-
-test("I have successfully achieved the objective", () => {
-  assertTrue(
-    detectCompletion([
-      {
-        role: "assistant",
-        content: "I have successfully achieved the objective.",
-      },
-    ]),
-  );
-});
-
-test("I have finished the task", () => {
-  assertTrue(
-    detectCompletion([
-      { role: "assistant", content: "I have finished the task." },
-    ]),
-  );
-});
-
-// --- additional false-positive checks ---
-
-test("does not match 'objective is clear'", () => {
-  assertFalse(
-    detectCompletion([
-      {
-        role: "assistant",
-        content: "The objective is clear from the context.",
-      },
-    ]),
-  );
-});
-
-test("does not match 'goal is to fix'", () => {
-  assertFalse(
-    detectCompletion([
-      { role: "assistant", content: "The goal is to fix the bug." },
-    ]),
-  );
-});
-
-test("does not match 'all tasks are defined'", () => {
-  assertFalse(
-    detectCompletion([
-      { role: "assistant", content: "All tasks are defined in the plan." },
-    ]),
-  );
-});
-
-test("does not match 'I have started the objective'", () => {
-  assertFalse(
-    detectCompletion([
-      { role: "assistant", content: "I have started the objective." },
-    ]),
-  );
-});
-
-test("does not match 'the task is complex'", () => {
-  assertFalse(
-    detectCompletion([
-      { role: "assistant", content: "The task is complex but doable." },
-    ]),
-  );
-});
-
-test("does not match 'step 1 is now complete'", () => {
-  assertFalse(
-    detectCompletion([
-      {
-        role: "assistant",
-        content: "Step 1 is now complete, moving to step 2.",
-      },
-    ]),
-  );
-});
-
-test("completion detected mid-sentence", () => {
-  assertTrue(
-    detectCompletion([
-      {
-        role: "assistant",
-        content:
-          "After running all tests, the objective has been completed successfully.",
-      },
-    ]),
-  );
-});
-
-test("completion detected with extra whitespace", () => {
-  assertTrue(
-    detectCompletion([
-      { role: "assistant", content: "The objective  has  been  completed." },
-    ]),
-  );
-});
-
-// ===========================================================================
-// runHadToolCalls tests
-// ===========================================================================
-
-console.log("\n=== runHadToolCalls Tests ===");
-
-test("empty messages returns false", () => {
-  assertFalse(runHadToolCalls([]));
-});
-
-test("text-only assistant message returns false", () => {
-  assertFalse(
-    runHadToolCalls([
-      { role: "assistant", content: [{ type: "text", text: "hello" }] },
-    ]),
-  );
-});
-
-test("string content returns false", () => {
-  assertFalse(runHadToolCalls([{ role: "assistant", content: "hello" }]));
-});
-
-test("toolCall in assistant message returns true", () => {
-  assertTrue(
-    runHadToolCalls([
-      { role: "assistant", content: [{ type: "toolCall", name: "bash" }] },
-    ]),
-  );
-});
-
-test("text then toolCall returns true", () => {
-  assertTrue(
-    runHadToolCalls([
-      {
-        role: "assistant",
-        content: [
-          { type: "text", text: "Running command" },
-          { type: "toolCall", name: "bash" },
-        ],
-      },
-    ]),
-  );
-});
-
-test("toolCall in any assistant message returns true", () => {
-  assertTrue(
-    runHadToolCalls([
-      { role: "user", content: "go" },
-      { role: "assistant", content: [{ type: "text", text: "ok" }] },
-      { role: "assistant", content: [{ type: "toolCall", name: "bash" }] },
-    ]),
-  );
-});
-
-test("user tool calls are ignored", () => {
-  assertFalse(
-    runHadToolCalls([
-      { role: "user", content: [{ type: "toolCall", name: "bash" }] },
-    ]),
-  );
-});
-
-test("non-array content returns false", () => {
-  assertFalse(runHadToolCalls([{ role: "assistant", content: undefined }]));
-});
-
-test("empty content array returns false", () => {
-  assertFalse(runHadToolCalls([{ role: "assistant", content: [] }]));
-});
-
-test("only non-toolCall parts returns false", () => {
-  assertFalse(
-    runHadToolCalls([
-      {
-        role: "assistant",
-        content: [
-          { type: "text", text: "a" },
-          { type: "reasoning", text: "b" },
-        ],
-      },
-    ]),
-  );
 });
 
 // ===========================================================================
@@ -725,23 +297,6 @@ test("toolCall with wrong name returns false", () => {
   );
 });
 
-test("old complete_goal tool name returns false (rename enforced)", () => {
-  assertFalse(
-    runCalledCompleteGoal([
-      {
-        role: "assistant",
-        content: [
-          {
-            type: "toolCall",
-            name: "complete_goal",
-            input: { status: "complete" },
-          },
-        ],
-      },
-    ]),
-  );
-});
-
 test("update_goal with status=blocked returns false from runCalledCompleteGoal", () => {
   assertFalse(
     runCalledCompleteGoal([
@@ -759,124 +314,11 @@ test("update_goal with status=blocked returns false from runCalledCompleteGoal",
   );
 });
 
-test("runCalledUpdateGoalBlocked detects status=blocked", () => {
-  assertTrue(
-    runCalledUpdateGoalBlocked([
-      {
-        role: "assistant",
-        content: [
-          {
-            type: "toolCall",
-            name: "update_goal",
-            input: { status: "blocked" },
-          },
-        ],
-      },
-    ]),
-  );
-});
-
-test("runCalledUpdateGoalBlocked ignores status=complete", () => {
-  assertFalse(
-    runCalledUpdateGoalBlocked([
-      {
-        role: "assistant",
-        content: [
-          {
-            type: "toolCall",
-            name: "update_goal",
-            input: { status: "complete" },
-          },
-        ],
-      },
-    ]),
-  );
-});
-
 // ===========================================================================
 // classifyContinuation tests
 // ===========================================================================
 
 console.log("\n=== classifyContinuation Tests ===");
-
-test("completion declaration returns complete", () => {
-  assertEquals(
-    classifyContinuation([
-      { role: "assistant", content: "The objective has been completed." },
-    ]),
-    "complete",
-  );
-});
-
-test("tool call without completion returns continue", () => {
-  assertEquals(
-    classifyContinuation([
-      {
-        role: "assistant",
-        content: [
-          { type: "text", text: "Running tests" },
-          { type: "toolCall", name: "bash" },
-        ],
-      },
-    ]),
-    "continue",
-  );
-});
-
-test("text-only without completion returns stalled", () => {
-  assertEquals(
-    classifyContinuation([
-      { role: "assistant", content: "I'm not sure what to do next." },
-    ]),
-    "stalled",
-  );
-});
-
-test("completion takes priority over no-tool-calls", () => {
-  // Completion is checked first, so a text-only completion declaration
-  // returns "complete" rather than "stalled".
-  assertEquals(
-    classifyContinuation([
-      { role: "assistant", content: "The objective has been completed." },
-    ]),
-    "complete",
-  );
-});
-
-test("completion takes priority over tool calls", () => {
-  // If the agent declares completion AND made tool calls, completion wins.
-  assertEquals(
-    classifyContinuation([
-      {
-        role: "assistant",
-        content: [
-          { type: "text", text: "The objective has been completed." },
-          { type: "toolCall", name: "bash" },
-        ],
-      },
-    ]),
-    "complete",
-  );
-});
-
-test("empty messages returns stalled", () => {
-  assertEquals(classifyContinuation([]), "stalled");
-});
-
-test("structured completion returns complete", () => {
-  assertEquals(
-    classifyContinuation([
-      {
-        role: "assistant",
-        content: [
-          { type: "toolCall", name: "bash" },
-          { type: "text", text: "The goal has been completed." },
-        ],
-      },
-    ]),
-    "complete",
-  );
-});
 
 test("update_goal with status=complete returns complete", () => {
   assertEquals(
@@ -885,26 +327,6 @@ test("update_goal with status=complete returns complete", () => {
         role: "assistant",
         content: [
           { type: "text", text: "Audit passed." },
-          {
-            type: "toolCall",
-            name: "update_goal",
-            input: { status: "complete" },
-          },
-        ],
-      },
-    ]),
-    "complete",
-  );
-});
-
-test("update_goal with status=complete takes priority over stall (no other tool calls)", () => {
-  // A run that only calls update_goal (no other tool calls) is complete,
-  // not stalled, because the tool-based signal wins.
-  assertEquals(
-    classifyContinuation([
-      {
-        role: "assistant",
-        content: [
           {
             type: "toolCall",
             name: "update_goal",
@@ -937,23 +359,152 @@ test("update_goal with status=complete takes priority over continue", () => {
   );
 });
 
-test("update_goal with status=complete takes priority over regex fallback", () => {
-  // Even when there is no completion text, the tool call wins.
+test("tool call without completion returns continue", () => {
   assertEquals(
     classifyContinuation([
       {
         role: "assistant",
         content: [
-          { type: "text", text: "Calling the tool now." },
-          {
-            type: "toolCall",
-            name: "update_goal",
-            input: { status: "complete" },
-          },
+          { type: "text", text: "Running tests" },
+          { type: "toolCall", name: "bash" },
         ],
       },
     ]),
-    "complete",
+    "continue",
+  );
+});
+
+test("text-only without tool calls returns continue (no stall detection)", () => {
+  assertEquals(
+    classifyContinuation([
+      { role: "assistant", content: "I'm not sure what to do next." },
+    ]),
+    "continue",
+  );
+});
+
+test("empty messages returns continue (no stall detection)", () => {
+  assertEquals(classifyContinuation([]), "continue");
+});
+
+// ===========================================================================
+// detectTurnError tests
+// ===========================================================================
+
+console.log("\n=== detectTurnError Tests ===");
+
+test("no assistant messages returns null", () => {
+  assertEquals(detectTurnError([]), null);
+  assertEquals(detectTurnError([{ role: "user", content: "hi" }]), null);
+});
+
+test("stopReason=stop returns null", () => {
+  assertEquals(
+    detectTurnError([{ role: "assistant", stopReason: "stop" }]),
+    null,
+  );
+});
+
+test("stopReason=toolUse returns null", () => {
+  assertEquals(
+    detectTurnError([{ role: "assistant", stopReason: "toolUse" }]),
+    null,
+  );
+});
+
+test("stopReason=error returns blocked", () => {
+  assertEquals(
+    detectTurnError([
+      {
+        role: "assistant",
+        stopReason: "error",
+        errorMessage: "internal server error",
+      },
+    ]),
+    "blocked",
+  );
+});
+
+test("stopReason=aborted returns blocked", () => {
+  assertEquals(
+    detectTurnError([
+      {
+        role: "assistant",
+        stopReason: "aborted",
+        errorMessage: "connection reset",
+      },
+    ]),
+    "blocked",
+  );
+});
+
+test("stopReason=error with rate limit message returns usage-limited", () => {
+  assertEquals(
+    detectTurnError([
+      {
+        role: "assistant",
+        stopReason: "error",
+        errorMessage: "rate limit exceeded",
+      },
+    ]),
+    "usage-limited",
+  );
+});
+
+test("stopReason=error with quota message returns usage-limited", () => {
+  assertEquals(
+    detectTurnError([
+      {
+        role: "assistant",
+        stopReason: "error",
+        errorMessage: "insufficient_quota",
+      },
+    ]),
+    "usage-limited",
+  );
+});
+
+test("stopReason=error with billing message returns usage-limited", () => {
+  assertEquals(
+    detectTurnError([
+      { role: "assistant", stopReason: "error", errorMessage: "billing issue" },
+    ]),
+    "usage-limited",
+  );
+});
+
+test("stopReason=error with usage limit message returns usage-limited", () => {
+  assertEquals(
+    detectTurnError([
+      {
+        role: "assistant",
+        stopReason: "error",
+        errorMessage: "usage limit reached",
+      },
+    ]),
+    "usage-limited",
+  );
+});
+
+test("only last assistant message is checked", () => {
+  assertEquals(
+    detectTurnError([
+      { role: "assistant", stopReason: "toolUse" },
+      { role: "user", content: "ok" },
+      { role: "assistant", stopReason: "error", errorMessage: "timeout" },
+    ]),
+    "blocked",
+  );
+});
+
+test("earlier error is ignored if last assistant message is clean", () => {
+  assertEquals(
+    detectTurnError([
+      { role: "assistant", stopReason: "error", errorMessage: "timeout" },
+      { role: "user", content: "retry" },
+      { role: "assistant", stopReason: "stop" },
+    ]),
+    null,
   );
 });
 
@@ -1058,6 +609,18 @@ test("returns blocked goal state", () => {
   assertTrue(result !== null);
   assertEquals(result!.objective, "stuck on permission");
   assertEquals(result!.status, "blocked");
+});
+
+test("returns usage-limited goal state", () => {
+  const state: GoalState = {
+    objective: "rate limited",
+    status: "usage-limited",
+    budget: DEFAULT_BUDGET,
+  };
+  const ctx = mockCtx([goalEntry(state)]);
+  const result = getGoalState(ctx as any);
+  assertTrue(result !== null);
+  assertEquals(result!.status, "usage-limited");
 });
 
 test("skips entries with missing objective", () => {

@@ -1,6 +1,9 @@
-// Contract shared with plan-mode/lib/contract.ts — keep EXECUTION_MODE_ENTRY,
-// MODE_EDIT, MODE_YOLO, modeLabel, and policyOverride shape in sync across
-// both extensions.
+// Contract shared with plan-mode/lib/contract.ts and
+// goal-mode/lib/contract.ts — keep EXECUTION_MODE_ENTRY, MODE_EDIT,
+// MODE_YOLO, modeLabel, and policyOverride shape in sync across all three
+// extensions. goal-mode reads EXECUTION_MODE_ENTRY and MODE_PLAN read-only
+// to defer its hooks during plan mode; it does not write execution-mode
+// entries or use MODE_EDIT/MODE_YOLO/policyOverride.
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 export const MODE_EDIT = "edit";

@@ -2,19 +2,18 @@
  * Goal mode contract: types, state management, and detection helpers.
  *
  * This module is the single source of truth for goal-state shape, validation,
- * and status labelling. It also provides completion-detection helpers used by
- * the extension's agent_end hook to decide whether a continuation turn
- * represents natural completion (the agent declared the objective satisfied)
- * or a stall (the agent produced no tool calls and no completion signal).
+ * and status labeling. It also provides completion-detection and turn-error
+ * helpers used by the extension's agent_end hook.
  *
- * Design principles (aligned with Codex's approach):
+ * Design principles:
  * - The harness trusts the model's judgment for *when* to stop.
- * - PRIMARY completion signal: the agent calls the `update_goal` model
- *   tool to mark the objective achieved (Codex-style tool-based completion).
- * - FALLBACK completion signal: the agent's natural-language declaration,
- *   detected by regex, as a safety net for models that miss the tool.
- * - Stall detection (no tool calls + no completion signal) is a safety net,
- *   not a completion mechanism.
+ * - Completion signal: the agent calls the `update_goal` model tool to
+ *   mark the objective achieved (tool-based completion). There is no
+ *   regex fallback or stall detection — a continuation turn with no tool
+ *   calls is trusted to continue.
+ * - Turn errors (provider/transport failures) are mapped to "blocked" or
+ *   "usage-limited" status.
+ * - Budgets are an optional backstop; unlimited by default.
  */
 
 import type {
@@ -27,8 +26,14 @@ import type {
 /** Custom-entry type used to persist goal state on the session branch. */
 export const GOAL_STATE_ENTRY = "goal-state";
 
-/** Custom-entry type for execution-mode (duplicated from plan-mode contract). */
+/**
+ * Custom-entry type for execution-mode. Duplicated from plan-mode/lib/contract.ts
+ * (and shell-policy/lib/execution-mode.ts) by convention — keep in sync across
+ * all three. goal-mode reads this read-only to defer its hooks during plan mode;
+ * it never writes execution-mode entries.
+ */
 export const EXECUTION_MODE_ENTRY = "execution-mode";
+export const MODE_EDIT = "edit";
 export const MODE_PLAN = "plan";
 
 // Types
@@ -37,6 +42,7 @@ export type GoalStatus =
   | "active" // Goal is being actively driven.
   | "paused" // User paused auto-continuation.
   | "blocked" // Agent at a true impasse (3-strike); resumable like paused.
+  | "usage-limited" // Provider rate/billing limit.
   | "complete" // Goal declared complete (by user or auto-detection).
   | "budget-limited" // Budget exhausted; agent asked to summarize.
   | "cleared"; // Goal removed; not shown in status bar.
@@ -65,97 +71,10 @@ export const DEFAULT_BUDGET: GoalBudget = {
 // Completion detection
 
 /**
- * Regex patterns that indicate the agent believes the overall objective is
- * complete. These are intentionally specific to avoid false positives from
- * sub-task completion language like "step 1 is done".
- *
- * The continuation prompt instructs the agent to say "The objective has been
- * completed" when done, so we look for close variants of that phrase.
- *
- * Pattern groups:
- *   (?:has been |is |was |has )?  — optional auxiliary verb
- *   (?:now )?                    — optional "now" ("the objective is now complete")
- *   (?:completed?|achieved|...)   — completion verb ("complete" or "completed")
- */
-const COMPLETION_PATTERNS: readonly RegExp[] = [
-  // "The objective has been completed" / "objective is now complete" / etc.
-  /\bobjective\s+(?:has\s+been\s+|is\s+|was\s+|has\s+)?(?:now\s+)?(?:completed?|achieved|finished|done|satisfied|fulfilled)\b/i,
-  // "The goal has been completed" / "goal is now complete" / etc.
-  /\bgoal\s+(?:has\s+been\s+|is\s+|was\s+|has\s+)?(?:now\s+)?(?:completed?|achieved|finished|done|satisfied|fulfilled)\b/i,
-  // "All requirements have been met" / "all tasks are now complete" / etc.
-  /\ball\s+(?:requirements|tasks|steps|tests)\s+(?:have\s+been\s+|are\s+|were\s+)?(?:now\s+)?(?:met|satisfied|completed?|fulfilled|done|passing)\b/i,
-  // "The task is complete" (broader)
-  /\bthe\s+task\s+(?:has\s+been\s+|is\s+|was\s+)?(?:now\s+)?(?:completed?|achieved|finished|done)\b/i,
-  // First-person: "I have completed the objective" / "I've finished the goal"
-  /\bI(?:\s+have\s+|'ve\s+)(?:successfully\s+)?(?:completed?|achieved|finished|done)\s+(?:the\s+)?(?:objective|goal|task)\b/i,
-];
-
-/**
- * Extract the plain-text content of the last assistant message from a run's
- * message array. Handles both string content and structured content arrays
- * (pi's message format uses `part.type === "text"` for text blocks).
- */
-export function extractLastAssistantText(messages: unknown[]): string {
-  for (let i = messages.length - 1; i >= 0; i--) {
-    const msg = messages[i] as { role?: string; content?: unknown };
-    if (msg.role !== "assistant") continue;
-
-    if (typeof msg.content === "string") return msg.content;
-    if (Array.isArray(msg.content)) {
-      return msg.content
-        .filter((part: unknown) => (part as { type?: string }).type === "text")
-        .map((part: unknown) => (part as { text?: string }).text ?? "")
-        .join("");
-    }
-    return "";
-  }
-  return "";
-}
-
-/**
- * Check whether the last assistant message in a run declares the objective
- * as complete. Returns true if any completion pattern matches.
- *
- * This is used by the agent_end hook to auto-complete a goal when the agent
- * naturally finishes, rather than treating it as a stall.
- */
-export function detectCompletion(messages: unknown[]): boolean {
-  const text = extractLastAssistantText(messages);
-  if (!text.trim()) return false;
-  return COMPLETION_PATTERNS.some((re) => re.test(text));
-}
-
-/**
- * Detect whether ANY assistant message in a run made tool calls.
- *
- * A continuation that made tool calls earlier in the run but ends with
- * a text-only message should NOT be classified as stalled — the agent did
- * real work, it just chose to summarize at the end. Only a run with zero
- * tool calls across all assistant messages is a true stall.
- *
- * pi's message format uses `part.type === "toolCall"` (not "tool_use").
- */
-export function runHadToolCalls(messages: unknown[]): boolean {
-  for (const msg of messages as { role?: string; content?: unknown }[]) {
-    if (msg.role === "assistant" && Array.isArray(msg.content)) {
-      if (
-        msg.content.some(
-          (part: unknown) => (part as { type?: string }).type === "toolCall",
-        )
-      ) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-/**
  * Detect whether ANY assistant message in a run called the `update_goal`
  * tool with status=`complete`. This is the PRIMARY completion signal: when
  * the agent marks the goal achieved via the model tool, the run is complete
- * regardless of any other text or tool activity. Mirrors the structure of
- * `runHadToolCalls`.
+ * regardless of any other text or tool activity.
  */
 export function runCalledCompleteGoal(messages: unknown[]): boolean {
   for (const msg of messages as { role?: string; content?: unknown }[]) {
@@ -181,59 +100,54 @@ export function runCalledCompleteGoal(messages: unknown[]): boolean {
   return false;
 }
 
+/** Pattern matching usage/rate/billing limit error messages. */
+const USAGE_LIMIT_PATTERN =
+  /usage limit|rate limit|quota|billing|insufficient_quota|out of budget/i;
+
 /**
- * Detect whether ANY assistant message in a run called the `update_goal`
- * tool with status=`blocked`.
+ * Inspect the last assistant message in a run for a terminal error.
+ * Pi surfaces provider/transport failures as a final AssistantMessage
+ * with stopReason "error" or "aborted" and errorMessage populated.
+ * Returns "usage-limited" if the error message indicates a usage/rate/
+ * billing limit, otherwise "blocked". Returns null if no error is detected.
  */
-export function runCalledUpdateGoalBlocked(messages: unknown[]): boolean {
-  for (const msg of messages as { role?: string; content?: unknown }[]) {
-    if (msg.role === "assistant" && Array.isArray(msg.content)) {
-      if (
-        msg.content.some((part: unknown) => {
-          const p = part as {
-            type?: string;
-            name?: string;
-            input?: { status?: string };
-          };
-          return (
-            p.type === "toolCall" &&
-            p.name === "update_goal" &&
-            p.input?.status === "blocked"
-          );
-        })
-      ) {
-        return true;
-      }
+export function detectTurnError(messages: unknown[]): GoalStatus | null {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const msg = messages[i] as {
+      role?: string;
+      stopReason?: string;
+      errorMessage?: string;
+    };
+    if (msg.role !== "assistant") continue;
+    if (msg.stopReason === "error" || msg.stopReason === "aborted") {
+      return USAGE_LIMIT_PATTERN.test(msg.errorMessage ?? "")
+        ? "usage-limited"
+        : "blocked";
     }
+    return null; // last assistant message is not an error
   }
-  return false;
+  return null;
 }
 
 /**
- * Outcome of analyzing a continuation turn for stall vs completion.
+ * Outcome of analyzing a continuation turn.
  *
- * - `"continue"`: The turn made tool calls and did not declare completion;
- *   the goal loop should continue.
- * - `"complete"`: The agent declared the objective satisfied; the goal
- *   should be auto-completed.
- * - `"stalled"`: The turn made no tool calls and declared no completion;
- *   the agent has stalled and the loop should stop.
+ * - `"continue"`: The turn did not signal completion; the goal loop
+ *   should continue.
+ * - `"complete"`: The agent called update_goal with status=complete;
+ *   the goal should be auto-completed.
  */
-export type ContinuationOutcome = "continue" | "complete" | "stalled";
+export type ContinuationOutcome = "continue" | "complete";
 
 /**
- * Classify a self-triggered continuation turn. This consolidates the
- * two-tier detection logic so the agent_end hook stays readable and the
- * decision is fully testable without a running session.
+ * Classify a self-triggered continuation turn. Returns "complete" if the
+ * agent called update_goal with status=complete (the tool-based completion
+ * signal), otherwise "continue". There is no stall detection: a
+ * continuation with no tool calls is trusted to continue (gated solely by
+ * status === "active").
  */
 export function classifyContinuation(messages: unknown[]): ContinuationOutcome {
-  // PRIMARY: the agent called the `update_goal` tool to mark the objective
-  // achieved. This takes priority over everything else.
   if (runCalledCompleteGoal(messages)) return "complete";
-  // FALLBACK: the agent declared completion in natural language but did not
-  // call the tool. Kept as a safety net for models that miss the tool.
-  if (detectCompletion(messages)) return "complete";
-  if (!runHadToolCalls(messages)) return "stalled";
   return "continue";
 }
 
@@ -257,7 +171,7 @@ export function isValidBudgetValue(
 
 // Objective validation and escaping
 
-/** Maximum objective length in characters (aligned with Codex). */
+/** Maximum objective length in characters. */
 export const MAX_OBJECTIVE_CHARS = 4000;
 
 /** Validate an objective string: non-empty and within the length limit. */
@@ -265,7 +179,7 @@ export function validateObjective(text: string): string | null {
   const trimmed = text.trim();
   if (!trimmed) return "Objective must not be empty.";
   // Count by Unicode code points (Array.from iterates code points, not UTF-16
-  // units), matching Codex's `value.chars().count()`.
+  // units).
   const charCount = Array.from(trimmed).length;
   if (charCount > MAX_OBJECTIVE_CHARS) {
     return `Objective must be at most ${MAX_OBJECTIVE_CHARS} characters (got ${charCount}).`;
@@ -276,7 +190,7 @@ export function validateObjective(text: string): string | null {
 /**
  * Escape XML special characters in objective text before inserting it into
  * `<untrusted_objective>` tags. This prevents prompt injection via crafted
- * objectives that break out of the tag (aligned with Codex's escape_xml_text).
+ * objectives that break out of the tag.
  */
 export function escapeXmlText(input: string): string {
   return input
@@ -306,6 +220,7 @@ export function getGoalState(ctx: ExtensionContext): GoalState | null {
         status !== "active" &&
         status !== "paused" &&
         status !== "blocked" &&
+        status !== "usage-limited" &&
         status !== "complete" &&
         status !== "budget-limited" &&
         status !== "cleared"
@@ -357,6 +272,8 @@ export function goalStatusLabel(state: GoalState | null): string | undefined {
       return "\uF04C goal: paused";
     case "blocked":
       return "\uF4E8 goal: blocked";
+    case "usage-limited":
+      return "\uF071 goal: usage-limited";
     case "complete":
       return "\uF00C goal: complete";
     case "budget-limited":
@@ -380,7 +297,7 @@ export function isPlanMode(ctx: ExtensionContext): boolean {
     .filter(Boolean);
   if (envModes.length > 0) return envModes[envModes.length - 1] === MODE_PLAN;
 
-  let mode = "edit";
+  let mode = MODE_EDIT;
   for (const entry of ctx.sessionManager.getEntries()) {
     if (entry.type === "custom" && entry.customType === EXECUTION_MODE_ENTRY) {
       const data = entry.data as { mode?: string } | undefined;
