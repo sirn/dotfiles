@@ -11,6 +11,7 @@
 - Resolve paths starting with `@` relative to the current working directory before searching other locations.
 - Use built-in tools and standard workflows; avoid writing ad-hoc scripts unless necessary.
 - Always read the corresponding reference skill before using any covered tool.
+- Do not batch multiple commands into a single shell invocation unless they must run together or repeat the same operation.
 
 ## Subagents
 
@@ -46,11 +47,13 @@
 ## Editing & Quality
 
 - Read file content before editing; use the `edit` tool instead of `sed` for single-file changes.
+- Do not tail the output of a command; rely on the tool's own truncation or output limits.
 - Maintain existing comments, indentation, ordering, and logical structure in configuration files.
 - Keep diffs focused on the task; report unrelated issues as feedback rather than fixing them opportunistically.
 - Review existing dependencies before adding new packages or libraries.
 - Test public-facing behavior; avoid targeting private implementation details unless externally observable.
 - Do not decorate comments (e.g., write `// Log commands` instead of `// --- Log commands ---`).
+- Do not write narrative-style comments or documentation narrating progress; comments and docs describe the code, not the work history.
 - Preserve exact spelling of domains, URLs, paths, and identifiers; never swap dots (`.`) and dashes (`-`) (e.g. `src-code.example.com` is not `src-code-example.com`).
 - Verify the literal input string against the original source when a write or path operation fails, before assuming a tool or permission failure.
 - Do not work around failures with `cat`, heredocs, or other shell writes; dedicated tools are correct, but the input string is wrong.
