@@ -8,7 +8,7 @@ import {
   evaluate,
   tokenize,
   extractCommands,
-  mergePolicies,
+  mergePoliciesStrict,
   buildWrapperRuleMap,
   normalizeShellPolicyConfig,
   normalizeUnifiedPolicyConfig,
@@ -1510,7 +1510,7 @@ test("combines all sections", () => {
     ask: [{ match: "rm", mode: "prefix" }],
     deny: [{ match: "sudo", mode: "prefix" }],
   };
-  const merged = mergePolicies(p1, p2);
+  const merged = mergePoliciesStrict(p1, p2);
   assertEquals(merged.allow.length, 1);
   assertEquals(merged.ask.length, 1);
   assertEquals(merged.deny.length, 1);
@@ -1520,7 +1520,7 @@ test("combines all sections", () => {
 });
 
 test("combines multiple policies", () => {
-  const merged = mergePolicies(
+  const merged = mergePoliciesStrict(
     { allow: [{ match: "ls", mode: "prefix" }], ask: [], deny: [] },
     { allow: [{ match: "cat", mode: "prefix" }], ask: [], deny: [] },
     { allow: [{ match: "grep", mode: "prefix" }], ask: [], deny: [] },
@@ -1539,7 +1539,7 @@ test("empty policies", () => {
     ask: [],
     deny: [],
   };
-  const merged = mergePolicies(p1, p2);
+  const merged = mergePoliciesStrict(p1, p2);
   assertEquals(merged.allow.length, 1);
   assertEquals(merged.ask.length, 0);
   assertEquals(merged.deny.length, 0);
@@ -1548,14 +1548,14 @@ test("empty policies", () => {
 test("both empty", () => {
   const p1: PolicyCommands = { allow: [], ask: [], deny: [] };
   const p2: PolicyCommands = { allow: [], ask: [], deny: [] };
-  const merged = mergePolicies(p1, p2);
+  const merged = mergePoliciesStrict(p1, p2);
   assertEquals(merged.allow.length, 0);
   assertEquals(merged.ask.length, 0);
   assertEquals(merged.deny.length, 0);
 });
 
 test("order preservation", () => {
-  const merged = mergePolicies(
+  const merged = mergePoliciesStrict(
     { allow: [{ match: "a", mode: "exact" }], ask: [], deny: [] },
     { allow: [{ match: "b", mode: "exact" }], ask: [], deny: [] },
     { allow: [{ match: "c", mode: "exact" }], ask: [], deny: [] },

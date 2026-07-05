@@ -135,3 +135,26 @@ export function normalizeSessionId(sessionId: unknown): string | undefined {
   if (ABSENT_SESSION_ID.has(trimmed.toLowerCase())) return undefined;
   return trimmed;
 }
+
+// Render file-change paths as an <output-meta> block, or "" when none.
+export function formatFileChangesMeta(fileChanges: string[]): string {
+  if (fileChanges.length === 0) return "";
+  return `
+<output-meta>
+## Files changed
+${fileChanges.map((p) => "- `" + p + "`").join("\n")}
+</output-meta>`;
+}
+
+// Render session IDs as an <output-meta> block, or "" when none.
+export function formatSessionIdsMeta(results: SingleResult[]): string {
+  const sessionIds = results
+    .filter((r) => r.sessionId)
+    .map((r) => `- ${r.agent}: ${r.sessionId}`);
+  if (sessionIds.length === 0) return "";
+  return `
+<output-meta>
+## Session IDs
+${sessionIds.join("\n")}
+</output-meta>`;
+}

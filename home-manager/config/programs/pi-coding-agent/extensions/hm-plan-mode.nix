@@ -1,25 +1,15 @@
-{ lib, pkgs, ... }:
-let
-  planModePromptsDir = ../vendor/prompts/plan-mode;
+{ lib, ... }:
 
-  planModePromptEntries = builtins.listToAttrs (
-    builtins.map
-      (
-        name:
-        lib.nameValuePair ".pi/agent/custom/plan-mode/prompts/${name}" {
-          text = builtins.readFile (planModePromptsDir + "/${name}");
-        }
-      )
-      (
-        builtins.filter (n: builtins.match ".*\\.md$" n != null) (
-          builtins.attrNames (builtins.readDir planModePromptsDir)
-        )
-      )
-  );
+let
+  readMdFiles = import ./lib/read-md-files.nix { inherit lib; };
+  planModePromptsDir = ../vendor/prompts/plan-mode;
 in
 {
   home.file = {
     ".pi/agent/extensions/hm-plan-mode".source = ../vendor/extensions/plan-mode;
   }
-  // planModePromptEntries;
+  // readMdFiles {
+    dir = planModePromptsDir;
+    prefix = ".pi/agent/custom/plan-mode/prompts";
+  };
 }

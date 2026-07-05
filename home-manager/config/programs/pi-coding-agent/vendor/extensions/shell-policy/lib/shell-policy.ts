@@ -202,20 +202,6 @@ export function computeDisabledTools(policies: ModePolicy[]): Set<string> {
  * mapped to their final opinion (true/false) after resolving the stack.
  * Last opinion wins.
  */
-export function getToolsWithPolicyOpinion(
-  policies: ModePolicy[],
-): Map<string, boolean> {
-  const result = new Map<string, boolean>();
-  for (const policy of policies) {
-    if (policy.tools) {
-      for (const [toolName, opinion] of Object.entries(policy.tools)) {
-        result.set(toolName, opinion);
-      }
-    }
-  }
-  return result;
-}
-
 // Tokenizer
 
 interface WordToken {
@@ -1599,10 +1585,6 @@ export function evaluate(
 
 export function getCommandSummary(command: string): string {
   return command.length > 80 ? command.slice(0, 77) + "..." : command;
-}
-
-export function mergePolicies(...policies: PolicyCommands[]): PolicyCommands {
-  return mergePoliciesStrict(...policies);
 }
 
 export function mergePoliciesStrict(

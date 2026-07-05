@@ -57,15 +57,17 @@ function resolveModeContextPath(mode: string): string | null {
 
 const COMMANDS_LOG_DIR = path.join(PI_AGENT_DIR, "logs/shell-policy");
 
-function logConfirmNeeded(command: string, result: EvalResult): void {
+function logCommand(
+  command: string,
+  decidedBy: string,
+  match?: EvalResult["match"],
+): void {
   try {
     const entry = {
       ts: new Date().toISOString(),
       command: command,
-      decidedBy: result.decidedBy,
-      match: result.match
-        ? { [result.match.category]: result.match.entry.match }
-        : undefined,
+      decidedBy,
+      match: match ? { [match.category]: match.entry.match } : undefined,
     };
     fs.mkdirSync(COMMANDS_LOG_DIR, { recursive: true });
     // Enforce restrictive perms even if dir/file already existed
@@ -81,27 +83,12 @@ function logConfirmNeeded(command: string, result: EvalResult): void {
   }
 }
 
+function logConfirmNeeded(command: string, result: EvalResult): void {
+  logCommand(command, result.decidedBy, result.match);
+}
+
 function logYoloApproved(command: string, result?: EvalResult): void {
-  try {
-    const entry = {
-      ts: new Date().toISOString(),
-      command: command,
-      decidedBy: "yolo",
-      match: result?.match
-        ? { [result.match.category]: result.match.entry.match }
-        : undefined,
-    };
-    fs.mkdirSync(COMMANDS_LOG_DIR, { recursive: true });
-    fs.chmodSync(COMMANDS_LOG_DIR, 0o700);
-    const logPath = path.join(COMMANDS_LOG_DIR, "commands.log");
-    fs.appendFileSync(logPath, JSON.stringify(entry) + "\n", {
-      mode: 0o600,
-      encoding: "utf-8",
-    });
-    fs.chmodSync(logPath, 0o600);
-  } catch {
-    // Best-effort; never block the tool_call handler
-  }
+  logCommand(command, "yolo", result?.match);
 }
 
 // Load global config from unified policy.json at ~/.pi/agent/custom/shell-policy/policy.json

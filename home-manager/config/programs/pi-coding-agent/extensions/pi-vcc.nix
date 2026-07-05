@@ -1,13 +1,5 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ pkgs, ... }:
 
-let
-  cfg = config.programs.pi-coding-agent;
-in
 {
   home.file.".pi/agent/extensions/monotykamary-pi-vcc".source = pkgs.local.pi-vcc;
 

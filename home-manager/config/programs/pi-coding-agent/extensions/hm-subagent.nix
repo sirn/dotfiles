@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 
 let
   agentsCfg = config.agents;
@@ -12,59 +7,33 @@ let
   yamlQuote = s: if builtins.match "^[a-zA-Z0-9_/., -]+$" s != null then s else "\"${s}\"";
 
   piAgentMdFiles = builtins.listToAttrs (
-    builtins.filter (a: a != null) (
-      builtins.attrValues (
-        builtins.mapAttrs (
-          name: agentCfg:
-          if agentCfg.pi.runner == "pi" then
-            let
-              piCfg = agentCfg.pi;
-              tools = builtins.concatStringsSep ", " piCfg.tools;
-              content = ''
-                ---
-                name: ${name}
-                description: ${yamlQuote agentCfg.description}
-                tools: ${tools}
-                model: ${piCfg.model}
-                ${lib.optionalString (piCfg.thinkingLevel != null) "thinkingLevel: ${piCfg.thinkingLevel}"}
-                ---
-                ${agentsCfg.subagentPreamble}
-
-                ${agentCfg.prompt}'';
-            in
-            {
-              name = ".pi/agent/agents/${name}.md";
-              value = {
-                text = content;
-              };
+    builtins.attrValues (
+      builtins.mapAttrs (
+        name: agentCfg:
+        let
+          piCfg = agentCfg.pi;
+          tools = builtins.concatStringsSep ", " piCfg.tools;
+          content = ''
+            ---
+            name: ${name}
+            description: ${yamlQuote agentCfg.description}${
+              lib.optionalString (piCfg.runner == "claude-code") "\nrunner: claude-code"
             }
-          else if agentCfg.pi.runner == "claude-code" then
-            let
-              piCfg = agentCfg.pi;
-              tools = builtins.concatStringsSep ", " piCfg.tools;
-              content = ''
-                ---
-                name: ${name}
-                description: ${yamlQuote agentCfg.description}
-                runner: claude-code
-                tools: ${tools}
-                model: ${piCfg.model}
-                ${lib.optionalString (piCfg.thinkingLevel != null) "thinkingLevel: ${piCfg.thinkingLevel}"}
-                ---
-                ${agentsCfg.subagentPreamble}
+            tools: ${tools}
+            model: ${piCfg.model}
+            ${lib.optionalString (piCfg.thinkingLevel != null) "thinkingLevel: ${piCfg.thinkingLevel}"}
+            ---
+            ${agentsCfg.subagentPreamble}
 
-                ${agentCfg.prompt}'';
-            in
-            {
-              name = ".pi/agent/agents/${name}.md";
-              value = {
-                text = content;
-              };
-            }
-          else
-            null
-        ) agentsCfg.subagents
-      )
+            ${agentCfg.prompt}'';
+        in
+        {
+          name = ".pi/agent/agents/${name}.md";
+          value = {
+            text = content;
+          };
+        }
+      ) agentsCfg.subagents
     )
   );
 

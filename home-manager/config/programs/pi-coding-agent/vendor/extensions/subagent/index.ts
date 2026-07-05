@@ -58,6 +58,8 @@ import {
   isFailedResult,
 } from "./types.js";
 import {
+  formatFileChangesMeta,
+  formatSessionIdsMeta,
   getResultErrorMessage,
   getFinalOutput,
   normalizeSessionId,
@@ -1328,13 +1330,7 @@ export default function (pi: ExtensionAPI) {
 
         stepStartIndex += stepTasks.length;
 
-        const sessionIds = planResults
-          .filter((r) => r.sessionId)
-          .map((r) => `- ${r.agent}: ${r.sessionId}`);
-        const sessionIdsText =
-          sessionIds.length > 0
-            ? `\n<output-meta>\n## Session IDs\n${sessionIds.join("\n")}\n</output-meta>`
-            : "";
+        const sessionIdsText = formatSessionIdsMeta(planResults);
 
         // Build combined output for next step's {previous}
         previousOutput = stepResults
@@ -1344,11 +1340,9 @@ export default function (pi: ExtensionAPI) {
           )
           .join("\n\n");
 
-        const fileChanges = extractFileChanges(planResults);
-        const fileChangesText =
-          fileChanges.length > 0
-            ? `\n<output-meta>\n## Files changed\n${fileChanges.map((p) => "- `" + p + "`").join("\n")}\n</output-meta>`
-            : "";
+        const fileChangesText = formatFileChangesMeta(
+          extractFileChanges(planResults),
+        );
 
         const anyFailed = stepResults.some(isFailedResult);
         if (anyFailed) {
@@ -1424,19 +1418,10 @@ export default function (pi: ExtensionAPI) {
         maxBytes: DEFAULT_MAX_BYTES,
       });
 
-      const fileChanges = extractFileChanges(planResults);
-      const fileChangesText =
-        fileChanges.length > 0
-          ? `\n<output-meta>\n## Files changed\n${fileChanges.map((p) => "- `" + p + "`").join("\n")}\n</output-meta>`
-          : "";
-
-      const sessionIds = planResults
-        .filter((r) => r.sessionId)
-        .map((r) => `- ${r.agent}: ${r.sessionId}`);
-      const sessionIdsText =
-        sessionIds.length > 0
-          ? `\n<output-meta>\n## Session IDs\n${sessionIds.join("\n")}\n</output-meta>`
-          : "";
+      const fileChangesText = formatFileChangesMeta(
+        extractFileChanges(planResults),
+      );
+      const sessionIdsText = formatSessionIdsMeta(planResults);
 
       let finalOutput: string;
       if (truncation.truncated) {
