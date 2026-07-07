@@ -100,6 +100,24 @@ in
         source "${dirJumpCmd}"
 
         bindkey -e
+
+        # Keep SSH_TTY synced with tmux's session environment so terminal
+        # clipboard tools (clipetty) target the correct pty after an SSH
+        # reconnect/reattach. tmux's update-environment only refreshes new
+        # panes; existing pane shells keep a stale SSH_TTY, which makes
+        # clipetty write to a dead or recycled /dev/pts/N.
+        if [[ -n "$TMUX" ]]; then
+          _ssh_tty_sync() {
+            local val
+            val=$(tmux show-environment SSH_TTY 2>/dev/null) || return
+            if [[ "$val" == -SSH_TTY ]]; then
+              unset SSH_TTY
+            elif [[ "$val" == SSH_TTY=* ]]; then
+              export "$val"
+            fi
+          }
+          precmd_functions+=(_ssh_tty_sync)
+        fi
       '';
   };
 }
