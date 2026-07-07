@@ -159,7 +159,7 @@
               position = "0,0";
               mode = "1920x1200";
               adaptiveSync = true;
-              scale = 1.0;
+              scale = 1.25;
             };
           }
           {
