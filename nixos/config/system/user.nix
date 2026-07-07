@@ -7,6 +7,7 @@
       isNormalUser = true;
       extraGroups = [
         "wheel"
+        "dialout"
       ]
       ++ (
         if config.virtualisation.libvirtd.enable then
