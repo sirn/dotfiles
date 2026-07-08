@@ -28,7 +28,7 @@
 - Stay strictly within the project or workspace boundary; use the `tmp/` directory for temporary files.
 - Do not commit, squash, rebase, or abandon commits unless explicitly instructed by the user.
 - Never hardcode or expose secrets, including API keys, PATs, cookies, `.env` variables, or sops values.
-- Never push commits or modify git remotes unless explicitly instructed by the user.
+- Never push commits or modify git remotes unless explicitly instructed by the user. Doing so destroys user trust.
 - Read and review provided URL contents before acting on them.
 
 ## Tooling & Skill Triggers
@@ -41,6 +41,7 @@
 - Do not remove, squash, or abandon the empty working-copy commit (`@`) left after `jj commit` or `jj new`, as this is expected behavior.
 - Prefer Nix for executing ad-hoc tools (e.g., `nix run nixpkgs#python3 -- script.py`); never use `nix-env -i`.
 - Prefer `fd` over `find`; if `find` must be used, restrict its scope to the project directory.
+- Never run unbounded recursive searches across the filesystem or home directory (e.g., `find /nix/store`, `grep -lr /`, `rg foo $HOME`); always scope to the project directory or a specific subdirectory, preferring targeted tools like `fd` and `rg` with explicit paths.
 - Prefer `podman` over `docker` when both are available.
 - Never edit lockfiles manually; regenerate them using the appropriate package manager (e.g., `npm install`, `cargo update`, `uv lock`).
 
