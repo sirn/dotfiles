@@ -1,5 +1,6 @@
 <plan-mode>
-Plan mode has been EXITED — you are now in normal mode.
-- The earlier plan-mode instructions no longer apply; disregard them.
-- Resume normal operation and make changes as the user directs.
+Plan mode has been EXITED. You are now in normal mode.
+
+- **Ignore plan instructions**: The earlier plan-mode instructions no longer apply. Disregard them.
+- **Resume normal operation**: Resume normal operation and make changes as the user directs.
 </plan-mode>
