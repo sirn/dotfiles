@@ -446,8 +446,15 @@ export function tokenize(input: string): Token[] {
       continue;
     }
     if (ch === "\n" || ch === "\r") {
+      // Handle CRLF: if \r is followed by \n, consume both as one newline
+      if (ch === "\r" && i + 1 < len && input[i + 1] === "\n") i++;
       i++;
-      if (pendingHeredocs.length > 0) consumeHeredocBodies();
+      if (pendingHeredocs.length > 0) {
+        consumeHeredocBodies();
+        continue;
+      }
+      // Newlines act as command separators (equivalent to ;)
+      tokens.push({ type: "operator", value: ";" });
       continue;
     }
 

@@ -2079,6 +2079,73 @@ test("buildWrapperRuleMap with undefined entries returns empty map", () => {
   assertEquals(cmds[0].name, "sudo");
 });
 
+// Newline as command separator (regression: multi-line commands were concatenated)
+test("newline separates commands - basic", () => {
+  const tokens = tokenize("ls\nls");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+});
+
+test("newline separates commands - policy evaluates each line", () => {
+  const policy: PolicyCommands = {
+    allow: [{ match: "cd", mode: "prefix" }],
+    ask: [{ match: "jj bookmark set", mode: "prefix" }],
+    deny: [{ match: "jj git push", mode: "prefix" }],
+  };
+  const result = evaluate("cd /tmp\njj bookmark set main -r @\necho ---\njj git push -b main", { commands: policy });
+  assertEquals(result.action, "deny");
+  assertEquals(result.match?.entry.match, "jj git push");
+  assertEquals(result.match?.category, "deny");
+});
+
+test("newline separates commands - allow does not leak to next line", () => {
+  const policy: PolicyCommands = {
+    allow: [{ match: "cd", mode: "prefix" }],
+    ask: [],
+    deny: [{ match: "rm", mode: "prefix" }],
+  };
+  // cd is allowed, but rm on next line should still be denied
+  const result = evaluate("cd /tmp\nrm -rf /", { commands: policy });
+  assertEquals(result.action, "deny");
+});
+
+test("CRLF newline separates commands", () => {
+  const tokens = tokenize("ls\r\nls");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+});
+
+test("newline inside double quotes does not separate", () => {
+  const tokens = tokenize('echo "line1\nline2"');
+  assertEquals(tokens.length, 2);
+  assertTrue((tokens[1] as { value: string }).value.includes("\n"));
+});
+
+test("multiple newlines between commands", () => {
+  const tokens = tokenize("ls\n\nls");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 2);
+});
+
+test("newline at end of command", () => {
+  const tokens = tokenize("ls\n");
+  const cmds = extractCommands(tokens);
+  assertEquals(cmds.length, 1);
+});
+
+test("heredoc body not split by newline separator", () => {
+  const policy: PolicyCommands = {
+    allow: [{ match: "cat", mode: "prefix" }],
+    ask: [],
+    deny: [{ match: "rm -rf /", mode: "substring" }],
+  };
+  // The heredoc body contains 'rm -rf /' but should not be evaluated
+  assertEquals(
+    evaluate("cat <<EOF\nrm -rf /\nEOF", { commands: policy }).action,
+    "allow",
+  );
+});
+
 // ==================== END EDGE CASE & REGRESSION TESTS ====================
 
 // ==================== DOCKER-RUN WRAPPER TESTS ====================
