@@ -52,6 +52,7 @@
 - Maintain existing comments, indentation, ordering, and logical structure in configuration files.
 - Keep diffs focused on the task; report unrelated issues as feedback rather than fixing them opportunistically.
 - Review existing dependencies before adding new packages or libraries.
+- Prefer reusing existing code over reimplementing it: stdlib first, then trusted/popular third-party libraries already in the project, then a reimplementation only when no existing option fits or the user explicitly asks for it.
 - Test public-facing behavior; avoid targeting private implementation details unless externally observable.
 - Do not decorate comments (e.g., write `// Log commands` instead of `// --- Log commands ---`).
 - Do not write narrative-style comments or documentation narrating progress; comments and docs describe the code, not the work history.

@@ -35,12 +35,92 @@ Spawn the `scout` subagent:
 Map cleanup opportunities in the following scope:
 {scope}
 
-For all the following:
-- redundancies
-- non-idiomatic code
-- dead code
-- simplification opportunities
-- unnecessary complexity
+### Redundancies
+
+- Redundant defensive checks that restate the obvious (where surrounding code or types already guarantee the condition)
+
+  Example:
+  - `if arr is not None and len(arr) > 0:` when the caller or context already ensures `arr` is a non-empty list
+
+- Redundant intermediate variables that just rename and are used once, adding no clarity
+
+  Example:
+  - `is_valid = check(x); if is_valid:` -> `if check(x):`
+
+- Duplicate logic that could share a single source
+
+  Example:
+  - Three near-identical blocks differing only by a constant
+
+### Non-idiomatic code
+
+- Code that ignores the language/framework's established idioms in favor of a verbose manual equivalent
+
+  Example:
+  - Manual index-based loop where a comprehension or `for...in` loop is idiomatic
+
+- Reinventing standard-library functionality
+
+  Example:
+  - Reimplemented `unique()` list utility instead of using the language's built-in set/deduplication primitive
+
+### Dead code
+
+- Unreachable code after early returns or raises
+
+  Example:
+  - Statements placed after an unconditional `return` or `raise` in the same block
+
+- Unused imports, variables, functions, or fields
+
+  Example:
+  - An import kept only by a reference that was since removed
+
+- Commented-out code left behind after a change
+
+### Simplification opportunities
+
+- Overly complex conditionals that collapse to a simpler expression
+
+  Example:
+  - `if x == True:` -> `if x:`
+  - Nested `if` chains that combine cleanly
+
+- Unnecessary abstraction layers for single use cases
+
+  Example:
+  - A generic wrapper interface or class with only one caller and one implementation
+
+### Unnecessary complexity
+
+- Premature generalization not justified by current requirements
+
+  Example:
+  - Configurable hooks, strategies, or parameters with only one strategy or value ever passed
+
+- Deep nesting that flattens with early returns or guards
+
+  Example:
+  - A four-level nested `if` structure that reads more cleanly as a sequence of guard clauses
+
+### Reimplemented functionality
+
+- Reimplemented logic that duplicates a well-known, trustworthy library or stdlib utility
+
+  Example:
+  - Reimplemented date parsing instead of using the language's date/time library
+  - Custom retry/backoff loop instead of a maintained retry library
+  - Reimplemented argument parser instead of the language's standard CLI library
+
+- Reinventing functionality that a popular, trusted dependency in the ecosystem already provides
+
+  Example:
+  - Custom HTTP client wrapper reimplementing timeout/retry/redirect handling already offered by a mainstream client
+  - Reimplemented JSON schema validation when a maintained validator exists
+
+  Exception:
+  - The user explicitly asked for a reimplemented or dependency-free implementation
+  - No existing library fits the constraints (license, size, platform) and a note explains why
 
 Report file paths, line numbers, and evidence for each.
 ```

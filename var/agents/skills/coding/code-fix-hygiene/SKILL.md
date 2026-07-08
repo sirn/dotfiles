@@ -1,9 +1,9 @@
 ---
 name: code-fix-hygiene
-description: Check diff for typos, conventions, comment quality, and unintended edits. Use when asked to clean up a diff, review changes for consistency, or perform pre-commit hygiene.
+description: Scan files in the working diff for typos, naming conventions, comment hygiene, and editing/coding artifacts across their full contents, and apply decisive cleanup fixes.
 ---
 
-Check the working diff for hygiene issues and apply minimal fixes.
+Check working files and their diffs for hygiene issues, scanning full files line-by-line and applying aggressive surface-level fixes.
 
 ## Process
 
@@ -11,31 +11,35 @@ Check the working diff for hygiene issues and apply minimal fixes.
 
 - Run `jj diff -s` for a high-level overview of changed files.
 - Run `jj diff` (or `jj diff -- <paths>`) for full diff content.
-- Restrict analysis to user-specified files or paths.
+- Identify the target files specified by the user or modified in the diff.
 
 ### Step 2 - Scout for Issues
+
+For every target file, read the entire file content in full. Do not use grep as the primary scanning method, and do not limit analysis to diff hunks. Use the diff as an entry point, but scan the full file line-by-line.
 
 Spawn the `scout` subagent:
 
 ```
-Analyze this diff in the following files:
+Read these files in full, scanning their entire contents line-by-line:
 {files}
 
-## Issues to flag
+Do not rely on grep or analyze only the changed hunks. Perform a full-file scan for code hygiene issues across the complete file content according to the sections below.
+
+### Issues to flag
 
 Flag all code hygiene issues according to the sections below.
 
-### Editing artifacts
+#### Editing artifacts
 
 - Spelling typos, grammatical errors, and naming/formatting convention violations
 
 - Unintended edits such as whitespace noises, newline noises, merge artifacts
 
   Example:
-  - When an existing code uses one newline between section, but the edit uses two
+  - When existing code uses one newline between sections, but an edit or nearby code uses two
   - Lack of newlines at the end of file
 
-### Commenting hygiene
+#### Commenting hygiene
 
 - Inline decorated comments
 
@@ -70,6 +74,84 @@ Flag all code hygiene issues according to the sections below.
   - "// replaced the old foo() call" when foo() is gone and the comment only describes what was removed
   - "// was previously bar, now baz" where bar no longer appears anywhere
 
+- Comments that describe what the code no longer does, or reference code/constructs that no longer exist
+
+  Example:
+  - "// no longer do Y" when describing removed behavior
+  - "// used to call bar()" where bar() is gone
+  These describe absence rather than what the code does—remove them.
+
+- Comments that restate the size or count of the following list/structure
+
+  Example:
+  - "// All 32 units" before a list of 32 items
+  - "# 3 steps:" before a three-item list
+  The count is obvious from the code—remove these.
+
+- Section-header comments that label obvious blocks (the code already says what it is)
+
+  Exception:
+  - Section headers that aid readability in long files
+
+  Example:
+  - `// Helper functions`
+  - `// Main logic`
+  - `// Configuration`
+  - `// Imports`
+
+- Narration of the current/next/future action step-by-step (describes what's happening instead of why)
+
+  Example:
+  - `// Here we initialize the counter`
+  - `// Now let's check if x is valid`
+  - `// In this section, we will...`
+  - `// First, we...`
+
+- Block-end markers (pure noise)
+
+  Example:
+  - `} // end of for loop`
+  - `} // end if`
+  - `# end of function`
+
+- "Note:" / "Important:" / "Note that:" prefixes with no added information
+
+  Example:
+  - `// Note: this returns a string` when the signature already says `-> str`
+
+- Comments restating the type signature in prose
+
+  Example:
+  - `// returns a string` or `// x is an integer` next to a typed declaration
+
+- Comments explaining language builtins/standard library
+
+  Example:
+  - `// map() applies the function to each element`
+  - `// filter keeps only items matching the predicate`
+
+- "This function does X" comments that just repeat the function name
+
+  Example:
+  - `def validate_input():  # This function validates the input`
+
+- Over-detailed docstrings on trivial one-liner functions
+
+  Example:
+  - A one-line `is_even(n): return n % 2 == 0` with a 6-line docstring
+
+- Filler words adding no information
+
+  Example:
+  - Use of "simply", "just", "basically", "essentially" (e.g., `// simply iterate and collect results`)
+
+- Conversational/editorial references (reads like an essay, not code)
+
+  Example:
+  - `// As discussed above`
+  - `// As we can see`
+  - `// As mentioned earlier`
+
 - Comments that narrate the editing process or refer to our conversation/interaction rather than the code itself
 
   Example:
@@ -78,7 +160,7 @@ Flag all code hygiene issues according to the sections below.
   - "// updated to use new API as discussed"
   These comments describe the change history, not the code—remove them.
 
-### Coding artifact
+#### Coding artifacts
 
 - Adhoc debug `print()`/`console.log()`/etc.
 
@@ -91,19 +173,19 @@ Flag all code hygiene issues according to the sections below.
 
 ## Output
 
-Report list of `file:line` for each issue with a brief explaination why it was flagged.
+Report a list of `file:line` for each issue with a brief explanation why it was flagged.
 ```
 
 ### Step 3 - Synthesize Findings
 
-- Filter for clear, low-risk, actionable issues.
-- Defer ambiguous findings to the user instead of fixing speculatively.
+- Take an aggressive stance on trimming and fixing identified issues. Prioritize fixing over deferring to the user.
+- Only defer findings when a change carries a genuine risk of breaking behavior, logic, or semantic correctness.
 - Verify typos against dictionaries or project glossary terms before assuming.
 
 ### Step 4 - Apply Fixes
 
 ```
-Apply these hygiene fixes in the following files:
+Apply these hygiene fixes across the full files:
 {files}
 
 For the following:
@@ -115,8 +197,7 @@ Apply one logical fix per edit.
 
 ### Step 5 - Stop at Diminishing Returns
 
-- Stop if remaining findings are speculative or stylistic.
-- Stop if fixes would alter behavior/semantics, or require broader context.
+- Stop only if further changes would alter behavior/semantics, or require broader architectural context.
 
 ### Step 6 - Verify
 
@@ -127,17 +208,16 @@ Apply one logical fix per edit.
 
 Report to the user:
 
-1. **Scope**: Analyzed files and diff summary.
+1. **Scope**: Analyzed files and full-file scan summary.
 2. **Issues Found**: Categorized issues (typos, comments, edits) with `file:line` references.
 3. **Fixes Applied**: Description and location of each fix.
-4. **Deferred/Skipped**: Identified but unfixed issues, with rationale.
+4. **Deferred/Skipped**: Only genuinely high-risk issues, with rationale for why they were deferred.
 5. **Verification**: Results of formatting, linting, or test commands.
 
 ## Guardrails
 
 - Never change behavior, logic, or structure—only address surface-level hygiene.
 - Do not rewrite comments; only remove "what"-comments and fix obvious typos.
-- Restrict fixes to the diff scope unless broader cleanup is explicitly requested.
-- Preserve purposeful debug logging, clear TODOs, and intentional commented-out code.
+- Perform a thorough full-file scan and cleanup across the entire content of specified files, not just within the modified diff hunks.
 - Remove transitional, legacy, and conversation-narrating comments (change-history notes like "replaced x with y") unless they are contextual TODOs.
-- Defer to the user on ambiguous or potentially intentional code.
+- Clean up hygiene issues aggressively and decisively. Only defer to the user on genuinely high-risk or behavior-changing cases.
