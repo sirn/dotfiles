@@ -351,9 +351,10 @@ export default function (pi: ExtensionAPI) {
       // this component is the shell's body — matching subagent's
       // SubagentResultView, which is a transparent Box(0,0) that lays out
       // children without its own background. The shell's toolSuccessBg /
-      // toolErrorBg provides the colored framing. Collapsed shows the
-      // objective (short); expanded shows the full result text (with usage
-      // stats). Error paths have no separate "full" content, so the error
+      // toolErrorBg provides the colored framing. Both collapsed and
+      // expanded show the usage summary (fullText). Collapsed shows only
+      // the usage with an expand hint; expanded also reveals the original
+      // objective. Error paths have no separate objective, so the error
       // text is shown in both states with no expand hint. The error header
       // uses the error color so rejected updates are distinguishable.
       const isError = status !== "complete" && status !== "blocked";
@@ -370,22 +371,30 @@ export default function (pi: ExtensionAPI) {
       const root = new Box(0, 0);
       root.addChild(new Text(theme.fg(headerColor, theme.bold(header)), 0, 0));
       root.addChild(new Spacer(1));
-      if (isError || expanded) {
-        root.addChild(new Text(theme.fg("customMessageText", fullText), 0, 0));
-      } else {
-        const objective =
-          typeof details.objective === "string" && details.objective.trim()
-            ? details.objective
-            : fullText;
-        root.addChild(new Text(theme.fg("customMessageText", objective), 0, 0));
-        root.addChild(new Spacer(1));
-        root.addChild(
-          new Text(
-            `${theme.fg("muted", "(")}${keyHint("app.tools.expand", "to expand")}${theme.fg("muted", ")")}`,
-            0,
-            0,
-          ),
-        );
+      root.addChild(new Text(theme.fg("customMessageText", fullText), 0, 0));
+      if (!isError) {
+        if (expanded) {
+          const objective =
+            typeof details.objective === "string" &&
+            details.objective.trim()
+              ? details.objective
+              : "";
+          if (objective) {
+            root.addChild(new Spacer(1));
+            root.addChild(
+              new Text(theme.fg("customMessageText", objective), 0, 0),
+            );
+          }
+        } else {
+          root.addChild(new Spacer(1));
+          root.addChild(
+            new Text(
+              `${theme.fg("muted", "(")}${keyHint("app.tools.expand", "to expand")}${theme.fg("muted", ")")}`,
+              0,
+              0,
+            ),
+          );
+        }
       }
       return root;
     },
@@ -438,15 +447,13 @@ export default function (pi: ExtensionAPI) {
         ctx.ui.notify("Goal marked complete via update_goal tool.", "success");
 
         const usage = deriveBudgetUsage(ctx);
-        const usageReport = `Goal complete. Objective: ${state.objective}`;
-        const finalUsage =
+        const usageReport =
           state.budget.maxTurns === Infinity &&
           state.budget.maxCost === Infinity
-            ? usageReport
-            : `${usageReport} Turns used: ${usage.turns}, cost used: $${usage.cost.toFixed(2)}.`;
-
+            ? "Goal complete."
+            : `Goal complete. Turns used: ${usage.turns}, cost used: $${usage.cost.toFixed(2)}.`;
         return {
-          content: [{ type: "text", text: finalUsage }],
+          content: [{ type: "text", text: usageReport }],
           details: { status: "complete", objective: state.objective },
           // Hint to pi that no follow-up LLM call is needed after this tool
           // batch — the goal is done and the agent should not continue.
@@ -458,13 +465,14 @@ export default function (pi: ExtensionAPI) {
         setGoalState(pi, { ...state, status: "blocked" });
         updateGoalStatus(ctx);
         ctx.ui.notify("Goal marked blocked via update_goal tool.", "warning");
+        const usage = deriveBudgetUsage(ctx);
+        const usageReport =
+          state.budget.maxTurns === Infinity &&
+          state.budget.maxCost === Infinity
+            ? "Goal blocked. Use /goal resume to retry."
+            : `Goal blocked. Turns used: ${usage.turns}, cost used: $${usage.cost.toFixed(2)}. Use /goal resume to retry.`;
         return {
-          content: [
-            {
-              type: "text",
-              text: "Goal marked blocked. Use /goal resume to retry.",
-            },
-          ],
+          content: [{ type: "text", text: usageReport }],
           details: { status: "blocked", objective: state.objective },
           // No follow-up LLM call — the goal is blocked and the loop stops.
           terminate: true,
