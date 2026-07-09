@@ -9,6 +9,22 @@ Commit current changes using Jujutsu (jj).
 
 - Read the `jujutsu` skill before running any `jj` command.
 
+## Commit Message Style
+
+Commit messages must provide a high-level overview of the change, NOT a detailed breakdown.
+
+- **Focus on intent**: Explain the 'why' and 'what' of the change at a high level, specifying the affected subsystem or concern.
+- **Do not enumerate changes**: Do not list the files changed, the number of files, or what was changed file-by-file. The diff already shows these details.
+- **Keep it concise**: Ensure the reader can understand the purpose of the change at a glance without re-reading the diff.
+
+### Examples
+
+- **Bad**: `update flake.nix, profiles/terra.nix, and nixos/system.nix to bump package versions and add wireguard module`
+- **Good**: `profiles/terra: enable wireguard support and update packages`
+
+- **Bad**: `fix typo in home-manager/config/git.nix line 42 and rename git.nix to git-config.nix`
+- **Good**: `hm/git: correct configuration typos and rename module`
+
 ## Process
 
 ### Step 0 - Load Jujutsu Skill
@@ -29,7 +45,7 @@ Commit current changes using Jujutsu (jj).
 
 ### Step 3 - Execute Commit
 
-- Derive the commit message primarily from the diff, not the conversation context, unless the context explains an otherwise unobvious change.
+- Derive the commit message primarily from the diff, not the conversation context, unless the context explains an otherwise unobvious change. Follow the high-level overview requirements in the **Commit Message Style** section (do not enumerate files, changed-line counts, or detailed breakdowns).
 - If changes are logically distinct (different subsystems, features, or concerns), split them:
   - Record the current operation ID with `jj op log -n 1` (revert with `jj undo` or `jj op restore <op-id>` if needed).
   - Run `jj split -r <id> -m "<commit-message>" -- <file>` for each split (do NOT use interactive `jj split`).
