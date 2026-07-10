@@ -3,95 +3,106 @@ name: code-fix-hygiene
 description: Scan files in the working diff for typos, naming conventions, comment hygiene, and editing/coding artifacts across their full contents, and apply decisive cleanup fixes.
 ---
 
-Check working files and their diffs for hygiene issues, scanning full files line-by-line and applying aggressive surface-level fixes.
+Check working files and their diffs for hygiene issues by scanning entire files line by line and applying aggressive, surface-level fixes.
 
 ## Process
 
 ### Step 1 - Identify Context
 
-- Run `jj diff -s` for a high-level overview of changed files.
-- Run `jj diff` (or `jj diff -- <paths>`) for full diff content.
-- Identify the target files specified by the user or modified in the diff.
+- Run `jj diff -s` to get a high-level overview of changed files.
+- Run `jj diff` (or `jj diff -- <paths>`) to view the full diff content.
+- Identify target files specified by the user or modified in the diff.
 
 ### Step 2 - Scout for Issues
 
-For every target file, read the entire file content in full. Do not use grep as the primary scanning method, and do not limit analysis to diff hunks. Use the diff as an entry point, but scan the full file line-by-line.
+Read each target file in full. Do not use grep as the primary scanning method, and do not limit analysis to diff hunks. Use the diff as an entry point, but scan the entire file line by line.
 
 Spawn the `scout` subagent:
 
 ```
-Read these files in full, scanning their entire contents line-by-line:
+Read these files in full, scanning their entire contents line by line:
 {files}
 
-Do not rely on grep or analyze only the changed hunks. Perform a full-file scan for code hygiene issues across the complete file content according to the sections below.
+- Scan the complete content of each file for code hygiene issues based on the sections below.
+- Do not rely on grep or analyze only the changed hunks.
+
+## Comment scan
+
+- Read every comment (including docstrings, block comments, inline comments, and section headers).
+- Evaluate each against the commenting hygiene rules.
+- Apply the same scrutiny to both new and existing comments; do not be lenient with either.
 
 ### Issues to flag
 
-Flag all code hygiene issues according to the sections below.
+Flag all code hygiene issues described in the sections below.
 
 #### Editing artifacts
 
-- Spelling typos, grammatical errors, and naming/formatting convention violations
+- Spelling typos, grammatical errors, and naming or formatting convention violations.
 
-- Unintended edits such as whitespace noises, newline noises, merge artifacts
+- Unintended edits, including whitespace noise, newline noise, and merge artifacts.
 
   Example:
-  - When existing code uses one newline between sections, but an edit or nearby code uses two
-  - Lack of newlines at the end of file
+  - An edit or nearby code uses two newlines between sections where existing code uses one.
+  - A missing newline at the end of a file.
 
 #### Commenting hygiene
 
-- Inline decorated comments
+- **Core principle**: Comments must capture *why not*:
+  - The non-obvious rationale, rejected alternative, or constraint explaining why the obvious approach was avoided.
+  - Any comment describing what the code does or how it works is a violation.
+
+- Inline decorated comments.
 
   Exception:
-  - Multi-line section borders
+  - Multi-line section borders.
 
   Example:
   - `// --- Title ---` -> replace with `// Title`
   - `# ==== Title ====` -> replace with `# Title`
   - `/* <emoji> Title */` -> replace with `/* Title */`
 
-- Comments that explain how the code works (How) or what it does (What) rather than capturing *Why not* (i.e., why the obvious/alternative approach was not taken, the non-obvious constraint, or the rejected alternative)
+- Comments explaining how the code works (How) or what it does (What) instead of capturing *why not* (the non-obvious constraint, rejected alternative, or reason the obvious approach was avoided).
 
   Exception:
-  - Section headers for readability
-  - The code is non-obvious
+  - Section headers that improve readability.
+  - Extremely non-obvious code.
 
   Example:
   - "a = 1+1; /* assign 1+1 to a */"
 
-- Commented-out code, orphaned TODOs
+- Commented-out code and orphaned TODOs.
 
-- Transitional or legacy comments that are not TODOs
+- Transitional or legacy comments that are not active TODOs.
 
   Example:
   - "Replaces the old x system"
-  - "Migration from y" where the referenced component no longer exists
+  - "Migration from y" (where the referenced component no longer exists)
 
-- Comments that reference code, symbols, or constructs that no longer exist in the codebase
-
-  Example:
-  - "// replaced the old foo() call" when foo() is gone and the comment only describes what was removed
-  - "// was previously bar, now baz" where bar no longer appears anywhere
-
-- Comments that describe what the code no longer does, or reference code/constructs that no longer exist
+- Comments referencing code, symbols, or constructs that no longer exist in the codebase.
 
   Example:
-  - "// no longer do Y" when describing removed behavior
-  - "// used to call bar()" where bar() is gone
-  These describe absence rather than what the code does—remove them.
+  - "// replaced the old foo() call" (where `foo()` is gone and the comment only describes what was removed)
+  - "// was previously bar, now baz" (where `bar` no longer appears anywhere)
 
-- Comments that restate the size or count of the following list/structure
+- Comments describing what the code no longer does, or referencing deleted code or constructs.
+
+  Example:
+  - "// no longer do Y" (when describing removed behavior)
+  - "// used to call bar()" (where `bar()` is gone)
+  Since these comments describe absence rather than active code behavior, remove them.
+
+- Comments restating the size or count of an immediately following list or structure.
 
   Example:
   - "// All 32 units" before a list of 32 items
   - "# 3 steps:" before a three-item list
-  The count is obvious from the code—remove these.
+  Since the count is obvious from the code, remove these.
 
-- Section-header comments that label obvious blocks (the code already says what it is)
+- Section-header comments labeling obvious blocks where the code's purpose is already clear.
 
   Exception:
-  - Section headers that aid readability in long files
+  - Section headers that improve readability in long files.
 
   Example:
   - `// Helper functions`
@@ -99,7 +110,7 @@ Flag all code hygiene issues according to the sections below.
   - `// Configuration`
   - `// Imports`
 
-- Narration of the current/next/future action step-by-step (describes what's happening instead of why)
+- Step-by-step narration of current, subsequent, or future actions, describing what is happening instead of why.
 
   Example:
   - `// Here we initialize the counter`
@@ -107,80 +118,81 @@ Flag all code hygiene issues according to the sections below.
   - `// In this section, we will...`
   - `// First, we...`
 
-- Block-end markers (pure noise)
+- Block-end markers.
 
   Example:
   - `} // end of for loop`
   - `} // end if`
   - `# end of function`
 
-- "Note:" / "Important:" / "Note that:" prefixes with no added information
+- "Note:", "Important:", or "Note that:" prefixes that add no informational value.
 
   Example:
-  - `// Note: this returns a string` when the signature already says `-> str`
+  - `// Note: this returns a string` (when the signature already indicates `-> str`)
 
-- Comments restating the type signature in prose
+- Comments restating type signatures in prose.
 
   Example:
   - `// returns a string` or `// x is an integer` next to a typed declaration
 
-- Comments explaining language builtins/standard library
+- Comments explaining language built-ins or the standard library.
 
   Example:
   - `// map() applies the function to each element`
   - `// filter keeps only items matching the predicate`
 
-- "This function does X" comments that just repeat the function name
+- "This function does X" comments that merely repeat the function name.
 
   Example:
   - `def validate_input():  # This function validates the input`
 
-- Over-detailed docstrings on trivial one-liner functions
+- Overly detailed docstrings on trivial, single-line functions.
 
   Example:
-  - A one-line `is_even(n): return n % 2 == 0` with a 6-line docstring
+  - A one-line `is_even(n): return n % 2 == 0` with a six-line docstring
 
-- Filler words adding no information
+- Filler words that add no informational value.
 
   Example:
-  - Use of "simply", "just", "basically", "essentially" (e.g., `// simply iterate and collect results`)
+  - Words like "simply", "just", "basically", or "essentially" (e.g., `// simply iterate and collect results`)
 
-- Conversational/editorial references (reads like an essay, not code)
+- Conversational or editorial references.
 
   Example:
   - `// As discussed above`
   - `// As we can see`
   - `// As mentioned earlier`
 
-- Comments that narrate the editing process or refer to our conversation/interaction rather than the code itself
+- Comments narrating the editing process or referencing conversations or interactions rather than the code itself.
 
   Example:
-  - "// replaced x with y" after the user asked to replace x with y
+  - "// replaced x with y" (after a request to replace x with y)
   - "// removed the previous loop"
   - "// updated to use new API as discussed"
-  These comments describe the change history, not the code—remove them.
+  Since these comments describe change history rather than the current code, remove them.
 
 #### Coding artifacts
 
-- Adhoc debug `print()`/`console.log()`/etc.
+- Ad-hoc debug statements, such as `print()` or `console.log()`.
 
   Example:
   - `print("here")`
 
-- Out-of-scope changes
+- Out-of-scope changes.
 
-- Inconsistent coding conventions
+- Inconsistent coding conventions.
 
 ## Output
 
-Report a list of `file:line` for each issue with a brief explanation why it was flagged.
+- List each issue by `file:line` with a brief explanation of why it was flagged.
+- Provide a comprehensive and thorough report; do not omit minor issues.
 ```
 
 ### Step 3 - Synthesize Findings
 
-- Take an aggressive stance on trimming and fixing identified issues. Prioritize fixing over deferring to the user.
-- Only defer findings when a change carries a genuine risk of breaking behavior, logic, or semantic correctness.
-- Verify typos against dictionaries or project glossary terms before assuming.
+- Be aggressive in trimming and fixing identified issues; prioritize fixing over deferring to the user.
+- Defer only when a change carries a genuine risk of breaking behavior, logic, or semantic correctness.
+- Verify potential typos against dictionaries or project glossaries before assuming they are incorrect.
 
 ### Step 4 - Apply Fixes
 
@@ -197,27 +209,27 @@ Apply one logical fix per edit.
 
 ### Step 5 - Stop at Diminishing Returns
 
-- Stop only if further changes would alter behavior/semantics, or require broader architectural context.
+- Stop if further changes would alter behavior or semantics, or require broader architectural context.
 
 ### Step 6 - Verify
 
 - Run `jj diff` to ensure only intended changes were made.
-- Run project formatter, linter, or tests if available to verify correctness.
+- Run the project's formatter, linter, or tests, if available, to verify correctness.
 
 ### Step 7 - Report
 
-Report to the user:
+Report the following to the user:
 
-1. **Scope**: Analyzed files and full-file scan summary.
+1. **Scope**: Analyzed files and a summary of the full-file scan.
 2. **Issues Found**: Categorized issues (typos, comments, edits) with `file:line` references.
 3. **Fixes Applied**: Description and location of each fix.
-4. **Deferred/Skipped**: Only genuinely high-risk issues, with rationale for why they were deferred.
-5. **Verification**: Results of formatting, linting, or test commands.
+4. **Deferred or Skipped**: Genuinely high-risk issues only, including the rationale for deferring them.
+5. **Verification**: Results of formatting, linter, or test commands.
 
 ## Guardrails
 
-- Never change behavior, logic, or structure—only address surface-level hygiene.
-- Do not rewrite comments; only remove "what"-comments and fix obvious typos.
-- Perform a thorough full-file scan and cleanup across the entire content of specified files, not just within the modified diff hunks.
-- Remove transitional, legacy, and conversation-narrating comments (change-history notes like "replaced x with y") unless they are contextual TODOs.
-- Clean up hygiene issues aggressively and decisively. Only defer to the user on genuinely high-risk or behavior-changing cases.
+- Never change behavior, logic, or structure; focus exclusively on surface-level hygiene.
+- Do not rewrite comments; only remove "what" comments and fix obvious typos.
+- Scan and clean the entire content of specified files thoroughly, not just modified diff hunks.
+- Remove transitional, legacy, and conversation-narrating comments (such as change-history notes like "replaced x with y") unless they are active TODOs.
+- Clean up hygiene issues aggressively and decisively; defer to the user only on genuinely high-risk or behavior-changing changes.
