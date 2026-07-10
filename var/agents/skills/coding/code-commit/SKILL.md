@@ -13,7 +13,7 @@ Commit current changes using Jujutsu (jj).
 
 Commit messages must provide a high-level overview of the change, NOT a detailed breakdown.
 
-- **Focus on intent**: Explain the 'why' and 'what' of the change at a high level, specifying the affected subsystem or concern.
+- **Focus on intent**: Explain the 'why' and 'what' of the change at a high level, specifying the affected subsystem or concern. Reinforce that the commit message should capture the *Why* of the change (the reason/motivation for making it), as distinct from the *How* (described by code) and *What* (described by test code).
 - **Do not enumerate changes**: Do not list the files changed, the number of files, or what was changed file-by-file. The diff already shows these details.
 - **Keep it concise**: Ensure the reader can understand the purpose of the change at a glance without re-reading the diff.
 

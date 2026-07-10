@@ -13,6 +13,13 @@
 - Always read the corresponding reference skill before using any covered tool.
 - Do not batch multiple commands into a single shell invocation unless they must run together or repeat the same operation.
 
+## Documentation Philosophy
+
+- Code describes How: implementation shows how something is done.
+- Test code describes What: tests show what behavior is expected.
+- Commit logs describe Why: commit messages explain why the change was made.
+- Code comments describe Why not: comments capture why the obvious or alternative approach was not taken — the non-obvious decision rationale, rejected alternative, or constraint that forced this shape.
+
 ## Subagents
 
 - Delegate to a subagent for any task beyond a verbatim 1-2 line edit you already know how to make.

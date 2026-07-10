@@ -51,7 +51,7 @@ Flag all code hygiene issues according to the sections below.
   - `# ==== Title ====` -> replace with `# Title`
   - `/* <emoji> Title */` -> replace with `/* Title */`
 
-- Comments that explain _what the code_ does rather than _why_
+- Comments that explain how the code works (How) or what it does (What) rather than capturing *Why not* (i.e., why the obvious/alternative approach was not taken, the non-obvious constraint, or the rejected alternative)
 
   Exception:
   - Section headers for readability
