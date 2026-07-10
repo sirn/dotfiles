@@ -75,13 +75,13 @@ goal-mode/
 
 1. **Turn-error detection**: Inspect the last assistant message for `stopReason === "error" | "aborted"`. If found, set status to `"blocked"` (or `"usage-limited"` for rate/billing errors) and stop.
 2. **Completion detection** (continuation turns only): If the agent called `update_goal` with `status=complete`, set status to `"complete"` and stop.
-3. Skip if compaction just happened.
+3. **Context guard**: When context usage exceeds the configured threshold (`~/.pi/agent/custom/goal-mode/config.json`, `contextGuard.{enable,maxContextTokens,contextRatio}`), yield instead of queueing a continuation — set the `yieldedForCompaction` flag and return without sending. Queuing a continuation during `agent_end` would keep the run alive (the message steers the still-streaming agent) and block fire-and-forget `ctx.compact()`. Sending nothing lets the run settle so compaction proceeds.
 4. Check budget; if exhausted, send a budget-reached message and stop.
 5. Otherwise, send a continuation message with `triggerTurn: true`.
 
-**Compaction recovery** (`session_compact` hook):
+**Compaction resume** (`session_compact` hook):
 
-When compaction fires during a continuation turn, `agent_end` skips sending another continuation (the `recentlyCompacted` guard). If the compacted turn won't be retried (`willRetry === false`, e.g. threshold or manual compaction), the goal loop would silently stall. The `session_compact` handler detects this case and re-triggers a continuation turn, which resumes after compaction. If `willRetry` is true, the retried turn's own `agent_end` handles continuation, so the handler skips.
+When `agent_end` yielded to compaction (`yieldedForCompaction`), `session_compact` resumes the goal on success: it clears the flag, skips if the compaction will retry (the retried turn's own `agent_end` resumes the loop), and otherwise sends budget-reached or a continuation. A cancelled or failed compaction emits no `session_compact`, so the goal stays active-but-idle until the user resumes (`/goal resume` or a new turn). This is the simplest safe design — pi provides no compaction-failure event, and timer-based recovery can race an in-flight `compact()`.
 
 **`pendingContinuationTurn` flag lifecycle:**
 

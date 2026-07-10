@@ -45,7 +45,7 @@ import {
   type GoalBudget,
   type GoalState,
 } from "./lib/contract.js";
-import { PROMPTS_DIR } from "./lib/paths.js";
+import { CONFIG_PATH, PROMPTS_DIR } from "./lib/paths.js";
 import { memoizeByStat } from "./lib/cache.js";
 
 // ---------------------------------------------------------------------------
@@ -57,6 +57,12 @@ const GOAL_BUDGET_REACHED_TYPE = "goal-budget-reached";
 const GOAL_CONTINUATION_TYPE = "goal-continuation";
 const GOAL_SET_TYPE = "goal-set";
 const GOAL_OBJECTIVE_UPDATED_TYPE = "goal-objective-updated";
+
+// Fallbacks for the context guard, used only when config.json is absent or
+// partial. The intended deployment sets these in dotpriv to match
+// smart-compact's autoCompact threshold.
+const DEFAULT_GUARD_MAX_CONTEXT_TOKENS = 150_000;
+const DEFAULT_GUARD_CONTEXT_RATIO = 0.8;
 
 // Inline fallbacks used only when the external prompt files are missing;
 // the long real instruction bodies live in vendor/prompts/goal-mode/*.md.
@@ -112,6 +118,88 @@ function loadPrompt(name: string): Promise<string | null> {
 }
 
 // ---------------------------------------------------------------------------
+// Context-guard config (yield to compaction)
+// ---------------------------------------------------------------------------
+
+interface GoalModeContextGuardConfig {
+  enable?: boolean;
+  maxContextTokens?: number;
+  contextRatio?: number;
+}
+
+interface GoalModeConfig {
+  contextGuard?: GoalModeContextGuardConfig;
+}
+
+interface NormalizedContextGuard {
+  maxContextTokens: number;
+  contextRatio: number;
+}
+
+function getPositiveNumber(value: unknown, fallback: number): number {
+  return typeof value === "number" && Number.isFinite(value) && value > 0
+    ? value
+    : fallback;
+}
+
+function getRatio(value: unknown, fallback: number): number {
+  return typeof value === "number" &&
+    Number.isFinite(value) &&
+    value > 0 &&
+    value <= 1
+    ? value
+    : fallback;
+}
+
+/**
+ * Returns null when the guard is disabled or config is missing/unparseable —
+ * in that case goal-mode never yields and the queue/liveness bug can recur
+ * when compaction is active. The intended deployment ships this via dotpriv.
+ */
+async function loadContextGuardConfig(): Promise<NormalizedContextGuard | null> {
+  try {
+    const parsed = await memoizeByStat(
+      CONFIG_PATH,
+      (content) => JSON.parse(content) as GoalModeConfig,
+    );
+    if (!parsed) return null;
+    const g = parsed.contextGuard;
+    if (!g || g.enable !== true) return null;
+    return {
+      maxContextTokens: getPositiveNumber(
+        g.maxContextTokens,
+        DEFAULT_GUARD_MAX_CONTEXT_TOKENS,
+      ),
+      contextRatio: getRatio(g.contextRatio, DEFAULT_GUARD_CONTEXT_RATIO),
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Threshold mirrors smart-compact's formula so that, when dotpriv sets the
+ * same two values, goal-mode yields exactly when smart-compact fires —
+ * decoupled from smart-compact's config, yet coordinated.
+ */
+function contextExceedsThreshold(
+  ctx: ExtensionContext,
+  guard: NormalizedContextGuard,
+): boolean {
+  const usage = ctx.getContextUsage();
+  if (!usage || usage.tokens == null) return false;
+  const contextWindow = usage.contextWindow || ctx.model?.contextWindow;
+  if (!contextWindow || contextWindow <= 0) return false;
+  const threshold = Math.min(
+    guard.maxContextTokens,
+    Math.floor(contextWindow * guard.contextRatio),
+  );
+  return (
+    Number.isFinite(threshold) && threshold > 0 && usage.tokens > threshold
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Formatting helpers
 // ---------------------------------------------------------------------------
 
@@ -149,6 +237,28 @@ export default function (pi: ExtensionAPI) {
         lastGoalInjected: boolean;
       }
     | undefined;
+
+  // No timer-based recovery: pi provides no compaction-failure event, and a
+  // timer can race an in-flight compact() (which disconnects agent events and
+  // replaces agent.state.messages on success). A cancelled/failed compaction
+  // leaves the goal active-but-idle for manual resume (/goal resume or a new
+  // turn).
+  let yieldedForCompaction = false;
+
+  function clearYieldRecovery(): void {
+    yieldedForCompaction = false;
+  }
+
+  /**
+   * Re-validates state rather than trusting the pre-yield snapshot: the goal
+   * may have been paused/cleared/budget-changed while compaction ran.
+   */
+  async function doResumeGoal(ctx: ExtensionContext): Promise<void> {
+    const state = getGoalState(ctx);
+    if (!state || state.status !== "active") return;
+    if (isPlanMode(ctx)) return;
+    await sendBudgetReachedOrContinue(ctx, state);
+  }
 
   // Branch scanning
 
@@ -297,6 +407,48 @@ export default function (pi: ExtensionAPI) {
     );
   }
 
+  /**
+   * Factored out because the session_compact resume path has no "next agent_end"
+   * to perform the exhausted-budget transition — this is the only thing that
+   * runs after a yield, so it must handle both budget and continuation.
+   */
+  async function sendBudgetReachedOrContinue(
+    ctx: ExtensionContext,
+    state: GoalState,
+  ): Promise<void> {
+    const usage = deriveBudgetUsage(ctx);
+    if (
+      usage.turns >= state.budget.maxTurns ||
+      usage.cost >= state.budget.maxCost
+    ) {
+      const reason =
+        usage.turns >= state.budget.maxTurns
+          ? `turn limit reached (${usage.turns}/${state.budget.maxTurns})`
+          : `cost limit reached ($${usage.cost.toFixed(2)}/$${state.budget.maxCost.toFixed(2)})`;
+      setGoalState(pi, {
+        ...state,
+        status: "budget-limited",
+        budgetReason: reason,
+      });
+      updateGoalStatus(ctx);
+      const prompts = await loadGoalPrompts();
+      const content = prompts.budgetReached.replaceAll("{OBJECTIVE}", () =>
+        escapeXmlText(state.objective),
+      );
+      pi.sendMessage(
+        {
+          customType: GOAL_BUDGET_REACHED_TYPE,
+          content,
+          display: true,
+          details: { userInstruction: state.objective },
+        },
+        { triggerTurn: true },
+      );
+      return;
+    }
+    await sendGoalContinuation(ctx, state);
+  }
+
   // Model tool: update_goal
 
   // The completion mechanism: the agent calls this tool to mark the
@@ -375,8 +527,7 @@ export default function (pi: ExtensionAPI) {
       if (!isError) {
         if (expanded) {
           const objective =
-            typeof details.objective === "string" &&
-            details.objective.trim()
+            typeof details.objective === "string" && details.objective.trim()
               ? details.objective
               : "";
           if (objective) {
@@ -534,6 +685,7 @@ export default function (pi: ExtensionAPI) {
         budget: { ...DEFAULT_BUDGET },
       });
       pendingContinuationTurn = false;
+      clearYieldRecovery();
       updateGoalStatus(ctx);
       pi.sendMessage(
         {
@@ -556,6 +708,7 @@ export default function (pi: ExtensionAPI) {
     const status = existing.status;
     setGoalState(pi, { ...existing, objective: trimmed });
     pendingContinuationTurn = false;
+    clearYieldRecovery();
     updateGoalStatus(ctx);
 
     if (status === "active") {
@@ -634,6 +787,7 @@ export default function (pi: ExtensionAPI) {
     }
     setGoalState(pi, { ...state, status: "paused" });
     pendingContinuationTurn = false;
+    clearYieldRecovery();
     updateGoalStatus(ctx);
     ctx.ui.notify("Goal paused.", "info");
   }
@@ -644,7 +798,10 @@ export default function (pi: ExtensionAPI) {
       ctx.ui.notify("No goal to resume.", "error");
       return;
     }
-    if (state.status === "active") {
+    // An active-but-yielded goal is idle because agent_end yielded to
+    // compaction that then never succeeded (cancelled/failed). Let the user
+    // resume manually; fall through to the active-resume path below.
+    if (state.status === "active" && !yieldedForCompaction) {
       ctx.ui.notify("Goal is already active.", "info");
       return;
     }
@@ -665,6 +822,7 @@ export default function (pi: ExtensionAPI) {
       budget: state.budget,
     });
     pendingContinuationTurn = false;
+    clearYieldRecovery();
     updateGoalStatus(ctx);
     ctx.ui.notify("Goal resumed.", "success");
 
@@ -682,6 +840,7 @@ export default function (pi: ExtensionAPI) {
     }
     setGoalState(pi, { ...state, status: "cleared" });
     pendingContinuationTurn = false;
+    clearYieldRecovery();
     updateGoalStatus(ctx);
     ctx.ui.notify("Goal cleared.", "info");
   }
@@ -694,6 +853,7 @@ export default function (pi: ExtensionAPI) {
     }
     setGoalState(pi, { ...state, status: "complete" });
     pendingContinuationTurn = false;
+    clearYieldRecovery();
     updateGoalStatus(ctx);
     ctx.ui.notify("Goal marked as complete.", "success");
   }
@@ -928,6 +1088,7 @@ export default function (pi: ExtensionAPI) {
   // Hooks
 
   pi.on("session_start", async (_event, ctx) => {
+    clearYieldRecovery();
     updateGoalStatus(ctx);
   });
 
@@ -936,6 +1097,7 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.on("session_shutdown", async (_event, ctx) => {
+    clearYieldRecovery();
     if (ctx.hasUI) ctx.ui.setStatus("goal-status", undefined);
   });
 
@@ -959,6 +1121,7 @@ export default function (pi: ExtensionAPI) {
         : undefined;
     if (leafCustomType !== GOAL_CONTINUATION_TYPE) {
       pendingContinuationTurn = false;
+      clearYieldRecovery(); // a user/other turn supersedes a pending yield
     }
 
     const state = getGoalState(ctx);
@@ -1047,70 +1210,30 @@ export default function (pi: ExtensionAPI) {
       // "continue" falls through to compaction guard and continuation logic.
     }
 
-    // Skip if compaction just happened; the post-compaction agent_end will
-    // handle continuation once context settles.
-    const { recentlyCompacted } = scanBranch(ctx);
-    if (recentlyCompacted) return;
-
-    // Budget check
-    const usage = deriveBudgetUsage(ctx);
-
-    // Budget exhausted? (Infinity means no limit, so the comparison is false.)
-    if (
-      usage.turns >= state.budget.maxTurns ||
-      usage.cost >= state.budget.maxCost
-    ) {
-      const reason =
-        usage.turns >= state.budget.maxTurns
-          ? `turn limit reached (${usage.turns}/${state.budget.maxTurns})`
-          : `cost limit reached ($${usage.cost.toFixed(2)}/$${state.budget.maxCost.toFixed(2)})`;
-      setGoalState(pi, {
-        ...state,
-        status: "budget-limited",
-        budgetReason: reason,
-      });
-      updateGoalStatus(ctx);
-      const prompts = await loadGoalPrompts();
-      const content = prompts.budgetReached.replaceAll("{OBJECTIVE}", () =>
-        escapeXmlText(state.objective),
-      );
-      pi.sendMessage(
-        {
-          customType: GOAL_BUDGET_REACHED_TYPE,
-          content,
-          display: true,
-          details: { userInstruction: state.objective },
-        },
-        { triggerTurn: true },
-      );
+    // Context guard: yield instead of queueing a continuation. A queued
+    // continuation (agent.steer during the still-streaming agent_end) keeps the
+    // run alive, which blocks fire-and-forget ctx.compact() — compact() waits
+    // for the run to settle before it can proceed. Sending nothing lets the run
+    // settle so compaction runs; session_compact resumes the goal on success.
+    // Done before the budget check: a budget-reached wrap-up must not be sent
+    // into over-threshold context.
+    const guard = await loadContextGuardConfig();
+    if (guard && contextExceedsThreshold(ctx, guard)) {
+      yieldedForCompaction = true;
       return;
     }
 
-    // Send continuation
-    await sendGoalContinuation(ctx, state);
+    await sendBudgetReachedOrContinue(ctx, state);
   });
 
-  // Re-trigger the goal loop when compaction halts it. agent_end skips
-  // continuation when a compaction just landed (recentlyCompacted). If the
-  // compacted turn will not be retried (willRetry === false, e.g. threshold or
-  // manual compaction), the goal loop would silently stall. This handler
-  // restarts it by sending a fresh continuation message, which re-injects
-  // and resumes after compaction.
+  // Guard on yieldedForCompaction so we resume only after a goal-mode yield,
+  // not after an unrelated compaction (manual /compact, or smart-compact on a
+  // non-yielded turn). A cancelled/failed compaction emits no session_compact;
+  // the goal stays active-but-idle for manual resume.
   pi.on("session_compact", async (event, ctx) => {
-    if (event.willRetry) return; // the retried turn's agent_end will continue
-    const state = getGoalState(ctx);
-    if (!state || state.status !== "active") return;
-    if (isPlanMode(ctx)) return;
-
-    const usage = deriveBudgetUsage(ctx);
-    // Re-check budget; compaction doesn't reset the budget window.
-    if (
-      usage.turns >= state.budget.maxTurns ||
-      usage.cost >= state.budget.maxCost
-    ) {
-      return; // agent_end's budget path handles this on the next turn
-    }
-
-    await sendGoalContinuation(ctx, state);
+    if (!yieldedForCompaction) return; // not a goal-mode yield; nothing to resume
+    clearYieldRecovery();
+    if (event.willRetry) return; // the retried turn's own agent_end resumes the loop
+    await doResumeGoal(ctx);
   });
 }
