@@ -2092,7 +2092,10 @@ test("newline separates commands - policy evaluates each line", () => {
     ask: [{ match: "jj bookmark set", mode: "prefix" }],
     deny: [{ match: "jj git push", mode: "prefix" }],
   };
-  const result = evaluate("cd /tmp\njj bookmark set main -r @\necho ---\njj git push -b main", { commands: policy });
+  const result = evaluate(
+    "cd /tmp\njj bookmark set main -r @\necho ---\njj git push -b main",
+    { commands: policy },
+  );
   assertEquals(result.action, "deny");
   assertEquals(result.match?.entry.match, "jj git push");
   assertEquals(result.match?.category, "deny");
