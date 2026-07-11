@@ -1230,10 +1230,40 @@ export default function (pi: ExtensionAPI) {
   // not after an unrelated compaction (manual /compact, or smart-compact on a
   // non-yielded turn). A cancelled/failed compaction emits no session_compact;
   // the goal stays active-but-idle for manual resume.
+  //
+  // The resume is deferred via setTimeout(0) rather than awaited inline.
+  // ctx.compact() (manual /compact and smart-compact's auto-compaction alike)
+  // emits session_compact while agent events are still disconnected —
+  // AgentSession._reconnectToAgent() runs in compact()'s finally block, after
+  // the extension emit awaits. Calling sendMessage({ triggerTurn: true })
+  // synchronously here would fire before reconnection, so the triggered turn
+  // can be lost. Scheduling on the macrotask queue lets compact()'s call stack
+  // unwind and reconnect first. doResumeGoal re-validates state, so a
+  // pause/clear/budget change racing the deferral is handled. The timer is not
+  // recovery for failed compactions (those emit no session_compact); it only
+  // orders the resume after a successful one.
   pi.on("session_compact", async (event, ctx) => {
     if (!yieldedForCompaction) return; // not a goal-mode yield; nothing to resume
     clearYieldRecovery();
     if (event.willRetry) return; // the retried turn's own agent_end resumes the loop
-    await doResumeGoal(ctx);
+    setTimeout(() => {
+      void doResumeGoal(ctx).catch((error) => {
+        // Notify only; do not leave an unhandled promise rejection. The goal
+        // stays active-but-idle for manual resume (/goal resume or a new turn).
+        // ctx is a lazy proxy that throws on access once invalidated by
+        // session replacement/reload; the notification is best-effort so a
+        // stale ctx never turns this into a fresh unhandled rejection.
+        try {
+          if (ctx.hasUI) {
+            ctx.ui.notify(
+              `Goal resume after compaction failed: ${error instanceof Error ? error.message : String(error)}`,
+              "error",
+            );
+          }
+        } catch {
+          // Stale ctx after session replacement/reload; nothing to notify.
+        }
+      });
+    }, 0);
   });
 }

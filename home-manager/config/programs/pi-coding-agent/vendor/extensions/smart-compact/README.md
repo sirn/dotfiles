@@ -4,7 +4,7 @@ High-fidelity session compaction and threshold-based auto-compaction for the Pi 
 
 ## Overview
 
-Smart Compact replaces Pi's default, generic conversation history compaction behavior with a highly sophisticated, user-configured LLM summarization. It intercepts compaction requests (`session_before_compact`) to produce a dense, structured "Checkpoint Summary" using a designated high-performance model, ensuring crucial context is never lost. Additionally, it automates context management (`agent_end`) by continuously monitoring token usage and triggers compaction when context size crosses user-defined limits.
+Smart Compact replaces Pi's default, generic conversation history compaction behavior with a highly sophisticated, user-configured LLM summarization. It intercepts compaction requests (`session_before_compact`) to produce a dense, structured "Checkpoint Summary" using a designated high-performance model, ensuring crucial context is never lost. Additionally, it automates context management (`agent_settled`) by continuously monitoring token usage and triggers compaction when context size crosses user-defined limits.
 
 ### Design Principles
 
@@ -70,15 +70,18 @@ smart-compact/
 8. The extension calls `complete(model, { messages }, { apiKey, headers, signal })` to invoke the LLM. The provided `AbortSignal` is forwarded so compaction can be gracefully aborted.
 9. On success, it returns `{ compaction: { summary, firstKeptEntryId, tokensBefore } }`.
 
-**Auto-Compaction Trigger (`agent_end`):**
+**Auto-Compaction Trigger (`agent_settled`):**
 
-1. After each agent turn, the extension checks the current token usage using `ctx.getContextUsage()`.
+The threshold check runs in `agent_settled`, the event Pi emits only after a run has fully settled — i.e. no automatic retry, auto-compaction retry, or queued continuation remains. Hooking here (rather than `agent_end`) avoids racing Pi's retry/continuation machinery: a compaction started in `agent_end` can be aborted mid-flight when Pi immediately continues with a queued follow-up message, leaving the context in a half-compacted state and the hysteresis tracker stuck above threshold.
+
+1. After each settled agent run, the extension checks the current token usage using `ctx.getContextUsage()`.
 2. It computes the active compaction threshold.
 3. It compares the current token count against the threshold, referencing `previousTokens` to detect a crossing.
-4. If token usage crosses above the threshold and an auto-compaction is not already in progress (`autoCompactionInProgress` guard), it triggers `ctx.compact({ customInstructions, onComplete, onError })`.
+4. Before triggering compaction, it defensively requires `ctx.isIdle()` to be true. `agent_settled` already implies idle, but the check guards against another extension having started a new run during the preceding async config load.
+5. If token usage crosses above the threshold, idle is confirmed, and an auto-compaction is not already in progress (`autoCompactionInProgress` guard), it triggers `ctx.compact({ customInstructions, onComplete, onError })`.
    - If VCC is enabled, `customInstructions` is set to `"__pi_vcc__"`.
    - Otherwise, a generic auto-compaction preservation prompt is used.
-5. Once compaction completes, `previousTokens` is reset to `null` so the next above-threshold crossing can be detected on future turns.
+6. Once compaction completes, `previousTokens` is reset to `null` so the next above-threshold crossing can be detected on future runs. The same reset runs on error so a failed or aborted compaction can retry on the next settled run. The effective threshold is tracked across runs: when it changes (because the model's context window or the config ratio/cap changed), `previousTokens` is dropped so the hysteresis re-evaluates against the new threshold instead of staying permanently suppressed above the old one. The threshold tracker is reset alongside `previousTokens` in both callbacks.
 
 ## Files
 
@@ -90,12 +93,13 @@ smart-compact/
 
 ### Pi Core API Call Sites
 
-- `pi.on("agent_end", async (_event, ctx) => { ... })`
+- `pi.on("agent_settled", async (_event, ctx) => { ... })`
 - `pi.on("session_before_compact", async (event, ctx) => { ... })`
 
 ### Context APIs Used
 
 - `ctx.getContextUsage()`
+- `ctx.isIdle()` (defensive guard before triggering auto-compaction)
 - `ctx.model` (to retrieve current model context limits)
 - `ctx.modelRegistry.find(provider, modelId)`
 - `ctx.modelRegistry.getApiKeyAndHeaders(model)`
@@ -115,7 +119,7 @@ smart-compact/
 
 ## Notable Implementation Details
 
-- **Hysteresis and Token Tracking**: The tracking state `previousTokens` is crucial for preventing infinite compaction loops. Compaction is only triggered on the _transition_ from `<= threshold` to `> threshold`.
-- **Abort Signal Propagation**: The `AbortSignal` provided by the Pi harness is passed directly down to the LLM completion API call. This ensures that if a user cancels compaction, the network request is immediately aborted, and spurious empty-summary warnings are avoided.
+- **Hysteresis and Token Tracking**: The tracking state `previousTokens` is crucial for preventing infinite compaction loops. Compaction is only triggered on the _transition_ from `<= threshold` to `> threshold`. Both the completion and error callbacks reset `previousTokens` to `null`, so a failed or aborted compaction can re-fire on the next settled run instead of permanently pinning the tracker above threshold. The effective threshold itself is tracked across runs: when it changes (model context window or config ratio/cap changed), `previousTokens` is reset so a lowered threshold does not leave the baseline permanently above it and suppress compaction forever. The threshold tracker is cleared in the same callbacks.
+- **Retry/Continuation Safety**: The auto-compaction trigger runs in `agent_settled`, which Pi emits only after all automatic retries, auto-compaction retries, and queued continuations have drained. A defensive `ctx.isIdle()` check immediately before `ctx.compact(...)` guards against another extension starting a new run during the async config load. Together these ensure compaction never races a continuation turn that would abort it mid-flight.
 - **VCC Integration**: When VCC is enabled (`vcc.enable === true`), manual checkpoint generation is bypassed during `session_before_compact`. During auto-compaction, the special marker instruction `"__pi_vcc__"` is sent to invoke the `pi-vcc` tool.
 - **Prompt Design**: Because the checkpoint summary entirely replaces the compacted conversation history, the prompt explicitly instructs the LLM to output highly dense, technical details including raw commands, file paths, and diagnostic information rather than hand-waving abstractions.

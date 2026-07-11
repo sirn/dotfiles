@@ -112,15 +112,35 @@ function getAutoCompactThreshold(
 
 export default function (pi: ExtensionAPI) {
   let previousTokens: number | null | undefined;
+  // Track the effective threshold used for the last crossing check. The
+  // threshold is derived from the model's context window and the config
+  // ratio/cap, so it can change when the model or config changes. Without
+  // tracking it, a lowered threshold leaves previousTokens pinned above the
+  // old threshold, so wasBelowOrAtThreshold stays false and compaction never
+  // re-fires. Resetting previousTokens when the threshold changes makes the
+  // hysteresis re-evaluate from a clean baseline.
+  let previousThreshold: number | undefined;
   let autoCompactionInProgress = false;
 
-  pi.on("agent_end", async (_event, ctx) => {
+  // agent_settled fires only after Pi has finished all automatic retries,
+  // auto-compaction retries, and queued continuations. Running the threshold
+  // check here (instead of agent_end) avoids racing a continuation turn that
+  // would otherwise observe a stale, already-compacted context and abort the
+  // compaction mid-flight.
+  pi.on("agent_settled", async (_event, ctx) => {
     const cfg = await loadCompactionConfig();
     if (!cfg) {
       return;
     }
     const autoCompactConfig = getAutoCompactConfig(cfg);
     if (!autoCompactConfig || autoCompactionInProgress) {
+      return;
+    }
+
+    // Defensive guard: agent_settled implies idle, but another extension may
+    // have started a new run during the async config load above. Bail out
+    // rather than compacting into an in-flight turn.
+    if (!ctx.isIdle()) {
       return;
     }
 
@@ -143,6 +163,14 @@ export default function (pi: ExtensionAPI) {
     if (!threshold) {
       return;
     }
+
+    // If the effective threshold changed (model or config changed), drop the
+    // crossing baseline so hysteresis re-evaluates against the new threshold
+    // instead of staying permanently suppressed above the old one.
+    if (previousThreshold !== undefined && previousThreshold !== threshold) {
+      previousTokens = null;
+    }
+    previousThreshold = threshold;
 
     const wasBelowOrAtThreshold =
       previousTokens === undefined ||
@@ -169,8 +197,16 @@ export default function (pi: ExtensionAPI) {
       onComplete: () => {
         autoCompactionInProgress = false;
         previousTokens = null;
-        if (ctx.hasUI) {
-          ctx.ui.notify("Auto-compaction completed", "info");
+        previousThreshold = undefined;
+        // ctx is a lazy proxy that throws on access once invalidated by
+        // session replacement/reload. The state resets above must run
+        // unconditionally; only the UI notification is best-effort.
+        try {
+          if (ctx.hasUI) {
+            ctx.ui.notify("Auto-compaction completed", "info");
+          }
+        } catch {
+          // Stale ctx after session replacement/reload; nothing to notify.
         }
       },
       onError: (error) => {
@@ -181,8 +217,15 @@ export default function (pi: ExtensionAPI) {
         // previousTokens pointing above threshold, so the crossing
         // detection never re-fires and context is never compacted.
         previousTokens = null;
-        if (ctx.hasUI) {
-          ctx.ui.notify(`Auto-compaction failed: ${error.message}`, "error");
+        previousThreshold = undefined;
+        // See onComplete: ctx access can throw once invalidated; resets stay
+        // unconditional and the notification is best-effort.
+        try {
+          if (ctx.hasUI) {
+            ctx.ui.notify(`Auto-compaction failed: ${error.message}`, "error");
+          }
+        } catch {
+          // Stale ctx after session replacement/reload; nothing to notify.
         }
       },
     });
