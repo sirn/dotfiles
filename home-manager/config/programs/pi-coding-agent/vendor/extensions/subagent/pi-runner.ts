@@ -118,6 +118,7 @@ export async function runPiAgent(
       let buffer = "";
       let killTimeout: ReturnType<typeof setTimeout> | undefined;
       let settled = false;
+      let turnCompleted = false;
       let agentEndTimer: ReturnType<typeof setTimeout> | undefined;
 
       const sendRpc = (message: Record<string, unknown>) => {
@@ -307,6 +308,7 @@ export async function runPiAgent(
 
         if (event.type === "agent_end") {
           if (settled) return;
+          turnCompleted = true;
           scheduleGraceFinish();
           return;
         }
@@ -348,16 +350,33 @@ export async function runPiAgent(
         if (event.type === "compaction_end") {
           if (settled) return;
           currentResult.compacting = false;
+          if (process.env.PI_SUBAGENT_DEBUG) {
+            ctx.ui.notify(
+              `[subagent] compaction_end reason=${event.reason} ` +
+                `willRetry=${event.willRetry} aborted=${event.aborted} ` +
+                `turnCompleted=${turnCompleted} ` +
+                `ctx=${
+                  currentResult.usage.contextTokens
+                    ? String(currentResult.usage.contextTokens)
+                    : "?"
+                } ` +
+                `err=${event.errorMessage ?? "-"}`,
+              "info",
+            );
+          }
           if (!event.willRetry) {
-            const isOverflowRecovery = event.reason !== "threshold";
-            if (isOverflowRecovery && (event.aborted || event.errorMessage)) {
+            if (turnCompleted) {
+              // Turn already produced a final answer; a failed post-turn
+              // compaction (any reason) must not discard it. Context-shrink
+              // failure is harmless for a one-shot subagent child about to exit.
+              scheduleGraceFinish();
+            } else if (event.aborted || event.errorMessage) {
               currentResult.stopReason = "error";
               currentResult.errorMessage =
                 event.errorMessage || currentResult.errorMessage;
               clearAgentEndTimer();
               finishFailure();
             } else {
-              // Threshold or successful compaction — restart the grace timer.
               scheduleGraceFinish();
             }
           }
