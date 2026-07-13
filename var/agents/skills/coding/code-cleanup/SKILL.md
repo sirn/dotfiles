@@ -1,9 +1,9 @@
 ---
 name: code-cleanup
-description: Find and fix redundancies, non-idiomatic code, dead code, and unnecessary complexity. Use when asked to clean up, simplify, refactor for clarity, remove dead code, or address code-quality findings directly.
+description: Find and fix surface hygiene (typos, naming, comment hygiene, editing artifacts, debug statements) and redundancies, non-idiomatic code, dead code, and unnecessary complexity. Use when asked to clean up, simplify, fix typos or comment hygiene, remove dead code, or address code-quality findings directly.
 ---
 
-Clean up code by applying small, behavior-preserving fixes until additional changes would have diminishing returns.
+Apply small, behavior-preserving fixes — surface hygiene and complexity/redundancy — until further changes would have diminishing returns.
 
 ## Operating Principles
 
@@ -11,6 +11,8 @@ Clean up code by applying small, behavior-preserving fixes until additional chan
 - Prefer applying validated fixes over merely generating review findings.
 - If analysis is requested without edits, report findings and proposed fixes instead of modifying files.
 - Keep changesets easy to review: make small, targeted changes with clear verification.
+- For larger structural refactors requiring planning (extraction/rename/movement across modules), use `code-plan-refactor`; this skill applies only small in-place fixes.
+- For runtime/production errors and symptoms, use `code-debug`; this skill addresses code quality, not diagnosing failures.
 
 ## Modes
 
@@ -34,6 +36,8 @@ Spawn the `scout` subagent:
 ```
 Map cleanup opportunities in the following scope:
 {scope}
+
+- Read the `code-smells` reference and flag relevant Fowler smells (Duplicated Code, Lazy Elements, Speculative Generality, Middle Man, Long Function, etc.); treat smells as heuristics and skip what the project linter/formatter already enforces.
 
 ### Redundancies
 
@@ -122,12 +126,27 @@ Map cleanup opportunities in the following scope:
   - The user explicitly asked for a reimplemented or dependency-free implementation
   - No existing library fits the constraints (license, size, platform) and a note explains why
 
+### Hygiene and artifacts
+
+- Spelling typos, grammatical errors, and naming or formatting convention violations.
+- Whitespace/newline noise, missing final newline, and merge artifacts.
+- Ad-hoc debug statements such as `print()` or `console.log()`.
+- Out-of-scope changes and inconsistent coding conventions.
+
+### Comment hygiene
+
+- Core principle: comments must capture *why not* — the non-obvious rationale, rejected alternative, or constraint. Any comment describing what the code does or how it works is a violation.
+- Decorated inline comments (e.g. `// --- Title ---` -> `// Title`; `# ==== Title ====` -> `# Title`). Exception: multi-line section borders.
+- Commented-out code and orphaned TODOs; transitional/legacy comments; comments referencing deleted constructs; comments describing removed behavior.
+- Comments restating a following list's size/count; obvious section headers; step-by-step narration; block-end markers; "Note:/Important:" prefixes that add no value; type-signature restatements; built-in/stdlib explanations; "This function does X" repeating the name; over-detailed docstrings on trivial functions; filler words (simply/just/basically); conversational references ("As discussed above"); change-history narration ("replaced x with y").
+- Exceptions: section headers that improve readability; extremely non-obvious code.
+
 Report file paths, line numbers, and evidence for each.
 ```
 
 Once the subagent completes:
 
-- Consult the `code-test` skill to identify project test and lint commands.
+- Consult the `code-check` skill to identify project test and lint commands.
 - Run targeted tests or checks on the current diff to establish a safety baseline.
 
 ### Step 3 - Synthesize Findings
@@ -178,4 +197,4 @@ Report the following details to the user:
 - Do not fix unrelated issues outside the defined scope.
 - Do not delete code unless usage analysis and build evidence support removal, or the user explicitly asked.
 - Always preserve public behavior and test outcomes.
-- Do not invoke other skills directly; only reading `code-test` for command detection is permitted.
+- Do not invoke other skills directly; only reading `code-check` for command detection is permitted.

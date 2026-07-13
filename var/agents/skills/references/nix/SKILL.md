@@ -1,7 +1,7 @@
 ---
 name: nix
 type: reference
-description: Reference for Nix commands, nix-shell patterns, package lookup, and Nix string escaping. ALWAYS read BEFORE running nix commands that are not specifically flake operations.
+description: Reference for Nix commands, nix-shell patterns, package lookup, Nix string escaping, and Nix flakes (flake commands, devShell patterns, templates, path:. usage). ALWAYS read BEFORE running nix commands or modifying flake.nix.
 ---
 
 ## String Escaping
@@ -44,7 +44,7 @@ function log(msg: string) {
 
 Use `nix-shell -p` for ad-hoc tools and temporary environments.
 
-See also [flake](../flake/SKILL.md) for flake-specific commands and templates, or inspect [examples/interactive-shell.bash](examples/interactive-shell.bash).
+Inspect [examples/interactive-shell.bash](examples/interactive-shell.bash).
 
 ### nix-shell Shebang Patterns
 
@@ -83,3 +83,30 @@ print(requests.get("https://api.example.com").json())
 
 - Verify exact package names with `nix-locate`, `nix search`, WebFetch, or WebSearch rather than guessing Nix attribute paths.
 - Never use `nix-env -i`; prefer flakes, profiles, or declarative configuration.
+
+## Flakes
+
+### Flake Command Reference
+- `nix build path:.#<package>` - Build a package
+- `nix run path:.#<package>` - Run a package
+- `nix develop path:.` - Enter dev shell
+- `nix flake check path:.` - Validate flake
+- `nix flake update` - Update flake.lock
+
+In a dirty workspace, use `path:.` or `path:/path/to/flake/dir` so untracked files are recognized.
+
+### devShell Patterns
+
+#### mkShell vs mkShellNoCC
+- `mkShell` - For C compilers and native extensions
+- `mkShellNoCC` - For pure scripting (Python, Node.js, Go)
+
+#### Templates
+- Basic flake: [examples/flake-basic.nix](examples/flake-basic.nix)
+- inputsFrom (workspace combining devShells): [examples/flake-inputs-from.nix](examples/flake-inputs-from.nix)
+- Python with uv/poetry: [examples/flake-python-uv.nix](examples/flake-python-uv.nix)
+- Overlay pattern: [examples/overlay-pattern.nix](examples/overlay-pattern.nix)
+
+### Formatting
+
+The project formatter is treefmt. Check formatting with `nix run path:.#treefmt -- --ci`; apply with `nix run path:.#treefmt`.

@@ -15,6 +15,9 @@ Generate an actionable implementation plan based on task analysis and research.
 
 ### Step 2 - Research and Scout
 
+- When the task introduces new modules, interfaces, or abstractions, read the `software-design` reference and evaluate at least two design alternatives against its principles (deep modules, information hiding, pull complexity downward, design-it-twice).
+- When structuring business logic, data access, or persistence layers, read the `eaa-patterns` reference and choose appropriate domain-logic (Transaction Script / Domain Model / Table Module / Service Layer), data-source (Active Record vs Data Mapper), and O/R mapping patterns rather than inventing ad-hoc structure.
+
 Spawn `scout` subagent:
 
 ```
@@ -72,7 +75,7 @@ Read the relevant code directly to validate all agent findings.
 - Define a minimal approach, incorporating `architect` and `auditor` findings when present.
 - Identify target files and integration points.
 - Align verification with project-specific tooling.
-- Prioritize simple, no-code, or boring solutions; avoid premature abstractions.
+- Prioritize simple, no-code, or boring solutions; avoid premature abstractions; favor fewer, deeper modules; avoid speculative generality.
 
 ### Step 8 - Report
 

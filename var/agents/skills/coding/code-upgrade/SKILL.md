@@ -26,7 +26,7 @@ Clarify the target if it is not already clear:
    - Rust: `Cargo.toml` and `Cargo.lock`.
    - Go: `go.mod` and `go.sum`.
    - Ruby: `Gemfile` and `Gemfile.lock`.
-   - Nix: `flake.nix`, `flake.lock`, and `shell.nix` (read the `nix` and `flake` skills).
+   - Nix: `flake.nix`, `flake.lock`, and `shell.nix` (read the `nix` skill).
 2. Read dependency files to identify current versions.
 3. Identify test, lint/check, build, and formatting commands from instructions, task runners, wrappers, and scripts.
 4. Note lockfiles but do not edit them manually.

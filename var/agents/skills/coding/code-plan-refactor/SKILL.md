@@ -1,6 +1,6 @@
 ---
 name: code-plan-refactor
-description: Create safe targeted refactoring plans. Use when asked to plan simplification, cleanup, extraction, renaming, deletion, or module movement without applying changes.
+description: Create safe targeted refactoring plans. Use when asked to plan simplification, cleanup, extraction, renaming, deletion, or module movement without applying changes. For small in-place fixes, use `code-cleanup` instead.
 ---
 
 Generate a safe refactoring plan only; do not apply code changes.
@@ -67,6 +67,8 @@ Read relevant code yourself and validate the agent's findings.
 
 - Identify safe transformations (e.g., extraction, rename, simplification, deletion, inlining, module movement).
 - Simplify design: prefer deleting or inlining code over adding new layers, ensuring every abstraction earns its complexity.
+- When deciding whether to split or combine modules, read the `software-design` reference and apply its "better together OR better apart" and deep-modules / information-hiding principles; do not split into shallow modules or leak information across boundaries.
+- When choosing refactorings, read the `code-smells` reference and match each smell to its primary fix; treat smells as heuristics, not hard violations, and skip what tooling already enforces.
 - Break the work into small, behavior-preserving steps, including verification after each step.
 - Identify where characterization tests are required before refactoring starts.
 - Do not apply any code changes.

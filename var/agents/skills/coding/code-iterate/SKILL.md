@@ -17,7 +17,7 @@ Run a convergent fix loop: find issues, fix them, repeat until clean.
 - **Code Changes**: Use `jj diff -s` to inspect changed files, or `jj diff -- path` to restrict the scope.
 - **Targeted Files**: Focus on any paths specified by the user.
 - **Safety Baseline**: Run `jj new` to create a fresh, empty commit on top of the current state.
-- **Baseline Verification**: Read the `code-test` skill to detect the project's test/lint commands and run a baseline check.
+- **Baseline Verification**: Read the `code-check` skill to detect the project's test/lint commands and run a baseline check.
 
 ### Step 2 - Iteration Loop
 
@@ -95,4 +95,4 @@ Stop the iteration loop when:
 - **Progressive Improvement**: Each iteration must yield fewer or equal new findings compared to the previous pass.
 - **Minimal Rewrites**: Apply strictly targeted fixes; do not perform broad refactoring.
 - **Strict Scope**: Do not address issues outside the defined target scope.
-- **Isolation**: Do not invoke other skills from within this skill (only reading `code-test` for command detection is permitted).
+- **Isolation**: Do not chain-invoke other skills as black boxes; read `code-review` and `code-cleanup` and replicate their subagent prompts. Only reading `code-check` for command detection is permitted.

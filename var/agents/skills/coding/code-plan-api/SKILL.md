@@ -73,6 +73,8 @@ Read relevant code directly to validate subagent findings.
 
 - Design only required resources, operations, fields, and data shapes.
 - Prefer flat, simple structures over deeply nested designs.
+- When designing the interface contract, read the `software-design` reference and apply deep-modules and "define errors out of existence" principles — keep the interface surface small relative to behavior, and prefer designing errors out over spreading exception handling across callers.
+- When the API crosses a process or network boundary, read the `eaa-patterns` reference and apply Remote Facade (coarse-grained operations) plus Data Transfer Object (batch data into one round-trip); do not use DTOs within a single process.
 - Consider versioning, pagination, error handling, auth, validation, and compatibility.
 - Identify security risks and secure API patterns.
 

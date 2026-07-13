@@ -16,6 +16,7 @@ Commit messages must provide a high-level overview of the change, NOT a detailed
 - **Focus on intent**: Explain the 'why' and 'what' of the change at a high level, specifying the affected subsystem or concern. Reinforce that the commit message should capture the _Why_ of the change (the reason/motivation for making it), as distinct from the _How_ (described by code) and _What_ (described by test code).
 - **Do not enumerate changes**: Do not list the files changed, the number of files, or what was changed file-by-file. The diff already shows these details.
 - **Keep it concise**: Ensure the reader can understand the purpose of the change at a glance without re-reading the diff.
+- Follow the `jujutsu` reference for line length, mood, and style conventions.
 
 ### Examples
 
@@ -45,16 +46,10 @@ Commit messages must provide a high-level overview of the change, NOT a detailed
 
 ### Step 3 - Execute Commit
 
-- Derive the commit message primarily from the diff, not the conversation context, unless the context explains an otherwise unobvious change. Follow the high-level overview requirements in the **Commit Message Style** section (do not enumerate files, changed-line counts, or detailed breakdowns).
-- If changes are logically distinct (different subsystems, features, or concerns), split them:
-  - Record the current operation ID with `jj op log -n 1` (revert with `jj undo` or `jj op restore <op-id>` if needed).
-  - Run `jj split -r <id> -m "<commit-message>" -- <file>` for each split (do NOT use interactive `jj split`).
-  - Always provide a commit message when splitting.
-- For a single commit:
-  - Run `jj commit -m "<message>"`.
-  - Use `jj describe <id> -m "<message>"` only to update an existing description without creating a new empty commit.
-  - Follow the `jujutsu` skill's **Commit Messages** best practice for line length and style.
-  - Note that `jj commit` leaves the new working copy (`@`) ready for new changes.
+- Derive the commit message primarily from the diff, not the conversation context, unless context explains an unobvious change. Follow the requirements in the **Commit Message Style** section.
+- If changes are logically distinct, split them (one commit message per split, do NOT use interactive `jj split`).
+- Refer to the `jujutsu` reference for the exact `jj commit` / `jj split` syntax and the commit+advance workflow.
+- Note that `jj commit` leaves the new working-copy `@` ready for new changes.
 
 ### Step 4 - Verify Line Lengths
 
@@ -62,7 +57,7 @@ Commit messages must provide a high-level overview of the change, NOT a detailed
   - Reference it by its absolute path. Do NOT `cd` into the skill directory, as `jj` operations must run in the repository's working directory.
   - Run `/path/to/check-commit-msg.sh [REV]` where `REV` can be a jujutsu revision, jujutsu alias, git revision, or git refs.
   - Run `/path/to/check-commit-msg.sh -h` to see all available options.
-- If any line exceeds the limit, fix it using `jj describe <rev> -m "<fixed-message>"`.
+- If any line exceeds the limit (per the `jujutsu` reference), fix with `jj describe <rev> -m "<fixed-message>"`.
 
 ### Step 5 - Report
 

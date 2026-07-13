@@ -1,6 +1,6 @@
 ---
 name: code-debug
-description: Debug issues by researching errors and proposing minimal fixes. Use when user asks to troubleshoot or debug a failure.
+description: Debug issues by researching errors and proposing minimal fixes. Use when user asks to troubleshoot or debug a runtime/production error or symptom. For test/lint/format check-command failures, use `code-check` instead.
 ---
 
 Troubleshoot problems by delegating focused research and risk review.
