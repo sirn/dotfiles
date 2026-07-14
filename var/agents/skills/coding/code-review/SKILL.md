@@ -59,6 +59,7 @@ Audit {files} for production readiness: correctness, security, data loss, migrat
 ### Step 4 - Synthesize Findings
 
 Read relevant code yourself to validate and synthesize agent findings.
+
 - Keep the Spec review and the Code Quality review on strictly separate axes. Never merge or rerank them; a perfectly written implementation of the wrong feature must remain visible as a spec failure.
 - When synthesizing code-quality findings, distinguish hard violations of documented standards from judgement calls on baseline code smells.
 
@@ -75,12 +76,15 @@ Run verification commands only when the user requested full checks:
 Produce the review report with the following structure:
 
 #### Axis A: Specification Compliance
-*(Skip or note if no spec source was found. Keep strictly separate from code quality.)*
+
+_(Skip or note if no spec source was found. Keep strictly separate from code quality.)_
+
 1. **Requirements Gap**: Quoted spec lines for requirements that are missing or partially implemented.
 2. **Scope Creep**: Behaviors in the diff that were not requested in the spec.
 3. **Incorrect Logic**: Quoted spec lines where the code attempts to implement a requirement but does so incorrectly.
 
 #### Axis B: Code Quality Review
+
 1. **Executive Summary**
 2. **Critical Issues** (must fix)
 3. **Security Analysis**

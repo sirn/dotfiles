@@ -87,6 +87,7 @@ print(requests.get("https://api.example.com").json())
 ## Flakes
 
 ### Flake Command Reference
+
 - `nix build path:.#<package>` - Build a package
 - `nix run path:.#<package>` - Run a package
 - `nix develop path:.` - Enter dev shell
@@ -98,10 +99,12 @@ In a dirty workspace, use `path:.` or `path:/path/to/flake/dir` so untracked fil
 ### devShell Patterns
 
 #### mkShell vs mkShellNoCC
+
 - `mkShell` - For C compilers and native extensions
 - `mkShellNoCC` - For pure scripting (Python, Node.js, Go)
 
 #### Templates
+
 - Basic flake: [examples/flake-basic.nix](examples/flake-basic.nix)
 - inputsFrom (workspace combining devShells): [examples/flake-inputs-from.nix](examples/flake-inputs-from.nix)
 - Python with uv/poetry: [examples/flake-python-uv.nix](examples/flake-python-uv.nix)

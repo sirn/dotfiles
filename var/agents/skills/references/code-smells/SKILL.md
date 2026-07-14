@@ -37,7 +37,7 @@ The 24 code smells from Martin Fowler's Refactoring (2nd edition, 2018). Each sm
 21. **Alternative Classes with Different Interfaces** — two classes doing the same job with different signatures. → Rename to unify; Extract Superclass; align the interfaces.
 22. **Data Class** — classes with only fields and accessors, no behavior. → Encapsulate Record; Remove Setting Method; move behavior onto the data.
 23. **Refused Bequest** — a subclass that ignores or overrides most of what it inherits. → Replace Inheritance with Delegation; Push Down Method/Field; Collapse Hierarchy.
-24. **Comments** — comments used as deodorant for bad code. → Extract Function with an explanatory name; keep comments that explain *why*. When you see a comment, ask which smell it is masking.
+24. **Comments** — comments used as deodorant for bad code. → Extract Function with an explanatory name; keep comments that explain _why_. When you see a comment, ask which smell it is masking.
 
 ### Edition Note
 
