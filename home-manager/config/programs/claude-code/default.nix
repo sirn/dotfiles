@@ -16,8 +16,7 @@ let
       inherit (policy) tools commands paths;
 
       webFetchRules = map (d: "WebFetch(domain:${d})") agentsCfg.domains.allowed;
-      mkToolPerm =
-        tool: if cfg.sandbox.enabled && pkgs.stdenv.hostPlatform.isLinux then tool else "${tool}(**)";
+      mkToolPerm = tool: "${tool}(**)";
       baseTools = [
         "Glob(*)"
         "Grep(*)"
@@ -28,11 +27,10 @@ let
       ++ lib.optional tools.write (mkToolPerm "Write")
       ++ webFetchRules;
 
-      pathAllows = lib.optionals (!cfg.sandbox.enabled) (
+      pathAllows =
         map (p: "Read(${p})") (paths.allow.read or [ ])
         ++ lib.optionals tools.edit (map (p: "Edit(${p})") (paths.allow.edit or [ ]))
-        ++ lib.optionals tools.write (map (p: "Write(${p})") (paths.allow.write or [ ]))
-      );
+        ++ lib.optionals tools.write (map (p: "Write(${p})") (paths.allow.write or [ ]));
 
       mkBashPatterns =
         cmds:
@@ -71,11 +69,10 @@ let
 
       ask = mkBashPatterns (commands.ask or [ ]);
 
-      pathDenies = lib.optionals (!cfg.sandbox.enabled) (
+      pathDenies =
         map (p: "Read(${p})") (paths.deny.read or [ ])
         ++ lib.optionals tools.edit (map (p: "Edit(${p})") (paths.deny.edit or [ ]))
-        ++ lib.optionals tools.write (map (p: "Write(${p})") (paths.deny.write or [ ]))
-      );
+        ++ lib.optionals tools.write (map (p: "Write(${p})") (paths.deny.write or [ ]));
 
       bashDenies = mkBashPatterns (commands.deny or [ ]);
       deny = pathDenies ++ bashDenies;
@@ -170,21 +167,20 @@ let
       value.source = agentsCfg.skillTrees + "/${skill.name}";
     }) agentsCfg.discoveredSkills
   );
+
+  wrappedClaude = config.agents.sandbox.mkWrapper {
+    name = "claude";
+    package = pkgs.llm-agents.claude-code;
+    preExports = ''
+      export DISABLE_AUTOUPDATER=1
+      export DISABLE_INSTALLATION_CHECKS=1
+    '';
+  };
 in
 {
   programs.claude-code = {
     enable = true;
-    package = (
-      pkgs.writeScriptBin "claude" ''
-        #!${pkgs.runtimeShell}
-        export DISABLE_AUTOUPDATER=1
-        export DISABLE_INSTALLATION_CHECKS=1
-        exec "${lib.getExe pkgs.local.envWrapper}" \
-          -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
-          -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env.local" \
-          -- "${lib.getExe pkgs.llm-agents.claude-code}" "$@"
-      ''
-    );
+    package = wrappedClaude;
 
     agents = lib.mapAttrs mkClaudeCodeAgent validClaudeCodeAgents;
     context = agentsCfg.instructionText;
@@ -207,8 +203,6 @@ in
       permissions = toClaudePermissions;
     };
   };
-
-  programs.claude-code.sandbox.enabled = pkgs.stdenv.hostPlatform.isLinux;
 
   programs.git = lib.mkIf cfg.enable {
     ignores = [

@@ -113,8 +113,9 @@ in
 {
   imports = [
     ./domains.nix
-    ./subagents.nix
     ./permissions.nix
+    ./sandbox.nix
+    ./subagents.nix
   ];
 
   options.agents = {

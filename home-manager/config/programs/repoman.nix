@@ -81,6 +81,14 @@ in
     ];
   };
 
+  # Allow repoman to clone and manage repos/workspaces from inside the agent sandbox.
+  agents.sandbox.extraWritePaths = [
+    "${config.home.homeDirectory}/Dev/src"
+    "${config.home.homeDirectory}/Dev/go/gopath/src"
+    "${config.home.homeDirectory}/Dev/workspace"
+    "${config.home.homeDirectory}/Dev/adhoc"
+  ];
+
   programs.zsh.initContent = lib.mkIf config.programs.zsh.enable ''
     # Quickly jump into dev project directory.
     ggd() {

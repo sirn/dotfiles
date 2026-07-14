@@ -8,14 +8,13 @@
 let
   agentsCfg = config.agents;
 
-  wrappedPi = pkgs.writeScriptBin "pi" ''
-    #!${pkgs.runtimeShell}
-    export PI_SKIP_VERSION_CHECK=1
-    exec "${lib.getExe pkgs.local.envWrapper}" \
-      -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env" \
-      -i "''${XDG_CONFIG_HOME:-$HOME/.config}/sops-nix/secrets/agents/env.local" \
-      -- "${lib.getExe pkgs.llm-agents.pi}" "$@"
-  '';
+  wrappedPi = config.agents.sandbox.mkWrapper {
+    name = "pi";
+    package = pkgs.llm-agents.pi;
+    preExports = ''
+      export PI_SKIP_VERSION_CHECK=1
+    '';
+  };
 in
 
 {

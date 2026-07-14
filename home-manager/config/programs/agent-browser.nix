@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   agentBrowserInstructionText = lib.strings.trim ''
@@ -25,4 +30,10 @@ in
   };
 
   home.packages = [ pkgs.llm-agents.agent-browser ];
+
+  agents.sandbox.extraWritePaths = [ "${config.home.homeDirectory}/.agent-browser" ];
+
+  # Chrome's internal sandbox conflicts with the outer Seatbelt jail.
+  # --no-sandbox is safe here: Seatbelt provides filesystem isolation.
+  agents.sandbox.extraEnv.AGENT_BROWSER_ARGS = "--no-sandbox";
 }
