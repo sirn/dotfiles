@@ -35,6 +35,9 @@ Review code, designs, or plans for correctness, security, convention fit, simpli
 - Every finding must include a file path and line number or a quoted snippet.
 - If evidence is missing, mark the item as speculative and lower the severity.
 - If there are no findings for the requested lens, say so clearly and mention what was reviewed.
+- Present Critical and High findings first.
+- Format each finding as a concise bullet point rather than narrative prose, quoting only the precise lines affected.
+- Condense Low findings to a single line each (while preserving file/line evidence) and reserve the Notes section for brief scope, assumptions, and verification details.
 
 ## Output
 
