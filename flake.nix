@@ -362,50 +362,7 @@
         };
 
       # Helper for eachSystem pattern
-      eachSystem =
-        f:
-        nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ] (
-          system: f nixpkgs.legacyPackages.${system}
-        );
-
-      # Build pkgs with local overlay applied
-      mkPkgs =
-        system:
-        import nixpkgs {
-          inherit system;
-          config = nixpkgsConfig;
-          inherit overlays;
-        };
-      # Eval the treefmt configuration
-      treefmtEval = eachSystem (
-        pkgs:
-        inputs.treefmt-nix.lib.evalModule pkgs {
-          # Used to find the project root
-          projectRootFile = "flake.nix";
-
-          # Enable formatters
-          programs.nixfmt = {
-            enable = true;
-            package = pkgs.nixfmt-rfc-style;
-            strict = true;
-          };
-
-          programs.prettier = {
-            enable = true;
-            settings.proseWrap = "never";
-          };
-          programs.shfmt.enable = true;
-
-          # Global settings
-          settings = {
-            excludes = [
-              "*.sops.*"
-              "flake.lock"
-              "secrets/**"
-            ];
-          };
-        }
-      );
+      eachSystem = f: nixpkgs.lib.genAttrs (import inputs.systems-default) (system: f system);
     in
     {
       # Home Manager module to be included by a standalone Home Manager
@@ -428,22 +385,58 @@
       };
 
       # Apps output for nix run path:.#treefmt
-      apps = eachSystem (pkgs: {
-        treefmt = {
-          type = "app";
-          program = "${treefmtEval.${pkgs.system}.config.build.wrapper}/bin/treefmt";
-        };
-      });
+      apps = eachSystem (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          treefmtEval = inputs.treefmt-nix.lib.evalModule pkgs {
+            projectRootFile = "flake.nix";
+
+            # Enable formatters
+            programs.nixfmt = {
+              enable = true;
+              package = pkgs.nixfmt;
+              strict = true;
+            };
+
+            programs.prettier = {
+              enable = true;
+              settings.proseWrap = "never";
+            };
+
+            programs.shfmt.enable = true;
+
+            # Global settings
+            settings = {
+              excludes = [
+                "*.sops.*"
+                "flake.lock"
+                "secrets/**"
+              ];
+            };
+          };
+        in
+        {
+          treefmt = {
+            type = "app";
+            program = "${treefmtEval.config.build.wrapper}/bin/treefmt";
+          };
+        }
+      );
 
       # Expose all local packages from the overlay
-      packages =
-        nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ]
-          (
-            system:
-            let
-              local = (mkPkgs system).local;
-            in
-            nixpkgs.lib.filterAttrs (_: v: nixpkgs.lib.isDerivation v) local
-          );
+      packages = eachSystem (
+        system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config = nixpkgsConfig;
+            inherit overlays;
+          };
+        in
+        {
+          pkgs = pkgs;
+        }
+      );
     };
 }
