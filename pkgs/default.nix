@@ -43,8 +43,6 @@ let
 
     tiler = (callPackage ./by-name/tiler/package.nix { });
 
-    terminal-use = (callPackage ./by-name/terminal-use/package.nix { });
-
     lsp-cli = (callPackage ./by-name/lsp-cli/package.nix { });
 
     localterm = (callPackage ./by-name/localterm/package.nix { });

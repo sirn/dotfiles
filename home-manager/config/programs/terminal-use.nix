@@ -18,5 +18,5 @@ in
 
   agents.commandContext = lib.mkAfter terminalUseCommandContext;
 
-  home.packages = [ pkgs.local.terminal-use ];
+  home.packages = [ pkgs.llm-agents.terminal-use ];
 }
