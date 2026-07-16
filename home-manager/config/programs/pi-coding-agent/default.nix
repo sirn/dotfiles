@@ -30,6 +30,7 @@ in
     ./extensions/hm-smart-compact.nix
     ./extensions/pi-vcc.nix
     ./extensions/pi-tool-repair.nix
+    ./extensions/pi-fabric.nix
   ];
 
   programs.pi-coding-agent = {

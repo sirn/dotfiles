@@ -1,0 +1,74 @@
+{
+  "name": "pi-fabric",
+  "version": "0.28.1",
+  "description": "A programmable tool and agent runtime for Pi",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./protocol": {
+      "types": "./dist/protocol.d.ts",
+      "import": "./dist/protocol.js"
+    }
+  },
+  "files": [
+    "dist/",
+    "skills/",
+    "docs/",
+    "README.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "codemode",
+    "mcp",
+    "agents",
+    "actors",
+    "steering",
+    "mesh",
+    "swarm",
+    "workflows",
+    "rlm",
+    "orchestration"
+  ],
+  "license": "MIT",
+  "author": "monotykamary",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/monotykamary/pi-fabric.git"
+  },
+  "homepage": "https://github.com/monotykamary/pi-fabric#readme",
+  "bugs": {
+    "url": "https://github.com/monotykamary/pi-fabric/issues"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "pi": {
+    "extensions": [
+      "./dist/index.js"
+    ],
+    "skills": [
+      "./skills"
+    ],
+    "image": "https://raw.githubusercontent.com/monotykamary/pi-fabric/main/media/cover.jpg"
+  },
+  "dependencies": {
+    "@earendil-works/pi-ai": "0.80.6",
+    "@jitl/quickjs-singlefile-mjs-release-sync": "^0.32.0",
+    "cross-spawn": "^7.0.6",
+    "diff": "^8.0.4",
+    "mcporter": "^0.12.3",
+    "quickjs-emscripten-core": "^0.32.0",
+    "shiki": "^4.3.1",
+    "typebox": "1.1.38",
+    "typescript": "^6.0.3",
+    "yaml": "^2.9.0"
+  }
+}

@@ -28,6 +28,7 @@ let
     pi-vcc = (callPackage ./by-name/pi-vcc/package.nix { });
 
     pi-tool-repair = (callPackage ./by-name/pi-tool-repair/package.nix { });
+    pi-fabric = (callPackage ./by-name/pi-fabric/package.nix { });
 
     mitsuhiko-agent-stuff = (callPackage ./by-name/mitsuhiko-agent-stuff { });
 
