@@ -1,6 +1,6 @@
 ---
 name: code-cleanup
-description: Find and fix surface hygiene (typos, naming, comment hygiene, editing artifacts, debug statements) and redundancies, non-idiomatic code, dead code, and unnecessary complexity. Use when asked to clean up, simplify, fix typos or comment hygiene, remove dead code, or address code-quality findings directly.
+description: Find and fix surface hygiene (typos, naming, comment hygiene, editing artifacts, debug statements) and redundancies, non-idiomatic code, dead code, and unnecessary complexity. Identifies comments that violate the project commenting policy and strips them. Use when asked to clean up, simplify, fix typos or comment hygiene, remove dead code, or address code-quality findings directly.
 ---
 
 Apply small, behavior-preserving fixes — surface hygiene and complexity/redundancy — until further changes would have diminishing returns.
@@ -135,11 +135,23 @@ Map cleanup opportunities in the following scope:
 
 ### Comment hygiene
 
-- Core principle: comments must capture *why not* — the non-obvious rationale, rejected alternative, or constraint. Any comment describing what the code does or how it works is a violation.
-- Decorated inline comments (e.g. `// --- Title ---` -> `// Title`; `# ==== Title ====` -> `# Title`). Exception: multi-line section borders.
-- Commented-out code and orphaned TODOs; transitional/legacy comments; comments referencing deleted constructs; comments describing removed behavior.
-- Comments restating a following list's size/count; obvious section headers; step-by-step narration; block-end markers; "Note:/Important:" prefixes that add no value; type-signature restatements; built-in/stdlib explanations; "This function does X" repeating the name; over-detailed docstrings on trivial functions; filler words (simply/just/basically); conversational references ("As discussed above"); change-history narration ("replaced x with y").
-- Exceptions: section headers that improve readability; extremely non-obvious code.
+Per the project commenting policy (AGENTS.md -> Documentation Philosophy and Editing & Quality), code comments exist only to capture *why not* — the non-obvious decision rationale, rejected alternative, or constraint that forced this shape. Identify every comment that violates the policy and strip it.
+
+Report each violation with file:line, the comment text, and its category:
+
+- **Describes what/how**: restates the code, the function name, a type signature, a following list's size/count, or obvious mechanics (e.g. `// Returns the user` on `function getUser()`).
+- **Narrative or changelog**: step-by-step narration, work history, "replaced x with y", "previously we...", "As discussed above"; changelog-style blocks are explicitly forbidden.
+- **Decorated**: inline borders or emphasis such as `// --- Title ---`, `# ==== Title ==== `, `/* ===== */`. Reduce to `// Title`, or strip when the title is obvious. Exception: deliberate multi-line section borders that aid readability.
+- **Filler and boilerplate prefixes**: "Note:/Important:/NB:" that add no information; filler words (simply/just/basically); over-detailed docstrings on trivial functions; built-in/stdlib explanations.
+- **Stale**: commented-out code, orphaned TODOs, comments referencing deleted constructs or describing removed behavior, transitional/legacy markers.
+
+Action:
+
+- **Strip** the comment entirely when it carries no *why not* rationale.
+- **Trim to the rationale** when a why-not reason is buried inside a violating comment; keep only the non-obvious decision, rejected alternative, or constraint.
+- **Keep** comments that encode a genuine constraint or rejected alternative, even when terse.
+
+Do not strip license/copyright headers, shebangs and editor modelines, language/tooling pragmas and region markers, i18n message comments, or comments in configuration files that convey settings meaning (the policy requires preserving those).
 
 Report file paths, line numbers, and evidence for each.
 ```
@@ -165,6 +177,7 @@ Apply these cleanup fixes in the following files:
 {prioritized findings list}
 
 Apply one logical cleanup per step.
+Strip policy-violating comments per the comment-hygiene findings: remove the comment, or trim it to only the why-not rationale. Never strip license headers, shebangs/modelines, tooling pragmas, or config-file comments that convey settings.
 Preserve public behavior, API signatures, and test expectations.
 ```
 
@@ -197,4 +210,5 @@ Report the following details to the user:
 - Do not fix unrelated issues outside the defined scope.
 - Do not delete code unless usage analysis and build evidence support removal, or the user explicitly asked.
 - Always preserve public behavior and test outcomes.
+- Do not strip comments that encode a genuine why-not rationale, license/copyright headers, shebangs/editor modelines, tooling pragmas, or configuration-file comments that convey settings meaning; strip only policy-violating comments.
 - Do not invoke other skills directly; only reading `code-check` for command detection is permitted.
