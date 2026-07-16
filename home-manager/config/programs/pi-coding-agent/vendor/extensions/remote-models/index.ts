@@ -26,7 +26,7 @@ import type {
   ProviderConfig,
   ProviderModelConfig,
 } from "@earendil-works/pi-coding-agent";
-import { getModel } from "@earendil-works/pi-ai";
+import { getModel } from "@earendil-works/pi-ai/compat";
 
 import * as os from "node:os";
 import * as path from "node:path";
@@ -319,7 +319,7 @@ function toProviderModel(
     },
     contextWindow,
     maxTokens,
-    ...(piModel?.compat && { compat: piModel.compat }),
+    ...(piModel?.compat ? { compat: piModel.compat } : {}),
   };
 }
 

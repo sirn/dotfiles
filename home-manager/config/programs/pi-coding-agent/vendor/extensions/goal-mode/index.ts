@@ -595,7 +595,7 @@ export default function (pi: ExtensionAPI) {
       if (params.status === "complete") {
         setGoalState(pi, { ...state, status: "complete" });
         updateGoalStatus(ctx);
-        ctx.ui.notify("Goal marked complete via update_goal tool.", "success");
+        ctx.ui.notify("Goal marked complete via update_goal tool.", "info");
 
         const usage = deriveBudgetUsage(ctx);
         const usageReport =
@@ -824,7 +824,7 @@ export default function (pi: ExtensionAPI) {
     pendingContinuationTurn = false;
     clearYieldRecovery();
     updateGoalStatus(ctx);
-    ctx.ui.notify("Goal resumed.", "success");
+    ctx.ui.notify("Goal resumed.", "info");
 
     // Trigger a continuation turn so the agent immediately resumes work,
     // mirroring a resumed-thread auto-activation. Without this, the goal is
@@ -855,7 +855,7 @@ export default function (pi: ExtensionAPI) {
     pendingContinuationTurn = false;
     clearYieldRecovery();
     updateGoalStatus(ctx);
-    ctx.ui.notify("Goal marked as complete.", "success");
+    ctx.ui.notify("Goal marked as complete.", "info");
   }
 
   function handleGoalBudget(args: string, ctx: ExtensionContext): void {
@@ -914,7 +914,7 @@ export default function (pi: ExtensionAPI) {
     updateGoalStatus(ctx);
     ctx.ui.notify(
       `Budget updated: ${fmtLimit(budget.maxTurns)} turns, ${fmtCost(budget.maxCost)}.`,
-      "success",
+      "info",
     );
   }
 
@@ -1203,7 +1203,7 @@ export default function (pi: ExtensionAPI) {
         }
         ctx.ui.notify(
           "Goal auto-completed: agent called update_goal.",
-          "success",
+          "info",
         );
         return;
       }

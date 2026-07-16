@@ -6,8 +6,11 @@
  * Falls back to default compaction if the configured model is unavailable.
  */
 
-import { complete } from "@earendil-works/pi-ai";
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { complete } from "@earendil-works/pi-ai/compat";
+import type {
+  ExtensionAPI,
+  ExtensionContext,
+} from "@earendil-works/pi-coding-agent";
 import {
   convertToLlm,
   serializeConversation,
@@ -73,6 +76,20 @@ function getRatio(value: unknown, fallback: number): number {
     value <= 1
     ? value
     : fallback;
+}
+
+// ctx is a lazy proxy that throws on access once invalidated by session
+// replacement/reload, so post-compaction notifications are best-effort.
+function notifyStaleSafe(
+  ctx: ExtensionContext,
+  message: string,
+  severity: "info" | "error",
+): void {
+  try {
+    if (ctx.hasUI) ctx.ui.notify(message, severity);
+  } catch {
+    // Stale ctx; nothing to notify.
+  }
 }
 
 function getAutoCompactConfig(
@@ -198,16 +215,9 @@ export default function (pi: ExtensionAPI) {
         autoCompactionInProgress = false;
         previousTokens = null;
         previousThreshold = undefined;
-        // ctx is a lazy proxy that throws on access once invalidated by
-        // session replacement/reload. The state resets above must run
-        // unconditionally; only the UI notification is best-effort.
-        try {
-          if (ctx.hasUI) {
-            ctx.ui.notify("Auto-compaction completed", "info");
-          }
-        } catch {
-          // Stale ctx after session replacement/reload; nothing to notify.
-        }
+        // State resets must run unconditionally; ctx may be a stale proxy
+        // after session replacement/reload, so the notification is best-effort.
+        notifyStaleSafe(ctx, "Auto-compaction completed", "info");
       },
       onError: (error) => {
         autoCompactionInProgress = false;
@@ -218,15 +228,7 @@ export default function (pi: ExtensionAPI) {
         // detection never re-fires and context is never compacted.
         previousTokens = null;
         previousThreshold = undefined;
-        // See onComplete: ctx access can throw once invalidated; resets stay
-        // unconditional and the notification is best-effort.
-        try {
-          if (ctx.hasUI) {
-            ctx.ui.notify(`Auto-compaction failed: ${error.message}`, "error");
-          }
-        } catch {
-          // Stale ctx after session replacement/reload; nothing to notify.
-        }
+        notifyStaleSafe(ctx, `Auto-compaction failed: ${error.message}`, "error");
       },
     });
   });
@@ -249,6 +251,7 @@ export default function (pi: ExtensionAPI) {
     }
 
     // Resolve the configured model
+    if (!cfg.provider || !cfg.model) return;
     const model = ctx.modelRegistry.find(cfg.provider, cfg.model);
     if (!model) {
       ctx.ui.notify(

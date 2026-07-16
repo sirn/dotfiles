@@ -1,0 +1,3 @@
+# Local dependency links created by check-subagent.sh so tsc can resolve
+# @earendil-works/* and typebox for the vendored subagent extension.
+node_modules/

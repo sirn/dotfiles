@@ -39,7 +39,6 @@ import {
 import {
   memoizeByStat,
   memoizeDirectoryByStat,
-  invalidateDirectoryCache,
 } from "./lib/cache.js";
 import { measure } from "./lib/perf.js";
 import { Box, Text, Spacer } from "@earendil-works/pi-tui";
@@ -373,7 +372,7 @@ async function mapWithAgentConcurrency<TIn, TOut>(
     string,
     { running: number; waitQueue: (() => void)[] }
   >();
-  for (const [name, max] of agentConcurrencyMap) {
+  for (const [name] of agentConcurrencyMap) {
     agentSems.set(name, { running: 0, waitQueue: [] });
   }
 
@@ -429,9 +428,15 @@ async function getDiscoveredAgents(agentDir: string): Promise<AgentConfig[]> {
         if (!entry.isFile() && !entry.isSymbolicLink()) continue;
 
         const filePath = path.join(agentDir, entry.name);
-        const parsed = await memoizeByStat(filePath, (content) =>
-          parseAgentFile(content),
-        );
+        // parseFrontmatter can throw on malformed YAML; one bad agent file
+        // must not crash discovery for every other agent.
+        const parsed = await memoizeByStat(filePath, (content) => {
+          try {
+            return parseAgentFile(content);
+          } catch {
+            return null;
+          }
+        });
         if (parsed) agents.push(parsed);
       }
       return agents;
@@ -481,10 +486,6 @@ function parseAgentFile(content: string): AgentConfig | null {
     systemPrompt: body,
     runner,
   };
-}
-
-function invalidateAgentCache(agentDir: string): void {
-  invalidateDirectoryCache(agentDir);
 }
 
 // Core: runSingleAgent (dispatcher)
@@ -555,11 +556,10 @@ type SubagentStore = {
 };
 
 function buildStore(
-  result: AgentToolResult<SubagentDetails>,
+  details: SubagentDetails,
   options: { expanded: boolean; isPartial: boolean },
   theme: any,
 ): SubagentStore {
-  const details = result.details;
   const isRunning = details.results.some(isPendingResult);
   return {
     details,
@@ -669,21 +669,6 @@ function resultDisplayItems(r: SingleResult): DisplayItem[] {
   return items;
 }
 
-type LeafCtx = {
-  kind:
-    | "step"
-    | "header"
-    | "task"
-    | "fallback"
-    | "display"
-    | "usage"
-    | "total"
-    | "expand";
-  stepIndex?: number;
-  resultIndex?: number;
-  agentNumber?: number;
-};
-
 type Leaf = {
   text: Text;
   derive: (store: SubagentStore) => string;
@@ -764,7 +749,7 @@ class SubagentResultView extends Box {
     this.clear();
     this.leaves = [];
     const root = this;
-    const { theme, expanded } = store;
+    const { expanded } = store;
     const grouped = groupedResults(store.details);
 
     let agentNumber = 1;
@@ -911,8 +896,11 @@ class SubagentResultView extends Box {
 }
 
 // Content version snapshot for a single result. Cheap concatenation of every
-// field the memoized derives read. `r.task` is set at creation and never
-// mutated, so it is omitted. The fallback derive reads exitCode/stopReason/
+// field the memoized derives read. The task derive reads r.task, which is
+// mutated in place when {previous} is substituted at the start of a chained
+// step; task.length is included (not the full string) to keep the snapshot
+// cheap. The injection always changes the length, so length is a sufficient
+// change signal here. The fallback derive reads exitCode/stopReason/
 // errorMessage plus resultDisplayItems; the display derive reads
 // resultDisplayItems; the usage derive reads isPending(exitCode) plus r.usage
 // and r.model. messages.length gates the append-only message array.
@@ -920,7 +908,7 @@ class SubagentResultView extends Box {
 // included because the header derive is never memoized.
 function resultVersion(r: SingleResult): string {
   const u = r.usage;
-  return `${r.exitCode}|${r.messages.length}|${r.stopReason ?? ""}|${r.errorMessage ?? ""}|${r.model ?? ""}|${u.turns}|${u.input}|${u.output}|${u.cacheRead}|${u.cacheWrite}|${u.cost}|${r.compacting}|${r.autoRetrying}`;
+  return `${r.exitCode}|${r.messages.length}|${r.task.length}|${r.stopReason ?? ""}|${r.errorMessage ?? ""}|${r.model ?? ""}|${u.turns}|${u.input}|${u.output}|${u.cacheRead}|${u.cacheWrite}|${u.cost}|${r.compacting}|${r.autoRetrying}`;
 }
 
 // Slot lookup by (stepIndex, resultIndex) into the grouped view of the
@@ -1490,7 +1478,11 @@ export default function (pi: ExtensionAPI) {
         );
       }
 
-      const store = buildStore(result, { expanded, isPartial }, theme);
+      const store = buildStore(
+        details,
+        { expanded, isPartial },
+        theme,
+      );
       const view =
         context.lastComponent instanceof SubagentResultView
           ? context.lastComponent

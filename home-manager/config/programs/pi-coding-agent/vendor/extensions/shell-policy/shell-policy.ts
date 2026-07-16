@@ -17,7 +17,7 @@
  * prompting the user. Any other outcome falls back to human confirmation.
  */
 
-import { complete } from "@earendil-works/pi-ai";
+import { complete } from "@earendil-works/pi-ai/compat";
 import type {
   ExtensionAPI,
   ExtensionContext,
@@ -529,7 +529,7 @@ export default function (pi: ExtensionAPI) {
       return undefined; // No additional blocking beyond tool policy
     }
 
-    // --- Bash command evaluation ---
+    // Bash command evaluation
     if (event.toolName !== "bash") return undefined;
     if (typeof event.input?.command !== "string") return undefined;
 

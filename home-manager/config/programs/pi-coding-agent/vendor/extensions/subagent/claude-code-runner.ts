@@ -13,7 +13,7 @@
  */
 
 import { spawn } from "node:child_process";
-import type { Message } from "@earendil-works/pi-ai";
+import type { AssistantMessage, Message } from "@earendil-works/pi-ai";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import {
   type AgentConfig,
@@ -39,8 +39,8 @@ import {
  */
 function mapCCStopReason(
   reason: string | undefined | null,
-): Message["stopReason"] {
-  const map: Record<string, Message["stopReason"]> = {
+): AssistantMessage["stopReason"] {
+  const map: Record<string, AssistantMessage["stopReason"]> = {
     end_turn: "stop",
     tool_use: "toolUse",
     max_tokens: "length",
@@ -103,10 +103,10 @@ function extractAssistantContent(event: CCAssistantEvent): {
  * Build a Pi-compatible AssistantMessage from a Claude Code assistant event.
  * Combines text and tool_use content blocks.
  */
-function buildAssistantMessage(event: CCAssistantEvent): Message {
+function buildAssistantMessage(event: CCAssistantEvent): AssistantMessage {
   const { textParts, toolCalls } = extractAssistantContent(event);
 
-  const content: Message["content"] = [];
+  const content: AssistantMessage["content"] = [];
 
   for (const text of textParts) {
     content.push({ type: "text", text });
@@ -147,7 +147,7 @@ function buildAssistantMessage(event: CCAssistantEvent): Message {
         cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
       };
 
-  const stopReason: Message["stopReason"] = mapCCStopReason(
+  const stopReason: AssistantMessage["stopReason"] = mapCCStopReason(
     event.message.stop_reason,
   );
 
@@ -481,6 +481,7 @@ export async function runClaudeCodeAgent(
                   cacheRead: 0,
                   cacheWrite: 0,
                   totalTokens: 0,
+                  cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
                 },
                 stopReason: "stop",
                 timestamp: Date.now(),
@@ -531,6 +532,14 @@ export async function runClaudeCodeAgent(
         // Process any remaining buffer
         if (stdoutBuffer.trim()) processLine(stdoutBuffer);
 
+        // A successful result event is authoritative. A non-zero or signal
+        // exit afterwards (e.g. a slow-to-terminate process hit by the grace
+        // kill above) must not taint an already-captured successful result.
+        // wasAborted is still honored by the post-exit handling below.
+        if (resultEvent && !resultEvent.is_error) {
+          finish(0);
+          return;
+        }
         if (typeof code === "number") finish(code);
         else if (wasAborted || childSignal) finish(130);
         else finish(1);

@@ -2,6 +2,7 @@ import type { AssistantMessage } from "@earendil-works/pi-ai";
 import * as path from "node:path";
 import {
   type ExtensionAPI,
+  type SessionEntry,
   getLatestCompactionEntry,
 } from "@earendil-works/pi-coding-agent";
 import type { TUI } from "@earendil-works/pi-tui";
@@ -53,7 +54,7 @@ function truncateToWidth(
   return out + ellipsis;
 }
 
-function isRecentlyCompacted(branch: BranchEntry[]): boolean {
+function isRecentlyCompacted(branch: SessionEntry[]): boolean {
   const latest = getLatestCompactionEntry(branch);
   if (!latest) return false;
   const leaf = branch[branch.length - 1];
@@ -61,12 +62,6 @@ function isRecentlyCompacted(branch: BranchEntry[]): boolean {
   const idx = branch.lastIndexOf(latest);
   return idx >= 0 && branch.length - idx <= 3;
 }
-
-type BranchEntry = {
-  type: string;
-  id: string;
-  message?: { role: string };
-};
 
 export default function (pi: ExtensionAPI) {
   let activeTui: TUI | undefined;
@@ -89,10 +84,10 @@ export default function (pi: ExtensionAPI) {
         cacheRead = 0,
         cacheWrite = 0,
         cost = 0;
-      const branch = ctx.sessionManager.getBranch() as BranchEntry[];
+      const branch = ctx.sessionManager.getBranch();
       for (const entry of branch) {
         if (entry.type === "message" && entry.message?.role === "assistant") {
-          const msg = (entry as { message: AssistantMessage }).message;
+          const msg = entry.message as AssistantMessage;
           input += msg.usage.input;
           output += msg.usage.output;
           cacheRead += msg.usage.cacheRead;

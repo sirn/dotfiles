@@ -124,7 +124,39 @@ export type RpcEvent =
     }
   | { type: string; [key: string]: unknown };
 
+// Narrow RpcEvent to a specific member. The catch-all member above defeats
+// `event.type === "..."` narrowing, so call sites cast via this alias.
+export type RpcEventType<T extends string> = Extract<RpcEvent, { type: T }>;
+
 // Claude Code Stream-JSON Event Types
+
+export interface CCTextBlock {
+  type: "text";
+  text: string;
+  [key: string]: unknown;
+}
+
+export interface CCToolUseBlock {
+  type: "tool_use";
+  id: string;
+  name: string;
+  input: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+export interface CCContentBlock {
+  type: string;
+  [key: string]: unknown;
+}
+
+export interface CCAssistantMessage {
+  role: "assistant";
+  content: CCTextBlock[] | CCToolUseBlock[] | CCContentBlock[];
+  model: string;
+  stop_reason?: string | null;
+  usage?: CCMessageUsage;
+  [key: string]: unknown;
+}
 
 export interface CCSystemEvent {
   type: "system";
@@ -144,7 +176,7 @@ export interface CCSystemEvent {
 
 export interface CCAssistantEvent {
   type: "assistant";
-  message: Message & { usage?: CCMessageUsage };
+  message: CCAssistantMessage;
   session_id?: string;
   parent_tool_use_id?: string | null;
 }
@@ -237,7 +269,7 @@ export type CCEvent =
   | CCRateLimitEvent
   | { type: string; [key: string]: unknown };
 
-interface CCMessageUsage {
+export interface CCMessageUsage {
   input_tokens?: number;
   output_tokens?: number;
   cache_read_input_tokens?: number;

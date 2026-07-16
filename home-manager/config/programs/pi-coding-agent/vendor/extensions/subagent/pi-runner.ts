@@ -16,6 +16,7 @@ import {
   type SingleResult,
   type SubagentDetails,
   type RpcEvent,
+  type RpcEventType,
   type OnUpdateCallback,
   createPendingResult,
 } from "./types.js";
@@ -193,7 +194,7 @@ export async function runPiAgent(
       let lineQueue = Promise.resolve();
 
       const handleExtensionUIRequest = async (
-        event: Extract<RpcEvent, { type: "extension_ui_request" }>,
+        event: RpcEventType<"extension_ui_request">,
       ) => {
         const { id, method } = event;
         switch (method) {
@@ -292,18 +293,21 @@ export async function runPiAgent(
         }
 
         if (event.type === "tool_execution_end" && event.isError) {
+          const te = event as RpcEventType<"tool_execution_end">;
           currentResult.errorMessage ||= getResultErrorMessage({
             ...currentResult,
             messages: [],
             errorMessage:
-              typeof event.result?.content === "string"
-                ? event.result.content
+              typeof te.result?.content === "string"
+                ? te.result.content
                 : undefined,
           });
         }
 
         if (event.type === "extension_ui_request") {
-          await handleExtensionUIRequest(event);
+          await handleExtensionUIRequest(
+            event as RpcEventType<"extension_ui_request">,
+          );
         }
 
         if (event.type === "agent_end") {
@@ -317,7 +321,9 @@ export async function runPiAgent(
         if (event.type === "auto_retry_start") {
           if (settled) return;
           clearAgentEndTimer();
-          currentResult.errorMessage = event.errorMessage;
+          currentResult.errorMessage = (
+            event as RpcEventType<"auto_retry_start">
+          ).errorMessage;
           currentResult.autoRetrying = true;
           emitUpdate();
         }
@@ -332,7 +338,8 @@ export async function runPiAgent(
           } else {
             currentResult.stopReason = "error";
             currentResult.errorMessage =
-              event.finalError || currentResult.errorMessage;
+              (event as RpcEventType<"auto_retry_end">).finalError ||
+              currentResult.errorMessage;
             clearAgentEndTimer();
             finishFailure();
           }
@@ -373,7 +380,8 @@ export async function runPiAgent(
             } else if (event.aborted || event.errorMessage) {
               currentResult.stopReason = "error";
               currentResult.errorMessage =
-                event.errorMessage || currentResult.errorMessage;
+                (event as RpcEventType<"compaction_end">)
+                  .errorMessage || currentResult.errorMessage;
               clearAgentEndTimer();
               finishFailure();
             } else {
@@ -402,7 +410,9 @@ export async function runPiAgent(
           !event.success
         ) {
           if (settled) return;
-          currentResult.errorMessage = event.error || "Prompt preflight failed";
+          currentResult.errorMessage =
+            (event as RpcEventType<"response">).error ||
+            "Prompt preflight failed";
           currentResult.stopReason = "error";
           clearAgentEndTimer();
           finishFailure();

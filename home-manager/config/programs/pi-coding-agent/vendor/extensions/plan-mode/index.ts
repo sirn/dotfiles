@@ -409,7 +409,7 @@ export default function (pi: ExtensionAPI) {
     if (choice === "Accept plan and clear context") {
       ctx.ui.notify(
         "Plan accepted! Creating new session for fresh execution...",
-        "success",
+        "info",
       );
 
       const previousModelSelection = ctx.model
@@ -444,7 +444,7 @@ export default function (pi: ExtensionAPI) {
 
       ctx.ui.notify(
         "New session created. Starting plan execution...",
-        "success",
+        "info",
       );
     } else if (choice === "Accept plan and compact") {
       if (recentlyCompacted) {
@@ -455,14 +455,14 @@ export default function (pi: ExtensionAPI) {
       } else {
         ctx.ui.notify(
           "Plan accepted! Compacting context for execution...",
-          "success",
+          "info",
         );
       }
       ctx.compact({
         customInstructions:
           "User has accepted the implementation plan. Summarize the current conversation in a short, concise text focusing on the context needed for plan execution.",
         onComplete: () => {
-          ctx.ui.notify("Context compacted. Ready for execution.", "success");
+          ctx.ui.notify("Context compacted. Ready for execution.", "info");
           void sendExecutionMessage(planContent, args);
         },
         onError: (error: Error) => {
@@ -474,7 +474,7 @@ export default function (pi: ExtensionAPI) {
         },
       });
     } else if (choice === "Accept plan") {
-      ctx.ui.notify("Plan accepted! Ready for execution.", "success");
+      ctx.ui.notify("Plan accepted! Ready for execution.", "info");
       await sendExecutionMessage(planContent, args);
     }
   }
@@ -493,7 +493,7 @@ export default function (pi: ExtensionAPI) {
 
     if (edited && edited !== content) {
       await fsp.writeFile(planPath, edited, "utf-8");
-      ctx.ui.notify("Plan updated manually.", "success");
+      ctx.ui.notify("Plan updated manually.", "info");
     }
   }
 
@@ -519,11 +519,11 @@ export default function (pi: ExtensionAPI) {
       try {
         if (await fileExists(planPath)) {
           await fsp.unlink(planPath);
-          ctx.ui.notify("Plan mode cancelled. Plan file deleted.", "success");
+          ctx.ui.notify("Plan mode cancelled. Plan file deleted.", "info");
         } else {
           ctx.ui.notify(
             "Plan mode cancelled. Plan file already removed.",
-            "success",
+            "info",
           );
         }
       } catch (error) {
@@ -533,7 +533,7 @@ export default function (pi: ExtensionAPI) {
         );
       }
     } else {
-      ctx.ui.notify("Plan mode cancelled. Back to normal mode.", "success");
+      ctx.ui.notify("Plan mode cancelled. Back to normal mode.", "info");
     }
   }
 
