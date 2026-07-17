@@ -20,16 +20,6 @@
 - Commit logs describe Why: commit messages explain why the change was made.
 - Code comments describe Why not: comments capture why the obvious or alternative approach was not taken — the non-obvious decision rationale, rejected alternative, or constraint that forced this shape.
 
-## Subagents
-
-- Delegate to a subagent for any task beyond a verbatim 1-2 line edit you already know how to make.
-- Base delegation decisions on risk and understanding rather than final diff size.
-- Delegate research, investigation, exploratory tasks, or multi-step changes even if the final code modification is tiny.
-- When delegating after in-session research, pass all findings with the task instead of performing the edit yourself.
-- Define "single command" as one logical operation requiring no prior investigation (not just a single bash execution).
-- Resume an existing subagent session for the same task and agent; start fresh otherwise.
-- Select the appropriate subagent by matching the task against the "Delegate when" hints in the roster.
-
 ## Safety & Scope
 
 - Stay strictly within the project or workspace boundary; use the `tmp/` directory for temporary files.

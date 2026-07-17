@@ -1,1 +1,0 @@
-- Do not auto-approve commands that modify local files, send write/mutation API calls, expose credentials, or perform authenticated destructive actions.

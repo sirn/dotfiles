@@ -82,42 +82,6 @@ let
       defaultMode = "auto";
     };
 
-  claudeCodeAgents = lib.filterAttrs (name: agent: agent.claude-code != null) agentsCfg.subagents;
-
-  validateClaudeCodeAgent =
-    name: agent:
-    let
-      cc = agent.claude-code;
-      valid =
-        if !(agent ? description) then
-          throw "Agent ${name}: missing 'description'"
-        else if !(cc ? allowedTools) then
-          throw "Agent ${name}: missing 'claude-code.allowedTools'"
-        else if !(cc ? color) then
-          throw "Agent ${name}: missing 'claude-code.color'"
-        else if !(cc ? model) then
-          throw "Agent ${name}: missing 'claude-code.model'"
-        else
-          agent;
-    in
-    valid;
-
-  validClaudeCodeAgents = lib.mapAttrs validateClaudeCodeAgent claudeCodeAgents;
-
-  mkClaudeCodeAgent = name: agent: ''
-    ---
-    name: ${name}
-    description: ${agent.description}
-    tools: ${lib.concatStringsSep ", " agent.claude-code.allowedTools}
-    color: ${agent.claude-code.color}
-    model: ${agent.claude-code.model}
-    ${lib.optionalString (agent.claude-code.effort != null) "effort: ${agent.claude-code.effort}"}
-    ---
-    ${agentsCfg.subagentPreamble}
-
-    ${agent.prompt}
-  '';
-
   isStdioServer = server: server ? command || server ? package;
 
   toClaudeCodeMcpServers =
@@ -182,7 +146,6 @@ in
     enable = true;
     package = wrappedClaude;
 
-    agents = lib.mapAttrs mkClaudeCodeAgent validClaudeCodeAgents;
     context = agentsCfg.instructionText;
     mcpServers = toClaudeCodeMcpServers config.programs.mcp.servers;
 

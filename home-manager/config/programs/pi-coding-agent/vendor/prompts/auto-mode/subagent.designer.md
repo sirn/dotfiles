@@ -1,2 +1,0 @@
-- Auto-approve read-only inspection commands like agent-browser snapshots, curl, ls, grep, and other non-mutating tools.
-- Do not auto-approve commands that modify local files, send write/mutation API calls, expose credentials, or perform authenticated destructive actions.

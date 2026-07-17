@@ -115,7 +115,6 @@ in
     ./domains.nix
     ./permissions.nix
     ./sandbox.nix
-    ./subagents.nix
   ];
 
   options.agents = {
@@ -123,12 +122,6 @@ in
       type = lib.types.lines;
       default = "";
       description = "Shared instruction text (AGENTS.md) for all agents.";
-    };
-
-    subagentPreamble = lib.mkOption {
-      type = lib.types.lines;
-      default = "";
-      description = "Preamble prepended to every subagent persona to override orchestration instructions.";
     };
 
     commandContext = lib.mkOption {

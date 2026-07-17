@@ -45,7 +45,7 @@ let
     ;; Network: no egress mediation in the threat model
     (allow network*)
 
-    ;; Process management: needed for subagent spawning (claude, tools)
+    ;; Process management: tool execution and child processes
     (allow process-exec)
     (allow process-fork)
     (allow signal (target same-sandbox))

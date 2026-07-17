@@ -691,38 +691,6 @@ in
         };
 
         plan = forbidsWrite;
-
-        subagent = { };
-
-        "subagent:architect" = forbidsWrite;
-
-        "subagent:auditor" = forbidsWrite;
-
-        "subagent:designer" = forbidsWrite;
-
-        "subagent:oracle" = forbidsWrite;
-
-        "subagent:planner" = forbidsWrite;
-
-        "subagent:researcher" = forbidsWrite;
-
-        "subagent:reviewer" = forbidsWrite;
-
-        "subagent:scout" = forbidsWrite;
-
-        "subagent:worker" = {
-          tools = {
-            edit = true;
-            write = true;
-          };
-        };
-
-        "subagent:writer" = {
-          tools = {
-            edit = true;
-            write = true;
-          };
-        };
       };
   };
 }
