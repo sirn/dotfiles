@@ -9,132 +9,69 @@ Generate an actionable schema design plan based on task analysis and research.
 
 ### Step 1 - Identify Context
 
-- If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
+- Inspect changed files with `jj diff -s`; restrict with `jj diff -- path`.
 - Focus on user-specified entities, tables, models, migrations, or relationships.
 - Identify the database, ORM/framework, migration tooling, and existing data model.
 
 ### Step 2 - Research and Scout
 
-Spawn `scout` subagent:
+Apply a scout lens to analyze existing schema artifacts for {task} (schema definitions, migrations, models, query code, tests, persistence conventions):
 
-```
-Analyze existing schema artifacts for {task}:
-- Schema definitions
-- Migrations
-- Models
-- Query code
-- Tests
-- Persistence conventions
-```
+- Map relevant files, conventions, and call paths; cite file paths and line numbers.
+- Distinguish confirmed patterns from one-offs; stay read-only and task-relevant.
 
-Spawn `researcher` subagent:
+Apply a researcher lens to research official database/ORM documentation relevant to {task} (migration constraints, performance, security):
 
-```
-Research official database/ORM documentation relevant to {task}:
-- Migration constraints
-- Performance considerations
-- Security guidance
-```
+- Prefer official documentation over blog posts; cite sources with URLs.
+- Separate confirmed facts from plausible interpretations; note version requirements.
+- Lead with the single most actionable recommendation.
 
-Spawn `planner` subagent:
+- For schemas affecting data flow or cross-module boundaries, apply an architect lens to analyze data flow, ownership, dependency direction, and migration shape for {task}:
+  - Map current boundaries, ownership, and dependency direction first.
+  - Recommend the smallest architecture/schema that preserves invariants.
+  - Avoid speculative generality.
 
-```
-Design a minimal schema plan for {task}, including:
-- Relationships
-- Indexes
-- Constraints
-- Migrations
-- Alternatives
-- Tradeoffs
-```
+Apply a planner lens to design a minimal schema plan for {task} (relationships, indexes, constraints, migrations, alternatives, tradeoffs):
 
-Spawn `reviewer` subagent:
+- Prefer simple, boring solutions; preserve existing project patterns.
+- Make tradeoffs and assumptions explicit; scope to the current problem.
 
-```
-Review the proposed schema for:
-- Correctness
-- Data integrity
-- Security
-- Performance
-- Simplicity
-- Project-convention risks
-```
+Apply a reviewer lens to review the proposed schema for correctness, data integrity, security, performance, simplicity, and project-convention risks:
 
-### Step 3 - Architecture Review
+- Ground findings in file paths and line numbers; prioritize the requested lens.
+- Distinguish confirmed findings from speculative risks; explain why each issue matters.
 
-For schemas affecting data flow or cross-module boundaries, spawn `architect` subagent before `planner` subagent:
+### Step 3 - Adjudicate Decisions
 
-```
-Analyze for {task}:
-- Data flow
-- Ownership
-- Dependency direction
-- Migration shape
-Recommend the minimal schema that preserves invariants.
-```
+- For high-impact or conflicting schema decisions, apply an oracle lens to adjudicate the conflicting schema recommendations for {task}:
+  - Identify the decision; state assumptions and constraints.
+  - Pick the smallest safe path that preserves future options.
+  - Note what evidence would change the recommendation.
 
-### Step 4 - Adjudicate Decisions
+### Step 4 - Audit
 
-Use `oracle` subagent only for high-impact or conflicting schema decisions:
+- For production-bound schema changes, apply an auditor lens to audit the schema plan for {task} for production risks:
+  - Data loss, migration hazards, rollback safety, and contract compatibility.
+  - Flag only material risk; this is a final gate, not iterative style review.
 
-```
-Adjudicate the conflicting schema recommendations for {task}.
-Choose the safest minimal data model and state:
-- Assumptions
-- Tradeoffs
-- Confidence
-```
+### Step 5 - Validate Findings
 
-### Step 5 - Audit
+- Read relevant code yourself and validate findings.
 
-For production-bound schema changes, spawn `auditor` subagent after the plan is synthesized:
+### Step 6 - Design Schema
 
-```
-Audit the schema plan for {task} for production risks:
-- Data loss
-- Migration hazards
-- Rollback safety
-- Contract compatibility
-```
-
-### Step 6 - Validate Findings
-
-Read relevant code yourself and validate agent findings.
-
-### Step 7 - Design Schema
-
-- Define only required tables, entities, and fields.
-- Avoid generic or over-flexible schemas.
+- Define only required tables, entities, and fields; avoid generic or over-flexible schemas.
 - Account for indexes, constraints, migrations, normalization, and N+1 query risks.
 - When mapping objects to tables or modeling relationships, read the `eaa-patterns` reference and apply its O/R structural and metadata patterns: choose Single/Class/Concrete Table Inheritance for hierarchies, Association Table Mapping for many-to-many, Embedded Value for small owned objects, and Identity Field for object identity; consider Lazy Load and Identity Map for N+1 and consistency.
 - Identify security and privacy risks for stored data.
 
-### Step 8 - Report
+### Step 7 - Report
 
-1. **Context Analysis**
-   - Existing schema/model structure
-   - Query patterns and integration points
-
-2. **Security Considerations**
-   - Data exposure, tenant boundaries, privacy, and integrity risks
-
-3. **Documentation & Best Practices**
-   - Relevant database/ORM constraints
-   - Common migration pitfalls
-
-4. **Simplicity Constraint**
-   - Minimal required entities and fields
-   - Over-engineering risks
-
-5. **Schema Design**
-   - Tables/entities/fields
-   - Relationships
-   - Indexes and constraints
-   - Migration/backfill considerations
-
-6. **Implementation Plan**
-   - Numbered concrete steps
-   - File targets
-   - Verification strategy
+1. **Context Analysis** — existing schema/model structure, query patterns, integration points.
+2. **Security Considerations** — data exposure, tenant boundaries, privacy, integrity risks.
+3. **Documentation & Best Practices** — database/ORM constraints; common migration pitfalls.
+4. **Simplicity Constraint** — minimal required entities and fields; over-engineering risks.
+5. **Schema Design** — tables/entities/fields, relationships, indexes and constraints, migration/backfill considerations.
+6. **Implementation Plan** — numbered concrete steps, file targets, verification strategy.
 
 Prioritize actionable, specific guidance over abstract advice.

@@ -3,76 +3,63 @@ name: code-explain
 description: Explain code, triage changes, or map project structure. Use when user asks to explain, understand, triage, or explore project structure.
 ---
 
-Explain code logic, triage incoming changes, or map the project architecture.
+Explain code logic, triage incoming changes, or map project architecture.
 
 ## Process
 
 ### Step 1 - Identify Context
 
-- If code changes are involved, run `jj diff -s` first to view changed files.
-- If specific files or paths are specified, focus on those.
+- For code changes, `jj diff -s` to view changed files.
+- Focus on specified files or paths.
 
 ### Step 2 - Determine Goal
 
-- **Explain**: To understand existing code.
-- **Triage**: To assess and understand a code diff.
-- **Map**: To get a high-level overview of the project structure.
+- **Explain**: understand existing code.
+- **Triage**: assess and understand a code diff.
+- **Map**: high-level overview of project structure.
 
 ### Step 3 - Execute Based on Goal
 
 #### Explain
 
-Spawn `scout` subagent:
+- Apply a scout lens to identify the purpose, local patterns, data flow, and integration points in `{files}`:
+  - Map relevant files, conventions, and call paths.
+  - Cite file paths and line numbers.
+  - Distinguish confirmed patterns from one-offs.
+  - Stay read-only.
+  - Keep it concise and task-relevant.
+- If external library context is needed, apply a researcher lens to look up docs for libraries/frameworks in `{files}`, focusing only on APIs needed to understand the code:
+  - Prefer official documentation over blog posts.
+  - Cite sources with URLs.
+  - Separate confirmed facts from plausible interpretations.
+  - Note version requirements.
+- If the user asks for architecture or tradeoff explanations, apply an architect lens to explain the architectural choices and tradeoffs visible in `{files}`:
+  - Map current module boundaries, ownership, and dependency direction first.
+  - Recommend the smallest architecture that preserves invariants.
+  - Avoid speculative generality.
 
-```
-Identify the purpose, local patterns, data flow, and integration points in:
-{files}
-```
-
-Spawn `researcher` subagent if external library context is needed:
-
-```
-Look up documentation for libraries/frameworks used in:
-{files}
-
-Focus only on APIs needed to understand the code.
-```
-
-Spawn `architect` subagent if the user asks for architecture or tradeoff explanations:
-
-```
-Explain the architectural choices and tradeoffs visible in:
-{files}
-```
-
-**Synthesize**: Purpose, how it works, patterns, dependencies, and gotchas.
+**Synthesize**: purpose, how it works, patterns, dependencies, and gotchas.
 
 #### Triage
 
-Skim relevant diffs, and spawn `scout` subagent if they touch unfamiliar areas:
+Skim relevant diffs.
 
-```
-Map the files, ownership boundaries, and neighboring tests for this diff.
-
-Identify:
-- areas touched
-- risk hotspots
-- review order
-```
+- If they touch unfamiliar areas, apply a scout lens to map the files, ownership boundaries, and neighboring tests for this diff, identifying areas touched, risk hotspots, and the review order:
+  - Map relevant files, conventions, and call paths.
+  - Cite file paths and line numbers.
+  - Distinguish confirmed patterns from one-offs.
+  - Stay read-only.
+  - Keep it concise and task-relevant.
 
 #### Map
 
-Spawn `scout` subagent:
+Apply a scout lens to create a high-level dependency graph and module breakdown for `{directory}`, identifying entry points, core domain logic, and infrastructure/adapters:
 
-```
-Create a high-level dependency graph and module breakdown for:
-{directory}
-
-Identify:
-- entry points
-- core domain logic
-- infrastructure/adapters
-```
+- Map relevant files, conventions, and call paths.
+- Cite file paths and line numbers.
+- Distinguish confirmed patterns from one-offs.
+- Stay read-only.
+- Keep it concise and task-relevant.
 
 ### Step 4 - Report
 

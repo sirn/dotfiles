@@ -9,90 +9,73 @@ Generate a safe refactoring plan only; do not apply code changes.
 
 ### Step 1 - Identify Context
 
-- If code changes are involved: run `jj diff -s` first to see changed files; then use `jj diff -- path` to restrict to specific files/directories.
-- Focus on any user-specified files, paths, abstractions, or pain points.
+- Inspect changed files with `jj diff -s`; restrict with `jj diff -- path`.
+- Focus on user-specified files, paths, abstractions, or pain points.
 - Clarify the desired outcome and non-goals.
 
 ### Step 2 - Research and Scout
 
-Research the codebase and design the refactoring plan using specialized subagents.
+Apply a scout lens to analyze affected code areas, call sites, tests, abstractions, dependency edges, and local conventions for {task}:
 
-Spawn the `scout` subagent:
+- Map relevant files, conventions, and call paths; cite file paths and line numbers.
+- Distinguish confirmed patterns from one-offs; stay read-only and task-relevant.
 
-```
-Analyze affected code areas, call sites, tests, abstractions, dependency edges, and local conventions for {task}.
-```
+- For cross-module refactors, apply an architect lens to analyze module boundaries, ownership, dependency direction, and structural invariants for {task}:
+  - Map current boundaries, ownership, and dependency direction first.
+  - Recommend the smallest architecture that preserves invariants.
+  - Avoid speculative generality.
 
-Spawn the `planner` subagent:
+Apply a planner lens to design a minimal behavior-preserving refactoring plan for {task}, including ordering, stop points, alternatives, and tradeoffs:
 
-```
-Design a minimal behavior-preserving refactoring plan for {task}, including ordering, stop points, alternatives, and tradeoffs.
-```
+- Prefer simple, boring solutions; preserve existing project patterns.
+- Make tradeoffs and assumptions explicit; scope to the current problem.
 
-Spawn the `reviewer` subagent:
+Apply a reviewer lens to review the proposed refactor for correctness, behavior preservation, simplicity, and project-convention risks:
 
-```
-Review the proposed refactor for correctness, behavior preservation, simplicity, and project-convention risks.
-```
+- Ground findings in file paths and line numbers; prioritize the requested lens.
+- Distinguish confirmed findings from speculative risks; explain why each issue matters.
 
-### Step 3 - Architecture Review
+### Step 3 - Adjudicate Decisions
 
-For cross-module refactors, spawn the `architect` subagent before the `planner` subagent:
+- For high-impact or conflicting design decisions, apply an oracle lens to adjudicate the conflicting refactoring recommendations for {task}:
+  - Identify the decision; state assumptions and constraints.
+  - Pick the smallest safe path that preserves future options.
+  - State an explicit confidence level (high/medium/low) for the adjudication and its key assumptions.
+  - Note what evidence would change the recommendation.
 
-```
-Analyze module boundaries, ownership, dependency direction, and structural invariants for {task}. Recommend the minimal architecture that preserves behavior.
-```
+### Step 4 - Audit
 
-### Step 4 - Adjudicate Decisions
+- For production-bound refactors, apply an auditor lens to audit the refactoring plan for {task} for production risks:
+  - Data loss, migration hazards, rollback safety, contract compatibility, and correctness/security risk.
+  - Flag only material risk; this is a final gate, not iterative style review.
 
-For high-impact or conflicting design decisions, spawn the `oracle` subagent to adjudicate:
+### Step 5 - Validate Findings
 
-```
-Adjudicate the conflicting refactoring recommendations for {task}. Choose the safest minimal path and state assumptions, tradeoffs, and confidence.
-```
+- Read relevant code yourself and validate findings.
 
-### Step 5 - Audit
+### Step 6 - Design Refactor
 
-For production-bound refactors, spawn the `auditor` subagent after synthesizing the plan:
-
-```
-Audit the refactoring plan for {task} for production risks: data loss, migration hazards, rollback safety, and contract compatibility.
-```
-
-### Step 6 - Validate Findings
-
-Read relevant code yourself and validate the agent's findings.
-
-### Step 7 - Design Refactor
-
-- Identify safe transformations (e.g., extraction, rename, simplification, deletion, inlining, module movement).
-- Simplify design: prefer deleting or inlining code over adding new layers, ensuring every abstraction earns its complexity.
+- Identify safe transformations (extraction, rename, simplification, deletion, inlining, module movement).
+- Simplify design: prefer deleting or inlining code over adding new layers; ensure every abstraction earns its complexity.
 - When deciding whether to split or combine modules, read the `software-design` reference and apply its "better together OR better apart" and deep-modules / information-hiding principles; do not split into shallow modules or leak information across boundaries.
 - When choosing refactorings, read the `code-smells` reference and match each smell to its primary fix; treat smells as heuristics, not hard violations, and skip what tooling already enforces.
-- Break the work into small, behavior-preserving steps, including verification after each step.
+- Break the work into small, behavior-preserving steps with verification after each.
 - Identify where characterization tests are required before refactoring starts.
 - Do not apply any code changes.
 
-### Step 8 - Report
+### Step 7 - Report
 
 Provide a structured report with:
 
-1. **Context Analysis**
-   - Relevant code structure and patterns
-   - Call sites and dependency edges
-   - Behavior-preservation constraints
-
-2. **Risk Analysis**
-   - Risky transformations and mitigation strategies
-   - Tests or checks needed before changes
-
-3. **Simplicity Constraint**
-   - Deletion, inlining, or no-code alternatives
-   - Over-engineering risks and minimal viable scope
-
-4. **Refactoring Plan**
-   - Numbered, concrete steps with target files
-   - Verification procedures for each step
-   - Rollback or stop points
+1. **Context Analysis** — relevant code structure, patterns, call sites, dependency edges, behavior-preservation constraints.
+2. **Risk Analysis** — risky transformations and mitigation strategies; tests/checks needed before changes.
+3. **Simplicity Constraint**:
+   - Deletion, inlining, or no-code alternatives.
+   - Over-engineering risks.
+   - Minimal viable scope.
+4. **Refactoring Plan**:
+   - Numbered, concrete steps with target files.
+   - Verification procedures per step.
+   - Rollback or stop points.
 
 Prioritize actionable, specific guidance over abstract advice.

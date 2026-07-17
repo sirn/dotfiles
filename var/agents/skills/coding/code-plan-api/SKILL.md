@@ -9,101 +9,74 @@ Generate an actionable API design plan based on task analysis and research.
 
 ### Step 1 - Identify Context
 
-- For code changes, run `jj diff -s` to view changed files, and `jj diff -- path` to restrict focus to specific files/directories.
+- Inspect changed files with `jj diff -s`; restrict with `jj diff -- path`.
 - Focus on user-specified files, endpoints, clients, protocols, or paths.
 - Identify the target protocol and schema format (REST, GraphQL, gRPC, TRPC, OpenAPI, protobuf, Zod/TypeBox, etc.).
 
 ### Step 2 - Research and Scout
 
-Spawn `scout` subagent:
+Apply a scout lens to analyze existing API handlers, clients, schemas, validators, middleware, tests, and local API conventions:
 
-```
-Analyze existing API handlers, clients, schemas, validators, middleware, tests, and local API conventions for {task}.
-```
+- Map relevant files, conventions, and call paths; cite file paths and line numbers.
+- Distinguish confirmed patterns from one-offs; stay read-only and task-relevant.
 
-Spawn `researcher` subagent:
+Apply a researcher lens to research official protocol/framework documentation, constraints, security guidance, and compatibility considerations:
 
-```
-Research official protocol/framework documentation, constraints, security guidance, and compatibility considerations relevant to {task}.
-```
+- Prefer official documentation over blog posts; cite sources with URLs.
+- Separate confirmed facts from plausible interpretations; note version requirements.
+- Lead with the single most actionable recommendation.
 
-Spawn `planner` subagent:
+- For APIs spanning module or service boundaries, apply an architect lens to analyze module boundaries, ownership, data flow, and interface contracts for {task}:
+  - Map current boundaries, ownership, and dependency direction first.
+  - Recommend the smallest API boundary/architecture that preserves invariants.
+  - Avoid speculative generality.
 
-```
-Design a minimal API contract for {task}, including request/response shapes, errors, validation, and tradeoffs.
-```
+Apply a planner lens to design a minimal API contract, including request/response shapes, errors, validation, and tradeoffs:
 
-Spawn `reviewer` subagent:
+- Prefer simple, boring solutions; preserve existing project patterns.
+- Make tradeoffs and assumptions explicit; scope to the current problem.
 
-```
-Review the proposed API for correctness, security, compatibility, simplicity, and project-convention risks.
-```
+Apply a reviewer lens to review the proposed API for correctness, security, compatibility, simplicity, and project-convention risks:
 
-### Step 3 - Architecture Review
+- Ground findings in file paths and line numbers; prioritize the requested lens.
+- Distinguish confirmed findings from speculative risks; explain why each issue matters.
 
-For APIs spanning module or service boundaries, spawn the `architect` subagent before the `planner`:
+### Step 3 - Adjudicate Decisions
 
-Spawn `architect` subagent:
+- For high-impact or conflicting design choices, apply an oracle lens to adjudicate the conflicting API design recommendations for {task}:
+  - Identify the decision; state assumptions and constraints.
+  - Pick the smallest safe path that preserves future options.
+  - Note what evidence would change the recommendation.
 
-```
-Analyze module boundaries, ownership, data flow, and interface contracts for {task}. Recommend the minimal API boundary that solves the problem.
-```
+### Step 4 - Audit
 
-### Step 4 - Adjudicate Decisions
+- For production-bound changes, apply an auditor lens to audit the API design for {task} for production risks:
+  - Contract compatibility, breaking changes, data loss, and rollback safety.
+  - Flag only material risk; this is a final gate, not iterative style review.
 
-For high-impact or conflicting design choices, spawn the `oracle` subagent:
+### Step 5 - Validate Findings
 
-```
-Adjudicate the conflicting API design recommendations for {task}. Choose the safest minimal contract and state assumptions, tradeoffs, and confidence.
-```
+- Read relevant code directly to validate findings.
 
-### Step 5 - Audit
+### Step 6 - Design API
 
-For production-bound changes, spawn the `auditor` subagent after synthesizing the plan:
-
-```
-Audit the API design for {task} for production risks: contract compatibility, breaking changes, data loss, and rollback safety.
-```
-
-### Step 6 - Validate Findings
-
-Read relevant code directly to validate subagent findings.
-
-### Step 7 - Design API
-
-- Design only required resources, operations, fields, and data shapes.
-- Prefer flat, simple structures over deeply nested designs.
-- When designing the interface contract, read the `software-design` reference and apply deep-modules and "define errors out of existence" principles — keep the interface surface small relative to behavior, and prefer designing errors out over spreading exception handling across callers.
-- When the API crosses a process or network boundary, read the `eaa-patterns` reference and apply Remote Facade (coarse-grained operations) plus Data Transfer Object (batch data into one round-trip); do not use DTOs within a single process.
+- Design only required resources, operations, fields, and data shapes; prefer flat, simple structures over deeply nested designs.
+- Read the `software-design` reference and apply deep-modules and "define errors out of existence" — keep the interface surface small relative to behavior; prefer designing errors out over spreading exception handling across callers.
+- For APIs crossing a process/network boundary, read the `eaa-patterns` reference and apply Remote Facade (coarse-grained operations) plus Data Transfer Object (batch data into one round-trip); do not use DTOs within a single process.
 - Consider versioning, pagination, error handling, auth, validation, and compatibility.
 - Identify security risks and secure API patterns.
 
-### Step 8 - Report
+### Step 7 - Report
 
-1. **Context Analysis**
-   - Existing API structure and patterns
-   - Clients/consumers and integration points
-
-2. **Security Considerations**
-   - Auth, authorization, validation, data exposure, and abuse risks
-
-3. **Documentation & Best Practices**
-   - Relevant protocol/framework constraints
-   - Common pitfalls
-
-4. **Simplicity Constraint**
-   - Minimal resources, operations, and fields
-   - Over-engineering risks
-
-5. **API Design**
-   - Resources/operations or service methods
-   - Request/response shapes
-   - Errors, pagination, versioning, auth, and validation
-   - Example requests/responses
-
-6. **Implementation Plan**
-   - Numbered concrete steps
-   - File targets
-   - Verification strategy
+1. **Context Analysis** — existing API structure, patterns, clients/consumers, integration points.
+2. **Security Considerations** — auth, authorization, validation, data exposure, abuse risks.
+3. **Documentation & Best Practices** — protocol/framework constraints and common pitfalls.
+4. **Simplicity Constraint** — minimal resources, operations, fields; over-engineering risks.
+5. **API Design**:
+   - Resources/operations or service methods.
+   - Request/response shapes.
+   - Errors, pagination, versioning, auth, validation.
+   - Example requests/responses.
+6. **Implementation Plan** — numbered concrete steps, file targets, verification strategy.
 
 Prioritize actionable, specific guidance over abstract advice.

@@ -9,39 +9,43 @@ Generate tests that match existing project conventions.
 
 ### Step 1 - Identify Context
 
-- If code changes are involved, run `jj diff -s` first to see changed files, then use `jj diff -- path` to restrict to specific files/directories.
-- Focus on any files, modules, behavior, or requirements specified by the user.
+- If code changes are involved, run `jj diff -s` for changed files, then `jj diff -- path` to restrict scope.
+- Focus on user-specified files, modules, behavior, or requirements.
 - Identify public behavior and interfaces to test.
 
 ### Step 2 - Research and Scout
 
-Spawn `scout` subagent:
+Apply a scout lens to identify critical public behavior, neighboring tests, fixtures, naming conventions, edge cases, and error paths in `{files}`:
 
-```
-Identify critical public behavior, neighboring tests, fixtures, naming conventions, edge cases, and error paths in {files}.
-```
+- Map relevant files, conventions, and call paths.
+- Cite file paths and line numbers.
+- Distinguish confirmed patterns from one-offs.
+- Stay read-only.
+- Keep it concise and task-relevant.
 
-Spawn `researcher` subagent:
+Apply a researcher lens to research idiomatic testing practices for the detected language/framework:
 
-```
-Research idiomatic testing practices for the detected language/framework.
-```
+- Prefer official documentation over blog posts.
+- Cite sources with URLs.
+- Separate confirmed facts from plausible interpretations.
+- Note version requirements.
 
-Spawn `reviewer` subagent:
+Apply a reviewer lens to review proposed tests with a simplicity and behavior-coverage lens, avoiding unnecessary helpers or private-implementation assertions:
 
-```
-Review proposed tests with a simplicity and behavior-coverage lens; avoid unnecessary helpers or private-implementation assertions.
-```
+- Ground findings in file paths and line numbers.
+- Prioritize the simplicity and behavior-coverage lens.
+- Distinguish confirmed findings from speculative risks.
+- Explain why each issue matters.
 
 ### Step 3 - Inspect Conventions
 
 - Read relevant code, neighboring tests, fixtures, and helpers.
 - Detect the test framework and command from task runners, wrapper scripts, package manager scripts, or defaults.
-- Check project instructions in `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `GEMINI.md`, and `CODEX.md`.
+- Check `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `GEMINI.md`, and `CODEX.md`.
 
 ### Step 4 - Generate Tests
 
-- Prioritize testing public interfaces and observable behavior (covering happy paths, edge cases, and error paths) over private implementation details.
+- Prioritize public interfaces and observable behavior (happy paths, edge cases, error paths) over private implementation details.
 - Match existing naming, fixture, assertion, and file-layout conventions.
 - Keep tests simple and explicit; avoid unnecessary helpers or abstractions.
 
