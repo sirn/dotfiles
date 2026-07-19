@@ -407,7 +407,9 @@
         }
       );
 
-      # Expose all local packages from the overlay
+      # Expose all local packages from the overlay as derivations so their
+      # passthru attrs (npmDeps, cargoDeps, goModules) are reachable as
+      # path:.#<pkg>.<attr> by the pkgs/by-name/*/update.sh scripts.
       packages = eachSystem (
         system:
         let
@@ -417,9 +419,7 @@
             inherit overlays;
           };
         in
-        {
-          pkgs = pkgs;
-        }
+        nixpkgs.lib.filterAttrs (_: v: nixpkgs.lib.isDerivation v) pkgs.local
       );
     };
 }
