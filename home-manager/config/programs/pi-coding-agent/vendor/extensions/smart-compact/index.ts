@@ -228,7 +228,11 @@ export default function (pi: ExtensionAPI) {
         // detection never re-fires and context is never compacted.
         previousTokens = null;
         previousThreshold = undefined;
-        notifyStaleSafe(ctx, `Auto-compaction failed: ${error.message}`, "error");
+        notifyStaleSafe(
+          ctx,
+          `Auto-compaction failed: ${error.message}`,
+          "error",
+        );
       },
     });
   });

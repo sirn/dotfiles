@@ -442,10 +442,7 @@ export default function (pi: ExtensionAPI) {
         return;
       }
 
-      ctx.ui.notify(
-        "New session created. Starting plan execution...",
-        "info",
-      );
+      ctx.ui.notify("New session created. Starting plan execution...", "info");
     } else if (choice === "Accept plan and compact") {
       if (recentlyCompacted) {
         ctx.ui.notify(

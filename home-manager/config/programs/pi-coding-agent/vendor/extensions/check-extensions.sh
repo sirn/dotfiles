@@ -35,8 +35,8 @@ resolve_path() {
   local p="$1" t
   while t="$(readlink "$p" 2>/dev/null)"; do
     case "$t" in
-      /*) p="$t" ;;
-      *) p="$(dirname "$p")/$t" ;;
+    /*) p="$t" ;;
+    *) p="$(dirname "$p")/$t" ;;
     esac
   done
   printf '%s\n' "$p"
@@ -68,12 +68,12 @@ link_node_modules() {
   local pcac="$pipkg/lib/node_modules/@earendil-works/pi-coding-agent"
   local ea="$pcac/node_modules/@earendil-works"
   local missing=()
-  [[ -d "$pcac" ]] || missing+=("$pcac")
+  [[ -d $pcac ]] || missing+=("$pcac")
   [[ -d "$ea/pi-ai" ]] || missing+=("$ea/pi-ai")
   [[ -d "$ea/pi-agent-core" ]] || missing+=("$ea/pi-agent-core")
   [[ -d "$ea/pi-tui" ]] || missing+=("$ea/pi-tui")
   [[ -d "$pcac/node_modules/typebox" ]] || missing+=("$pcac/node_modules/typebox")
-  if (( ${#missing[@]} )); then
+  if ((${#missing[@]})); then
     echo "missing pi package dirs: ${missing[*]}" >&2
     return 1
   fi
@@ -110,10 +110,13 @@ count_lines() {
 main() {
   local mode="check"
   case "${1:-}" in
-    --setup) mode="setup" ;;
-    --update-baseline) mode="update" ;;
-    "") mode="check" ;;
-    *) echo "usage: $0 [--setup|--update-baseline]" >&2; exit 2 ;;
+  --setup) mode="setup" ;;
+  --update-baseline) mode="update" ;;
+  "") mode="check" ;;
+  *)
+    echo "usage: $0 [--setup|--update-baseline]" >&2
+    exit 2
+    ;;
   esac
 
   local pipkg
@@ -132,7 +135,7 @@ main() {
 
   # Non-zero tsc exit with no type diagnostics means tsc/nix failed to run at
   # all; a genuinely clean run exits 0, and type errors populate $current.
-  if (( tsc_ec != 0 )) && [[ -z $current ]]; then
+  if ((tsc_ec != 0)) && [[ -z $current ]]; then
     echo "tsc failed to run (no type diagnostics produced); exit $tsc_ec" >&2
     printf '%s\n' "$tsc_out" >&2
     exit 2
