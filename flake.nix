@@ -189,24 +189,7 @@
             pkgs = final;
           };
 
-          llm-agents = inputs.llm-agents.packages.${final.stdenv.hostPlatform.system} // {
-            # TODO: remove this override once numtide/llm-agents.nix bumps
-            # agent-browser's fetchPnpmDeps to fetcherVersion >= 4. Upstream
-            # pins fetcherVersion = 3, which pnpm_11 no longer supports;
-            # forcing the package throws at eval time. The deps hash is
-            # fetcher-version-specific, so it is replaced alongside it.
-            agent-browser = final.callPackage (inputs.llm-agents + "/packages/agent-browser/package.nix") {
-              fetchPnpmDeps =
-                args:
-                final.fetchPnpmDeps (
-                  args
-                  // {
-                    fetcherVersion = 4;
-                    hash = "sha256-B3O1VePIWPR2R7BN3ybRVTTWEXV25XYl2By5KnWm28w=";
-                  }
-                );
-            };
-          };
+          llm-agents = inputs.llm-agents.packages.${final.stdenv.hostPlatform.system};
 
           local = (import ./pkgs final prev inputs).${final.stdenv.hostPlatform.system};
         })
