@@ -36,7 +36,12 @@ trap 'rm -rf "$tmpdir"' EXIT
 curl -sL "https://registry.npmjs.org/@monotykamary/localterm/-/localterm-${version}.tgz" |
   tar xz -C "$tmpdir" --strip-components=1
 
-(cd "$tmpdir" && npm install --package-lock-only --ignore-scripts)
+# Use a throwaway npm cache so the script never touches (or needs write
+# access to) ~/.npm, which may contain root-owned files from prior runs.
+npm_cache=$(mktemp -d)
+trap 'rm -rf "$tmpdir" "$npm_cache"' EXIT
+
+(cd "$tmpdir" && npm install --package-lock-only --ignore-scripts --cache "$npm_cache")
 cp "$tmpdir/package-lock.json" "$lockfile"
 
 # Write sources.json with a fake npmDepsHash, then build to get the real one.
