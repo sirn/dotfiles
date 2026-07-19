@@ -189,7 +189,27 @@
             pkgs = final;
           };
 
-          llm-agents = inputs.llm-agents.packages.${final.stdenv.hostPlatform.system};
+          llm-agents =
+            let
+              raw = inputs.llm-agents.packages.${final.stdenv.hostPlatform.system};
+            in
+            raw
+            // {
+              # pi ships a Bun-compiled libexec/pi/pi native binary that is only
+              # linker-signed; nix's fixup invalidates the signature and amfid
+              # kills it (silent SIGKILL on aarch64-darwin). Re-sign ad-hoc.
+              pi =
+                if final.stdenv.hostPlatform.isDarwin then
+                  raw.pi.overrideAttrs (
+                    _: prev: {
+                      postFixup = (prev.postFixup or "") + ''
+                        /usr/bin/codesign -f -s - $out/libexec/pi/pi
+                      '';
+                    }
+                  )
+                else
+                  raw.pi;
+            };
 
           local = (import ./pkgs final prev inputs).${final.stdenv.hostPlatform.system};
         })
