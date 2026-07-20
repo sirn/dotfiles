@@ -18,6 +18,8 @@
   shaderc,
   wayland,
   fontconfig,
+  wtype,
+  wl-clipboard,
 }:
 
 let
@@ -137,7 +139,13 @@ rustPlatform.buildRustPackage rec {
             addDriverRunpath.driverLink
           ]
         } \
-        --prefix PATH : ${lib.makeBinPath [ fontconfig.bin ]}
+        --prefix PATH : ${
+          lib.makeBinPath [
+            fontconfig.bin
+            wtype
+            wl-clipboard
+          ]
+        }
     '';
 
   # Seal the bundle ad-hoc AFTER fixupPhase (which strips/rewrites signatures)
