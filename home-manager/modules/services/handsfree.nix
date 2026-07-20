@@ -93,12 +93,10 @@ let
   };
 
   # A launchd agent does not inherit the login shell's environment, and the
-  # plist has no EnvironmentFile directive. When an env file is set, the
-  # service launches via an in-bundle wrapper (Contents/MacOS/handsfree-launcher)
-  # that sources $1 then execs the sibling binary — keeping the process tree
-  # inside Handsfree.app so TCC attributes Mic/Accessibility to the bundle.
+  # plist has no EnvironmentFile directive so a wrapper is needed.
   appBinary = "${cfg.package}/Applications/Handsfree.app/Contents/MacOS/handsfree";
   appLauncher = "${cfg.package}/Applications/Handsfree.app/Contents/MacOS/handsfree-launcher";
+
   linuxExe = lib.getExe cfg.package;
 in
 {
@@ -114,22 +112,11 @@ in
       description = "The handsfree package to use.";
     };
 
-    # Decoupled from any particular secret backend (sops, dotpriv, a hand-written
-    # file, …) rather than wired to agents.sandbox.envFiles, so this stays a
-    # generic hook point.
     environmentFile = mkOption {
       type = types.nullOr types.str;
       default = null;
-      example = "\${config.xdg.configHome}/sops-nix/secrets/agents/env";
-      description = ''
-        Path to a shell env file sourced by the service to inject handsfree's
-        API keys (e.g. OPENAI_API_KEY), used by the OpenAI transcription and
-        LLM-cleanup backends whose var *names* are set in config.toml
-        (transcription.openai.api_key_env / postProcessing.llm.openai.api_key_env).
-        null (default) runs handsfree with only the service's own environment.
-        launchd has no EnvironmentFile directive, so on macOS the binary is
-        launched via a wrapper that sources this file then execs the .app.
-      '';
+      example = "/path/to/env";
+      description = "Path to a shell env file sourced by the service to inject into handsfree's env.";
     };
 
     transcription = {
