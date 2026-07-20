@@ -13,6 +13,7 @@
   # Linux only
   alsa-lib,
   vulkan-headers,
+  spirv-headers,
   vulkan-loader,
   shaderc,
   wayland,
@@ -57,13 +58,37 @@ rustPlatform.buildRustPackage rec {
   buildInputs = lib.optionals stdenv.hostPlatform.isLinux [
     alsa-lib
     vulkan-headers
+    spirv-headers
     vulkan-loader
     wayland
     fontconfig
   ];
 
-  # bindgen (whisper-rs-sys) needs libclang at build time.
+  # bindgen (whisper-rs-sys / llama-cpp-sys-2) loads libclang directly, so it
+  # does not inherit the cc-wrapper include paths and cannot find glibc headers
+  # like stdio.h.
   LIBCLANG_PATH = "${lib.getLib llvmPackages.libclang}/lib";
+  BINDGEN_EXTRA_CLANG_ARGS = "-isystem ${lib.getDev stdenv.cc.libc}/include";
+
+  # llama-cpp-sys-2 builds ggml with GGML_VULKAN=ON, whose ggml-vulkan
+  # CMakeLists does find_package(SPIRV-Headers CONFIG). CMAKE_PREFIX_PATH does
+  # not cover nixpkgs' spirv-headers layout (config lives under
+  # share/cmake/SPIRV-Headers). cmake reads <PackageName>_DIR from the
+  # environment, and the crate's build.rs inherits it.
+  SPIRV-Headers_DIR = lib.optionalString stdenv.hostPlatform.isLinux "${spirv-headers}/share/cmake/SPIRV-Headers";
+
+  # handsfree-wayland enables both whisper-rs and llama-cpp-2, each vendoring
+  # its own ggml. Statically linking two ggml copies into one binary collides
+  # on every ggml_* symbol (the same collision handsfree-llm's Cargo.toml
+  # notes for macOS Metal). The author left llm-local enabled on Linux, so
+  # merge the duplicates at link time; whisper-rs's ggml wins by link order.
+  # If the llama and whisper ggml ABIs drift, the LLM path can misbehave; drop
+  # this and build handsfree-wayland with --no-default-features (disabling
+  # llm-local) if that becomes a problem.
+  RUSTFLAGS = lib.optionals stdenv.hostPlatform.isLinux [
+    "-C"
+    "link-arg=-Wl,--allow-multiple-definition"
+  ];
 
   cargoBuildFlags = [
     "-p"
