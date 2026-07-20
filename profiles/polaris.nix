@@ -27,8 +27,8 @@
 
       # services
       ../nixos/config/services/flatpak.nix
-      ../nixos/config/services/geoclue2.nix
       ../nixos/config/services/fwupd.nix
+      ../nixos/config/services/geoclue2.nix
       ../nixos/config/services/greetd.nix
       ../nixos/config/services/node-exporter.nix
       ../nixos/config/services/podman.nix
@@ -123,8 +123,9 @@
         ../home-manager/config/programs/mpv.nix
         ../home-manager/config/programs/sublime-text.nix
         ../home-manager/config/programs/virt-manager.nix
-        ../home-manager/config/services/coord.nix
         ../home-manager/config/programs/yt-dlp.nix
+        ../home-manager/config/services/coord.nix
+        ../home-manager/config/services/handsfree.nix
       ];
 
       services.kanshi = lib.mkIf config.services.kanshi.enable {
