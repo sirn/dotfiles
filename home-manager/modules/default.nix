@@ -6,6 +6,7 @@
     ./home/colors.nix
     ./home/fonts.nix
     ./services/coord.nix
+    ./services/handsfree.nix
     ./services/tiler.nix
     ./programs/emacs.nix
     ./programs/niri.nix

@@ -9,6 +9,8 @@ let
 
     coord = (callPackage ./by-name/coord/package.nix { });
 
+    handsfree = (callPackage ./by-name/handsfree/package.nix { });
+
     emacsPackages.phscroll = (callPackage ./by-name/emacs/elisp-packages/phscroll/package.nix { });
 
     envWrapper = (callPackage ./by-name/env-wrapper/package.nix { });
