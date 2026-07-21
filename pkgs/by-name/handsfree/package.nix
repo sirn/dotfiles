@@ -39,15 +39,15 @@ let
 in
 rustPlatform.buildRustPackage rec {
   pname = "handsfree";
-  version = "0.1.0";
+  version = "0.1.1";
 
   src = fetchgit {
     url = "https://git.sr.ht/~sirn/handsfree";
     rev = "refs/tags/v${version}";
-    hash = "sha256-itjqY1+hVnzkc5QxcAiw/xgeq5OAmWsjj9Y1N7qrP5A=";
+    hash = "sha256-kN8Q3qJzVRgWEH9K6qzXn4sqYXUgoEvgoZm0xWG9ygI=";
   };
 
-  cargoHash = "sha256-pTO798AyrXAxyzIkhCEiTe73zHZIV2xBBkzW7ORK7qw=";
+  cargoHash = "sha256-Bws125KyqdRmSngtpqJ5+FuddEPpIn5oZxDv14d3ZgA=";
 
   nativeBuildInputs = [
     pkg-config

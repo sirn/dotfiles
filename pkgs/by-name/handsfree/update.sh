@@ -43,7 +43,7 @@ src_hash=$(nix hash convert --hash-algo sha256 --to sri \
 # Update version and src hash in package.nix
 sed_inplace \
   -e "s|version = \"$current_version\"|version = \"$version\"|" \
-  -e "s|hash = \"sha256-[^"]*\"|hash = \"$src_hash\"|" \
+  -e "s|hash = \"sha256-[^\"]*\"|hash = \"$src_hash\"|" \
   "$package_file"
 
 # Set a fake cargoHash so the cargo vendor staging derivation fails and reports
@@ -60,6 +60,6 @@ if [ -z "$cargo_hash" ]; then
   exit 1
 fi
 
-sed_inplace "s|cargoHash = \"sha256-[^"]*\"|cargoHash = \"$cargo_hash\"|" "$package_file"
+sed_inplace "s|cargoHash = \"sha256-[^\"]*\"|cargoHash = \"$cargo_hash\"|" "$package_file"
 
 echo "Done. Updated to $version"
