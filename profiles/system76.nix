@@ -31,12 +31,12 @@
         ../nixos/config/programs/appimage.nix
 
         # services
+        ../nixos/config/services/dnscrypt-proxy.nix
         ../nixos/config/services/flatpak.nix
         ../nixos/config/services/geoclue2.nix
         ../nixos/config/services/greetd.nix
         ../nixos/config/services/node-exporter.nix
         ../nixos/config/services/podman.nix
-        ../nixos/config/services/dnscrypt-proxy.nix
         ../nixos/config/services/udisks2.nix
         ../nixos/config/services/upower.nix
 
@@ -134,6 +134,7 @@
 
         # services
         ../home-manager/config/services/coord.nix
+        ../home-manager/config/services/handsfree.nix
       ];
 
       home.colors.themeName = "nord";
