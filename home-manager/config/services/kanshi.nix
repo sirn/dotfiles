@@ -29,7 +29,7 @@ in
           alias = "pa148";
           criteria = "ASUSTek COMPUTER INC ASUS PA148 N9LMTF061468";
           mode = "1920x1080@60Hz";
-          scale = 1.0;
+          scale = 1.25;
         };
       }
       {
