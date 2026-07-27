@@ -43,9 +43,7 @@ let
       sample_rate = cfg.audio.sampleRate;
     };
 
-    hotkey = {
-      inherit (cfg.hotkey) key modifiers;
-    };
+    hotkey = { inherit (cfg.hotkey) key modifiers; };
 
     insertion = {
       inherit (cfg.insertion) method;
@@ -87,9 +85,7 @@ let
           };
     };
 
-    overlay = {
-      inherit (cfg.overlay) enabled;
-    };
+    overlay = { inherit (cfg.overlay) enabled; };
   };
 
   # A launchd agent does not inherit the login shell's environment, and the
