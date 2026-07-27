@@ -7,6 +7,8 @@
 
 let
   gpgcfg = config.programs.gpg;
+
+  primaryAccount = lib.findFirst (a: a.primary) null (lib.attrValues config.accounts.email.accounts);
 in
 {
   home.packages = with pkgs; [ git-crypt ];
@@ -34,8 +36,8 @@ in
       status.branch = true;
       status.short = true;
       submodule.fetchJobs = 8;
-      user.email = lib.mkDefault "sirn@ogsite.net";
-      user.name = lib.mkDefault "Sirn Thanabulpong";
+      user.email = lib.mkDefault primaryAccount.address;
+      user.name = lib.mkDefault primaryAccount.realName;
 
       url = {
         "ssh://git@github.com/".insteadOf = "https://github.com/";

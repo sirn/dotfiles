@@ -1,11 +1,14 @@
-{ config, pkgs, ... }:
+{ config, lib, ... }:
 
+let
+  primaryAccount = lib.findFirst (a: a.primary) null (lib.attrValues config.accounts.email.accounts);
+in
 {
   programs.mercurial = {
     enable = true;
 
-    userName = config.programs.git.settings.user.name;
-    userEmail = config.programs.git.settings.user.email;
+    userName = primaryAccount.realName;
+    userEmail = primaryAccount.address;
     ignores = config.programs.git.ignores;
   };
 }
