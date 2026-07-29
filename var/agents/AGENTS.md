@@ -13,6 +13,7 @@
 - Use built-in tools and standard workflows; avoid writing ad-hoc scripts unless necessary.
 - Always read the corresponding reference skill before using any covered tool.
 - Do not batch multiple commands into a single shell invocation unless they must run together or repeat the same operation.
+- Unless specified otherwise, prefer a small refactor over creating a compatibility layer or a compatibility flag.
 
 ## Documentation Philosophy
 
