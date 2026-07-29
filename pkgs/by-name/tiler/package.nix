@@ -10,12 +10,12 @@
 
 stdenv.mkDerivation rec {
   pname = "tiler";
-  version = "0.5.1";
+  version = "0.5.2";
 
   src = fetchgit {
     url = "https://git.sr.ht/~sirn/tiler";
     rev = "refs/tags/v${version}";
-    hash = "sha256-S53mNWSxZ/LW69s2HCk27v9FrfzyxbCcYdcSwN6v5Hs=";
+    hash = "sha256-CSSpP0wyiq4+ci1AOEbUIxSO3R0kGiXiWStviPvd8Xo=";
   };
 
   nativeBuildInputs = [
