@@ -17,20 +17,24 @@ let
 
       webFetchRules = map (d: "WebFetch(domain:${d})") agentsCfg.domains.allowed;
       mkToolPerm = tool: "${tool}(**)";
+      # Claude Code has no Write path permission: Edit(path) covers all
+      # file-editing tools, so write rules are rendered as Edit rules.
+      mkEditPerms =
+        section:
+        lib.unique (
+          (lib.optionals tools.edit (map (p: "Edit(${p})") (paths.${section}.edit or [ ])))
+          ++ (lib.optionals tools.write (map (p: "Edit(${p})") (paths.${section}.write or [ ])))
+        );
       baseTools = [
         "Glob(*)"
         "Grep(*)"
         (mkToolPerm "Read")
         "WebSearch"
       ]
-      ++ lib.optional tools.edit (mkToolPerm "Edit")
-      ++ lib.optional tools.write (mkToolPerm "Write")
+      ++ lib.optional (tools.edit || tools.write) (mkToolPerm "Edit")
       ++ webFetchRules;
 
-      pathAllows =
-        map (p: "Read(${p})") (paths.allow.read or [ ])
-        ++ lib.optionals tools.edit (map (p: "Edit(${p})") (paths.allow.edit or [ ]))
-        ++ lib.optionals tools.write (map (p: "Write(${p})") (paths.allow.write or [ ]));
+      pathAllows = map (p: "Read(${p})") (paths.allow.read or [ ]) ++ mkEditPerms "allow";
 
       mkBashPatterns =
         cmds:
@@ -69,10 +73,7 @@ let
 
       ask = mkBashPatterns (commands.ask or [ ]);
 
-      pathDenies =
-        map (p: "Read(${p})") (paths.deny.read or [ ])
-        ++ lib.optionals tools.edit (map (p: "Edit(${p})") (paths.deny.edit or [ ]))
-        ++ lib.optionals tools.write (map (p: "Write(${p})") (paths.deny.write or [ ]));
+      pathDenies = map (p: "Read(${p})") (paths.deny.read or [ ]) ++ mkEditPerms "deny";
 
       bashDenies = mkBashPatterns (commands.deny or [ ]);
       deny = pathDenies ++ bashDenies;
