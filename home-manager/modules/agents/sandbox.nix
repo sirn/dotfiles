@@ -85,6 +85,11 @@ let
     (allow file-write* (subpath (param "WORKDIR")))
     (allow file-write* (subpath (string-append (param "HOME") "/.pi")))
     (allow file-write* (subpath (string-append (param "HOME") "/.claude")))
+    ;; macOS login keychain: Claude Code persists/refreshes OAuth tokens here.
+    ;; The Security framework writes the keychain DB file directly, so this
+    ;; carve-out is required for credential writes. Reads are already covered
+    ;; by the broad file-read* allow above.
+    (allow file-write* (subpath (string-append (param "HOME") "/Library/Keychains")))
     ${extraWriteRules}
     (allow file-write* (subpath (param "XDG_CACHE")))
     (allow file-write* (subpath (param "XDG_CONFIG")))
