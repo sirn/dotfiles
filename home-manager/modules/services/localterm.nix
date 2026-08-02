@@ -13,7 +13,6 @@ let
     concatStringsSep
     ;
   cfg = config.services.localterm;
-  fontcfg = config.home.fonts.terminal;
 
   startArgs = [
     "start"
@@ -113,7 +112,7 @@ in
 
       family = mkOption {
         type = types.str;
-        default = fontcfg.monospace;
+        default = "monospace";
         defaultText = "config.home.fonts.terminal.monospace";
         description = "Custom terminal font family for localterm.";
       };
