@@ -6,14 +6,12 @@
 }:
 
 let
-  # Absolute paths to allow writes to inside the sandbox.
   extraWriteRules = lib.concatMapStringsSep "\n" (
     path: "(allow file-write* (subpath \"${path}\"))"
   ) config.agents.sandbox.extraWritePaths;
 
-  # Deny all file-read operation classes for a path filter.
-  # file-read* alone is insufficient: explicit (allow file-read-data) etc.
-  # are more specific and override the wildcard deny.
+  # file-read* alone is insufficient: explicit (allow file-read-data) etc. are
+  # more specific and override the wildcard deny.
   denyRead = filter: ''
     (deny file-read* ${filter})
     (deny file-read-data ${filter})
@@ -31,10 +29,8 @@ let
     ]
   );
 
-  # Seatbelt profile for AI coding agents (pi + claude-code process tree).
-  # Default-deny writes; broad reads with secret carve-outs; full network.
-  # Imports system.sb for fundamental syscall/mach allowances that Rust and
-  # Chrome runtimes need; our (deny default) + specific allows layer on top.
+  # Imports system.sb for the syscall/mach allowances that Rust and Chrome
+  # runtimes need; our (deny default) + specific allows layer on top.
   defaultSeatbeltProfile = ''
     ;; Parameters (supplied via -D): HOME, WORKDIR, XDG_CACHE, XDG_CONFIG, TMPDIR
     (version 1)
@@ -67,6 +63,16 @@ let
     ;; Deny reads of sensitive material (after broad allow: these win)
     ${secretDenyRules}
 
+    ;; SSH operation: the .ssh deny above blocks host-key verification and
+    ;; config reads. Re-allow the non-secret parts SSH needs (known_hosts,
+    ;; config), keeping the private-key deny authoritative. Literal and
+    ;; explicit filters outrank the broader subpath deny from secretDenyRules.
+    (allow file-read* (literal (string-append (param "HOME") "/.ssh/config")))
+    (allow file-read* (subpath (string-append (param "HOME") "/.ssh/config.d")))
+    (allow file-read* (literal (string-append (param "HOME") "/.ssh/known_hosts")))
+    ;; OpenSSH control-master sockets and multiplexed connection state.
+    (allow file-read* (regex (string-append "^" (regex-quote (param "HOME")) "/\\.ssh/ssh-")))
+
     ;; Mach IPC: needed by Chrome (crashpad, port rendezvous), launchd, etc.
     (allow mach-lookup)
 
@@ -90,6 +96,9 @@ let
     ;; carve-out is required for credential writes. Reads are already covered
     ;; by the broad file-read* allow above.
     (allow file-write* (subpath (string-append (param "HOME") "/Library/Keychains")))
+    ;; SSH: control sockets and host-key verification growth.
+    (allow file-write* (regex (string-append "^" (regex-quote (param "HOME")) "/\\.ssh/ssh-")))
+    (allow file-write* (literal (string-append (param "HOME") "/.ssh/known_hosts")))
     ${extraWriteRules}
     (allow file-write* (subpath (param "XDG_CACHE")))
     (allow file-write* (subpath (param "XDG_CONFIG")))
@@ -138,14 +147,18 @@ let
       done
       ${lib.optionalString seatbeltEnabled ''
         if [ "''${_SEATBELT_ACTIVE:-}" != "1" ]; then
-          # Resolve TMPDIR to a real path; /var is a symlink to /private/var on macOS,
-          # and Seatbelt evaluates paths after symlink resolution.
+          # Resolve TMPDIR and WORKDIR to real paths; /var and ~/Google Drive are
+          # symlinks, and Seatbelt evaluates paths after symlink resolution, so
+          # the WORKDIR write-allow must match the canonical path or .pi creation
+          # (and all project writes) fail with EPERM.
           _real_tmpdir="$(cd "''${TMPDIR:-/tmp}" 2>/dev/null && pwd -P)"
           _real_tmpdir="''${_real_tmpdir:-/tmp}"
+          _real_workdir="$(cd "$PWD" 2>/dev/null && pwd -P)"
+          _real_workdir="''${_real_workdir:-$PWD}"
           export _SEATBELT_ACTIVE=1
           exec /usr/bin/sandbox-exec \
             -D "HOME=$HOME" \
-            -D "WORKDIR=$PWD" \
+            -D "WORKDIR=$_real_workdir" \
             -D "XDG_CACHE=''${XDG_CACHE_HOME:-$HOME/.cache}" \
             -D "XDG_CONFIG=''${XDG_CONFIG_HOME:-$HOME/.config}" \
             -D "TMPDIR=$_real_tmpdir" \
