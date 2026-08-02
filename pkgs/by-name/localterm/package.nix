@@ -22,12 +22,23 @@ buildNpmPackage rec {
   # dependencies (including the native node-pty module) need installing.
   dontNpmBuild = true;
 
-  # The npm tarball omits the lockfile; vendor it so npmDepsHash is stable.
+  # The published CLI never passes `publicUrl` to `createServer`, and after
+  # creation it calls `server.setPublicUrl(resolved.url)` which overwrites any
+  # value we inject.
+  patches = [ ./public-url.patch ];
+
   postPatch = ''
     cp ${./package-lock.json} ./package-lock.json
   '';
 
-  # node-pty is built from source via node-gyp, which needs Python.
+  # The server rejects WebSocket upgrades from non-RFC-1918 source IPs when
+  # bound to a non-loopback address. Access is already restricted by the NixOS
+  # firewall, so disable the redundant check to allow e.g. TEST-NET-1 tunnels.
+  postConfigure = ''
+    sed -i 's/!isAllowedSourceIp(remoteAddress, host)/false/' \
+      node_modules/@monotykamary/localterm-server/dist/index.js
+  '';
+
   nodejs = nodejs_22;
 
   # node-pty ships prebuilt binaries whose `spawn-helper` lacks the executable
