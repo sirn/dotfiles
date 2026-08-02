@@ -43,8 +43,7 @@ buildNpmPackage rec {
   # cannot resolve cross-package dynamic imports, so highlighting fails and
   # previews fall back to plain text. Bundle shiki/bundle/full with esbuild at
   # build time into a single self-contained module (all themes, langs, and the
-  # inlined oniguruma wasm resolved statically), then repoint pi-fabric and
-  # pi-code-previews at it via the existing "shiki/dist/*" export.
+  # inlined oniguruma wasm resolved statically), then repoint pi-fabric at it.
   postInstall = ''
     fab="$out/lib/node_modules/$pname"
     entry="$fab/shiki-inline-entry.mjs"
@@ -52,10 +51,17 @@ buildNpmPackage rec {
     esbuild --bundle --format=esm --platform=node \
       --outfile="$fab/node_modules/shiki/dist/shiki-inline.mjs" "$entry"
     rm "$entry"
+    # Shiki ships metadata and the highlighter behind subpath/dynamic imports;
+    # repoint each to the single bundled module so previews resolve statically.
     substituteInPlace \
       "$fab/dist/ui/highlight.js" \
+      --replace-fail 'from "shiki/langs"' 'from "shiki/dist/shiki-inline.mjs"' \
+      --replace-fail 'from "shiki/themes"' 'from "shiki/dist/shiki-inline.mjs"' \
+      --replace-fail 'await import("shiki")' 'await import("shiki/dist/shiki-inline.mjs")'
+    substituteInPlace \
       "$fab/dist/ui/core-tool-render.js" \
-      --replace-fail 'from "shiki"' 'from "shiki/dist/shiki-inline.mjs"'
+      --replace-fail 'from "shiki/langs"' 'from "shiki/dist/shiki-inline.mjs"' \
+      --replace-fail 'from "shiki/themes"' 'from "shiki/dist/shiki-inline.mjs"'
   '';
 
   passthru.updateScript = ./update.sh;
