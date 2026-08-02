@@ -23,38 +23,21 @@ let
     cfg.host
   ];
 
-  # We can't use home.file here because it symlinks to the read-only store,
-  # and the daemon persists cdpPort/graceSeconds changes back into this file.
-  baseConfig = pkgs.writeText "localterm-config.json" (
-    builtins.toJSON {
-      version = 1;
-      cdpPort = null;
-      identity = {
-        provider = cfg.identity.provider;
-      }
-      // lib.optionalAttrs (cfg.identity.provider == "oidc") {
-        issuer = cfg.identity.oidc.issuer;
-        clientId = cfg.identity.oidc.clientId;
-        claim = cfg.identity.oidc.claim;
-        scope = cfg.identity.oidc.scope;
-      };
-    }
-  );
-
-  writeConfigScript =
-    if cfg.identity.oidc.clientSecretFile != null then
-      pkgs.writeShellScript "localterm-write-config" ''
-        mkdir -p "$HOME/.localterm"
-        ${lib.getExe' pkgs.jq "jq"} \
-          --arg secret "$(cat ${lib.escapeShellArg cfg.identity.oidc.clientSecretFile})" \
-          '.identity.clientSecret = $secret' \
-          ${baseConfig} > "$HOME/.localterm/config.json"
-      ''
-    else
-      pkgs.writeShellScript "localterm-write-config" ''
-        mkdir -p "$HOME/.localterm"
-        cp ${baseConfig} "$HOME/.localterm/config.json"
-      '';
+  identityConfig = {
+    provider = cfg.identity.provider;
+  }
+  // lib.optionalAttrs (cfg.identity.provider == "oidc") {
+    issuer = cfg.identity.oidc.issuer;
+    clientId = cfg.identity.oidc.clientId;
+    claim = cfg.identity.oidc.claim;
+    scope = cfg.identity.oidc.scope;
+  }
+  // lib.optionalAttrs (cfg.identity.provider == "header") {
+    trustedProxy = cfg.identity.header.trustedProxy;
+  }
+  // lib.optionalAttrs (cfg.identity.header.headerName != null) {
+    header = cfg.identity.header.headerName;
+  };
 in
 {
   options.services.localterm = {
@@ -82,10 +65,10 @@ in
       type = types.nullOr types.str;
       default = null;
       description = ''
-        Announced public origin (e.g. `https://term.example.com:3417`). Drives
-        the OIDC redirect URI and the network-policy host allowlist so a
-        DNS-named reverse proxy fronting a non-loopback bind is accepted.
-        Null lets the CLI auto-resolve (loopback / portless / tailnet).
+        Announced public origin (e.g. `https://term.example.com`). Drives
+        the network-policy host allowlist so a DNS-named reverse proxy
+        fronting a non-loopback bind is accepted. Null lets the CLI
+        auto-resolve (loopback / portless / tailnet).
         Requires the localterm package patch that reads LOCALTERM_PUBLIC_URL.
       '';
     };
@@ -146,6 +129,24 @@ in
         '';
       };
 
+      header = {
+        headerName = mkOption {
+          type = types.nullOr types.str;
+          default = null;
+          description = "Header name to read the user identity from (defaults to X-Forwarded-User).";
+        };
+
+        trustedProxy = mkOption {
+          type = types.str;
+          default = "loopback";
+          description = ''
+            CIDR or shorthand (loopback/private) the trusted proxy connects
+            from. The identity header is only honored for requests from this
+            range.
+          '';
+        };
+      };
+
       oidc = {
         issuer = mkOption {
           type = types.str;
@@ -155,16 +156,6 @@ in
         clientId = mkOption {
           type = types.str;
           description = "OIDC client ID registered with the IdP.";
-        };
-
-        clientSecretFile = mkOption {
-          type = types.nullOr types.str;
-          default = null;
-          description = ''
-            Path to a file containing the OIDC client secret (e.g. a sops secret path).
-            Null for a public (PKCE-only) client — the config file is then fully
-            declarative with no ExecStartPre secret injection.
-          '';
         };
 
         claim = mkOption {
@@ -196,6 +187,17 @@ in
       };
     };
 
+    # `force` overwrites the daemon's runtime-persisted cdpPort/graceSeconds
+    # on each activation; those are non-critical defaults the daemon re-derives.
+    home.file.".localterm/config.json" = lib.mkIf (cfg.identity.provider != "none") {
+      force = true;
+      text = builtins.toJSON {
+        version = 1;
+        cdpPort = null;
+        identity = identityConfig;
+      };
+    };
+
     systemd.user.services.localterm = lib.mkIf pkgs.stdenv.isLinux {
       Unit = {
         Description = "localterm terminal daemon";
@@ -212,8 +214,7 @@ in
           (lib.optional cfg.fullPath "LOCALTERM_PTY_FULL_PATH=1")
           ++ (lib.optional (cfg.zdotdir != null) "ZDOTDIR=${cfg.zdotdir}")
           ++ (lib.optional (cfg.publicUrl != null) "LOCALTERM_PUBLIC_URL=${cfg.publicUrl}");
-      }
-      // lib.optionalAttrs (cfg.identity.provider != "none") { ExecStartPre = [ writeConfigScript ]; };
+      };
 
       Install = {
         WantedBy = [ "graphical-session.target" ];
