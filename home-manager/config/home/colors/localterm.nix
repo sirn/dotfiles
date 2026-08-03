@@ -9,7 +9,7 @@
 let
   toLocalTermTheme = variant: label: {
     id = "nix-${familyName}-${label}";
-    name = "${familyName}-${label}";
+    name = variant.name;
     source = "nix-dotfiles";
     colors = {
       background = variant.base16Colors.background;

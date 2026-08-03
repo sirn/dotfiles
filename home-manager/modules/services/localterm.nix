@@ -96,7 +96,6 @@ in
       family = mkOption {
         type = types.str;
         default = "monospace";
-        defaultText = "config.home.fonts.terminal.monospace";
         description = "Custom terminal font family for localterm.";
       };
 
