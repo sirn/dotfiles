@@ -54,7 +54,7 @@ in
 
     instructionText = agentsCfg.instructionText;
 
-    policy = policyFromPermissions;
+    policy.rules = policyFromPermissions;
 
     settings = {
       bash.pass_env = agentsCfg.requiredEnvs;
