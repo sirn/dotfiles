@@ -12,5 +12,6 @@
     ./programs/emacs.nix
     ./programs/niri.nix
     ./programs/pi-coding-agent.nix
+    ./programs/lofi.nix
   ];
 }

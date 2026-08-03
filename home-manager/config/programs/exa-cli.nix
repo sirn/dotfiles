@@ -13,6 +13,8 @@ in
 {
   agents.permissions.default.commands.allow = [ "exa" ];
 
+  agents.requiredEnvs = [ "EXA_API_KEY" ];
+
   agents.instructionText = lib.mkAfter exaInstructionText;
 
   agents.commandContext = lib.mkAfter exaCommandContext;

@@ -10,4 +10,6 @@
 
     ## Additional tools
   '';
+
+  agents.requiredEnvs = [ "ASANA_PAT" ];
 }

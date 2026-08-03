@@ -134,6 +134,12 @@ in
       '';
     };
 
+    requiredEnvs = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      description = "Environment variables tools need inherited by a model-run shell.";
+    };
+
     skillSets = lib.mkOption {
       type = lib.types.attrsOf skillSetType;
       default = { };

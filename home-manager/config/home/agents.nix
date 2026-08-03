@@ -6,6 +6,7 @@
     ../programs/context7-cli.nix
     ../programs/exa-cli.nix
     ../programs/lsp-cli.nix
+    ../programs/lofi
     ../programs/mcp.nix
     ../programs/pi-coding-agent
     ../programs/terminal-use.nix

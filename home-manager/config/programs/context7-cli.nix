@@ -13,6 +13,8 @@ in
 {
   agents.permissions.default.commands.allow = [ "context7" ];
 
+  agents.requiredEnvs = [ "CONTEXT7_API_KEY" ];
+
   agents.instructionText = lib.mkAfter context7InstructionText;
 
   agents.commandContext = lib.mkAfter context7CommandContext;
