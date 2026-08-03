@@ -21,7 +21,8 @@ in
         polkit_agent = true;
         settings_show_advanced = true;
         panel = {
-          launcher_placement = "centered";
+          launcher_placement = "floating";
+          launcher_position = "center";
           control_center_placement = "attached";
           open_near_click_control_center = true;
         };
@@ -55,19 +56,14 @@ in
 
       # Per-widget settings
       widget = {
-        launcher = {
-          use_distro_logo = true;
-          enable_colorization = true;
-        };
         tray = {
           drawer = true;
         };
         battery = {
           show_label = false;
-          warning_threshold = 30;
         };
         workspaces = {
-          display = "none";
+          show_labels = false;
         };
         clock = {
           format = "{:%H:%M}";
@@ -152,7 +148,6 @@ in
         fill_mode = "crop";
         automation = {
           enabled = true;
-          interval_minutes = 30;
           order = "random";
           recursive = true;
         };
