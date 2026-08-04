@@ -643,54 +643,20 @@ in
       };
     };
 
-    modes =
-      let
-        forbidsWrite = {
-          tools = {
-            edit = false;
-            write = false;
-          };
-          commands.deny = destructiveCommands ++ [
-            "cp"
-            "ln"
-            "mkdir"
-            "mktemp"
-            "mv"
-            "rsync"
-            "sed -i"
-            "tee"
-            "touch"
-          ];
-          redirects = {
-            action = "deny";
-            safeTargets = [
-              "/dev/null"
-              "/dev/stderr"
-              "/dev/stdout"
-            ];
-            allowFdDup = true;
-          };
-          heredocs = {
-            action = "ask";
-          };
+    modes = {
+      build = {
+        tools = {
+          edit = true;
+          write = true;
         };
-      in
-      {
-        build = {
-          tools = {
-            edit = true;
-            write = true;
-          };
-        };
-
-        yolo = {
-          tools = {
-            edit = true;
-            write = true;
-          };
-        };
-
-        plan = forbidsWrite;
       };
+
+      yolo = {
+        tools = {
+          edit = true;
+          write = true;
+        };
+      };
+    };
   };
 }

@@ -11,7 +11,7 @@ In addition to command-level checking, the extension controls write and edit too
 ### Core Principles
 
 1. **Safety First (Fail-Closed).** If a command cannot be parsed, contains unsupported syntax, or doesn't match any policy rules, it fails closed by falling back to a user-confirmation prompt (`ask`) or direct blocking.
-2. **Context-Aware Enforcement.** Policies can vary depending on the active execution mode (e.g., `MODE_EDIT`, `MODE_PLAN`, or `MODE_YOLO`). This ensures stricter rules apply during planning phases while allowing flexible, safe command execution during implementation.
+2. **Context-Aware Enforcement.** Policies can vary depending on the active execution mode (e.g., `MODE_EDIT` or `MODE_YOLO`). This ensures stricter rules apply while allowing flexible, safe command execution.
 3. **No Redundant Prompts.** Safe commands are automatically approved, and if "auto mode" is enabled, an LLM checks if the command matches safety guidelines before bothering the user with a confirmation dialog.
 4. **Transparent Audit Logging.** All decisions, whether allowed, denied, or YOLO-approved, are logged locally with detailed context.
 
@@ -27,7 +27,7 @@ In addition to command-level checking, the extension controls write and edit too
 
 ### Status Bar and UI Interaction
 
-- **Status Bar Icon:** Displays the active mode via the status item named `execution-mode` utilizing the mode's visual label (e.g., plan or YOLO mode icons).
+- **Status Bar Icon:** Displays the active mode via the status item named `execution-mode` utilizing the mode's visual label (e.g., YOLO mode icon).
 - **Notifications:** Displays warnings and policy updates using `ctx.ui.notify(...)`.
 - **Confirmation Prompts:** When a command evaluates to `ask` or `default` and is not pre-approved, the extension blocks execution and asks the user: `ctx.ui.select("Confirm...\n<command>", ["Yes, proceed", "No, cancel"])`.
 

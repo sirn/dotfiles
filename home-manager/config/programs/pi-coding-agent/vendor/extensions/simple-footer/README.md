@@ -10,7 +10,7 @@ The Simple Footer extension replaces Pi's built-in terminal footer with a highly
 
 1. **Two-Line Layout:** Maximizes vertical terminal space compared to bulkier default footers.
 2. **Detailed Session Statistics:** Computes and formats cumulative input, output, cache read, and cache write tokens, alongside total session cost.
-3. **Cross-Extension Integration:** Automatically reads and displays status indicators from the `plan-mode`, `shell-policy`, `subagent`, and `goal-mode` extensions.
+3. **Cross-Extension Integration:** Automatically reads and displays status indicators from the `shell-policy`, `subagent`, and `goal-mode` extensions.
 4. **Compaction Awareness:** Warns you with a highlight when the branch was recently compacted, preserving context-window context.
 5. **Caching & Efficiency:** Caches generated lines to bypass recomputation when terminal dimensions and session variables remain unchanged.
 
@@ -113,7 +113,7 @@ The extension leverages the following types and functions:
 
 The `simple-footer` is a consumer of status values. It does not write statuses itself. It reads the following keys from `footerData.getExtensionStatuses()`:
 
-`execution-mode` : Set by `plan-mode`, `shell-policy`. Rendered via `statuses.get("execution-mode")` (accent colored).
+`execution-mode` : Set by `shell-policy`. Rendered via `statuses.get("execution-mode")` (accent colored).
 
 `subagent-cost` : Set by `subagent`. Rendered via `statuses.get("subagent-cost")` (parenthesized cost).
 

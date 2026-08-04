@@ -2557,14 +2557,14 @@ test("normalizeUnifiedPolicyConfig - with modes", () => {
   const config = normalizeUnifiedPolicyConfig({
     default: { commands: { allow: [], ask: [], deny: [] } },
     modes: {
-      plan: {
+      yolo: {
         tools: { edit: false, write: false },
         commands: { allow: [], ask: [], deny: [] },
       },
     },
   });
-  assertTrue(config.modes?.plan !== undefined);
-  assertEquals(config.modes?.plan.tools, { edit: false, write: false });
+  assertTrue(config.modes?.yolo !== undefined);
+  assertEquals(config.modes?.yolo.tools, { edit: false, write: false });
 });
 
 test("normalizeUnifiedPolicyConfig - with redirects and heredocs", () => {
@@ -2575,7 +2575,7 @@ test("normalizeUnifiedPolicyConfig - with redirects and heredocs", () => {
       heredocs: { action: "ask" },
     },
     modes: {
-      plan: {
+      yolo: {
         commands: { allow: [], ask: [], deny: [] },
         redirects: {
           action: "deny",
@@ -2588,9 +2588,9 @@ test("normalizeUnifiedPolicyConfig - with redirects and heredocs", () => {
   });
   assertEquals(config.default.redirects?.action, "allow");
   assertEquals(config.default.heredocs?.action, "ask");
-  assertEquals(config.modes?.plan.redirects?.action, "deny");
-  assertEquals(config.modes?.plan.redirects?.safeTargets, ["/dev/null"]);
-  assertEquals(config.modes?.plan.redirects?.allowFdDup, true);
+  assertEquals(config.modes?.yolo.redirects?.action, "deny");
+  assertEquals(config.modes?.yolo.redirects?.safeTargets, ["/dev/null"]);
+  assertEquals(config.modes?.yolo.redirects?.allowFdDup, true);
 });
 
 test("normalizeUnifiedPolicyConfig - null/undefined input defaults", () => {
@@ -2731,10 +2731,6 @@ test("mergeEvaluationPolicies - mode deny overrides default allow for same comma
 console.log("\n=== Mode Label Tests ===");
 
 import { modeLabel } from "../lib/execution-mode.ts";
-
-test("modeLabel(plan) returns plan mode label", () => {
-  assertEquals(modeLabel("plan"), "\uF4A0 plan mode");
-});
 
 test("modeLabel(yolo) returns yolo mode label", () => {
   assertEquals(modeLabel("yolo"), "\ueb44 yolo mode");

@@ -10,7 +10,7 @@
  *
  * Examples:
  *   evaluate-shell-policy.ts curl https://example.com
- *   evaluate-shell-policy.ts -f ./plan-mode.json ls -la
+ *   evaluate-shell-policy.ts -f ./yolo-mode.json ls -la
  *   evaluate-shell-policy.ts -- rm -rf /tmp/test
  */
 
@@ -80,7 +80,7 @@ function printUsage(): void {
     `  ${scriptName} ls -la                    # Uses 'edit' mode (default only)`,
   );
   console.log(
-    `  ${scriptName} -m plan -- ls -la         # Merges plan mode on default`,
+    `  ${scriptName} -m yolo -- ls -la        # Merges yolo mode on default`,
   );
   console.log(`  ${scriptName} -f ./policy.json -- rm -rf /tmp/test`);
 }
