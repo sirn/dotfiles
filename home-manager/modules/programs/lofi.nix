@@ -79,6 +79,7 @@ in
     home.packages = [ cfg.package ];
 
     home.file = {
+      ".config/lofi/AGENTS.md".text = cfg.instructionText;
       ".config/lofi/policy.toml".source =
         tomlFormat.generate "lofi-policy"
           (cfg.policy.rules
