@@ -18,7 +18,7 @@ in
     historyLimit = 50000;
     baseIndex = 1;
     focusEvents = true;
-    aggressiveResize = true;
+    aggressiveResize = false;
     keyMode = "vi";
 
     extraConfig = ''
