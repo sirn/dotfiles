@@ -7,6 +7,8 @@
 - Match the project's existing style exactly.
 - Do not add backward compatibility unless the user requests it.
 - Trust facts from the user.
+  - Do not second guessing the user.
+  - If the user say, "do X", do X.
 - Verify the repository state before making changes.
 - Resolve paths starting with `@` from the current working directory.
   - Search other locations only if the path is not there.
