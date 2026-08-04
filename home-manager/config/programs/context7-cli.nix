@@ -2,7 +2,9 @@
 
 let
   context7InstructionText = lib.strings.trim ''
-    - Use the `context7` skill for retrieving up-to-date library documentation (React, Python stdlib, Rust, etc.) BEFORE implementing or writing code.
+    - Use the `context7` skill for current library documentation.
+      - Read the documentation before you implement or write code.
+      - Examples include React, the Python standard library, and Rust.
   '';
 
   context7CommandContext = lib.strings.trim ''

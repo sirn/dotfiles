@@ -2,9 +2,11 @@
 
 let
   terminalUseInstructionText = lib.strings.trim ''
-    - Use `tu` to drive interactive terminal applications and headless terminal sessions: send keystrokes, read the screen, and control the mouse.
-    - Load the command reference before the first interaction: `tu usage`.
-    - Sessions run under an auto-started background daemon; use `--name` to manage multiple terminal instances.
+    - Use `tu` for interactive applications and headless terminal sessions.
+      - Use it to send keys, read the screen, and control the mouse.
+      - Run `tu usage` before the first interaction.
+      - Use `--name` to manage multiple terminal sessions.
+      - The background daemon starts automatically.
   '';
 
   terminalUseCommandContext = lib.strings.trim ''

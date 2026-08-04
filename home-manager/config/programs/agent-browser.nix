@@ -7,9 +7,16 @@
 
 let
   agentBrowserInstructionText = lib.strings.trim ''
-    - Use the `agent-browser` skill for browser automation: navigate, snapshot (`@eN` refs), click, fill, screenshot, eval, and extract data. Prefer `curl` for static HTML and JSON.
-    - Load the version-matched usage guide before any command: `agent-browser skills get core` (or `--full` for the full reference).
-    - The browser stays running across commands; call `agent-browser close` (or `close --all`) when finished.
+    - Use the `agent-browser` skill for browser automation.
+      - Use it to navigate, click, fill, take screenshots, and extract data.
+      - Use snapshots with `@eN` references.
+      - Use `eval` to run JavaScript.
+      - Prefer `curl` for static HTML and JSON.
+      - Before the first command, run `agent-browser skills get core`.
+      - Use `--full` when you need the full reference.
+      - The browser stays open between commands.
+      - Run `agent-browser close` when finished.
+      - Run `agent-browser close --all` to close all sessions.
   '';
 
   agentBrowserCommandContext = lib.strings.trim ''

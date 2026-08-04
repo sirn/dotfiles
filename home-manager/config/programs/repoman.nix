@@ -57,7 +57,10 @@ let
   '';
 
   repomanInstructionText = lib.strings.trim ''
-    - Use `repoman list` and `repoman workspace list` to locate project directories; read the `repoman` skill before clone, batch update, or workspace operations."
+    - Use `repoman` to locate and manage project directories.
+      - Use `repoman list` to locate repositories.
+      - Use `repoman workspace list` to locate workspaces.
+      - Read the `repoman` skill before clone, batch update, or workspace operations.
   '';
 
   tmuxcfg = config.programs.tmux;

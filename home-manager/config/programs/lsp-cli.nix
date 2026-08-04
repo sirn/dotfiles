@@ -2,9 +2,12 @@
 
 let
   lspInstructionText = lib.strings.trim ''
-    - Use the `lsp` skill for semantic code intelligence: hover, definition, references, diagnostics, completion, symbols, formatting.
-    - Always start a session first: `lsp session start --lsp <name>`, then query, then stop: `lsp session stop --lsp <name>`.
-    - Prefer `grep`/`rg` for text search; use `lsp` for type information, definitions, and compiler diagnostics.
+    - Use the `lsp` skill for semantic code information.
+      - Start with `lsp session start --lsp <name>`.
+      - Stop with `lsp session stop --lsp <name>`.
+      - Use `grep` or `rg` for text search.
+      - Use `lsp` for types, definitions, references, and diagnostics.
+      - Use `lsp` for completion, symbols, and formatting.
   '';
 
   lspCommandContext = lib.strings.trim ''

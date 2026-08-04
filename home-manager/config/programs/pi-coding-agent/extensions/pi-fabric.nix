@@ -2,7 +2,10 @@
 
 let
   fabricInstructionText = lib.strings.trim ''
-    - When calling Fabric agent/subagent entry points (including `agents.run`, `agents.spawn`, `workflow.agent`, and recursive/rlm calls where applicable), always set `extensions: true`; never set or pass `extensions: false`.
+    - Set `extensions: true` for all Fabric agent and subagent calls.
+      - This rule applies to `agents.run`, `agents.spawn`, and `workflow.agent`.
+      - This rule also applies to recursive and RLM calls.
+      - Do not set or pass `extensions: false`.
   '';
 in
 {
