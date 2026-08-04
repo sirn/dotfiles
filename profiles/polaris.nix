@@ -1,5 +1,5 @@
 {
-  nixos = { nixos-hardware, ... }: {
+  nixos = { nixos-hardware, pkgs, ... }: {
     imports = [
       ../nixos/config/common.nix
       ../nixos/config/common-zfs.nix
@@ -66,6 +66,58 @@
     '';
 
     hardware.uinput.enable = true;
+
+    # Rebind the I2C HID touchpad driver on resume to work around a Sensel
+    # SNSL0028:00 trackpad bug where scrolling stops working after s2idle
+    # suspend. The hid-multitouch driver doesn't properly re-initialize
+    # the device on resume.
+    #
+    # Skip the rebind if hid-multitouch is already bound. After rebinding,
+    # poll with 1-second backoff (up to 5 times) until hid-multitouch claims
+    # the device — hid-generic binds first before hid-multitouch takes over.
+    powerManagement.resumeCommands = ''
+      ${pkgs.writeShellScript "polaris-rebind-touchpad" ''
+        set -euo pipefail
+
+        HID_DRIVER=/sys/bus/i2c/drivers/i2c_hid_acpi
+        DEVICE=i2c-SNSL0028:00
+        HID_ID=0018:2C2F:0028
+        MAX_RETRIES=5
+
+        is_multitouch() {
+          local driver
+          driver=$(readlink "$HID_DRIVER/$DEVICE"/"$HID_ID".*/driver 2>/dev/null || true)
+          [[ "$driver" == *hid-multitouch* ]]
+        }
+
+        wait_for_multitouch() {
+          local retries=$1
+          if is_multitouch; then
+            return 0
+          fi
+          if [ "$retries" -ge "$MAX_RETRIES" ]; then
+            echo "polaris-rebind-touchpad: hid-multitouch did not bind after $MAX_RETRIES retries" >&2
+            return 1
+          fi
+          sleep 1
+          wait_for_multitouch $((retries + 1))
+        }
+
+        # Skip if hid-multitouch is already correctly bound.
+        if is_multitouch; then
+          exit 0
+        fi
+
+        # Rebind to force a full re-probe.
+        if [ -e "$HID_DRIVER/$DEVICE" ]; then
+          echo "$DEVICE" > "$HID_DRIVER/unbind" || true
+          sleep 1
+          echo "$DEVICE" > "$HID_DRIVER/bind" || true
+        fi
+
+        wait_for_multitouch 0
+      ''}
+    '';
 
     # Fix broken audio on Lunar Lake.
     services.pipewire.extraConfig.pipewire."99-lunar-lake-fix" = {
