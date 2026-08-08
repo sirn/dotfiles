@@ -21,6 +21,8 @@ let
 
     exa-cli = (callPackage ./by-name/exa-cli/package.nix { });
 
+    fizzterm = (callPackage ./by-name/fizzterm/package.nix { });
+
     gondolin = (callPackage ./by-name/gondolin/package.nix { });
 
     portless = (callPackage ./by-name/portless/package.nix { });

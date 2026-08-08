@@ -129,6 +129,7 @@ lib.mkMerge [
   (import ./coord.nix desktopArgs)
   (import ./alacritty.nix terminalArgs)
   (import ./emacs.nix terminalArgs)
+  (import ./fizzterm.nix terminalArgs)
   (import ./foot.nix terminalArgs)
   (import ./fuzzel.nix desktopArgs)
   (import ./ghostty.nix terminalArgs)
