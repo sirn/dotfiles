@@ -15,26 +15,17 @@ let
 
     emacsPackages.phscroll = (callPackage ./by-name/emacs/elisp-packages/phscroll/package.nix { });
 
-    envWrapper = (callPackage ./by-name/env-wrapper/package.nix { });
-
     context7-cli = (callPackage ./by-name/context7-cli/package.nix { });
 
     exa-cli = (callPackage ./by-name/exa-cli/package.nix { });
 
     fizzterm = (callPackage ./by-name/fizzterm/package.nix { });
 
-    gondolin = (callPackage ./by-name/gondolin/package.nix { });
-
-    portless = (callPackage ./by-name/portless/package.nix { });
-
     powerband = (callPackage ./by-name/powerband { });
 
     pi-vcc = (callPackage ./by-name/pi-vcc/package.nix { });
 
-    pi-tool-repair = (callPackage ./by-name/pi-tool-repair/package.nix { });
     pi-fabric = (callPackage ./by-name/pi-fabric/package.nix { });
-
-    mitsuhiko-agent-stuff = (callPackage ./by-name/mitsuhiko-agent-stuff { });
 
     node-textfile-collector-scripts = (
       callPackage ./by-name/prometheus/node-textfile-collector-scripts.nix { }
@@ -51,8 +42,6 @@ let
     tiler = (callPackage ./by-name/tiler/package.nix { });
 
     lsp-cli = (callPackage ./by-name/lsp-cli/package.nix { });
-
-    localterm = (callPackage ./by-name/localterm/package.nix { });
 
     wrapped-uv = (callPackage ./by-name/wrapped-uv/wrapped.nix { });
   };

@@ -134,7 +134,6 @@ lib.mkMerge [
   (import ./fuzzel.nix desktopArgs)
   (import ./ghostty.nix terminalArgs)
   (import ./jjui.nix terminalArgs)
-  (import ./localterm.nix terminalArgs)
   (import ./mako.nix desktopArgs)
   (import ./niri.nix desktopArgs)
   (import ./noctalia.nix desktopArgs)

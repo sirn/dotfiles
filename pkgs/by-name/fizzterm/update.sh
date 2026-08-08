@@ -51,7 +51,7 @@ sed_inplace \
 # correct fixed-output hash. The npm deps staging only downloads packages; it
 # does not compile any code. The sed is scoped to the npmDeps block so the
 # real src hash is left intact for the later cargoDeps build.
-sed_inplace "/npmDeps = fetchNpmDeps {/,/};/ s|hash = \"sha256-[^\"]*\"|hash = \"sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=\"|" "$package_file"
+sed_inplace '/npmDeps = fetchNpmDeps {/,/};/ s|hash = "sha256-[^"]*"|hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="|' "$package_file"
 sed_inplace 's|cargoHash = "sha256-[^"]*"|cargoHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="|' "$package_file"
 
 build_log=$(nix build --no-link "path:${repo_root}#${pname}.npmDeps" 2>&1 || true)

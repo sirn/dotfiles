@@ -26,7 +26,6 @@ in
     ./extensions/hm-simple-footer.nix
     ./extensions/hm-smart-compact.nix
     ./extensions/pi-vcc.nix
-    ./extensions/pi-tool-repair.nix
     ./extensions/pi-fabric.nix
   ];
 
