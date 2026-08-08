@@ -14,18 +14,18 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "fizzterm";
-  version = "0.1.0";
+  version = "0.1.1";
 
   src = fetchgit {
     url = "https://git.sr.ht/~sirn/fizzterm";
     rev = "refs/tags/v" + version;
-    hash = "sha256-3XakDwdMFZnkmRXdoh/cHFlH9cEJooF+vwYCJonckmI=";
+    hash = "sha256-+VhbcNz4yEUL8Oypla5Enn9ipC7mWUKmaLYc050+k/Y=";
   };
 
   npmDeps = fetchNpmDeps {
     inherit src;
     name = "fizzterm-ui-npm-deps";
-    hash = "sha256-8+P2EDn7MaFLc5EASeI9tc2PoP+vADIYTHWzjEPgcoA=";
+    hash = "sha256-+VhbcNz4yEUL8Oypla5Enn9ipC7mWUKmaLYc050+k/Y=";
     postPatch = "cp fizzterm-ui/package-lock.json ./package-lock.json";
   };
 
@@ -53,7 +53,7 @@ rustPlatform.buildRustPackage rec {
   ];
   doCheck = false;
 
-  cargoHash = "sha256-/CaogP3QOQs2pO9oleR01Dq7pp1rb5AarDC3BvXWRxM=";
+  cargoHash = "sha256-7nnVaXHB2avZfcV9B1C8EYq68e1FAkTuYNm8/4LxiQQ=";
 
   passthru.updateScript = ./update.sh;
 
