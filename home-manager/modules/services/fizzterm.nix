@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  options,
   pkgs,
   ...
 }:
@@ -8,123 +9,77 @@
 let
   inherit (lib) mkOption types mkEnableOption;
   cfg = config.services.fizzterm;
+  opt = options.services.fizzterm;
 
   tomlFormat = pkgs.formats.toml { };
 
+  mkPaletteOption =
+    description:
+    mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      inherit description;
+    };
+
   paletteSubmodule = types.submodule {
     options = {
-      foreground = mkOption {
-        type = types.str;
-        description = "Terminal foreground color.";
-      };
-      background = mkOption {
-        type = types.str;
-        description = "Terminal background color.";
-      };
-      cursor = mkOption {
-        type = types.str;
-        description = "Cursor color.";
-      };
-      selection_background = mkOption {
-        type = types.str;
-        description = "Selection background color.";
-      };
-      black = mkOption {
-        type = types.str;
-        description = "ANSI black.";
-      };
-      red = mkOption {
-        type = types.str;
-        description = "ANSI red.";
-      };
-      green = mkOption {
-        type = types.str;
-        description = "ANSI green.";
-      };
-      yellow = mkOption {
-        type = types.str;
-        description = "ANSI yellow.";
-      };
-      blue = mkOption {
-        type = types.str;
-        description = "ANSI blue.";
-      };
-      magenta = mkOption {
-        type = types.str;
-        description = "ANSI magenta.";
-      };
-      cyan = mkOption {
-        type = types.str;
-        description = "ANSI cyan.";
-      };
-      white = mkOption {
-        type = types.str;
-        description = "ANSI white.";
-      };
-      bright_black = mkOption {
-        type = types.str;
-        description = "ANSI bright black.";
-      };
-      bright_red = mkOption {
-        type = types.str;
-        description = "ANSI bright red.";
-      };
-      bright_green = mkOption {
-        type = types.str;
-        description = "ANSI bright green.";
-      };
-      bright_yellow = mkOption {
-        type = types.str;
-        description = "ANSI bright yellow.";
-      };
-      bright_blue = mkOption {
-        type = types.str;
-        description = "ANSI bright blue.";
-      };
-      bright_magenta = mkOption {
-        type = types.str;
-        description = "ANSI bright magenta.";
-      };
-      bright_cyan = mkOption {
-        type = types.str;
-        description = "ANSI bright cyan.";
-      };
-      bright_white = mkOption {
-        type = types.str;
-        description = "ANSI bright white.";
-      };
+      foreground = mkPaletteOption "Terminal foreground color.";
+      background = mkPaletteOption "Terminal background color.";
+      cursor = mkPaletteOption "Cursor color.";
+      selection_background = mkPaletteOption "Selection background color.";
+      black = mkPaletteOption "ANSI black.";
+      red = mkPaletteOption "ANSI red.";
+      green = mkPaletteOption "ANSI green.";
+      yellow = mkPaletteOption "ANSI yellow.";
+      blue = mkPaletteOption "ANSI blue.";
+      magenta = mkPaletteOption "ANSI magenta.";
+      cyan = mkPaletteOption "ANSI cyan.";
+      white = mkPaletteOption "ANSI white.";
+      bright_black = mkPaletteOption "ANSI bright black.";
+      bright_red = mkPaletteOption "ANSI bright red.";
+      bright_green = mkPaletteOption "ANSI bright green.";
+      bright_yellow = mkPaletteOption "ANSI bright yellow.";
+      bright_blue = mkPaletteOption "ANSI bright blue.";
+      bright_magenta = mkPaletteOption "ANSI bright magenta.";
+      bright_cyan = mkPaletteOption "ANSI bright cyan.";
+      bright_white = mkPaletteOption "ANSI bright white.";
     };
   };
 
-  settings = lib.filterAttrs (_: v: v != null) {
-    server = lib.filterAttrs (_: v: v != null) {
-      address = cfg.server.address;
-      allowed_user = cfg.server.allowedUser;
-      user_header = cfg.server.userHeader;
-      websocket_max_lifetime_seconds = cfg.server.websocketMaxLifetimeSeconds;
-    };
-    session = lib.filterAttrs (_: v: v != null) {
-      shell = cfg.session.shell;
-      replay_bytes = cfg.session.replayBytes;
-    };
-    font = lib.filterAttrs (_: v: v != null) {
-      family = cfg.font.family;
-      size = cfg.font.size;
-      directory = cfg.font.directory;
-    };
-    theme = lib.filterAttrs (_: v: v != null) {
-      mode = cfg.theme.mode;
-      dark = cfg.theme.dark;
-      light = cfg.theme.light;
-    };
-    clipboard = lib.filterAttrs (_: v: v != null) {
-      osc52 = cfg.clipboard.osc52;
-      max_bytes = cfg.clipboard.maxBytes;
-    };
-    notifications = lib.filterAttrs (_: v: v != null) {
-      enabled = cfg.notifications.enabled;
-      when_focused = cfg.notifications.whenFocused;
-    };
+  # Only include options that were explicitly set so unset options fall back
+  # to fizzterm's built-in defaults instead of being written to config.toml.
+  onlyIfDefined =
+    option: key: value:
+    if option.isDefined && value != null && value != { } && value != [ ] then
+      builtins.listToAttrs [ (lib.nameValuePair key value) ]
+    else
+      { };
+
+  settings = lib.filterAttrs (_: v: v != { }) {
+    server =
+      onlyIfDefined opt.server.address "address" cfg.server.address
+      // onlyIfDefined opt.server.allowedUser "allowed_user" cfg.server.allowedUser
+      // onlyIfDefined opt.server.userHeader "user_header" cfg.server.userHeader
+      //
+        onlyIfDefined opt.server.websocketMaxLifetimeSeconds "websocket_max_lifetime_seconds"
+          cfg.server.websocketMaxLifetimeSeconds;
+    session =
+      onlyIfDefined opt.session.shell "shell" cfg.session.shell
+      // onlyIfDefined opt.session.replayBytes "replay_bytes" cfg.session.replayBytes;
+    font =
+      onlyIfDefined opt.font.family "family" cfg.font.family
+      // onlyIfDefined opt.font.size "size" cfg.font.size
+      // onlyIfDefined opt.font.directory "directory" cfg.font.directory;
+    theme =
+      onlyIfDefined opt.theme.mode "mode" cfg.theme.mode
+      // onlyIfDefined opt.theme.dark "dark" (lib.filterAttrs (_: v: v != null) cfg.theme.dark)
+      // onlyIfDefined opt.theme.light "light" (lib.filterAttrs (_: v: v != null) cfg.theme.light);
+    clipboard =
+      onlyIfDefined opt.clipboard.osc52 "osc52" cfg.clipboard.osc52
+      // onlyIfDefined opt.clipboard.maxBytes "max_bytes" cfg.clipboard.maxBytes;
+    notifications =
+      onlyIfDefined opt.notifications.enabled "enabled" cfg.notifications.enabled
+      // onlyIfDefined opt.notifications.whenFocused "when_focused" cfg.notifications.whenFocused;
   };
 in
 {
@@ -139,8 +94,8 @@ in
 
     server = {
       address = mkOption {
-        type = types.str;
-        default = "127.0.0.1:3417";
+        type = types.nullOr types.str;
+        default = null;
         description = "Address the fizzterm server binds to.";
       };
 
@@ -151,8 +106,8 @@ in
       };
 
       userHeader = mkOption {
-        type = types.str;
-        default = "x-forwarded-email";
+        type = types.nullOr types.str;
+        default = null;
         description = "HTTP header carrying the authenticated user identity.";
       };
 
@@ -171,22 +126,22 @@ in
       };
 
       replayBytes = mkOption {
-        type = types.ints.positive;
-        default = 1048576;
+        type = types.nullOr types.ints.positive;
+        default = null;
         description = "Maximum bytes of session output kept for replay after reconnect.";
       };
     };
 
     font = {
       family = mkOption {
-        type = types.str;
-        default = "monospace";
+        type = types.nullOr types.str;
+        default = null;
         description = "Terminal font family.";
       };
 
       size = mkOption {
-        type = types.ints.positive;
-        default = 14;
+        type = types.nullOr types.ints.positive;
+        default = null;
         description = "Terminal font size.";
       };
 
@@ -199,12 +154,14 @@ in
 
     theme = {
       mode = mkOption {
-        type = types.enum [
-          "auto"
-          "dark"
-          "light"
-        ];
-        default = "auto";
+        type = types.nullOr (
+          types.enum [
+            "auto"
+            "dark"
+            "light"
+          ]
+        );
+        default = null;
         description = "Default theme palette mode.";
       };
 
@@ -223,31 +180,33 @@ in
 
     clipboard = {
       osc52 = mkOption {
-        type = types.enum [
-          "disabled"
-          "allow"
-        ];
-        default = "allow";
+        type = types.nullOr (
+          types.enum [
+            "disabled"
+            "allow"
+          ]
+        );
+        default = null;
         description = "OSC 52 clipboard mode.";
       };
 
       maxBytes = mkOption {
-        type = types.ints.positive;
-        default = 65536;
+        type = types.nullOr types.ints.positive;
+        default = null;
         description = "Maximum bytes accepted for OSC 52 clipboard writes.";
       };
     };
 
     notifications = {
       enabled = mkOption {
-        type = types.bool;
-        default = true;
+        type = types.nullOr types.bool;
+        default = null;
         description = "Enable terminal notifications.";
       };
 
       whenFocused = mkOption {
-        type = types.bool;
-        default = false;
+        type = types.nullOr types.bool;
+        default = null;
         description = "Show notifications when the tab is focused.";
       };
     };
