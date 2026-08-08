@@ -25,7 +25,7 @@ rustPlatform.buildRustPackage rec {
   npmDeps = fetchNpmDeps {
     inherit src;
     name = "fizzterm-ui-npm-deps";
-    hash = "sha256-+VhbcNz4yEUL8Oypla5Enn9ipC7mWUKmaLYc050+k/Y=";
+    hash = "sha256-8+P2EDn7MaFLc5EASeI9tc2PoP+vADIYTHWzjEPgcoA=";
     postPatch = "cp fizzterm-ui/package-lock.json ./package-lock.json";
   };
 

@@ -39,16 +39,33 @@ src_hash=$(nix hash convert --hash-algo sha256 --to sri \
     "https://git.sr.ht/~sirn/${pname}/archive/v${version}.tar.gz" \
     2>/dev/null | tail -1)")
 
-# Update version and src hash in package.nix
+# Update version and the src hash. The version sed only touches the top-level
+# "version =" line; the src hash sed is scoped to the src = fetchgit block so
+# it never clobbers npmDeps.hash or cargoHash.
 sed_inplace \
   -e "s|version = \"$current_version\"|version = \"$version\"|" \
-  -e "s|hash = \"sha256-[^\"]*\"|hash = \"$src_hash\"|" \
+  -e "/src = fetchgit {/,/};/ s|hash = \"sha256-[^\"]*\"|hash = \"$src_hash\"|" \
   "$package_file"
 
-# Set fake cargoHash so the staging derivation fails and reports the correct
-# fixed-output hash. The vendor staging only downloads crates; it does not
-# compile any Rust code.
+# Set a fake npmDeps hash so the staging derivation fails and reports the
+# correct fixed-output hash. The npm deps staging only downloads packages; it
+# does not compile any code. The sed is scoped to the npmDeps block so the
+# real src hash is left intact for the later cargoDeps build.
+sed_inplace "/npmDeps = fetchNpmDeps {/,/};/ s|hash = \"sha256-[^\"]*\"|hash = \"sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=\"|" "$package_file"
 sed_inplace 's|cargoHash = "sha256-[^"]*"|cargoHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="|' "$package_file"
+
+build_log=$(nix build --no-link "path:${repo_root}#${pname}.npmDeps" 2>&1 || true)
+npm_deps_hash=$(echo "$build_log" | grep 'got:' | head -1 | sed 's/.*got: *//')
+
+if [ -z "$npm_deps_hash" ]; then
+  echo "ERROR: Failed to determine npmDeps hash"
+  echo "$build_log" | tail -20
+  exit 1
+fi
+
+# Restore npmDeps.hash (the hash line in the npmDeps = fetchNpmDeps block),
+# then fake cargoHash again so the cargoDeps build reports its real hash.
+sed_inplace "/npmDeps = fetchNpmDeps {/,/};/ s|hash = \"sha256-[^\"]*\"|hash = \"$npm_deps_hash\"|" "$package_file"
 
 build_log=$(nix build --no-link "path:${repo_root}#${pname}.cargoDeps" 2>&1 || true)
 cargo_hash=$(echo "$build_log" | grep 'got:' | head -1 | sed 's/.*got: *//')
