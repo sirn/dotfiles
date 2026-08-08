@@ -65,6 +65,7 @@ let
           cfg.server.websocketMaxLifetimeSeconds;
     session =
       onlyIfDefined opt.session.shell "shell" cfg.session.shell
+      // onlyIfDefined opt.session.env "env" cfg.session.env
       // onlyIfDefined opt.session.replayBytes "replay_bytes" cfg.session.replayBytes;
     font =
       onlyIfDefined opt.font.family "family" cfg.font.family
@@ -120,9 +121,15 @@ in
 
     session = {
       shell = mkOption {
-        type = types.nullOr types.str;
+        type = types.nullOr (types.listOf types.str);
         default = null;
-        description = "Shell to launch in each session. Null uses the system default.";
+        description = "Command line used to launch the shell in each session. Null uses the system default.";
+      };
+
+      env = mkOption {
+        type = types.attrsOf types.str;
+        default = { };
+        description = "Environment variables set for each session.";
       };
 
       replayBytes = mkOption {
