@@ -53,6 +53,8 @@ buildNpmPackage rec {
     rm "$entry"
     # Shiki ships metadata and the highlighter behind subpath/dynamic imports;
     # repoint each to the single bundled module so previews resolve statically.
+    # core-tool-render.js may not import shiki/themes in every release (0.40.3
+    # dropped it), so tolerate its absence there while failing elsewhere.
     substituteInPlace \
       "$fab/dist/ui/highlight.js" \
       --replace-fail 'from "shiki/langs"' 'from "shiki/dist/shiki-inline.mjs"' \
@@ -61,7 +63,7 @@ buildNpmPackage rec {
     substituteInPlace \
       "$fab/dist/ui/core-tool-render.js" \
       --replace-fail 'from "shiki/langs"' 'from "shiki/dist/shiki-inline.mjs"' \
-      --replace-fail 'from "shiki/themes"' 'from "shiki/dist/shiki-inline.mjs"'
+      --replace-quiet 'from "shiki/themes"' 'from "shiki/dist/shiki-inline.mjs"'
   '';
 
   passthru.updateScript = ./update.sh;
