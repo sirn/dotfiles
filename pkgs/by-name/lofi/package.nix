@@ -11,7 +11,7 @@ rustPlatform.buildRustPackage rec {
   src = fetchgit {
     url = "https://git.sr.ht/~sirn/lofi";
     rev = "refs/tags/v${version}";
-    hash = "sha256-JVguhsbmX5w7o9Suet9tixzUa4u0OKQ7Lzic+CV4oLc=";
+    hash = "sha256-gTknGx6XZlYGQRzptp09vM62OH4GrnQfDn4SNfb367o=";
   };
 
   cargoHash = "sha256-J1EQXcNw2D/8QIzOmlhhi2DJVUQUyIxIDFOa6QxpOHg=";
