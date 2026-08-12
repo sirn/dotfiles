@@ -1,6 +1,7 @@
 {
   themes,
-  themeName,
+  schemes,
+  familyName,
   config,
   lib,
   stripHash,
@@ -8,6 +9,18 @@
 }:
 
 let
+  family = schemes.${familyName};
+  lightThemeName = family.light.name;
+  darkThemeName = family.dark.name;
+
+  ghosttyThemeName =
+    if config.home.colors.variants.terminal == "dark" then
+      darkThemeName
+    else if config.home.colors.variants.terminal == "light" then
+      lightThemeName
+    else
+      "light:${lightThemeName},dark:${darkThemeName}";
+
   ghosttyTheme = t: {
     background = stripHash t.base16Colors.background;
     cursor-color = stripHash t.base16Colors.foreground;
@@ -19,7 +32,7 @@ let
 in
 lib.mkIf config.programs.ghostty.enable {
   programs.ghostty = {
-    settings.theme = themeName;
+    settings.theme = ghosttyThemeName;
     themes = lib.mapAttrs (name: ghosttyTheme) themes;
   };
 }

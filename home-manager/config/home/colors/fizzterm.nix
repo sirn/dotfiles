@@ -32,6 +32,7 @@ let
 in
 lib.mkIf config.services.fizzterm.enable {
   services.fizzterm.theme = {
+    mode = config.home.colors.variants.terminal;
     dark = toPalette family.dark;
     light = toPalette family.light;
   };

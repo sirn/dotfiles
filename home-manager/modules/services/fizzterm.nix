@@ -25,8 +25,6 @@ let
     options = {
       foreground = mkPaletteOption "Terminal foreground color.";
       background = mkPaletteOption "Terminal background color.";
-      cursor = mkPaletteOption "Cursor color.";
-      selection_background = mkPaletteOption "Selection background color.";
       black = mkPaletteOption "ANSI black.";
       red = mkPaletteOption "ANSI red.";
       green = mkPaletteOption "ANSI green.";
