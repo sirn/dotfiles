@@ -10,8 +10,6 @@ let
   toPalette = variant: {
     foreground = variant.base16Colors.foreground;
     background = variant.base16Colors.background;
-    cursor = variant.base16Colors.foreground;
-    selection_background = variant.base16Colors.selection;
     black = variant.base16Colors.normal.black;
     red = variant.base16Colors.normal.red;
     green = variant.base16Colors.normal.green;
