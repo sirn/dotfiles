@@ -138,8 +138,7 @@
       ];
 
       home.colors.themeName = "nord";
-      home.colors.variant = "light";
-      home.colors.variants.terminal = "dark";
+      home.colors.variant = "auto";
 
       services.kanshi = lib.mkIf config.services.kanshi.enable {
         settings = [
