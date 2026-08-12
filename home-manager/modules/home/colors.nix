@@ -13,29 +13,48 @@ in
 
     variant = mkOption {
       type = types.enum [
+        "auto"
         "dark"
         "light"
       ];
-      default = "dark";
-      description = "Default variant — determines light or dark theme.";
+      default = "auto";
+      description = "Default scheme for apps that follow the system: auto, light, or dark.";
     };
 
     variants = {
       desktop = mkOption {
         type = types.enum [
+          "auto"
           "dark"
           "light"
         ];
         default = config.home.colors.variant;
-        description = "Override variant for desktop UI apps (niri, waybar, mako, etc.).";
+        description = "Default desktop scheme for apps that follow the system: auto, light, or dark.";
       };
       terminal = mkOption {
+        type = types.enum [
+          "auto"
+          "dark"
+          "light"
+        ];
+        default = config.home.colors.variant;
+        description = "Default terminal scheme for apps that follow the system: auto, light, or dark.";
+      };
+      desktopFallback = mkOption {
         type = types.enum [
           "dark"
           "light"
         ];
-        default = config.home.colors.variant;
-        description = "Override variant for terminal apps (ghostty, wezterm, etc.).";
+        default = "light";
+        description = "Static desktop variant for apps that do not support auto.";
+      };
+      terminalFallback = mkOption {
+        type = types.enum [
+          "dark"
+          "light"
+        ];
+        default = "dark";
+        description = "Static terminal variant for apps that do not support auto.";
       };
     };
 

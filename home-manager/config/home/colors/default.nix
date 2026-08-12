@@ -82,8 +82,8 @@ let
 
   # Resolve active themes per context
   familyName = config.home.colors.themeName;
-  desktopVariant = config.home.colors.variants.desktop;
-  terminalVariant = config.home.colors.variants.terminal;
+  desktopVariant = config.home.colors.variants.desktopFallback;
+  terminalVariant = config.home.colors.variants.terminalFallback;
 
   desktopTheme = schemes.${familyName}.${desktopVariant};
   terminalTheme = schemes.${familyName}.${terminalVariant};

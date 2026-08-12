@@ -16,7 +16,7 @@ let
 
   swaycfg = config.wayland.windowManager.sway;
 
-  isDark = config.home.colors.variants.desktop == "dark";
+  isDark = config.home.colors.variants.desktopFallback == "dark";
 
   # Breeze GTK theme name and icon theme name follow the desktop variant.
   gtkThemeName = if isDark then "Breeze-Dark" else "Breeze";
