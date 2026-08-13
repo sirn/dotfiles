@@ -58,7 +58,7 @@
     ++ lib.optionals (profile != "") [
       (
         let
-          p = import ../../profiles/${profile}.nix;
+          p = import ../profiles/${profile}.nix;
         in
         p.nixos
       )
@@ -92,10 +92,10 @@
             nix-index-database.homeModules.nix-index
             noctalia.homeModules.default
             sops-nix.homeManagerModules.sops
-            ../../home-manager/modules
+            ../home-manager/modules
             (
               let
-                p = import ../../profiles/${hmProfile}.nix;
+                p = import ../profiles/${hmProfile}.nix;
               in
               p.home
             )

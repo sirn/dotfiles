@@ -131,8 +131,6 @@
 
       stateVersion = "26.05";
 
-      optionalPath = p: if builtins.pathExists p then p else { };
-
       localCfg =
         let
           cfg = if builtins.pathExists ./local/default.nix then import ./local/default.nix else { };
@@ -142,227 +140,18 @@
           home = cfg.home or { };
         };
 
-      mkMicroVM = import ./nixos/lib/mk-microvm.nix {
-        inherit (inputs)
-          microvm
-          home-manager
-          sops-nix
-          niri
-          nix-index-database
-          noctalia
+      overlays = import ./pkgs/overlays.nix { inherit inputs nixpkgsConfig; };
+
+      builders = import ./lib {
+        inherit
+          inputs
+          nixpkgs
+          overlays
+          nixpkgsConfig
+          stateVersion
+          localCfg
           ;
-        inherit overlays stateVersion;
       };
-
-      compatOverlays = [
-        # Bun-compiled tailwindcss standalone is only linker-signed, which
-        # amfid kills on recent macOS; trunk's tailwind hook then can't read
-        # its version offline.
-        #
-        # TODO: revisit after macOS 27 is released.
-        (
-          final: prev:
-          prev.lib.optionalAttrs prev.stdenv.hostPlatform.isDarwin {
-            tailwindcss_4 = prev.tailwindcss_4.overrideAttrs (
-              final': prev': {
-                postFixup = (prev'.postFixup or "") + ''
-                  /usr/bin/codesign -f -s - $out/bin/.tailwindcss-wrapped
-                '';
-              }
-            );
-          }
-        )
-      ];
-
-      overlays = compatOverlays ++ [
-        inputs.nixgl.overlay
-
-        (final: prev: {
-          unstable = import inputs.nixpkgs-unstable {
-            system = final.stdenv.hostPlatform.system;
-            config = nixpkgsConfig;
-            overlays = compatOverlays;
-          };
-
-          nur = import inputs.nur {
-            nurpkgs = final;
-            pkgs = final;
-          };
-
-          llm-agents =
-            let
-              raw = inputs.llm-agents.packages.${final.stdenv.hostPlatform.system};
-            in
-            raw
-            // {
-              # pi ships a Bun-compiled libexec/pi/pi native binary that is only
-              # linker-signed; nix's fixup invalidates the signature and amfid
-              # kills it (silent SIGKILL on aarch64-darwin). Re-sign ad-hoc.
-              pi =
-                if final.stdenv.hostPlatform.isDarwin then
-                  raw.pi.overrideAttrs (
-                    _: prev: {
-                      postFixup = (prev.postFixup or "") + ''
-                        /usr/bin/codesign -f -s - $out/libexec/pi/pi
-                      '';
-                    }
-                  )
-                else
-                  raw.pi;
-            };
-
-          local = (import ./pkgs final prev inputs).${final.stdenv.hostPlatform.system};
-        })
-      ];
-
-      # Returns a list of Home Manager modules
-      mkHomeManagerModules =
-        hostname:
-        let
-          profile = import ./profiles/${hostname}.nix;
-        in
-        [
-          # Home Manager modules
-          inputs.niri.homeModules.niri
-          inputs.nix-index-database.homeModules.nix-index
-          inputs.noctalia.homeModules.default
-          inputs.sops-nix.homeManagerModules.sops
-
-          # Configurations
-          ./home-manager/modules
-          localCfg.home
-          profile.home
-        ];
-
-      # Returns the base Home Manager configuration module
-      mkHomeManagerBaseModule = { username, homeDirectory }: {
-        nixpkgs.overlays = overlays;
-        nixpkgs.config = nixpkgsConfig;
-        programs.home-manager.enable = true;
-        home.username = username;
-        home.homeDirectory = homeDirectory;
-        home.stateVersion = stateVersion;
-        news.display = "silent";
-      };
-
-      # Builds a standalone Home Manager configuration
-      mkHomeManager =
-        {
-          hostname,
-          username,
-          system,
-          homeDirectory,
-        }:
-        inputs.home-manager.lib.homeManagerConfiguration {
-          # home-manager will be responsible for evaluating the nixpkgs.overlays.
-          # We're passing legacyPackages here to avoid nixpkgs from being
-          # evaluated twice.
-          #
-          # Ref:
-          # home-manager/modules/modules.nix (`pkgPath = ...;')
-          # home-manager/modules/misc/nixpkgs.nix (`import pkgPath ...;')
-          pkgs = nixpkgs.legacyPackages.${system};
-          modules = [
-            (mkHomeManagerBaseModule { inherit username homeDirectory; })
-          ]
-          ++ (mkHomeManagerModules hostname);
-        };
-
-      mkNixOS =
-        {
-          hostname,
-          username ? "sirn",
-          system ? "x86_64-linux",
-          homeDirectory ? "/home/${username}",
-        }:
-        let
-          profile = import ./profiles/${hostname}.nix;
-        in
-        nixpkgs.lib.nixosSystem {
-          inherit system;
-
-          specialArgs = {
-            inherit (inputs) nixos-hardware microvm nixvirt;
-            inherit mkMicroVM;
-          };
-
-          modules = [
-            {
-              nixpkgs.overlays = overlays;
-              nixpkgs.config = nixpkgsConfig;
-              system.stateVersion = stateVersion;
-            }
-
-            # NixOS modules
-            inputs.microvm.nixosModules.host
-            inputs.nixvirt.nixosModules.default
-            inputs.sops-nix.nixosModules.sops
-
-            # NixOS Generate Config (per-machine, gitignored)
-            (optionalPath ./configuration.nix)
-            (optionalPath ./hardware-configuration.nix)
-
-            # Configurations
-            ./nixos/modules
-            localCfg.nixos
-            profile.nixos
-
-            # Home Manager
-            inputs.home-manager.nixosModules.home-manager
-            (
-              { lib, pkgs, ... }:
-              let
-                hm-backup = pkgs.writeScriptBin "hm-backup" ''
-                  #!${pkgs.runtimeShell}
-                  mv "$1" "$1.backup.$(date +%s)"
-                '';
-              in
-              {
-                home-manager.useGlobalPkgs = false;
-                home-manager.useUserPackages = true;
-                home-manager.backupCommand = lib.getExe hm-backup;
-                home-manager.users.${username}.imports = [
-                  (mkHomeManagerBaseModule { inherit username homeDirectory; })
-                ]
-                ++ (mkHomeManagerModules hostname);
-              }
-            )
-          ];
-        };
-
-      mkHomeManagerLinux =
-        {
-          hostname,
-          username ? "sirn",
-          system ? "x86_64-linux",
-          homeDirectory ? "/home/${username}",
-          ...
-        }:
-        mkHomeManager {
-          inherit
-            hostname
-            username
-            system
-            homeDirectory
-            ;
-        };
-
-      mkHomeManagerDarwin =
-        {
-          hostname,
-          username ? "sirn",
-          system ? "aarch64-darwin",
-          homeDirectory ? "/Users/${username}",
-          ...
-        }:
-        mkHomeManager {
-          inherit
-            hostname
-            username
-            system
-            homeDirectory
-            ;
-        };
 
       # Helper for eachSystem pattern
       eachSystem = f: nixpkgs.lib.genAttrs (import inputs.systems-default) (system: f system);
@@ -370,21 +159,21 @@
     {
       # Home Manager module to be included by a standalone Home Manager
       homeConfigurations = {
-        phoebe = mkHomeManagerLinux { hostname = "phoebe"; };
-        polaris = mkHomeManagerLinux { hostname = "polaris"; };
-        system76 = mkHomeManagerLinux { hostname = "system76"; };
-        terra = mkHomeManagerLinux { hostname = "terra"; };
-        theia = mkHomeManagerDarwin { hostname = "theia"; };
-        ws = mkHomeManagerLinux { hostname = "ws"; };
+        phoebe = builders.mkHomeManagerLinux { hostname = "phoebe"; };
+        polaris = builders.mkHomeManagerLinux { hostname = "polaris"; };
+        system76 = builders.mkHomeManagerLinux { hostname = "system76"; };
+        terra = builders.mkHomeManagerLinux { hostname = "terra"; };
+        theia = builders.mkHomeManagerDarwin { hostname = "theia"; };
+        ws = builders.mkHomeManagerLinux { hostname = "ws"; };
       };
 
       # NixOS configuration for NixOS
       nixosConfigurations = {
-        phoebe = mkNixOS { hostname = "phoebe"; };
-        polaris = mkNixOS { hostname = "polaris"; };
-        system76 = mkNixOS { hostname = "system76"; };
-        terra = mkNixOS { hostname = "terra"; };
-        ws = mkNixOS { hostname = "ws"; };
+        phoebe = builders.mkNixOS { hostname = "phoebe"; };
+        polaris = builders.mkNixOS { hostname = "polaris"; };
+        system76 = builders.mkNixOS { hostname = "system76"; };
+        terra = builders.mkNixOS { hostname = "terra"; };
+        ws = builders.mkNixOS { hostname = "ws"; };
       };
 
       # Apps output for nix run path:.#treefmt
@@ -392,32 +181,7 @@
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
-          treefmtEval = inputs.treefmt-nix.lib.evalModule pkgs {
-            projectRootFile = "flake.nix";
-
-            # Enable formatters
-            programs.nixfmt = {
-              enable = true;
-              package = pkgs.nixfmt;
-              strict = true;
-            };
-
-            programs.prettier = {
-              enable = true;
-              settings.proseWrap = "never";
-            };
-
-            programs.shfmt.enable = true;
-
-            # Global settings
-            settings = {
-              excludes = [
-                "*.sops.*"
-                "flake.lock"
-                "secrets/**"
-              ];
-            };
-          };
+          treefmtEval = inputs.treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
         in
         {
           treefmt = {
