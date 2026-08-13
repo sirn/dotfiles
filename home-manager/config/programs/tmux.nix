@@ -114,6 +114,10 @@ in
         SESSION=$1
         WORKDIR=$2
 
+        # tmux mangles '.' and ':' in new-session names (to '_') but not in
+        # switch-client lookups, so normalize to the same safe name up front.
+        SESSION=$(printf '%s' "$SESSION" | sed 's/[^A-Za-z0-9_-]/-/g')
+
         if [ -z "$SESSION" ]; then
           SESSION=main
         fi
