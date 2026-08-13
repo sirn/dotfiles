@@ -159,7 +159,6 @@
     {
       # Home Manager module to be included by a standalone Home Manager
       homeConfigurations = {
-        phoebe = builders.mkHomeManagerLinux { hostname = "phoebe"; };
         polaris = builders.mkHomeManagerLinux { hostname = "polaris"; };
         system76 = builders.mkHomeManagerLinux { hostname = "system76"; };
         terra = builders.mkHomeManagerLinux { hostname = "terra"; };
@@ -169,7 +168,6 @@
 
       # NixOS configuration for NixOS
       nixosConfigurations = {
-        phoebe = builders.mkNixOS { hostname = "phoebe"; };
         polaris = builders.mkNixOS { hostname = "polaris"; };
         system76 = builders.mkNixOS { hostname = "system76"; };
         terra = builders.mkNixOS { hostname = "terra"; };

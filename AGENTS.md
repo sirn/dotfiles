@@ -12,7 +12,7 @@ This is a Nix/Home Manager dotfiles repository. Read `README.md` before doing an
 
 ## Profiles
 
-- NixOS: `phoebe`, `polaris`, `system76`, `terra`, `ws`.
+- NixOS: `polaris`, `system76`, `terra`, `ws`.
 - macOS/Home Manager only: `theia` (`aarch64-darwin`).
 
 ## Development

@@ -20,7 +20,6 @@ Dotfiles repository for managing configurations across Linux and macOS machines.
 
 The following hostnames are defined as machine profiles in `flake.nix`:
 
-- `phoebe` (Linux)
 - `polaris` (Linux)
 - `system76` (Linux)
 - `terra` (Linux)
