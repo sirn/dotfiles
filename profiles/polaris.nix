@@ -1,42 +1,22 @@
 {
   nixos = { nixos-hardware, pkgs, ... }: {
     imports = [
-      ../nixos/config/common.nix
+      ../nixos/config/roles/laptop.nix
       ../nixos/config/common-zfs.nix
-      ../nixos/config/system/network/networkmanager.nix
 
-      # machine
+      # Machine
       nixos-hardware.nixosModules.lenovo-thinkpad-x1-13th-gen
 
-      # profiles
-      ../nixos/config/system/bluetooth.nix
-      ../nixos/config/system/desktop.nix
-      ../nixos/config/system/game.nix
-      ../nixos/config/system/intel-gpu.nix
-      ../nixos/config/system/niri.nix
-      ../nixos/config/system/pcie-aspm.nix
-      ../nixos/config/system/plymouth.nix
-      ../nixos/config/system/power-management.nix
-      ../nixos/config/system/sway.nix
-      ../nixos/config/system/wireless.nix
-
-      # programs
+      # Programs
       ../nixos/config/programs/1password.nix
-      ../nixos/config/programs/appimage.nix
       ../nixos/config/programs/ddcutil.nix
 
-      # services
-      ../nixos/config/services/flatpak.nix
+      # Services
       ../nixos/config/services/fwupd.nix
-      ../nixos/config/services/geoclue2.nix
-      ../nixos/config/services/greetd.nix
-      ../nixos/config/services/node-exporter.nix
-      ../nixos/config/services/podman.nix
       ../nixos/config/services/prometheus-agent.nix
       ../nixos/config/services/sanoid.nix
       ../nixos/config/services/thermald.nix
       ../nixos/config/services/tlp.nix
-      ../nixos/config/services/upower.nix
     ];
 
     networking.hostName = "polaris";
@@ -64,8 +44,6 @@
       # Prevent the internal I2C touchpad from waking the laptop repeatedly while suspended.
       SUBSYSTEM=="i2c", ACTION=="add|change", KERNEL=="i2c-SNSL0028:00", ATTR{power/wakeup}="disabled"
     '';
-
-    hardware.uinput.enable = true;
 
     # Rebind the I2C HID touchpad driver on resume to work around a Sensel
     # SNSL0028:00 trackpad bug where scrolling stops working after s2idle
@@ -147,37 +125,17 @@
       defaultExec = lib.optional config.services.awww.enable "${lib.getExe config.services.awww.package} restore";
     in
     {
-      flatpak.enable = true;
-
       imports = [
-        # common
-        ../home-manager/config/common.nix
-        ../home-manager/config/common-linux.nix
+        ../home-manager/config/roles/laptop.nix
 
-        # profiles
-        ../home-manager/config/home/breeze.nix
-        ../home-manager/config/home/flatpak.nix
-        ../home-manager/config/home/fonts.nix
-        ../home-manager/config/home/i18n.nix
-        ../home-manager/config/home/laptop.nix
-        ../home-manager/config/home/niri/shell.nix
-        ../home-manager/config/home/sway/shell.nix
-        ../home-manager/config/home/uwsm.nix
-
-        # programs
+        # Programs
         ../home-manager/config/programs/1password.nix
         ../home-manager/config/programs/brightnessctl.nix
         ../home-manager/config/programs/ffmpeg.nix
-        ../home-manager/config/programs/ghostty.nix
-        ../home-manager/config/programs/helium.nix
-        ../home-manager/config/programs/imagemagick.nix
         ../home-manager/config/programs/intellij.nix
         ../home-manager/config/programs/mpv.nix
-        ../home-manager/config/programs/sublime-text.nix
         ../home-manager/config/programs/virt-manager.nix
         ../home-manager/config/programs/yt-dlp.nix
-        ../home-manager/config/services/coord.nix
-        ../home-manager/config/services/handsfree.nix
       ];
 
       services.kanshi = lib.mkIf config.services.kanshi.enable {

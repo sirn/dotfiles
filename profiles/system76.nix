@@ -12,35 +12,13 @@
     in
     {
       imports = [
-        ../nixos/config/common.nix
-        ../nixos/config/system/network/networkmanager.nix
+        ../nixos/config/roles/laptop.nix
 
-        # profiles
-        ../nixos/config/system/bluetooth.nix
-        ../nixos/config/system/desktop.nix
-        ../nixos/config/system/game.nix
-        ../nixos/config/system/intel-gpu.nix
-        ../nixos/config/system/niri.nix
-        ../nixos/config/system/pcie-aspm.nix
-        ../nixos/config/system/plymouth.nix
-        ../nixos/config/system/power-management.nix
-        ../nixos/config/system/sway.nix
-        ../nixos/config/system/wireless.nix
-
-        # programs
-        ../nixos/config/programs/appimage.nix
-
-        # services
+        # Services
         ../nixos/config/services/dnscrypt-proxy.nix
-        ../nixos/config/services/flatpak.nix
-        ../nixos/config/services/geoclue2.nix
-        ../nixos/config/services/greetd.nix
-        ../nixos/config/services/node-exporter.nix
-        ../nixos/config/services/podman.nix
         ../nixos/config/services/udisks2.nix
-        ../nixos/config/services/upower.nix
 
-        # hardware
+        # Hardware
         "${nixos-hardware}/common/cpu/intel"
         "${nixos-hardware}/common/cpu/intel/meteor-lake"
         "${nixos-hardware}/common/gpu/intel/meteor-lake"
@@ -81,8 +59,6 @@
         SUBSYSTEM=="power_supply", KERNEL=="ADP*", ACTION=="change", ENV{POWER_SUPPLY_ONLINE}=="0", RUN+="${systemdRun} --collect ${system76Power} profile battery"
       '';
 
-      hardware.uinput.enable = true;
-
       boot.kernelParams = [
         "i915.enable_guc=3"
         "i915.enable_fbc=1"
@@ -106,35 +82,12 @@
       defaultExec = lib.optional config.services.awww.enable "${lib.getExe config.services.awww.package} restore";
     in
     {
-      flatpak.enable = true;
-
       imports = [
-        # common
-        ../home-manager/config/common.nix
-        ../home-manager/config/common-linux.nix
+        ../home-manager/config/roles/laptop.nix
 
-        # profiles
-        ../home-manager/config/home/breeze.nix
-        ../home-manager/config/home/flatpak.nix
-        ../home-manager/config/home/fonts.nix
-        ../home-manager/config/home/i18n.nix
-        ../home-manager/config/home/laptop.nix
-        ../home-manager/config/home/niri/shell.nix
-        ../home-manager/config/home/sway/shell.nix
-        ../home-manager/config/home/uwsm.nix
-
-        # programs
+        # Programs
         ../home-manager/config/programs/bitwarden.nix
-        ../home-manager/config/programs/ghostty.nix
-        ../home-manager/config/programs/helium.nix
-        ../home-manager/config/programs/imagemagick.nix
         ../home-manager/config/programs/mcp.nix
-        ../home-manager/config/programs/obsidian.nix
-        ../home-manager/config/programs/sublime-text.nix
-
-        # services
-        ../home-manager/config/services/coord.nix
-        ../home-manager/config/services/handsfree.nix
       ];
 
       home.colors.themeName = "nord";
