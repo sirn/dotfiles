@@ -136,8 +136,9 @@ in
       # Theme
       theme = {
         templates = {
-          enable_builtin_templates = false;
+          enable_builtin_templates = true;
           enable_community_templates = false;
+          builtin_ids = [ ];
         };
       };
 

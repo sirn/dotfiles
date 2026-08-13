@@ -7,7 +7,7 @@
     ../common-linux.nix
 
     # Home
-    ../home/breeze.nix
+    ../home/breeze/shell.nix
     ../home/flatpak.nix
     ../home/fonts.nix
     ../home/i18n.nix
