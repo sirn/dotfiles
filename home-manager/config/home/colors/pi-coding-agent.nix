@@ -1,6 +1,8 @@
 {
   themes,
   themeName,
+  schemes,
+  familyName,
   config,
   lib,
   ...
@@ -119,109 +121,19 @@ let
         infoBg = s.surface.bg;
       };
     };
-
-  # ANSI theme: drive the UI from the terminal's own palette so pi follows
-  # the terminal when it switches appearance (auto). Empty strings mean
-  # terminal default; numeric values are ANSI palette indices.
-  ansiTheme = {
-    "$schema" =
-      "https://raw.githubusercontent.com/earendil-works/pi/main/packages/coding-agent/src/modes/interactive/theme/theme-schema.json";
-    name = "ansi";
-    vars = {
-      black = 0;
-      red = 1;
-      green = 2;
-      yellow = 3;
-      blue = 4;
-      magenta = 5;
-      cyan = 6;
-      white = 7;
-      brightBlack = 8;
-      brightRed = 9;
-      brightGreen = 10;
-      brightYellow = 11;
-      brightBlue = 12;
-      brightMagenta = 13;
-      brightCyan = 14;
-      brightWhite = 15;
-    };
-    colors = {
-      accent = "brightBlue";
-      border = "brightBlack";
-      borderAccent = "brightBlue";
-      borderMuted = "black";
-      success = "green";
-      error = "red";
-      warning = "yellow";
-      muted = "brightBlack";
-      dim = "black";
-      text = "";
-      thinkingText = "brightBlack";
-
-      # Default terminal background so surfaces follow the terminal.
-      selectedBg = "";
-      userMessageBg = "";
-      userMessageText = "";
-      customMessageBg = "";
-      customMessageText = "";
-      customMessageLabel = "brightMagenta";
-      toolPendingBg = "";
-      toolSuccessBg = "";
-      toolErrorBg = "";
-      toolTitle = "white";
-      toolOutput = "brightBlack";
-
-      # Markdown
-      mdHeading = "brightYellow";
-      mdLink = "brightBlue";
-      mdLinkUrl = "brightBlack";
-      mdCode = "brightCyan";
-      mdCodeBlock = "";
-      mdCodeBlockBorder = "brightBlack";
-      mdQuote = "brightBlack";
-      mdQuoteBorder = "brightBlack";
-      mdHr = "brightBlack";
-      mdListBullet = "brightCyan";
-
-      # Tool diffs
-      toolDiffAdded = "green";
-      toolDiffRemoved = "red";
-      toolDiffContext = "brightBlack";
-
-      # Syntax highlighting
-      syntaxComment = "brightBlack";
-      syntaxKeyword = "magenta";
-      syntaxFunction = "brightYellow";
-      syntaxVariable = "brightCyan";
-      syntaxString = "green";
-      syntaxNumber = "red";
-      syntaxType = "brightBlue";
-      syntaxOperator = "";
-      syntaxPunctuation = "brightBlack";
-
-      # Thinking level borders (subtle -> prominent)
-      thinkingOff = "black";
-      thinkingMinimal = "brightBlack";
-      thinkingLow = "blue";
-      thinkingMedium = "cyan";
-      thinkingHigh = "magenta";
-      thinkingXhigh = "red";
-
-      # Bash mode
-      bashMode = "brightYellow";
-    };
-  };
 in
 lib.mkIf config.programs.pi-coding-agent.enable {
+  # Pi auto-switches between light and dark using its "light/dark" setting
+  # syntax when the terminal appearance changes (detected via COLORFGBG).
   programs.pi-coding-agent.settings.theme =
-    if config.home.colors.variants.terminal == "auto" then "ansi" else themeName;
+    if config.home.colors.variants.terminal == "auto" then
+      "${schemes.${familyName}.light.name}/${schemes.${familyName}.dark.name}"
+    else
+      themeName;
 
   home.file =
     lib.mapAttrs' (
       name: scheme:
       lib.nameValuePair ".pi/agent/themes/${name}.json" { text = builtins.toJSON (piTheme name scheme); }
-    ) themes
-    // {
-      ".pi/agent/themes/ansi.json".text = builtins.toJSON ansiTheme;
-    };
+    ) themes;
 }
