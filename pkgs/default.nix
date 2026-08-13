@@ -25,8 +25,6 @@ let
 
     pi-vcc = (callPackage ./by-name/pi-vcc/package.nix { });
 
-    pi-fabric = (callPackage ./by-name/pi-fabric/package.nix { });
-
     node-textfile-collector-scripts = (
       callPackage ./by-name/prometheus/node-textfile-collector-scripts.nix { }
     );
