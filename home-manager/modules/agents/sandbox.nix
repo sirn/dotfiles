@@ -113,8 +113,10 @@ let
     (allow file-write* (literal "/dev/null"))
     (allow file-write* (literal "/dev/stdout"))
     (allow file-write* (literal "/dev/stderr"))
+
     ;; PTY allocation for openpty (tu, agent-browser, interactive tools).
     ;; The slave device requires the com.apple.sandbox.pty extension.
+    (allow file-read* file-write* file-ioctl (literal "/dev/tty"))
     (allow file-read* file-write* file-ioctl (literal "/dev/ptmx"))
     (allow file-read* file-write*
            (require-all
