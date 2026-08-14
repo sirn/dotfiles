@@ -56,6 +56,7 @@ let
   settings = lib.filterAttrs (_: v: v != { }) {
     server =
       onlyIfDefined opt.server.address "address" cfg.server.address
+      // onlyIfDefined opt.server.allowRemote "allow_remote" cfg.server.allowRemote
       // onlyIfDefined opt.server.allowedUser "allowed_user" cfg.server.allowedUser
       // onlyIfDefined opt.server.userHeader "user_header" cfg.server.userHeader
       //
@@ -102,6 +103,12 @@ in
         type = types.nullOr types.str;
         default = null;
         description = "Require this exact authenticated user value from the proxy.";
+      };
+
+      allowRemote = mkOption {
+        type = types.nullOr types.bool;
+        default = null;
+        description = "Enables remote connection.";
       };
 
       userHeader = mkOption {
