@@ -141,6 +141,12 @@ def generate_palette(bg, fg, normal):
     fg_lab = rgb_to_lab(hex_to_rgb(fg))
     base8_lab = [rgb_to_lab(hex_to_rgb(c)) for c in normal]
 
+    # On light themes (fg darker than bg), swap the endpoints so index 16
+    # stays dark and 231/255 stay light. Legacy 256-color programs assume
+    # this ordering.
+    if fg_lab[0] < bg_lab[0]:
+        bg_lab, fg_lab = fg_lab, bg_lab
+
     palette = []
 
     # Generate 6x6x6 RGB cube (colors 16-231)
