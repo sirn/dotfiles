@@ -65,27 +65,7 @@ in
     };
   };
 
-  # Shell completion based on
-  # https://github.com/martinvonz/jj/blob/0690922ca15ced55e417edab806c982b0cc42b84/docs/install-and-setup.md
-  programs.bash = {
-    initExtra = ''
-      source <(${cfg.package}/bin/jj util completion bash)
-    '';
-  };
-
-  programs.zsh = {
-    initContent = ''
-      autoload -U compinit
-      compinit
-      source <(${cfg.package}/bin/jj util completion zsh)
-    '';
-  };
-
   programs.fish = {
-    interactiveShellInit = ''
-      ${cfg.package}/bin/jj util completion fish | source
-    '';
-
     functions = {
       # https://gist.github.com/hroi/d0dc0e95221af858ee129fd66251897e
       fish_jj_prompt = {
