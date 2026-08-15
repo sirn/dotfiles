@@ -454,7 +454,10 @@ Other buffers are left alone."
   (completion-cycle-threshold 3)
   (tab-always-indent 'complete)
 
-  :hook (after-init . global-corfu-mode))
+  :hook
+  ((after-init . global-corfu-mode)
+   (global-corfu-mode . corfu-popupinfo-mode)
+   (global-corfu-mode . corfu-history-mode)))
 
 
 ;; Part of corfu
@@ -531,6 +534,9 @@ Other buffers are left alone."
 ;;; Tree Sitter (builtin treesit)
 
 (use-package emacs
+  :custom
+  (treesit-font-lock-level 4)
+
   :init
   (add-to-list
    'treesit-extra-load-path

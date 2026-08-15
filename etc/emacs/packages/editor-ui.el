@@ -17,6 +17,12 @@
   :hook (after-init . which-key-mode))
 
 
+;; Smooth pixel scrolling on graphical frames
+(use-package pixel-scroll
+  :if (display-graphic-p)
+  :hook (after-init . pixel-scroll-precision-mode))
+
+
 ;; Builtin: browser-like tabs for window configurations
 (use-package tab-bar
   :custom
