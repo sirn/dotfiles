@@ -3,9 +3,9 @@ let
   inherit (prev) callPackage;
 
   commonPackages = {
-    asdcontrol = (callPackage ./by-name/asdcontrol { });
+    asdcontrol = (callPackage ./by-name/asdcontrol/package.nix { });
 
-    coincide = (callPackage ./by-name/coincide { });
+    coincide = (callPackage ./by-name/coincide/package.nix { });
 
     coord = (callPackage ./by-name/coord/package.nix { });
 
@@ -13,7 +13,7 @@ let
 
     lofi = (callPackage ./by-name/lofi/package.nix { });
 
-    emacsPackages.phscroll = (callPackage ./by-name/emacs/elisp-packages/phscroll/package.nix { });
+    emacsPackages.phscroll = (callPackage ./by-name/phscroll/package.nix { });
 
     context7-cli = (callPackage ./by-name/context7-cli/package.nix { });
 
@@ -21,19 +21,19 @@ let
 
     fizzterm = (callPackage ./by-name/fizzterm/package.nix { });
 
-    powerband = (callPackage ./by-name/powerband { });
+    powerband = (callPackage ./by-name/powerband/package.nix { });
 
     pi-vcc = (callPackage ./by-name/pi-vcc/package.nix { });
 
     node-textfile-collector-scripts = (
-      callPackage ./by-name/prometheus/node-textfile-collector-scripts.nix { }
+      callPackage ./by-name/node-textfile-collector-scripts/package.nix { }
     );
 
     repoman = (callPackage ./by-name/repoman/package.nix { });
 
-    skill-ast-grep = (callPackage ./by-name/skill-ast-grep { });
+    skill-ast-grep = (callPackage ./by-name/skill-ast-grep/package.nix { });
 
-    skill-tuicr = (callPackage ./by-name/skill-tuicr { });
+    skill-tuicr = (callPackage ./by-name/skill-tuicr/package.nix { });
 
     tincan = (callPackage ./by-name/tincan/package.nix { });
 
@@ -41,13 +41,13 @@ let
 
     lsp-cli = (callPackage ./by-name/lsp-cli/package.nix { });
 
-    wrapped-uv = (callPackage ./by-name/wrapped-uv/wrapped.nix { });
+    wrapped-uv = (callPackage ./by-name/wrapped-uv/package.nix { });
   };
 
   linuxPackages = commonPackages // {
     helium = (callPackage ./by-name/helium/package.nix { });
 
-    udev-forwarder = (callPackage ./by-name/udev-forwarder { });
+    udev-forwarder = (callPackage ./by-name/udev-forwarder/package.nix { });
   };
 in
 {

@@ -13,7 +13,7 @@ sed_inplace() {
 
 script_dir="$(dirname "${BASH_SOURCE[0]}")"
 repo_root="$(cd "$script_dir/../../.." && pwd -P)"
-package_file="$script_dir/default.nix"
+package_file="$script_dir/package.nix"
 pname="powerband"
 
 if [ -n "${NIX_SSL_CERT_FILE:-}" ] && [ -f "${NIX_SSL_CERT_FILE}" ]; then
@@ -40,7 +40,7 @@ src_hash=$(nix hash convert --hash-algo sha256 --to sri \
     "https://git.sr.ht/~sirn/${pname}/archive/v${version}.tar.gz" \
     2>/dev/null | tail -1)")
 
-# Update version and src hash in default.nix
+# Update version and src hash in package.nix
 sed_inplace \
   -e "s|version = \"$current_version\"|version = \"$version\"|" \
   -e "s|hash = \"sha256-[^\"]*\"|hash = \"$src_hash\"|" \

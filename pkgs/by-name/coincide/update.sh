@@ -13,7 +13,7 @@ sed_inplace() {
 
 script_dir="$(dirname "${BASH_SOURCE[0]}")"
 repo_root="$(cd "$script_dir/../../.." && pwd -P)"
-package_file="$script_dir/default.nix"
+package_file="$script_dir/package.nix"
 pname="coincide"
 
 if [ -n "${NIX_SSL_CERT_FILE:-}" ] && [ -f "${NIX_SSL_CERT_FILE}" ]; then
@@ -40,7 +40,7 @@ src_hash=$(nix hash convert --hash-algo sha256 --to sri \
     "https://git.sr.ht/~sirn/${pname}/archive/v${version}.tar.gz" \
     2>/dev/null | tail -1)")
 
-# Update version and src hash in default.nix. The version lives in a `let`
+# Update version and src hash in package.nix. The version lives in a `let`
 # block. The src hash is scoped to the fetchFromSourcehut block so the pinned
 # wasm-bindgen-cli dependency hashes are left untouched.
 sed_inplace \

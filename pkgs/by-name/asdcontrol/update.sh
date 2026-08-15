@@ -12,7 +12,7 @@ sed_inplace() {
 }
 
 script_dir="$(dirname "${BASH_SOURCE[0]}")"
-package_file="$script_dir/default.nix"
+package_file="$script_dir/package.nix"
 owner="nikosdion"
 repo="asdcontrol"
 branch="main"
@@ -41,7 +41,7 @@ src_hash=$(nix hash convert --hash-algo sha256 --to sri \
     "https://github.com/${owner}/${repo}/archive/${rev}.tar.gz" \
     2>/dev/null | tail -1)")
 
-# Update version, rev and src hash in default.nix
+# Update version, rev and src hash in package.nix
 sed_inplace \
   -e "s|version = \"[^\"]*\"|version = \"$version\"|" \
   -e "s|rev = \"[^\"]*\"|rev = \"$rev\"|" \
