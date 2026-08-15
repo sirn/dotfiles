@@ -34,8 +34,6 @@ in
       local wezterm = require 'wezterm'
       local config = wezterm.config_builder()
 
-      local is_darwin <const> = wezterm.target_triple:find("darwin") ~= nil
-
       local font = wezterm.font_with_fallback({
         '${fontcfg.terminal.monospace}',
         'Source Han Code JP',
@@ -50,17 +48,10 @@ in
 
       local font_size = ${toString fontcfg.terminal.size}
 
-      if is_darwin then
-        config.font_size = font_size
-        config.command_palette_font_size = font_size
-        config.pane_select_font_size = font_size
-        config.char_select_font_size = font_size
-      else
-        config.font_size = font_size
-        config.command_palette_font_size = font_size
-        config.pane_select_font_size = font_size
-        config.char_select_font_size = font_size
-      end
+      config.font_size = font_size
+      config.command_palette_font_size = font_size
+      config.pane_select_font_size = font_size
+      config.char_select_font_size = font_size
 
       config.use_ime = true
       config.freetype_load_target = 'Light'
