@@ -22,10 +22,10 @@ let
       builtins.floor (config.home.fonts.editor.size * 1.33 + 0.5);
 
   # Wrap tenv to auto-install appropriate terraform version
-  tenvWrapped = pkgs.tenv.overrideDerivation (attrs: {
-    nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
+  tenvWrapped = pkgs.tenv.overrideAttrs (old: {
+    nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
 
-    postInstall = ''
+    postInstall = (old.postInstall or "") + ''
       for program in "$out"/bin/*; do
         if [ -f "$program" ]; then
           wrapProgram "$program" --set TENV_AUTO_INSTALL true
@@ -46,8 +46,8 @@ let
 
   emacsBinDeps = pkgs.stdenv.mkDerivation {
     name = "emacs-bin-deps";
-    buildInputs = with pkgs; [ makeWrapper ];
     nativeBuildInputs = with pkgs; [
+      makeWrapper
       fd
       jq
       nixfmt
@@ -80,9 +80,9 @@ let
       # terraform-ls looks up `terraform` binary via $PATH but bin deps
       # is injected via exec-path only, so we need to inject bin deps path
       # explicitly here
-      (terraform-ls.overrideDerivation (attrs: {
-        nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
-        postInstall = ''
+      (terraform-ls.overrideAttrs (old: {
+        nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ makeWrapper ];
+        postInstall = (old.postInstall or "") + ''
           wrapProgram $out/bin/terraform-ls \
             --prefix PATH : ${tenvWrapped}/bin
         '';
@@ -113,7 +113,7 @@ let
       (defvar gemacs-default-shell "${config.home.shell.interactiveShell}")
 
       ;; Font configuration (from home.fonts module)
-      ;; Emacs uses 1.25x the editor font size on Linux for better readability
+      ;; Emacs uses 1.33x the editor font size on Linux for better readability
       (defvar gemacs-font "${config.home.fonts.editor.monospace}")
       (defvar gemacs-font-size ${toString emacsFontSize})
 
@@ -274,21 +274,21 @@ in
         vterm
         which-key
 
-        (apheleia.overrideDerivation (attrs: {
-          nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
+        (apheleia.overrideAttrs (old: {
+          nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
 
-          postInstall = ''
-            wrapProgram $out/share/emacs/site-lisp/elpa/${attrs.pname}-${attrs.version}/scripts/formatters/apheleia-npx \
-              --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.prettier ]}
-            wrapProgram $out/share/emacs/site-lisp/elpa/${attrs.pname}-${attrs.version}/scripts/formatters/apheleia-phpcs \
-              --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.php83Packages.php-codesniffer ]}
+          postInstall = (old.postInstall or "") + ''
+            wrapProgram $out/share/emacs/site-lisp/elpa/${old.pname}-${old.version}/scripts/formatters/apheleia-npx \
+              --prefix PATH : ${lib.makeBinPath [ pkgs.prettier ]}
+            wrapProgram $out/share/emacs/site-lisp/elpa/${old.pname}-${old.version}/scripts/formatters/apheleia-phpcs \
+              --prefix PATH : ${lib.makeBinPath [ pkgs.php83Packages.php-codesniffer ]}
           '';
         }))
 
-        (visual-regexp-steroids.overrideDerivation (attrs: {
-          postPatch = ''
+        (visual-regexp-steroids.overrideAttrs (old: {
+          postPatch = (old.postPatch or "") + ''
             substituteInPlace visual-regexp-steroids.el \
-              --replace "python %s" "${pkgs.python311}/bin/python3 %s"
+              --replace "python %s" "${pkgs.python3}/bin/python3 %s"
           '';
         }))
 
