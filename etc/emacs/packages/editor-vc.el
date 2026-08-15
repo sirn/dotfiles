@@ -40,9 +40,13 @@
   (setq forge-add-default-bindings nil))
 
 
-;; Show git diff in the gutter
-(use-package git-gutter
+;; Highlight uncommitted changes in fringe / margin
+(use-package diff-hl
   :custom
-  (git-gutter:disabled-modes '(fundamental-mode org-mode))
+  (diff-hl-draw-borders nil)
 
-  :hook (after-init . global-git-gutter-mode))
+  :hook
+  ((after-init . global-diff-hl-mode)
+   (dired-mode . diff-hl-dired-mode)
+   (magit-pre-refresh . diff-hl-magit-pre-refresh)
+   (magit-post-refresh . diff-hl-magit-post-refresh)))

@@ -240,7 +240,7 @@ in
         flymake-collection
         forge
         ghub
-        git-gutter
+        diff-hl
         gptel
         helpful
         magit
