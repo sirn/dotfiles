@@ -65,13 +65,25 @@ let
 
     ;; SSH operation: the .ssh deny above blocks host-key verification and
     ;; config reads. Re-allow the non-secret parts SSH needs (known_hosts,
-    ;; config), keeping the private-key deny authoritative. Literal and
-    ;; explicit filters outrank the broader subpath deny from secretDenyRules.
-    (allow file-read* (literal (string-append (param "HOME") "/.ssh/config")))
-    (allow file-read* (subpath (string-append (param "HOME") "/.ssh/config.d")))
-    (allow file-read* (literal (string-append (param "HOME") "/.ssh/known_hosts")))
+    ;; config), keeping the private-key deny authoritative.
+    ;;
+    ;; Seatbelt rule matching is specificity-based, not order-based, but a
+    ;; wildcard allow (file-read*) loses to a specific-op deny
+    ;; (file-read-data) even when the allow filter is more specific. The
+    ;; re-allow rules must name the exact operations from secretDenyRules
+    ;; (plus file-test-existence, which file-read* does not cover) to win.
+    (allow file-read* file-read-data file-read-metadata file-read-xattr file-test-existence
+      (literal (string-append (param "HOME") "/.ssh/config")))
+    (allow file-read* file-read-data file-read-metadata file-read-xattr file-test-existence
+      (subpath (string-append (param "HOME") "/.ssh/config.d")))
+    ;; All files with the known_hosts prefix are host-key databases or their
+    ;; temp/backup files, never private keys, so one prefix rule covers
+    ;; known_hosts, known_hosts2, and mkstemp temps.
+    (allow file-read* file-read-data file-read-metadata file-read-xattr file-test-existence
+      (regex (string-append "^" (regex-quote (param "HOME")) "/\\.ssh/known_hosts")))
     ;; OpenSSH control-master sockets and multiplexed connection state.
-    (allow file-read* (regex (string-append "^" (regex-quote (param "HOME")) "/\\.ssh/ssh-")))
+    (allow file-read* file-read-data file-read-metadata file-read-xattr file-test-existence
+      (regex (string-append "^" (regex-quote (param "HOME")) "/\\.ssh/ssh-")))
 
     ;; Mach IPC: needed by Chrome (crashpad, port rendezvous), launchd, etc.
     (allow mach-lookup)
@@ -100,7 +112,9 @@ let
     (allow file-write* (subpath (string-append (param "HOME") "/Library/Keychains")))
     ;; SSH: control sockets and host-key verification growth.
     (allow file-write* (regex (string-append "^" (regex-quote (param "HOME")) "/\\.ssh/ssh-")))
-    (allow file-write* (literal (string-append (param "HOME") "/.ssh/known_hosts")))
+    ;; Same prefix rule for writes: known_hosts, known_hosts2, and the
+    ;; mkstemp temps OpenSSH uses when rewriting the file.
+    (allow file-write* (regex (string-append "^" (regex-quote (param "HOME")) "/\\.ssh/known_hosts")))
     ${extraWriteRules}
     (allow file-write* (subpath (param "XDG_CACHE")))
     (allow file-write* (subpath (param "XDG_CONFIG")))
