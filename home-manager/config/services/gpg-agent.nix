@@ -97,7 +97,16 @@ in
     };
 
   programs.ssh.settings."*" = lib.mkIf cfg.enable {
-    IdentityAgent = lib.mkOverride 500 "$\{XDG_RUNTIME_DIR\}/gnupg/S.gpg-agent.ssh";
+    # gpg-agent's SSH socket lives in the GPG homedir on Darwin (launchd
+    # agent) and in the systemd runtime dir on Linux (%t). ssh_config does
+    # not expand XDG_RUNTIME_DIR mid-string; on Linux the %i token (uid)
+    # resolves the runtime path at ssh runtime instead.
+    IdentityAgent = lib.mkOverride 500 (
+      if pkgs.stdenv.isDarwin then
+        "${gpgcfg.homedir}/S.gpg-agent.ssh"
+      else
+        "/run/user/%i/gnupg/S.gpg-agent.ssh"
+    );
   };
 
   systemd.user.services.gpg-agent.Service = lib.mkIf cfg.enable {
