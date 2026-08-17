@@ -14,12 +14,12 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "fizzterm";
-  version = "0.2.3";
+  version = "0.2.4";
 
   src = fetchgit {
     url = "https://git.sr.ht/~sirn/fizzterm";
     rev = "refs/tags/v" + version;
-    hash = "sha256-s5qVnUy6ld1b1/wkCZSklYT7s/bwABnGLFR5wGbzK4I=";
+    hash = "sha256-/8ZuOEm4HZudRU8nvFZ9e6oKSDTqQfxfx9jcH8p2NDg=";
   };
 
   npmDeps = fetchNpmDeps {
@@ -53,7 +53,7 @@ rustPlatform.buildRustPackage rec {
   ];
   doCheck = false;
 
-  cargoHash = "sha256-6khcYhJOGVo+AQ+F5Auqc86J0fz8IIN7zlnTodb9FQM=";
+  cargoHash = "sha256-xR/CuX8sewh9n2Abi8MsR0Gn5imwKtuaLrgWuf2sggY=";
 
   passthru.updateScript = ./update.sh;
 
