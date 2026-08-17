@@ -1,5 +1,5 @@
 ---
-name: software-design
+name: john-ousterhout-software-design
 type: reference
 description: Reference for Ousterhout's A Philosophy of Software Design principles. ALWAYS read before designing modules, interfaces, or abstractions, or deciding how to split or combine code.
 ---

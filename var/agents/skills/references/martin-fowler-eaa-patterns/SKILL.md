@@ -1,5 +1,5 @@
 ---
-name: eaa-patterns
+name: martin-fowler-eaa-patterns
 type: reference
 description: Reference for Martin Fowler's Patterns of Enterprise Application Architecture (PoEAA, 2002). ALWAYS read before structuring business logic, data access, web presentation, distribution, concurrency, or session state for enterprise applications.
 ---

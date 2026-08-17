@@ -15,8 +15,8 @@ Generate an actionable implementation plan based on task analysis and research.
 
 ### Step 2 - Research and Scout
 
-- When the task introduces new modules, interfaces, or abstractions, read the `software-design` reference and evaluate at least two design alternatives against its principles (deep modules, information hiding, pull complexity downward, design-it-twice).
-- When structuring business logic, data access, or persistence layers, read the `eaa-patterns` reference and choose appropriate domain-logic (Transaction Script / Domain Model / Table Module / Service Layer), data-source (Active Record vs Data Mapper), and O/R mapping patterns rather than inventing ad-hoc structure.
+- When the task introduces new modules, interfaces, or abstractions, read the `john-ousterhout-software-design` reference and evaluate at least two design alternatives against its principles (deep modules, information hiding, pull complexity downward, design-it-twice).
+- When structuring business logic, data access, or persistence layers, read the `martin-fowler-eaa-patterns` reference and choose appropriate domain-logic (Transaction Script / Domain Model / Table Module / Service Layer), data-source (Active Record vs Data Mapper), and O/R mapping patterns rather than inventing ad-hoc structure.
 
 Apply a scout lens to analyze affected code areas, existing patterns, tests, architecture, integration points, and local conventions for {task}:
 

@@ -1,5 +1,5 @@
 ---
-name: code-smells
+name: martin-fowler-code-smells
 type: reference
 description: Reference for Martin Fowler's 24 code smells (Refactoring, 2nd ed. 2018). ALWAYS read before reviewing code quality, planning refactors, or cleaning up code, to identify smells and their fixes.
 ---

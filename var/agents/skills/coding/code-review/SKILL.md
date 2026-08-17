@@ -24,11 +24,11 @@ Review across these axes:
 
 - **correctness/quality** — bugs, logic errors, edge cases, error handling, resource leaks, concurrency, performance traps.
 - **security** — OWASP risks, injection flaws, auth/authz, cryptography, sensitive data exposure, dependency risks, secure defaults.
-- **convention/simplicity** — assess using the 24 Fowler code smells; read the `code-smells` reference and apply each relevant smell's fix (smells are heuristics, never hard violations).
+- **convention/simplicity** — assess using the 24 Fowler code smells; read the `martin-fowler-code-smells` reference and apply each relevant smell's fix (smells are heuristics, never hard violations).
 
 Binding Rules:
 
-- **The repo overrides**: a documented repo standard (from {standards_sources}) always wins; where it endorses something `code-smells` would flag, suppress the smell.
+- **The repo overrides**: a documented repo standard (from {standards_sources}) always wins; where it endorses something `martin-fowler-code-smells` would flag, suppress the smell.
 - **Always a judgment call**: each smell is a labeled heuristic, never a hard violation. Skip anything tooling already enforces.
 
 Cite the specific source (file and rule) for any violation of identified repo standards {standards_sources}.
@@ -85,7 +85,7 @@ _(Skip or note if no spec source was found. Keep strictly separate from code qua
 5. **Quality & Logic**
 6. **Simplicity & Convention**
    - **Hard Violations**: documented repo standard breaches (cite specific file and rule).
-   - **Judgement Calls**: the 24 Fowler code smells from `code-smells` (heuristics/suggestions, never hard violations; skip if tooling already enforces).
+   - **Judgement Calls**: the 24 Fowler code smells from `martin-fowler-code-smells` (heuristics/suggestions, never hard violations; skip if tooling already enforces).
 7. **Performance & Best Practices**
 8. **Test/Lint Results** (only when run)
 9. **Quick Wins**

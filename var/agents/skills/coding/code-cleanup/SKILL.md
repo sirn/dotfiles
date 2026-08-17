@@ -39,7 +39,7 @@ Apply a scout lens to map cleanup opportunities in the following scope: {scope}:
 - Stay read-only.
 - Keep it concise and task-relevant.
 
-Read the `code-smells` reference and flag relevant Fowler smells (Duplicated Code, Lazy Elements, Speculative Generality, Middle Man, Long Function, etc.); treat smells as heuristics and skip what the linter/formatter already enforces.
+Read the `martin-fowler-code-smells` reference and flag relevant Fowler smells (Duplicated Code, Lazy Elements, Speculative Generality, Middle Man, Long Function, etc.); treat smells as heuristics and skip what the linter/formatter already enforces.
 
 #### Redundancies
 

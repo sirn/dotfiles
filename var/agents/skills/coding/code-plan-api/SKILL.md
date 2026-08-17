@@ -61,8 +61,8 @@ Apply a reviewer lens to review the proposed API for correctness, security, comp
 ### Step 6 - Design API
 
 - Design only required resources, operations, fields, and data shapes; prefer flat, simple structures over deeply nested designs.
-- Read the `software-design` reference and apply deep-modules and "define errors out of existence" — keep the interface surface small relative to behavior; prefer designing errors out over spreading exception handling across callers.
-- For APIs crossing a process/network boundary, read the `eaa-patterns` reference and apply Remote Facade (coarse-grained operations) plus Data Transfer Object (batch data into one round-trip); do not use DTOs within a single process.
+- Read the `john-ousterhout-software-design` reference and apply deep-modules and "define errors out of existence" — keep the interface surface small relative to behavior; prefer designing errors out over spreading exception handling across callers.
+- For APIs crossing a process/network boundary, read the `martin-fowler-eaa-patterns` reference and apply Remote Facade (coarse-grained operations) plus Data Transfer Object (batch data into one round-trip); do not use DTOs within a single process.
 - Consider versioning, pagination, error handling, auth, validation, and compatibility.
 - Identify security risks and secure API patterns.
 

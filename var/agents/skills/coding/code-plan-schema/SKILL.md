@@ -62,7 +62,7 @@ Apply a reviewer lens to review the proposed schema for correctness, data integr
 
 - Define only required tables, entities, and fields; avoid generic or over-flexible schemas.
 - Account for indexes, constraints, migrations, normalization, and N+1 query risks.
-- When mapping objects to tables or modeling relationships, read the `eaa-patterns` reference and apply its O/R structural and metadata patterns: choose Single/Class/Concrete Table Inheritance for hierarchies, Association Table Mapping for many-to-many, Embedded Value for small owned objects, and Identity Field for object identity; consider Lazy Load and Identity Map for N+1 and consistency.
+- When mapping objects to tables or modeling relationships, read the `martin-fowler-eaa-patterns` reference and apply its O/R structural and metadata patterns: choose Single/Class/Concrete Table Inheritance for hierarchies, Association Table Mapping for many-to-many, Embedded Value for small owned objects, and Identity Field for object identity; consider Lazy Load and Identity Map for N+1 and consistency.
 - Identify security and privacy risks for stored data.
 
 ### Step 7 - Report
