@@ -6,36 +6,184 @@
 }:
 
 let
-  breezePkg = pkgs.kdePackages.breeze;
-
-  breezeGtkPkg = pkgs.kdePackages.breeze-gtk;
-
-  breezeIconsPkg = pkgs.kdePackages.breeze-icons;
-
   gtkconf = config.gtk;
 
   swaycfg = config.wayland.windowManager.sway;
 
-  # Breeze GTK theme name and icon theme name follow the desktop variant.
-  isDark =
-    config.home.colors.variants.desktop == "dark"
-    || (
-      config.home.colors.variants.desktop == "auto"
-      && config.home.colors.variants.desktopFallback == "dark"
-    );
+  swaymsgBin = "${swaycfg.package}/bin/swaymsg";
 
-  gtkThemeName = if isDark then "Breeze-Dark" else "Breeze";
-  iconThemeName = if isDark then "breeze-dark" else "breeze";
-  colorScheme = if isDark then "prefer-dark" else "prefer-light";
-  kdeglobalsFile = if isDark then "BreezeDark.colors" else "BreezeLight.colors";
+  noctaliacfg = config.programs.noctalia;
+
+  # ----------------------------------------------------
+  # Base
+  # ----------------------------------------------------
+
+  breezePkg = pkgs.kdePackages.breeze;
+
+  # ----------------------------------------------------
+  # GTK
+  # ----------------------------------------------------
+
+  breezeGtkThemePkg = pkgs.kdePackages.breeze-gtk;
+
+  breezeGtkThemeName = {
+    dark = "Breeze-Dark";
+    light = "Breeze";
+  };
+
+  # ----------------------------------------------------
+  # Icons
+  # ----------------------------------------------------
+
+  breezeIconsPkg = pkgs.kdePackages.breeze-icons;
+
+  breezeIconsThemeName = {
+    dark = "breeze-dark";
+    light = "breeze";
+  };
+
+  # ----------------------------------------------------
+  # Cursors
+  # ----------------------------------------------------
+
+  breezeCursorPkg = breezePkg;
+
+  breezeCursorThemeName = {
+    dark = "breeze_cursors";
+    light = "breeze_cursors";
+  };
+
+  breezeColorSchemeFile = {
+    dark = "${breezePkg}/share/color-schemes/BreezeDark.colors";
+    light = "${breezePkg}/share/color-schemes/BreezeLight.colors";
+  };
+
+  # ----------------------------------------------------
+  # Default
+  # ----------------------------------------------------
+
+  defaultColorSchemeName =
+    if
+      config.home.colors.variants.desktop == "dark"
+      || (
+        config.home.colors.variants.desktop == "auto"
+        && config.home.colors.variants.desktopFallback == "dark"
+      )
+    then
+      "dark"
+    else
+      "light";
+
+  # ----------------------------------------------------
+  # Script
+  # ----------------------------------------------------
+
+  gsettingsBin =
+    if pkgs.stdenv.isLinux && !config.targets.genericLinux.enable then
+      "${pkgs.glib.bin}/bin/gsettings"
+    else
+      "/usr/bin/gsettings";
+
+  gsettingsDesktopSchemas = pkgs.gsettings-desktop-schemas;
+
+  updateBreezeAppearance = pkgs.writeScriptBin "update-breeze-appearance" ''
+    _gsettings() {
+      XDG_DATA_DIRS="${gsettingsDesktopSchemas}/share/gsettings-schemas/${gsettingsDesktopSchemas.name}:$XDG_DATA_DIRS"
+      ${gsettingsBin} "$@" || true
+    }
+
+    # ----------------------------------------------------
+    # GTK
+    # ----------------------------------------------------
+
+    _setGtkCommon() {
+      _gsettings set org.gnome.desktop.interface cursor-size ${toString gtkconf.cursorTheme.size}
+      _gsettings set org.gnome.desktop.interface document-font-name "${gtkconf.font.name} ${toString gtkconf.font.size}"
+      _gsettings set org.gnome.desktop.interface font-name "${gtkconf.font.name} ${toString gtkconf.font.size}"
+      _gsettings set org.gnome.desktop.interface monospace-font-name "monospace 10"
+    }
+
+    setGtkLightTheme() {
+      _setGtkCommon
+      _gsettings set org.gnome.desktop.interface color-scheme prefer-light
+      _gsettings set org.gnome.desktop.interface cursor-theme "${breezeCursorThemeName.light}"
+      _gsettings set org.gnome.desktop.interface gtk-theme "${breezeGtkThemeName.light}"
+      _gsettings set org.gnome.desktop.interface icon-theme "${breezeIconsThemeName.light}"
+    }
+
+    setGtkDarkTheme() {
+      _setGtkCommon
+      _gsettings set org.gnome.desktop.interface color-scheme prefer-dark
+      _gsettings set org.gnome.desktop.interface cursor-theme "${breezeCursorThemeName.dark}"
+      _gsettings set org.gnome.desktop.interface gtk-theme "${breezeGtkThemeName.dark}"
+      _gsettings set org.gnome.desktop.interface icon-theme "${breezeIconsThemeName.dark}"
+    }
+
+    # ----------------------------------------------------
+    # KDE
+    # ----------------------------------------------------
+
+    setKdeLightTheme() {
+      XDG_CONFIG_HOME=''${XDG_CONFIG_HOME:-$HOME/.config}
+      cp -f "${breezeColorSchemeFile.light}" "$XDG_CONFIG_HOME/kdeglobals"
+    }
+
+    setKdeDarkTheme() {
+      XDG_CONFIG_HOME=''${XDG_CONFIG_HOME:-$HOME/.config}
+      cp -f "${breezeColorSchemeFile.dark}" "$XDG_CONFIG_HOME/kdeglobals"
+    }
+
+    ${lib.optionalString swaycfg.enable (
+      let
+        cursorSize = toString config.gtk.cursorTheme.size;
+      in
+      ''
+        # ----------------------------------------------------
+        # Sway
+        # ----------------------------------------------------
+
+        setSwayLightTheme() {
+          if [ -n "''${SWAYSOCK-}" ] && [ -S "$SWAYSOCK" ]; then
+            ${swaymsgBin} 'seat * xcursor_theme ${breezeCursorThemeName.light} ${cursorSize}'
+          fi
+        }
+
+        setSwayDarkTheme() {
+          if [ -n "''${SWAYSOCK-}" ] && [ -S "$SWAYSOCK" ]; then
+            ${swaymsgBin} 'seat * xcursor_theme ${breezeCursorThemeName.dark} ${cursorSize}'
+          fi
+        }
+
+      ''
+    )}
+    # ----------------------------------------------------
+    # Entrypoint
+    # ----------------------------------------------------
+
+    entrypoint() {
+      THEME=''${1:-${defaultColorSchemeName}}
+
+      if [ "$THEME" = "dark" ]; then
+        setGtkDarkTheme
+        setKdeDarkTheme
+        ${lib.optionalString swaycfg.enable "setSwayDarkTheme"}
+      else
+        setGtkLightTheme
+        setKdeLightTheme
+        ${lib.optionalString swaycfg.enable "setSwayLightTheme"}
+      fi
+    }
+
+    entrypoint "$@"
+  '';
 in
 {
   gtk = {
     enable = pkgs.stdenv.isLinux;
 
     cursorTheme = {
-      name = "breeze_cursors";
-      package = breezePkg;
+      name = lib.mkDefault breezeCursorThemeName.${defaultColorSchemeName};
+      package = breezeCursorPkg;
       size = 24;
     };
 
@@ -45,12 +193,12 @@ in
     };
 
     theme = {
-      name = lib.mkDefault gtkThemeName;
-      package = breezeGtkPkg;
+      name = lib.mkDefault breezeGtkThemeName.${defaultColorSchemeName};
+      package = breezeGtkThemePkg;
     };
 
     iconTheme = {
-      name = lib.mkDefault iconThemeName;
+      name = lib.mkDefault breezeIconsThemeName.${defaultColorSchemeName};
       package = breezeIconsPkg;
     };
 
@@ -83,53 +231,22 @@ in
     };
   };
 
-  xdg.configFile."kdeglobals".source = "${breezePkg}/share/color-schemes/${kdeglobalsFile}";
-
   home = {
     packages = with pkgs; [
-      breezeGtkPkg
+      breezeCursorPkg
+      breezeGtkThemePkg
       breezeIconsPkg
       breezePkg
+
+      # fallback
       hicolor-icon-theme
     ];
 
-    activation =
-      let
-        gsettingsBin =
-          if pkgs.stdenv.isLinux && !config.targets.genericLinux.enable then
-            "${pkgs.glib.bin}/bin/gsettings"
-          else
-            "/usr/bin/gsettings";
-
-        gsettingsDesktopSchemas = pkgs.gsettings-desktop-schemas;
-
-        setupGnomeDesktopInterface = pkgs.writeScriptBin "setup-gnome-desktop-interface" ''
-          #!${pkgs.runtimeShell}
-
-          _gsettings() {
-            XDG_DATA_DIRS="${gsettingsDesktopSchemas}/share/gsettings-schemas/${gsettingsDesktopSchemas.name}:$XDG_DATA_DIRS"
-            ${gsettingsBin} "$@" || true
-          }
-
-          _gsettings set org.gnome.desktop.interface color-scheme ${colorScheme}
-          _gsettings set org.gnome.desktop.interface cursor-size ${toString gtkconf.cursorTheme.size}
-          _gsettings set org.gnome.desktop.interface cursor-theme "${gtkconf.cursorTheme.name}"
-          _gsettings set org.gnome.desktop.interface document-font-name "${gtkconf.font.name} ${toString gtkconf.font.size}"
-          _gsettings set org.gnome.desktop.interface font-name "${gtkconf.font.name} ${toString gtkconf.font.size}"
-          _gsettings set org.gnome.desktop.interface gtk-theme "${gtkconf.theme.name}"
-          _gsettings set org.gnome.desktop.interface icon-theme "${gtkconf.iconTheme.name}"
-          _gsettings set org.gnome.desktop.interface monospace-font-name "monospace 10"
-        '';
-      in
-      {
-        setupBreeze = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          setupBreeze() {
-            ${lib.getExe setupGnomeDesktopInterface}
-          }
-
-          setupBreeze
-        '';
-      };
+    activation = {
+      setupBreezeAppearance = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        ${lib.getExe updateBreezeAppearance}
+      '';
+    };
 
     # On a non-NixOS, we just provide the proper environment variables
     # for it to pick up the correct themes installed with the system
@@ -146,6 +263,18 @@ in
           xcursor_theme = "${config.gtk.cursorTheme.name} ${toString config.gtk.cursorTheme.size}";
         };
       };
+    };
+  };
+
+  programs.noctalia = lib.mkIf noctaliacfg.enable {
+    settings.hooks = {
+      theme_mode_changed = "${lib.getExe updateBreezeAppearance} $NOCTALIA_THEME_MODE";
+    };
+  };
+
+  flatpak.globalOverrides = lib.mkIf config.flatpak.enable {
+    environment = {
+      QT_QPA_PLATFORMTHEME = "xdgdesktopportal";
     };
   };
 }
