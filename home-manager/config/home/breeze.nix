@@ -87,14 +87,14 @@ let
   gsettingsDesktopSchemas = pkgs.gsettings-desktop-schemas;
 
   updateBreezeAppearance = pkgs.writeScriptBin "update-breeze-appearance" ''
+    # ----------------------------------------------------
+    # GTK
+    # ----------------------------------------------------
+
     _gsettings() {
       XDG_DATA_DIRS="${gsettingsDesktopSchemas}/share/gsettings-schemas/${gsettingsDesktopSchemas.name}:$XDG_DATA_DIRS"
       ${gsettingsBin} "$@" || true
     }
-
-    # ----------------------------------------------------
-    # GTK
-    # ----------------------------------------------------
 
     _setGtkCommon() {
       _gsettings set org.gnome.desktop.interface cursor-size ${toString gtkconf.cursorTheme.size}
@@ -123,14 +123,23 @@ let
     # KDE
     # ----------------------------------------------------
 
+    ${lib.optionalString config.systemd.user.enable ''
+      _restartXdpKde() {
+        # Hack; xdg-desktop-portal-kde only set theme at the start.
+        ${lib.getExe' pkgs.systemd "systemctl"} restart --user plasma-xdg-desktop-portal-kde || true
+      }
+    ''}
+
     setKdeLightTheme() {
       XDG_CONFIG_HOME=''${XDG_CONFIG_HOME:-$HOME/.config}
       cp -f "${breezeColorSchemeFile.light}" "$XDG_CONFIG_HOME/kdeglobals"
+      ${lib.optionalString config.systemd.user.enable "_restartXdpKde"}
     }
 
     setKdeDarkTheme() {
       XDG_CONFIG_HOME=''${XDG_CONFIG_HOME:-$HOME/.config}
       cp -f "${breezeColorSchemeFile.dark}" "$XDG_CONFIG_HOME/kdeglobals"
+      ${lib.optionalString config.systemd.user.enable "_restartXdpKde"}
     }
 
     ${lib.optionalString swaycfg.enable (
@@ -153,9 +162,9 @@ let
             ${swaymsgBin} 'seat * xcursor_theme ${breezeCursorThemeName.dark} ${cursorSize}'
           fi
         }
-
       ''
     )}
+
     # ----------------------------------------------------
     # Entrypoint
     # ----------------------------------------------------
