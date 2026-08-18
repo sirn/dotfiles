@@ -14,7 +14,6 @@
     "b" #'consult-project-buffer
     "d" #'project-dired
     "f" #'gemacs--project-fd
-    "g" #'gemacs--project-gptel
     "m" #'magit-project-status
     "p" #'project-switch-project
     "s" #'consult-ripgrep
@@ -38,9 +37,7 @@
     (declare-function project-switch-project nil)
     (declare-function gemacs--project-switch-command nil)
     (declare-function gemacs--project-switch-transient-menu nil)
-    (declare-function gemacs--project-switch-smuggle-chosen-project nil)
-    (declare-function gemacs--project-gptel nil)
-    (declare-function pi-coding-agent nil))
+    (declare-function gemacs--project-switch-smuggle-chosen-project nil))
 
   :config
   (require 'transient)
@@ -75,9 +72,7 @@
      ("F" "Find file" project-find-file)
      ("s" "Ripgrep" consult-ripgrep)]
     ["Tools"
-     ("g" "GPTel" gemacs--project-gptel)
      ("m" "Magit" magit-project-status)
-     ("p" "Pi coding agent" pi-coding-agent)
      ("'" "Terminal (Eat)" eat-project)]
     ["Maintenance"
      ("S" "Sync projects" gemacs--project-sync)])
@@ -129,13 +124,4 @@
              (pr (project-current nil dir)))
         (when pr
           (project-remember-project pr))))
-    (message "Projects successfully synced"))
-
-  (defun gemacs--project-gptel ()
-    "Open gptel with project root as default directory."
-    (interactive)
-    (if (fboundp 'gptel)
-        (when-let ((project (project-current t)))
-          (let ((default-directory (project-root project)))
-            (gptel)))
-      (error "GPTel is not enabled"))))
+    (message "Projects successfully synced")))

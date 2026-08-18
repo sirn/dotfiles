@@ -73,7 +73,6 @@ Project-specific commands and operations.
 | `SPC p b` | `consult-project-buffer` | Find a buffer belonging to the current project. |
 | `SPC p d` | `project-dired` | Open project root in Dired. |
 | `SPC p f` | `gemacs--project-fd` | Find file in project using `fd`. |
-| `SPC p g` | `gemacs--project-gptel` | Open GPTel in the project root. |
 | `SPC p m` | `magit-project-status` | Open Magit status for the project. |
 | `SPC p s` | `consult-ripgrep` | Search project with `ripgrep`. |
 | `SPC p S` | `gemacs--project-sync` | Sync known projects from `repoman`. |
@@ -93,13 +92,6 @@ Environment variable management commands.
 | `' '` | `eat`    | Open a new `eat` terminal. |
 | `' v` | `vterm`  | Open `vterm`.              |
 | `' e` | `eshell` | Open `eshell`.             |
-
-### `a` - AI / LLM
-
-| Key   | Command                        | Description               |
-| :---- | :----------------------------- | :------------------------ |
-| `a p` | `pi-coding-agent`              | Open the Pi coding agent. |
-| `a g` | `gemacs--gptel-transient-menu` | Show the GPTel menu.      |
 
 ### `A` - Applications
 

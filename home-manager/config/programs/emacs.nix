@@ -204,10 +204,9 @@ in
         use-package
 
         # AI packages
-        pi-coding-agent
         pkgs.local.emacsPackages.phscroll
 
-        # Org packages
+        # org packages
         org
         org-modern
         org-ql
@@ -241,7 +240,6 @@ in
         forge
         ghub
         diff-hl
-        gptel
         helpful
         magit
         marginalia
@@ -324,7 +322,6 @@ in
         with-editor
         yaml-mode
         zencoding-mode
-
       ]
       ++ (
         if notmuchcfg.enable then
