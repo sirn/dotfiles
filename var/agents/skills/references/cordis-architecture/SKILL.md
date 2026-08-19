@@ -11,6 +11,7 @@ Architecture and design principles for spatiotemporal composability from the Cor
 ### Core Premise
 
 Dynamic composition requires managing software along two orthogonal dimensions:
+
 - **Temporal composability (Time)**: When removing a component, every modification (resource allocation, event listener, state mutation) made to the shared environment must be completely and safely reversed.
 - **Spatial composability (Space)**: Components must declare, discover, and resolve inter-component dependencies reactively, coordinating lifecycles when dependencies appear, disappear, or change identity.
 
@@ -21,19 +22,19 @@ Classical systems use coarse-grained workarounds (process restarts, container re
 ### Theoretical Foundations
 
 #### 1. Revertible Effects (Temporal Dimension)
+
 - **Effect Context ($\partial\Gamma$)**: An effect context $\partial\Gamma \coloneqq \Gamma \times (\Gamma \to \Gamma)$ pairs current state $\gamma$ with an accumulator $\varphi$ (the composite of inverses).
-- **Twisted Composition ($\mathfrak{T}_\Gamma$)**: Inverses compose in reverse order:
-  $$(f_1, g_1) \circ (f_2, g_2) \coloneqq (f_1 \circ f_2, g_2 \circ g_1)$$
+- **Twisted Composition ($\mathfrak{T}_\Gamma$)**: Inverses compose in reverse order: $$(f_1, g_1) \circ (f_2, g_2) \coloneqq (f_1 \circ f_2, g_2 \circ g_1)$$
 - **Tracking & Recovery**:
   - $\operatorname{track}_\Gamma(f, g) \coloneqq (\gamma, \varphi) \mapsto (f(\gamma), \varphi \circ g)$
   - $\operatorname{recover}_\Gamma(\gamma, \varphi) \coloneqq (\varphi(\gamma), \operatorname{id}_\Gamma)$
   - **Soundness Invariant**: Applying the accumulated inverse recovers the prior state up to the paper's observational equivalence ($\simeq$). The inverse witness is an obligation on the component; the runtime does not verify it.
 - **Effect Functions ($\mathfrak{E}_\Gamma$)**: An effect function $e: \Gamma \to \Gamma \times (\Gamma \to \Gamma)$ returns its state-specific inverse alongside the modified state.
-- **Effect Composition ($\diamond$)**:
-  $$f \diamond g \coloneqq \gamma \mapsto \operatorname{let}\; (\delta, s) = g(\gamma) \;\operatorname{in}\; \operatorname{let}\; (\varepsilon, t) = f(\delta) \;\operatorname{in}\; (\varepsilon, s \circ t)$$
+- **Effect Composition ($\diamond$)**: $$f \diamond g \coloneqq \gamma \mapsto \operatorname{let}\; (\delta, s) = g(\gamma) \;\operatorname{in}\; \operatorname{let}\; (\varepsilon, t) = f(\delta) \;\operatorname{in}\; (\varepsilon, s \circ t)$$
 - **Effect Independence**: Effects $e_1, e_2$ are independent when their generated transformation monoids $\mathfrak{M}(e_1)$ and $\mathfrak{M}(e_2)$ commute and neither disturbs the inverse yielded by the other. This allows withdrawing an effect from an interleaved execution without side-effect leaks.
 
 #### 2. Reactive Coeffects (Spatial Dimension)
+
 - **Coeffect Specification ($d$) & Provision ($p$)**: Components declare required keys ($d \subseteq K$) and provided keys ($p \subseteq K$).
 - **Two-Layer Resolution**: $k \mapsto \rho(k) \mapsto \sigma(\rho(k))$
   - `@@store` ($\sigma$): Value store mapping realm symbols to typed values.
@@ -43,6 +44,7 @@ Classical systems use coarse-grained workarounds (process restarts, container re
 - **Scoped Isolation (`isolate`) & Interception (`intercept`)**: Contexts structurally inherit tables from parents. Modifying isolation or interception creates child context scopes without mutating ancestor environments.
 
 #### 3. Unified Context Paradigm
+
 - The context `ctx` is a first-class runtime entity ($\Gamma^\infty$) unifying effect tracking and coeffect resolution.
 - **Observational Equivalence ($\simeq$)**: Operations on disjoint or commutative keys commute, guaranteeing that runtime dynamic operations yield normal forms equivalent to static assembly.
 
@@ -51,6 +53,7 @@ Classical systems use coarse-grained workarounds (process restarts, container re
 ### Calculus of Dynamic Composition
 
 A running system is modeled as a set of **fibers** in a registry $F_\gamma$. Each fiber is a tuple $\langle d, p, e, \pi, \sigma, \tau, \theta \rangle$:
+
 - $d$: Declared coeffects (dependencies).
 - $p$: Provided coeffects.
 - $e$: Applied effect function / iterator.
@@ -60,6 +63,7 @@ A running system is modeled as a set of **fibers** in a registry $F_\gamma$. Eac
 - $\theta$: Lifecycle state machine.
 
 #### Lifecycle States & Transitions
+
 ```
                 [L-Begin] (target != ⊥)
    INACTIVE(⊥) --------------------------> RELOADING / LOADING
@@ -87,6 +91,7 @@ A running system is modeled as a set of **fibers** in a registry $F_\gamma$. Eac
    - `L-Unload`: Runs accumulator $g$, recovers all installed effects in LIFO order, and transitions to $\text{Inactive}$. **Guard**: Defers unload until all dependent fibers have finished deactivating.
 
 #### Metatheoretic Guarantees
+
 - **Preservation**: Registry well-formedness (disjoint provisions, valid trees, total committed views) is preserved across all transitions.
 - **Recovery Exactness (Terminal Recovery)**: Under pairwise independence, an acyclic precedence relation, and the paper's other hypotheses, running a fiber's accumulator removes that fiber's contribution and recovers the environment up to observational equivalence. Terminal recovery does not promise to undo external emissions.
 - **Coeffect Ordering**: Providers strictly outlive dependents ($b_{\text{provider}} < b_{\text{dependent}}$ and $u_{\text{dependent}} < u_{\text{provider}}$). Dependents never observe half-torn-down providers.
@@ -112,6 +117,7 @@ A running system is modeled as a set of **fibers** in a registry $F_\gamma$. Eac
 ```
 
 #### 1. Core Library Primitives
+
 - **`ctx.effect(callback)`**:
   - Executes an effect function or generator.
   - Returns a self-disposal closure with an `armed` guard ensuring at most one recovery execution.
@@ -132,6 +138,7 @@ A running system is modeled as a set of **fibers** in a registry $F_\gamma$. Eac
   - Throws `UNDECLARED_ACCESS` if key is not declared in component injection metadata (`inject`).
 
 #### 2. Component Loader & Declarative Configuration
+
 - **Configuration Tree Entry**:
   - `id`: Stable identifier for keyed diffing.
   - `url`: Module specifier/path.
@@ -145,9 +152,9 @@ A running system is modeled as a set of **fibers** in a registry $F_\gamma$. Eac
 - **Managed Isolation Realms (Delimiters $\delta_k$)**:
   - Unique tag per key inherited down the context hierarchy to track context derivation and seamlessly migrate bindings when entries move.
 - **Hot Module Replacement (HMR)**: The paper describes this as the `@cordisjs/hmr` component.
-  1. *Classification*: Fixed-point propagation marking changed modules as accepted/declined.
-  2. *Stale Detection*: Finds affected component entries whose import graphs reach accepted changes.
-  3. *Transactional Reload*: Disposes stale fibers, invalidates module cache with rollback backup, and imports fresh component modules. Restores backup if re-import fails.
+  1. _Classification_: Fixed-point propagation marking changed modules as accepted/declined.
+  2. _Stale Detection_: Finds affected component entries whose import graphs reach accepted changes.
+  3. _Transactional Reload_: Disposes stale fibers, invalidates module cache with rollback backup, and imports fresh component modules. Restores backup if re-import fails.
 
 ---
 
@@ -157,8 +164,8 @@ A running system is modeled as a set of **fibers** in a registry $F_\gamma$. Eac
    - Every tracked stateful mutation must yield an inverse that restores the prior state up to the required equivalence. The runtime does not prove this property.
    - Wrap reversible acquisitions (event listeners, timers, server listeners, database handles) in `ctx.effect`. Treat irreversible emissions, such as sent packets or printed output, as outside the tracked boundary.
 2. **Distinguish Acquisitions vs Emissions**:
-   - *Acquisitions* (internal state, registrations, connections) belong inside context tracking.
-   - *Emissions* (sending a network packet, printing a log, writing a terminal line) cross the system boundary and cannot be undone; do not attempt artificial inversion.
+   - _Acquisitions_ (internal state, registrations, connections) belong inside context tracking.
+   - _Emissions_ (sending a network packet, printing a log, writing a terminal line) cross the system boundary and cannot be undone; do not attempt artificial inversion.
 3. **Declare Dependencies Explicitly**:
    - Always declare consumed services in `inject` / coeffect specifications.
    - Never access global singletons or bypass context proxy resolution.
