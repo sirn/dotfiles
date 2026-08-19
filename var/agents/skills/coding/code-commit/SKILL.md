@@ -13,16 +13,36 @@ Commit current changes using Jujutsu (jj).
 
 Commit messages provide a high-level overview of the change, NOT a detailed breakdown. They capture the _Why_ (reason/motivation), distinct from the _How_ (code) and _What_ (test code).
 
-- **Focus on intent**: the high-level why and the affected subsystem or concern; do not enumerate file-level what.
-- **Do not enumerate changes**: no file lists, file counts, or file-by-file detail; the diff shows these.
-- **Keep it concise**: reader understands the purpose at a glance without re-reading the diff.
-- Follow the `jujutsu` reference for line length, mood, and style conventions.
+- **Prefer single-line messages**: Use a single subject line when the subject is sufficient to explain the change.
+- **Strict body limit**: If a description body is necessary (to explain why or capture non-obvious context), keep the body within 3 lines maximum. Do not exceed 3 lines unless there is a strong reason; justify this reason to the user before creating the commit.
+- **Focus on intent**: Explain the high-level why and the affected subsystem; do not enumerate file-level changes.
+- **Do not enumerate changes**: Do not include file lists, change tallies, or bullet lists of modified files; the diff already shows these.
+- **Keep it concise**: Reader understands the purpose at a glance without re-reading the diff.
+- Follow the `jujutsu` reference for line length (<= 72 chars per line), mood, and style conventions.
 
 ### Examples
 
-- **Bad**: `update flake.nix, profiles/terra.nix, and nixos/system.nix to bump package versions and add wireguard module`
-- **Good**: `profiles/terra: enable wireguard support and update packages`
-- **Bad**: `fix typo in home-manager/config/git.nix line 42 and rename git.nix to git-config.nix`
+- **Bad (enumerating files and changes)**:
+
+  ```
+  update flake.nix, profiles/terra.nix, and nixos/system.nix to bump package versions and add wireguard module
+
+  - Bumped lofi to v0.2.2
+  - Added wireguard configuration module in nixos/system.nix
+  - Updated terra profile to include wireguard
+  - Modified flake inputs
+  ```
+
+- **Good (single-line)**: `profiles/terra: enable wireguard support and update packages`
+- **Good (short body, within 3 lines)**:
+
+  ```
+  profiles/terra: enable wireguard support
+
+  Wireguard replaces the previous OpenVPN tunnel for peer-to-peer routing.
+  ```
+
+- **Bad (overly detailed)**: `fix typo in home-manager/config/git.nix line 42 and rename git.nix to git-config.nix`
 - **Good**: `hm/git: correct configuration typos and rename module`
 
 ## Process
@@ -45,7 +65,7 @@ Commit messages provide a high-level overview of the change, NOT a detailed brea
 
 ### Step 3 - Execute Commit
 
-- Derive the message primarily from the diff, not conversation context, unless context explains an unobvious change. Follow **Commit Message Style**.
+- Derive the message primarily from the diff, not conversation context, unless context explains an unobvious change. Follow **Commit Message Style** (prefer single-line; body within 3 lines maximum; justify to the user beforehand if exceeding 3 lines).
 - If changes are logically distinct, split them (one message per split; do NOT use interactive `jj split`).
 - Refer to the `jujutsu` reference for exact `jj commit` / `jj split` syntax and the commit+advance workflow.
 - `jj commit` leaves the new working-copy `@` ready for new changes.
