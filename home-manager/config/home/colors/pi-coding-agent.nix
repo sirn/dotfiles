@@ -131,9 +131,8 @@ lib.mkIf config.programs.pi-coding-agent.enable {
     else
       themeName;
 
-  home.file =
-    lib.mapAttrs' (
-      name: scheme:
-      lib.nameValuePair ".pi/agent/themes/${name}.json" { text = builtins.toJSON (piTheme name scheme); }
-    ) themes;
+  home.file = lib.mapAttrs' (
+    name: scheme:
+    lib.nameValuePair ".pi/agent/themes/${name}.json" { text = builtins.toJSON (piTheme name scheme); }
+  ) themes;
 }
