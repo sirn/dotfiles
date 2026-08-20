@@ -9,7 +9,6 @@
 
       # Programs
       ../nixos/config/programs/1password.nix
-      ../nixos/config/programs/ddcutil.nix
 
       # Services
       ../nixos/config/services/fwupd.nix

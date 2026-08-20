@@ -17,6 +17,7 @@
 
     # Programs
     ../programs/appimage.nix
+    ../programs/ddcutil.nix
 
     # Services
     ../services/flatpak.nix
