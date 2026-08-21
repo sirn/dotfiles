@@ -70,6 +70,7 @@ let
       onlyIfDefined opt.font.family "family" cfg.font.family
       // onlyIfDefined opt.font.size "size" cfg.font.size
       // onlyIfDefined opt.font.directory "directory" cfg.font.directory;
+    ui = onlyIfDefined opt.ui.tabMode "tab_mode" cfg.ui.tabMode;
     theme =
       onlyIfDefined opt.theme.mode "mode" cfg.theme.mode
       // onlyIfDefined opt.theme.dark "dark" (lib.filterAttrs (_: v: v != null) cfg.theme.dark)
@@ -161,6 +162,14 @@ in
         type = types.nullOr types.path;
         default = null;
         description = "Directory to scan for web fonts served to the browser.";
+      };
+    };
+
+    ui = {
+      tabMode = mkOption {
+        type = types.nullOr types.bool;
+        default = null;
+        description = "Show session tabs in the header by default.";
       };
     };
 
