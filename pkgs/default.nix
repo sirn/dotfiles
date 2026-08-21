@@ -5,6 +5,12 @@ let
   commonPackages = {
     asdcontrol = (callPackage ./by-name/asdcontrol/package.nix { });
 
+    ast-grep = (
+      callPackage ./by-name/ast-grep-skills/package.nix {
+        ast-grep = final.unstable.ast-grep;
+      }
+    );
+
     coincide = (callPackage ./by-name/coincide/package.nix { });
 
     coord = (callPackage ./by-name/coord/package.nix { });
@@ -30,8 +36,6 @@ let
     );
 
     repoman = (callPackage ./by-name/repoman/package.nix { });
-
-    skill-ast-grep = (callPackage ./by-name/skill-ast-grep/package.nix { });
 
     skill-tuicr = (callPackage ./by-name/skill-tuicr/package.nix { });
 

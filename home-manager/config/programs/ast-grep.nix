@@ -12,7 +12,7 @@ let
 in
 
 {
-  agents.skillSets.ast-grep = "${pkgs.local.skill-ast-grep}/skills";
+  agents.skillSets.ast-grep = "${pkgs.local.ast-grep}/skills";
 
   agents.permissions.default.commands.allow = [ "ast-grep" ];
 
@@ -20,5 +20,5 @@ in
 
   agents.commandContext = lib.mkAfter astGrepCommandContext;
 
-  home.packages = [ pkgs.ast-grep ];
+  home.packages = [ pkgs.local.ast-grep ];
 }
