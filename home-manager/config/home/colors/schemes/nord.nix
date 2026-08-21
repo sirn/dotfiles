@@ -97,7 +97,7 @@ in
       palette256 = lightPalette;
       emacsTheme = {
         packages = epkgs: [ epkgs.nord-theme ];
-        customElisp = "(load-theme 'nord t)";
+        customElisp = "(load-theme 'tango t)";
       };
       semantic = {
         primary = {

@@ -170,13 +170,7 @@ This avoids leaving xterm mouse reporting enabled after emacsclient exits."
     `(lambda ()
        (gemacs--after-make-frame-func (selected-frame))))
 
-  ;; Reset themes before enabling a new one
-
-  (defun gemacs--disable-theme ()
-      "Disable theme propogation."
-      (mapc #'disable-theme custom-enabled-themes))
-
-  (advice-add 'theme-dont-propagate :before #'gemacs--disable-theme)
+  ;; Light/dark theme switching lives in editor-theme.el.
 
   ;; Enable macOS-specific setups
 

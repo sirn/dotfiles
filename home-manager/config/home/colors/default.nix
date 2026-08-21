@@ -128,7 +128,7 @@ lib.mkMerge [
   (import ./claude-code.nix terminalArgs)
   (import ./coord.nix desktopArgs)
   (import ./alacritty.nix terminalArgs)
-  (import ./emacs.nix terminalArgs)
+  (import ./emacs.nix desktopArgs)
   (import ./fizzterm.nix terminalArgs)
   (import ./foot.nix terminalArgs)
   (import ./fuzzel.nix desktopArgs)

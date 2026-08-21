@@ -215,6 +215,7 @@ in
         # Packages
         ace-link
         ace-window
+        auto-dark
         avy
         clipetty
         consult
