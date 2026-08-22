@@ -6,9 +6,7 @@ let
     asdcontrol = (callPackage ./by-name/asdcontrol/package.nix { });
 
     ast-grep = (
-      callPackage ./by-name/ast-grep-skills/package.nix {
-        ast-grep = final.unstable.ast-grep;
-      }
+      callPackage ./by-name/ast-grep-skills/package.nix { ast-grep = final.unstable.ast-grep; }
     );
 
     coincide = (callPackage ./by-name/coincide/package.nix { });

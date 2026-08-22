@@ -1,7 +1,4 @@
-{
-  fetchFromGitHub,
-  ast-grep,
-}:
+{ fetchFromGitHub, ast-grep }:
 
 let
   # Agent skills are published separately from the CLI in the
