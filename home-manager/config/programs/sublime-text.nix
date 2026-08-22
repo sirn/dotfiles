@@ -19,7 +19,9 @@ let
 
   sublimeConfig = {
     theme = "Meetio Theme.sublime-theme";
-    color_scheme = "Meetio Darker.sublime-color-scheme";
+    color_scheme = "auto";
+    dark_color_scheme = "Meetio Darker.sublime-color-scheme";
+    light_color_scheme = "Meetio Lighter.sublime-color-scheme";
     font_face = fontcfg.editor.monospace;
     font_size = fontcfg.editor.size;
     update_check = false;
