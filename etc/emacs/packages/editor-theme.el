@@ -88,10 +88,14 @@ terminal."
   (eval-when-compile
     (declare-function auto-dark-mode nil)
     (declare-function frame-set-background-mode nil)
+    (declare-function frame-terminal nil)
+    (declare-function send-string-to-terminal nil)
+    (declare-function xterm--push-map nil)
     (declare-function xterm--query nil)
     (declare-function xterm--read-event-for-query nil)
     (defvar xterm-query-timeout)
-    (defvar xterm-query-redisplay-timeout))
+    (defvar xterm-query-redisplay-timeout)
+    (defvar help-event-list))
 
   :custom
   ;; Disable auto-dark's theme loading.  Its detection and hooks
@@ -116,11 +120,18 @@ terminal."
 
 (defun gemacs-theme--tty-report-dark (&optional _prompt)
   "Handle CSI 997 ; 1 n."
-  (gemacs-theme--tty-report 'dark))
+  (gemacs-theme--tty-report 'dark)
+  [])
 
 (defun gemacs-theme--tty-report-light (&optional _prompt)
   "Handle CSI 997 ; 2 n."
-  (gemacs-theme--tty-report 'light))
+  (gemacs-theme--tty-report 'light)
+  [])
+
+(defun gemacs-theme--tty-report-none (&optional _prompt)
+  "Handle CSI 997 ; 0 n, meaning no color scheme is set."
+  (setq gemacs-theme--tty-got-report t)
+  [])
 
 (defun gemacs-theme--tty-background-report ()
   "Handle an OSC 11 background color reply."
@@ -149,29 +160,62 @@ terminal."
      "\e]11;?\e\\"
      '(("\e]11;" . gemacs-theme--tty-background-report)))))
 
-(defun gemacs-theme--tty-query-scheme ()
-  "Detect the terminal theme via CSI 996 with an OSC 11 fallback.
+(defvar gemacs-theme--tty-decode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "\e[?997;0n" #'gemacs-theme--tty-report-none)
+    (define-key map "\e[?997;1n" #'gemacs-theme--tty-report-dark)
+    (define-key map "\e[?997;2n" #'gemacs-theme--tty-report-light)
+    map)
+  "Keymap decoding CSI 997 color-scheme reports from the terminal.")
 
-The terminal is queried synchronously, so no entries are left in
-the input decoding map."
-  (require 'term/xterm)
-  (let ((xterm-query-timeout 0.4)
-        (xterm-query-redisplay-timeout 0.1))
-    (xterm--query
-     "\e[?996n"
-     '(("\e[?997;1n" . gemacs-theme--tty-report-dark)
-       ("\e[?997;2n" . gemacs-theme--tty-report-light))
-     t))
-  (unless gemacs-theme--tty-got-report
-    (gemacs-theme--tty-query-background)))
+(defvar gemacs-theme--tty-handlers-installed nil
+  "Non-nil when the CSI 997 input handlers are installed.")
+
+(defun gemacs-theme--tty-install-handlers ()
+  "Decode CSI 997 color-scheme reports in the input decoding map.
+
+The handlers are installed through keymap inheritance, the same way
+Emacs installs xterm-function-map, so they coexist with arrow and
+function-key decoders.
+
+The ? character (0x3f) is a member of help-event-list by default, so
+read-key-sequence treats ESC [ ? as a prefix followed by a help key and
+pops up the prefix binding help buffer instead of decoding the report.
+Remove ? from help-event-list so the report is decoded normally."
+  (unless gemacs-theme--tty-handlers-installed
+    (setq help-event-list (delq ?\? help-event-list))
+    (xterm--push-map gemacs-theme--tty-decode-map input-decode-map)
+    (setq gemacs-theme--tty-handlers-installed t)))
+
+(defun gemacs-theme--tty-request-updates (frame)
+  "Ask FRAME's terminal for unsolicited color-scheme reports."
+  (send-string-to-terminal "\e[?2031h" (frame-terminal frame)))
+
+(defun gemacs-theme--tty-sync (frame)
+  "Query FRAME's terminal for its current color scheme.
+
+Falls back to an OSC 11 background query when the terminal does not
+answer the CSI 996 query."
+  (with-selected-frame frame
+    (setq gemacs-theme--tty-got-report nil)
+    (send-string-to-terminal "\e[?996n")
+    (run-with-timer
+     0.4 nil
+     (lambda (f)
+       (when (and (frame-live-p f) (not gemacs-theme--tty-got-report))
+         (with-selected-frame f
+           (gemacs-theme--tty-query-background))))
+     frame)))
 
 (defun gemacs-theme--tty-start (frame)
   "Start terminal theme tracking for FRAME."
+  (require 'term/xterm)
+  (gemacs-theme--tty-install-handlers)
   (with-selected-frame frame
     (if (string= gemacs-theme-terminal-mode "auto")
         (progn
-          (setq gemacs-theme--tty-got-report nil)
-          (gemacs-theme--tty-query-scheme))
+          (gemacs-theme--tty-request-updates frame)
+          (gemacs-theme--tty-sync frame))
       (gemacs-theme--apply 'terminal (intern gemacs-theme-terminal-mode)))))
 
 
