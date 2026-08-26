@@ -188,8 +188,14 @@ Remove ? from help-event-list so the report is decoded normally."
     (setq gemacs-theme--tty-handlers-installed t)))
 
 (defun gemacs-theme--tty-request-updates (frame)
-  "Ask FRAME's terminal for unsolicited color-scheme reports."
-  (send-string-to-terminal "\e[?2031h" (frame-terminal frame)))
+  "Ask FRAME's terminal for unsolicited color-scheme reports.
+
+The report subscription is persistent, so enable it once per
+terminal rather than on every frame focus."
+  (let ((terminal (frame-terminal frame)))
+    (unless (terminal-parameter terminal 'gemacs-theme-tty-updates-subscribed)
+      (set-terminal-parameter terminal 'gemacs-theme-tty-updates-subscribed t)
+      (send-string-to-terminal "\e[?2031h" terminal))))
 
 (defun gemacs-theme--tty-sync (frame)
   "Query FRAME's terminal for its current color scheme.
@@ -234,7 +240,19 @@ answer the CSI 996 query."
         (when (fboundp 'auto-dark--check-and-set-dark-mode)
           (auto-dark--check-and-set-dark-mode)))
     (when (string= gemacs-theme-terminal-mode "auto")
-      (gemacs-theme--tty-start (selected-frame)))))
+      ;; Re-sync after the focus event has finished being read, not
+      ;; during it.  A report sent while Emacs is still assembling the
+      ;; focus key sequence is not decoded by the CSI 997 keymap, so
+      ;; the terminal answers ("997;1n") get self-inserted into the
+      ;; buffer.  Two triggers per focus widened this: re-sending 2031h
+      ;; plus the 996n sync returned two reports, hence the doubled
+      ;; "997;1n997;1n".
+      (run-with-timer
+       0.1 nil
+       (lambda (frame)
+         (when (and (frame-live-p frame) (not (display-graphic-p frame)))
+           (gemacs-theme--tty-start frame)))
+       (selected-frame)))))
 
 (add-hook 'after-make-frame-functions #'gemacs-theme--after-make-frame)
 (add-hook 'after-init-hook
