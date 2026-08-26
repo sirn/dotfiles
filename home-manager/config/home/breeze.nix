@@ -185,6 +185,13 @@ let
 
     entrypoint "$@"
   '';
+
+  # ----------------------------------------------------
+  # Hooks
+  # ----------------------------------------------------
+
+  # When Noctalia is enabled, Noctalia will handle the switch.
+  needsActivationScript = !noctaliacfg.enable || config.home.colors.variants.desktop != "auto";
 in
 {
   gtk = {
@@ -251,7 +258,7 @@ in
       hicolor-icon-theme
     ];
 
-    activation = {
+    activation = lib.mkIf needsActivationScript {
       setupBreezeAppearance = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         ${lib.getExe updateBreezeAppearance}
       '';
