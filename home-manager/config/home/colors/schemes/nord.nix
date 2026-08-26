@@ -128,14 +128,14 @@ in
         }; # 3.50 (3:1)
 
         surface = {
-          bg = getColor 234;
+          bg = getColor 254;
           text = base16Colors.foreground;
-        }; # 8.58 (AAA)
+        }; # 9.27 (AAA)
 
         recess = {
-          bg = getColor 232;
+          bg = getColor 250;
           text = base16Colors.foreground;
-        }; # 10.08 (AAA)
+        }; # 6.70 (AA)
 
         # Interaction
 
@@ -165,14 +165,14 @@ in
         }; # 8.00 (AAA)
 
         success = {
-          bg = getColor 22;
-          text = base16Colors.foreground;
-        }; # 9.72 (AAA)
+          bg = getColor 194;
+          text = getColor 22;
+        }; # 6.48 (AA)
 
         error = {
-          bg = getColor 52;
-          text = base16Colors.foreground;
-        }; # 8.66 (AAA)
+          bg = getColor 225;
+          text = getColor 88;
+        }; # 5.94 (AA)
 
         # UI elements
 
@@ -182,7 +182,7 @@ in
         # Text tone
 
         muted = nord3; # 6.40 (AA)
-        dim = getColor 194; # 5.22 (AA)
+        dim = getColor 18; # 1.86 (FAIL)
         label = getColor 219; # 5.99 (AA)
 
         # Special case: battery

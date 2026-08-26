@@ -35,17 +35,19 @@ let
         white = c.normal.white;
         brightBlack = c.bright.black;
         brightWhite = c.bright.white;
-        accent = s.accent.bg;
+        accent = s.primary.text;
         secondary = s.secondary.bg;
         tertiary = s.tertiary.bg;
         outline = s.outline;
         muted = s.muted;
         dim = s.dim;
-        # Surface backgrounds: lifted neutrals and subtle tints, per scheme.
         surface = s.surface.bg;
         surfaceDim = s.recess.bg;
         successBg = s.success.bg;
+        successText = s.success.text;
         errorBg = s.error.bg;
+        errorText = s.error.text;
+        warningText = s.warning.text;
         customBg = s.surface.bg; # neutral; label carries the color signal
         purple = s.label;
       };
@@ -55,9 +57,9 @@ let
         border = "blue";
         borderAccent = "cyan";
         borderMuted = "muted";
-        success = "green";
-        error = "red";
-        warning = "yellow";
+        success = "successText";
+        error = "errorText";
+        warning = "warningText";
         muted = "muted";
         dim = "dim";
         text = "fg";
