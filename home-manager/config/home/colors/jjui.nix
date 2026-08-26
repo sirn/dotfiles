@@ -33,7 +33,6 @@ let
       # Global
       "text" = {
         fg = s.primary.text;
-        bg = s.primary.bg;
       };
       "dimmed" = {
         fg = s.dim;
