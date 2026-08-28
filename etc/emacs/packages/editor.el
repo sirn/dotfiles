@@ -56,6 +56,58 @@ Other buffers are left alone."
 
 
 ;; --------------------------------------------------------------------------
+;;; Terminal key decoding
+
+;; Builtin: decode Shift+Space that tmux forwards as CSI u
+(use-package emacs
+  :preface
+  (eval-when-compile
+    (declare-function xterm--push-map "term/xterm")
+    (declare-function gemacs--tty-install-key-decode-map nil)
+    (declare-function gemacs--tty-key-decode-frame nil))
+
+  :config
+  ;; Ghostty's kitty keyboard protocol (and tmux with
+  ;; extended-keys-format csi-u) encodes Shift+Space as CSI u; the
+  ;; legacy encoding has no form for it, so without a decoder the
+  ;; trailing "u" self-inserts.  GUI Emacs reports Shift+Space as a
+  ;; plain space (it discards shift on keys it cannot modify), so
+  ;; translate to one for parity.
+  (defvar gemacs--tty-key-decode-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map "\e[32;2u" [?\s])
+      (define-key map "\e[32:65;2u" [?\s])
+      (define-key map "\e[27;2;32~" [?\s])
+      map)
+    "Keymap decoding Shift+Space that tmux forwards as CSI u.
+
+The decoders go into local-function-key-map, not input-decode-map,
+so they coexist with the response bindings xterm--query parks under
+the same ESC [ prefix while a query is in flight.")
+
+  (defun gemacs--tty-install-key-decode-map ()
+    "Install the tty key decoders on the selected terminal."
+    (require 'term/xterm)
+    (unless (terminal-parameter nil 'gemacs-tty-key-decode-map)
+      (xterm--push-map gemacs--tty-key-decode-map local-function-key-map)
+      (set-terminal-parameter nil 'gemacs-tty-key-decode-map t)))
+
+  (defun gemacs--tty-key-decode-frame (frame)
+    "Install the tty key decoders for FRAME's terminal."
+    (unless (display-graphic-p frame)
+      (with-selected-frame frame
+        (gemacs--tty-install-key-decode-map))))
+
+  ;; A daemon's initial frame has no terminal; real tty frames arrive
+  ;; through after-make-frame-functions.
+  (add-hook 'after-make-frame-functions #'gemacs--tty-key-decode-frame)
+  (add-hook 'after-init-hook
+            (lambda ()
+              (unless (daemonp)
+                (gemacs--tty-key-decode-frame (selected-frame))))))
+
+
+;; --------------------------------------------------------------------------
 ;;; Editing behaviors
 
 ;; Builtin
