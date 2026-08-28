@@ -90,6 +90,8 @@ terminal."
     (declare-function frame-set-background-mode nil)
     (declare-function frame-terminal nil)
     (declare-function send-string-to-terminal nil)
+    (declare-function set-terminal-parameter nil)
+    (declare-function terminal-parameter nil)
     (declare-function xterm--push-map nil)
     (declare-function xterm--query nil)
     (declare-function xterm--read-event-for-query nil)
@@ -152,6 +154,17 @@ terminal."
              'dark
            'light))))))
 
+(defun gemacs-theme--tty-background-handler (&optional _prompt)
+  "Decode an unsolicited OSC 11 background color report.
+
+Like xterm's DA and version handlers, terminals answer queries
+asynchronously, so the report can arrive long after the query, or
+unsolicited when the terminal reports a background change on its
+own.  Decode it in the input decoding map instead of relying on a
+pending query."
+  (gemacs-theme--tty-background-report)
+  [])
+
 (defun gemacs-theme--tty-query-background ()
   "Query OSC 11 and apply the reported terminal background mode."
   (let ((xterm-query-timeout 0.8)
@@ -165,27 +178,43 @@ terminal."
     (define-key map "\e[?997;0n" #'gemacs-theme--tty-report-none)
     (define-key map "\e[?997;1n" #'gemacs-theme--tty-report-dark)
     (define-key map "\e[?997;2n" #'gemacs-theme--tty-report-light)
+    (define-key map "\e]11;" #'gemacs-theme--tty-background-handler)
     map)
-  "Keymap decoding CSI 997 color-scheme reports from the terminal.")
+  "Keymap decoding terminal color-scheme reports.
 
-(defvar gemacs-theme--tty-handlers-installed nil
-  "Non-nil when the CSI 997 input handlers are installed.")
+Covers CSI 997 color-scheme reports and OSC 11 background reports.
+xterm--query installs temporary bindings like these in
+input-decode-map while a query is in flight; this map keeps them
+in local-function-key-map so unsolicited reports decode too.")
 
 (defun gemacs-theme--tty-install-handlers ()
-  "Decode CSI 997 color-scheme reports in the input decoding map.
+  "Decode color-scheme reports in the local function key map.
 
 The handlers are installed through keymap inheritance, the same way
-Emacs installs xterm-function-map, so they coexist with arrow and
+Emacs installs xterm-alternatives-map, so they coexist with arrow and
 function-key decoders.
+
+The decoders go into local-function-key-map, not input-decode-map.
+input-decode-map is where xterm--query parks its temporary response
+bindings for the device-attributes queries, and unbinding them
+leaves a nil under the ESC [ ? prefix.  A nil binding there blocks
+inherited bindings below that prefix, so ESC [ 997 reports would
+never be decoded no matter what the parent keymap holds.
+
+local-function-key-map is also terminal-local, and xterm--push-map
+mutates the map of the selected terminal only.  Install it once per
+terminal so frames made after startup (emacsclient on a daemon) get
+the decoders too; a global flag leaves them decoding nothing, and
+terminal reports then fall through to self-inserting keys.
 
 The ? character (0x3f) is a member of help-event-list by default, so
 read-key-sequence treats ESC [ ? as a prefix followed by a help key and
 pops up the prefix binding help buffer instead of decoding the report.
 Remove ? from help-event-list so the report is decoded normally."
-  (unless gemacs-theme--tty-handlers-installed
+  (unless (terminal-parameter nil 'gemacs-theme-tty-decode-map)
     (setq help-event-list (delq ?\? help-event-list))
-    (xterm--push-map gemacs-theme--tty-decode-map input-decode-map)
-    (setq gemacs-theme--tty-handlers-installed t)))
+    (xterm--push-map gemacs-theme--tty-decode-map local-function-key-map)
+    (set-terminal-parameter nil 'gemacs-theme-tty-decode-map t)))
 
 (defun gemacs-theme--tty-request-updates (frame)
   "Ask FRAME's terminal for unsolicited color-scheme reports.
@@ -216,8 +245,8 @@ answer the CSI 996 query."
 (defun gemacs-theme--tty-start (frame)
   "Start terminal theme tracking for FRAME."
   (require 'term/xterm)
-  (gemacs-theme--tty-install-handlers)
   (with-selected-frame frame
+    (gemacs-theme--tty-install-handlers)
     (if (string= gemacs-theme-terminal-mode "auto")
         (progn
           (gemacs-theme--tty-request-updates frame)
@@ -241,12 +270,9 @@ answer the CSI 996 query."
           (auto-dark--check-and-set-dark-mode)))
     (when (string= gemacs-theme-terminal-mode "auto")
       ;; Re-sync after the focus event has finished being read, not
-      ;; during it.  A report sent while Emacs is still assembling the
-      ;; focus key sequence is not decoded by the CSI 997 keymap, so
-      ;; the terminal answers ("997;1n") get self-inserted into the
-      ;; buffer.  Two triggers per focus widened this: re-sending 2031h
-      ;; plus the 996n sync returned two reports, hence the doubled
-      ;; "997;1n997;1n".
+      ;; during it.  Output sent while Emacs is still assembling the
+      ;; focus key sequence interleaves with the report the terminal
+      ;; is sending for the focus change.
       (run-with-timer
        0.1 nil
        (lambda (frame)
@@ -257,5 +283,12 @@ answer the CSI 996 query."
 (add-hook 'after-make-frame-functions #'gemacs-theme--after-make-frame)
 (add-hook 'after-init-hook
           (lambda ()
-            (gemacs-theme--after-make-frame (selected-frame))))
+            ;; A daemon's initial frame has no terminal: its stdin and
+            ;; stdout are pipes nobody reads, so queries and report
+            ;; subscriptions sent there go nowhere.  Real tty frames
+            ;; arrive through after-make-frame-functions instead.
+            (unless (and (daemonp)
+                         (eq (terminal-name (selected-frame))
+                             'initial_terminal))
+              (gemacs-theme--after-make-frame (selected-frame)))))
 (add-function :after after-focus-change-function #'gemacs-theme--after-focus-change)
