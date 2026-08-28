@@ -229,18 +229,19 @@ terminal rather than on every frame focus."
 (defun gemacs-theme--tty-sync (frame)
   "Query FRAME's terminal for its current color scheme.
 
-Falls back to an OSC 11 background query when the terminal does not
-answer the CSI 996 query."
+The OSC 11 query goes first.  A terminal answers asynchronously,
+and on a freshly created terminal the initialization device
+attributes query can still be pending: its temporary binding sits
+under the same ESC [ ? prefix that CSI 996 reports use, so the
+first 996n answer can be swallowed by the version handler and the
+frame keeps the default theme.  OSC 11 replies use ESC ] and cannot
+collide with it.  The 996n query still goes out for terminals that
+report color-scheme changes but not backgrounds; a second report
+just deduplicates."
   (with-selected-frame frame
     (setq gemacs-theme--tty-got-report nil)
     (send-string-to-terminal "\e[?996n")
-    (run-with-timer
-     0.4 nil
-     (lambda (f)
-       (when (and (frame-live-p f) (not gemacs-theme--tty-got-report))
-         (with-selected-frame f
-           (gemacs-theme--tty-query-background))))
-     frame)))
+    (gemacs-theme--tty-query-background)))
 
 (defun gemacs-theme--tty-start (frame)
   "Start terminal theme tracking for FRAME."
@@ -250,6 +251,12 @@ answer the CSI 996 query."
     (if (string= gemacs-theme-terminal-mode "auto")
         (progn
           (gemacs-theme--tty-request-updates frame)
+          ;; The daemon remembers the last applied mode, so a new
+          ;; frame shows it right away instead of the default theme
+          ;; while the terminal answers the query.  The sync below
+          ;; corrects it if the terminal reports otherwise.
+          (when gemacs-theme--last-mode
+            (gemacs-theme--apply 'terminal gemacs-theme--last-mode))
           (gemacs-theme--tty-sync frame))
       (gemacs-theme--apply 'terminal (intern gemacs-theme-terminal-mode)))))
 
@@ -287,8 +294,6 @@ answer the CSI 996 query."
             ;; stdout are pipes nobody reads, so queries and report
             ;; subscriptions sent there go nowhere.  Real tty frames
             ;; arrive through after-make-frame-functions instead.
-            (unless (and (daemonp)
-                         (eq (terminal-name (selected-frame))
-                             'initial_terminal))
+            (unless (daemonp)
               (gemacs-theme--after-make-frame (selected-frame)))))
 (add-function :after after-focus-change-function #'gemacs-theme--after-focus-change)
