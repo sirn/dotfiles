@@ -10,5 +10,9 @@
     ## Additional tools
   '';
 
-  agents.requiredEnvs = [ "ASANA_PAT" ];
+  agents.requiredEnvs = [
+    "ASANA_PAT" # var/skills/apis/asana
+    "CLICKUP_PAT" # var/skills/apis/clickup
+    "LINEAR_PAT" # var/skills/apis/linear
+  ];
 }
