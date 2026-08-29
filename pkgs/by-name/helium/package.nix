@@ -146,7 +146,7 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "helium";
-  version = "0.15.6.1";
+  version = "0.16.2.1";
 
   src = fetchurl {
     url = "https://github.com/imputnet/helium-linux/releases/download/${version}/helium-bin_${version}-1_${suffix}.deb";
