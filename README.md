@@ -45,7 +45,7 @@ experimental-features = nix-command flakes
 Clone the Repository:
 
 ```shell
-$ git clone git@git.sr.ht:~sirn/dotfiles ~/.dotfiles
+$ git clone git@github.com:sirn/dotfiles.git ~/.dotfiles
 ```
 
 Setup Home Manager:
@@ -67,7 +67,7 @@ $ home-manager switch --flake path:.#$HM_PROFILE
 On a NixOS system, clone this repository into `/etc/nixos`:
 
 ```shell
-$ git clone git@git.sr.ht:~sirn/nixos /etc/nixos
+$ git clone git@github.com:sirn/dotfiles.git /etc/nixos
 ```
 
 Generate hardware-configuration:

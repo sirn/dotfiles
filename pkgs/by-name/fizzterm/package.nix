@@ -17,7 +17,7 @@ rustPlatform.buildRustPackage rec {
   version = "0.3.1";
 
   src = fetchgit {
-    url = "https://git.sr.ht/~sirn/fizzterm";
+    url = "https://github.com/sirn/fizzterm";
     rev = "refs/tags/v" + version;
     hash = "sha256-F52pCTOnIIWowvUFd6ds4Md0RgHo273mqAdIfut8B9s=";
   };
@@ -59,7 +59,7 @@ rustPlatform.buildRustPackage rec {
 
   meta = with lib; {
     description = "A persistent browser terminal with a Rust server and xterm.js";
-    homepage = "https://git.sr.ht/~sirn/fizzterm";
+    homepage = "https://github.com/sirn/fizzterm";
     license = licenses.mit;
     mainProgram = "fizzterm";
   };

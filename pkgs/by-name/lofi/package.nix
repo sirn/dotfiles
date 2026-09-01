@@ -9,7 +9,7 @@ rustPlatform.buildRustPackage rec {
   version = "0.2.7";
 
   src = fetchgit {
-    url = "https://git.sr.ht/~sirn/lofi";
+    url = "https://github.com/sirn/lofi";
     rev = "refs/tags/v${version}";
     hash = "sha256-DE7rZ4MWv+04FGZU5fUZsB0FHp9ts6y2mDcKWBe5Vf0=";
   };
@@ -25,7 +25,7 @@ rustPlatform.buildRustPackage rec {
 
   meta = with lib; {
     description = "Minimal coding-agent harness written in Rust";
-    homepage = "https://git.sr.ht/~sirn/lofi";
+    homepage = "https://github.com/sirn/lofi";
     license = licenses.asl20;
     mainProgram = "lofi";
     platforms = platforms.linux ++ platforms.darwin;

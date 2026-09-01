@@ -3,7 +3,7 @@
   libvirt,
   pkg-config,
   systemd,
-  fetchFromSourcehut,
+  fetchFromGitHub,
   rustPlatform,
 }:
 
@@ -11,8 +11,8 @@ rustPlatform.buildRustPackage rec {
   pname = "udev-forwarder";
   version = "0.2.0";
 
-  src = fetchFromSourcehut {
-    owner = "~sirn";
+  src = fetchFromGitHub {
+    owner = "sirn";
     repo = "udev-forwarder";
     rev = "v${version}";
     hash = "sha256-hy7o1qOL970Dfhy4NDNYv1i4CnUiD0bbjkR9iSb/Jkc=";
@@ -29,7 +29,7 @@ rustPlatform.buildRustPackage rec {
 
   meta = with lib; {
     description = "A simple daemon that forward matching USB devices to libvirt VM";
-    homepage = "https://git.sr.ht/~sirn/udev-forwarder";
+    homepage = "https://github.com/sirn/udev-forwarder";
     license = licenses.bsd3;
     mainProgram = "udev-forwarder";
   };

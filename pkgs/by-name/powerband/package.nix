@@ -1,6 +1,6 @@
 {
   lib,
-  fetchFromSourcehut,
+  fetchFromGitHub,
   rustPlatform,
 }:
 
@@ -8,8 +8,8 @@ rustPlatform.buildRustPackage rec {
   pname = "powerband";
   version = "0.1.1";
 
-  src = fetchFromSourcehut {
-    owner = "~sirn";
+  src = fetchFromGitHub {
+    owner = "sirn";
     repo = "powerband";
     rev = "v${version}";
     hash = "sha256-a2GTzu9D+SiPx/4ygxcEbt9+0Y6rkZmcVxNnC3VkkuU=";
@@ -19,7 +19,7 @@ rustPlatform.buildRustPackage rec {
 
   meta = with lib; {
     description = "Load-aware CPU power settings daemon (EPP, EPB, governor)";
-    homepage = "https://git.sr.ht/~sirn/powerband";
+    homepage = "https://github.com/sirn/powerband";
     license = licenses.bsd3;
     mainProgram = "powerband";
   };
