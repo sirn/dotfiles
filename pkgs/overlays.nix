@@ -23,6 +23,7 @@ in
 compatOverlays
 ++ [
   inputs.nixgl.overlay
+  inputs.emacs-overlay.overlay
 
   (final: prev: {
     unstable = import inputs.nixpkgs-unstable {
