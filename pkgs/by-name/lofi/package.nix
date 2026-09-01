@@ -6,15 +6,15 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "lofi";
-  version = "0.2.7";
+  version = "0.2.8";
 
   src = fetchgit {
     url = "https://github.com/sirn/lofi";
     rev = "refs/tags/v${version}";
-    hash = "sha256-DE7rZ4MWv+04FGZU5fUZsB0FHp9ts6y2mDcKWBe5Vf0=";
+    hash = "sha256-4wiX3DNTakk1o0bp7QLhxvsQICYK2Bn5tQEggjBbx70=";
   };
 
-  cargoHash = "sha256-dOOCNDtiNfbQOaq46N5+qexruO8fVDWkamZGyYOFeqY=";
+  cargoHash = "sha256-q8+urURNPX21kRaPHw1pkCekd6gNXglt7XB6sNQMow8=";
 
   cargoBuildFlags = [
     "-p"
