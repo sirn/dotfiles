@@ -102,6 +102,23 @@ $ HM_PROFILE=$(hostname -s)
 $ nix build "path:.#homeConfigurations.$HM_PROFILE.activationPackage"
 ```
 
+### Testing NixOS Locally
+
+Build a NixOS system without switching to it, and print the store path:
+
+```shell
+$ PROFILE=$(hostname -s)
+$ nix build --no-link --print-out-paths "path:.#nixosConfigurations.$PROFILE.config.system.build.toplevel"
+```
+
+To print the store path of an already-built system without rebuilding:
+
+```shell
+$ nix path-info "path:.#nixosConfigurations.$PROFILE.config.system.build.toplevel"
+```
+
+To deploy the built system, run `sudo ./result/bin/switch-to-configuration switch`.
+
 ## Configuration
 
 ### Local Home Manager Configuration
