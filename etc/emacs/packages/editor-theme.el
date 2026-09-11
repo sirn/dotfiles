@@ -224,6 +224,10 @@ terminal rather than on every frame focus."
   (let ((terminal (frame-terminal frame)))
     (unless (terminal-parameter terminal 'gemacs-theme-tty-updates-subscribed)
       (set-terminal-parameter terminal 'gemacs-theme-tty-updates-subscribed t)
+      ;; Without a reset, the terminal stays subscribed after Emacs
+      ;; exits and keeps sending CSI 997 reports to whatever runs next.
+      (push "\e[?2031l" (terminal-parameter terminal 'tty-mode-reset-strings))
+      (push "\e[?2031h" (terminal-parameter terminal 'tty-mode-set-strings))
       (send-string-to-terminal "\e[?2031h" terminal))))
 
 (defun gemacs-theme--tty-sync (frame)
