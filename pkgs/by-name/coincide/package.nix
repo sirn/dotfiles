@@ -90,7 +90,7 @@ rustPlatform.buildRustPackage {
 
   meta = with lib; {
     description = "Local web app for reviewing Git commits and Jujutsu changes in an inline diff view";
-    homepage = "https://git.sr.ht/~sirn/coincide";
+    homepage = "https://github.com/sirn/coincide";
     license = licenses.bsd3;
     mainProgram = "coincide-server";
   };

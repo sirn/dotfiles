@@ -12,7 +12,7 @@ rustPlatform.buildRustPackage rec {
   version = "0.4.3";
 
   src = fetchgit {
-    url = "https://git.sr.ht/~sirn/coord";
+    url = "https://github.com/sirn/coord";
     rev = "refs/tags/v${version}";
     hash = "sha256-hzEoWN2fyRRmNPPdm33cBupolo/6pMBJEb45oxHo+cs=";
   };
@@ -41,7 +41,7 @@ rustPlatform.buildRustPackage rec {
 
   meta = with lib; {
     description = "Keyboard-controlled mouse for Wayland";
-    homepage = "https://git.sr.ht/~sirn/coord";
+    homepage = "https://github.com/sirn/coord";
     license = licenses.mit;
     mainProgram = "coord";
     platforms = platforms.linux ++ platforms.darwin;

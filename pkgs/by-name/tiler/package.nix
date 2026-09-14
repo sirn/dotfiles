@@ -13,7 +13,7 @@ stdenv.mkDerivation rec {
   version = "0.5.2";
 
   src = fetchgit {
-    url = "https://git.sr.ht/~sirn/tiler";
+    url = "https://github.com/sirn/tiler";
     rev = "refs/tags/v${version}";
     hash = "sha256-CSSpP0wyiq4+ci1AOEbUIxSO3R0kGiXiWStviPvd8Xo=";
   };
@@ -45,7 +45,7 @@ stdenv.mkDerivation rec {
 
   meta = with lib; {
     description = "Niri-like WM for macOS";
-    homepage = "https://git.sr.ht/~sirn/tiler";
+    homepage = "https://github.com/sirn/tiler";
     license = licenses.mit;
     mainProgram = "TilerApp";
     platforms = platforms.darwin;

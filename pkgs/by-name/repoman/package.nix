@@ -11,7 +11,7 @@ rustPlatform.buildRustPackage rec {
   version = "0.3.3";
 
   src = fetchgit {
-    url = "https://git.sr.ht/~sirn/repoman";
+    url = "https://github.com/sirn/repoman";
     rev = "refs/tags/v${version}";
     hash = "sha256-vQpvtkJ32/p8axJmqD1SIsHyJ2BICRimaxVF0Ulq2Qc=";
   };
@@ -24,7 +24,7 @@ rustPlatform.buildRustPackage rec {
 
   meta = with lib; {
     description = "Repository management tool";
-    homepage = "https://git.sr.ht/~sirn/repoman";
+    homepage = "https://github.com/sirn/repoman";
     license = licenses.mit;
     mainProgram = "repoman";
   };

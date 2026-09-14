@@ -39,15 +39,15 @@ let
 in
 rustPlatform.buildRustPackage rec {
   pname = "handsfree";
-  version = "0.1.1";
+  version = "0.1.0";
 
   src = fetchgit {
-    url = "https://git.sr.ht/~sirn/handsfree";
+    url = "https://github.com/sirn/handsfree";
     rev = "refs/tags/v${version}";
-    hash = "sha256-kN8Q3qJzVRgWEH9K6qzXn4sqYXUgoEvgoZm0xWG9ygI=";
+    hash = "sha256-itjqY1+hVnzkc5QxcAiw/xgeq5OAmWsjj9Y1N7qrP5A=";
   };
 
-  cargoHash = "sha256-Bws125KyqdRmSngtpqJ5+FuddEPpIn5oZxDv14d3ZgA=";
+  cargoHash = "sha256-pTO798AyrXAxyzIkhCEiTe73zHZIV2xBBkzW7ORK7qw=";
 
   nativeBuildInputs = [
     pkg-config
@@ -158,7 +158,7 @@ rustPlatform.buildRustPackage rec {
 
   meta = with lib; {
     description = "Minimal local speech-to-text dictation app for macOS and Wayland";
-    homepage = "https://git.sr.ht/~sirn/handsfree";
+    homepage = "https://github.com/sirn/handsfree";
     license = licenses.mit;
     mainProgram = "handsfree";
     platforms = platforms.linux ++ platforms.darwin;
