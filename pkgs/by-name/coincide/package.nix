@@ -3,7 +3,7 @@
   buildWasmBindgenCli,
   binaryen,
   fetchCrate,
-  fetchFromSourcehut,
+  fetchFromGitHub,
   lld,
   openssl,
   pkg-config,
@@ -31,8 +31,8 @@ in
 rustPlatform.buildRustPackage {
   inherit pname version;
 
-  src = fetchFromSourcehut {
-    owner = "~sirn";
+  src = fetchFromGitHub {
+    owner = "sirn";
     repo = "coincide";
     rev = "v${version}";
     hash = "sha256-MmmiwXElcyaGelGwgmA2JbKtzR2le2YPFrmWWlP0ZeU=";

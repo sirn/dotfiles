@@ -41,11 +41,11 @@ src_hash=$(nix hash convert --hash-algo sha256 --to sri \
     2>/dev/null | tail -1)")
 
 # Update version and src hash in package.nix. The version lives in a `let`
-# block. The src hash is scoped to the fetchFromSourcehut block so the pinned
+# block. The src hash is scoped to the fetchFromGitHub block so the pinned
 # wasm-bindgen-cli dependency hashes are left untouched.
 sed_inplace \
   -e "s|version = \"$current_version\"|version = \"$version\"|" \
-  -e "/src = fetchFromSourcehut {/,/};/ s|hash = \"sha256-[^\"]*\"|hash = \"$src_hash\"|" \
+  -e "/src = fetchFromGitHub {/,/};/ s|hash = \"sha256-[^\"]*\"|hash = \"$src_hash\"|" \
   "$package_file"
 
 # Set a fake cargoHash so the cargo vendor staging derivation fails and reports
