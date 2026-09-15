@@ -6,7 +6,6 @@
       ../nixos/config/system/network/networkd.nix
 
       # profiles
-      ../nixos/config/system/pcie-aspm.nix
       ../nixos/config/system/plymouth.nix
       ../nixos/config/system/vfio.nix
 

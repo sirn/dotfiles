@@ -9,7 +9,6 @@
     ../system/game.nix
     ../system/intel-gpu.nix
     ../system/niri.nix
-    ../system/pcie-aspm.nix
     ../system/plymouth.nix
     ../system/power-management.nix
     ../system/sway.nix
