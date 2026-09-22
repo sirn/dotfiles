@@ -6,7 +6,6 @@
     ./home/colors.nix
     ./home/fonts.nix
     ./services/coord.nix
-    ./services/fizzterm.nix
     ./services/handsfree.nix
     ./services/tiler.nix
     ./programs/emacs.nix
