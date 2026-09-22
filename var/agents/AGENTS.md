@@ -37,6 +37,7 @@
   - Use concrete commands.
   - Use the imperative for commands.
   - Use "Do not" for prohibitions.
+- Provides context; do not assume user already know about it.
 - Ask for clarification when information is not clear.
   - Check the requirements.
   - Check the success criteria.
