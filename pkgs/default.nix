@@ -46,10 +46,21 @@ let
     wrapped-uv = (callPackage ./by-name/wrapped-uv/package.nix { });
   };
 
-  linuxPackages = commonPackages // {
+  linuxPackages = commonPackages // rec {
     helium = (callPackage ./by-name/helium/package.nix { });
 
     udev-forwarder = (callPackage ./by-name/udev-forwarder/package.nix { });
+
+    # Vendored from NixOS/nixpkgs#561724 until unattended Wayland support
+    # lands upstream. Built against unstable because the packages need its
+    # Flutter 3.29 toolchain.
+    libdrmtap = final.unstable.callPackage ./by-name/libdrmtap/package.nix { };
+
+    rustdesk-flutter = final.unstable.callPackage ./by-name/rustdesk-flutter/package.nix { };
+
+    rustdesk-flutter-nightly =
+      final.unstable.callPackage ./by-name/rustdesk-flutter-nightly/package.nix
+        { inherit libdrmtap rustdesk-flutter; };
   };
 in
 {

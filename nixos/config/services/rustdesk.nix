@@ -1,0 +1,5 @@
+{
+  services.rustdesk = {
+    enable = true;
+  };
+}
