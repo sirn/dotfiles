@@ -39,9 +39,6 @@
     # Set default backlight
     services.udev.extraRules = ''
       SUBSYSTEM=="backlight", ACTION=="add", KERNEL=="intel_backlight", ATTR{brightness}="100"
-
-      # Prevent the internal I2C touchpad from waking the laptop repeatedly while suspended.
-      SUBSYSTEM=="i2c", ACTION=="add|change", KERNEL=="i2c-SNSL0028:00", ATTR{power/wakeup}="disabled"
     '';
 
     # Rebind the I2C HID touchpad driver on resume to work around a Sensel
@@ -95,27 +92,6 @@
         wait_for_multitouch 0
       ''}
     '';
-
-    # Fix broken audio on Lunar Lake.
-    services.pipewire.extraConfig.pipewire."99-lunar-lake-fix" = {
-      "context.properties" = {
-        "default.clock.min-quantum" = 1024;
-        "default.clock.quantum" = 1024;
-      };
-    };
-
-    # Attempt at fixing ZFS crash on `arc_evict` at `__pgalloc_tag_sub`
-    # which seems to be enabled as part of `mem_alloc_profiling_enabled`
-    # aka vm.mem_profiling.
-    #
-    # Not sure if it's a bug in ZFS or the kernel. Let's disable this
-    # for the time being and see if it will fix the issue. So far, this
-    # crash is observed on ThinkPad X1 Carbon Gen 13 (Intel Core 258V).
-    #
-    # TODO: reevaluate after 6.17 or if the crash happens again
-    boot.kernel.sysctl = {
-      "vm.mem_profiling" = "0";
-    };
   };
 
   home =
