@@ -63,14 +63,6 @@
         "consoleblank=60"
         "pci=noaer"
       ];
-
-      # Fix broken audio with BTD600/BTD700
-      services.pipewire.extraConfig.pipewire."99-btd600-btd700-fix" = {
-        "context.properties" = {
-          "default.clock.min-quantum" = 1024;
-          "default.clock.quantum" = 1024;
-        };
-      };
     };
 
   home =
