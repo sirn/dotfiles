@@ -120,7 +120,17 @@
               alias = "internal";
               criteria = "Samsung Display Corp. ATNA40HQ02-0  Unknown";
               mode = "2880x1800@120Hz";
+              position = "458,1080";
               scale = 1.75;
+            };
+          }
+          {
+            output = {
+              alias = "japannext";
+              criteria = "PNP(CDY) JAPANNEXT MNT Unknown";
+              mode = "2560x1080@75Hz";
+              position = "0,0";
+              scale = 1.0;
             };
           }
           {
@@ -139,6 +149,16 @@
                   criteria = "$internal";
                   status = "disable";
                 }
+              ];
+              exec = defaultExec;
+            };
+          }
+          {
+            profile = {
+              name = "dual_japannext_internal";
+              outputs = [
+                { criteria = "$japannext"; }
+                { criteria = "$internal"; }
               ];
               exec = defaultExec;
             };
