@@ -29,7 +29,7 @@ This is a Nix/Home Manager dotfiles repository. Read `README.md` before doing an
 - Format: `nix run path:.#treefmt`.
 - Parse profile: `nix-instantiate --parse profiles/<hostname>.nix`.
 - Build flake attr: `nix build --no-link path:.#<attr>`.
-- Build a local package: `nix build path:.#<name>` (e.g. `nix build path:.#coord`).
+- Build a local package: `nix build path:.#<name>` (e.g. `nix build path:.#tiler`).
 - Check flake: `nix flake check path:.`.
 - Build NixOS profile: `nix build --no-link path:.#nixosConfigurations.<hostname>.config.system.build.toplevel`.
 - Apply Home Manager on non-NixOS: `home-manager switch --flake path:.#<hostname>`.
@@ -42,6 +42,6 @@ Keep messages concise and use these scope prefixes:
 - `profiles/<hostname>` for `profiles/<hostname>.nix`, e.g. `profiles/terra: ...`.
 - `nixos/<component>` for files under `nixos/config`, `nixos/modules`, or `nixos/lib`. Skip `modules/programs`, e.g. `nixos/system: ...`
 - `hm/<component>` for files under `home-manager/config`, `home-manager/modules`, or `home-manager/lib`, e.g. `hm/pi-coding-agent: ...`
-- `pkgs/<package>` for packages under `pkgs/<group>/<package>`, e.g. `pkgs/coord: ...`.
+- `pkgs/<package>` for packages under `pkgs/<group>/<package>`, e.g. `pkgs/tiler: ...`.
 - Use the top-level filename for top-level files, and the directory path for other areas.
 - For multiple areas, use brace scopes like `nixos/{system,services}: ...` or `{nixos,hm}/*: ...`.

@@ -13,8 +13,6 @@
       ../home-manager/config/home/xdg.nix
 
       # services
-      ../home-manager/config/services/coord.nix
-      ../home-manager/config/services/handsfree.nix
       ../home-manager/config/services/tiler.nix
     ];
   };

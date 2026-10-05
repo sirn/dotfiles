@@ -23,8 +23,5 @@
     ../programs/obsidian.nix
     ../programs/sublime-text.nix
 
-    # Services
-    ../services/coord.nix
-    ../services/handsfree.nix
   ];
 }

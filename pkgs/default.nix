@@ -9,12 +9,6 @@ let
       callPackage ./by-name/ast-grep-skills/package.nix { ast-grep = final.unstable.ast-grep; }
     );
 
-    coincide = (callPackage ./by-name/coincide/package.nix { });
-
-    coord = (callPackage ./by-name/coord/package.nix { });
-
-    handsfree = (callPackage ./by-name/handsfree/package.nix { });
-
     lofi = (callPackage ./by-name/lofi/package.nix { });
 
     emacsPackages.phscroll = (callPackage ./by-name/phscroll/package.nix { });

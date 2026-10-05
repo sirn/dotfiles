@@ -41,7 +41,7 @@ if [ ${#scripts[@]} -eq 0 ]; then
   exit 1
 fi
 
-# Allow filtering by package name: pkgs/update.sh coord repoman
+# Allow filtering by package name: pkgs/update.sh tiler repoman
 if [ "$#" -gt 0 ]; then
   filtered=()
   for f in "${scripts[@]}"; do
