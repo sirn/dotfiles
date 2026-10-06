@@ -105,6 +105,15 @@
             };
           }
           {
+            output = {
+              alias = "aoc";
+              criteria = "PNP(AOC) 28E850 Unknown";
+              mode = "1920x1080@60Hz";
+              position = "0,0";
+              scale = 1.0;
+            };
+          }
+          {
             profile = {
               name = "dual_system76_aw3225qf";
               outputs = [
@@ -135,6 +144,58 @@
                   mode = "3440x1440@120Hz";
                   adaptiveSync = true;
                   scale = 1.0;
+                }
+              ];
+              exec = defaultExec;
+            };
+          }
+          {
+            profile = {
+              name = "dual_system76_aoc";
+              outputs = [
+                {
+                  criteria = "$aoc";
+                  status = "enable";
+                }
+                {
+                  criteria = "$system76";
+                  status = "disable";
+                }
+              ];
+              exec = defaultExec;
+            };
+          }
+          {
+            profile = {
+              name = "dual_u3425we_aoc";
+              outputs = [
+                {
+                  criteria = "$aoc";
+                  status = "enable";
+                }
+                {
+                  criteria = "$u3425we";
+                  status = "disable";
+                }
+              ];
+              exec = defaultExec;
+            };
+          }
+          {
+            profile = {
+              name = "triple_system76_u3425we_aoc";
+              outputs = [
+                {
+                  criteria = "$aoc";
+                  status = "enable";
+                }
+                {
+                  criteria = "$system76";
+                  status = "disable";
+                }
+                {
+                  criteria = "$u3425we";
+                  status = "disable";
                 }
               ];
               exec = defaultExec;
