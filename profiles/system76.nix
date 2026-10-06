@@ -86,17 +86,7 @@
         settings = [
           {
             output = {
-              alias = "u3425we";
-              criteria = "Dell Inc. DELL U3425WE 7WWR3Z3";
-              mode = "3440x1440@120Hz";
-              position = "0,0";
-              adaptiveSync = true;
-              scale = 1.0;
-            };
-          }
-          {
-            output = {
-              alias = "system76";
+              alias = "internal";
               criteria = "Chimei Innolux Corporation 0x148A Unknown";
               position = "0,0";
               mode = "1920x1200";
@@ -105,45 +95,25 @@
             };
           }
           {
-            output = {
-              alias = "aoc";
-              criteria = "PNP(AOC) 28E850 Unknown";
-              mode = "1920x1080@60Hz";
-              position = "0,0";
-              scale = 1.0;
+            profile = {
+              name = "only_internal";
+              outputs = [
+                { criteria = "$internal"; }
+              ];
+              exec = defaultExec;
             };
           }
           {
             profile = {
-              name = "dual_system76_aw3225qf";
+              name = "dual_aw3225qf_internal";
               outputs = [
                 {
                   criteria = "$aw3225qf";
-                  status = "enable";
-                }
-                {
-                  criteria = "$system76";
-                  status = "disable";
-                }
-              ];
-              exec = defaultExec;
-            };
-          }
-          {
-            profile = {
-              name = "dual_system76_u3425we";
-              outputs = [
-                {
-                  criteria = "$system76";
-                  status = "disable";
-                }
-                {
-                  criteria = "$u3425we";
-                  status = "enable";
                   position = "0,0";
-                  mode = "3440x1440@120Hz";
-                  adaptiveSync = true;
-                  scale = 1.0;
+                }
+                {
+                  criteria = "$internal";
+                  position = "1056,1728"; # below-center of aw3225qf
                 }
               ];
               exec = defaultExec;
@@ -151,63 +121,15 @@
           }
           {
             profile = {
-              name = "dual_system76_aoc";
+              name = "dual_u3425we_internal";
               outputs = [
                 {
-                  criteria = "$aoc";
-                  status = "enable";
-                }
-                {
-                  criteria = "$system76";
-                  status = "disable";
-                }
-              ];
-              exec = defaultExec;
-            };
-          }
-          {
-            profile = {
-              name = "dual_u3425we_aoc";
-              outputs = [
-                {
-                  criteria = "$aoc";
-                  status = "enable";
+                  criteria = "$internal";
+                  position = "0,0";
                 }
                 {
                   criteria = "$u3425we";
-                  status = "disable";
-                }
-              ];
-              exec = defaultExec;
-            };
-          }
-          {
-            profile = {
-              name = "triple_system76_u3425we_aoc";
-              outputs = [
-                {
-                  criteria = "$aoc";
-                  status = "enable";
-                }
-                {
-                  criteria = "$system76";
-                  status = "disable";
-                }
-                {
-                  criteria = "$u3425we";
-                  status = "disable";
-                }
-              ];
-              exec = defaultExec;
-            };
-          }
-          {
-            profile = {
-              name = "only_system76";
-              outputs = [
-                {
-                  criteria = "$system76";
-                  status = "enable";
+                  position = "1536,960"; # right of internal
                 }
               ];
               exec = defaultExec;

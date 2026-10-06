@@ -121,7 +121,6 @@
               alias = "internal";
               criteria = "Samsung Display Corp. ATNA40HQ02-0  Unknown";
               mode = "2880x1800@120Hz";
-              position = "458,1080";
               scale = 1.75;
             };
           }
@@ -130,7 +129,6 @@
               alias = "japannext";
               criteria = "PNP(CDY) JAPANNEXT MNT Unknown";
               mode = "2560x1080@75Hz";
-              position = "0,0";
               scale = 1.0;
             };
           }
@@ -145,10 +143,13 @@
             profile = {
               name = "dual_aw3225qf_internal";
               outputs = [
-                { criteria = "$aw3225qf"; }
+                {
+                  criteria = "$aw3225qf";
+                  position = "0,0";
+                }
                 {
                   criteria = "$internal";
-                  status = "disable";
+                  position = "342,1728"; # below-center of aw3225qf
                 }
               ];
               exec = defaultExec;
@@ -158,8 +159,30 @@
             profile = {
               name = "dual_japannext_internal";
               outputs = [
-                { criteria = "$japannext"; }
-                { criteria = "$internal"; }
+                {
+                  criteria = "$japannext";
+                  position = "0,0";
+                }
+                {
+                  criteria = "$internal";
+                  position = "457,1080"; # below-center of japannext
+                }
+              ];
+              exec = defaultExec;
+            };
+          }
+          {
+            profile = {
+              name = "dual_u3425we_internal";
+              outputs = [
+                {
+                  criteria = "$u3425we";
+                  position = "0,0";
+                }
+                {
+                  criteria = "$internal";
+                  position = "897,1440"; # below-center of u3425we
+                }
               ];
               exec = defaultExec;
             };

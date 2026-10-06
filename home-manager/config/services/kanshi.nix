@@ -15,6 +15,7 @@ in
 
     settings = [
       {
+        # Home
         output = {
           alias = "aw3225qf";
           adaptiveSync = true;
@@ -25,11 +26,23 @@ in
         };
       }
       {
+        # Portable monitor
         output = {
           alias = "pa148";
           criteria = "ASUSTek COMPUTER INC ASUS PA148 N9LMTF061468";
           mode = "1920x1080@60Hz";
           scale = 1.25;
+        };
+      }
+      {
+        # Work
+        output = {
+          alias = "u3425we";
+          criteria = "Dell Inc. DELL U3425WE 7WWR3Z3";
+          mode = "3440x1440@120Hz";
+          position = "0,0";
+          adaptiveSync = true;
+          scale = 1.0;
         };
       }
       {
@@ -43,6 +56,13 @@ in
         profile = {
           name = "pa148";
           outputs = [ { criteria = "$pa148"; } ];
+          exec = defaultExec;
+        };
+      }
+      {
+        profile = {
+          name = "u3425we";
+          outputs = [ { criteria = "$u3425we"; } ];
           exec = defaultExec;
         };
       }
