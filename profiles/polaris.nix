@@ -109,6 +109,7 @@
         ../home-manager/config/programs/ffmpeg.nix
         ../home-manager/config/programs/intellij.nix
         ../home-manager/config/programs/mpv.nix
+        ../home-manager/config/programs/rustdesk.nix
         ../home-manager/config/programs/virt-manager.nix
         ../home-manager/config/programs/yt-dlp.nix
       ];
