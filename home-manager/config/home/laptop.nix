@@ -1,4 +1,9 @@
-{ lib, config, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 
 let
   swaycfg = config.wayland.windowManager.sway;
@@ -8,13 +13,23 @@ let
   niricfg = config.programs.niri;
 
   noctaliaCfg = config.programs.noctalia;
+
+  suspendOnBattery = pkgs.writeShellApplication {
+    name = "suspend-on-battery";
+    runtimeInputs = [ pkgs.systemd ];
+    text = ''
+      if [[ "$(systemd-ac-power --verbose)" == "no" ]]; then
+        exec "$@"
+      fi
+    '';
+  };
 in
 {
   services.swayidle = lib.mkIf swayidlecfg.enable {
     timeouts = [
       {
         timeout = 900;
-        command = "${config.systemd.user.systemctlPath} suspend";
+        command = "${lib.getExe suspendOnBattery} ${config.systemd.user.systemctlPath} suspend";
       }
     ];
   };
@@ -29,7 +44,8 @@ in
         ];
         behavior = {
           "lock-and-suspend" = {
-            action = "lock_and_suspend";
+            action = "command";
+            command = "${lib.getExe suspendOnBattery} ${lib.getExe noctaliaCfg.package} msg session lock-and-suspend";
             enabled = true;
             timeout = 900;
           };
