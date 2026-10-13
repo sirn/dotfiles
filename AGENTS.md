@@ -23,6 +23,7 @@ This is a Nix/Home Manager dotfiles repository. Read `README.md` before doing an
 - Do not run `home-manager switch` on NixOS; Home Manager is managed by the system config there.
 - Use `nix run nixpkgs#python3 -- ...` for ad-hoc Python.
 - Use `jaq` for JSON/YAML/TOML/XML processing when available.
+- NEVER revert treefmt changes.
 
 ## Quick Reference
 

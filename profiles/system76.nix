@@ -97,9 +97,7 @@
           {
             profile = {
               name = "only_internal";
-              outputs = [
-                { criteria = "$internal"; }
-              ];
+              outputs = [ { criteria = "$internal"; } ];
               exec = defaultExec;
             };
           }
