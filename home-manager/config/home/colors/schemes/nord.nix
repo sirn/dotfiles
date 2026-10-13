@@ -23,42 +23,58 @@ let
   nord14 = "#a3be8c";
   nord15 = "#b48ead";
 
-  # Nord Snow Storm (light): Nord palette on a Snow Storm background.
+  nordLightFg = "#414858";
+  nordLightSelectionFg = "#4c556a";
+  nordLightCyan = "#7bb3c3";
+  nordLightGreen = "#96b17f";
+  nordLightYellow = "#c5a565";
+  nordLightWhite = "#a5abb6";
+  nordLightBrightCyan = "#82afae";
+  nordLightOutline = "#c5cedd";
+  nordDarkBrightBlack = "#596377";
+  nordDarkCursorText = "#282828";
+  nordDarkOutline = "#505a70";
+
   lightBase16 = {
     background = nord6; # bg
-    foreground = nord0; # 10.84 (AAA)
-    selection = nord5; # 1.06 (FAIL)
+    foreground = nordLightFg; # 7.95 (AAA)
+    selection = nord4; # 1.17 (FAIL)
+    selectionFg = nordLightSelectionFg; # 5.52 (AA)
+    cursor = nordLightCyan; # 2.01 (FAIL)
+    cursorText = nord1; # 4.35 (3:1)
     scrollbar = nord10; # 3.50 (3:1)
 
     normal = {
       black = nord1; # 8.73 (AAA)
       red = nord11; # 3.55 (3:1)
-      green = nord14; # 1.77 (FAIL)
-      yellow = nord13; # 1.35 (FAIL)
+      green = nordLightGreen; # 2.05 (FAIL)
+      yellow = nordLightYellow; # 2.04 (FAIL)
       blue = nord9; # 2.34 (FAIL)
       magenta = nord15; # 2.46 (FAIL)
-      cyan = nord8; # 1.74 (FAIL)
-      white = nord5; # 1.06 (FAIL)
+      cyan = nordLightCyan; # 2.01 (FAIL)
+      white = nordLightWhite; # 2.00 (FAIL)
     };
 
     bright = {
       black = nord3; # 6.40 (AA)
       red = nord11; # 3.55 (3:1)
-      green = nord14; # 1.77 (FAIL)
-      yellow = nord13; # 1.35 (FAIL)
+      green = nordLightGreen; # 2.05 (FAIL)
+      yellow = nordLightYellow; # 2.04 (FAIL)
       blue = nord9; # 2.34 (FAIL)
       magenta = nord15; # 2.46 (FAIL)
-      cyan = nord7; # 1.81 (FAIL)
+      cyan = nordLightBrightCyan; # 2.10 (FAIL)
       white = nord6; # 1.00 (FAIL)
     };
   };
   lightPalette = generatePalette "nord-snow-storm" lightBase16;
 
-  # Nord Polar Night (dark)
   darkBase16 = {
     background = nord0; # bg
     foreground = nord4; # 9.25 (AAA)
-    selection = nord2; # 1.45 (FAIL)
+    selection = nord6; # 10.84 (AAA)
+    selectionFg = nord3; # 6.40 (AA)
+    cursor = nord6; # 10.84 (AAA)
+    cursorText = nordDarkCursorText; # 12.79 (AAA)
     scrollbar = nord9; # 4.64 (AA)
 
     normal = {
@@ -73,7 +89,7 @@ let
     };
 
     bright = {
-      black = nord3; # 1.69 (FAIL)
+      black = nordDarkBrightBlack; # 2.07 (FAIL)
       red = nord11; # 3.05 (3:1)
       green = nord14; # 6.13 (AA)
       yellow = nord13; # 8.00 (AAA)
@@ -102,13 +118,13 @@ in
       semantic = {
         primary = {
           bg = base16Colors.background; # surface
-          text = base16Colors.foreground; # onSurface
+          text = nord0; # onSurface
         }; # 10.84 (AAA)
 
         accent = {
           bg = base16Colors.normal.cyan;
           text = base16Colors.foreground;
-        }; # 6.24 (AA)
+        }; # 3.96 (3:1)
 
         secondary = {
           bg = "#64adc2"; # Noctalia secondary
@@ -130,17 +146,17 @@ in
         surface = {
           bg = getColor 254;
           text = base16Colors.foreground;
-        }; # 9.27 (AAA)
+        }; # 6.93 (AA)
 
         recess = {
           bg = getColor 250;
           text = base16Colors.foreground;
-        }; # 6.70 (AA)
+        }; # 5.24 (AA)
 
         # Interaction
 
         inactive = {
-          bg = base16Colors.normal.white; # surfaceVariant
+          bg = nord5; # surfaceVariant
           text = base16Colors.bright.black; # onSurfaceVariant
         }; # 6.06 (AA)
 
@@ -162,28 +178,28 @@ in
         warning = {
           bg = base16Colors.normal.yellow;
           text = base16Colors.foreground;
-        }; # 8.00 (AAA)
+        }; # 3.90 (3:1)
 
         success = {
           bg = getColor 194;
           text = getColor 22;
-        }; # 6.48 (AA)
+        }; # 4.71 (AA)
 
         error = {
           bg = getColor 225;
           text = getColor 88;
-        }; # 5.94 (AA)
+        }; # 4.90 (AA)
 
         # UI elements
 
-        outline = getColor 245; # 3.43 (3:1)
+        outline = nordLightOutline; # 1.38 (FAIL)
         shadow = nord4; # 1.17 (FAIL)
 
         # Text tone
 
         muted = nord3; # 6.40 (AA)
-        dim = getColor 18; # 1.86 (FAIL)
-        label = getColor 219; # 5.99 (AA)
+        dim = getColor 18; # 4.78 (AA)
+        label = getColor 219; # 1.40 (FAIL)
 
         # Special case: battery
 
@@ -191,11 +207,11 @@ in
           charging = {
             bg = getColor 46;
             text = base16Colors.foreground;
-          }; # 6.13 (AA)
+          }; # 3.88 (3:1)
           low = {
             bg = base16Colors.normal.yellow;
             text = base16Colors.foreground;
-          }; # 8.00 (AAA)
+          }; # 3.90 (3:1)
           critical = {
             bg = base16Colors.normal.red;
             text = base16Colors.bright.white;
@@ -226,7 +242,7 @@ in
         accent = {
           bg = base16Colors.normal.cyan;
           text = base16Colors.bright.black;
-        }; # 3.69 (3:1)
+        }; # 3.02 (3:1)
 
         secondary = {
           bg = base16Colors.normal.cyan; # Noctalia secondary (Nord8)
@@ -294,7 +310,7 @@ in
 
         # UI elements
 
-        outline = getColor 66; # 3.43 (3:1)
+        outline = nordDarkOutline; # 1.81 (FAIL)
         shadow = base16Colors.background; # 1.00 (FAIL)
 
         # Text tone

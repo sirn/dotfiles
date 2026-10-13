@@ -35,13 +35,13 @@ let
       }) t.palette256
     );
     background = t.base16Colors.background;
-    cursor_bg = t.base16Colors.foreground;
-    cursor_border = t.base16Colors.foreground;
-    cursor_fg = t.base16Colors.background;
+    cursor_bg = t.base16Colors.cursor;
+    cursor_border = t.base16Colors.cursor;
+    cursor_fg = t.base16Colors.cursorText;
     foreground = t.base16Colors.foreground;
     scrollbar_thumb = t.base16Colors.scrollbar;
     selection_bg = t.base16Colors.selection;
-    selection_fg = t.base16Colors.background;
+    selection_fg = t.base16Colors.selectionFg;
   };
 in
 lib.mkIf config.programs.wezterm.enable {

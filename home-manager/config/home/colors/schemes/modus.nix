@@ -10,6 +10,9 @@ let
     background = "#ffffff"; # bg
     foreground = "#000000"; # 21.00 (AAA)
     selection = "#bbbbbb"; # 1.92 (FAIL)
+    selectionFg = "#000000";
+    cursor = "#000000";
+    cursorText = "#ffffff";
     scrollbar = "#919191"; # 3.15 (3:1)
 
     normal = {
@@ -41,6 +44,9 @@ let
     background = "#000000"; # bg
     foreground = "#ffffff"; # 21.00 (AAA)
     selection = "#393939"; # 1.82 (FAIL)
+    selectionFg = "#ffffff";
+    cursor = "#ffffff";
+    cursorText = "#000000";
     scrollbar = "#686868"; # 3.77 (3:1)
 
     normal = {

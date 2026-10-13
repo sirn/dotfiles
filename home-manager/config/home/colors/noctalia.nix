@@ -33,9 +33,9 @@ let
       terminal = {
         foreground = variant.base16Colors.foreground;
         background = variant.base16Colors.background;
-        cursor = variant.base16Colors.foreground;
-        cursorText = variant.base16Colors.background;
-        selectionFg = variant.base16Colors.foreground;
+        cursor = variant.base16Colors.cursor;
+        cursorText = variant.base16Colors.cursorText;
+        selectionFg = variant.base16Colors.selectionFg;
         selectionBg = variant.base16Colors.selection;
         normal = variant.base16Colors.normal;
         bright = variant.base16Colors.bright;
