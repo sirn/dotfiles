@@ -129,7 +129,7 @@
                 }
                 {
                   criteria = "$u3425we";
-                  position = "1536,960"; # right of internal
+                  position = "1536,0"; # right of internal, top-aligned
                 }
               ];
               exec = defaultExec;
