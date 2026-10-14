@@ -2,7 +2,9 @@
   imports = [
     ../agents
     ../programs/agent-browser.nix
+    ../programs/antigravity-cli
     ../programs/claude-code
+    ../programs/codex
     ../programs/context7-cli.nix
     ../programs/exa-cli.nix
     ../programs/lsp-cli.nix

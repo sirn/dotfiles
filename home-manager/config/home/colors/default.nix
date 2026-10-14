@@ -125,6 +125,7 @@ lib.mkMerge [
     home.colors.desktopThemeName = desktopThemeName;
     home.colors.terminalThemeName = terminalThemeName;
   }
+  (import ./antigravity-cli.nix terminalArgs)
   (import ./claude-code.nix terminalArgs)
   (import ./alacritty.nix terminalArgs)
   (import ./emacs.nix desktopArgs)

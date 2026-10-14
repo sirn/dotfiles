@@ -103,6 +103,8 @@ let
     (allow file-write* (subpath (param "WORKDIR")))
     (allow file-write* (subpath (string-append (param "HOME") "/.pi")))
     (allow file-write* (subpath (string-append (param "HOME") "/.claude")))
+    (allow file-write* (subpath (string-append (param "HOME") "/.codex")))
+    (allow file-write* (subpath (string-append (param "HOME") "/.gemini")))
     ;; Lofi transcripts, discovery cache, and session scratch.
     (allow file-write* (subpath (string-append (param "HOME") "/.local/state/lofi")))
     ;; macOS login keychain: Claude Code persists/refreshes OAuth tokens here.
@@ -144,6 +146,7 @@ let
       name,
       package,
       preExports ? "",
+      extraArgs ? [ ],
     }:
     let
       inherit (pkgs.stdenv.hostPlatform) isDarwin;
@@ -153,6 +156,7 @@ let
         lib.mapAttrsToList (k: v: "export ${k}=${lib.escapeShellArg v}") config.agents.sandbox.extraEnv
       );
       envFileArgs = lib.concatStringsSep " " (map (f: "\"${f}\"") config.agents.sandbox.envFiles);
+      escapedExtraArgs = lib.optionalString (extraArgs != [ ]) " ${lib.escapeShellArgs extraArgs}";
     in
     pkgs.writeScriptBin name ''
       #!${pkgs.runtimeShell}
@@ -181,10 +185,10 @@ let
             -D "XDG_CONFIG=''${XDG_CONFIG_HOME:-$HOME/.config}" \
             -D "TMPDIR=$_real_tmpdir" \
             -f "${profile}" \
-            -- "${lib.getExe package}" "$@"
+            -- "${lib.getExe package}"${escapedExtraArgs} "$@"
         fi
       ''}
-      exec "${lib.getExe package}" "$@"
+      exec "${lib.getExe package}"${escapedExtraArgs} "$@"
     '';
 in
 {

@@ -56,7 +56,7 @@ if [ -n "$session_duration_ms" ]; then
 fi
 
 # Context window info
-used_pct=$(echo "$input" | jaq -r '.context_window.used_percentage // empty')
+used_pct=$(echo "$input" | jaq -r '(.context_window.used_percentage // empty) | round')
 context_info=""
 if [ -n "$used_pct" ]; then
   # Create visual bar (10 blocks total, each represents 10%)
