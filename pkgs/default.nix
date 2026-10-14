@@ -33,11 +33,13 @@ let
 
     tincan = (callPackage ./by-name/tincan/package.nix { });
 
-    tiler = (callPackage ./by-name/tiler/package.nix { });
-
     lsp-cli = (callPackage ./by-name/lsp-cli/package.nix { });
 
     wrapped-uv = (callPackage ./by-name/wrapped-uv/package.nix { });
+  };
+
+  darwinPackages = commonPackages // {
+    tiler = (callPackage ./by-name/tiler/package.nix { });
   };
 
   linuxPackages = commonPackages // rec {
@@ -60,6 +62,6 @@ in
 {
   x86_64-linux = linuxPackages;
   aarch64-linux = linuxPackages;
-  x86_64-darwin = commonPackages;
-  aarch64-darwin = commonPackages;
+  x86_64-darwin = darwinPackages;
+  aarch64-darwin = darwinPackages;
 }
