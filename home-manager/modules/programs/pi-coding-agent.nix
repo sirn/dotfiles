@@ -73,7 +73,7 @@ in
 
     defaultModel = lib.mkOption {
       type = lib.types.str;
-      default = "gemini-3-flash-preview";
+      default = "gemini-3.8-flash";
       description = ''
         Default model ID for Pi sessions.
       '';
@@ -100,7 +100,7 @@ in
         {
           "shell-policy" = { autoMode.enable = true; };
           "smart-compact" = {
-            model = "gemini-3-flash-preview";
+            model = "gemini-3.8-flash";
             provider = "plexus";
           };
         }
