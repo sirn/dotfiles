@@ -9,6 +9,9 @@
       ../nixos/config/system/plymouth.nix
       ../nixos/config/system/vfio.nix
 
+      # programs
+      ../nixos/config/programs/1password-cli.nix
+
       # services
       ../nixos/config/services/fwupd.nix
       ../nixos/config/services/libvirtd.nix
@@ -74,9 +77,6 @@
     imports = [
       ../home-manager/config/common.nix
       ../home-manager/config/common-linux.nix
-
-      # programs
-      ../home-manager/config/programs/1password-cli.nix
     ];
   };
 }

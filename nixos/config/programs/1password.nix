@@ -3,4 +3,6 @@
     enable = true;
     polkitPolicyOwners = [ "sirn" ];
   };
+
+  programs._1password.enable = true;
 }

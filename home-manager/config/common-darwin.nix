@@ -5,6 +5,7 @@
     ./home/nix.nix
 
     # programs
+    ./programs/1password-cli.nix
     ./programs/1password.nix
     ./programs/ffmpeg.nix
     ./programs/ghostty.nix

@@ -2,6 +2,7 @@
   nixos = {
     imports = [
       ../nixos/config/common.nix
+      ../nixos/config/programs/1password-cli.nix
       ../nixos/config/system/network/networkd.nix
       ../nixos/config/services/podman.nix
     ];
@@ -35,9 +36,6 @@
     imports = [
       ../home-manager/config/common.nix
       ../home-manager/config/common-linux.nix
-
-      # programs
-      ../home-manager/config/programs/1password-cli.nix
     ];
   };
 }

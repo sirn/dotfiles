@@ -15,8 +15,6 @@ let
       "${homeDirectory}/.1password/agent.sock";
 in
 {
-  imports = [ ./1password-cli.nix ];
-
   home.packages =
     with pkgs;
     lib.optional (!pkgs.stdenv.isDarwin && !config.flatpak.enable) [ _1password-gui ];
