@@ -41,13 +41,15 @@ let
       username,
       system,
       homeDirectory,
+      extraModules ? [ ],
     }:
     inputs.home-manager.lib.homeManagerConfiguration {
       pkgs = nixpkgs.legacyPackages.${system};
       modules = [
         (mkHomeManagerBaseModule { inherit username homeDirectory; })
       ]
-      ++ (mkHomeManagerModules hostname);
+      ++ (mkHomeManagerModules hostname)
+      ++ extraModules;
     };
 in
 {
@@ -59,6 +61,7 @@ in
       username ? "sirn",
       system ? "x86_64-linux",
       homeDirectory ? "/home/${username}",
+      extraModules ? [ ],
       ...
     }:
     mkHomeManager {
@@ -67,6 +70,7 @@ in
         username
         system
         homeDirectory
+        extraModules
         ;
     };
 
@@ -76,6 +80,7 @@ in
       username ? "sirn",
       system ? "aarch64-darwin",
       homeDirectory ? "/Users/${username}",
+      extraModules ? [ ],
       ...
     }:
     mkHomeManager {
@@ -84,6 +89,7 @@ in
         username
         system
         homeDirectory
+        extraModules
         ;
     };
 }

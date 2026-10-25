@@ -17,6 +17,8 @@ in
   username ? "sirn",
   system ? "x86_64-linux",
   homeDirectory ? "/home/${username}",
+  extraModules ? [ ],
+  extraHomeModules ? [ ],
 }:
 let
   profile = import ../profiles/${hostname}.nix;
@@ -67,8 +69,10 @@ nixpkgs.lib.nixosSystem {
         home-manager.users.${username}.imports = [
           (mkHomeManagerBaseModule { inherit username homeDirectory; })
         ]
-        ++ (mkHomeManagerModules hostname);
+        ++ (mkHomeManagerModules hostname)
+        ++ extraHomeModules;
       }
     )
-  ];
+  ]
+  ++ extraModules;
 }

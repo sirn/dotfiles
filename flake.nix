@@ -162,7 +162,15 @@
       eachSystem = f: nixpkgs.lib.genAttrs (import inputs.systems-default) (system: f system);
     in
     {
-      # Home Manager module to be included by a standalone Home Manager
+      lib = {
+        inherit (builders)
+          mkNixOS
+          mkHomeManagerLinux
+          mkHomeManagerDarwin
+          mkMicroVM
+          ;
+      };
+
       homeConfigurations = {
         polaris = builders.mkHomeManagerLinux { hostname = "polaris"; };
         system76 = builders.mkHomeManagerLinux { hostname = "system76"; };
@@ -171,7 +179,6 @@
         ws = builders.mkHomeManagerLinux { hostname = "ws"; };
       };
 
-      # NixOS configuration for NixOS
       nixosConfigurations = {
         polaris = builders.mkNixOS { hostname = "polaris"; };
         system76 = builders.mkNixOS { hostname = "system76"; };
