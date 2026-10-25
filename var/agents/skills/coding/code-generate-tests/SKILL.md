@@ -15,7 +15,7 @@ Generate tests that match existing project conventions.
 
 ### Step 2 - Research and Scout
 
-Apply a scout lens to identify critical public behavior, neighboring tests, fixtures, naming conventions, edge cases, and error paths in `{files}`:
+Apply a scout lens to identify critical public behavior, neighboring tests, fixtures, naming conventions, edge cases, and error paths in {files}:
 
 - Map relevant files, conventions, and call paths.
 - Cite file paths and line numbers.

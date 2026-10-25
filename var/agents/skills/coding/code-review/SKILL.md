@@ -33,18 +33,13 @@ Binding Rules:
 
 Cite the specific source (file and rule) for any violation of identified repo standards {standards_sources}.
 
-- If a spec is identified, apply a researcher lens to compare {files} against {spec_source}:
-  - Prefer official documentation over blog posts; cite sources with URLs.
-  - Separate confirmed facts from plausible interpretations; note version requirements.
-  - Lead with the single most actionable recommendation.
-  - Check for: missing or partially implemented requirements; behavior in the diff not requested by the spec (scope creep); requirements that look implemented but are incorrect.
-  - Quote the relevant spec line for each finding.
+Apply a researcher lens for spec comparison and API verification in {files}:
 
-- For API verification, apply a researcher lens to verify relevant API/library usage in {files} against official documentation and research relevant best practices:
-  - Prefer official documentation over blog posts; cite sources with URLs.
-  - Separate confirmed facts from plausible interpretations; note version requirements.
-  - Lead with the single most actionable recommendation.
-  - Cross-check usage against idiomatic patterns and known pitfalls for the API/library.
+- Prefer official documentation over blog posts; cite sources with URLs.
+- Separate confirmed facts from plausible interpretations; note version requirements.
+- Lead with the single most actionable recommendation.
+- If a spec is identified, compare {files} against {spec_source}: check for missing or partially implemented requirements, behavior in the diff not requested by the spec (scope creep), and requirements that look implemented but are incorrect; quote the relevant spec line for each finding.
+- For API verification, cross-check relevant API/library usage in {files} against official documentation, idiomatic patterns, and known pitfalls.
 
 ### Step 3 - Audit
 
@@ -85,7 +80,7 @@ _(Skip or note if no spec source was found. Keep strictly separate from code qua
 5. **Quality & Logic**
 6. **Simplicity & Convention**
    - **Hard Violations**: documented repo standard breaches (cite specific file and rule).
-   - **Judgement Calls**: the 24 Fowler code smells from `martin-fowler-code-smells` (heuristics/suggestions, never hard violations; skip if tooling already enforces).
+   - **Judgment Calls**: the 24 Fowler code smells from `martin-fowler-code-smells` (heuristics/suggestions, never hard violations; skip if tooling already enforces).
 7. **Performance & Best Practices**
 8. **Test/Lint Results** (only when run)
 9. **Quick Wins**

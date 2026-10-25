@@ -20,7 +20,7 @@ By default, `fj` operates on the repository detected from the current directory.
 | Use `-r/--repo <repo>` | `fj <command> -r owner/repo` |
 | Use `-H <host>`        | `fj <command> -H <host>`     |
 
-`-R/--remote` selects a **local git remote** by name (e.g. `origin`). `-r/--repo` takes an `owner/repo` and is accepted by `release` and `tag` subcommands. `-H/--host` overrides the host.
+`-R/--remote` selects a **local git remote** by name (e.g. `origin`; for `pr`, `org`, and `user`, pass `-R` before the subcommand, e.g. `fj pr -R origin view <number>`; `fj whoami` uses `-r/--remote`). `-r/--repo` takes an `owner/repo` and is accepted by `release`, `tag`, `issue search`, `issue templates`, `pr search`, and `actions` subcommands. `-H/--host` overrides the host.
 
 ### Current User (Read-Only)
 
@@ -30,21 +30,31 @@ By default, `fj` operates on the repository detected from the current directory.
 
 ### Issues (Read-Only)
 
-| Task           | Command              |
-| -------------- | -------------------- |
-| Search issues  | `fj issue search`    |
-| View issue     | `fj issue view <id>` |
-| List templates | `fj issue templates` |
+| Task                | Command                        |
+| ------------------- | ------------------------------ |
+| Search issues       | `fj issue search [query]`      |
+| View issue          | `fj issue view <id>`           |
+| View issue comments | `fj issue view <id> comments`  |
+| View assignees      | `fj issue view <id> assignees` |
+| List templates      | `fj issue templates`           |
 
-**Search options**: `--state open|closed|all`, `--author <user>`, `--label <label>`, `--limit <n>`, `--keyword <text>`
+**Search options**: `--state open|closed|all`, `--creator <user>`, `--assignee <user>`, `--labels <labels>`, `--mentions <user>`, `--type issues|pulls`
 
 ### Pull Requests (Read-Only)
 
-| Task       | Command                 |
-| ---------- | ----------------------- |
-| Search PRs | `fj pr search`          |
-| View PR    | `fj pr view <number>`   |
-| PR status  | `fj pr status <number>` |
+| Task             | Command                         |
+| ---------------- | ------------------------------- |
+| Search PRs       | `fj pr search [query]`          |
+| View PR          | `fj pr view <number>`           |
+| View PR diff     | `fj pr view <number> diff`      |
+| View PR files    | `fj pr view <number> files`     |
+| View PR commits  | `fj pr view <number> commits`   |
+| View PR comments | `fj pr view <number> comments`  |
+| View PR labels   | `fj pr view <number> labels`    |
+| View assignees   | `fj pr view <number> assignees` |
+| PR status        | `fj pr status <number>`         |
+
+**Search options**: `--state open|closed|all`, `--creator <user>`, `--assignee <user>`, `--labels <labels>`, `--mentions <user>`
 
 ### Repositories (Read-Only)
 
@@ -52,7 +62,7 @@ By default, `fj` operates on the repository detected from the current directory.
 | -------------- | ----------------------------- |
 | View repo info | `fj repo view [repo]`         |
 | View README    | `fj repo readme [repo]`       |
-| View labels    | `fj repo labels view [repo]`  |
+| View labels    | `fj repo labels [repo] view`  |
 | Star status    | `fj repo star-status [repo]`  |
 | Watch status   | `fj repo watch-status [repo]` |
 

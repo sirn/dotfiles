@@ -52,7 +52,9 @@ When either debugging server starts, Chromium writes two lines to `DevToolsActiv
 2. Line 2: The browser WebSocket path (e.g., `/devtools/browser/a1b2c3d4-...`).
 
 ```bash
-profile="$HOME/.config/google-chrome" # or your browser's profile path
+# Linux: "$HOME/.config/google-chrome"
+# macOS: "$HOME/Library/Application Support/Google/Chrome"
+profile="$HOME/.config/google-chrome"
 port=$(head -n 1 "$profile/DevToolsActivePort")
 path=$(sed -n '2p' "$profile/DevToolsActivePort")
 ws="ws://127.0.0.1:${port}${path}"
@@ -199,6 +201,17 @@ Because `/devtools/page/<id>` returns `403` in remote-debugging toggle mode, all
      "params": { "sessionId": "<sessionId>" }
    }
    ```
+
+#### Common Read-Only CDP Methods (Page Session)
+
+| Goal | Method | Key Parameters |
+| --- | --- | --- |
+| Evaluate JS expression | `Runtime.evaluate` | `{"expression": "document.title", "returnByValue": true, "awaitPromise": true}` |
+| Inspect DOM tree | `DOM.getDocument` | `{"depth": -1, "pierce": true}` |
+| Get element HTML | `DOM.getOuterHTML` | `{"nodeId": 1}` |
+| Inspect accessibility tree | `Accessibility.getFullAXTree` | `{}` |
+| Capture screenshot | `Page.captureScreenshot` | `{"format": "png"}` |
+| Read network body | `Network.getResponseBody` | `{"requestId": "<requestId>"}` (requires `Network.enable` prior to request) |
 
 ---
 

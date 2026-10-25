@@ -35,11 +35,11 @@ Find likely root causes, official docs or known issues, minimal fixes, and verif
 
 Report to the user:
 
-1. **Likely cause**
-2. **Evidence** (links or doc references)
+1. **Likely Cause**
+2. **Evidence**: Links or doc references
 3. **Fix**
-4. **Verify**
+4. **Verification**
 
-## Stop Condition
+## Guardrails
 
 - If a proposed fix fails twice, stop, re-evaluate the diagnosis, and ask for guidance.

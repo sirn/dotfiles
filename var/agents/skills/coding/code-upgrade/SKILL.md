@@ -76,11 +76,7 @@ Specifically:
 
 ### Step 6 - Fix Failures
 
-- If you cannot resolve a failure, apply a researcher lens to research the failure:
-  - Prefer official documentation over blog posts; cite sources with URLs.
-  - Separate confirmed facts from plausible interpretations.
-  - Lead with the single most actionable recommendation.
-  - Extract the exact symptom, likely root causes, and minimal verification steps.
+- If you cannot resolve a failure, apply the researcher lens from Step 3 to investigate the exact symptom, likely root causes, and minimal verification steps.
 - Use these to find the root cause and a minimal fix; apply the fix with the same worker lens as Step 5; re-run verification to confirm.
 
 ### Step 7 - Report
@@ -97,6 +93,7 @@ Provide a final summary detailing:
 8. **Failures Fixed** — troubleshooting and resolution details.
 9. **Remaining Issues** — tasks requiring manual attention.
 
-## Stop Condition
+## Guardrails
 
-If a fix fails twice, stop and ask for guidance.
+- Do not edit lockfiles manually; let the package manager update them.
+- If a fix fails twice, stop and ask for guidance.

@@ -11,23 +11,26 @@ Terraform is an infrastructure as code tool for building, changing, and versioni
 ### Best Practices
 
 - **Standard Plan-Confirm-Apply Workflow**: Run `terraform plan`, present a summary of changes, and obtain explicit permission before executing `terraform apply`. Never apply changes without direct instruction.
-- **Save plans to filter output**: Avoid re-running `terraform plan` to search or filter output. State verification is slow and remote state may drift. Instead, save the plan output to a temporary file and use tools like grep, head, or tail to inspect it:
+- **Pass `-input=false` in non-interactive shells**: Always include `-input=false` on `init`, `plan`, and `apply` in automated or agent workflows so Terraform fails immediately instead of hanging on stdin prompts if a variable or backend setting is missing.
+- **Save plans once and inspect offline**: Avoid re-running `terraform plan` to search or filter output. State verification is slow and remote state may drift. Save a binary plan file with `-out=tmp/tfplan` (which can be inspected as text or JSON and applied directly), or redirect human-readable output to `tmp/tfplan.txt`:
 
   ```bash
   # ❌ Avoid: Running plan multiple times
-  terraform plan | grep "aws_instance"
-  terraform plan | head -20
+  terraform plan | rg "aws_instance"
 
-  # ✅ Correct: Save once, then filter
-  terraform plan > /tmp/tfplan.txt
-  grep "aws_instance" /tmp/tfplan.txt
-  head -20 /tmp/tfplan.txt
+  # ✅ Correct: Save binary plan once, then inspect as text or JSON
+  mkdir -p tmp
+  terraform plan -input=false -out=tmp/tfplan
+  terraform show -no-color tmp/tfplan > tmp/tfplan.txt
+  rg "aws_instance" tmp/tfplan.txt
+  terraform show -json tmp/tfplan | jaq '.resource_changes[] | {address, actions: .change.actions}'
   ```
 
 - **Restrict `-auto-approve`**: Only use `-auto-approve` if the user has given explicit permission to apply changes.
 - **Limit `-target`**: Avoid targeted applies via `-target` as they can leave infrastructure in an inconsistent state; reserve them for emergencies.
+- **Prefer declarative state blocks (`moved`, `import`, `removed`)**: Prefer config-driven `moved {}`, `import {}`, and `removed {}` blocks over imperative `terraform state mv`, `terraform import`, and `terraform state rm` whenever using Terraform 1.5+ / 1.7+, as declarative blocks are previewed in `terraform plan` before modifying state.
 - **Handle locking carefully**: Never force-unlock state unless you fully understand why it is locked.
-- **Backup state**: Always backup the state file before running `state rm` or `state mv`.
+- **Backup state to `tmp/`**: Always backup the state file to `tmp/` before running imperative `state rm` or `state mv` (never write plaintext state files to the repository root where they could be committed).
 - **Verify workspace**: Run `terraform workspace show` to check the current workspace before running any destructive operations.
 - **Pin module versions**: Pin all module versions in production to prevent unexpected updates.
 - **Lock providers**: Use `terraform providers lock` to maintain consistent provider versions.
@@ -73,7 +76,7 @@ terraform apply
 | Apply with target | `terraform apply -target=resource.address` |
 | Destroy infrastructure | `terraform destroy` |
 | Auto-approve destroy (USE WITH CAUTION) | `terraform destroy -auto-approve` |
-| Refresh state | `terraform refresh` |
+| Refresh state | `terraform apply -refresh-only` |
 
 ### State Management Commands
 
@@ -83,18 +86,46 @@ terraform apply
 | List with pattern | `terraform state list 'module.foo.*'` |
 | Show resource details | `terraform state show resource.address` |
 | Remove resource from state | `terraform state rm resource.address` |
-| Move resource in state | `terraform state mv source.destination` |
-| Pull raw state (JSON) | `terraform state pull > state.json` |
-| Push raw state | `terraform state push state.json` |
+| Move resource in state | `terraform state mv <source> <destination>` |
+| Pull raw state (JSON) | `terraform state pull > tmp/state.json` |
+| Push raw state | `terraform state push tmp/state.json` |
 | Replace provider | `terraform state replace-provider old.provider new.provider` |
 
-### Resource Import and Tainting
+### Resource Import and Replacement
 
-| Task                      | Command                                         |
-| ------------------------- | ----------------------------------------------- |
-| Import existing resource  | `terraform import resource.address resource.id` |
-| Taint resource (recreate) | `terraform taint resource.address`              |
-| Untaint resource          | `terraform untaint resource.address`            |
+| Task | Command |
+| --- | --- |
+| Import existing resource | `terraform import resource.address resource.id` |
+| Generate config for `import` blocks | `terraform plan -generate-config-out=generated.tf` |
+| Replace resource | `terraform apply -replace=resource.address` |
+| Taint resource (legacy) | `terraform taint resource.address` |
+| Untaint resource (legacy) | `terraform untaint resource.address` |
+
+#### Declarative State Refactoring (Terraform 1.1–1.7+)
+
+Prefer HCL refactoring blocks so state moves, imports, and removals are validated during `terraform plan`:
+
+```hcl
+# Rename or move a resource/module without destroying (Terraform 1.1+)
+moved {
+  from = aws_instance.old_name
+  to   = aws_instance.new_name
+}
+
+# Import existing infrastructure in plan/apply (Terraform 1.5+)
+import {
+  to = aws_instance.web
+  id = "i-1234567890abcdef0"
+}
+
+# Remove a resource from state without destroying it (Terraform 1.7+)
+removed {
+  from = aws_instance.legacy
+  lifecycle {
+    destroy = false
+  }
+}
+```
 
 ### Workspace Commands
 
@@ -145,15 +176,15 @@ terraform apply
 
 ### Authentication and Misc
 
-| Task                   | Command                            |
-| ---------------------- | ---------------------------------- |
-| Terraform Cloud login  | `terraform login`                  |
-| Terraform Cloud logout | `terraform logout`                 |
-| Show version           | `terraform version`                |
-| JSON version           | `terraform version -json`          |
-| Force unlock state     | `terraform force-unlock <lock-id>` |
-| Module metadata        | `terraform metadata`               |
-| Run tests              | `terraform test`                   |
+| Task                   | Command                              |
+| ---------------------- | ------------------------------------ |
+| Terraform Cloud login  | `terraform login`                    |
+| Terraform Cloud logout | `terraform logout`                   |
+| Show version           | `terraform version`                  |
+| JSON version           | `terraform version -json`            |
+| Force unlock state     | `terraform force-unlock <lock-id>`   |
+| Function metadata      | `terraform metadata functions -json` |
+| Run tests              | `terraform test`                     |
 
 ### Common Options
 
@@ -170,31 +201,6 @@ terraform apply
 | JSON output | `-json` | `terraform show -json` |
 
 ### Common Workflows
-
-#### Standard Safe Apply Workflow (ALWAYS Follow This)
-
-Always use this workflow to apply changes safely:
-
-```bash
-# Step 1: Initialize
-terraform init
-
-# Step 2: Create a plan and review output
-terraform plan
-
-# Step 3: Summarize changes to user
-# Discuss what will be created, modified, or destroyed
-
-# Step 4: Apply ONLY after user explicitly tells you to apply
-terraform apply
-```
-
-**Key Points:**
-
-- Review `terraform plan` output before applying.
-- Present a change summary to the user.
-- Run `terraform apply` only with explicit user permission.
-- Limit `-auto-approve` to pre-approved changes.
 
 #### First-time Setup
 
@@ -219,11 +225,12 @@ terraform apply  # Only after user tells you to apply
 #### Safe State Modification
 
 ```bash
-# Step 1: Backup state first
-terraform state pull > backup-$(date +%Y%m%d).json
+# Step 1: Backup state to tmp/ first
+mkdir -p tmp
+terraform state pull > tmp/state-backup-$(date +%Y%m%d).json
 
 # Step 2: Preview changes with plan
-terraform plan
+terraform plan -input=false
 # Review output and discuss with user
 
 # Step 3: Make state changes (only after user confirms)
@@ -231,7 +238,7 @@ terraform state mv module.old module.new
 terraform state rm deprecated.resource
 
 # Step 4: Verify with plan
-terraform plan  # Should show no changes if state ops were correct
+terraform plan -input=false  # Should show no changes if state ops were correct
 ```
 
 #### Import Existing Resources

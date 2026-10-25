@@ -9,15 +9,15 @@ Evaluate and address PR review comments.
 
 Reference these skills first:
 
-- Read `jujutsu` skill to understand change context.
-- Read `github-cli` skill to fetch PR comments.
+- Read the `jujutsu` skill to understand change context.
+- Read the `github-cli` skill to fetch PR comments.
 
 ## Process
 
 ### Step 1 - Gather PR Data
 
 - Get PR number: ask the user or infer from the current branch.
-- Determine repository: `gh repo view` or `jj git remote list`.
+- Determine repository: `jj git remote list`.
 - Fetch PR comments: `gh api repos/owner/repo/pulls/<number>/comments -X GET --paginate`.
 - Fetch reviews: `gh api repos/owner/repo/pulls/<number>/reviews -X GET --paginate`.
 - Get PR diff: `gh pr diff <number> -R owner/repo`.
@@ -30,39 +30,25 @@ Reference these skills first:
 
 ### Step 2 - Analyze Comments and CI
 
-Apply a reviewer lens to review comments across all relevant perspectives:
+Apply a reviewer lens to review comments and CI failure logs across all relevant perspectives:
 
-- Ground findings in file paths and line numbers.
-- Prioritize the requested lens.
-- Distinguish confirmed findings from speculative risks.
-- Explain why each issue matters.
+- Ground findings in file paths and line numbers; prioritize the requested lens.
+- Distinguish confirmed findings from speculative risks; explain why each issue matters.
 
-Review across these perspectives:
+Review comments across these perspectives:
 
 - **Correctness and quality**: Classify each comment as already-addressed, valid-fix-needed, invalid, or needs-discussion.
 - **Security**: Identify valid security concerns vs false positives; assess severity.
 - **Simplicity and convention**: Prefer the simplest change satisfying valid feedback; distinguish valid simplifications from over-engineering.
 - **CI correlation**: Check whether each comment relates to an observed CI failure and whether addressing it would resolve the failure; incorporate available CI failure context.
 
-Apply a researcher lens to validate APIs and research best practices for the fixes suggested in the PR comments:
+Apply a researcher lens to validate APIs, research best practices for fixes suggested in the PR comments, and investigate any CI failure error messages, stack traces, or test failures:
 
-- Prefer official documentation over blog posts.
-- Cite sources with URLs.
-- Separate confirmed facts from plausible interpretations.
-- Note version requirements.
+- Prefer official documentation over blog posts; cite sources with URLs.
+- Separate confirmed facts from plausible interpretations; note version requirements.
 - Lead with the single most actionable recommendation.
 
-- If CI failure logs are included, apply a researcher lens to research the specific error messages, stack traces, or test failures to identify root causes and known solutions:
-  - Prefer official documentation over blog posts; cite sources with URLs.
-  - Separate confirmed facts from plausible interpretations; note version requirements.
-  - Lead with the single most actionable recommendation.
-
-- If checks failed, apply a reviewer lens to analyze the GitHub Actions CI failure logs:
-  - Ground findings in file paths and line numbers.
-  - Distinguish confirmed findings from speculative risks.
-  - Explain why each issue matters.
-
-For each failure:
+If checks failed, classify and analyze each failure:
 
 - **Failure classification**: test flake, code regression, env/infra issue, dependency problem, or timeout.
 - **Root cause**: most likely root cause with supporting evidence from logs.

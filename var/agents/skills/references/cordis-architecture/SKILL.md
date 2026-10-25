@@ -4,6 +4,8 @@ type: reference
 description: Reference for Cordis meta-framework architecture, spatiotemporal composability, revertible effects, reactive coeffects, dynamic composition calculus, and component lifecycles. ALWAYS read before designing, implementing, or refactoring dynamic plugin systems, agent harnesses, or extensible architectures.
 ---
 
+## Cordis Meta-Framework Architecture
+
 Source: https://github.com/cordiverse/paper/blob/main/paper.pdf
 
 Architecture and design principles for spatiotemporal composability from the Cordis meta-framework. Cordis formalizes and implements dynamic software composition—loading, unloading, and reconfiguring components at runtime—by lifting effect and coeffect theory to runtime mechanisms.

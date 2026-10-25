@@ -5,6 +5,11 @@ description: Detect and run project test, lint, and format commands; diagnose an
 
 Run project checks (tests, lint, formatting); diagnose and fix failures with minimal targeted changes when requested.
 
+## Modes
+
+- **Run-only** (default): Run checks, report pass/fail, and suggest fixes without editing.
+- **Fix**: Run checks, then diagnose and fix failures. For formatting, applying the formatter is the fix.
+
 ## Process
 
 ### Step 1 - Identify Context
@@ -51,12 +56,7 @@ Detect test, lint, and format commands in this order (single shared list, not du
 - Prefer the most specific command covering the requested files or changes.
 - Use bounded timeouts; avoid watch modes.
 
-### Step 4 - Modes
-
-- **Run-only** (default): run, report pass/fail, suggest fixes without editing.
-- **Fix**: proceed to Step 5. For formatting, applying the formatter is the fix.
-
-### Step 5 - Diagnose and Fix (fix mode only)
+### Step 4 - Diagnose and Fix (Fix Mode Only)
 
 - Prefer the exact failing command from the user or project output.
 - Diagnose the root cause before editing.
@@ -71,30 +71,26 @@ Apply a researcher lens to identify the root cause of the failure ({error output
 
 Classify the failure as one of: product-code bug, test bug, environment issue, stale expectation. Find relevant docs or known issues.
 
-Then, apply a worker lens to apply a minimal fix for the {root cause} in {file}:
+Then, apply a worker lens to fix {root cause} in {file}:
 
 - Read files before editing; keep diffs minimal and idiomatic; preserve public behavior; verify with the narrowest meaningful command.
 - Do not weaken assertions, skip tests, or broaden ignores unless explicitly approved with sound rationale.
 
-### Step 6 - Verify
+### Step 5 - Verify
 
 - Re-run the relevant command(s) to confirm the fix.
 
-### Step 7 - Stop Condition
-
-- If a fix fails twice, stop, analyze the root cause, and ask for guidance.
-
-### Step 8 - Report
+### Step 6 - Report
 
 Report to the user:
 
-1. **Command Used**
-2. **Mode**: run-only or fix
-3. **Results**: pass/fail summary
-4. **Failures** with root cause and file references
-5. **Fixes Applied** (if fix mode)
-6. **Remaining Issues** requiring manual action
-7. **Verification** from re-running relevant commands
+1. **Command Used**: The executed check command(s).
+2. **Mode**: Run-only or fix.
+3. **Results**: Pass/fail summary.
+4. **Failures**: Root cause and file references.
+5. **Fixes Applied**: Summary of changes (if fix mode).
+6. **Remaining Issues**: Items requiring manual action.
+7. **Verification**: Outcome from re-running relevant commands.
 
 ## Guardrails
 
@@ -103,4 +99,5 @@ Report to the user:
 - Use the exact failing command from the user or project output when available.
 - Avoid watch modes; use bounded timeouts.
 - Prefer the most specific command covering the requested scope.
+- If a fix fails twice, stop, analyze the root cause, and ask for guidance.
 - For runtime/production errors not surfaced by a check command, use `code-debug`.

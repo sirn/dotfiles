@@ -20,20 +20,18 @@ Explain code logic, triage incoming changes, or map project architecture.
 
 ### Step 3 - Execute Based on Goal
 
+When applying a scout lens below:
+
+- Map relevant files, conventions, and call paths; cite file paths and line numbers.
+- Distinguish confirmed patterns from one-offs; stay read-only and task-relevant.
+
 #### Explain
 
-- Apply a scout lens to identify the purpose, local patterns, data flow, and integration points in `{files}`:
-  - Map relevant files, conventions, and call paths.
-  - Cite file paths and line numbers.
-  - Distinguish confirmed patterns from one-offs.
-  - Stay read-only.
-  - Keep it concise and task-relevant.
-- If external library context is needed, apply a researcher lens to look up docs for libraries/frameworks in `{files}`, focusing only on APIs needed to understand the code:
-  - Prefer official documentation over blog posts.
-  - Cite sources with URLs.
-  - Separate confirmed facts from plausible interpretations.
-  - Note version requirements.
-- If the user asks for architecture or tradeoff explanations, apply an architect lens to explain the architectural choices and tradeoffs visible in `{files}`:
+- Apply a scout lens to identify the purpose, local patterns, data flow, and integration points in {files}.
+- If external library context is needed, apply a researcher lens to look up docs for libraries/frameworks in {files}, focusing only on APIs needed to understand the code:
+  - Prefer official documentation over blog posts; cite sources with URLs.
+  - Separate confirmed facts from plausible interpretations; note version requirements.
+- If the user asks for architecture or tradeoff explanations, apply an architect lens to explain the architectural choices and tradeoffs visible in {files}:
   - Map current module boundaries, ownership, and dependency direction first.
   - Recommend the smallest architecture that preserves invariants.
   - Avoid speculative generality.
@@ -44,22 +42,11 @@ Explain code logic, triage incoming changes, or map project architecture.
 
 Skim relevant diffs.
 
-- If they touch unfamiliar areas, apply a scout lens to map the files, ownership boundaries, and neighboring tests for this diff, identifying areas touched, risk hotspots, and the review order:
-  - Map relevant files, conventions, and call paths.
-  - Cite file paths and line numbers.
-  - Distinguish confirmed patterns from one-offs.
-  - Stay read-only.
-  - Keep it concise and task-relevant.
+- If they touch unfamiliar areas, apply a scout lens to map the files, ownership boundaries, and neighboring tests for this diff, identifying areas touched, risk hotspots, and the review order.
 
 #### Map
 
-Apply a scout lens to create a high-level dependency graph and module breakdown for `{directory}`, identifying entry points, core domain logic, and infrastructure/adapters:
-
-- Map relevant files, conventions, and call paths.
-- Cite file paths and line numbers.
-- Distinguish confirmed patterns from one-offs.
-- Stay read-only.
-- Keep it concise and task-relevant.
+- Apply a scout lens to create a high-level dependency graph and module breakdown for {directory}, identifying entry points, core domain logic, and infrastructure/adapters.
 
 ### Step 4 - Report
 

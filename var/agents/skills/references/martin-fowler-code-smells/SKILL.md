@@ -4,12 +4,14 @@ type: reference
 description: Reference for Martin Fowler's 24 code smells (Refactoring, 2nd ed. 2018). ALWAYS read before reviewing code quality, planning refactors, or cleaning up code, to identify smells and their fixes.
 ---
 
-The 24 code smells from Martin Fowler's Refactoring (2nd edition, 2018). Each smell is a labelled heuristic that suggests refactoring — a judgement call, never a hard violation.
+## Code Smells (Fowler)
+
+The 24 code smells from Martin Fowler's Refactoring (2nd edition, 2018). Each smell is a labeled heuristic that suggests refactoring — a judgment call, never a hard violation.
 
 ### Using This Baseline
 
 - **The repo overrides**: A documented repo standard always wins; where it endorses something a smell would flag, suppress the smell.
-- **Always a judgement call**: Each smell is a heuristic, never a hard violation. Skip anything a linter/formatter already enforces.
+- **Always a judgment call**: Each smell is a heuristic, never a hard violation. Skip anything a linter/formatter already enforces.
 - **Match the smell to the change**: Match the smell to the change, not the whole codebase; only flag what is relevant to the diff or target files.
 
 ### The 24 Smells (2018, 2nd edition)
@@ -27,7 +29,7 @@ The 24 code smells from Martin Fowler's Refactoring (2nd edition, 2018). Each sm
 11. **Primitive Obsession** — a primitive or string standing in for a domain concept. → Replace Primitive with Object; Replace Type Code with Subclasses or Polymorphism; Introduce Parameter Object.
 12. **Repeated Switches** — the same switch/if-cascade on the same type recurs across the change. → Replace Conditional with Polymorphism, or one shared map both sites use.
 13. **Loops** — explicit loops that obscure the processing pipeline. → Replace Loop with Pipeline (map/filter/reduce).
-14. **Lazy Elements** — a class, function, or module that does too little to justify itself. → Inline Function / Inline Class; delete it.
+14. **Lazy Element** — a class, function, or module that does too little to justify itself. → Inline Function / Inline Class; delete it.
 15. **Speculative Generality** — abstraction, parameters, or hooks added for needs the spec doesn't have. → Remove the dead abstraction; Inline; Collapse Hierarchy.
 16. **Temporary Field** — a field set only in certain circumstances, leaving it null/odd otherwise. → Extract Class; Introduce Special Case (Null Object); move the odd field.
 17. **Message Chains** — long a.b().c().d() navigation the caller shouldn't depend on. → Hide Delegate; expose one method on the first object.
@@ -42,3 +44,15 @@ The 24 code smells from Martin Fowler's Refactoring (2nd edition, 2018). Each sm
 ### Edition Note
 
 - Compared to the 1st edition (1999): adds Mysterious Name, Global Data, Mutable Data, Loops, Insider Trading; renames Long Method→Long Function, Switch Statements→Repeated Switches, Lazy Class→Lazy Element; drops Parallel Inheritance Hierarchies and Incomplete Library Class.
+
+### Smell Taxonomy by Symptom
+
+Use this grouping to quickly diagnose the structural root cause during code review or refactoring:
+
+| Category | Smells | Primary Fix Direction |
+| --- | --- | --- |
+| **Change Preventers** (one change requires many edits, or one module edits for many reasons) | Divergent Change (#7), Shotgun Surgery (#8), Repeated Switches (#12) | Align module boundaries with axes of change (Extract Module/Class, Move Function, Polymorphism/Table lookup) |
+| **Couplers** (modules know too much about each other or delegate without adding value) | Feature Envy (#9), Message Chains (#17), Middle Man (#18), Insider Trading (#19) | Colocate behavior with the data it operates on (Move Function) or remove pass-through delegation (Inline / Hide Delegate) |
+| **Bloaters** (units grown too large or parameter-heavy to reason about) | Long Function (#3), Long Parameter List (#4), Data Clumps (#10), Primitive Obsession (#11), Large Class (#20) | Extract domain types/functions and group traveling parameters into value objects |
+| **Data & State Hazards** (uncontrolled mutation or awkward state lifecycles) | Global Data (#5), Mutable Data (#6), Temporary Field (#16), Data Class (#22) | Encapsulate state, prefer immutable values, and move behavior onto records |
+| **Dispensables & Obscurity** (noise, dead weight, or unclear intent) | Mysterious Name (#1), Duplicated Code (#2), Loops (#13), Lazy Element (#14), Speculative Generality (#15), Alternative Classes (#21), Refused Bequest (#23), Comments (#24) | Rename for clarity, replace loops with pipelines, inline/delete unused abstractions, and extract self-explanatory functions instead of apologetic comments |

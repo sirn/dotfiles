@@ -26,7 +26,7 @@ https://api.linear.app/graphql
 All requests require the `Authorization` header:
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
   --data '{"query":"query { viewer { id name email } }"}'
@@ -47,19 +47,19 @@ For OAuth, use `Authorization: Bearer <ACCESS_TOKEN>`, but prefer `LINEAR_PAT` f
 ### Get Current User
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query { viewer { id name displayName email active } }"}' | jq '.data.viewer'
+  --data '{"query":"query { viewer { id name displayName email active } }"}' | jaq '.data.viewer'
 ```
 
 ### Get Viewer Organization
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query { organization { id name urlKey } }"}' | jq '.data.organization'
+  --data '{"query":"query { organization { id name urlKey } }"}' | jaq '.data.organization'
 ```
 
 ## Teams
@@ -67,10 +67,10 @@ curl -s https://api.linear.app/graphql \
 ### List Teams
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query { teams { nodes { id key name description } } }"}' | jq '.data.teams.nodes'
+  --data '{"query":"query { teams { nodes { id key name description } } }"}' | jaq '.data.teams.nodes'
 ```
 
 **Response**:
@@ -89,19 +89,19 @@ curl -s https://api.linear.app/graphql \
 ### Get Team by ID
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query($id: String!) { team(id: $id) { id key name description } }","variables":{"id":"TEAM_ID"}}' | jq '.data.team'
+  --data '{"query":"query($id: String!) { team(id: $id) { id key name description } }","variables":{"id":"TEAM_ID"}}' | jaq '.data.team'
 ```
 
 ### Get Team States
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query($id: String!) { team(id: $id) { id name states { nodes { id name type position } } } }","variables":{"id":"TEAM_ID"}}' | jq '.data.team.states.nodes'
+  --data '{"query":"query($id: String!) { team(id: $id) { id name states { nodes { id name type position } } } }","variables":{"id":"TEAM_ID"}}' | jaq '.data.team.states.nodes'
 ```
 
 ## Users
@@ -109,19 +109,19 @@ curl -s https://api.linear.app/graphql \
 ### List Users
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query { users { nodes { id name displayName email active } } }"}' | jq '.data.users.nodes'
+  --data '{"query":"query { users { nodes { id name displayName email active } } }"}' | jaq '.data.users.nodes'
 ```
 
 ### Search Users by Name
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query($name: String!) { users(filter: { name: { containsIgnoreCase: $name } }) { nodes { id name displayName email } } }","variables":{"name":"KEYWORD"}}' | jq '.data.users.nodes'
+  --data '{"query":"query($name: String!) { users(filter: { name: { containsIgnoreCase: $name } }) { nodes { id name displayName email } } }","variables":{"name":"KEYWORD"}}' | jaq '.data.users.nodes'
 ```
 
 ## Projects
@@ -129,28 +129,28 @@ curl -s https://api.linear.app/graphql \
 ### List Projects
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query { projects { nodes { id name slug state progress targetDate } } }"}' | jq '.data.projects.nodes'
+  --data '{"query":"query { projects { nodes { id name slugId status { id name type } progress targetDate } } }"}' | jaq '.data.projects.nodes'
 ```
 
 ### Get Project
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query($id: String!) { project(id: $id) { id name slug description state progress startDate targetDate url } }","variables":{"id":"PROJECT_ID"}}' | jq '.data.project'
+  --data '{"query":"query($id: String!) { project(id: $id) { id name slugId description status { id name type } progress startDate targetDate url } }","variables":{"id":"PROJECT_ID"}}' | jaq '.data.project'
 ```
 
 ### Get Project Issues
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query($id: String!) { project(id: $id) { id name issues(first: 50) { nodes { id identifier title state { name type } assignee { name } } } } }","variables":{"id":"PROJECT_ID"}}' | jq '.data.project.issues.nodes'
+  --data '{"query":"query($id: String!) { project(id: $id) { id name issues(first: 50) { nodes { id identifier title state { name type } assignee { name } } } } }","variables":{"id":"PROJECT_ID"}}' | jaq '.data.project.issues.nodes'
 ```
 
 ## Cycles
@@ -158,19 +158,19 @@ curl -s https://api.linear.app/graphql \
 ### List Cycles
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query { cycles { nodes { id number name startsAt endsAt completedAt team { id key name } } }"}' | jq '.data.cycles.nodes'
+  --data '{"query":"query { cycles { nodes { id number name startsAt endsAt completedAt team { id key name } } } }"}' | jaq '.data.cycles.nodes'
 ```
 
 ### List Cycles for Team
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query($teamId: ID!) { cycles(filter: { team: { id: { eq: $teamId } } }) { nodes { id number name startsAt endsAt completedAt } } }","variables":{"teamId":"TEAM_ID"}}' | jq '.data.cycles.nodes'
+  --data '{"query":"query($teamId: ID!) { cycles(filter: { team: { id: { eq: $teamId } } }) { nodes { id number name startsAt endsAt completedAt } } }","variables":{"teamId":"TEAM_ID"}}' | jaq '.data.cycles.nodes'
 ```
 
 ## Issues
@@ -180,10 +180,10 @@ curl -s https://api.linear.app/graphql \
 Linear accepts UUIDs and shorthand identifiers like `ENG-123`.
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query($id: String!) { issue(id: $id) { id identifier title description state { id name type } priority priorityLabel assignee { id name } project { id name } cycle { id name number } labels { nodes { id name } } url } }","variables":{"id":"ENG-123"}}' | jq '.data.issue'
+  --data '{"query":"query($id: String!) { issue(id: $id) { id identifier title description state { id name type } priority priorityLabel assignee { id name } project { id name } cycle { id name number } labels { nodes { id name } } url } }","variables":{"id":"ENG-123"}}' | jaq '.data.issue'
 ```
 
 **Response**:
@@ -208,10 +208,10 @@ curl -s https://api.linear.app/graphql \
 ### List Issues for a Team
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query($id: String!) { team(id: $id) { id name issues(first: 50) { nodes { id identifier title state { name type } assignee { name } updatedAt } } } }","variables":{"id":"TEAM_ID"}}' | jq '.data.team.issues.nodes'
+  --data '{"query":"query($id: String!) { team(id: $id) { id name issues(first: 50) { nodes { id identifier title state { name type } assignee { name } updatedAt } } } }","variables":{"id":"TEAM_ID"}}' | jaq '.data.team.issues.nodes'
 ```
 
 ### List Incomplete Issues for a Team
@@ -219,10 +219,10 @@ curl -s https://api.linear.app/graphql \
 Prefer this unless completed issues are explicitly requested.
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query($teamId: ID!) { issues(filter: { team: { id: { eq: $teamId } }, completedAt: { null: true } }) { nodes { id identifier title state { name type } assignee { name } } } }","variables":{"teamId":"TEAM_ID"}}' | jq '.data.issues.nodes'
+  --data '{"query":"query($teamId: ID!) { issues(filter: { team: { id: { eq: $teamId } }, completedAt: { null: true } }) { nodes { id identifier title state { name type } assignee { name } } } }","variables":{"teamId":"TEAM_ID"}}' | jaq '.data.issues.nodes'
 ```
 
 ### Search Issues by Text
@@ -230,28 +230,28 @@ curl -s https://api.linear.app/graphql \
 Use `searchIssues` (`issueSearch` is deprecated).
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query($term: String!) { searchIssues(term: $term, first: 50) { nodes { id identifier title state { name } assignee { name } team { key name } } } }","variables":{"term":"KEYWORD"}}' | jq '.data.searchIssues.nodes'
+  --data '{"query":"query($term: String!) { searchIssues(term: $term, first: 50) { nodes { id identifier title state { name } assignee { name } team { key name } } } }","variables":{"term":"KEYWORD"}}' | jaq '.data.searchIssues.nodes'
 ```
 
 ### List Issues Assigned to Me
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query { viewer { assignedIssues(first: 50) { nodes { id identifier title state { name type } priorityLabel dueDate team { key } } } } }"}' | jq '.data.viewer.assignedIssues.nodes'
+  --data '{"query":"query { viewer { assignedIssues(first: 50) { nodes { id identifier title state { name type } priorityLabel dueDate team { key } } } } }"}' | jaq '.data.viewer.assignedIssues.nodes'
 ```
 
 ### List Recently Updated Issues
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query { issues(first: 50, orderBy: updatedAt) { nodes { id identifier title updatedAt state { name } } } }"}' | jq '.data.issues.nodes'
+  --data '{"query":"query { issues(first: 50, orderBy: updatedAt) { nodes { id identifier title updatedAt state { name } } } }"}' | jaq '.data.issues.nodes'
 ```
 
 ## Comments
@@ -259,10 +259,10 @@ curl -s https://api.linear.app/graphql \
 ### Get Issue Comments
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query($id: String!) { issue(id: $id) { id identifier comments(first: 50) { nodes { id body createdAt user { id name } } } } }","variables":{"id":"ENG-123"}}' | jq '.data.issue.comments.nodes'
+  --data '{"query":"query($id: String!) { issue(id: $id) { id identifier comments(first: 50) { nodes { id body createdAt user { id name } } } } }","variables":{"id":"ENG-123"}}' | jaq '.data.issue.comments.nodes'
 ```
 
 ## Labels
@@ -270,10 +270,10 @@ curl -s https://api.linear.app/graphql \
 ### List Labels
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query { issueLabels { nodes { id name color description team { key name } } } }"}' | jq '.data.issueLabels.nodes'
+  --data '{"query":"query { issueLabels { nodes { id name color description team { key name } } } }"}' | jaq '.data.issueLabels.nodes'
 ```
 
 ## Pagination
@@ -281,10 +281,10 @@ curl -s https://api.linear.app/graphql \
 ### Paginate Through Issues
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query($after: String) { issues(first: 50, after: $after) { nodes { id identifier title } pageInfo { hasNextPage endCursor } } }","variables":{"after":null}}' | jq '.data.issues'
+  --data '{"query":"query($after: String) { issues(first: 50, after: $after) { nodes { id identifier title } pageInfo { hasNextPage endCursor } } }","variables":{"after":null}}' | jaq '.data.issues'
 ```
 
 Use the returned `pageInfo.endCursor` as the next `after` value.
@@ -294,28 +294,28 @@ Use the returned `pageInfo.endCursor` as the next `after` value.
 ### Filter Issues by Team + Assignee + Incomplete
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query($teamId: ID!, $assigneeId: ID!) { issues(filter: { team: { id: { eq: $teamId } }, assignee: { id: { eq: $assigneeId } }, completedAt: { null: true } }, orderBy: updatedAt) { nodes { id identifier title updatedAt state { name } } } }","variables":{"teamId":"TEAM_ID","assigneeId":"USER_ID"}}' | jq '.data.issues.nodes'
+  --data '{"query":"query($teamId: ID!, $assigneeId: ID!) { issues(filter: { team: { id: { eq: $teamId } }, assignee: { id: { eq: $assigneeId } }, completedAt: { null: true } }, orderBy: updatedAt) { nodes { id identifier title updatedAt state { name } } } }","variables":{"teamId":"TEAM_ID","assigneeId":"USER_ID"}}' | jaq '.data.issues.nodes'
 ```
 
 ### Filter Issues by Project
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query($projectId: ID!) { issues(filter: { project: { id: { eq: $projectId } } }) { nodes { id identifier title state { name } assignee { name } } } }","variables":{"projectId":"PROJECT_ID"}}' | jq '.data.issues.nodes'
+  --data '{"query":"query($projectId: ID!) { issues(filter: { project: { id: { eq: $projectId } } }) { nodes { id identifier title state { name } assignee { name } } } }","variables":{"projectId":"PROJECT_ID"}}' | jaq '.data.issues.nodes'
 ```
 
 ### Filter Issues by Cycle
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"query($cycleId: String!) { cycle(id: $cycleId) { id name issues(first: 50) { nodes { id identifier title state { name } assignee { name } } } } }","variables":{"cycleId":"CYCLE_ID"}}' | jq '.data.cycle.issues.nodes'
+  --data '{"query":"query($cycleId: String!) { cycle(id: $cycleId) { id name issues(first: 50) { nodes { id identifier title state { name } assignee { name } } } } }","variables":{"cycleId":"CYCLE_ID"}}' | jaq '.data.cycle.issues.nodes'
 ```
 
 ## Mutations
@@ -323,10 +323,10 @@ curl -s https://api.linear.app/graphql \
 ### Create Issue
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"mutation($input: IssueCreateInput!) { issueCreate(input: $input) { success issue { id identifier title url } } }","variables":{"input":{"teamId":"TEAM_ID","title":"New issue title","description":"Issue description"}}}' | jq '.data.issueCreate'
+  --data '{"query":"mutation($input: IssueCreateInput!) { issueCreate(input: $input) { success issue { id identifier title url } } }","variables":{"input":{"teamId":"TEAM_ID","title":"New issue title","description":"Issue description"}}}' | jaq '.data.issueCreate'
 ```
 
 If `stateId` is omitted, Linear assigns the team default backlog or triage state.
@@ -334,37 +334,37 @@ If `stateId` is omitted, Linear assigns the team default backlog or triage state
 ### Update Issue
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"mutation($id: String!, $input: IssueUpdateInput!) { issueUpdate(id: $id, input: $input) { success issue { id identifier title state { name } assignee { name } } } }","variables":{"id":"ENG-123","input":{"title":"Updated title","description":"Updated description"}}}' | jq '.data.issueUpdate'
+  --data '{"query":"mutation($id: String!, $input: IssueUpdateInput!) { issueUpdate(id: $id, input: $input) { success issue { id identifier title state { name } assignee { name } } } }","variables":{"id":"ENG-123","input":{"title":"Updated title","description":"Updated description"}}}' | jaq '.data.issueUpdate'
 ```
 
 ### Move Issue to Another State
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"mutation($id: String!, $input: IssueUpdateInput!) { issueUpdate(id: $id, input: $input) { success issue { id identifier state { id name type } } } }","variables":{"id":"ENG-123","input":{"stateId":"STATE_ID"}}}' | jq '.data.issueUpdate'
+  --data '{"query":"mutation($id: String!, $input: IssueUpdateInput!) { issueUpdate(id: $id, input: $input) { success issue { id identifier state { id name type } } } }","variables":{"id":"ENG-123","input":{"stateId":"STATE_ID"}}}' | jaq '.data.issueUpdate'
 ```
 
 ### Assign Issue
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"mutation($id: String!, $input: IssueUpdateInput!) { issueUpdate(id: $id, input: $input) { success issue { id identifier assignee { id name } } } }","variables":{"id":"ENG-123","input":{"assigneeId":"USER_ID"}}}' | jq '.data.issueUpdate'
+  --data '{"query":"mutation($id: String!, $input: IssueUpdateInput!) { issueUpdate(id: $id, input: $input) { success issue { id identifier assignee { id name } } } }","variables":{"id":"ENG-123","input":{"assigneeId":"USER_ID"}}}' | jaq '.data.issueUpdate'
 ```
 
 ### Add Comment
 
 ```bash
-curl -s https://api.linear.app/graphql \
+curl -fsS https://api.linear.app/graphql \
   -H "Authorization: $LINEAR_PAT" \
   -H "Content-Type: application/json" \
-  --data '{"query":"mutation($input: CommentCreateInput!) { commentCreate(input: $input) { success comment { id body url } } }","variables":{"input":{"issueId":"ISSUE_ID","body":"Adding a comment from the API."}}}' | jq '.data.commentCreate'
+  --data '{"query":"mutation($input: CommentCreateInput!) { commentCreate(input: $input) { success comment { id body url } } }","variables":{"input":{"issueId":"ISSUE_ID","body":"Adding a comment from the API."}}}' | jaq '.data.commentCreate'
 ```
 
 ## Common ID Patterns

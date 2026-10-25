@@ -5,9 +5,9 @@ description: Commit current changes using jj. Analyzes changes, suggests commit 
 
 Commit current changes using Jujutsu (jj).
 
-## Important
+## Prerequisites
 
-- Read the `jujutsu` skill before running any `jj` command.
+- Read the `jujutsu` skill before running any `jj` command and follow its Best Practices for local commit autonomy, revision references, logical grouping, and message style.
 
 ## Commit Message Style
 
@@ -47,10 +47,6 @@ Commit messages provide a high-level overview of the change, NOT a detailed brea
 
 ## Process
 
-### Step 0 - Load Jujutsu Skill
-
-- Review the `jujutsu` skill and follow its Best Practices for local commit autonomy, revision references, logical grouping, and message style.
-
 ### Step 1 - Analyze Changes
 
 - `jj diff -s` to inspect changed files; `jj diff` for the full diff.
@@ -74,7 +70,7 @@ Commit messages provide a high-level overview of the change, NOT a detailed brea
 
 - Run the `check-commit-msg.sh` script in this skill directory:
   - Reference it by absolute path; do NOT `cd` into the skill directory (`jj` must run in the repo working directory).
-  - `/path/to/check-commit-msg.sh [REV]` where `REV` is a jujutsu revision/alias or git revision/ref.
+  - `/path/to/check-commit-msg.sh @-` (or pass each split revision `REV`; omitting `REV` checks `@`, which is empty after `jj commit`).
   - `/path/to/check-commit-msg.sh -h` for all options.
 - If any line exceeds the limit (per `jujutsu`), fix with `jj describe <rev> -m "<fixed-message>"`.
 

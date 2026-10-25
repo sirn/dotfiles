@@ -476,8 +476,8 @@ jj unsign -r <id>
 # List remotes
 jj git remote list
 
-# Parse owner/repo from remote URL (for gh CLI)
-jj git remote list | grep origin | head -1 | sed -E 's/.*github\.com[:/]([^/]+)\/([^/]+)\.git.*/\1\/\2/'
+# Parse owner/repo from origin remote URL (for gh CLI)
+jj git remote list | sed -nE 's/^origin[[:space:]]+.*github\.com[:/]([^/]+\/[^/.]+)(\.git)?$/\1/p'
 ```
 
 #### Remote Operations
@@ -523,6 +523,24 @@ jj resolve --tool=:theirs -r <id>
 jj new @ <other-id>
 ```
 
+#### Resolving Divergent Changes
+
+A change ID becomes divergent (shown as `??` or `divergent`) when two visible commits share the same change ID (e.g., after concurrent rewrites or importing unpushed refs).
+
+```bash
+# List all divergent commits with their commit IDs and change ID offsets
+jj log -r 'divergent()'
+
+# Inspect differences between the two versions (using change ID offsets /0 and /1, or commit IDs)
+jj interdiff --from <change-id>/0 --to <change-id>/1
+
+# Keep one version and abandon the obsolete commit by its explicit commit ID
+jj abandon <obsolete-commit-id>
+
+# Or generate a fresh change ID if both commits should be kept as distinct changes
+jj metaedit -r <commit-id> --update-change-id
+```
+
 ---
 
 ### Recovery & Operation Log
@@ -564,7 +582,7 @@ jj evolog -r <id>
   jj restore --from <src> --to <dst>    # Copy file contents from src to dst
   jj restore --changes-in <id>          # Revert diff introduced by commit <id>
   ```
-- **`jj revert -r <id> -d <dest>`**: Creates a new commit applying the inverse diff of revision `<id>`.
+- **`jj revert -r <id> -o <dest>`**: Creates a new commit applying the inverse diff of revision `<id>`.
 
 ---
 
@@ -582,22 +600,29 @@ x | y       # Union
 ~x          # Complement (not in x)
 x::y        # DAG range (descendants of x that are ancestors of y)
 
-# Functions
-mine()                  # Commits authored by you
-bookmarks()             # All local bookmarks
-remote_bookmarks()      # All remote bookmarks
-tags()                  # All tags
-mutable()               # All non-immutable commits
-immutable_heads()       # Heads of immutable commit tree
-author("pattern")       # Filter by author name/email
-description("text")     # Filter by commit message text
-files("path/**")        # Commits touching files matching pattern
-empty()                 # Commits with no diff against parents
-conflict()              # Commits containing unresolved conflicts
-heads(x)                # Heads in revision set x
-roots(x)                # Roots in revision set x
-latest(x, [n])          # Latest n commits in set by committer date
-reachable(src, domain)  # Commits reachable from src within domain
+# Functions & Built-in Aliases
+trunk()                         # Trunk head (main/master on default remote)
+mine()                          # Commits authored by you
+bookmarks([pattern])            # Local bookmarks (optionally matching pattern)
+remote_bookmarks([pattern])     # Remote bookmarks
+tracked_remote_bookmarks()      # Tracked remote bookmarks
+tags([pattern])                 # All tags
+mutable()                       # All non-immutable commits
+immutable_heads()               # Heads of immutable commit tree
+author("pattern")               # Filter by author name/email
+description("text")             # Filter by commit message text
+files("path/**")                # Commits touching files matching pattern
+empty()                         # Commits with no diff against parents
+conflicts()                     # Commits containing unresolved conflicts
+divergent()                     # Commits sharing a change ID with another visible commit
+merges()                        # Merge commits (more than one parent)
+present(x)                      # Evaluates to x if it exists, or empty() instead of erroring
+heads(x)                        # Heads in revision set x
+roots(x)                        # Roots in revision set x
+fork_point(x)                   # Common ancestor(s) of revisions in x (e.g. fork_point(trunk() | @))
+connected(x)                    # Same as x::x (all commits on paths between revisions in x)
+latest(x, [n])                  # Latest n commits in set by committer date
+reachable(src, domain)          # Commits reachable from src within domain
 ```
 
 ---
@@ -625,7 +650,7 @@ Workspaces allow multiple working copies attached to the same jj repository.
 
 ```bash
 # Add a new workspace at path
-jj workspace add <path> [name]
+jj workspace add <path> [--name <name>]
 
 # List active workspaces
 jj workspace list

@@ -4,6 +4,8 @@ type: reference
 description: Reference for accessible, consistent, clean web design, spacing discipline, strong UX, and anti-AI aesthetics. ALWAYS read before writing, refactoring, or reviewing web UI, CSS, stylesheets, design tokens, or component templates.
 ---
 
+## Web Design & Accessibility Reference
+
 Web design guidelines for building simple, accessible, consistent, and user-focused web interfaces. Prioritize clear hierarchy, usability, and speed over decorative trends or AI-generated aesthetics.
 
 ### Core Layout & Spacing Rules
@@ -83,8 +85,12 @@ Web design guidelines for building simple, accessible, consistent, and user-focu
   - Provide descriptive, actionable error messages. Tell the user what went wrong and how to fix it.
   - Build informative empty states with a direct call to action (e.g., "No projects yet. Create your first project.").
 - **Fast and stable rendering**:
-  - Avoid layout shifts (CLS). Reserve space for dynamic content, images, and asynchronous data.
+  - Avoid layout shifts (CLS). Reserve space for dynamic content, images (`width`/`height` or `aspect-ratio`), and asynchronous data.
+  - Use `font-variant-numeric: tabular-nums` (Tailwind `tabular-nums`) on numeric columns, counters, timers, prices, and metrics so digits align vertically and never jitter when values update.
   - Prefer instant CSS transitions (100–200ms) over slow, elaborate multi-stage animations.
+- **Intrinsic responsive layout**:
+  - Use `repeat(auto-fit, minmax(min(100%, 280px), 1fr))` for responsive grids so tracks wrap naturally and never overflow horizontally on viewports narrower than `280px`.
+  - Prefer CSS logical properties (`inline-size`, `max-inline-size`, `padding-inline`, `padding-block`) and `@container` queries for reusable components whose layout depends on container width rather than viewport width.
 
 ---
 
@@ -166,14 +172,16 @@ AI-generated web layouts often share generic, copy-paste visual tropes that make
 
 <style>
   .page-container {
+    display: grid;
+    justify-items: center;
     padding: var(--space-8);
-    max-inline-size: var(--size-container-lg);
-    margin-inline: auto; /* centered container */
   }
   .card-grid {
     display: grid;
     gap: var(--space-6);
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    inline-size: 100%;
+    max-inline-size: var(--size-container-lg);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   }
   .card {
     display: flex;
@@ -202,8 +210,8 @@ AI-generated web layouts often share generic, copy-paste visual tropes that make
 </style>
 
 <!-- Tailwind Example -->
-<main class="mx-auto max-w-5xl p-8">
-  <section class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+<main class="grid justify-items-center p-8">
+  <section class="grid w-full max-w-5xl grid-cols-1 gap-6 sm:grid-cols-2">
     <article
       class="flex flex-col gap-4 rounded-lg border border-slate-200 bg-white p-6"
     >
@@ -214,13 +222,13 @@ AI-generated web layouts often share generic, copy-paste visual tropes that make
       <div class="flex justify-end gap-2">
         <button
           type="button"
-          class="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+          class="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 disabled:opacity-50"
         >
           View logs
         </button>
         <button
           type="button"
-          class="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+          class="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 active:bg-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 disabled:opacity-50"
         >
           Edit project
         </button>
@@ -246,4 +254,4 @@ Before finalizing any UI implementation or template:
 - [ ] **Forms**: Does every input have a visible, associated `<label>` (not just placeholder text)?
 - [ ] **Touch targets**: Are interactive targets at least 44×44px on mobile viewports?
 - [ ] **Restraint**: Are unnecessary borders, decorative gradient blobs, glassmorphism, and excessive shadows removed?
-- [ ] **Interaction states**: Are `hover`, `focus-visible`, `active`, and `disabled` states clearly styled?
+- [ ] **Interaction states**: Are `default`, `hover`, `active`, `focus-visible`, `disabled`, and `loading` states clearly styled?

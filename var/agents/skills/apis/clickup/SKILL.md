@@ -30,7 +30,7 @@ This skill is **PAT-only**:
 
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/user" | jq .
+  "https://api.clickup.com/api/v2/user" | jaq .
 ```
 
 ## API coverage map
@@ -87,7 +87,7 @@ When IDs are unknown, discover them in this order:
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/user" | jq .
+  "https://api.clickup.com/api/v2/user" | jaq .
 ```
 
 ### List authorized workspaces
@@ -95,7 +95,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team" | jq '.teams'
+  "https://api.clickup.com/api/v2/team" | jaq '.teams'
 ```
 
 ### Get workspace plan
@@ -103,7 +103,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/plan" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/plan" | jaq .
 ```
 
 ### Get workspace seats
@@ -111,7 +111,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/seats" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/seats" | jaq .
 ```
 
 ## Hierarchy: spaces, folders, lists, views
@@ -121,7 +121,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/space?archived=false" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/space?archived=false" | jaq .
 ```
 
 ### Get a space
@@ -129,7 +129,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/space/SPACE_ID" | jq .
+  "https://api.clickup.com/api/v2/space/SPACE_ID" | jaq .
 ```
 
 ### List folders in a space
@@ -137,7 +137,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/space/SPACE_ID/folder?archived=false" | jq .
+  "https://api.clickup.com/api/v2/space/SPACE_ID/folder?archived=false" | jaq .
 ```
 
 ### Get a folder
@@ -145,7 +145,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/folder/FOLDER_ID" | jq .
+  "https://api.clickup.com/api/v2/folder/FOLDER_ID" | jaq .
 ```
 
 ### List folderless lists in a space
@@ -153,7 +153,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/space/SPACE_ID/list?archived=false" | jq .
+  "https://api.clickup.com/api/v2/space/SPACE_ID/list?archived=false" | jaq .
 ```
 
 ### List lists in a folder
@@ -161,7 +161,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/folder/FOLDER_ID/list?archived=false" | jq .
+  "https://api.clickup.com/api/v2/folder/FOLDER_ID/list?archived=false" | jaq .
 ```
 
 ### Get a list
@@ -169,7 +169,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/list/LIST_ID" | jq .
+  "https://api.clickup.com/api/v2/list/LIST_ID" | jaq .
 ```
 
 ### List views
@@ -178,22 +178,22 @@ curl -fsS \
 # Workspace / Everything views
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/view" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/view" | jaq .
 
 # Space views
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/space/SPACE_ID/view" | jq .
+  "https://api.clickup.com/api/v2/space/SPACE_ID/view" | jaq .
 
 # Folder views
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/folder/FOLDER_ID/view" | jq .
+  "https://api.clickup.com/api/v2/folder/FOLDER_ID/view" | jaq .
 
 # List views
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/list/LIST_ID/view" | jq .
+  "https://api.clickup.com/api/v2/list/LIST_ID/view" | jaq .
 ```
 
 ### Get a view or its tasks
@@ -201,10 +201,10 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/view/VIEW_ID" | jq .
+  "https://api.clickup.com/api/v2/view/VIEW_ID" | jaq .
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/view/VIEW_ID/task" | jq .
+  "https://api.clickup.com/api/v2/view/VIEW_ID/task" | jaq .
 ```
 
 ## Tasks
@@ -214,7 +214,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/task/TASK_ID" | jq .
+  "https://api.clickup.com/api/v2/task/TASK_ID" | jaq .
 ```
 
 Useful query parameters:
@@ -229,7 +229,7 @@ Example:
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/task/TASK_ID?include_subtasks=true&include_markdown_description=true" | jq .
+  "https://api.clickup.com/api/v2/task/TASK_ID?include_subtasks=true&include_markdown_description=true" | jaq .
 ```
 
 ### List tasks in a list
@@ -237,7 +237,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/list/LIST_ID/task?archived=false&subtasks=true&include_closed=false" | jq .
+  "https://api.clickup.com/api/v2/list/LIST_ID/task?archived=false&subtasks=true&include_closed=false" | jaq .
 ```
 
 Common filters supported by `GET /list/{list_id}/task`:
@@ -265,7 +265,7 @@ This is the main workspace-level task query in v2. It filters tasks across space
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/task?include_closed=false&page=0" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/task?include_closed=false&page=0" | jaq .
 ```
 
 Common filters supported by `GET /team/{team_Id}/task`:
@@ -292,7 +292,7 @@ Common filters supported by `GET /team/{team_Id}/task`:
 
 ### Create or update tasks
 
-> **Always use `markdown_content` (create) or `markdown_description` (update) for task descriptions.** The `description` field treats content as plain text and does not render Markdown, whereas `markdown_content` and `markdown_description` render rich text in the ClickUp UI. If both are provided, `markdown_content` takes precedence.
+> **Always use `markdown_content` for task descriptions (both create and update).** The `description` field treats content as plain text and does not render Markdown, whereas `markdown_content` renders rich text in the ClickUp UI (`markdown_description` is only a response field when `include_markdown_description=true` is passed on `GET`). If both `markdown_content` and `description` are provided, `markdown_content` takes precedence.
 
 ```bash
 # Create task in a list (with Markdown description)
@@ -301,7 +301,8 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X POST \
   "https://api.clickup.com/api/v2/list/LIST_ID/task" \
-  -d '{"name":"New task","markdown_content":"## Overview\nDetails here."}' | jq .
+  -d '{"name":"New task","markdown_content":"## Overview\nDetails here."}' \
+  | jaq .
 
 # Update task (with Markdown description)
 curl -fsS \
@@ -309,7 +310,8 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X PUT \
   "https://api.clickup.com/api/v2/task/TASK_ID" \
-  -d '{"name":"Updated task name","markdown_description":"## Updated\nNew details."}' | jq .
+  -d '{"name":"Updated task name","markdown_content":"## Updated\nNew details."}' \
+  | jaq .
 ```
 
 ### Task relationships
@@ -321,12 +323,12 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X POST \
   "https://api.clickup.com/api/v2/task/TASK_ID/dependency" \
-  -d '{"depends_on":"OTHER_TASK_ID"}' | jq .
+  -d '{"depends_on":"OTHER_TASK_ID"}' | jaq .
 
 # Link tasks
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  -X POST "https://api.clickup.com/api/v2/task/TASK_ID/link/OTHER_TASK_ID" | jq .
+  -X POST "https://api.clickup.com/api/v2/task/TASK_ID/link/OTHER_TASK_ID" | jaq .
 ```
 
 ### Checklists
@@ -338,7 +340,7 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X POST \
   "https://api.clickup.com/api/v2/task/TASK_ID/checklist" \
-  -d '{"name":"Checklist"}' | jq .
+  -d '{"name":"Checklist"}' | jaq .
 ```
 
 ### Task members
@@ -346,10 +348,10 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/task/TASK_ID/member" | jq .
+  "https://api.clickup.com/api/v2/task/TASK_ID/member" | jaq .
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/list/LIST_ID/member" | jq .
+  "https://api.clickup.com/api/v2/list/LIST_ID/member" | jaq .
 ```
 
 ### Task attachment upload (v2)
@@ -358,7 +360,7 @@ curl -fsS \
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
   -F "attachment=@/path/to/file" \
-  "https://api.clickup.com/api/v2/task/TASK_ID/attachment" | jq .
+  "https://api.clickup.com/api/v2/task/TASK_ID/attachment" | jaq .
 ```
 
 ## Comments
@@ -368,7 +370,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/task/TASK_ID/comment" | jq .
+  "https://api.clickup.com/api/v2/task/TASK_ID/comment" | jaq .
 ```
 
 Optional pagination-style params:
@@ -382,7 +384,7 @@ Optional pagination-style params:
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/list/LIST_ID/comment" | jq .
+  "https://api.clickup.com/api/v2/list/LIST_ID/comment" | jaq .
 ```
 
 ### Get view comments
@@ -390,7 +392,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/view/VIEW_ID/comment" | jq .
+  "https://api.clickup.com/api/v2/view/VIEW_ID/comment" | jaq .
 ```
 
 ### Get threaded replies for a comment
@@ -398,7 +400,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/comment/COMMENT_ID/reply" | jq .
+  "https://api.clickup.com/api/v2/comment/COMMENT_ID/reply" | jaq .
 ```
 
 ### Create comments
@@ -410,7 +412,7 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X POST \
   "https://api.clickup.com/api/v2/task/TASK_ID/comment" \
-  -d '{"comment_text":"Hello from the API","notify_all":true}' | jq .
+  -d '{"comment_text":"Hello from the API","notify_all":true}' | jaq .
 
 # Threaded reply
 curl -fsS \
@@ -418,7 +420,7 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X POST \
   "https://api.clickup.com/api/v2/comment/COMMENT_ID/reply" \
-  -d '{"comment_text":"Replying in thread","notify_all":true}' | jq .
+  -d '{"comment_text":"Replying in thread","notify_all":true}' | jaq .
 ```
 
 ## Custom fields, tags, custom task types, roles
@@ -428,16 +430,16 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/field" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/field" | jaq .
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/space/SPACE_ID/field" | jq .
+  "https://api.clickup.com/api/v2/space/SPACE_ID/field" | jaq .
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/folder/FOLDER_ID/field" | jq .
+  "https://api.clickup.com/api/v2/folder/FOLDER_ID/field" | jaq .
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/list/LIST_ID/field" | jq .
+  "https://api.clickup.com/api/v2/list/LIST_ID/field" | jaq .
 ```
 
 ### Set a task custom field value
@@ -450,7 +452,7 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X POST \
   "https://api.clickup.com/api/v2/task/TASK_ID/field/FIELD_ID" \
-  -d '{"value":"example"}' | jq .
+  -d '{"value":"example"}' | jaq .
 ```
 
 ### Tags
@@ -458,19 +460,19 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/space/SPACE_ID/tag" | jq .
+  "https://api.clickup.com/api/v2/space/SPACE_ID/tag" | jaq .
 ```
 
 ```bash
 # Add tag to task
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  -X POST "https://api.clickup.com/api/v2/task/TASK_ID/tag/TAG_NAME" | jq .
+  -X POST "https://api.clickup.com/api/v2/task/TASK_ID/tag/TAG_NAME" | jaq .
 
 # Remove tag from task
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  -X DELETE "https://api.clickup.com/api/v2/task/TASK_ID/tag/TAG_NAME" | jq .
+  -X DELETE "https://api.clickup.com/api/v2/task/TASK_ID/tag/TAG_NAME" | jaq .
 ```
 
 ### Custom task types
@@ -478,7 +480,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/custom_item" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/custom_item" | jaq .
 ```
 
 ### Custom roles
@@ -486,7 +488,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/customroles?include_members=true" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/customroles?include_members=true" | jaq .
 ```
 
 ## Goals
@@ -496,7 +498,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/goal?include_completed=false" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/goal?include_completed=false" | jaq .
 ```
 
 ### Get a goal
@@ -504,15 +506,29 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/goal/GOAL_ID" | jq .
+  "https://api.clickup.com/api/v2/goal/GOAL_ID" | jaq .
 ```
 
 ### Key results
 
+Key results are returned inside `GET /api/v2/goal/GOAL_ID` (`goal.key_results`). To create, update, or delete a key result:
+
 ```bash
+# Create a key result on a goal
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/key_result/KEY_RESULT_ID" | jq .
+  -H "Content-Type: application/json" \
+  -X POST \
+  "https://api.clickup.com/api/v2/goal/GOAL_ID/key_result" \
+  -d '{"name":"Key result","type":"number","steps_start":0,"steps_end":10}' | jaq .
+
+# Update a key result
+curl -fsS \
+  -H "Authorization: $CLICKUP_PAT" \
+  -H "Content-Type: application/json" \
+  -X PUT \
+  "https://api.clickup.com/api/v2/key_result/KEY_RESULT_ID" \
+  -d '{"steps_current":5,"note":"Progress update"}' | jaq .
 ```
 
 ## Time tracking
@@ -522,7 +538,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries?start_date=START_MS&end_date=END_MS" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries?start_date=START_MS&end_date=END_MS" | jaq .
 ```
 
 Useful filters:
@@ -543,7 +559,7 @@ Useful filters:
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries/current" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries/current" | jaq .
 ```
 
 ### Get a single time entry or its history
@@ -551,10 +567,10 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries/TIMER_ID" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries/TIMER_ID" | jaq .
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries/TIMER_ID/history" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries/TIMER_ID/history" | jaq .
 ```
 
 ### Start or stop a timer
@@ -565,14 +581,14 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X POST \
   "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries/start" \
-  -d '{"description":"Working on task"}' | jq .
+  -d '{"description":"Working on task"}' | jaq .
 
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
   -H "Content-Type: application/json" \
   -X POST \
   "https://api.clickup.com/api/v2/team/TEAM_ID/time_entries/stop" \
-  -d '{}' | jq .
+  -d '{}' | jaq .
 ```
 
 ### Legacy task time tracking endpoints
@@ -580,7 +596,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/task/TASK_ID/time" | jq .
+  "https://api.clickup.com/api/v2/task/TASK_ID/time" | jaq .
 ```
 
 ## Templates, shared hierarchy, members, users, guests, groups
@@ -590,7 +606,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/shared" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/shared" | jaq .
 ```
 
 ### Templates
@@ -598,13 +614,13 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/taskTemplate?page=0" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/taskTemplate?page=0" | jaq .
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/list_template" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/list_template" | jaq .
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/folder_template" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/folder_template" | jaq .
 ```
 
 ### Users, guests, groups
@@ -613,17 +629,17 @@ curl -fsS \
 # User details in workspace
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/user/USER_ID" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/user/USER_ID" | jaq .
 
 # Guest details in workspace
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/guest/GUEST_ID" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/guest/GUEST_ID" | jaq .
 
-# List user groups
+# List user groups (team_id is required)
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/group" | jq .
+  "https://api.clickup.com/api/v2/group?team_id=TEAM_ID" | jaq .
 ```
 
 ## Webhooks
@@ -633,7 +649,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v2/team/TEAM_ID/webhook" | jq .
+  "https://api.clickup.com/api/v2/team/TEAM_ID/webhook" | jaq .
 ```
 
 ### Create a webhook
@@ -644,7 +660,7 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X POST \
   "https://api.clickup.com/api/v2/team/TEAM_ID/webhook" \
-  -d '{"endpoint":"https://example.com/clickup-webhook","events":["taskCreated"]}' | jq .
+  -d '{"endpoint":"https://example.com/clickup-webhook","events":["taskCreated"]}' | jaq .
 ```
 
 ## Docs API (v3)
@@ -656,7 +672,7 @@ Docs live in **v3**. Avoid using incorrect `/workflow/.../doc` style URLs, and u
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs?archived=false&deleted=false&limit=50" | jq .
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs?archived=false&deleted=false&limit=50" | jaq .
 ```
 
 Useful filters:
@@ -676,7 +692,7 @@ Useful filters:
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs/DOC_ID" | jq .
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs/DOC_ID" | jaq .
 ```
 
 ### Get doc page listing
@@ -684,7 +700,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs/DOC_ID/page_listing?max_page_depth=10" | jq .
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs/DOC_ID/page_listing?max_page_depth=10" | jaq .
 ```
 
 ### Get doc pages
@@ -694,7 +710,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs/DOC_ID/pages?content_format=text/md" | jq .
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs/DOC_ID/pages?content_format=text/md" | jaq .
 ```
 
 ### Get a specific page
@@ -702,7 +718,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs/DOC_ID/pages/PAGE_ID?content_format=text/md" | jq .
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs/DOC_ID/pages/PAGE_ID?content_format=text/md" | jaq .
 ```
 
 ### Create docs/pages
@@ -714,7 +730,7 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X POST \
   "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs" \
-  -d '{"name":"New doc"}' | jq .
+  -d '{"name":"New doc"}' | jaq .
 
 # Create a page
 curl -fsS \
@@ -722,7 +738,7 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X POST \
   "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/docs/DOC_ID/pages" \
-  -d '{"name":"New page"}' | jq .
+  -d '{"name":"New page"}' | jaq .
 ```
 
 ## Chat API (v3)
@@ -732,7 +748,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels?limit=50" | jq .
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels?limit=50" | jaq .
 ```
 
 Useful filters:
@@ -750,7 +766,7 @@ Useful filters:
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels/CHANNEL_ID" | jq .
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels/CHANNEL_ID" | jaq .
 ```
 
 ### Get channel followers or members
@@ -758,10 +774,10 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels/CHANNEL_ID/followers" | jq .
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels/CHANNEL_ID/followers" | jaq .
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels/CHANNEL_ID/members" | jq .
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels/CHANNEL_ID/members" | jaq .
 ```
 
 ### Get channel messages
@@ -771,7 +787,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels/CHANNEL_ID/messages?limit=50&content_format=text/md" | jq .
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels/CHANNEL_ID/messages?limit=50&content_format=text/md" | jaq .
 ```
 
 ### Get replies or reactions for a message
@@ -779,13 +795,13 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/messages/MESSAGE_ID/replies?content_format=text/md" | jq .
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/messages/MESSAGE_ID/replies?content_format=text/md" | jaq .
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/messages/MESSAGE_ID/reactions" | jq .
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/messages/MESSAGE_ID/reactions" | jaq .
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/messages/MESSAGE_ID/tagged_users" | jq .
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/messages/MESSAGE_ID/tagged_users" | jaq .
 ```
 
 ### Send a message
@@ -796,7 +812,7 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X POST \
   "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/chat/channels/CHANNEL_ID/messages" \
-  -d '{"type":"message","content":"Hello from the API","content_format":"text/plain"}' | jq .
+  -d '{"type":"message","content":"Hello from the API","content_format":"text/plain"}' | jaq .
 ```
 
 ## Generic attachments API (v3)
@@ -806,7 +822,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
-  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/ENTITY_TYPE/ENTITY_ID/attachments?limit=50" | jq .
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/ENTITY_TYPE/ENTITY_ID/attachments?limit=50" | jaq .
 ```
 
 ### Upload an attachment to a supported entity
@@ -815,7 +831,7 @@ curl -fsS \
 curl -fsS \
   -H "Authorization: $CLICKUP_PAT" \
   -F "attachment=@/path/to/file" \
-  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/ENTITY_TYPE/ENTITY_ID/attachments" | jq .
+  "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/ENTITY_TYPE/ENTITY_ID/attachments" | jaq .
 ```
 
 ## Privacy / ACLs (v3)
@@ -830,7 +846,7 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X PATCH \
   "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/OBJECT_TYPE/OBJECT_ID/acls" \
-  -d '{"private":true}' | jq .
+  -d '{"private":true}' | jaq .
 ```
 
 See the v3 spec for the exact body shape for the target object type.
@@ -839,7 +855,7 @@ See the v3 spec for the exact body shape for the target object type.
 
 ### Query workspace audit logs
 
-The audit logs endpoint is a `POST` in v3.
+The audit logs endpoint is a `POST` in v3 (`applicability` values include `auth-and-security`, `user-activity`, `hierarchy-activity`, `custom-fields`, `agent-settings-activity`, `other-activity`).
 
 ```bash
 curl -fsS \
@@ -847,7 +863,7 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X POST \
   "https://api.clickup.com/api/v3/workspaces/WORKSPACE_ID/auditlogs" \
-  -d '{}' | jq .
+  -d '{"applicability":"auth-and-security"}' | jaq .
 ```
 
 ## Common URL / ID patterns
@@ -908,5 +924,5 @@ Prefer `curl -fsS` so HTTP failures surface immediately.
 6. **When using custom task IDs**, add `custom_task_ids=true&team_id=TEAM_ID`
 7. **Free-text task search is not a general v2 endpoint**: use workspace/list filtering or fetch and filter client-side
 8. **Docs content and chat message content support `text/md` and `text/plain`**
-9. **Use `markdown_content` (create) or `markdown_description` (update) for task descriptions** — `description` is plain text only and will not render Markdown
+9. **Use `markdown_content` for task descriptions (both create and update)** — `description` is plain text only and will not render Markdown (`markdown_description` is only a `GET` response field)
 10. **Be careful with mutations**: creating, editing, deleting, ACL changes, and webhook changes should only be done when explicitly requested

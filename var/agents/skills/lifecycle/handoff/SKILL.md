@@ -7,19 +7,22 @@ Create a handoff summary to transfer the current session context seamlessly to a
 
 ## Process
 
-1. **Gather context**:
-   - Review conversation history to identify active tasks.
-   - Note the current working directory, project context, and any running processes/servers.
-   - List uncommitted modified files using `jj diff -s` or `git status`.
-   - Capture user preferences, constraints, instructions, and recent debugging state (errors or failures).
+### Step 1 - Gather Context
 
-2. **Identify command patterns & skills**:
-   - Record project-specific commands (build, test, lint, etc.) and custom scripts/aliases.
-   - Note custom agent skills used during the session (e.g., `jujutsu`, `clickup`, `context7`).
+- Review conversation history to identify active tasks.
+- Note the current working directory, project context, and any running processes/servers.
+- List uncommitted modified files using `jj diff -s`.
+- Capture user preferences, constraints, instructions, and recent debugging state (errors or failures).
 
-3. **Determine remaining work**:
-   - List incomplete tasks, TODOs, and next steps or planned actions.
-   - Identify specific files the next agent should read first and note any blockers/issues.
+### Step 2 - Identify Command Patterns and Skills
+
+- Record project-specific commands (build, test, lint, etc.) and custom scripts/aliases.
+- Note custom agent skills used during the session (e.g., `jujutsu`, `clickup`, `context7`).
+
+### Step 3 - Determine Remaining Work
+
+- List incomplete tasks, TODOs, and next steps or planned actions.
+- Identify specific files the next agent should read first and note any blockers/issues.
 
 ## Output Format
 

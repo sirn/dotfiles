@@ -1,5 +1,5 @@
 # Ad-hoc shell with packages
-nix-shell -p curl jaq --run "curl -s https://api.example.com | jaq ."
+nix-shell -p curl jaq --run "curl -fsS https://api.example.com | jaq ."
 
 # Enter interactive shell with packages
 nix-shell -p python3 python3Packages.requests

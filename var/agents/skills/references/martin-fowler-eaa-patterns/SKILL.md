@@ -4,6 +4,8 @@ type: reference
 description: Reference for Martin Fowler's Patterns of Enterprise Application Architecture (PoEAA, 2002). ALWAYS read before structuring business logic, data access, web presentation, distribution, concurrency, or session state for enterprise applications.
 ---
 
+## Enterprise Application Architecture Patterns (Fowler)
+
 Enterprise application architecture patterns from Martin Fowler's PoEAA (2002). Enterprise applications display, manipulate, and store large amounts of often complex data and automate business processes with that data.
 
 ### Layering (foundational)
@@ -98,4 +100,13 @@ Enterprise application architecture patterns from Martin Fowler's PoEAA (2002). 
 - **Inheritance to tables**: Single Table (simplest, sparse columns) vs Class Table (clear, needs joins) vs Concrete Table (no cross-hierarchy joins, duplicated fields).
 - **Web controller**: Page Controller (per-page, simple) vs Front Controller (centralized) vs Application Controller (complex shared flow).
 - **Concurrency**: Optimistic (rare conflicts, low overhead) vs Pessimistic (likely conflicts, willing to pay lock cost).
-- **Distribution**: reach for Remote Facade + DTO only across a real process/network boundary; finer-grained local calls need neither.
+- **Distribution**: Reach for Remote Facade + DTO only across a real process/network boundary; finer-grained local calls need neither.
+
+### Common Architectural Stacks
+
+| System Profile | Recommended Pattern Combination | Why It Fits |
+| --- | --- | --- |
+| **Simple CRUD / Internal Tool** | Transaction Script + Active Record (or Table/Row Data Gateway) + Page Controller | Minimal indirection; fast to build and easy to read when business rules are mostly validation and persistence |
+| **Rich Domain / Core Business Service** | Service Layer + Domain Model + Repository + Data Mapper + Unit of Work + Separated Interface | Keeps complex domain invariants pure and testable in memory while isolating SQL/ORM mechanics behind Repository + Data Mapper |
+| **High-Read / Reporting Split (CQRS-style)** | Write path: Service Layer + Domain Model + Unit of Work; Read path: Query Object / Table Data Gateway -> DTO | Avoids hydrating heavy domain object graphs and Identity Maps just to render tabular read projections |
+| **External Integration Boundary** | Gateway + Mapper + Service Stub + Value Object (e.g. Money) | Isolates third-party API wire formats from domain types and allows deterministic offline testing via Service Stub |

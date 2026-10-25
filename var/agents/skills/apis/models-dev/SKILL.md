@@ -14,7 +14,7 @@ GET https://models.dev/api.json
 ## Prerequisites
 
 - `curl` to fetch the API data
-- `jq` to query and filter the JSON data
+- `jaq` to query and filter the JSON data
 
 ## Cache Management
 
@@ -27,7 +27,7 @@ CACHE_FILE="$HOME/.cache/agents/models.json"
 mkdir -p "$(dirname "$CACHE_FILE")"
 
 if [[ ! -f "$CACHE_FILE" ]] || [[ -n "$(find "$CACHE_FILE" -mtime +1 2>/dev/null)" ]]; then
-  curl -s "https://models.dev/api.json" > "$CACHE_FILE"
+  curl -fsS "https://models.dev/api.json" > "$CACHE_FILE"
 fi
 ```
 
@@ -35,7 +35,7 @@ fi
 
 The API is organized by provider:
 
-- **Top level**: Provider IDs (e.g., `google`, `anthropic`, `openai`, `fireworks`).
+- **Top level**: Provider IDs (e.g., `google`, `anthropic`, `openai`, `fireworks-ai`).
 - **Provider fields**: `{id, name, models, doc, env, npm}`.
 - **`models`**: Object mapping model IDs to model definitions.
 
@@ -49,8 +49,8 @@ The API is organized by provider:
     "models": {
       "gemini-3.5-flash": {
         "name": "Gemini 3.5 Flash",
-        "cost": { "input": 0.35, "output": 1.05 },
-        "limit": { "context": 1000000, "output": 8192 }
+        "cost": { "input": 1.5, "output": 9 },
+        "limit": { "context": 1048576, "output": 65536 }
       }
     }
   }
@@ -59,21 +59,21 @@ The API is organized by provider:
 
 ## Common Queries
 
-### List all providers
+### List All Providers
 
 ```bash
 CACHE_FILE="$HOME/.cache/agents/models.json"
-jq 'keys[]' "$CACHE_FILE"
+jaq 'keys[]' "$CACHE_FILE"
 ```
 
-### Get pricing for a specific model
+### Get Pricing for a Specific Model
 
 ```bash
 CACHE_FILE="$HOME/.cache/agents/models.json"
 PROVIDER="google"
 MODEL="gemini-3.5-flash"
 
-jq --arg p "$PROVIDER" --arg m "$MODEL" '
+jaq --arg p "$PROVIDER" --arg m "$MODEL" '
   .[$p].models[$m] | {
     name: .name,
     input_cost: .cost.input,
@@ -83,13 +83,13 @@ jq --arg p "$PROVIDER" --arg m "$MODEL" '
 ' "$CACHE_FILE"
 ```
 
-### Find models by provider
+### Find Models by Provider
 
 ```bash
 CACHE_FILE="$HOME/.cache/agents/models.json"
 PROVIDER="fireworks-ai"
 
-jq --arg p "$PROVIDER" '
+jaq --arg p "$PROVIDER" '
   .[$p].models | to_entries | map({
     id: .key,
     name: .value.name,
@@ -98,30 +98,34 @@ jq --arg p "$PROVIDER" '
 ' "$CACHE_FILE"
 ```
 
-### Search models by name across all providers
+### Search Models by Name Across All Providers
 
 ```bash
 CACHE_FILE="$HOME/.cache/agents/models.json"
 SEARCH="gemini flash"
 
-jq --arg s "$(echo "$SEARCH" | tr '[:upper:]' '[:lower:]')" '
+jaq --arg s "$(echo "$SEARCH" | tr '[:upper:]' '[:lower:]')" '
+  ($s | split(" ")) as $terms |
   to_entries | map(.key as $provider | .value.models | to_entries | map({
     provider: $provider,
     id: .key,
     name: .value.name,
     cost: .value.cost,
     limits: .value.limit
-  })) | flatten | map(select(.name | ascii_downcase | contains($s)))
+  })) | flatten | map(select(
+    (.name | ascii_downcase) as $name |
+    all($terms[]; $name | contains(.))
+  ))
 ' "$CACHE_FILE"
 ```
 
-### Find providers offering a specific model
+### Find Providers Offering a Specific Model
 
 ```bash
 CACHE_FILE="$HOME/.cache/agents/models.json"
 MODEL_ID="gemini-3.5-flash"
 
-jq --arg m "$MODEL_ID" '
+jaq --arg m "$MODEL_ID" '
   to_entries | map(select(.value.models[$m])) | map({
     provider: .key,
     name: .value.name,
@@ -130,20 +134,20 @@ jq --arg m "$MODEL_ID" '
 ' "$CACHE_FILE"
 ```
 
-### List all models with pricing
+### List All Models with Pricing
 
 ```bash
 CACHE_FILE="$HOME/.cache/agents/models.json"
 
-jq '
+jaq '
   to_entries | map(.key as $provider | .value.models | to_entries | map({
     provider: $provider,
     id: .key,
     name: .value.name,
     input_cost: .value.cost.input,
     output_cost: .value.cost.output
-  })) | flatten | sort_by(.provider, .name)
-' "$CACHE_FILE" | head -50
+  })) | flatten | sort_by(.provider, .name) | .[:50]
+' "$CACHE_FILE"
 ```
 
 ## Example Usage
@@ -156,11 +160,11 @@ CACHE_FILE="$HOME/.cache/agents/models.json"
 # Ensure cache is fresh
 if [[ ! -f "$CACHE_FILE" ]] || [[ -n "$(find "$CACHE_FILE" -mtime +1 2>/dev/null)" ]]; then
   mkdir -p "$(dirname "$CACHE_FILE")"
-  curl -s "https://models.dev/api.json" > "$CACHE_FILE"
+  curl -fsS "https://models.dev/api.json" > "$CACHE_FILE"
 fi
 
 # Search for Gemini Flash models
-jq '
+jaq '
   to_entries | map(.key as $provider | .value.models | to_entries | map({
     provider: $provider,
     id: .key,
@@ -180,11 +184,11 @@ CACHE_FILE="$HOME/.cache/agents/models.json"
 # Ensure cache is fresh
 if [[ ! -f "$CACHE_FILE" ]] || [[ -n "$(find "$CACHE_FILE" -mtime +1 2>/dev/null)" ]]; then
   mkdir -p "$(dirname "$CACHE_FILE")"
-  curl -s "https://models.dev/api.json" > "$CACHE_FILE"
+  curl -fsS "https://models.dev/api.json" > "$CACHE_FILE"
 fi
 
 # Get Fireworks AI models
-jq '
+jaq '
   .["fireworks-ai"].models | to_entries | map({
     id: .key,
     name: .value.name,
@@ -201,14 +205,14 @@ jq '
 CACHE_FILE="$HOME/.cache/agents/models.json"
 MIN_CONTEXT=128000
 
-jq --argjson min_ctx "$MIN_CONTEXT" '
+jaq --argjson min_ctx "$MIN_CONTEXT" '
   to_entries | map(.key as $provider | .value.models | to_entries | map({
     provider: $provider,
     id: .key,
     name: .value.name,
     input_cost: .value.cost.input,
     context: .value.limit.context
-  })) | flatten | map(select(.context >= $min_ctx)) | sort_by(.input_cost) | .[:10]
+  })) | flatten | map(select((.context // 0) >= $min_ctx and .input_cost != null and .input_cost > 0)) | sort_by(.input_cost) | .[:10]
 ' "$CACHE_FILE"
 ```
 
@@ -216,7 +220,7 @@ jq --argjson min_ctx "$MIN_CONTEXT" '
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `id` | string | Provider ID (e.g., `google`, `fireworks`) |
+| `id` | string | Provider ID (e.g., `google`, `fireworks-ai`) |
 | `name` | string | Provider display name |
 | `models.<id>.name` | string | Human-readable model name |
 | `models.<id>.cost.input` | number | Input price per 1M tokens |

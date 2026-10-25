@@ -31,7 +31,7 @@ Apply small, behavior-preserving fixes — surface hygiene and complexity/redund
 
 ### Step 2 - Map Cleanup Opportunities
 
-Apply a scout lens to map cleanup opportunities in the following scope: {scope}:
+Apply a scout lens to map cleanup opportunities in {scope}:
 
 - Map relevant files, conventions, and call paths.
 - Cite file paths and line numbers.
@@ -39,7 +39,7 @@ Apply a scout lens to map cleanup opportunities in the following scope: {scope}:
 - Stay read-only.
 - Keep it concise and task-relevant.
 
-Read the `martin-fowler-code-smells` reference and flag relevant Fowler smells (Duplicated Code, Lazy Elements, Speculative Generality, Middle Man, Long Function, etc.); treat smells as heuristics and skip what the linter/formatter already enforces.
+Read the `martin-fowler-code-smells` reference and flag relevant Fowler smells (Duplicated Code, Lazy Element, Speculative Generality, Middle Man, Long Function, etc.); treat smells as heuristics and skip what the linter/formatter already enforces.
 
 #### Redundancies
 
@@ -115,7 +115,7 @@ Once mapping is complete:
 
 ### Step 4 - Apply Fixes
 
-Apply a worker lens to apply these cleanup fixes in the files {files} based on the {prioritized findings list}:
+Apply a worker lens to fix {prioritized findings list} in {files}:
 
 - Read files before editing; keep diffs minimal and idiomatic; preserve public behavior; verify with the narrowest meaningful command.
 - If a fix fails twice, stop and report.
@@ -156,4 +156,4 @@ Report to the user:
 - Do not delete code unless usage analysis and build evidence support removal, or the user explicitly asked.
 - Always preserve public behavior and test outcomes.
 - Strip only policy-violating comments; keep genuine why-not rationale, license/copyright headers, shebangs/modelines, tooling pragmas, and config-file settings comments.
-- Do not invoke other skills directly; only reading `code-check` for command detection is permitted.
+- Do not invoke other skills directly; only reading `martin-fowler-code-smells` and `code-check` is permitted.

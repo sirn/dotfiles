@@ -22,7 +22,7 @@ Interact with the Asana REST API directly using a Personal Access Token:
 
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/workspaces" | jq .
+  "https://app.asana.com/api/1.0/workspaces" | jaq .
 ```
 
 ## Core API conventions
@@ -70,7 +70,7 @@ Asana uses string GIDs everywhere:
 Common query options:
 
 - `opt_fields=field1,field2,...`
-- `pretty=true`
+- `opt_pretty=true`
 
 `opt_fields` is recommended since many endpoints return compact objects by default.
 
@@ -166,7 +166,7 @@ When IDs are unknown, discover them in this order:
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/workspaces" | jq '.data'
+  "https://app.asana.com/api/1.0/workspaces" | jaq '.data'
 ```
 
 ### List users
@@ -174,7 +174,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/users" | jq '.data'
+  "https://app.asana.com/api/1.0/users" | jaq '.data'
 ```
 
 ### Get a user
@@ -182,7 +182,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/users/USER_GID" | jq '.data'
+  "https://app.asana.com/api/1.0/users/USER_GID" | jaq '.data'
 ```
 
 ### List users in a workspace or organization
@@ -190,7 +190,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/workspaces/WORKSPACE_GID/users" | jq '.data'
+  "https://app.asana.com/api/1.0/workspaces/WORKSPACE_GID/users" | jaq '.data'
 ```
 
 ### List teams in a workspace
@@ -198,7 +198,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/workspaces/WORKSPACE_GID/teams" | jq '.data'
+  "https://app.asana.com/api/1.0/workspaces/WORKSPACE_GID/teams" | jaq '.data'
 ```
 
 ### Get a team
@@ -206,7 +206,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/teams/TEAM_GID" | jq '.data'
+  "https://app.asana.com/api/1.0/teams/TEAM_GID" | jaq '.data'
 ```
 
 ### List users in a team
@@ -214,7 +214,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/teams/TEAM_GID/users" | jq '.data'
+  "https://app.asana.com/api/1.0/teams/TEAM_GID/users" | jaq '.data'
 ```
 
 ## Projects and sections
@@ -225,17 +225,17 @@ curl -fsS \
 # Workspace-scoped
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/workspaces/WORKSPACE_GID/projects" | jq '.data'
+  "https://app.asana.com/api/1.0/workspaces/WORKSPACE_GID/projects" | jaq '.data'
 
 # Team-scoped
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/teams/TEAM_GID/projects" | jq '.data'
+  "https://app.asana.com/api/1.0/teams/TEAM_GID/projects" | jaq '.data'
 
 # Generic projects endpoint with filters
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/projects?workspace=WORKSPACE_GID" | jq '.data'
+  "https://app.asana.com/api/1.0/projects?workspace=WORKSPACE_GID" | jaq '.data'
 ```
 
 ### Get a project
@@ -243,7 +243,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/projects/PROJECT_GID" | jq '.data'
+  "https://app.asana.com/api/1.0/projects/PROJECT_GID" | jaq '.data'
 ```
 
 ### Create or update a project
@@ -255,7 +255,7 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X POST \
   "https://app.asana.com/api/1.0/workspaces/WORKSPACE_GID/projects" \
-  -d '{"data":{"name":"Project Name"}}' | jq '.data'
+  -d '{"data":{"name":"Project Name"}}' | jaq '.data'
 
 # Update
 curl -fsS \
@@ -263,7 +263,7 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X PUT \
   "https://app.asana.com/api/1.0/projects/PROJECT_GID" \
-  -d '{"data":{"name":"Updated Project Name"}}' | jq '.data'
+  -d '{"data":{"name":"Updated Project Name"}}' | jaq '.data'
 ```
 
 ### List sections in a project
@@ -271,7 +271,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/projects/PROJECT_GID/sections" | jq '.data'
+  "https://app.asana.com/api/1.0/projects/PROJECT_GID/sections" | jaq '.data'
 ```
 
 ### Create a section in a project
@@ -282,7 +282,7 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X POST \
   "https://app.asana.com/api/1.0/projects/PROJECT_GID/sections" \
-  -d '{"data":{"name":"To Do"}}' | jq '.data'
+  -d '{"data":{"name":"To Do"}}' | jaq '.data'
 ```
 
 ## Tasks
@@ -292,7 +292,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/tasks/TASK_GID" | jq '.data'
+  "https://app.asana.com/api/1.0/tasks/TASK_GID" | jaq '.data'
 ```
 
 Use `opt_fields` to request specific fields:
@@ -300,7 +300,7 @@ Use `opt_fields` to request specific fields:
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/tasks/TASK_GID?opt_fields=name,completed,assignee.name,due_on,projects.name,tags.name,custom_fields.name,custom_fields.display_value" | jq '.data'
+  "https://app.asana.com/api/1.0/tasks/TASK_GID?opt_fields=name,completed,assignee.name,due_on,projects.name,tags.name,custom_fields.name,custom_fields.display_value" | jaq '.data'
 ```
 
 ### List tasks in a project or section
@@ -308,10 +308,10 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/projects/PROJECT_GID/tasks" | jq '.data'
+  "https://app.asana.com/api/1.0/projects/PROJECT_GID/tasks" | jaq '.data'
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/sections/SECTION_GID/tasks" | jq '.data'
+  "https://app.asana.com/api/1.0/sections/SECTION_GID/tasks" | jaq '.data'
 ```
 
 ### Search tasks in a workspace
@@ -321,16 +321,16 @@ This is Asana's main workspace-level search endpoint.
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/workspaces/WORKSPACE_GID/tasks/search?completed=false&assignee=me" | jq '.data'
+  "https://app.asana.com/api/1.0/workspaces/WORKSPACE_GID/tasks/search?completed=false&assignee.any=me" | jaq '.data'
 ```
 
 Commonly used search filters:
 
 - `text`
-- `assignee`
-- `project`
-- `section`
-- `tag`
+- `assignee.any`, `assignee.not`
+- `projects.any`, `projects.not`, `projects.all`
+- `sections.any`, `sections.not`, `sections.all`
+- `tags.any`, `tags.not`, `tags.all`
 - `completed`
 - `is_subtask`
 - `due_on`
@@ -349,7 +349,7 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X POST \
   "https://app.asana.com/api/1.0/tasks" \
-  -d '{"data":{"name":"New task","workspace":"WORKSPACE_GID"}}' | jq '.data'
+  -d '{"data":{"name":"New task","workspace":"WORKSPACE_GID"}}' | jaq '.data'
 ```
 
 Common task creation fields from the schema:
@@ -377,7 +377,7 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X PUT \
   "https://app.asana.com/api/1.0/tasks/TASK_GID" \
-  -d '{"data":{"name":"Updated task","completed":false}}' | jq '.data'
+  -d '{"data":{"name":"Updated task","completed":false}}' | jaq '.data'
 ```
 
 ### Subtasks
@@ -386,7 +386,7 @@ curl -fsS \
 # List subtasks
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/tasks/TASK_GID/subtasks" | jq '.data'
+  "https://app.asana.com/api/1.0/tasks/TASK_GID/subtasks" | jaq '.data'
 
 # Create subtask
 curl -fsS \
@@ -394,7 +394,7 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X POST \
   "https://app.asana.com/api/1.0/tasks/TASK_GID/subtasks" \
-  -d '{"data":{"name":"Subtask name"}}' | jq '.data'
+  -d '{"data":{"name":"Subtask name"}}' | jaq '.data'
 ```
 
 ## Stories / comments
@@ -406,7 +406,7 @@ In Asana, comments are stories.
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/tasks/TASK_GID/stories" | jq '.data'
+  "https://app.asana.com/api/1.0/tasks/TASK_GID/stories" | jaq '.data'
 ```
 
 ### Create a comment on a task
@@ -417,7 +417,7 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X POST \
   "https://app.asana.com/api/1.0/tasks/TASK_GID/stories" \
-  -d '{"data":{"text":"Hello from the API"}}' | jq '.data'
+  -d '{"data":{"text":"Hello from the API"}}' | jaq '.data'
 ```
 
 The schema also supports `html_text` for formatted comments.
@@ -429,7 +429,7 @@ The schema also supports `html_text` for formatted comments.
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/workspaces/WORKSPACE_GID/tags" | jq '.data'
+  "https://app.asana.com/api/1.0/workspaces/WORKSPACE_GID/tags" | jaq '.data'
 ```
 
 ### Get a tag or its tasks
@@ -437,10 +437,10 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/tags/TAG_GID" | jq '.data'
+  "https://app.asana.com/api/1.0/tags/TAG_GID" | jaq '.data'
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/tags/TAG_GID/tasks" | jq '.data'
+  "https://app.asana.com/api/1.0/tags/TAG_GID/tasks" | jaq '.data'
 ```
 
 ### List custom fields in a workspace
@@ -448,7 +448,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/workspaces/WORKSPACE_GID/custom_fields" | jq '.data'
+  "https://app.asana.com/api/1.0/workspaces/WORKSPACE_GID/custom_fields" | jaq '.data'
 ```
 
 ### Get custom field settings for a project
@@ -456,7 +456,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/projects/PROJECT_GID/custom_field_settings" | jq '.data'
+  "https://app.asana.com/api/1.0/projects/PROJECT_GID/custom_field_settings" | jaq '.data'
 ```
 
 Other custom field settings endpoints exist for portfolios, goals, and teams.
@@ -468,13 +468,13 @@ Other custom field settings endpoints exist for portfolios, goals, and teams.
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/portfolios?workspace=WORKSPACE_GID" | jq '.data'
+  "https://app.asana.com/api/1.0/portfolios?workspace=WORKSPACE_GID" | jaq '.data'
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/portfolios/PORTFOLIO_GID" | jq '.data'
+  "https://app.asana.com/api/1.0/portfolios/PORTFOLIO_GID" | jaq '.data'
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/portfolios/PORTFOLIO_GID/items" | jq '.data'
+  "https://app.asana.com/api/1.0/portfolios/PORTFOLIO_GID/items" | jaq '.data'
 ```
 
 ### Goals
@@ -483,12 +483,12 @@ curl -fsS \
 # Filter goals by workspace / team / portfolio / project / task
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/goals?workspace=WORKSPACE_GID" | jq '.data'
+  "https://app.asana.com/api/1.0/goals?workspace=WORKSPACE_GID" | jaq '.data'
 
 # Get goal
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/goals/GOAL_GID" | jq '.data'
+  "https://app.asana.com/api/1.0/goals/GOAL_GID" | jaq '.data'
 ```
 
 ### Status updates
@@ -497,7 +497,7 @@ curl -fsS \
 # parent can be a project, goal, or portfolio
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/status_updates?parent=PARENT_GID" | jq '.data'
+  "https://app.asana.com/api/1.0/status_updates?parent=PARENT_GID" | jaq '.data'
 ```
 
 ### Project statuses
@@ -505,10 +505,10 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/projects/PROJECT_GID/project_statuses" | jq '.data'
+  "https://app.asana.com/api/1.0/projects/PROJECT_GID/project_statuses" | jaq '.data'
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/project_statuses/PROJECT_STATUS_GID" | jq '.data'
+  "https://app.asana.com/api/1.0/project_statuses/PROJECT_STATUS_GID" | jaq '.data'
 ```
 
 ## Attachments
@@ -520,7 +520,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/attachments?parent=TASK_GID" | jq '.data'
+  "https://app.asana.com/api/1.0/attachments?parent=TASK_GID" | jaq '.data'
 ```
 
 ### Get an attachment
@@ -528,7 +528,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/attachments/ATTACHMENT_GID" | jq '.data'
+  "https://app.asana.com/api/1.0/attachments/ATTACHMENT_GID" | jaq '.data'
 ```
 
 ### Upload an attachment
@@ -538,7 +538,7 @@ curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
   -F "parent=TASK_GID" \
   -F "file=@/path/to/file.pdf;type=application/pdf" \
-  "https://app.asana.com/api/1.0/attachments" | jq '.data'
+  "https://app.asana.com/api/1.0/attachments" | jaq '.data'
 ```
 
 The attachment API also supports external attachments via `resource_subtype=external`, `parent`, `name`, and `url`.
@@ -550,10 +550,10 @@ The attachment API also supports external attachments via `resource_subtype=exte
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/webhooks?workspace=WORKSPACE_GID" | jq '.data'
+  "https://app.asana.com/api/1.0/webhooks?workspace=WORKSPACE_GID" | jaq '.data'
 ```
 
-Optional webhook listing filters include `workspace` and `resource`.
+`workspace` is required; `resource` is an optional filter.
 
 ### Create a webhook
 
@@ -563,7 +563,7 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X POST \
   "https://app.asana.com/api/1.0/webhooks" \
-  -d '{"data":{"resource":"PROJECT_GID","target":"https://example.com/asana-webhook"}}' | jq '.data'
+  -d '{"data":{"resource":"PROJECT_GID","target":"https://example.com/asana-webhook"}}' | jaq '.data'
 ```
 
 The schema also supports webhook `filters`.
@@ -575,7 +575,7 @@ Asana's events API is for incremental sync using a sync token.
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/events?resource=PROJECT_GID" | jq .
+  "https://app.asana.com/api/1.0/events?resource=PROJECT_GID" | jaq .
 ```
 
 Then reuse the returned `sync` token:
@@ -583,7 +583,7 @@ Then reuse the returned `sync` token:
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/events?resource=PROJECT_GID&sync=SYNC_TOKEN" | jq .
+  "https://app.asana.com/api/1.0/events?resource=PROJECT_GID&sync=SYNC_TOKEN" | jaq .
 ```
 
 There is also a workspace-scoped events endpoint:
@@ -591,7 +591,7 @@ There is also a workspace-scoped events endpoint:
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/workspaces/WORKSPACE_GID/events" | jq .
+  "https://app.asana.com/api/1.0/workspaces/WORKSPACE_GID/events" | jaq .
 ```
 
 Important notes from the official reference:
@@ -604,7 +604,7 @@ Important notes from the official reference:
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/workspaces/WORKSPACE_GID/audit_log_events" | jq '.data'
+  "https://app.asana.com/api/1.0/workspaces/WORKSPACE_GID/audit_log_events" | jaq '.data'
 ```
 
 ## Batch API
@@ -632,7 +632,7 @@ curl -fsS \
         }
       ]
     }
-  }' | jq '.data'
+  }' | jaq '.data'
 ```
 
 Batch action parameters:
@@ -647,15 +647,15 @@ Batch action parameters:
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/user_task_lists/USER_TASK_LIST_GID" | jq '.data'
+  "https://app.asana.com/api/1.0/user_task_lists/USER_TASK_LIST_GID" | jaq '.data'
 ```
 
-You can also navigate from a user:
+You can also navigate from a user (`workspace` is required):
 
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/users/USER_GID/user_task_list" | jq '.data'
+  "https://app.asana.com/api/1.0/users/USER_GID/user_task_list?workspace=WORKSPACE_GID" | jaq '.data'
 ```
 
 ### Time tracking entries for a task
@@ -663,7 +663,7 @@ curl -fsS \
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/tasks/TASK_GID/time_tracking_entries" | jq '.data'
+  "https://app.asana.com/api/1.0/tasks/TASK_GID/time_tracking_entries" | jaq '.data'
 ```
 
 ### Create a time tracking entry for a task
@@ -674,17 +674,17 @@ curl -fsS \
   -H "Content-Type: application/json" \
   -X POST \
   "https://app.asana.com/api/1.0/tasks/TASK_GID/time_tracking_entries" \
-  -d '{"data":{"duration_minutes":30,"description":"API time entry"}}' | jq '.data'
+  -d '{"data":{"duration_minutes":30,"entered_on":"2026-10-25"}}' | jaq '.data'
 ```
 
-The schema also supports `entered_on`, `attributable_to`, `billable_status`, and `categories`.
+The schema also supports `attributable_to` and `assignee`, plus `description`, `billable_status`, and `categories` (which require the Timesheets and Budgets add-on; passing them without it returns `402 Payment Required`).
 
 ### Poll long-running jobs
 
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $ASANA_PAT" \
-  "https://app.asana.com/api/1.0/jobs/JOB_GID" | jq '.data'
+  "https://app.asana.com/api/1.0/jobs/JOB_GID" | jaq '.data'
 ```
 
 Useful for polling asynchronous APIs like exports and larger operations.

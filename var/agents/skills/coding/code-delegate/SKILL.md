@@ -102,10 +102,10 @@ Use the harness's built-in subagent tool so each worker runs in a fresh, isolate
 
 | Harness | One worker |
 | --- | --- |
-| lofi | `lofi.subagent({ prompt })` from `exec` |
-| Claude Code | `Agent` tool (`subagent_type: "general-purpose"`, `prompt`) |
-| Codex | `spawn_agent` (`message: "<prompt>"`, `fork_context: false` / `fork_turns: "none"`), then `wait_agent` and `close_agent` |
-| agy | `invoke_subagent` (`TypeName: "self"`, `Role`, `Prompt`) |
+| lofi | `await lofi.subagent({ prompt })` from `exec` |
+| Claude Code | `Agent` tool (`description`, `prompt`, `subagent_type: "general-purpose"`) |
+| Codex | `spawn_agent` (`message: "<prompt>"`, `fork_context: false`), `wait_agent` (`ids: [id]`), `close_agent` (`id`) |
+| agy | `invoke_subagent` (`TypeName: "self"`, `Role`, `Prompt`, `Workspace: "inherit"`) |
 
 - Pass the full worker contract, the ledger files, and the single task in the prompt; the worker starts with nothing else.
 - Run independent workers in parallel only when they do not write the same file.

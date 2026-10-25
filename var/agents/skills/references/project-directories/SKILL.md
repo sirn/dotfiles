@@ -6,11 +6,19 @@ description: Reference for the user's local project directory layout. Read when 
 
 ## Layout
 
-- `~/Dev/src/<host>/<repo>`: Cloned source repositories.
+- `~/Dev/src/<host>/<owner>/<repo>`: Cloned source repositories.
   - Example: `~/Dev/src/github.com/sirn/example` corresponds to `github.com/sirn/example`.
-- `~/Dev/workspace/<name>/<repo>`: Named workspaces containing one or more repositories.
+- `~/Dev/workspace/<name>/<repo>`: Named workspaces containing one or more repositories (isolated working copies or clones for a specific task/feature).
   - Example: `~/Dev/workspace/foo-implementation/example` is the `example` repo inside the `foo-implementation` workspace.
 - `~/Dev/adhoc/<name>`: Ad-hoc scripts, experiments, and one-off projects.
+
+## Discovery with `repoman`
+
+Prefer `repoman` over recursive filesystem searches when locating repositories or workspaces under `~/Dev`:
+
+- `repoman list`: List all cloned repositories under `~/Dev/src`.
+- `repoman find <name>`: Print the path to a matching repository.
+- `repoman workspace list`: List all workspaces under `~/Dev/workspace`.
 
 ## Policy
 

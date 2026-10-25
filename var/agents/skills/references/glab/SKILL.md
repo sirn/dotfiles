@@ -21,22 +21,25 @@ description: Reference for GitLab CLI (glab) - READ-ONLY operations only. ALWAYS
 
 ### Issues (Read-Only)
 
-| Task        | Command                                  |
-| ----------- | ---------------------------------------- |
-| List issues | `glab issue list -R owner/repo`          |
-| View issue  | `glab issue view <number> -R owner/repo` |
+| Task                | Command                                             |
+| ------------------- | --------------------------------------------------- |
+| List issues         | `glab issue list -R owner/repo`                     |
+| View issue          | `glab issue view <number> -R owner/repo`            |
+| View issue comments | `glab issue view <number> -R owner/repo --comments` |
 
-**List options**: `--all`, `--assignee <user>`, `--author <user>`, `--labels <label>`, `--milestone <n>`, `--search <text>`, `--state opened|closed|all`, `--per-page <n>`
+**List options**: `--all`, `--closed`, `--assignee <user>`, `--author <user>`, `--label <label>`, `--milestone <n>`, `--search <text>`, `--per-page <n>`, `--output json`
 
 ### Merge Requests (Read-Only)
 
-| Task         | Command                               |
-| ------------ | ------------------------------------- |
-| List MRs     | `glab mr list -R owner/repo`          |
-| View MR      | `glab mr view <number> -R owner/repo` |
-| View MR diff | `glab mr diff <number> -R owner/repo` |
+| Task                    | Command                                            |
+| ----------------------- | -------------------------------------------------- |
+| List MRs                | `glab mr list -R owner/repo`                       |
+| View MR                 | `glab mr view <number> -R owner/repo`              |
+| View MR comments        | `glab mr view <number> -R owner/repo --comments`   |
+| View unresolved threads | `glab mr view <number> -R owner/repo --unresolved` |
+| View MR diff            | `glab mr diff <number> -R owner/repo`              |
 
-**List options**: `--all`, `--assignee <user>`, `--author <user>`, `--labels <label>`, `--milestone <n>`, `--search <text>`, `--state opened|closed|merged|all`
+**List options**: `--all`, `--closed`, `--merged`, `--draft`, `--assignee <user>`, `--author <user>`, `--reviewer <user>`, `--label <label>`, `--milestone <n>`, `--search <text>`, `--per-page <n>`, `--output json`
 
 ### Repositories (Read-Only)
 
@@ -86,14 +89,26 @@ description: Reference for GitLab CLI (glab) - READ-ONLY operations only. ALWAYS
 
 ### Search (Read-Only)
 
-| Task        | Command                              |
-| ----------- | ------------------------------------ |
-| Search code | `glab search semantic -R owner/repo` |
+| Task        | Command                                           |
+| ----------- | ------------------------------------------------- |
+| Search code | `glab search semantic -q "<query>" -R owner/repo` |
 
 ### API (Read-Only)
 
-| Task        | Command                             |
-| ----------- | ----------------------------------- |
-| GET request | `glab api <endpoint> -R owner/repo` |
+| Task | Command |
+| --- | --- |
+| GET endpoint | `glab api -X GET projects/owner%2Frepo/<endpoint>` |
+| Paginate | `glab api -X GET --paginate projects/owner%2Frepo/<endpoint>` |
+| MR discussions | `glab api -X GET projects/owner%2Frepo/merge_requests/<iid>/discussions` |
+| MR notes | `glab api -X GET projects/owner%2Frepo/merge_requests/<iid>/notes` |
 
-**IMPORTANT**: Never pass write flags to `glab api`. POST/PUT/DELETE methods (`-X`, `--request`, `--method`) and data flags (`-f`/`--field`, `-F`/`--raw-field`, `--input`) perform writes and are denied.
+**IMPORTANT**: Always use `-X GET` and never pass write flags to `glab api`. POST/PUT/PATCH/DELETE methods (`-X`, `--method`) and data flags (`-F`/`--field`, `-f`/`--raw-field`, `--form`, `--input`) perform writes and are denied.
+
+### Common Output Options
+
+| Goal | Flag | Example |
+| --- | --- | --- |
+| JSON output | `--output json` | `glab mr list -R owner/repo --output json \| jaq .` |
+| Pagination | `--page <n> --per-page <n>` | `glab issue list -R owner/repo --page 1 --per-page 50` |
+
+**Note**: Prefer the long flag `--output json` over `-F json` or `-O json` (`glab issue list` binds `-O` to `--output` and `-F` to `--output-format`, whereas other subcommands bind `-F` to `--output`).

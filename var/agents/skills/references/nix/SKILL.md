@@ -21,10 +21,13 @@ The modern `nix` CLI operates on installables (flake attributes, store paths, or
 | Build with logs | `nix build -L path:.#<pkg>` | Print build logs in real time |
 | Select derivation output | `nix build 'path:.#<pkg>^dev,static'` | Select specific derivation outputs |
 | Build all outputs | `nix build 'path:.#<pkg>^*'` | Select all derivation outputs |
+| View build log | `nix log path:.#<pkg>` | Print cached or failed build logs without rebuilding |
+| Show derivation JSON | `nix derivation show path:.#<pkg>` | Inspect derivation inputs, builder, outputs, and env |
 | Search packages | `nix search nixpkgs <query>` | Search package names and descriptions |
 | Evaluate expression | `nix eval path:.#<attr>` | Evaluate Nix attribute to value |
 | Evaluate raw string | `nix eval --raw path:.#<attr>` | Output raw evaluated string without quotes |
 | Evaluate JSON | `nix eval --json path:.#<attr>` | Output evaluated Nix structure as JSON |
+| Evaluate with function | `nix eval path:.#<attr> --apply 'x: builtins.attrNames x'` | Apply function before serializing (ideal for large configs) |
 | Interactive REPL | `nix repl --file '<nixpkgs>'` | Start REPL with nixpkgs |
 | Interactive Flake REPL | `nix repl path:.` | Start REPL and inspect flake outputs |
 | Format flake | `nix fmt` | Run configured flake formatter |
@@ -47,7 +50,7 @@ nix flake metadata path:.
 nix flake update
 
 # Update a single input only
-nix flake lock --update-input <input-name>
+nix flake update <input-name> --flake path:.
 
 # Pin input to specific rev or branch
 nix flake lock --override-input <input-name> github:nixos/nixpkgs/<rev>
@@ -66,7 +69,7 @@ When referencing a local directory without the `path:` scheme (e.g. `.`), Nix de
 nix why-depends path:.#<pkg1> path:.#<pkg2>
 
 # Print store path information and closure size
-nix path-info -r -h /nix/store/<path>
+nix path-info -r -S -h /nix/store/<path>
 
 # Compare store closures (diff two builds or profiles)
 nix store diff-closures /nix/store/<pathA> /nix/store/<pathB>
@@ -86,14 +89,16 @@ nix-collect-garbage -d                 # Also delete old profile generations
 #!/usr/bin/env nix
 #! nix shell nixpkgs#bash nixpkgs#curl nixpkgs#jaq --command bash
 
-curl -s https://api.example.com | jaq .
+curl -fsS https://api.example.com | jaq .
 ```
 
-#### Python with Modern `nix` Shebang
+#### Python with Packages (`nix-shell` Shebang)
+
+Note: `nix shell` only adds `bin/` directories to `PATH` and does not set `PYTHONPATH` for `python3Packages.*`. Use `python3.withPackages` with `nix-shell`:
 
 ```python
-#!/usr/bin/env nix
-#! nix shell nixpkgs#python3 nixpkgs#python3Packages.requests --command python3
+#!/usr/bin/env nix-shell
+#! nix-shell -i python3 -p "python3.withPackages (ps: [ ps.requests ])"
 
 import requests
 print(requests.get("https://api.example.com").json())
@@ -107,7 +112,7 @@ print(requests.get("https://api.example.com").json())
 #! nix-shell -p bash curl jaq
 #! nix-shell -I nixpkgs=https://nixos.org/channels/nixos-26.05/nixexprs.tar.xz
 
-curl -s https://api.example.com | jaq .
+curl -fsS https://api.example.com | jaq .
 ```
 
 ---
@@ -141,7 +146,28 @@ When generating code or configuration containing string interpolations (e.g., Ty
 
 - Search packages using `nix search nixpkgs <query>`.
 - Find packages providing a specific binary: `nix-locate bin/<command>` (from `nix-index`).
+- Inspect NixOS or Home Manager module option values:
+  ```bash
+  nix eval path:.#nixosConfigurations.<host>.config.<option.path>
+  nix eval path:.#homeConfigurations.<host>.config.<option.path>
+  ```
 - **Never** use `nix-env -i`; prefer declarative configuration, `nix run`, `nix shell`, or `pkgs.mkShell`.
+
+---
+
+### Hash Prefetching & Conversion
+
+When packaging or updating sources (`fetchurl`, `fetchFromGitHub`, `cargoHash`, `vendorHash`, `npmDepsHash`):
+
+```bash
+# Prefetch a URL and output its SRI sha256 hash
+nix store prefetch-file --json https://example.com/archive.tar.gz | jaq -r .hash
+
+# Convert a hex or base32 sha256 hash to SRI format (sha256-...)
+nix hash convert --hash-algo sha256 --to sri <hash>
+```
+
+- For Fixed-Output Derivations (`fetchFromGitHub`, `cargoHash`, `vendorHash`, `npmDepsHash`), you can also set `hash = lib.fakeHash;` (`"sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="`), run `nix build path:.#<pkg>`, and copy the `got: sha256-...` value from the error output.
 
 ---
 
@@ -161,7 +187,7 @@ pkgs.writeShellApplication {
   name = "my-script";
   runtimeInputs = with pkgs; [ curl jaq ];
   text = ''
-    curl -s "https://api.example.com" | jaq .
+    curl -fsS "https://api.example.com" | jaq .
   '';
 }
 ```
@@ -172,6 +198,7 @@ pkgs.writeShellApplication {
 - Multi-repo devShell integration: [examples/flake-inputs-from.nix](examples/flake-inputs-from.nix)
 - Python environment with uv: [examples/flake-python-uv.nix](examples/flake-python-uv.nix)
 - Package overlay pattern: [examples/overlay-pattern.nix](examples/overlay-pattern.nix)
+- Legacy `nix-shell` commands: [examples/interactive-shell.bash](examples/interactive-shell.bash)
 
 ---
 

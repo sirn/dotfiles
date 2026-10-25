@@ -5,11 +5,7 @@
   };
 
   outputs =
-    {
-      self,
-      nixpkgs,
-      flake-utils,
-    }:
+    { nixpkgs, flake-utils, ... }:
     flake-utils.lib.eachDefaultSystem (
       system:
       let
@@ -59,7 +55,7 @@
       in
       {
         devShells.default = pkgs.mkShell {
-          buildInputs = [
+          packages = [
             pkgs.wrapped-uv
             pkgs.wrapped-uv-poetry
           ];

@@ -15,7 +15,7 @@ Generate documentation that matches existing project conventions.
 
 ### Step 2 - Research and Plan
 
-Apply a scout lens to identify existing documentation style, naming, structure, examples, and relevant code context for `{files or requirements}`:
+Apply a scout lens to identify existing documentation style, naming, structure, examples, and relevant code context for {files or requirements}:
 
 - Map relevant files, conventions, and call paths.
 - Cite file paths and line numbers.
