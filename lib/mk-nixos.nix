@@ -4,14 +4,10 @@
   overlays,
   nixpkgsConfig,
   stateVersion,
-  localCfg,
   mkMicroVM,
   mkHomeManagerModules,
   mkHomeManagerBaseModule,
 }:
-let
-  optionalPath = p: if builtins.pathExists p then p else { };
-in
 {
   hostname,
   username ? "sirn",
@@ -43,13 +39,8 @@ nixpkgs.lib.nixosSystem {
     inputs.nixvirt.nixosModules.default
     inputs.sops-nix.nixosModules.sops
 
-    # NixOS Generate Config (per-machine, gitignored)
-    (optionalPath ../configuration.nix)
-    (optionalPath ../hardware-configuration.nix)
-
     # Configurations
     ../nixos/modules
-    localCfg.nixos
     profile.nixos
 
     # Home Manager

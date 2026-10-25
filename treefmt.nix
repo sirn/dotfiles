@@ -17,10 +17,6 @@
 
   # Global settings
   settings = {
-    excludes = [
-      "*.sops.*"
-      "flake.lock"
-      "secrets/**"
-    ];
+    excludes = [ "flake.lock" ];
   };
 }

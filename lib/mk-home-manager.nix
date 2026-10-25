@@ -4,7 +4,6 @@
   overlays,
   nixpkgsConfig,
   stateVersion,
-  localCfg,
 }:
 let
   mkHomeManagerModules =
@@ -21,7 +20,6 @@ let
 
       # Configurations
       ../home-manager/modules
-      localCfg.home
       profile.home
     ];
 

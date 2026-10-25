@@ -4,7 +4,6 @@
   overlays,
   nixpkgsConfig,
   stateVersion,
-  localCfg,
 }:
 let
   mkMicroVM = import ./mk-microvm.nix {
@@ -26,7 +25,6 @@ let
       overlays
       nixpkgsConfig
       stateVersion
-      localCfg
       ;
   };
 
@@ -37,7 +35,6 @@ let
       overlays
       nixpkgsConfig
       stateVersion
-      localCfg
       mkMicroVM
       ;
     inherit (hmBuilders) mkHomeManagerModules mkHomeManagerBaseModule;

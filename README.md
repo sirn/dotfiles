@@ -1,30 +1,52 @@
 # Dotfiles
 
-Dotfiles repository for managing configurations across Linux and macOS machines.
+Public NixOS and Home Manager configurations, modules, and packages across Linux and macOS machines.
+
+This flake is consumed as an input by the private configuration repository, which serves as the entry point for each machine and supplies host-specific hardware, boot settings, secrets, and private modules.
 
 ## Project Structure
 
-- `flake.nix`: The entry point defining Home Manager configurations and NixOS modules.
+- `flake.nix`: Exposes host and MicroVM builders (`lib.*`), base `homeConfigurations` and `nixosConfigurations` for local testing, local `packages`, and `apps.treefmt`.
+- `profiles/<hostname>.nix`: Base machine profiles (`{ nixos = ...; home = ...; }` on NixOS, `{ home = ...; }` on Darwin).
+- `lib/`: Flake builders (`mkNixOS`, `mkHomeManagerLinux`, `mkHomeManagerDarwin`, `mkMicroVM`) and shared helpers (`caches.nix`).
 - `home-manager/`: Home Manager configuration and modules.
-  - `config/`: Configuration files organized by program or service.
+  - `config/`: Configuration files organized by role, home, program, or service.
   - `modules/`: Home Manager module definitions.
-  - `lib/`: Helper functions and utilities.
 - `nixos/`: NixOS configuration and modules.
-  - `config/`: Configuration files organized by program or service.
+  - `config/`: Configuration files organized by role, system, program, or service.
   - `modules/`: NixOS module definitions.
-  - `lib/`: Helper functions and utilities.
-- `pkgs/`: Custom package definitions and overlays.
-- `secrets/`: Secrets managed with sops-nix.
+- `pkgs/`: Custom package definitions (`pkgs/by-name/`) and overlays.
 
 ## Machine Profiles
 
-The following hostnames are defined as machine profiles in `flake.nix`:
+`profiles/<hostname>.nix` defines the public half of each profile. The private repository imports this flake and extends each profile via `dotfiles.lib.*`:
 
-- `polaris` (Linux)
-- `system76` (Linux)
-- `terra` (Linux)
-- `theia` (macOS - `aarch64-darwin`)
-- `ws` (Linux)
+- `polaris` (NixOS - `x86_64-linux`)
+- `system76` (NixOS - `x86_64-linux`)
+- `terra` (NixOS - `x86_64-linux`)
+- `theia` (macOS Home Manager - `aarch64-darwin`)
+- `ws` (MicroVM base profile - `x86_64-linux`)
+
+Example usage in the private repository's `flake.nix`:
+
+```nix
+{
+  inputs.dotfiles.url = "github:sirn/dotfiles";
+
+  outputs = { dotfiles, ... }: {
+    homeConfigurations.theia = dotfiles.lib.mkHomeManagerDarwin {
+      hostname = "theia";
+      extraModules = [ (import ./profiles/theia).home ];
+    };
+
+    nixosConfigurations.terra = dotfiles.lib.mkNixOS {
+      hostname = "terra";
+      extraModules = [ (import ./profiles/terra).nixos ];
+      extraHomeModules = [ (import ./profiles/terra).home ];
+    };
+  };
+}
+```
 
 ## Setting Up
 
@@ -36,120 +58,101 @@ Ensure Nix is installed. If not, install it with:
 $ sh <(curl -L https://nixos.org/nix/install) --daemon
 ```
 
-Configure nix, edit `~/.config/nix/nix.conf` to enable flakes:
+Enable flakes in `~/.config/nix/nix.conf`:
 
 ```ini
 experimental-features = nix-command flakes
 ```
 
-Clone the Repository:
+Clone the private repository to `~/.dotfiles`:
 
 ```shell
-$ git clone git@github.com:sirn/dotfiles.git ~/.dotfiles
+$ git clone <private repository> ~/.dotfiles
+$ cd ~/.dotfiles
 ```
 
-Setup Home Manager:
+Bootstrap Home Manager:
 
 ```shell
 $ HM_PROFILE=$(hostname -s)
-$ nix build --no-link path:.#homeConfigurations.$HM_PROFILE.activationPackage
-$ $(nix path-info path:.#homeConfigurations.$HM_PROFILE.activationPackage)/activate
+$ nix build --no-link .#homeConfigurations.$HM_PROFILE.activationPackage
+$ $(nix path-info .#homeConfigurations.$HM_PROFILE.activationPackage)/activate
 ```
 
-On subsequent updates, use:
+On subsequent updates, run:
 
 ```shell
-$ home-manager switch --flake path:.#$HM_PROFILE
+$ home-manager switch --flake ~/.dotfiles#$HM_PROFILE
 ```
 
 ### NixOS
 
-On a NixOS system, clone this repository into `/etc/nixos`:
+Clone the private repository into `/etc/nixos`:
 
 ```shell
-$ git clone git@github.com:sirn/dotfiles.git /etc/nixos
+$ git clone <private repository> /etc/nixos
 ```
 
-Generate hardware-configuration:
-
-```shell
-$ nixos-generate-config --root /etc/nixos
-```
-
-Edit `configuration.nix` and get rid of most configurations as the actual configuration belongs in the machine profiles. After done, rebuild NixOS with `nixos-rebuild`:
+Apply the configuration with `nixos-rebuild`:
 
 ```shell
 $ PROFILE=$(hostname -s)
-$ nixos-rebuild --flake path:.#$PROFILE boot
+$ nixos-rebuild --sudo --flake /etc/nixos#$PROFILE switch
 ```
 
 ## Development & Maintenance
 
 ### Formatting
 
-To format all files consistently:
+Format all files:
 
 ```shell
-nix run path:.#treefmt
+$ nix run .#treefmt
 ```
 
-### Testing Home Manager Locally
+### Testing Locally
 
-Test a Home Manager build locally without applying the configuration:
+Parse-check a profile:
+
+```shell
+$ nix-instantiate --parse profiles/<hostname>.nix
+```
+
+Build a local package from the overlay:
+
+```shell
+$ nix build --no-link .#<package>
+```
+
+Test a base Home Manager profile without applying it:
 
 ```shell
 $ HM_PROFILE=$(hostname -s)
-$ nix build "path:.#homeConfigurations.$HM_PROFILE.activationPackage"
+$ nix build --no-link ".#homeConfigurations.$HM_PROFILE.activationPackage"
 ```
 
-### Testing NixOS Locally
-
-Build a NixOS system without switching to it, and print the store path:
+Test a base NixOS profile without switching to it:
 
 ```shell
 $ PROFILE=$(hostname -s)
-$ nix build --no-link --print-out-paths "path:.#nixosConfigurations.$PROFILE.config.system.build.toplevel"
+$ nix build --no-link ".#nixosConfigurations.$PROFILE.config.system.build.toplevel"
 ```
-
-To print the store path of an already-built system without rebuilding:
-
-```shell
-$ nix path-info "path:.#nixosConfigurations.$PROFILE.config.system.build.toplevel"
-```
-
-To deploy the built system, run `sudo ./result/bin/switch-to-configuration switch`.
 
 ## Configuration
 
-### Local Home Manager Configuration
-
-Create a file named `local/home.nix` to have a machine-specific configuration that is not committed to the repository.
-
-```nix
-{
-  imports = [
-    ../home-manager/config/programs/bitwarden.nix
-    ../home-manager/config/services/languagetool.nix
-  ];
-
-  # When running on a non-NixOS Linux:
-  targets.genericLinux.enable = true;
-}
-```
-
 ### Binary Caches
 
-Binary caches (numtide, noctalia, microvm) are configured declaratively:
+Public binary caches (`cache.nixos.org`, `numtide`, `noctalia`, `microvm`) are defined in `lib/caches.nix` and configured declaratively:
 
-- NixOS hosts via `nix.settings` in `nixos/config/system/nix.nix` (applies to all users on rebuild; `cache.nixos.org` is appended automatically by the NixOS nix module).
-- The `theia` macOS host via `nix.settings` in `home-manager/config/home/nix.nix`, which Home Manager writes to `~/.config/nix/nix.conf` on `switch`.
+- NixOS hosts via `nix.settings` in `nixos/config/system/nix.nix`.
+- Standalone Home Manager hosts (`theia`) via `nix.settings` in `home-manager/config/home/nix.nix`, which writes `~/.config/nix/nix.conf` on `switch`.
 
 These are set at the system/user level rather than in `flake.nix`'s `nixConfig`, which Nix ignores unless `accept-flake-config = true` is set.
 
-On the standalone Home Manager host (`theia`), the user must also be trusted so Nix honours user-level `substituters`/`trusted-public-keys`. Add to `/etc/nix/nix.conf` once:
+On standalone Home Manager hosts (`theia`), the user must be trusted in `/etc/nix/nix.conf` so the Nix daemon honours user-level `substituters` and `trusted-public-keys`:
 
 ```ini
 trusted-users = root <username>
 ```
 
-then restart the Nix daemon before running `home-manager switch` or `nixos-rebuild`.
+Restart the Nix daemon after editing `/etc/nix/nix.conf`.

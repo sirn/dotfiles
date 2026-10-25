@@ -136,15 +136,6 @@
 
       stateVersion = "26.05";
 
-      localCfg =
-        let
-          cfg = if builtins.pathExists ./local/default.nix then import ./local/default.nix else { };
-        in
-        {
-          nixos = cfg.nixos or { };
-          home = cfg.home or { };
-        };
-
       overlays = import ./pkgs/overlays.nix { inherit inputs nixpkgsConfig; };
 
       builders = import ./lib {
@@ -154,7 +145,6 @@
           overlays
           nixpkgsConfig
           stateVersion
-          localCfg
           ;
       };
 
@@ -186,7 +176,7 @@
         ws = builders.mkNixOS { hostname = "ws"; };
       };
 
-      # Apps output for nix run path:.#treefmt
+      # Apps output for nix run .#treefmt
       apps = eachSystem (
         system:
         let
@@ -203,7 +193,7 @@
 
       # Expose all local packages from the overlay as derivations so their
       # passthru attrs (npmDeps, cargoDeps, goModules) are reachable as
-      # path:.#<pkg>.<attr> by the pkgs/by-name/*/update.sh scripts.
+      # .#<pkg>.<attr> by the pkgs/by-name/*/update.sh scripts.
       packages = eachSystem (
         system:
         let
