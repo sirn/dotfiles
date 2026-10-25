@@ -1,12 +1,12 @@
 ---
 name: github-cli
 type: reference
-description: Reference for GitHub CLI (gh) - READ-ONLY operations only. ALWAYS read BEFORE using gh commands to ensure correct syntax and available flags.
+description: Reference for GitHub CLI (gh). ALWAYS read BEFORE using gh commands to ensure correct syntax and available flags.
 ---
 
 ## GitHub CLI Reference (gh)
 
-**IMPORTANT**: This skill is for READ-ONLY operations only. DO NOT execute any commands that create, modify, or delete resources.
+**IMPORTANT**: Read operations run without prompting. Write operations (creating, editing, commenting, closing, or merging issues/PRs/releases, or re-running/canceling Actions) require explicit user request and confirmation. Never run `gh repo delete`.
 
 ### Repository Identification
 
@@ -139,7 +139,22 @@ gh api -X GET repos/owner/repo/pulls/123/comments | jaq '.[] | {id, path, line, 
 gh api graphql -f query='query { viewer { login } }'
 ```
 
-**IMPORTANT**: Always pass `-X GET` on REST endpoints to ensure read-only access (note that passing `-f` or `-F` without `-X GET` defaults `gh api` to `POST`). Never execute `POST`, `PUT`, `PATCH`, or `DELETE` requests or GraphQL `mutation` queries.
+**IMPORTANT**: Always pass `-X GET` on REST endpoints for read-only queries (note that passing `-f` or `-F` without `-X GET` defaults `gh api` to `POST` and triggers a confirmation prompt). Only execute `POST`, `PUT`, `PATCH`, or `DELETE` requests or GraphQL `mutation` queries when explicitly requested by the user.
+
+### Write Operations (Require User Confirmation)
+
+Always pass explicit `-t` / `-b` flags so `gh` does not open an interactive prompt or `$EDITOR`:
+
+| Task | Command |
+| --- | --- |
+| Create issue | `gh issue create -R owner/repo -t "<title>" -b "<body>"` |
+| Comment on issue | `gh issue comment <number> -R owner/repo -b "<body>"` |
+| Edit issue | `gh issue edit <number> -R owner/repo -t "<title>" -b "<body>"` |
+| Close issue | `gh issue close <number> -R owner/repo` |
+| Create PR | `gh pr create -R owner/repo -B <base> -H <head> -t "<title>" -b "<body>"` |
+| Comment on PR | `gh pr comment <number> -R owner/repo -b "<body>"` |
+| Rerun failed CI | `gh run rerun <run-id> -R owner/repo --failed` |
+| Delete cache | `gh cache delete <cache-id-or-key> -R owner/repo` |
 
 ### Common Output Options
 

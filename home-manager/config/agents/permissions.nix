@@ -1,200 +1,4 @@
-{ config, ... }:
-let
-  destructiveCommands = [
-    "chmod"
-    "chown"
-    "dd"
-    {
-      match = "env";
-      mode = "exact";
-    }
-    "fdisk"
-    "git commit"
-    "jj abandon"
-    "jj bookmark delete"
-    "jj bookmark move"
-    "jj bookmark set"
-    "jj edit"
-    "jj op restore"
-    "jj rebase"
-    "jj squash"
-    "jj undo"
-    "kubectl apply"
-    "kubectl create"
-    "kubectl delete"
-    "kubectl exec"
-    "kubectl run"
-    "mkfs"
-    "nix run"
-    {
-      match = "printenv";
-      mode = "exact";
-    }
-    "rm"
-    "shred"
-    # HTTP method flags (-X / --request / --method) — any command
-    {
-      match = "*:-X POST";
-      mode = "args";
-    }
-    {
-      match = "*:-XPOST";
-      mode = "args";
-    }
-    {
-      match = "*:--request POST";
-      mode = "args";
-    }
-    {
-      match = "*:--request=POST";
-      mode = "args";
-    }
-    {
-      match = "*:-X PUT";
-      mode = "args";
-    }
-    {
-      match = "*:-XPUT";
-      mode = "args";
-    }
-    {
-      match = "*:--request PUT";
-      mode = "args";
-    }
-    {
-      match = "*:--request=PUT";
-      mode = "args";
-    }
-    {
-      match = "*:-X DELETE";
-      mode = "args";
-    }
-    {
-      match = "*:-XDELETE";
-      mode = "args";
-    }
-    {
-      match = "*:--request DELETE";
-      mode = "args";
-    }
-    {
-      match = "*:--request=DELETE";
-      mode = "args";
-    }
-    {
-      match = "*:-X PATCH";
-      mode = "args";
-    }
-    {
-      match = "*:-XPATCH";
-      mode = "args";
-    }
-    {
-      match = "*:--request PATCH";
-      mode = "args";
-    }
-    {
-      match = "*:--request=PATCH";
-      mode = "args";
-    }
-    {
-      match = "*:--method DELETE";
-      mode = "args";
-    }
-    {
-      match = "*:--method=DELETE";
-      mode = "args";
-    }
-    {
-      match = "*:--method PATCH";
-      mode = "args";
-    }
-    {
-      match = "*:--method=PATCH";
-      mode = "args";
-    }
-    {
-      match = "*:--method POST";
-      mode = "args";
-    }
-    {
-      match = "*:--method=POST";
-      mode = "args";
-    }
-    {
-      match = "*:--method PUT";
-      mode = "args";
-    }
-    {
-      match = "*:--method=PUT";
-      mode = "args";
-    }
-    # curl: data-sending flags (implicitly POST)
-    {
-      match = "curl:-d";
-      mode = "args";
-    }
-    {
-      match = "curl:--data";
-      mode = "args";
-    }
-    {
-      match = "curl:--data-binary";
-      mode = "args";
-    }
-    {
-      match = "curl:--data-raw";
-      mode = "args";
-    }
-    {
-      match = "curl:--data-urlencode";
-      mode = "args";
-    }
-    {
-      match = "curl:-F";
-      mode = "args";
-    }
-    {
-      match = "curl:--form";
-      mode = "args";
-    }
-    {
-      match = "curl:--form-string";
-      mode = "args";
-    }
-    # curl: upload flag (implicitly PUT)
-    {
-      match = "curl:-T";
-      mode = "args";
-    }
-    {
-      match = "curl:--upload-file";
-      mode = "args";
-    }
-    # gh api: mutation flags
-    {
-      match = "gh api:--input";
-      mode = "args";
-    }
-    {
-      match = "gh api:-f";
-      mode = "args";
-    }
-    {
-      match = "gh api:--field";
-      mode = "args";
-    }
-    {
-      match = "gh api:-F";
-      mode = "args";
-    }
-    {
-      match = "gh api:--raw-field";
-      mode = "args";
-    }
-  ];
-in
-{
+{ config, ... }: {
   agents.permissions = {
     default = {
       tools = {
@@ -211,6 +15,7 @@ in
         "["
         "alejandra"
         "awk --version"
+        "basename"
         "bash -n"
         "bat"
         "batcat"
@@ -227,6 +32,7 @@ in
         "cut"
         "date"
         "diff"
+        "dirname"
         "docker images"
         "docker inspect"
         "docker logs"
@@ -283,6 +89,7 @@ in
         "gh repo view"
         "gh run list"
         "gh run view"
+        "gh run watch"
         "gh search code"
         "gh search commits"
         "gh search issues"
@@ -366,11 +173,20 @@ in
         "jj file search"
         "jj file show"
         "jj git remote list"
+        "jj interdiff"
         "jj log"
         "jj new"
+        "jj op diff"
+        "jj op log"
+        "jj op show"
+        "jj resolve --list"
         "jj split"
         "jj show"
+        "jj squash"
         "jj status"
+        "jj tag list"
+        "jj workspace list"
+        "jj workspace root"
         "jaq"
         "jq"
         "just"
@@ -382,6 +198,7 @@ in
         "ls"
         "lstr"
         "make"
+        "mkdir"
         "mvn test"
         "mvn verify"
         "mypy"
@@ -390,12 +207,19 @@ in
         "nix derivation show"
         "nix eval"
         "nix flake"
+        "nix fmt"
+        "nix hash"
+        "nix log"
         "nix path-info"
+        "nix run path:.#treefmt"
         "nix search"
+        "nix store diff-closures"
+        "nix store prefetch-file"
         "nix why-depends"
         "nix-build"
         "nix-channel --list"
         "nix-linter"
+        "nix-locate"
         "nix-prefetch-git"
         "nixfmt"
         "nix-instantiate"
@@ -423,6 +247,8 @@ in
         "pytest"
         "python -m pytest"
         "python -m unittest"
+        "readlink"
+        "realpath"
         "redis-cli info"
         "redis-cli ping"
         "rg"
@@ -431,7 +257,9 @@ in
         "ruff format --check"
         "rustc --version"
         "sed --version"
+        "sed -E"
         "sed -n"
+        "sed -nE"
         "shellcheck"
         "shfmt"
         "sleep"
@@ -439,6 +267,19 @@ in
         "stat"
         "staticcheck"
         "tail"
+        "terraform fmt"
+        "terraform graph"
+        "terraform metadata functions"
+        "terraform output"
+        "terraform providers"
+        "terraform show"
+        "terraform state list"
+        "terraform state show"
+        "terraform test"
+        "terraform validate"
+        "terraform version"
+        "terraform workspace list"
+        "terraform workspace show"
         "test"
         "tmux capture-pane"
         "tr"
@@ -459,9 +300,15 @@ in
         "yarn list"
       ];
 
-      commands.ask = destructiveCommands;
-
-      commands.deny = [
+      commands.ask = [
+        "chmod"
+        "chown"
+        "dd"
+        {
+          match = "env";
+          mode = "exact";
+        }
+        "fdisk"
         "fj actions dispatch"
         "fj actions secrets create"
         "fj actions secrets delete"
@@ -487,7 +334,6 @@ in
         "fj release delete"
         "fj release edit"
         "fj repo create"
-        "fj repo delete"
         "fj repo edit"
         "fj repo fork"
         "fj repo labels create"
@@ -505,21 +351,48 @@ in
         "fj user follow"
         "fj user unblock"
         "fj user unfollow"
-        "gh issue create"
+        "gh cache delete"
         "gh issue close"
+        "gh issue comment"
+        "gh issue create"
         "gh issue delete"
         "gh issue edit"
+        "gh issue lock"
+        "gh issue pin"
         "gh issue reopen"
-        "gh pr create"
+        "gh issue transfer"
+        "gh issue unlock"
+        "gh issue unpin"
         "gh pr close"
+        "gh pr comment"
+        "gh pr create"
         "gh pr edit"
+        "gh pr lock"
         "gh pr merge"
+        "gh pr ready"
         "gh pr reopen"
+        "gh pr review"
+        "gh pr unlock"
+        "gh pr update-branch"
         "gh release create"
         "gh release delete"
+        "gh release delete-asset"
+        "gh release edit"
+        "gh release upload"
+        "gh repo archive"
         "gh repo create"
-        "gh repo delete"
+        "gh repo edit"
         "gh repo fork"
+        "gh repo rename"
+        "gh repo sync"
+        "gh repo unarchive"
+        "gh run cancel"
+        "gh run delete"
+        "gh run rerun"
+        "gh workflow disable"
+        "gh workflow enable"
+        "gh workflow run"
+        "git commit"
         "glab ci cancel"
         "glab ci delete"
         "glab ci retry"
@@ -557,12 +430,231 @@ in
         "glab release delete"
         "glab release upload"
         "glab repo create"
-        "glab repo delete"
         "glab repo fork"
         "glab schedule create"
         "glab schedule delete"
         "glab schedule run"
         "glab schedule update"
+        "jj abandon"
+        "jj bookmark delete"
+        "jj bookmark move"
+        "jj bookmark set"
+        "jj edit"
+        "jj op restore"
+        "jj rebase"
+        "jj undo"
+        "kill"
+        "kubectl apply"
+        "kubectl create"
+        "kubectl delete"
+        "kubectl exec"
+        "kubectl run"
+        "mkfs"
+        {
+          match = "printenv";
+          mode = "exact";
+        }
+        "rm"
+        "shred"
+        "terraform apply"
+        "terraform destroy"
+        "terraform force-unlock"
+        "terraform import"
+        "terraform state mv"
+        "terraform state push"
+        "terraform state replace-provider"
+        "terraform state rm"
+        "terraform workspace delete"
+        # HTTP method flags (-X / --request / --method) — any command
+        {
+          match = "*:-X POST";
+          mode = "args";
+        }
+        {
+          match = "*:-XPOST";
+          mode = "args";
+        }
+        {
+          match = "*:--request POST";
+          mode = "args";
+        }
+        {
+          match = "*:--request=POST";
+          mode = "args";
+        }
+        {
+          match = "*:-X PUT";
+          mode = "args";
+        }
+        {
+          match = "*:-XPUT";
+          mode = "args";
+        }
+        {
+          match = "*:--request PUT";
+          mode = "args";
+        }
+        {
+          match = "*:--request=PUT";
+          mode = "args";
+        }
+        {
+          match = "*:-X DELETE";
+          mode = "args";
+        }
+        {
+          match = "*:-XDELETE";
+          mode = "args";
+        }
+        {
+          match = "*:--request DELETE";
+          mode = "args";
+        }
+        {
+          match = "*:--request=DELETE";
+          mode = "args";
+        }
+        {
+          match = "*:-X PATCH";
+          mode = "args";
+        }
+        {
+          match = "*:-XPATCH";
+          mode = "args";
+        }
+        {
+          match = "*:--request PATCH";
+          mode = "args";
+        }
+        {
+          match = "*:--request=PATCH";
+          mode = "args";
+        }
+        {
+          match = "*:--method DELETE";
+          mode = "args";
+        }
+        {
+          match = "*:--method=DELETE";
+          mode = "args";
+        }
+        {
+          match = "*:--method PATCH";
+          mode = "args";
+        }
+        {
+          match = "*:--method=PATCH";
+          mode = "args";
+        }
+        {
+          match = "*:--method POST";
+          mode = "args";
+        }
+        {
+          match = "*:--method=POST";
+          mode = "args";
+        }
+        {
+          match = "*:--method PUT";
+          mode = "args";
+        }
+        {
+          match = "*:--method=PUT";
+          mode = "args";
+        }
+        # curl: data-sending flags (implicitly POST)
+        {
+          match = "curl:-d";
+          mode = "args";
+        }
+        {
+          match = "curl:--data";
+          mode = "args";
+        }
+        {
+          match = "curl:--data-binary";
+          mode = "args";
+        }
+        {
+          match = "curl:--data-raw";
+          mode = "args";
+        }
+        {
+          match = "curl:--data-urlencode";
+          mode = "args";
+        }
+        {
+          match = "curl:-F";
+          mode = "args";
+        }
+        {
+          match = "curl:--form";
+          mode = "args";
+        }
+        {
+          match = "curl:--form-string";
+          mode = "args";
+        }
+        # curl: upload flag (implicitly PUT)
+        {
+          match = "curl:-T";
+          mode = "args";
+        }
+        {
+          match = "curl:--upload-file";
+          mode = "args";
+        }
+        # gh api / glab api: mutation flags
+        {
+          match = "gh api:--input";
+          mode = "args";
+        }
+        {
+          match = "gh api:-f";
+          mode = "args";
+        }
+        {
+          match = "gh api:--field";
+          mode = "args";
+        }
+        {
+          match = "gh api:-F";
+          mode = "args";
+        }
+        {
+          match = "gh api:--raw-field";
+          mode = "args";
+        }
+        {
+          match = "glab api:--input";
+          mode = "args";
+        }
+        {
+          match = "glab api:-f";
+          mode = "args";
+        }
+        {
+          match = "glab api:--raw-field";
+          mode = "args";
+        }
+        {
+          match = "glab api:-F";
+          mode = "args";
+        }
+        {
+          match = "glab api:--field";
+          mode = "args";
+        }
+        {
+          match = "glab api:--form";
+          mode = "args";
+        }
+      ];
+
+      commands.deny = [
+        "fj repo delete"
+        "gh repo delete"
+        "glab repo delete"
         "git push"
         "jj git push"
         {
@@ -577,7 +669,6 @@ in
           match = "jj:--at-operation";
           mode = "args";
         }
-        "kill"
         "sops"
         "doas"
         "sudo"
@@ -704,10 +795,12 @@ in
             "**/id_rsa"
             "**/id_ed25519"
             "**/*credential*.json"
-            "**/*credentials*.json"
-            "**/*secret*"
-            "**/*secrets*"
-            "**/*token*"
+            "**/secrets/**"
+            "**/.secrets/**"
+            "**/secret.*"
+            "**/*.secret"
+            "**/*token*.json"
+            "**/*token*.txt"
             "**/*apikey*"
             "**/*api_key*"
             "**/.aws/credentials"
@@ -732,10 +825,12 @@ in
             "**/id_rsa"
             "**/id_ed25519"
             "**/*credential*.json"
-            "**/*credentials*.json"
-            "**/*secret*"
-            "**/*secrets*"
-            "**/*token*"
+            "**/secrets/**"
+            "**/.secrets/**"
+            "**/secret.*"
+            "**/*.secret"
+            "**/*token*.json"
+            "**/*token*.txt"
             "**/*apikey*"
             "**/*api_key*"
             "**/.aws/credentials"
@@ -760,10 +855,12 @@ in
             "**/id_rsa"
             "**/id_ed25519"
             "**/*credential*.json"
-            "**/*credentials*.json"
-            "**/*secret*"
-            "**/*secrets*"
-            "**/*token*"
+            "**/secrets/**"
+            "**/.secrets/**"
+            "**/secret.*"
+            "**/*.secret"
+            "**/*token*.json"
+            "**/*token*.txt"
             "**/*apikey*"
             "**/*api_key*"
             "**/.aws/credentials"

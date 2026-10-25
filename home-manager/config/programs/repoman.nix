@@ -72,6 +72,16 @@ in
 
   agents.skillSets.repoman = repomanSkillSet;
   agents.instructionText = lib.mkAfter repomanInstructionText;
+  agents.permissions.default.commands = {
+    allow = [
+      "repoman list"
+      "repoman workspace list"
+    ];
+    ask = [
+      "repoman pull-all"
+      "repoman workspace delete"
+    ];
+  };
 
   xdg.configFile."repoman/config.toml".source = tomlFormat.generate "repoman-config" {
     roots = [

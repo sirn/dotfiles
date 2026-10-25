@@ -1,12 +1,12 @@
 ---
 name: glab
 type: reference
-description: Reference for GitLab CLI (glab) - READ-ONLY operations only. ALWAYS read BEFORE using glab commands to ensure correct syntax and available flags.
+description: Reference for GitLab CLI (glab). ALWAYS read BEFORE using glab commands to ensure correct syntax and available flags.
 ---
 
 ## GitLab CLI Reference (glab)
 
-**IMPORTANT**: This skill is for READ-ONLY operations only. DO NOT execute any commands that create, modify, or delete resources.
+**IMPORTANT**: Read operations run without prompting. Write operations (creating, updating, commenting, closing, or merging issues/MRs/releases, or triggering/retrying CI pipelines) require explicit user request and confirmation. Never run `glab repo delete`.
 
 ### Repository Identification
 
@@ -102,7 +102,21 @@ description: Reference for GitLab CLI (glab) - READ-ONLY operations only. ALWAYS
 | MR discussions | `glab api -X GET projects/owner%2Frepo/merge_requests/<iid>/discussions` |
 | MR notes | `glab api -X GET projects/owner%2Frepo/merge_requests/<iid>/notes` |
 
-**IMPORTANT**: Always use `-X GET` and never pass write flags to `glab api`. POST/PUT/PATCH/DELETE methods (`-X`, `--method`) and data flags (`-F`/`--field`, `-f`/`--raw-field`, `--form`, `--input`) perform writes and are denied.
+**IMPORTANT**: Always pass `-X GET` on read-only `glab api` requests. Passing `POST`/`PUT`/`PATCH`/`DELETE` methods (`-X`, `--method`) or data flags (`-F`/`--field`, `-f`/`--raw-field`, `--form`, `--input`) performs a write and requires explicit user request and confirmation.
+
+### Write Operations (Require User Confirmation)
+
+Always pass explicit `-t`, `-d`, `-m`, and `-y` (`--yes`) flags so `glab` does not open an interactive prompt or `$EDITOR`:
+
+| Task | Command |
+| --- | --- |
+| Create issue | `glab issue create -R owner/repo -t "<title>" -d "<body>" -y` |
+| Comment on issue | `glab issue note <number> -R owner/repo -m "<body>"` |
+| Update issue | `glab issue update <number> -R owner/repo -t "<title>" -d "<body>"` |
+| Close issue | `glab issue close <number> -R owner/repo` |
+| Create MR | `glab mr create -R owner/repo -b <target> -s <source> -t "<title>" -d "<body>" -y` |
+| Comment on MR | `glab mr note <number> -R owner/repo -m "<body>"` |
+| Retry CI job | `glab ci retry <job-id> -R owner/repo` |
 
 ### Common Output Options
 

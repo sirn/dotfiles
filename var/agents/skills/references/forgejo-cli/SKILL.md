@@ -1,12 +1,12 @@
 ---
 name: forgejo-cli
 type: reference
-description: Reference for Forgejo CLI (fj) - READ-ONLY operations only. ALWAYS read BEFORE using fj commands to ensure correct syntax and available flags.
+description: Reference for Forgejo CLI (fj). ALWAYS read BEFORE using fj commands to ensure correct syntax and available flags.
 ---
 
 ## Forgejo CLI Reference (fj)
 
-**IMPORTANT**: This skill is for READ-ONLY operations only. DO NOT execute any commands that create, modify, or delete resources.
+**IMPORTANT**: Read operations run without prompting. Write operations (creating, editing, commenting, closing, or merging issues/PRs/releases) require explicit user request and confirmation. Never run `fj repo delete`.
 
 The `forgejo-cli` package provides the `fj` binary.
 
@@ -105,3 +105,16 @@ By default, `fj` operates on the repository detected from the current directory.
 | List tasks     | `fj actions tasks`          |
 | List secrets   | `fj actions secrets list`   |
 | List variables | `fj actions variables list` |
+
+### Write Operations (Require User Confirmation)
+
+Always pass explicit `--body` (or `<body>` argument) so `fj` does not open an interactive `$EDITOR`:
+
+| Task | Command |
+| --- | --- |
+| Create issue | `fj issue create -r owner/repo --body "<body>" "<title>"` |
+| Comment on issue | `fj issue comment <id> "<body>"` |
+| Close issue | `fj issue close <id>` |
+| Create PR | `fj pr create -r owner/repo --base <base> --head <head> --body "<body>" "<title>"` |
+| Comment on PR | `fj pr comment <number> "<body>"` |
+| Merge PR | `fj pr merge <number>` |
