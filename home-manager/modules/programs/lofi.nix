@@ -17,19 +17,26 @@ let
           description = "Whether to enable LLM-based auto mode pre-approval.";
         };
         provider = lib.mkOption {
-          type = lib.types.str;
+          type = lib.types.nullOr lib.types.str;
+          default = null;
           example = "openai";
-          description = "LLM provider used for auto mode approval.";
+          description = "LLM provider used for auto mode approval. Omit it when model is a qualified model query.";
         };
         model = lib.mkOption {
           type = lib.types.str;
           example = "gpt-5.6-luna";
-          description = "Model used for auto mode approval.";
+          description = "Model used for auto mode approval. Accepts a model id or a provider/model query.";
         };
         max_tokens = lib.mkOption {
           type = lib.types.int;
           example = 256;
           description = "Maximum number of tokens for an auto mode response.";
+        };
+        timeout_ms = lib.mkOption {
+          type = lib.types.int;
+          default = 10000;
+          example = 10000;
+          description = "Maximum duration of one auto mode evaluation in milliseconds.";
         };
       };
     }
@@ -62,7 +69,7 @@ in
           auto_mode = lib.mkOption {
             type = autoModeType;
             default = null;
-            description = "Auto mode configuration (enable/provider/model/max_tokens).";
+            description = "Auto mode configuration (enable/provider/model/max_tokens/timeout_ms).";
           };
         };
       };
@@ -84,7 +91,9 @@ in
       ".config/lofi/AGENTS.md".text = cfg.instructionText;
       ".config/lofi/policy.toml".source = tomlFormat.generate "lofi-policy" (
         cfg.policy.rules
-        // lib.optionalAttrs (cfg.policy.auto_mode != null) { auto_mode = cfg.policy.auto_mode; }
+        // lib.optionalAttrs (cfg.policy.auto_mode != null) {
+          auto_mode = lib.filterAttrs (_: value: value != null) cfg.policy.auto_mode;
+        }
       );
     }
     // lib.optionalAttrs (cfg.settings != { }) {
