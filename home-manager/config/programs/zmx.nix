@@ -1,7 +1,3 @@
 { pkgs, ... }:
 
-{
-  home.packages = [
-    pkgs.unstable.zmx
-  ];
-}
+{ home.packages = [ pkgs.unstable.zmx ]; }
