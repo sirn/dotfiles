@@ -60,11 +60,6 @@ in
           }
         ];
       };
-
-      shell = {
-        program = config.home.shell.interactiveShell;
-        args = if pkgs.stdenv.isDarwin then [ "--login" ] else [ ];
-      };
     };
   };
 

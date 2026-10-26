@@ -12,7 +12,6 @@ in
   programs.tmux = {
     enable = true;
     escapeTime = 0;
-    shell = config.home.shell.interactiveShell;
     terminal = "tmux-256color";
     mouse = true;
     historyLimit = 50000;

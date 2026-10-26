@@ -72,10 +72,6 @@
 ;; --------------------------------------------------------------------------
 ;;; System
 
-(setenv "SHELL" gemacs-default-shell)
-(setq sh-shell-file gemacs-default-shell)
-(setq shell-file-name gemacs-default-shell)
-
 ;; Inherit environment variables from shell on macOS
 (use-package exec-path-from-shell
   :if (eq system-type 'darwin)

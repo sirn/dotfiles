@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 
@@ -17,16 +16,6 @@ in
         Function to wrap a launcher command. Accepts either a package
         (will use lib.getExe) or a path string.
       '';
-    };
-
-    shell = {
-      interactiveShell = mkOption {
-        type = types.str;
-        default = lib.getExe pkgs.bash;
-        description = ''
-          Default interactive shell.
-        '';
-      };
     };
   };
 

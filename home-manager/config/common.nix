@@ -1,8 +1,6 @@
-{ config, lib, ... }:
+{ ... }:
 
 {
-  config.home.shell.interactiveShell = "${lib.getExe config.programs.zsh.package}";
-
   imports = [
     ./home/agents.nix
     ./home/colors

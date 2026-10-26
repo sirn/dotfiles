@@ -254,7 +254,6 @@ in
     }
 
     default_mode "locked"
-    default_shell "${config.home.shell.interactiveShell}"
     show_startup_tips false
     show_release_notes false
   '';

@@ -24,7 +24,6 @@ in
 
     settings = {
       main = {
-        shell = config.home.shell.interactiveShell;
         term = "xterm-256color";
         font = "${fontcfg.terminal.monospace}:size=${toString fontcfg.terminal.size}";
         bold-text-in-bright = "yes";

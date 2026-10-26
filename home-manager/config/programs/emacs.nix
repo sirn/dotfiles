@@ -110,7 +110,6 @@ let
     ''
       (setq inhibit-startup-screen t)
       (defvar gemacs-nix-config-directory user-emacs-directory)
-      (defvar gemacs-default-shell "${config.home.shell.interactiveShell}")
 
       ;; Font configuration (from home.fonts module)
       ;; Emacs uses 1.33x the editor font size on Linux for better readability

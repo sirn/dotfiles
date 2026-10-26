@@ -69,19 +69,6 @@ in
       '';
     };
 
-    "wezterm/modules/shell.lua" = {
-      text = ''
-        return {
-          default_prog = {
-            "${config.home.shell.interactiveShell}",
-            ${lib.optionalString pkgs.stdenv.isDarwin ''
-              "--login",
-            ''}
-          }
-        }
-      '';
-    };
-
     "wezterm/modules/tabbar.lua".text = builtins.readFile ./tabbar.lua;
 
     "wezterm/modules/mux.lua".text = builtins.readFile ./mux.lua;

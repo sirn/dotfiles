@@ -31,10 +31,6 @@ in
         # Ctrl+[ traditionally sends ESC; fixterm disambiguates it,
         # breaking Evil insert-mode escape in Emacs.
         keybind = [ "ctrl+bracket_left=text:\\x1b" ];
-
-        command = builtins.concatStringsSep " " (
-          [ config.home.shell.interactiveShell ] ++ lib.optional pkgs.stdenv.isDarwin "--login"
-        );
       }
       (lib.mkIf pkgs.stdenv.isLinux {
         font-size = fontcfg.terminal.size;

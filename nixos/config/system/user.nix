@@ -5,6 +5,7 @@
     sirn = {
       uid = 1000;
       isNormalUser = true;
+      shell = pkgs.zsh;
       extraGroups = [
         "wheel"
         "dialout"
