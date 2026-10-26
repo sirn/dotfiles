@@ -25,15 +25,16 @@
     ./programs/forgejo-cli.nix
     ./programs/fzy.nix
     ./programs/gh.nix
+    ./programs/ghostty-terminfo.nix
     ./programs/git.nix
     ./programs/glab.nix
     ./programs/gpg.nix
     ./programs/htop.nix
     ./programs/jaq.nix
-    ./programs/jujutsu.nix
     ./programs/jjui.nix
-    ./programs/lstr.nix
+    ./programs/jujutsu.nix
     ./programs/less.nix
+    ./programs/lstr.nix
     ./programs/nix-index.nix
     ./programs/qalculate.nix
     ./programs/repoman.nix
@@ -45,10 +46,9 @@
     ./programs/tincan.nix
     ./programs/tmux.nix
     ./programs/tree.nix
-    ./programs/ghostty-terminfo.nix
     ./programs/wezterm-terminfo.nix
-    ./programs/zsh.nix
     ./programs/zmx.nix
+    ./programs/zsh.nix
 
     # services
     ./services/emacs.nix
