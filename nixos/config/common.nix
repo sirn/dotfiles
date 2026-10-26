@@ -13,7 +13,6 @@
     ./programs/age.nix
     ./programs/attic.nix
     ./programs/git.nix
-    ./programs/mosh.nix
     ./programs/sops.nix
     ./programs/zsh.nix
 
