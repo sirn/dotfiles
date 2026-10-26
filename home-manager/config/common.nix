@@ -48,6 +48,7 @@
     ./programs/ghostty-terminfo.nix
     ./programs/wezterm-terminfo.nix
     ./programs/zsh.nix
+    ./programs/zmx.nix
 
     # services
     ./services/emacs.nix
