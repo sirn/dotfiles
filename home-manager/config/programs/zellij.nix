@@ -1,13 +1,5 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ ... }:
 
-let
-  cfg = config.programs.zellij;
-in
 {
   programs.zellij = {
     enable = true;
@@ -257,38 +249,4 @@ in
     show_startup_tips false
     show_release_notes false
   '';
-
-  home.file = {
-    ".zellij_init" = {
-      executable = true;
-
-      text = ''
-        #!/bin/sh -l
-        SESSION=$1
-
-        if [ -z "$SESSION" ]; then
-          SESSION=main
-        fi
-
-        # Update SSH_TTY for new panes
-        export SSH_TTY=$(tty)
-
-        ${
-          if pkgs.stdenv.isLinux then
-            ''
-              exec systemd-run \
-                --user \
-                --scope \
-                --slice=app.slice \
-                --setenv=SSH_TTY="$SSH_TTY" \
-                ${cfg.package}/bin/zellij attach "$SESSION" -c
-            ''
-          else
-            ''
-              exec ${cfg.package}/bin/zellij attach "$SESSION" -c
-            ''
-        }
-      '';
-    };
-  };
 }

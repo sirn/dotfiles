@@ -5,9 +5,6 @@
   ...
 }:
 
-let
-  cfg = config.programs.tmux;
-in
 {
   programs.tmux = {
     enable = true;
@@ -102,53 +99,5 @@ in
         bind -T copy-mode-vi y send -X copy-pipe-and-cancel "pbcopy"
       ''}
     '';
-  };
-
-  home.file = {
-    ".tmux_init" = {
-      executable = true;
-      text = ''
-        #!/bin/sh -l
-        SESSION=$1
-        WORKDIR=$2
-
-        # tmux mangles '.' and ':' in new-session names (to '_') but not in
-        # switch-client lookups, so normalize to the same safe name up front.
-        SESSION=$(printf '%s' "$SESSION" | sed 's/[^A-Za-z0-9_-]/-/g')
-
-        if [ -z "$SESSION" ]; then
-          SESSION=main
-        fi
-
-        # Update SSH_TTY for new panes
-        export SSH_TTY=$(tty)
-
-        # If already in a tmux session, create detached and switch.
-        # Note: switch-client just tells the server to switch and exits immediately,
-        # so we must not exec here or the pane will close. The caller decides whether
-        # to exec this script based on $TMUX.
-        if [ -n "$TMUX" ]; then
-          ${cfg.package}/bin/tmux new-session -d -s "$SESSION" ''${WORKDIR:+-c "$WORKDIR"} 2>/dev/null || true
-          ${cfg.package}/bin/tmux switch-client -t "$SESSION"
-          exit 0
-        fi
-
-        ${
-          if pkgs.stdenv.isLinux then
-            ''
-              exec systemd-run \
-                --user \
-                --scope \
-                --slice=app.slice \
-                --setenv=SSH_TTY="$SSH_TTY" \
-                ${cfg.package}/bin/tmux new-session -A -s "$SESSION" ''${WORKDIR:+-c "$WORKDIR"}
-            ''
-          else
-            ''
-              exec ${cfg.package}/bin/tmux new-session -A -s "$SESSION" ''${WORKDIR:+-c "$WORKDIR"}
-            ''
-        }
-      '';
-    };
   };
 }
