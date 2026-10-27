@@ -1,8 +1,24 @@
-{ ... }:
+{ lib, pkgs, ... }:
 
+let
+  zellij = pkgs.zellij;
+in
 {
   programs.zellij = {
     enable = true;
+    package =
+      if pkgs.stdenv.isLinux then
+        pkgs.writeShellScriptBin "zellij" ''
+          exec ${pkgs.systemd}/bin/systemd-run \
+            --user \
+            --scope \
+            --quiet \
+            --slice=app.slice \
+            -- \
+            ${lib.getExe zellij} "$@"
+        ''
+      else
+        zellij;
   };
 
   xdg.configFile."zellij/config.kdl".text = ''

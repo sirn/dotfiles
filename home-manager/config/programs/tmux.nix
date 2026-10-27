@@ -5,9 +5,25 @@
   ...
 }:
 
+let
+  tmux = pkgs.tmux;
+in
 {
   programs.tmux = {
     enable = true;
+    package =
+      if pkgs.stdenv.isLinux then
+        pkgs.writeShellScriptBin "tmux" ''
+          exec ${pkgs.systemd}/bin/systemd-run \
+            --user \
+            --scope \
+            --quiet \
+            --slice=app.slice \
+            -- \
+            ${lib.getExe tmux} "$@"
+        ''
+      else
+        tmux;
     escapeTime = 0;
     terminal = "tmux-256color";
     mouse = true;
