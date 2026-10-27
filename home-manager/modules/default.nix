@@ -12,5 +12,6 @@
     ./programs/codex.nix
     ./programs/pi-coding-agent.nix
     ./programs/lofi.nix
+    ./programs/zmx.nix
   ];
 }

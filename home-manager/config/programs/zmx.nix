@@ -1,3 +1,1 @@
-{ pkgs, ... }:
-
-{ home.packages = [ pkgs.unstable.zmx ]; }
+{ programs.zmx.enable = true; }
