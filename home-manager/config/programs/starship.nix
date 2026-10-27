@@ -7,6 +7,8 @@
 
 let
   jjcfg = config.programs.jujutsu;
+
+  zmxcfg = config.programs.zmx;
 in
 {
   programs.starship = {
@@ -16,6 +18,7 @@ in
 
     settings = {
       format = lib.concatStrings [
+        (lib.optionalString (zmxcfg.enable && zmxcfg.enableStarshipIntegration) "\${custom.zmx}")
         "$hostname"
         "$directory"
         "$git_branch"
