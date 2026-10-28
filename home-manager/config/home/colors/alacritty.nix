@@ -13,5 +13,9 @@ lib.mkIf config.programs.alacritty.enable {
     };
     normal = theme.base16Colors.normal;
     bright = theme.base16Colors.bright;
+    indexed_colors = lib.imap0 (i: c: {
+      index = i + 16;
+      color = c;
+    }) (lib.drop 16 theme.palette256);
   };
 }

@@ -30,9 +30,9 @@ let
     ];
     indexed = lib.listToAttrs (
       lib.imap0 (i: c: {
-        name = toString i;
+        name = toString (i + 16);
         value = c;
-      }) t.palette256
+      }) (lib.drop 16 t.palette256)
     );
     background = t.base16Colors.background;
     cursor_bg = t.base16Colors.cursor;

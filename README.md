@@ -140,6 +140,10 @@ $ nix build --no-link ".#nixosConfigurations.$PROFILE.config.system.build.toplev
 
 ## Configuration
 
+### Terminal Palettes
+
+Themes in `home-manager/config/home/colors/` define 16 ANSI colors, a background, and a foreground. `generate-palette.py` uses CIELAB interpolation to generate extended colors (`16–255`) and shared semantic color roles.
+
 ### Binary Caches
 
 Public binary caches (`cache.nixos.org`, `numtide`, `noctalia`, `microvm`) are defined in `lib/caches.nix` and configured declaratively:
