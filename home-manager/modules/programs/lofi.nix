@@ -9,6 +9,24 @@ let
   cfg = config.programs.lofi;
   tomlFormat = pkgs.formats.toml { };
 
+  permissionType = lib.types.submodule {
+    options = {
+      path = lib.mkOption {
+        type = lib.types.str;
+        example = "~/notes";
+        description = "Directory tree granted to the file tools outside the workspace root. ~ expands to the home directory.";
+      };
+      access = lib.mkOption {
+        type = lib.types.enum [
+          "read"
+          "write"
+        ];
+        default = "read";
+        description = "Access level the grant allows. Defaults to read so an omitted field never widens to write.";
+      };
+    };
+  };
+
   autoModeType = lib.types.nullOr (
     lib.types.submodule {
       options = {
@@ -23,20 +41,28 @@ let
           description = "LLM provider used for auto mode approval. Omit it when model is a qualified model query.";
         };
         model = lib.mkOption {
-          type = lib.types.str;
+          type = lib.types.nullOr lib.types.str;
+          default = null;
           example = "gpt-5.6-luna";
-          description = "Model used for auto mode approval. Accepts a model id or a provider/model query.";
+          description = "Chat model used for auto mode approval. Accepts a model id or a provider/model query. Required unless decision_model is set.";
+        };
+        decision_model = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          example = "plexus/clef-flash";
+          description = "Decision model that gates commands with typed questions before the chat evaluator runs. Accepts a model id or a model query. Required unless model is set.";
         };
         max_tokens = lib.mkOption {
-          type = lib.types.int;
+          type = lib.types.nullOr lib.types.int;
+          default = null;
           example = 256;
-          description = "Maximum number of tokens for an auto mode response.";
+          description = "Maximum number of tokens for an auto mode response. Defaults to the selected model's output limit.";
         };
         timeout_ms = lib.mkOption {
           type = lib.types.int;
-          default = 10000;
-          example = 10000;
-          description = "Maximum duration of one auto mode evaluation in milliseconds.";
+          default = 30000;
+          example = 30000;
+          description = "Maximum duration of one auto mode evaluation in milliseconds. Defaults to 30000 for either evaluation stage.";
         };
       };
     }
@@ -58,6 +84,22 @@ in
       description = "Settings written to ~/.config/lofi/config.toml.";
     };
 
+    permissions = lib.mkOption {
+      type = lib.types.listOf permissionType;
+      default = [ ];
+      example = [
+        {
+          path = "/nix/store";
+          access = "read";
+        }
+        {
+          path = "~/notes";
+          access = "write";
+        }
+      ];
+      description = "Directories granted to the file tools outside the workspace root, written to [[permissions]] in config.toml.";
+    };
+
     policy = lib.mkOption {
       type = lib.types.submodule {
         options = {
@@ -69,7 +111,7 @@ in
           auto_mode = lib.mkOption {
             type = autoModeType;
             default = null;
-            description = "Auto mode configuration (enable/provider/model/max_tokens/timeout_ms).";
+            description = "Auto mode configuration (enable/provider/model/decision_model/max_tokens/timeout_ms).";
           };
         };
       };
@@ -96,8 +138,10 @@ in
         }
       );
     }
-    // lib.optionalAttrs (cfg.settings != { }) {
-      ".config/lofi/config.toml".source = tomlFormat.generate "lofi-config" cfg.settings;
+    // lib.optionalAttrs (cfg.settings != { } || cfg.permissions != [ ]) {
+      ".config/lofi/config.toml".source = tomlFormat.generate "lofi-config" (
+        cfg.settings // lib.optionalAttrs (cfg.permissions != [ ]) { permissions = cfg.permissions; }
+      );
     };
   };
 }
