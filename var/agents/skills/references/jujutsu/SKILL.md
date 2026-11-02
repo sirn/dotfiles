@@ -28,7 +28,7 @@ Working copy is always a commit. Changes are first-class with stable IDs across 
 - `@-` = parent, `@--` = grandparent, `@+` = child
 - Revsets: `::@` (ancestors), `main..@` (commits since main), `mutable()` (all non-immutable commits)
 - Default `jj log` shows only mutable revisions (plus working-copy + bookmarked context). Use `jj log -r ::` or `all()` to see all visible commits, including immutable ancestors.
-- Immutable commits: those in `::immutable_heads()` (default includes `trunk()`-ancestors) are immutable; jj refuses to mutate them. Bypass with `--ignore-immutable` only when you intend to rewrite them.
+- Immutable commits: those in `::immutable_heads()` (default includes `trunk()`-ancestors) are immutable; jj refuses to mutate them. Never pass `--ignore-immutable`.
 
 ### Global Options
 

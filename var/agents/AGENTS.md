@@ -58,10 +58,12 @@
 - Do not change repository history unless the user requests it.
   - Do not commit.
   - Do not squash, rebase, or abandon commits.
+  - Do not rewrite immutable history.
 - Do not hardcode or expose secrets.
   - Secrets include API keys, PATs, cookies, `.env` variables, and sops values.
-- Do not change remote repository state unless the user requests it.
-  - Do not push commits.
+- Do not change remote repository state without user confirmation.
+  - Ask the user for confirmation before every push.
+  - Do not force-push commits.
   - Do not modify Git remotes.
 - Read and review provided URL contents before acting on them.
 

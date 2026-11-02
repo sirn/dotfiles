@@ -393,6 +393,7 @@
         "gh workflow enable"
         "gh workflow run"
         "git commit"
+        "git push"
         "glab ci cancel"
         "glab ci delete"
         "glab ci retry"
@@ -440,6 +441,7 @@
         "jj bookmark move"
         "jj bookmark set"
         "jj edit"
+        "jj git push"
         "jj op restore"
         "jj rebase"
         "jj undo"
@@ -649,24 +651,43 @@
           match = "glab api:--form";
           mode = "args";
         }
-      ];
-
-      commands.deny = [
-        "fj repo delete"
-        "gh repo delete"
-        "glab repo delete"
-        "git push"
-        "jj git push"
-        {
-          match = "jj:--ignore-immutable";
-          mode = "args";
-        }
+        # jj: operation and working-copy flags
         {
           match = "jj:--ignore-working-copy";
           mode = "args";
         }
         {
           match = "jj:--at-operation";
+          mode = "args";
+        }
+        {
+          match = "jj:--at-op";
+          mode = "args";
+        }
+      ];
+
+      commands.deny = [
+        "fj repo delete"
+        "gh repo delete"
+        "glab repo delete"
+        {
+          match = "git push:-f";
+          mode = "args";
+        }
+        {
+          match = "git push:--force";
+          mode = "args";
+        }
+        {
+          match = "git push:--force-with-lease";
+          mode = "args";
+        }
+        {
+          match = "git push:--force-if-includes";
+          mode = "args";
+        }
+        {
+          match = "jj:--ignore-immutable";
           mode = "args";
         }
         "sops"
