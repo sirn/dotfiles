@@ -52,7 +52,18 @@ in
 
     package = wrappedLofi;
 
-    instructionText = agentsCfg.instructionText;
+    instructionText =
+      agentsCfg.instructionText
+      + "\n\n"
+      + lib.strings.trim ''
+        ## Code Mode
+
+        - Batch operations into as few `exec` calls as possible.
+          - Combine multiple `lofi.*` calls (`lofi.read`, `lofi.grep`, `lofi.find`, `lofi.ls`, `lofi.edit`, `lofi.write`, `lofi.patch`, and `lofi.bash`) in one `exec` script.
+          - Use JavaScript control flow to inspect, filter, and transform results in the sandbox before returning.
+          - Run separate shell commands as separate `lofi.bash` calls in the same `exec` script instead of chaining them in a single shell string.
+          - Start a new `exec` call only when the next step depends on output you cannot handle in the current script.
+      '';
 
     policy.rules = policyFromPermissions;
 
