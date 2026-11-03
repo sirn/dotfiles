@@ -1,6 +1,6 @@
 {
-  "version": "0.8.15",
-  "rev": "f54fff2723c3c8362fd2f0bba96e9717ee8d6db5",
-  "srcHash": "sha256-ZPKMp9tXoGSLvCu3A8VGVtlrSODMl+z4MbjWcyzWC6M=",
-  "npmDepsHash": "sha256-dSFvnGOcBjyxlTEJwUzPvr0GpnLdE+wctmAk5tSUVa0="
+  "version": "0.8.16",
+  "rev": "e76ce6576553d7f5f375005f2d921cae4168878c",
+  "srcHash": "sha256-aDNEMl8zJ4NzISlJUB0rFVX4uAXDNc36MkZHfQuJNBw=",
+  "npmDepsHash": "sha256-BzdsENEJn9qRO+0GCwo4SDYMmd6nJT/7mH94PeBeX6o="
 }
