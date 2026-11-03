@@ -44,7 +44,6 @@
     ./programs/ssh.nix
     ./programs/starship.nix
     ./programs/tincan.nix
-    ./programs/tmux.nix
     ./programs/tree.nix
     ./programs/wezterm-terminfo.nix
     ./programs/zmx.nix
