@@ -9,6 +9,7 @@
     ./programs/antigravity-cli.nix
     ./programs/emacs.nix
     ./programs/niri.nix
+    ./programs/claude-code.nix
     ./programs/codex.nix
     ./programs/pi-coding-agent.nix
     ./programs/lofi.nix
