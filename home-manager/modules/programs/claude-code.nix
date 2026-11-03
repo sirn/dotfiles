@@ -169,5 +169,9 @@ in
   config = lib.mkIf (cfg.enable && cfg.extraProfiles != { }) {
     home.file = lib.concatMapAttrs renderFiles cfg.extraProfiles;
     home.packages = lib.mapAttrsToList mkWrapper cfg.extraProfiles;
+
+    agents.sandbox.extraWritePaths = lib.mapAttrsToList (
+      _: profile: "${config.home.homeDirectory}/${profile.configDir}"
+    ) cfg.extraProfiles;
   };
 }
