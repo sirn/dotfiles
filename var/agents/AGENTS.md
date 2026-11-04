@@ -77,6 +77,8 @@
 - Do not bypass authorization failures.
   - This rule applies to GPG and SSH.
   - Stop and wait for the user to resolve the failure.
+- Credential environment variables (`*_PAT`, `*_API_KEY`, etc.) may be prefixed with the organization that issues them.
+  - Example: `ACME_MYSERVICE_PAT`.
 - Use project task runners instead of ad-hoc commands.
   - Examples: `make test`, `just check`, `task lint`, and `bin/test`.
 - Use Jujutsu instead of Git.
