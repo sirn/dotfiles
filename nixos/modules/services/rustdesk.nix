@@ -14,8 +14,8 @@ in
 
     package = lib.mkOption {
       type = lib.types.package;
-      default = pkgs.local.rustdesk-flutter-nightly;
-      defaultText = lib.literalExpression "pkgs.local.rustdesk-flutter-nightly";
+      default = pkgs.local.rustdesk-flutter-unattended-wayland;
+      defaultText = lib.literalExpression "pkgs.local.rustdesk-flutter-unattended-wayland";
       description = "RustDesk package to run as the root service.";
     };
   };

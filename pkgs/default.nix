@@ -54,8 +54,8 @@ let
 
     rustdesk-flutter = final.unstable.callPackage ./by-name/rustdesk-flutter/package.nix { };
 
-    rustdesk-flutter-nightly =
-      final.unstable.callPackage ./by-name/rustdesk-flutter-nightly/package.nix
+    rustdesk-flutter-unattended-wayland =
+      final.unstable.callPackage ./by-name/rustdesk-flutter-unattended-wayland/package.nix
         { inherit libdrmtap rustdesk-flutter; };
   };
 in
