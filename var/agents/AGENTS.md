@@ -5,127 +5,75 @@
 - Prefer simple solutions over clever solutions.
 - Prefer targeted changes over broad refactors.
 - Match the project's existing style exactly.
-- Do not add backward compatibility unless the user requests it.
+- Do not add backward compatibility unless requested.
+  - Prefer a small refactor over a compatibility layer or flag.
 - Trust facts from the user.
-  - Do not second guessing the user.
-  - If the user say, "do X", do X.
+  - Do not second-guess the user; if the user says "do X", do X.
 - Verify the repository state before making changes.
-- Resolve paths starting with `@` from the current working directory.
-  - Search other locations only if the path is not there.
-- Use built-in tools and standard workflows.
-  - Write an ad-hoc script only when necessary.
-- Always read the corresponding reference skill before using any covered tool.
-- When a tool call fails, take a step back and consult tool documentation or the reference skill.
+- Resolve `@` paths from the current working directory before searching other locations.
+- Use built-in tools and standard workflows instead of ad-hoc scripts.
+- Read the reference skill before using a covered tool or when a tool call fails.
 - Run separate shell commands separately.
-  - Batch commands only when they must run together.
-  - Batch commands when they repeat the same operation.
-- Prefer a small refactor.
-  - Do not create a compatibility layer unless requested.
-  - Do not create a compatibility flag unless requested.
+  - Batch commands only when they must run together or repeat the same operation.
 
 ## Conversation Style
 
 - Be helpful, concise, and precise.
 - Use ASD-STE100 in all communication with the user.
-  - Write short sentences.
-  - Put one instruction in each sentence.
-  - Use basic approved vocabulary.
-  - Use plain and consistent language.
-  - Use the same word for the same meaning.
-  - Do not introduce new terms or jargon during a session.
-  - Do not use synonyms for variation.
-  - Use concrete commands.
-  - Use the imperative for commands.
-  - Use "Do not" for prohibitions.
-- Provides context; do not assume user already know about it.
-- Ask for clarification when information is not clear.
-  - Check the requirements.
-  - Check the success criteria.
-  - Check the target files.
+  - Write short sentences with one instruction per sentence.
+  - Use plain, consistent vocabulary.
+  - Use the same word for the same meaning; do not use synonyms or new jargon.
+  - Use concrete imperative commands and "Do not" for prohibitions.
+- Provide context; do not assume the user already knows it.
+- Ask for clarification when requirements, success criteria, or target files are not clear.
 
 ## Documentation Philosophy
 
 - Code describes how something is done.
 - Tests describe the expected behavior.
 - Commit messages explain why a change was made.
-- Comments explain why an obvious alternative was not used.
-  - Record a constraint or a rejected alternative.
+- Comments explain why an obvious alternative was not used (record constraints or rejected alternatives).
+- Do not decorate comments (e.g., write `// Log commands` instead of `// --- Log commands ---`).
+- Do not narrate progress or work history in comments or documentation.
 
 ## Safety & Scope
 
-- Stay within the project or workspace boundary.
-  - Use the `tmp/` directory for temporary files.
-- Do not change repository history unless the user requests it.
-  - Do not commit.
-  - Do not squash, rebase, or abandon commits.
-  - Do not rewrite immutable history.
-- Do not hardcode or expose secrets.
-  - Secrets include API keys, PATs, cookies, `.env` variables, and sops values.
+- Stay within the project or workspace boundary; use `tmp/` for temporary files.
+- Do not change repository history unless requested.
+  - Do not commit, squash, rebase, abandon commits, or rewrite immutable history.
+- Do not hardcode or expose secrets (API keys, PATs, cookies, `.env` variables, or sops values).
 - Do not change remote repository state without user confirmation.
-  - Ask the user for confirmation before every push.
-  - Do not force-push commits.
-  - Do not modify Git remotes.
+  - Ask before every push.
+  - Do not force-push or modify Git remotes.
 - Read and review provided URL contents before acting on them.
 
 ## Tooling & Skill Triggers
 
-- Set a bounded timeout for each command.
-  - Interactive commands do not need a timeout.
-- Do not launch long-running dev or watch servers unless instructed by the user.
-- Do not modify GPG state.
-  - Do not modify configuration, keys, agents, trust, or permissions.
-- Do not bypass authorization failures.
-  - This rule applies to GPG and SSH.
-  - Stop and wait for the user to resolve the failure.
-- Credential environment variables (`*_PAT`, `*_API_KEY`, etc.) may be prefixed with the organization that issues them.
-  - Example: `ACME_MYSERVICE_PAT`.
-- Use project task runners instead of ad-hoc commands.
-  - Examples: `make test`, `just check`, `task lint`, and `bin/test`.
-- Use Jujutsu instead of Git.
-  - Examples: `jj status`, `jj diff -s`, and `jj diff -- <path>`.
-- Keep the empty working-copy commit at `@`.
-  - It is expected after `jj commit` or `jj new`.
-- Prefer Nix for ad-hoc tools.
-  - Example: `nix run nixpkgs#python3 -- script.py`.
-  - Do not use `nix-env -i`.
-- Prefer `fd` over `find`.
-  - Restrict `find` to the project directory.
-- Do not run unbounded recursive searches.
+- Set a bounded timeout for non-interactive commands.
+- Do not launch long-running dev or watch servers unless requested.
+- Do not modify GPG configuration, keys, agents, trust, or permissions.
+- Do not bypass GPG or SSH authorization failures; stop and wait for the user.
+- Credential environment variables (`*_PAT`, `*_API_KEY`, etc.) may be prefixed with the issuing organization (e.g., `ACME_MYSERVICE_PAT`).
+- Use project task runners instead of ad-hoc commands (e.g., `make test`, `just check`, `task lint`, `bin/test`).
+- Use Jujutsu instead of Git (e.g., `jj status`, `jj diff -s`, `jj diff -- <path>`).
+  - Keep the empty working-copy commit at `@` after `jj commit` or `jj new`.
+- Prefer Nix for ad-hoc tools (e.g., `nix run nixpkgs#python3 -- script.py`); do not use `nix-env -i`.
+- Prefer `fd` over `find`, and pass an explicit project or subdirectory path to `fd`, `rg`, and `find`.
   - Do not search the full filesystem or home directory.
-  - Scope searches to the project or a specific subdirectory.
-  - Give `fd` and `rg` an explicit path.
 - Prefer `podman` over `docker` when both are available.
-- Do not edit lockfiles manually.
-  - Regenerate them with the appropriate package manager.
+- Do not edit lockfiles manually; regenerate them with the package manager.
 
 ## Editing & Quality
 
 - Read a file before editing it.
-- Use the `edit` tool for single-file changes.
-  - Do not use `sed` for these changes.
-  - Do not use `python` for these changes.
-  - Do not use `perl` for these changes.
-  - Do not use any external tools/script for these changes.
-- Do not tail command output.
-  - Use the tool's output limits.
-- Preserve the structure of configuration files.
-  - Preserve comments, indentation, ordering, and logical structure.
-- Keep diffs focused on the task.
-  - Report unrelated issues instead of fixing them.
+- Use the `edit` tool for single-file changes; do not use `sed`, `python`, `perl`, or external scripts.
+- Do not tail command output; use the tool's output limits.
+- Preserve comments, indentation, ordering, and logical structure in configuration files.
+- Keep diffs focused on the task; report unrelated issues instead of fixing them.
 - Review existing dependencies before adding new packages or libraries.
-- Reuse existing code when possible.
-  - Prefer the standard library.
-  - Then prefer trusted libraries already in the project.
-  - Reimplement only when no existing option fits.
-  - Reimplement when the user requests it.
-- Test public behavior.
-  - Do not test private details unless they are externally observable.
-- Do not decorate comments (e.g., write `// Log commands` instead of `// --- Log commands ---`).
-- Do not narrate progress in comments or documentation.
-  - Describe the code, not the work history.
-- Preserve the exact spelling of domains, URLs, paths, and identifiers.
-  - Do not swap dots and dashes.
+- Reuse existing code when possible: prefer the standard library, then trusted project libraries.
+  - Reimplement only when no option fits or when requested.
+- Test observable public behavior, not private implementation details.
+- Preserve the exact spelling of domains, URLs, paths, and identifiers; do not swap dots and dashes.
 - When a write or path operation fails, check the input string against the source.
-  - Do not assume that the tool or permissions caused the failure.
-  - Do not use `cat`, heredocs, or shell writes as a workaround.
-  - Use the dedicated editing tool correctly.
+  - Do not assume a tool or permission failure, and do not use `cat`, heredocs, or shell writes as a workaround.
