@@ -19,11 +19,12 @@
 ## Conversation Style
 
 - Be helpful, concise, and precise.
-- Use ASD-STE100 in all communication with the user.
-  - Write short sentences with one instruction per sentence.
-  - Use plain, consistent vocabulary.
-  - Use the same word for the same meaning; do not use synonyms or new jargon.
-  - Use concrete imperative commands and "Do not" for prohibitions.
+- Write clear, direct technical prose:
+  - Lead with the answer, conclusion, or root cause before supporting detail.
+  - Use active voice and concrete specifics (exact files, symbols, commands, and values).
+  - Write short sentences with one main idea per sentence; cut filler and hedging.
+  - Use consistent terminology: use the same word for the same concept, and do not invent jargon or swap synonyms.
+  - Use lists or tables when comparing options or presenting multi-step information.
 - Provide context; do not assume the user already knows it.
 - Ask for clarification when requirements, success criteria, or target files are not clear.
 
