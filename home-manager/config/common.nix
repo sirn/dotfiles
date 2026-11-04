@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ./home/agents.nix
+    ./agents
     ./home/colors
     ./home/email.nix
     ./home/shell.nix
