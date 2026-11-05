@@ -1,0 +1,46 @@
+name: Update flake.lock
+
+on:
+  schedule:
+    # Sunday: 05:00 JST
+    - cron: "0 20 * * 6"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Prevent update-pkgs.yml from racing to push to main.
+concurrency:
+  group: update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: exe
+    timeout-minutes: 60
+    # Alpine selects the runner's musl Node build, so actions/checkout runs.
+    container:
+      image: docker.io/library/alpine:3
+    env:
+      NIX_CONFIG: experimental-features = nix-command flakes
+    steps:
+      - name: Install bash, git, and Nix
+        shell: sh
+        run: apk add --no-cache bash git nix
+
+      - uses: actions/checkout@v5
+
+      - name: Update flake inputs
+        run: nix flake update
+
+      - name: Commit and push
+        run: |
+          if [ -z "$(git status --porcelain -- flake.lock)" ]; then
+            echo "No flake input updates."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add flake.lock
+          git commit --message "flake.lock: periodic update"
+          git push origin HEAD:main

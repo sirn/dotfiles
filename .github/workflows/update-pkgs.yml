@@ -1,0 +1,53 @@
+name: Update packages
+
+on:
+  schedule:
+    # Daily: 05:00 JST
+    - cron: "0 20 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Prevent update-flake.yml from racing to push to main.
+concurrency:
+  group: update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: exe
+    timeout-minutes: 60
+    # Alpine selects the runner's musl Node build, so actions/checkout runs.
+    container:
+      image: docker.io/library/alpine:3
+    env:
+      NIX_CONFIG: experimental-features = nix-command flakes
+    steps:
+      - name: Install bash, git, and Nix
+        shell: sh
+        run: apk add --no-cache bash git nix
+
+      - uses: actions/checkout@v5
+
+      - name: Point NIX_PATH at the locked nixpkgs
+        run: |
+          nixpkgs=$(nix eval --raw --impure --expr \
+            '(builtins.getFlake (toString ./.)).inputs.nixpkgs.outPath')
+          echo "NIX_PATH=nixpkgs=$nixpkgs" >> "$GITHUB_ENV"
+
+      - name: Run update scripts
+        run: ./pkgs/update.sh
+
+      - name: Commit and push
+        if: always()
+        run: |
+          if [ -z "$(git status --porcelain -- pkgs)" ]; then
+            echo "No package updates."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --all pkgs
+          git commit --message "pkgs/*: periodic update"
+          git push origin HEAD:main
