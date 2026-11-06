@@ -26,8 +26,8 @@ let
           ++ (lib.optionals tools.write (map (p: "Edit(${p})") (paths.${section}.write or [ ])))
         );
       baseTools = [
-        "Glob(*)"
-        "Grep(*)"
+        "Glob"
+        "Grep"
         (mkToolPerm "Read")
         "WebSearch"
       ]
