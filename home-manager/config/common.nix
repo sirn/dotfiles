@@ -47,6 +47,7 @@
     ./programs/tree.nix
     ./programs/wezterm-terminfo.nix
     ./programs/zmx.nix
+    ./programs/zrex.nix
     ./programs/zsh.nix
 
     # services

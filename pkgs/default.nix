@@ -36,6 +36,8 @@ let
     lsp-cli = (callPackage ./by-name/lsp-cli/package.nix { });
 
     wrapped-uv = (callPackage ./by-name/wrapped-uv/package.nix { });
+
+    zrex = (callPackage ./by-name/zrex/package.nix { });
   };
 
   darwinPackages = commonPackages // {
