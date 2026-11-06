@@ -28,7 +28,6 @@
         "clang-tidy"
         "command -v"
         "cppcheck"
-        "curl"
         "cut"
         "date"
         "diff"
@@ -73,7 +72,7 @@
         "fj user view"
         "fj whoami"
         "gem list"
-        "gh api"
+        "gh api -X GET"
         "gh cache list"
         "gh issue list"
         "gh issue status"
@@ -108,7 +107,7 @@
         "git rev-parse"
         "git rev-parse --show-toplevel"
         "git status"
-        "glab api"
+        "glab api -X GET"
         "glab ci get"
         "glab ci lint"
         "glab ci list"
@@ -294,379 +293,21 @@
         "uv run python -m pytest"
         "uv run ruff"
         "wc"
-        "wget"
         "which"
         "whoami"
         "yarn list"
       ];
 
-      commands.ask = [
-        "chmod"
-        "chown"
-        "dd"
-        {
-          match = "env";
-          mode = "exact";
-        }
-        "fdisk"
-        "fj actions dispatch"
-        "fj actions secrets create"
-        "fj actions secrets delete"
-        "fj actions variables create"
-        "fj actions variables delete"
-        "fj issue assign"
-        "fj issue close"
-        "fj issue comment"
-        "fj issue create"
-        "fj issue edit"
-        "fj issue unassign"
-        "fj org create"
-        "fj org edit"
-        "fj pr assign"
-        "fj pr close"
-        "fj pr comment"
-        "fj pr create"
-        "fj pr edit"
-        "fj pr merge"
-        "fj pr review"
-        "fj pr unassign"
-        "fj release create"
-        "fj release delete"
-        "fj release edit"
-        "fj repo create"
-        "fj repo edit"
-        "fj repo fork"
-        "fj repo labels create"
-        "fj repo labels delete"
-        "fj repo labels edit"
-        "fj repo migrate"
-        "fj repo star"
-        "fj repo unstar"
-        "fj repo watch"
-        "fj repo unwatch"
-        "fj tag create"
-        "fj tag delete"
-        "fj user block"
-        "fj user edit"
-        "fj user follow"
-        "fj user unblock"
-        "fj user unfollow"
-        "gh cache delete"
-        "gh issue close"
-        "gh issue comment"
-        "gh issue create"
-        "gh issue delete"
-        "gh issue edit"
-        "gh issue lock"
-        "gh issue pin"
-        "gh issue reopen"
-        "gh issue transfer"
-        "gh issue unlock"
-        "gh issue unpin"
-        "gh pr close"
-        "gh pr comment"
-        "gh pr create"
-        "gh pr edit"
-        "gh pr lock"
-        "gh pr merge"
-        "gh pr ready"
-        "gh pr reopen"
-        "gh pr review"
-        "gh pr unlock"
-        "gh pr update-branch"
-        "gh release create"
-        "gh release delete"
-        "gh release delete-asset"
-        "gh release edit"
-        "gh release upload"
-        "gh repo archive"
-        "gh repo create"
-        "gh repo edit"
-        "gh repo fork"
-        "gh repo rename"
-        "gh repo sync"
-        "gh repo unarchive"
-        "gh run cancel"
-        "gh run delete"
-        "gh run rerun"
-        "gh workflow disable"
-        "gh workflow enable"
-        "gh workflow run"
-        "git commit"
-        "git push"
-        "glab ci cancel"
-        "glab ci delete"
-        "glab ci retry"
-        "glab ci run"
-        "glab ci run-trig"
-        "glab ci trigger"
-        "glab issue close"
-        "glab issue create"
-        "glab issue delete"
-        "glab issue note"
-        "glab issue reopen"
-        "glab issue subscribe"
-        "glab issue unsubscribe"
-        "glab issue update"
-        "glab label create"
-        "glab label delete"
-        "glab label edit"
-        "glab milestone create"
-        "glab milestone delete"
-        "glab milestone edit"
-        "glab mr approve"
-        "glab mr close"
-        "glab mr create"
-        "glab mr delete"
-        "glab mr merge"
-        "glab mr note"
-        "glab mr rebase"
-        "glab mr reopen"
-        "glab mr revoke"
-        "glab mr subscribe"
-        "glab mr todo"
-        "glab mr unsubscribe"
-        "glab mr update"
-        "glab release create"
-        "glab release delete"
-        "glab release upload"
-        "glab repo create"
-        "glab repo fork"
-        "glab schedule create"
-        "glab schedule delete"
-        "glab schedule run"
-        "glab schedule update"
-        "jj abandon"
-        "jj bookmark delete"
-        "jj bookmark move"
-        "jj bookmark set"
-        "jj edit"
-        "jj git push"
-        "jj op restore"
-        "jj rebase"
-        "jj undo"
-        "kill"
-        "kubectl apply"
-        "kubectl create"
-        "kubectl delete"
-        "kubectl exec"
-        "kubectl run"
-        "mkfs"
-        {
-          match = "printenv";
-          mode = "exact";
-        }
-        "rm"
-        "shred"
-        "terraform apply"
-        "terraform destroy"
-        "terraform force-unlock"
-        "terraform import"
-        "terraform state mv"
-        "terraform state push"
-        "terraform state replace-provider"
-        "terraform state rm"
-        "terraform workspace delete"
-        # HTTP method flags (-X / --request / --method) — any command
-        {
-          match = "*:-X POST";
-          mode = "args";
-        }
-        {
-          match = "*:-XPOST";
-          mode = "args";
-        }
-        {
-          match = "*:--request POST";
-          mode = "args";
-        }
-        {
-          match = "*:--request=POST";
-          mode = "args";
-        }
-        {
-          match = "*:-X PUT";
-          mode = "args";
-        }
-        {
-          match = "*:-XPUT";
-          mode = "args";
-        }
-        {
-          match = "*:--request PUT";
-          mode = "args";
-        }
-        {
-          match = "*:--request=PUT";
-          mode = "args";
-        }
-        {
-          match = "*:-X DELETE";
-          mode = "args";
-        }
-        {
-          match = "*:-XDELETE";
-          mode = "args";
-        }
-        {
-          match = "*:--request DELETE";
-          mode = "args";
-        }
-        {
-          match = "*:--request=DELETE";
-          mode = "args";
-        }
-        {
-          match = "*:-X PATCH";
-          mode = "args";
-        }
-        {
-          match = "*:-XPATCH";
-          mode = "args";
-        }
-        {
-          match = "*:--request PATCH";
-          mode = "args";
-        }
-        {
-          match = "*:--request=PATCH";
-          mode = "args";
-        }
-        {
-          match = "*:--method DELETE";
-          mode = "args";
-        }
-        {
-          match = "*:--method=DELETE";
-          mode = "args";
-        }
-        {
-          match = "*:--method PATCH";
-          mode = "args";
-        }
-        {
-          match = "*:--method=PATCH";
-          mode = "args";
-        }
-        {
-          match = "*:--method POST";
-          mode = "args";
-        }
-        {
-          match = "*:--method=POST";
-          mode = "args";
-        }
-        {
-          match = "*:--method PUT";
-          mode = "args";
-        }
-        {
-          match = "*:--method=PUT";
-          mode = "args";
-        }
-        # curl: data-sending flags (implicitly POST)
-        {
-          match = "curl:-d";
-          mode = "args";
-        }
-        {
-          match = "curl:--data";
-          mode = "args";
-        }
-        {
-          match = "curl:--data-binary";
-          mode = "args";
-        }
-        {
-          match = "curl:--data-raw";
-          mode = "args";
-        }
-        {
-          match = "curl:--data-urlencode";
-          mode = "args";
-        }
-        {
-          match = "curl:-F";
-          mode = "args";
-        }
-        {
-          match = "curl:--form";
-          mode = "args";
-        }
-        {
-          match = "curl:--form-string";
-          mode = "args";
-        }
-        # curl: upload flag (implicitly PUT)
-        {
-          match = "curl:-T";
-          mode = "args";
-        }
-        {
-          match = "curl:--upload-file";
-          mode = "args";
-        }
-        # gh api / glab api: mutation flags
-        {
-          match = "gh api:--input";
-          mode = "args";
-        }
-        {
-          match = "gh api:-f";
-          mode = "args";
-        }
-        {
-          match = "gh api:--field";
-          mode = "args";
-        }
-        {
-          match = "gh api:-F";
-          mode = "args";
-        }
-        {
-          match = "gh api:--raw-field";
-          mode = "args";
-        }
-        {
-          match = "glab api:--input";
-          mode = "args";
-        }
-        {
-          match = "glab api:-f";
-          mode = "args";
-        }
-        {
-          match = "glab api:--raw-field";
-          mode = "args";
-        }
-        {
-          match = "glab api:-F";
-          mode = "args";
-        }
-        {
-          match = "glab api:--field";
-          mode = "args";
-        }
-        {
-          match = "glab api:--form";
-          mode = "args";
-        }
-        # jj: operation and working-copy flags
-        {
-          match = "jj:--ignore-working-copy";
-          mode = "args";
-        }
-        {
-          match = "jj:--at-operation";
-          mode = "args";
-        }
-        {
-          match = "jj:--at-op";
-          mode = "args";
-        }
-      ];
+      commands.ask = [ ];
 
       commands.deny = [
+        "dd"
+        "doas"
+        "fdisk"
+        "find /"
+        "find /nix"
+        "find /nix/store"
+        "find ${config.home.homeDirectory}"
         "fj repo delete"
         "gh repo delete"
         "glab repo delete"
@@ -690,13 +331,10 @@
           match = "jj:--ignore-immutable";
           mode = "args";
         }
+        "mkfs"
+        "shred"
         "sops"
-        "doas"
         "sudo"
-        "find /"
-        "find /nix"
-        "find /nix/store"
-        "find ${config.home.homeDirectory}"
       ];
 
       wrappers = [
