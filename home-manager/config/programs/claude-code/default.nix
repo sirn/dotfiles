@@ -57,13 +57,22 @@ let
             args =
               let
                 parts = lib.splitString ":" m;
+                program = builtins.head parts;
                 argsStr = lib.concatStringsSep ":" (builtins.tail parts);
               in
-              [
-                "Bash(* ${argsStr} *)"
-                "Bash(${argsStr} *)"
-                "Bash(* ${argsStr})"
-              ];
+              if program == "*" then
+                [
+                  "Bash(* ${argsStr} *)"
+                  "Bash(${argsStr} *)"
+                  "Bash(* ${argsStr})"
+                ]
+              else
+                [
+                  "Bash(${program} * ${argsStr} *)"
+                  "Bash(${program} ${argsStr} *)"
+                  "Bash(${program} * ${argsStr})"
+                  "Bash(${program} ${argsStr})"
+                ];
           }
           .${entry.mode or "prefix"}
         ) cmds;
