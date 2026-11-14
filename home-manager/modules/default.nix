@@ -13,6 +13,7 @@
     ./programs/codex.nix
     ./programs/pi-coding-agent.nix
     ./programs/lofi.nix
+    ./programs/obsidian-headless.nix
     ./programs/zmx.nix
   ];
 }
