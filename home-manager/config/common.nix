@@ -36,6 +36,7 @@
     ./programs/less.nix
     ./programs/lstr.nix
     ./programs/nix-index.nix
+    ./programs/nix-output-monitor.nix
     ./programs/qalculate.nix
     ./programs/repoman.nix
     ./programs/ripgrep.nix
