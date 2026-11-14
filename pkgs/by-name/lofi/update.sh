@@ -23,7 +23,7 @@ fi
 current_version=$(sed -n 's/.*version = "\([^"]*\)".*/\1/p' "$package_file" | head -1)
 
 # Latest tag from the upstream GitHub repository
-latest_tag=$(git ls-remote --tags "https://github.com/sirn/${pname}" |
+latest_tag=$(git ls-remote --tags "https://github.com/cakework/${pname}" |
   grep -v '\^{}' | awk -F/ '{print $NF}' | sort -V | tail -1)
 version="${latest_tag#v}"
 
@@ -37,7 +37,7 @@ echo "Updating from $current_version to $version"
 # Prefetch the source tarball and compute its SRI hash
 src_hash=$(nix hash convert --hash-algo sha256 --to sri \
   "$(nix-prefetch-url --unpack \
-    "https://github.com/sirn/${pname}/archive/refs/tags/v${version}.tar.gz" \
+    "https://github.com/cakework/${pname}/archive/refs/tags/v${version}.tar.gz" \
     2>/dev/null | tail -1)")
 
 # Update version and src hash in package.nix
