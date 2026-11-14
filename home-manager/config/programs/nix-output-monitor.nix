@@ -18,7 +18,7 @@ let
   posixWrappers = lib.concatMapStrings (cli: ''
     if command -v ${cli} >/dev/null 2>&1; then
       ${cli}() {
-        command ${cli} --log-format internal-json -v "$@" |& nom --json
+        command ${cli} --log-format internal-json "$@" |& nom --json
       }
     fi
   '') clis;
@@ -32,7 +32,7 @@ in
     lib.concatMapStrings (cli: ''
       if command -q ${cli}
         function ${cli}
-          command ${cli} --log-format internal-json -v $argv |& nom --json
+          command ${cli} --log-format internal-json $argv |& nom --json
         end
       end
     '') clis
