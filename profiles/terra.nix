@@ -6,6 +6,7 @@
       ../nixos/config/system/network/networkd.nix
 
       # profiles
+      ../nixos/config/system/nvidia.nix
       ../nixos/config/system/plymouth.nix
       ../nixos/config/system/vfio.nix
 
@@ -16,6 +17,7 @@
       ../nixos/config/services/fwupd.nix
       ../nixos/config/services/libvirtd.nix
       ../nixos/config/services/node-exporter-ipmitool.nix
+      ../nixos/config/services/node-exporter-nvidia-gpu.nix
       ../nixos/config/services/node-exporter.nix
       ../nixos/config/services/podman.nix
       ../nixos/config/services/powerband.nix
