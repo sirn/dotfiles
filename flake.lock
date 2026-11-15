@@ -101,7 +101,7 @@
     "flake-utils": {
       "inputs": {
         "systems": [
-          "systems-linux"
+          "systems-default"
         ]
       },
       "locked": {

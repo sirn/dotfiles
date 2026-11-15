@@ -77,7 +77,7 @@
 
     flake-utils = {
       url = "github:numtide/flake-utils";
-      inputs.systems.follows = "systems-linux";
+      inputs.systems.follows = "systems-default";
     };
 
     ## MicroVM
