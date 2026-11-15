@@ -3,6 +3,7 @@
 {
   programs.direnv = {
     enable = true;
+    contrib.op.enable = true;
     nix-direnv = {
       enable = true;
     };

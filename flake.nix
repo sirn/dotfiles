@@ -33,6 +33,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # 1Password secrets for direnv.
+    direnv-op = {
+      url = "github:direnv-contrib/direnv-op";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
+
     # For GL application compatibility on non-Nix.
     nixgl = {
       url = "github:nix-community/nixGL";

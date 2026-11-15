@@ -34,6 +34,29 @@
         "type": "github"
       }
     },
+    "direnv-op": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794209897,
+        "narHash": "sha256-2ny//5PtLB2xIXzz+38y8feW6ZuVALTm/KLNwgamRDw=",
+        "owner": "direnv-contrib",
+        "repo": "direnv-op",
+        "rev": "b357e499153fe321c3a523e469127cf0eb7c1e3f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "direnv-contrib",
+        "repo": "direnv-op",
+        "type": "github"
+      }
+    },
     "emacs-overlay": {
       "inputs": {
         "nixpkgs": [
@@ -404,6 +427,7 @@
     },
     "root": {
       "inputs": {
+        "direnv-op": "direnv-op",
         "emacs-overlay": "emacs-overlay",
         "flake-parts": "flake-parts",
         "flake-utils": "flake-utils",

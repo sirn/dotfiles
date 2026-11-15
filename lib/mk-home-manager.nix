@@ -13,6 +13,7 @@ let
     in
     [
       # Home Manager modules
+      inputs.direnv-op.homeModules.default
       inputs.niri.homeModules.niri
       inputs.nix-index-database.homeModules.nix-index
       inputs.noctalia.homeModules.default
