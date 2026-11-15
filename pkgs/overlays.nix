@@ -57,6 +57,11 @@ compatOverlays
             )
           else
             raw.pi;
+        # nixpkgs-unstable made aws-lc's OpenSSL shim opt-in, so openssl-sys
+        # no longer finds the `openssl.pc` this package expects.
+        codex = raw.codex.overrideAttrs (prev: {
+          buildInputs = prev.buildInputs ++ [ final.unstable.openssl ];
+        });
       };
 
     local = (import ./default.nix final prev inputs).${final.stdenv.hostPlatform.system};
