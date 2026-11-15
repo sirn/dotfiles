@@ -10,6 +10,7 @@ let
     inherit (inputs)
       microvm
       home-manager
+      direnv-op
       sops-nix
       niri
       nix-index-database

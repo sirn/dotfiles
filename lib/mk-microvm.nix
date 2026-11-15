@@ -1,6 +1,7 @@
 {
   microvm,
   home-manager,
+  direnv-op,
   sops-nix,
   niri,
   nix-index-database,
@@ -88,6 +89,7 @@
       {
         home-manager.users.${hmUsername} = {
           imports = [
+            direnv-op.homeModules.default
             niri.homeModules.niri
             nix-index-database.homeModules.nix-index
             noctalia.homeModules.default
