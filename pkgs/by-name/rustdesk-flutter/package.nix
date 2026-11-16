@@ -5,13 +5,16 @@
   copyDesktopItems,
   fetchFromGitHub,
   flutter329,
+  dbus,
   ffmpeg_7,
   gst_all_1,
   fuse3,
   libxtst,
   libaom,
+  libgit2,
   libopus,
   libpulseaudio,
+  libsodium,
   libva,
   libvdpau,
   libvpx,
@@ -32,6 +35,8 @@
   addDriverRunpath,
   perl,
   openssl,
+  zlib,
+  zstd,
 }:
 let
   flutterRustBridge = rustPlatform.buildRustPackage rec {
@@ -119,14 +124,17 @@ flutter329.buildFlutterApplication rec {
   ];
 
   buildInputs = [
+    dbus
     ffmpeg_7
     fuse3
     gst_all_1.gst-plugins-base
     gst_all_1.gstreamer
     libxtst
     libaom
+    libgit2
     libopus
     libpulseaudio
+    libsodium
     libva
     libvdpau
     libvpx
@@ -136,6 +144,8 @@ flutter329.buildFlutterApplication rec {
     pam
     xdotool
     openssl
+    zlib
+    zstd
   ];
 
   prePatch = ''
