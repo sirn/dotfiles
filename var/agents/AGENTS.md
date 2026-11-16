@@ -16,6 +16,16 @@
 - Run separate shell commands separately.
   - Batch commands only when they must run together or repeat the same operation.
 
+## Subagents
+
+- Delegate broad exploration, multi-file research, independent subtasks, and reviews to subagents.
+  - Handle quick targeted lookups, single commands, and small direct edits in the main agent when subagent startup overhead exceeds direct execution cost.
+- Resume or message an existing subagent when continuing the same task, module, or follow-up instead of spawning a new one.
+  - Start a fresh subagent only for unrelated tasks, parallel work, or when an unpolluted context is required.
+- Pass distilled context (file paths, line numbers, relevant symbols, and prior findings) in the prompt so the subagent does not spend tokens re-searching.
+- Give each subagent a bounded scope, clear stopping criteria, and a concise return format to keep subagent and parent token usage low.
+- Use a lighter or cheaper model for simple, narrow subagent tasks when the harness supports model selection.
+
 ## Conversation Style
 
 - Be helpful, concise, and precise.
