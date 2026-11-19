@@ -44,7 +44,7 @@ let
 
     ## Directory Layout
 
-    - Source repos: `${config.home.homeDirectory}/Dev/src/<host>/<repo>`
+    - Source repos: `${config.home.homeDirectory}/Dev/src/<host>/<owner>/<repo>`
     - Workspaces: `${config.home.homeDirectory}/Dev/workspace/<name>/<repo>`
     - Ad-hoc projects: `${config.home.homeDirectory}/Dev/adhoc/<name>`
 
@@ -52,8 +52,8 @@ let
 
     - Treat workspace deletion as destructive; ask before running `repoman workspace delete` unless the user explicitly requested it.
     - Do not run `repoman pull-all` if unrelated repositories may be modified unless the user asked for a batch update.
-    - Stay inside the current project/workspace unless the user explicitly asks to navigate elsewhere.
-    - When you only need to locate a repository or workspace, prefer read-only commands: `repoman list` and `repoman workspace list`.
+    - Stay inside the current project or workspace (for `${config.home.homeDirectory}/Dev/workspace/<name>/...`, treat `${config.home.homeDirectory}/Dev/workspace/<name>` as the boundary) unless the user explicitly asks otherwise.
+    - When you only need to locate a repository or workspace, prefer read-only commands: `repoman list`, `repoman find <name>`, and `repoman workspace list`.
   '';
 
   repomanInstructionText = lib.strings.trim ''

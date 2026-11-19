@@ -6,6 +6,8 @@ description: Reference for Forgejo CLI (fj). ALWAYS read BEFORE using fj command
 
 ## Forgejo CLI Reference (fj)
 
+Run `fj <subcommand> --help` for full subcommand syntax and flags.
+
 **IMPORTANT**: Read operations run without prompting. Write operations (creating, editing, commenting, closing, or merging issues/PRs/releases) require explicit user request and confirmation. Never run `fj repo delete`.
 
 The `forgejo-cli` package provides the `fj` binary.

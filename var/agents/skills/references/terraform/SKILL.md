@@ -6,7 +6,7 @@ description: Local Terraform CLI safety and workflow guardrails (plan-then-confi
 
 ## Terraform CLI Safety & Workflow
 
-Use the HashiCorp skills for authoring and refactoring (`terraform-style-guide`, `refactor-module`, `terraform-test`, `terraform-policy`, `terraform-search-import`, `terraform-stacks`). Apply these local operational rules whenever running `terraform` commands:
+Run `terraform <subcommand> -help` for exact CLI syntax and flags. Use the HashiCorp skills for authoring and refactoring (`terraform-style-guide`, `refactor-module`, `terraform-test`, `terraform-policy`, `terraform-search-import`, `terraform-stacks`). Apply these local operational rules whenever running `terraform` commands:
 
 - **Plan-confirm-apply**: Run `terraform plan`, summarize all proposed creates, updates, and destroys, and get explicit user confirmation before running `terraform apply` or `terraform destroy`.
 - **Restrict `-auto-approve`**: Never pass `-auto-approve` unless the user explicitly pre-approved applying that change.
