@@ -13,9 +13,11 @@
     ../programs/codex
     ../programs/context7-cli.nix
     ../programs/exa-cli.nix
+    ../programs/impeccable.nix
     ../programs/lsp-cli.nix
     ../programs/lofi
     ../programs/mcp.nix
+    ../programs/modern-web-guidance.nix
     ../programs/pi-coding-agent
     ../programs/terminal-use.nix
     ../programs/tuicr.nix

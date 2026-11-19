@@ -11,7 +11,28 @@ in
     coding = ../../../var/agents/skills/coding;
     lifecycle = ../../../var/agents/skills/lifecycle;
     references = ../../../var/agents/skills/references;
+
+    hashicorp-terraform = {
+      path = "${pkgs.local.skill-hashicorp}/skills/terraform";
+      skills = [
+        "refactor-module"
+        "terraform-policy"
+        "terraform-search-import"
+        "terraform-stacks"
+        "terraform-style-guide"
+        "terraform-test"
+      ];
+    };
+
     simple-english = "${pkgs.local.skill-simple-english}/skills";
+
+    superpowers = {
+      path = "${pkgs.local.skill-superpowers}/skills";
+      skills = [
+        "systematic-debugging"
+        "test-driven-development"
+      ];
+    };
   };
 
   agents.instructionText = lib.mkOrder 1200 (

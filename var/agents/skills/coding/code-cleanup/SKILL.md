@@ -12,7 +12,7 @@ Apply small, behavior-preserving fixes — surface hygiene and complexity/redund
 - If analysis is requested without edits, report findings and proposed fixes instead of modifying files.
 - Keep changesets easy to review: small, targeted changes with clear verification.
 - For larger structural refactors (extraction/rename/movement across modules), use `code-plan-refactor`; this skill applies only small in-place fixes.
-- For runtime/production errors, use `code-debug`; this skill addresses code quality, not failures.
+- For runtime/production errors, use `systematic-debugging`; this skill addresses code quality, not failures.
 
 ## Modes
 

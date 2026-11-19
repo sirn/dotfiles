@@ -100,4 +100,4 @@ Report to the user:
 - Avoid watch modes; use bounded timeouts.
 - Prefer the most specific command covering the requested scope.
 - If a fix fails twice, stop, analyze the root cause, and ask for guidance.
-- For runtime/production errors not surfaced by a check command, use `code-debug`.
+- For runtime/production errors not surfaced by a check command, use `systematic-debugging`.

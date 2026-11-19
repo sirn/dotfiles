@@ -19,9 +19,13 @@ let
 
     fizzterm = (callPackage ./by-name/fizzterm/package.nix { });
 
+    impeccable = (callPackage ./by-name/impeccable/package.nix { });
+
     powerband = (callPackage ./by-name/powerband/package.nix { });
 
     pi-vcc = (callPackage ./by-name/pi-vcc/package.nix { });
+
+    modern-web-guidance = (callPackage ./by-name/modern-web-guidance/package.nix { });
 
     node-textfile-collector-scripts = (
       callPackage ./by-name/node-textfile-collector-scripts/package.nix { }
@@ -29,7 +33,11 @@ let
 
     repoman = (callPackage ./by-name/repoman/package.nix { });
 
+    skill-hashicorp = (callPackage ./by-name/skill-hashicorp/package.nix { });
+
     skill-simple-english = (callPackage ./by-name/skill-simple-english/package.nix { });
+
+    skill-superpowers = (callPackage ./by-name/skill-superpowers/package.nix { });
 
     skill-tuicr = (callPackage ./by-name/skill-tuicr/package.nix { });
 
