@@ -29,6 +29,8 @@ let
 
     repoman = (callPackage ./by-name/repoman/package.nix { });
 
+    skill-simple-english = (callPackage ./by-name/skill-simple-english/package.nix { });
+
     skill-tuicr = (callPackage ./by-name/skill-tuicr/package.nix { });
 
     tincan = (callPackage ./by-name/tincan/package.nix { });

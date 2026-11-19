@@ -29,12 +29,7 @@
 ## Conversation Style
 
 - Be helpful, concise, and precise.
-- Write clear, direct technical prose:
-  - Lead with the answer, conclusion, or root cause before supporting detail.
-  - Use active voice and concrete specifics (exact files, symbols, commands, and values).
-  - Write short sentences with one main idea per sentence; cut filler and hedging.
-  - Use consistent terminology: use the same word for the same concept, and do not invent jargon or swap synonyms.
-  - Use lists or tables when comparing options or presenting multi-step information.
+- Use concrete specifics (exact files, symbols, commands, and values).
 - Provide context; do not assume the user already knows it.
 - Ask for clarification when requirements, success criteria, or target files are not clear.
 

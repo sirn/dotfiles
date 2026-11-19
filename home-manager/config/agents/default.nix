@@ -1,3 +1,5 @@
+{ lib, ... }:
+
 {
   imports = [
     ./domains.nix
@@ -19,10 +21,12 @@
     ../programs/tuicr.nix
   ];
 
-  agents.instructionText = (builtins.readFile ../../../var/agents/AGENTS.md) + ''
-
-    ## Additional tools
-  '';
+  # Keep Additional tools just before tool-level lib.mkAfter (1500) bullets so
+  # other instruction sections can insert between AGENTS.md (1000) and tools.
+  agents.instructionText = lib.mkMerge [
+    (lib.strings.trim (builtins.readFile ../../../var/agents/AGENTS.md))
+    (lib.mkOrder 1400 "\n## Additional tools\n")
+  ];
 
   agents.requiredEnvs = [
     "ASANA_PAT" # var/skills/apis/asana
