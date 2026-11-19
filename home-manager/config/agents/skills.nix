@@ -26,13 +26,7 @@ in
 
     simple-english = "${pkgs.local.skill-simple-english}/skills";
 
-    superpowers = {
-      path = "${pkgs.local.skill-superpowers}/skills";
-      skills = [
-        "systematic-debugging"
-        "test-driven-development"
-      ];
-    };
+    superpowers = "${pkgs.local.skill-superpowers}/skills";
   };
 
   agents.instructionText = lib.mkOrder 1200 (
