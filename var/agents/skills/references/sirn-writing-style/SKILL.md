@@ -11,7 +11,7 @@ Pair this skill with `simple-english`. While `simple-english` governs active voi
 ## Audience & Definitions
 
 - **Do not gloss standard engineering terms**: For developer docs, READMEs, ADRs, and technical notes, treat everyday computing terms (`TCP handshake`, `prepared statement`, `cgroup`, `DMA`, `JSON Lines`) as known. Define only project-specific concepts, domain-external terms, or non-obvious acronyms at first use.
-- **Motivate rules with the underlying constraint**: State *why* a default or recommendation exists before or alongside the rule (for example, why CFS quotas add tail latency even on idle hosts, or why scaling a cache on memory usage backfires).
+- **Motivate rules with the underlying constraint**: State _why_ a default or recommendation exists before or alongside the rule (for example, why CFS quotas add tail latency even on idle hosts, or why scaling a cache on memory usage backfires).
 
 ## Paragraph Shape
 
@@ -31,18 +31,14 @@ Every sentence after the first must either start from a concept introduced at th
 | **Contrast & boundary** | `In contrast, ...` / `By contrast, ...` / `Otherwise, ...` / `Unlike <X>, <Y> ...` |
 | **Sequence & lifecycle** | `At startup, ...` -> `If ..., ...` -> `Once <step> succeeds, ...` |
 
-- **Bridge every sentence split**: When splitting a >25-word compound sentence to stay within the `simple-english` word cap, replace `, while` or `, so` with a period *plus* an explicit bridge (`A. In contrast, B.` or `A. This lets B.`), never a bare period (`A. B.`).
+- **Bridge every sentence split**: When splitting a >25-word compound sentence to stay within the `simple-english` word cap, replace `, while` or `, so` with a period _plus_ an explicit bridge (`A. In contrast, B.` or `A. This lets B.`), never a bare period (`A. B.`).
 - **Bridge across paragraphs**: Open a new paragraph by anchoring it to the preceding paragraph (`To avoid those handshake spikes, PgBouncer...`, `Unlike hard compaction, [compaction.auto] waits...`, `Alongside text caps, [image] bounds...`).
 
 ### Before vs. After
 
 Before (unjoined `simple-english` sentences on separate lines):
 
-> Lofi spawns Claude Code in streaming print mode connected to `lofi mcp serve`.
-> Built-in Claude Code tools, slash commands, hooks, and local Claude configuration are disabled for the child.
-> Enterprise managed Claude policies still apply.
-> The child `init` frame must report only the `exec` tool and only the Lofi MCP server.
-> Any other reported tool or server aborts the turn with an error naming it.
+> Lofi spawns Claude Code in streaming print mode connected to `lofi mcp serve`. Built-in Claude Code tools, slash commands, hooks, and local Claude configuration are disabled for the child. Enterprise managed Claude policies still apply. The child `init` frame must report only the `exec` tool and only the Lofi MCP server. Any other reported tool or server aborts the turn with an error naming it.
 
 After (topic-chained paragraph):
 
