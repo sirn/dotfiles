@@ -1,80 +1,119 @@
 ---
 name: code-commit
-description: Commit current changes using jj. Analyzes changes, suggests commit messages following repository conventions, splits when needed, and creates commits.
+description: Use when committing working-copy changes, writing commit messages, or separating unrelated edits into commits (prefers jj, supports git).
 ---
 
-Commit current changes using Jujutsu (jj).
+Commit working-copy changes directly, preferring Jujutsu (`jj`) with `git` fallback.
+
+Most commits belong on a single line. Adding a body to routine commits buries the rare bodies that carry real rationale, so a body exists only when the diff cannot explain itself.
 
 ## Prerequisites
 
-- Read the `jujutsu` skill before running any `jj` command and follow its Best Practices for local commit autonomy, revision references, logical grouping, and message style.
+- Detect the VCS from the repository root: use `jj` when `jj root` succeeds; otherwise use `git`.
+- When using `jj`, read the `jujutsu` skill first and follow its Autonomy & Safety and Non-Interactive Agent Rules.
+- Commit directly without asking for message approval unless a guardrail below requires confirmation.
 
-## Commit Message Style
+## Commit Message Contract
 
-Commit messages provide a high-level overview of the change, NOT a detailed breakdown. They capture the _Why_ (reason/motivation), distinct from the _How_ (code) and _What_ (test code).
+### Format
 
-- **Prefer single-line messages**: Use a single subject line when the subject is sufficient to explain the change.
-- **Strict body limit**: If a description body is necessary (to explain why or capture non-obvious context), keep the body within 3 lines maximum. Do not exceed 3 lines unless there is a strong reason; justify this reason to the user before creating the commit.
-- **Focus on intent**: Explain the high-level why and the affected subsystem; do not enumerate file-level changes.
-- **Do not enumerate changes**: Do not include file lists, change tallies, or bullet lists of modified files; the diff already shows these.
-- **Keep it concise**: Reader understands the purpose at a glance without re-reading the diff.
-- Follow the `jujutsu` reference for line length (<= 72 chars per line), mood, and style conventions.
+- **Default (single line)**: `<scope>: <imperative summary>` (<= 72 characters; omit `<scope>:` if the repository does not use scopes).
+- **With body (exception only)**:
+
+  ```text
+  <subject line, <= 72 chars>
+
+  <1 to 3 lines, <= 72 chars each>
+  ```
+
+### When a Body Is Allowed
+
+Include a body only when at least one of these is true and is not obvious from the diff:
+
+- A non-obvious constraint, upstream quirk, or bug root cause drove the change.
+- A reasonable alternative was rejected and future readers need to know why.
+- The change requires a breaking-change note, migration step, or issue reference per repository rules.
+
+If none of these apply, stop after the subject line. If a body needs more than 3 lines, stop and justify the extra length to the user before committing.
 
 ### Examples
 
-- **Bad (enumerating files and changes)**:
+- **Routine multi-file feature (single line, no body)**: `api: add per-IP rate limiting to public routes`
+- **Non-obvious constraint (subject + short body)**:
 
+  ```text
+  cache: reduce token TTL from 60s to 5s
+
+  Upstream API v2.3 invalidates tokens silently after 10s, causing 401
+  bursts under the previous TTL.
   ```
-  update flake.nix, profiles/terra.nix, and nixos/system.nix to bump package versions and add wireguard module
+
+- **Bad (bloated changelog restating the diff)**:
+
+  ```text
+  profiles/terra: enable wireguard support and update packages
 
   - Bumped lofi to v0.2.2
-  - Added wireguard configuration module in nixos/system.nix
+  - Added wireguard configuration in nixos/system.nix
   - Updated terra profile to include wireguard
-  - Modified flake inputs
   ```
 
-- **Good (single-line)**: `profiles/terra: enable wireguard support and update packages`
-- **Good (short body, within 3 lines)**:
-
-  ```
-  profiles/terra: enable wireguard support
-
-  Wireguard replaces the previous OpenVPN tunnel for peer-to-peer routing.
-  ```
-
-- **Bad (overly detailed)**: `fix typo in home-manager/config/git.nix line 42 and rename git.nix to git-config.nix`
-- **Good**: `hm/git: correct configuration typos and rename module`
+- **Good (split by logical change, single line each)**:
+  - `nixos/wireguard: add peer-to-peer tunnel config`
+  - `profiles/terra: enable wireguard`
+  - `pkgs/lofi: update to 0.2.2`
 
 ## Process
 
-### Step 1 - Analyze Changes
+### Step 1 - Inspect Working Copy
 
-- `jj diff -s` to inspect changed files; `jj diff` for the full diff.
-- Focus on any user-specified files or paths.
+- `jj`: run `jj status` and `jj diff -s`, then `jj diff` for details.
+- `git`: run `git status --short` and `git diff --stat` (plus `git diff --cached --stat`), then `git diff`.
+- If there are no changes to commit, stop and report that the working copy is clean.
+- Check for untracked, temporary, or sensitive files (`.env`, secrets, debug dumps). Because `jj` snapshots all non-ignored files automatically, exclude stray files by passing explicit paths to `jj commit`.
+- In `jj`, if `@` already has a description (`jj log -r @ --no-graph -T description`), preserve any user-written intent or ticket references.
 
-### Step 2 - Analyze Existing Convention
+### Step 2 - Extract Repository Conventions
 
-- `jj log -r ::@ -n 20 --no-graph -T 'description ++ "\n---\n"'` to extract conventions:
-  - Identify the scope prefix pattern (path-based like `<dir>/<name>:`, module, or component names).
-  - Determine if conventional prefixes (`feat:`, `fix:`, `chore:`) are used; omit them if absent from history.
-  - Note mood and separator conventions.
+Check both sources in priority order:
 
-### Step 3 - Execute Commit
+1. **Documented repository rules (highest priority)**: Check root instruction files (`AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `GEMINI.md`) for explicit scope prefixes, formatting, or commit guidelines.
+2. **Recent history**:
+   - `jj`: `jj log -r '::@ ~ @ ~ root()' -n 20 --no-graph -T 'description ++ "\n---\n"'`
+   - `git`: `git log -n 20 --format='%B---'`
 
-- Derive the message primarily from the diff, not conversation context, unless context explains an unobvious change. Follow **Commit Message Style** (prefer single-line; body within 3 lines maximum; justify to the user beforehand if exceeding 3 lines).
-- If changes are logically distinct, split them (one message per split; do NOT use interactive `jj split`).
-- Refer to the `jujutsu` reference for exact `jj commit` / `jj split` syntax and the commit+advance workflow.
-- `jj commit` leaves the new working-copy `@` ready for new changes.
+Match the repository's scope prefix pattern (path-based, subsystem, brace scopes, or none), capitalization, mood, and separator style. Include type prefixes (such as `feat:` or `fix:`) only when documented or present in recent history.
 
-### Step 4 - Verify Line Lengths
+### Step 3 - Group and Commit
 
-- Run the `check-commit-msg.sh` script in this skill directory:
-  - Reference it by absolute path; do NOT `cd` into the skill directory (`jj` must run in the repo working directory).
-  - `/path/to/check-commit-msg.sh @-` (or pass each split revision `REV`; omitting `REV` checks `@`, which is empty after `jj commit`).
-  - `/path/to/check-commit-msg.sh -h` for all options.
-- If any line exceeds the limit (per `jujutsu`), fix with `jj describe <rev> -m "<fixed-message>"`.
+- Derive messages from the diff first; use conversation context only for non-obvious rationale that qualifies for a body.
+- Commit each logically distinct change separately:
+  - `jj` (all changes): `jj commit -m "<msg>"`
+  - `jj` (subset or split): `jj commit -m "<msg>" -- <paths>...` repeated once per logical group. Do not run `jj split` on uncommitted `@` changes; `jj split` rewrites an existing revision and requires user confirmation per `jujutsu`.
+  - `git`: commit already-staged changes, or stage each logical group with `git add -- <paths>...` and run `git commit -m "<msg>"`.
+- Never invoke commands that open an interactive editor.
+
+### Step 4 - Validate Commit Messages
+
+Run `check-commit-msg.sh` from the repository root through `bash` (never `cd` into the skill directory):
+
+- `jj`: `bash <skill-dir>/check-commit-msg.sh @-` (or pass all created revisions, e.g. `@-- @-` or `'@--::@-'`).
+- `git`: `bash <skill-dir>/check-commit-msg.sh HEAD` (when creating multiple `git` commits, validate `HEAD` after each commit so `git commit --amend` remains safe).
+
+The script verifies non-empty messages, <= 72 characters per line, and a blank second line when a body is present. If validation fails, fix and re-run until it exits `0`:
+
+- `jj`: `jj describe <rev> -m "<fixed-message>"`
+- `git`: `git commit --amend -m "<fixed-message>"` (for the latest local commit only)
 
 ### Step 5 - Report
 
-- Display resulting commit(s) with `jj log -r @- -n 1` (or more if split).
-- For each commit, report its message and, if split, the reasoning and scope.
+- Display created commit(s) with `jj log -r '<revs>'` (e.g. `jj log -r @- -n 1`) or `git log -n <count> --oneline`.
+- Report each commit message, the grouping rationale if split, and any stray files intentionally left uncommitted.
+
+## Guardrails
+
+- Never push, create unsolicited bookmarks/branches, or rewrite immutable or shared history.
+- Never commit secrets, credentials, `.env` files, or debug/temporary artifacts.
+- Never run `jj split` without explicit user confirmation; use path-scoped `jj commit` for separating working-copy changes.
+- Never write a commit body to summarize the diff or list files; stop and ask before exceeding 3 body lines.
+- Never skip `check-commit-msg.sh` after committing.
