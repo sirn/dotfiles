@@ -6,7 +6,7 @@ This flake is consumed as an input by the private configuration repository, whic
 
 ## Project Structure
 
-- `flake.nix`: Exposes host and MicroVM builders (`lib.*`), base `homeConfigurations` and `nixosConfigurations` for local testing, local `packages`, and `apps.treefmt`.
+- `flake.nix`: Exposes host and MicroVM builders (`lib.*`), base `homeConfigurations` and `nixosConfigurations` for local testing, `packages` for the local and `llm-agents` package sets, and `apps.treefmt`.
 - `profiles/<hostname>.nix`: Base machine profiles (`{ nixos = ...; home = ...; }` on NixOS, `{ home = ...; }` on Darwin).
 - `lib/`: Flake builders (`mkNixOS`, `mkHomeManagerLinux`, `mkHomeManagerDarwin`, `mkMicroVM`) and shared helpers (`caches.nix`).
 - `home-manager/`: Home Manager configuration and modules.

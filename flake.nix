@@ -198,9 +198,10 @@
         }
       );
 
-      # Expose all local packages from the overlay as derivations so their
-      # passthru attrs (npmDeps, cargoDeps, goModules) are reachable as
-      # .#<pkg>.<attr> by the pkgs/by-name/*/update.sh scripts.
+      # Expose the overlay packages as derivations so their passthru attrs
+      # (npmDeps, cargoDeps, goModules) are reachable as .#<pkg>.<attr> by the
+      # pkgs/by-name/*/update.sh scripts. The private configuration also seeds
+      # this output into its binary cache.
       packages = eachSystem (
         system:
         let
@@ -210,7 +211,7 @@
             inherit overlays;
           };
         in
-        nixpkgs.lib.filterAttrs (_: v: nixpkgs.lib.isDerivation v) pkgs.local
+        nixpkgs.lib.filterAttrs (_: v: nixpkgs.lib.isDerivation v) (pkgs.local // pkgs.llm-agents)
       );
     };
 }
