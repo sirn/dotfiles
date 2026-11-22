@@ -1,12 +1,12 @@
 ---
 name: sirn-writing-style
 type: reference
-description: Use when writing, rewriting, or reviewing documentation, READMEs, guides, ADRs, blog posts, or technical notes, alongside simple-english, or when prose reads as choppy, staccato, or disconnected between sentences.
+description: Use when writing, rewriting, or reviewing documentation, READMEs, guides, API docs, ADRs, blog posts, technical notes, docstrings, or code and configuration comments, alongside simple-english, or when prose reads as choppy, staccato, or disconnected between sentences.
 ---
 
 # Writing Style
 
-Pair this skill with `simple-english`. While `simple-english` governs active voice, simple tenses, plain words, no AI slop, no em-dashes, and the 25-word descriptive / 20-word procedural sentence cap, this skill governs how sentences join into cohesive paragraphs and how technical documents are structured.
+Pair this skill with `simple-english` for repository and published technical writing (docs, READMEs, API references, guides, ADRs, notes, docstrings, and code comments). For conversational replies, forum threads, PR reviews, chat, and email, use `sirn-communication-style` instead. While `simple-english` governs active voice, simple tenses, plain words, no AI slop, no em-dashes, and the 25-word descriptive / 20-word procedural sentence cap, this skill governs how sentences join into cohesive paragraphs, how technical documents are structured, and how docstrings and comments record contracts and constraints.
 
 ## Audience & Definitions
 
@@ -16,7 +16,7 @@ Pair this skill with `simple-english`. While `simple-english` governs active voi
 ## Paragraph Shape
 
 - **Flowing paragraph lines**: Write all sentences of a paragraph on one standard Markdown line separated from other paragraphs by a blank line. Never use one-sentence-per-line semantic linebreaks in prose, because they encourage isolated bullet-like statements.
-- **Complete 3–5 sentence arcs**: Build each paragraph around one topic arc (baseline or mechanism, consequence or concrete example, and resolution or edge case). Avoid 1–2 sentence stub paragraphs and avoid opening sections with tautological dictionary definitions (`Connection pooling reuses database connections.`).
+- **Complete 3–5 sentence arcs in prose**: Build each explanatory paragraph around one topic arc (baseline or mechanism, consequence or concrete example, and resolution or edge case). Avoid 1–2 sentence stub paragraphs in conceptual prose and avoid opening sections with tautological dictionary definitions (`Connection pooling reuses database connections.`). Keep setup step lead-ins, convention rules, API endpoint summaries, and docstrings concise (1–2 sentences) rather than padding them into multi-sentence paragraphs.
 
 ## Joining Sentences (Old-to-New Chaining)
 
@@ -46,7 +46,17 @@ After (topic-chained paragraph):
 
 ## Document Shapes & Mechanics
 
-- **Reference docs, READMEs, and articles**: Lead each section with a cohesive paragraph explaining the mechanism and trade-offs, then present multi-field reference details in a Markdown table or language-tagged code block (`sh`, `toml`, `json`, `go`, `rust`). Introduce every code block with a goal-first sentence ending in a colon (`To make all pushed commits immutable, edit .jj/repo/config.toml and add the following:`).
+- **READMEs and setup guides**: Open with one direct sentence stating what the project does (no hype or mission pitch), and state explicit non-goals or maturity upfront (such as a `Status` table for incomplete support). Separate runtime and build-time requirements, use aligned directory trees with concrete example mappings when explaining file layouts, walk top-down from entrypoint to one end-to-end example, and keep setup sequences command-first with short goal-led lead-ins ending in a colon (`Clone the repository:`, `Configure Nix in ~/.config/nix/nix.conf:`) directly above fenced blocks (`sh`, `toml`, `ini`, `nix`).
+- **API and configuration references**: Lead each endpoint or section with 1–2 sentences stating what it does, its default behavior, and non-obvious async or semantic caveats. Present parameters, response fields, and env vars in a `Field | Type | Description` table (or compact `-` list) with explicit `Required` markers, defaults, mutual exclusions, conditional availability (`Only present when ...`), and a concrete example value per field. Call out semantic traps and anti-patterns directly beside the field or method (for example, when `status: "done"` indicates worker completion rather than domain success, or why calling a sync method on every request backfires).
+- **Convention guides and articles**: Lead conceptual sections with a cohesive paragraph explaining the mechanism and trade-offs, then present multi-field details in a Markdown table or language-tagged code block (`sh`, `toml`, `json`, `go`, `rust`). For convention guides, state each rule concisely, follow immediately with a minimal concrete snippet, and record the underlying constraint beside the rule.
 - **Working, ops, and debugging notes**: Use concise `-` bullet lists with indented sub-bullets under direct headings (`Symptom`, `Root cause`, `Fix`, `Result`, `Gotchas`), keeping cause-and-effect chains explicit.
-- **Oxford comma**: Always use the serial comma (`a, b, and c`) so list groupings are unambiguous.
+- **Parentheses, arrows, and serial commas**: Use parentheses `(...)` for compact qualifiers, versions, and examples (`(e.g. ...)`, `(i.e. ...)`) rather than em-dashes (`—`), `->` for transitions or replacements, and the Oxford comma (`a, b, and c`) so list groupings are unambiguous.
 - **Concrete numbers**: Ground latency, capacity, memory, and timeout explanations in concrete numbers and units whenever known (`60-100ns` vs `67.2ns` frame budget, `10,000,000 objects × 1 KB = 10 GB`).
+
+## Docstrings & Code Comments
+
+- **Terse docstrings by contract and contrast**: Open with a direct 1-sentence summary (`Returns True if ...`, `Works like X, except ...`) without boilerplate (`This method ...`) or repeating defaults already visible in the signature. State explicit boolean, fallback, and error contracts (`Returns False if not listed or no providers are configured`; `Raises ValueError when confidence is below 0.5`), and add parameter lines only when units, types, or semantics are non-obvious.
+- **Comment constraints, not mechanics**: Record only non-obvious platform quirks, load or ordering dependencies, ABI or version mismatches, rejected alternatives, and candidly flagged hacks (`Hack: ...`). When documenting a non-obvious string or wire format, include one concrete example broken down by segment. Leave self-evident settings and straightforward code uncommented.
+- **Cite primary sources inline**: Place issue URLs, PRs, manpages, or source references directly above workarounds and adapted code (`BUG: <issue-url>`, `Workaround for <issue-url>`, `See <flag> in <tool>(<section>)`, `Ref: <path> (<symbol>)`, or a pinned upstream commit URL).
+- **Compress cause and effect**: Keep inline comments to 1–3 tight lines using `because`, `since`, `otherwise`, `;`, or `(...)` qualifiers (`# Non-Linux host; assume no systemd`, `# Load before TLS init; otherwise custom CAs are ignored`).
+- **Plain labels, no decorative banners**: Start standalone scripts with a one-line purpose comment (`# Wrapper for running ...`) and group long configs with short 1–3 word section labels (`## Utilities`, `# Network rules`), without ASCII separator bars.
