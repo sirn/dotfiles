@@ -36,8 +36,9 @@
     };
 
     systemd.network.networks = {
-      "30-eno2" = {
-        matchConfig.Name = "eno2";
+      # TODO: switch back to eno2 when Supermicro board is back online
+      "30-enp110s0" = {
+        matchConfig.Name = "enp110s0";
         networkConfig.Bridge = "br0";
         linkConfig.RequiredForOnline = "enslaved";
       };
