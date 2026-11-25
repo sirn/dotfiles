@@ -4,21 +4,22 @@ This is a Nix/Home Manager dotfiles repository consumed as a flake input by the 
 
 ## Project Structure
 
-- `profiles/<hostname>.nix`: Base machine profiles. NixOS hosts define `{ nixos = { ... }; home = { ... }; }`; Darwin hosts define `{ home = { ... }; }`.
-- `lib/`: Flake builders (`mkNixOS`, `mkHomeManagerLinux`, `mkHomeManagerDarwin`, `mkMicroVM`) and shared helpers (`caches.nix`).
+- `lib/`: Flake builders (`mkNixOS`, `mkHomeManagerLinux`, `mkHomeManagerDarwin`, `mkMicroVM`) and shared helpers (`caches.nix`, `modules.nix`).
 - `home-manager/`: Home Manager config and modules (`config/`, `modules/`).
 - `nixos/`: NixOS config and modules (`config/`, `modules/`).
 - `pkgs/`: Custom packages (`pkgs/by-name/<name>/package.nix`) and overlays.
 
-## Profiles
+## Modules
 
-- NixOS: `polaris`, `system76`, `terra`, `ws` (MicroVM base profile).
-- macOS/Home Manager only: `theia` (`aarch64-darwin`).
+- Machine profiles live in the private configuration repository (`/etc/nixos`), which imports this flake.
+- `lib.modules` exposes every shared module as an attrset, e.g. `dotfiles.lib.modules.nixos.config.roles.laptop`.
+- The builders pass `lib.modules.nixos.config` and `lib.modules.homeManager.config` to the module systems as the `nixosConfig` and `hmConfig` special arguments.
+- Generic `homeConfigurations.stub` and `nixosConfigurations.stub` outputs exist for local evaluation.
 
 ## Development
 
-- Base profiles are defined in `profiles/<hostname>.nix` and exposed via `lib.*` builders (and `nixosConfigurations` / `homeConfigurations` for local testing) in `flake.nix`.
-- Live machine deployments happen from the private entrypoint repository (`/etc/nixos` on NixOS, `~/.dotfiles` on Darwin), which consumes this flake.
+- This flake is a module library. The private entrypoint repository (`/etc/nixos` on NixOS, `~/.dotfiles` on Darwin) owns the profiles and passes them through `extraModules` and `extraHomeModules`.
+- Live machine deployments happen from that private repository.
 - Verify NixOS/Home Manager options against official docs when changing Nix config.
 - Do not run `home-manager switch` on NixOS; Home Manager is managed by the system config there.
 - Use `nix run nixpkgs#python3 -- ...` for ad-hoc Python.
@@ -28,19 +29,20 @@ This is a Nix/Home Manager dotfiles repository consumed as a flake input by the 
 ## Quick Reference
 
 - Format: `nix run .#treefmt`.
-- Parse profile: `nix-instantiate --parse profiles/<hostname>.nix`.
+- Parse module: `nix-instantiate --parse <path>.nix`.
+- Print module path: `nix eval --raw .#lib.modules.nixos.config.roles.laptop`.
 - Build flake attr: `nix build --no-link .#<attr>`.
 - Build a local package: `nix build --no-link .#<name>` (e.g. `nix build --no-link .#tiler`).
 - Check flake: `nix flake check`.
-- Test base NixOS profile: `nix build --no-link .#nixosConfigurations.<hostname>.config.system.build.toplevel`.
-- Test base Home Manager profile: `nix build --no-link .#homeConfigurations.<hostname>.activationPackage`.
+- Test stub NixOS: `nix build --no-link .#nixosConfigurations.stub.config.system.build.toplevel`.
+- Test stub Home Manager: `nix build --no-link .#homeConfigurations.stub.activationPackage`.
 - Check OS: `[ -f /etc/NIXOS ] && echo NixOS || echo Not NixOS`.
 
 ## Commit Messages
 
 Keep messages concise and use these scope prefixes:
 
-- `profiles/<hostname>` for `profiles/<hostname>.nix`, e.g. `profiles/terra: ...`.
+- `lib/<name>` for files under `lib/`, e.g. `lib/modules: ...`.
 - `nixos/<component>` for files under `nixos/config` or `nixos/modules`. Skip `modules/programs`, e.g. `nixos/system: ...`
 - `hm/<component>` for files under `home-manager/config` or `home-manager/modules`, e.g. `hm/pi-coding-agent: ...`
 - `pkgs/<package>` for packages under `pkgs/by-name/<package>`, e.g. `pkgs/tiler: ...`.

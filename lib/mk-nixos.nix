@@ -5,11 +5,11 @@
   nixpkgsConfig,
   stateVersion,
   mkMicroVM,
-  mkHomeManagerModules,
+  homeManagerModules,
   mkHomeManagerBaseModule,
+  modules,
 }:
 {
-  hostname,
   username ? "sirn",
   system ? "x86_64-linux",
   homeDirectory ? "/home/${username}",
@@ -17,14 +17,15 @@
   extraHomeModules ? [ ],
 }:
 let
-  profile = import ../profiles/${hostname}.nix;
+  nixosConfig = modules.nixos.config;
+  hmConfig = modules.homeManager.config;
 in
 nixpkgs.lib.nixosSystem {
   inherit system;
 
   specialArgs = {
     inherit (inputs) nixos-hardware microvm nixvirt;
-    inherit mkMicroVM;
+    inherit mkMicroVM nixosConfig;
   };
 
   modules = [
@@ -41,7 +42,6 @@ nixpkgs.lib.nixosSystem {
 
     # Configurations
     ../nixos/modules
-    profile.nixos
 
     # Home Manager
     inputs.home-manager.nixosModules.home-manager
@@ -57,10 +57,11 @@ nixpkgs.lib.nixosSystem {
         home-manager.useGlobalPkgs = false;
         home-manager.useUserPackages = true;
         home-manager.backupCommand = lib.getExe hm-backup;
+        home-manager.extraSpecialArgs = { inherit hmConfig; };
         home-manager.users.${username}.imports = [
           (mkHomeManagerBaseModule { inherit username homeDirectory; })
         ]
-        ++ (mkHomeManagerModules hostname)
+        ++ homeManagerModules
         ++ extraHomeModules;
       }
     )

@@ -161,6 +161,7 @@
     {
       lib = {
         inherit (builders)
+          modules
           mkNixOS
           mkHomeManagerLinux
           mkHomeManagerDarwin
@@ -168,19 +169,32 @@
           ;
       };
 
+      # Generic stubs for local evaluation. Machine profiles live in the
+      # private repository, which passes them as extra modules.
       homeConfigurations = {
-        polaris = builders.mkHomeManagerLinux { hostname = "polaris"; };
-        system76 = builders.mkHomeManagerLinux { hostname = "system76"; };
-        terra = builders.mkHomeManagerLinux { hostname = "terra"; };
-        theia = builders.mkHomeManagerDarwin { hostname = "theia"; };
-        ws = builders.mkHomeManagerLinux { hostname = "ws"; };
+        stub = builders.mkHomeManagerLinux { extraModules = [ ./home-manager/config/common.nix ]; };
+        stub-darwin = builders.mkHomeManagerDarwin {
+          extraModules = [
+            ./home-manager/config/common.nix
+            ./home-manager/config/common-darwin.nix
+          ];
+        };
       };
 
       nixosConfigurations = {
-        polaris = builders.mkNixOS { hostname = "polaris"; };
-        system76 = builders.mkNixOS { hostname = "system76"; };
-        terra = builders.mkNixOS { hostname = "terra"; };
-        ws = builders.mkNixOS { hostname = "ws"; };
+        stub = builders.mkNixOS {
+          extraModules = [
+            ./nixos/config/common.nix
+            {
+              fileSystems."/" = {
+                device = "/dev/disk/by-label/nixos";
+                fsType = "ext4";
+              };
+              boot.loader.grub.enable = false;
+            }
+          ];
+          extraHomeModules = [ ./home-manager/config/common.nix ];
+        };
       };
 
       # Apps output for nix run .#treefmt

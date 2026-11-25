@@ -6,6 +6,8 @@
   stateVersion,
 }:
 let
+  modules = import ./modules.nix { inherit (nixpkgs) lib; };
+
   mkMicroVM = import ./mk-microvm.nix {
     inherit (inputs)
       microvm
@@ -16,7 +18,7 @@ let
       nix-index-database
       noctalia
       ;
-    inherit overlays stateVersion;
+    inherit overlays stateVersion modules;
   };
 
   hmBuilders = import ./mk-home-manager.nix {
@@ -26,6 +28,7 @@ let
       overlays
       nixpkgsConfig
       stateVersion
+      modules
       ;
   };
 
@@ -37,11 +40,14 @@ let
       nixpkgsConfig
       stateVersion
       mkMicroVM
+      modules
       ;
-    inherit (hmBuilders) mkHomeManagerModules mkHomeManagerBaseModule;
+    inherit (hmBuilders) homeManagerModules mkHomeManagerBaseModule;
   };
 in
 {
   inherit mkMicroVM mkNixOS;
   inherit (hmBuilders) mkHomeManagerLinux mkHomeManagerDarwin;
+
+  inherit modules;
 }

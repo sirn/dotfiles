@@ -1,14 +1,13 @@
 # Dotfiles
 
-Public NixOS and Home Manager configurations, modules, and packages across Linux and macOS machines.
+Public NixOS and Home Manager modules and packages across Linux and macOS machines.
 
-This flake is consumed as an input by the private configuration repository, which serves as the entry point for each machine and supplies host-specific hardware, boot settings, secrets, and private modules.
+This flake is a module library. The private configuration repository is the entry point for each machine: it owns every profile and consumes this flake for the builders, shared modules, and packages.
 
 ## Project Structure
 
-- `flake.nix`: Exposes host and MicroVM builders (`lib.*`), base `homeConfigurations` and `nixosConfigurations` for local testing, `packages` for the local and `llm-agents` package sets, and `apps.treefmt`.
-- `profiles/<hostname>.nix`: Base machine profiles (`{ nixos = ...; home = ...; }` on NixOS, `{ home = ...; }` on Darwin).
-- `lib/`: Flake builders (`mkNixOS`, `mkHomeManagerLinux`, `mkHomeManagerDarwin`, `mkMicroVM`) and shared helpers (`caches.nix`).
+- `flake.nix`: Exposes the MicroVM and Home Manager builders (`lib.*`), the module registry (`lib.modules`), generic `homeConfigurations` and `nixosConfigurations` stubs for local evaluation, `packages` for the local and `llm-agents` package sets, and `apps.treefmt`.
+- `lib/`: Flake builders (`mkNixOS`, `mkHomeManagerLinux`, `mkHomeManagerDarwin`, `mkMicroVM`) and shared helpers (`caches.nix`, `modules.nix`).
 - `home-manager/`: Home Manager configuration and modules.
   - `config/`: Configuration files organized by role, home, program, or service.
   - `modules/`: Home Manager module definitions.
@@ -17,36 +16,60 @@ This flake is consumed as an input by the private configuration repository, whic
   - `modules/`: NixOS module definitions.
 - `pkgs/`: Custom package definitions (`pkgs/by-name/`) and overlays.
 
-## Machine Profiles
+## Modules
 
-`profiles/<hostname>.nix` defines the public half of each profile. The private repository imports this flake and extends each profile via `dotfiles.lib.*`:
-
-- `polaris` (NixOS - `x86_64-linux`)
-- `system76` (NixOS - `x86_64-linux`)
-- `terra` (NixOS - `x86_64-linux`)
-- `theia` (macOS Home Manager - `aarch64-darwin`)
-- `ws` (MicroVM base profile - `x86_64-linux`)
-
-Example usage in the private repository's `flake.nix`:
+`lib.modules` exposes every module as an attrset that mirrors the directory tree. The `.nix` suffix is dropped, and a directory with a `default.nix` appears as its own path:
 
 ```nix
+dotfiles.lib.modules.nixos.config.roles.laptop
+dotfiles.lib.modules.nixos.config.programs."1password"
+dotfiles.lib.modules.homeManager.config.common
+```
+
+The builders pass the tree into the module systems as special arguments. `nixosConfig` is `lib.modules.nixos.config` and `hmConfig` is `lib.modules.homeManager.config`, so a module imports shared modules without an argument from its caller:
+
+```nix
+# profiles/terra/default.nix in the private repository
 {
-  inputs.dotfiles.url = "github:sirn/dotfiles";
-
-  outputs = { dotfiles, ... }: {
-    homeConfigurations.theia = dotfiles.lib.mkHomeManagerDarwin {
-      hostname = "theia";
-      extraModules = [ (import ./profiles/theia).home ];
+  nixos =
+    { nixosConfig, ... }:
+    {
+      imports = [
+        nixosConfig.common
+        nixosConfig.roles.laptop
+        ./nixos/hardware.nix
+      ];
+      networking.hostName = "terra";
     };
 
-    nixosConfigurations.terra = dotfiles.lib.mkNixOS {
-      hostname = "terra";
-      extraModules = [ (import ./profiles/terra).nixos ];
-      extraHomeModules = [ (import ./profiles/terra).home ];
+  home =
+    { hmConfig, ... }:
+    {
+      imports = [ hmConfig.common hmConfig.common-linux ];
     };
+}
+```
+
+The private repository imports each profile and passes its parts to a builder:
+
+```nix
+outputs = { dotfiles, ... }:
+let
+  profile = hostname: import ./profiles/${hostname};
+in
+{
+  nixosConfigurations.terra = dotfiles.lib.mkNixOS {
+    extraModules = [ (profile "terra").nixos ];
+    extraHomeModules = [ (profile "terra").home ];
+  };
+
+  homeConfigurations.theia = dotfiles.lib.mkHomeManagerDarwin {
+    extraModules = [ (profile "theia").home ];
   };
 }
 ```
+
+A `mkMicroVM` guest receives its base modules through `extraModules` and `extraHomeModules` in the same way. Each guest is its own system, so `mkMicroVM` passes `nixosConfig` and `hmConfig` to it again.
 
 ## Setting Up
 
@@ -112,10 +135,16 @@ $ nix run .#treefmt
 
 ### Testing Locally
 
-Parse-check a profile:
+Parse-check a module:
 
 ```shell
-$ nix-instantiate --parse profiles/<hostname>.nix
+$ nix-instantiate --parse nixos/config/<path>.nix
+```
+
+Print a registered module path:
+
+```shell
+$ nix eval --raw .#lib.modules.nixos.config.roles.laptop
 ```
 
 Build a local package from the overlay:
@@ -124,18 +153,17 @@ Build a local package from the overlay:
 $ nix build --no-link .#<package>
 ```
 
-Test a base Home Manager profile without applying it:
+The generic stubs import the common configuration and no machine hardware. Build them to check that the modules still evaluate:
 
 ```shell
-$ HM_PROFILE=$(hostname -s)
-$ nix build --no-link ".#homeConfigurations.$HM_PROFILE.activationPackage"
+$ nix build --no-link .#homeConfigurations.stub.activationPackage
+$ nix build --no-link .#nixosConfigurations.stub.config.system.build.toplevel
 ```
 
-Test a base NixOS profile without switching to it:
+On macOS, the Darwin stub replaces the Linux one:
 
 ```shell
-$ PROFILE=$(hostname -s)
-$ nix build --no-link ".#nixosConfigurations.$PROFILE.config.system.build.toplevel"
+$ nix build --no-link .#homeConfigurations.stub-darwin.activationPackage
 ```
 
 ## Configuration
@@ -149,7 +177,7 @@ Themes in `home-manager/config/home/colors/` define 16 ANSI colors, a background
 Public binary caches (`cache.nixos.org`, `numtide`, `noctalia`, `microvm`) are defined in `lib/caches.nix` and configured declaratively:
 
 - NixOS hosts via `nix.settings` in `nixos/config/system/nix.nix`.
-- Standalone Home Manager hosts (`theia`) via `nix.settings` in `home-manager/config/home/nix.nix`, which writes `~/.config/nix/nix.conf` on `switch`.
+- Standalone Home Manager hosts via `nix.settings` in `home-manager/config/home/nix.nix`, which writes `~/.config/nix/nix.conf` on `switch`.
 
 These are set at the system/user level rather than in `flake.nix`'s `nixConfig`, which Nix ignores unless `accept-flake-config = true` is set.
 

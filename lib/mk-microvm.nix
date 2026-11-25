@@ -8,6 +8,7 @@
   noctalia,
   overlays,
   stateVersion,
+  modules,
 }:
 
 {
@@ -16,8 +17,6 @@
   mem ? 16384,
   extraConfig ? { },
 
-  # Profile
-  profile ? "",
   extraModules ? [ ],
 
   # Networking
@@ -28,7 +27,6 @@
   # Optionals
   useHomeManager ? false,
   extraHomeModules ? [ ],
-  hmProfile ? profile,
   hmUsername ? "sirn",
 
   # Nix Store
@@ -50,19 +48,18 @@
   containersVolumeImage ? "/var/lib/microvms/${hostname}/containers.img",
 }:
 
+let
+  nixosConfig = modules.nixos.config;
+  hmConfig = modules.homeManager.config;
+in
 {
+  # A VM is evaluated as its own nixosSystem, so it needs the registry again.
+  specialArgs = { inherit nixosConfig; };
+
   config = { lib, ... }: {
     imports = [
       microvm.nixosModules.microvm
       sops-nix.nixosModules.sops
-    ]
-    ++ lib.optionals (profile != "") [
-      (
-        let
-          p = import ../profiles/${profile}.nix;
-        in
-        p.nixos
-      )
     ]
     ++ extraModules
     ++ lib.optionals useHomeManager [
@@ -77,6 +74,7 @@
         in
         {
           home-manager.backupCommand = lib.getExe hm-backup;
+          home-manager.extraSpecialArgs = { inherit hmConfig; };
           home-manager.users.${hmUsername} = {
             nixpkgs.overlays = overlays;
             nixpkgs.config.allowUnfree = true;
@@ -85,7 +83,7 @@
         }
       )
     ]
-    ++ lib.optionals (useHomeManager && hmProfile != "") [
+    ++ lib.optionals useHomeManager [
       {
         home-manager.users.${hmUsername} = {
           imports = [
@@ -95,20 +93,8 @@
             noctalia.homeModules.default
             sops-nix.homeManagerModules.sops
             ../home-manager/modules
-            (
-              let
-                p = import ../profiles/${hmProfile}.nix;
-              in
-              p.home
-            )
-          ];
-        };
-      }
-    ]
-    ++ lib.optionals (useHomeManager && extraHomeModules != [ ]) [
-      {
-        home-manager.users.${hmUsername} = {
-          imports = extraHomeModules;
+          ]
+          ++ extraHomeModules;
         };
       }
     ]
@@ -126,7 +112,7 @@
     system.stateVersion = stateVersion;
     networking.hostName = hostname;
 
-    # hostId is re-generated here as our MicroVM may not import common.nix (when no profile is set)
+    # Regenerate hostId because a guest may not import common.nix.
     networking.hostId = builtins.substring 0 8 (builtins.hashString "sha256" hostname);
 
     microvm = {
