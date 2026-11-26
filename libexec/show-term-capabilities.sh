@@ -47,12 +47,12 @@ echo ""
 # 256 colors (sample)
 echo "256 Colors (16 samples):"
 for row in 0 4 8 12; do
-  echo -n "  "
-  for col in {0..3}; do
-    code=$((row * 4 + col + 16))
-    printf '\033[48;5;%dm  \033[0m' $code
-  done
-  echo ""
+	echo -n "  "
+	for col in {0..3}; do
+		code=$((row * 4 + col + 16))
+		printf '\033[48;5;%dm  \033[0m' $code
+	done
+	echo ""
 done
 echo ""
 
@@ -60,10 +60,10 @@ echo ""
 echo "True Color Gradient (24-bit RGB, if supported):"
 echo -n "  "
 for i in {0..31}; do
-  r=$((i * 8))
-  g=$((255 - i * 8))
-  b=$((i * 4))
-  printf '\033[48;2;%d;%d;%dm  \033[0m' $r $g $b
+	r=$((i * 8))
+	g=$((255 - i * 8))
+	b=$((i * 4))
+	printf '\033[48;2;%d;%d;%dm  \033[0m' $r $g $b
 done
 echo ""
 echo ""
