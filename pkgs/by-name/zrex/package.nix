@@ -6,15 +6,15 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "zrex";
-  version = "0.2.0";
+  version = "0.3.0";
 
   src = fetchgit {
     url = "https://github.com/sirn/zrex";
     rev = "refs/tags/v${version}";
-    hash = "sha256-Qo++exalPK/roenAw3Drtw730C/0SZYrtFdj0sdMbI0=";
+    hash = "sha256-FF9BCHDcUMUNfRQ4PdJaHJqKiR7ucvvEfqQ8SCOjBKI=";
   };
 
-  cargoHash = "sha256-wwrd1qiF9ljuXvM5c6Yp0FoEwNxS1OkRln/vRZGkJso=";
+  cargoHash = "sha256-d8+9pCKCfmMRynwTuk0hZtIFBkaoivwVyKk1kFNfuaE=";
 
   meta = with lib; {
     description = "Command-line client for a Rex server";
